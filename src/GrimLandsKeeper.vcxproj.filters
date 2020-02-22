@@ -1,0 +1,232 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="_pch">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Application">
+      <UniqueIdentifier>{56ef4ddf-1f75-423f-bd52-c89e0a6d8682}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\FileSystem">
+      <UniqueIdentifier>{6c249930-f16e-4aa9-ba23-2f2a82c2812d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib">
+      <UniqueIdentifier>{39abdf3c-23ad-40a3-8de6-37fa7c3297f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Third_Party">
+      <UniqueIdentifier>{11573465-8a4d-448f-acc7-67bf43109674}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{290e9c1f-d463-4d25-9999-f4a7355a22b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs">
+      <UniqueIdentifier>{23335532-d6dd-4c87-ba03-fa3ad5a7d2d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{14df9c6d-6e5f-4425-8301-782026b8da4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\Graphics">
+      <UniqueIdentifier>{f3c3b922-ec10-45c8-b3de-06ca031739be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\Console">
+      <UniqueIdentifier>{36974115-5103-4048-bf8d-8ffa5a234600}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\Inputs">
+      <UniqueIdentifier>{79ccdd56-8a9a-4075-9ab8-f9db51648c07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Third_Party\cjson">
+      <UniqueIdentifier>{4c845885-44ea-4108-843d-49b96cb8ecd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Third_Party\imgui">
+      <UniqueIdentifier>{2070d888-63a0-4e9b-ba1b-fdeba872011b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Third_Party\stb">
+      <UniqueIdentifier>{87926539-c38d-415b-9359-c86e86bbe5f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\Resources">
+      <UniqueIdentifier>{da58dec7-37a5-4133-a053-5fdd4ea0ad7f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>_pch</Filter>
+    </ClInclude>
+    <ClInclude Include="macro.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="enum_utils.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="noncopyable.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="object_pool.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="FileSystem.h">
+      <Filter>Application\FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="string_utils.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonTypes.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="Console.h">
+      <Filter>Application\Console</Filter>
+    </ClInclude>
+    <ClInclude Include="System.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsDevice.h">
+      <Filter>Application\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsDefs.h">
+      <Filter>Application\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL_Defs.h">
+      <Filter>Application\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="InputsDefs.h">
+      <Filter>Application\Inputs</Filter>
+    </ClInclude>
+    <ClInclude Include="InputsManager.h">
+      <Filter>Application\Inputs</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsDeviceContext.h">
+      <Filter>Application\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexFormat.h">
+      <Filter>Application\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="version.h" />
+    <ClInclude Include="SystemSettings.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="FileSystemArchive.h">
+      <Filter>Application\FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="file_utils.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryInputStream.h">
+      <Filter>Application\FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="randomizer.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="intrusive_list.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="handle.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="math_utils.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="math_defs.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="3rd_party\cJSON.h">
+      <Filter>Third_Party\cjson</Filter>
+    </ClInclude>
+    <ClInclude Include="3rd_party\imconfig.h">
+      <Filter>Third_Party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="3rd_party\imgui.h">
+      <Filter>Third_Party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="3rd_party\imgui_internal.h">
+      <Filter>Third_Party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="3rd_party\imstb_textedit.h">
+      <Filter>Third_Party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="3rd_party\imstb_truetype.h">
+      <Filter>Third_Party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="3rd_party\imstb_rectpack.h">
+      <Filter>Third_Party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="3rd_party\stb_rect_pack.h">
+      <Filter>Third_Party\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="3rd_party\stb_sprintf.h">
+      <Filter>Third_Party\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="3rd_party\std_image.h">
+      <Filter>Third_Party\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="3rd_party\stb_image_write.h">
+      <Filter>Third_Party\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineTexturesProvider.h">
+      <Filter>Application\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture2D_Data.h">
+      <Filter>Application\Resources</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <Filter>_pch</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="enums_impl.cpp" />
+    <ClCompile Include="FileSystem.cpp">
+      <Filter>Application\FileSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="CommonTypes.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="Console.cpp">
+      <Filter>Application\Console</Filter>
+    </ClCompile>
+    <ClCompile Include="System.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsDevice.cpp">
+      <Filter>Application\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="InputsManager.cpp">
+      <Filter>Application\Inputs</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemSettings.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="FileSystemArchive.cpp">
+      <Filter>Application\FileSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryInputStream.cpp">
+      <Filter>Application\FileSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="3rd_party\cJSON.cpp">
+      <Filter>Third_Party\cjson</Filter>
+    </ClCompile>
+    <ClCompile Include="3rd_party\imgui.cpp">
+      <Filter>Third_Party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="3rd_party\imgui_demo.cpp">
+      <Filter>Third_Party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="3rd_party\imgui_draw.cpp">
+      <Filter>Third_Party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="3rd_party\imgui_widgets.cpp">
+      <Filter>Third_Party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="3rd_party\stb_rect_pack.cpp">
+      <Filter>Third_Party\stb</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineTexturesProvider.cpp">
+      <Filter>Application\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture2D_Data.cpp">
+      <Filter>Application\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="stb_image.cpp">
+      <Filter>Third_Party\stb</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
