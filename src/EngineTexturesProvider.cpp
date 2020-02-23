@@ -773,17 +773,17 @@ bool EngineTexturesProvider::Initialize()
         return false;
     }
 
-    filesystem::path engineTexturesDir {gFileSystem.mDungeonKeeperGameTextureCacheDirPath};
-    filesystem::path datFilepath = engineTexturesDir / "EngineTextures.dat";
-    filesystem::path dirFilepath = engineTexturesDir / "EngineTextures.dir";
+    fs::path engineTexturesDir {gFileSystem.mDungeonKeeperGameTextureCacheDirPath};
+    fs::path datFilepath = engineTexturesDir / "EngineTextures.dat";
+    fs::path dirFilepath = engineTexturesDir / "EngineTextures.dir";
 
-    if (!filesystem::exists(datFilepath) || !filesystem::is_regular_file(datFilepath))
+    if (!fs::exists(datFilepath) || !fs::is_regular_file(datFilepath))
     {
         gConsole.LogMessage(eLogMessage_Warning, "Cannot locate file 'EngineTextures.dat'");
         return false;
     }
 
-    if (!filesystem::exists(dirFilepath) || !filesystem::is_regular_file(dirFilepath))
+    if (!fs::exists(dirFilepath) || !fs::is_regular_file(dirFilepath))
     {
         gConsole.LogMessage(eLogMessage_Warning, "Cannot locate file 'EngineTextures.dir'");
         return false;
@@ -829,37 +829,123 @@ bool EngineTexturesProvider::ExtractTexture(const std::string& textureName, Text
 
     const TextureEntryIndex& entryIndex = find_iterator->second;
 
-    const int linearIndex = entryIndex.mMipIndices[TEXTURE_MIP_LEVEL_HIGH];
+    const int linearIndex = entryIndex.mMipIndices[0];
     debug_assert(linearIndex != -1);
     const TextureEntryStruct& entryStruct = mEntiesArray[linearIndex];
 
     // extract primary bitmap
-    textureData.Create(eTextureFormat_RGBA8, entryStruct.mSizeX, entryStruct.mSizeY, nullptr);
+    textureData.Setup(eTextureFormat_RGBA8, entryStruct.mSizeX, entryStruct.mSizeY, entryStruct.mHasAlpha, nullptr);
     if (!ExtractTexturePixels(linearIndex, textureData.mBitmap.data()))
     {
+        debug_assert(false);
         gConsole.LogMessage(eLogMessage_Warning, "Cannot extract texture data '%s'", textureName.c_str());
         return false;
     }
 
     // extract mipmaps
-    for (int mipIndex = TEXTURE_MIP_LEVEL_MEDIUM; mipIndex < TEXTURE_MIP_LEVEL_COUNT; ++mipIndex)
+    if (entryIndex.mMipsCount > 1)
     {
-        const int mipLinearIndex = entryIndex.mMipIndices[mipIndex];
-        if (mipLinearIndex == -1)
-            break;
+        textureData.SetupMipmaps(entryIndex.mMipsCount - 1);
 
-        const TextureEntryStruct& mipmapStruct = mEntiesArray[mipLinearIndex];
-        debug_assert(mipmapStruct.mSizeX == GetTextureMipmapDimensions(entryStruct.mSizeX, mipIndex));
-        debug_assert(mipmapStruct.mSizeY == GetTextureMipmapDimensions(entryStruct.mSizeY, mipIndex));
-
-        textureData.CreateMipmap(nullptr);
-        if (!ExtractTexturePixels(mipLinearIndex, textureData.mMipmaps[mipIndex - 1].mBitmap.data()))
+        for (int imipmap = 1; imipmap < entryIndex.mMipsCount; ++imipmap)
         {
-            gConsole.LogMessage(eLogMessage_Warning, "Cannot extract texture mipmap data '%s'", textureName.c_str());
-            break;
+            const int mipLinearIndex = entryIndex.mMipIndices[imipmap];
+            debug_assert(mipLinearIndex != -1);
+
+            const TextureEntryStruct& mipmapStruct = mEntiesArray[mipLinearIndex];
+            debug_assert(mipmapStruct.mSizeX == GetTextureMipmapDimensions(entryStruct.mSizeX, imipmap));
+            debug_assert(mipmapStruct.mSizeY == GetTextureMipmapDimensions(entryStruct.mSizeY, imipmap));
+
+            if (!ExtractTexturePixels(mipLinearIndex, textureData.mMipmaps[imipmap - 1].mBitmap.data()))
+            {
+                debug_assert(false);
+                gConsole.LogMessage(eLogMessage_Warning, "Cannot extract texture mipmap data '%s'", textureName.c_str());
+                break;
+            }
         }
     }
     return true;
+}
+
+void EngineTexturesProvider::DumpTextures(const std::string& outputDirectory) const
+{
+    fs::path outDirectoryPath { outputDirectory };
+    if (!fs::is_directory(outDirectoryPath))
+    {
+        if (!fs::create_directories(outDirectoryPath))
+        {
+            debug_assert(false);
+            return;
+        }
+    }
+
+    Texture2D_Data textureData;
+    for (const auto& indices_iterator: mIndicesMap)
+    {
+        const TextureEntryIndex& entryIndex = indices_iterator.second;
+        debug_assert(entryIndex.mMipsCount > 0);
+
+        const int primaryIndex = entryIndex.mMipIndices[0];
+        debug_assert(primaryIndex != -1);
+        const TextureEntryStruct& primaryEntry = mEntiesArray[primaryIndex];
+
+        textureData.Setup(eTextureFormat_RGBA8, primaryEntry.mSizeX, primaryEntry.mSizeY, primaryEntry.mHasAlpha, nullptr);
+        if (!ExtractTexturePixels(primaryIndex, textureData.mBitmap.data()))
+        {
+            debug_assert(false);
+            gConsole.LogMessage(eLogMessage_Warning, "Cannot extract texture data '%s'", indices_iterator.first.c_str());
+            continue;
+        }
+
+        std::string tempName = indices_iterator.first;
+        tempName.append(".png");
+        cxx::path_remove_forbidden_chars(tempName); // make sure path is good
+
+        fs::path filePath = outDirectoryPath / fs::path { tempName };
+        if (!textureData.SaveToFile(filePath.generic_string()))
+        {
+            debug_assert(false);
+            gConsole.LogMessage(eLogMessage_Warning, "Cannot save texture '%s'", indices_iterator.first.c_str());
+            continue;
+        }
+
+        // extract mipmaps
+        if (entryIndex.mMipsCount > 1)
+        {
+            textureData.SetupMipmaps(entryIndex.mMipsCount - 1);
+
+            for (int imipmap = 1; imipmap < entryIndex.mMipsCount; ++imipmap)
+            {
+                const int mipLinearIndex = entryIndex.mMipIndices[imipmap];
+                debug_assert(mipLinearIndex != -1);
+
+                const TextureEntryStruct& mipmapStruct = mEntiesArray[mipLinearIndex];
+                debug_assert(mipmapStruct.mSizeX == GetTextureMipmapDimensions(primaryEntry.mSizeX, imipmap));
+                debug_assert(mipmapStruct.mSizeY == GetTextureMipmapDimensions(primaryEntry.mSizeY, imipmap));
+
+                if (!ExtractTexturePixels(mipLinearIndex, textureData.mMipmaps[imipmap - 1].mBitmap.data()))
+                {
+                    debug_assert(false);
+                    gConsole.LogMessage(eLogMessage_Warning, "Cannot extract texture mipmap data '%s'", indices_iterator.first.c_str());
+                    break;
+                }
+
+                std::string tempName = indices_iterator.first;
+                tempName.append("_MM");
+                tempName.append(std::to_string(imipmap));
+                tempName.append(".png");
+                cxx::path_remove_forbidden_chars(tempName); // make sure path is good
+
+                fs::path mipMapPath = outDirectoryPath / fs::path { tempName };
+                if (!textureData.SaveToFileMip(mipMapPath.generic_string(), imipmap - 1))
+                {
+                    debug_assert(false);
+                    gConsole.LogMessage(eLogMessage_Warning, "Cannot save mipmap for texture '%s'", indices_iterator.first.c_str());
+                    continue;
+                }
+            }
+        }
+    }
 }
 
 bool EngineTexturesProvider::ParseDirContent(const std::string& dirFilepath, const std::string& datFilepath)
@@ -929,6 +1015,7 @@ bool EngineTexturesProvider::ParseDirContent(const std::string& dirFilepath, con
             TextureEntryIndex& entryIndex = mIndicesMap[nameString];
             debug_assert(entryIndex.mMipIndices[mipIndex] == -1);
             entryIndex.mMipIndices[mipIndex] = i;
+            ++entryIndex.mMipsCount;
         }
 
         TextureEntryStruct& entryStruct = mEntiesArray[i];

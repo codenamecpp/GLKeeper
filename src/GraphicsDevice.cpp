@@ -4,6 +4,11 @@
 #include "OpenGL_Defs.h"
 #include "InputsManager.h"
 #include "System.h"
+#include "GpuBuffer.h"
+#include "GpuBufferTexture.h"
+#include "GpuProgram.h"
+#include "GpuTexture2D.h"
+#include "GpuTextureArray2D.h"
 
 GraphicsDevice gGraphicsDevice;
 
@@ -554,4 +559,356 @@ void GraphicsDevice::ClearScreen()
 
     ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glCheckError();
+}
+
+GpuBufferTexture* GraphicsDevice::CreateBufferTexture()
+{
+    debug_assert(mWindowHandle);
+
+    GpuBufferTexture* texture = new GpuBufferTexture(mDeviceContext);
+    return texture;
+}
+
+GpuBufferTexture* GraphicsDevice::CreateBufferTexture(eTextureFormat textureFormat, int dataLength, const void* sourceData)
+{
+    debug_assert(mWindowHandle);
+
+    GpuBufferTexture* texture = new GpuBufferTexture(mDeviceContext);
+    if (!texture->Setup(textureFormat, dataLength, sourceData))
+    {
+        DestroyTexture(texture);
+        return nullptr;
+    }
+    return texture;
+}
+
+GpuTexture2D* GraphicsDevice::CreateTexture2D()
+{
+    debug_assert(mWindowHandle);
+
+    GpuTexture2D* texture = new GpuTexture2D(mDeviceContext);
+    return texture;
+}
+
+GpuTexture2D* GraphicsDevice::CreateTexture2D(eTextureFormat textureFormat, int sizex, int sizey, const void* sourceData)
+{
+    debug_assert(mWindowHandle);
+
+    GpuTexture2D* texture = new GpuTexture2D(mDeviceContext);
+    if (!texture->Setup(textureFormat, sizex, sizey, sourceData))
+    {
+        DestroyTexture(texture);
+        return nullptr;
+    }
+    return texture;
+}
+
+GpuTextureArray2D* GraphicsDevice::CreateTextureArray2D()
+{
+    debug_assert(mWindowHandle);
+
+    GpuTextureArray2D* texture = new GpuTextureArray2D(mDeviceContext);
+    return texture;   
+}
+
+GpuTextureArray2D* GraphicsDevice::CreateTextureArray2D(eTextureFormat textureFormat, int sizex, int sizey, int layersCount, const void* sourceData)
+{
+    debug_assert(mWindowHandle);
+
+    GpuTextureArray2D* texture = new GpuTextureArray2D(mDeviceContext);
+    if (!texture->Setup(textureFormat, sizex, sizey, layersCount, sourceData))
+    {
+        DestroyTexture(texture);
+        return nullptr;
+    }
+    return texture;
+}
+
+GpuProgram* GraphicsDevice::CreateRenderProgram()
+{
+    debug_assert(mWindowHandle);
+
+    GpuProgram* program = new GpuProgram(mDeviceContext);
+    return program;
+}
+
+GpuProgram* GraphicsDevice::CreateRenderProgram(const char* shaderSource)
+{
+    debug_assert(mWindowHandle);
+
+    GpuProgram* program = new GpuProgram(mDeviceContext);
+    if (!program->CompileSourceCode(shaderSource))
+    {
+        DestroyProgram(program);
+        return nullptr;
+    }
+    return program;
+}
+
+GpuBuffer* GraphicsDevice::CreateBuffer(eBufferContent bufferContent)
+{
+    debug_assert(mWindowHandle);
+    debug_assert(bufferContent < eBufferContent_COUNT);
+    GpuBuffer* bufferObject = new GpuBuffer(mDeviceContext, bufferContent);
+    return bufferObject;
+}
+
+GpuBuffer* GraphicsDevice::CreateBuffer(eBufferContent bufferContent, eBufferUsage bufferUsage, unsigned int bufferLength, const void* dataBuffer)
+{
+    debug_assert(mWindowHandle);
+    debug_assert(bufferContent < eBufferContent_COUNT);
+    GpuBuffer* bufferObject = new GpuBuffer(mDeviceContext, bufferContent);
+    if (!bufferObject->Setup(bufferUsage, bufferLength, dataBuffer))
+    {
+        DestroyBuffer(bufferObject);
+        return nullptr;
+    }
+    return bufferObject;
+}
+
+void GraphicsDevice::BindVertexBuffer(GpuBuffer* sourceBuffer, const VertexFormat& streamDefinition)
+{
+    debug_assert(mWindowHandle);
+    debug_assert(mDeviceContext.mCurrentProgram);
+    if (sourceBuffer)
+    {
+        debug_assert(sourceBuffer->mContent == eBufferContent_Vertices);
+    }
+
+    if (mDeviceContext.mCurrentBuffers[eBufferContent_Vertices] != sourceBuffer)
+    {
+        GLenum bufferTargetGL = EnumToGL(eBufferContent_Vertices);
+        mDeviceContext.mCurrentBuffers[eBufferContent_Vertices] = sourceBuffer;
+        ::glBindBuffer(bufferTargetGL, sourceBuffer ? sourceBuffer->mResourceHandle : 0);
+        glCheckError();
+    }
+
+    if (sourceBuffer)
+    {
+        SetupVertexAttributes(streamDefinition);
+    }
+}
+
+void GraphicsDevice::BindIndexBuffer(GpuBuffer* sourceBuffer)
+{
+    debug_assert(mWindowHandle);
+    if (sourceBuffer)
+    {
+        debug_assert(sourceBuffer->mContent == eBufferContent_Indices);
+    }
+
+    if (mDeviceContext.mCurrentBuffers[eBufferContent_Indices] == sourceBuffer)
+        return;
+
+    mDeviceContext.mCurrentBuffers[eBufferContent_Indices] = sourceBuffer;
+    GLenum bufferTargetGL = EnumToGL(eBufferContent_Indices);
+    ::glBindBuffer(bufferTargetGL, sourceBuffer ? sourceBuffer->mResourceHandle : 0);
+    glCheckError();
+}
+
+void GraphicsDevice::BindTexture(eTextureUnit textureUnit, GpuBufferTexture* texture)
+{
+    debug_assert(mWindowHandle);
+    debug_assert(textureUnit < eTextureUnit_COUNT);
+    if (mDeviceContext.mCurrentTextures[textureUnit].mBufferTexture == texture)
+        return;
+
+    ActivateTextureUnit(textureUnit);
+
+    mDeviceContext.mCurrentTextures[textureUnit].mBufferTexture = texture;
+    ::glBindTexture(GL_TEXTURE_BUFFER, texture ? texture->mResourceHandle : 0);
+    glCheckError();
+}
+
+void GraphicsDevice::BindTexture(eTextureUnit textureUnit, GpuTexture2D* texture)
+{
+    debug_assert(mWindowHandle);
+    debug_assert(textureUnit < eTextureUnit_COUNT);
+    if (mDeviceContext.mCurrentTextures[textureUnit].mTexture2D == texture)
+        return;
+
+    ActivateTextureUnit(textureUnit);
+
+    mDeviceContext.mCurrentTextures[textureUnit].mTexture2D = texture;
+    ::glBindTexture(GL_TEXTURE_2D, texture ? texture->mResourceHandle : 0);
+    glCheckError();
+}
+
+void GraphicsDevice::BindTexture(eTextureUnit textureUnit, GpuTextureArray2D* texture)
+{
+    debug_assert(mWindowHandle);
+    debug_assert(textureUnit < eTextureUnit_COUNT);
+    if (mDeviceContext.mCurrentTextures[textureUnit].mTextureArray2D == texture)
+        return;
+
+    ActivateTextureUnit(textureUnit);
+
+    mDeviceContext.mCurrentTextures[textureUnit].mTextureArray2D = texture;
+    ::glBindTexture(GL_TEXTURE_2D_ARRAY, texture ? texture->mResourceHandle : 0);
+    glCheckError();
+}
+
+void GraphicsDevice::BindRenderProgram(GpuProgram* program)
+{
+    debug_assert(mWindowHandle);
+    if (mDeviceContext.mCurrentProgram == program)
+        return;
+
+    ::glUseProgram(program ? program->mResourceHandle : 0);
+    glCheckError();
+    if (program)
+    {
+        bool programAttributes[eVertexAttribute_MAX] = {};
+        for (int streamIndex = 0; streamIndex < eVertexAttribute_MAX; ++streamIndex)
+        {
+            if (program->mAttributes[streamIndex] == GpuVariable_NULL)
+                continue;
+
+            programAttributes[program->mAttributes[streamIndex]] = true;
+        }
+
+        // setup attribute streams
+        for (int ivattribute = 0; ivattribute < eVertexAttribute_COUNT; ++ivattribute)
+        {
+            if (programAttributes[ivattribute])
+            {
+                ::glEnableVertexAttribArray(ivattribute);
+                glCheckError();
+            }
+            else
+            {
+                ::glDisableVertexAttribArray(ivattribute);
+                glCheckError();
+            }
+        }
+    }
+    else
+    {
+        for (int ivattribute = 0; ivattribute < eVertexAttribute_MAX; ++ivattribute)
+        {
+            ::glDisableVertexAttribArray(ivattribute);
+            glCheckError();
+        }
+    }
+    mDeviceContext.mCurrentProgram = program;
+}
+
+void GraphicsDevice::DestroyTexture(GpuBufferTexture* textureResource)
+{
+    debug_assert(mWindowHandle);
+    debug_assert(textureResource);
+    delete textureResource;
+}
+
+void GraphicsDevice::DestroyTexture(GpuTexture2D* textureResource)
+{
+    debug_assert(mWindowHandle);
+    debug_assert(textureResource);
+    delete textureResource;
+}
+
+void GraphicsDevice::DestroyTexture(GpuTextureArray2D* textureResource)
+{
+    debug_assert(mWindowHandle);
+    debug_assert(textureResource);
+    delete textureResource;
+}
+
+void GraphicsDevice::DestroyProgram(GpuProgram* programResource)
+{
+    debug_assert(mWindowHandle);
+    debug_assert(programResource);
+    delete programResource;
+}
+
+void GraphicsDevice::DestroyBuffer(GpuBuffer* bufferResource)
+{
+    debug_assert(mWindowHandle);
+    debug_assert(bufferResource);
+    delete bufferResource;
+}
+
+void GraphicsDevice::RenderIndexedPrimitives(ePrimitiveType primitive, eIndicesType indices, unsigned int offset, unsigned int numIndices)
+{
+    debug_assert(mWindowHandle);
+
+    GpuBuffer* indexBuffer = mDeviceContext.mCurrentBuffers[eBufferContent_Indices];
+    GpuBuffer* vertexBuffer = mDeviceContext.mCurrentBuffers[eBufferContent_Vertices];
+    debug_assert(indexBuffer && vertexBuffer && mDeviceContext.mCurrentProgram);
+
+    GLenum primitives = EnumToGL(primitive);
+    GLenum indicesTypeGL = EnumToGL(indices);
+    ::glDrawElements(primitives, numIndices, indicesTypeGL, BUFFER_OFFSET(offset));
+    glCheckError();
+}
+
+void GraphicsDevice::RenderIndexedPrimitives(ePrimitiveType primitive, eIndicesType indices, unsigned int offset, unsigned int numIndices, unsigned int baseVertex)
+{
+    debug_assert(mWindowHandle);
+
+    GpuBuffer* indexBuffer = mDeviceContext.mCurrentBuffers[eBufferContent_Indices];
+    GpuBuffer* vertexBuffer = mDeviceContext.mCurrentBuffers[eBufferContent_Vertices];
+    debug_assert(indexBuffer && vertexBuffer && mDeviceContext.mCurrentProgram);
+
+    GLenum primitives = EnumToGL(primitive);
+    GLenum indicesTypeGL = EnumToGL(indices);
+    ::glDrawElementsBaseVertex(primitives, numIndices, indicesTypeGL, BUFFER_OFFSET(offset), baseVertex);
+    glCheckError();
+}
+
+void GraphicsDevice::RenderPrimitives(ePrimitiveType primitiveType, unsigned int firstIndex, unsigned int numElements)
+{
+    debug_assert(mWindowHandle);
+
+    GpuBuffer* vertexBuffer = mDeviceContext.mCurrentBuffers[eBufferContent_Vertices];
+    debug_assert(vertexBuffer && mDeviceContext.mCurrentProgram);
+
+    GLenum primitives = EnumToGL(primitiveType);
+    ::glDrawArrays(primitives, firstIndex, numElements);
+    glCheckError();
+}
+
+void GraphicsDevice::ActivateTextureUnit(eTextureUnit textureUnit)
+{
+    if (mDeviceContext.mCurrentTextureUnit == textureUnit)
+        return;
+
+    mDeviceContext.mCurrentTextureUnit = textureUnit;
+
+    ::glActiveTexture(GL_TEXTURE0 + textureUnit);
+    glCheckError();
+}
+
+void GraphicsDevice::SetupVertexAttributes(const VertexFormat& streamDefinition)
+{
+    GpuProgram* currentProgram = mDeviceContext.mCurrentProgram;
+    for (int iattribute = 0; iattribute < eVertexAttribute_COUNT; ++iattribute)
+    {
+        if (currentProgram->mAttributes[iattribute] == GpuVariable_NULL)
+        {
+            // current vertex attribute is unused in shader
+            continue;
+        }
+
+        const auto& attribute = streamDefinition.mAttributes[iattribute];
+        if (attribute.mFormat == eVertexAttributeFormat_Unknown)
+        {
+            debug_assert(false);
+            continue;
+        }
+
+        unsigned int numComponents = GetAttributeComponentCount(attribute.mFormat);
+        if (numComponents == 0)
+        {
+            debug_assert(numComponents > 0);
+            continue;
+        }
+
+        GLenum dataType = GetAttributeDataTypeGL(attribute.mFormat);
+        // set attribute location
+        ::glVertexAttribPointer(currentProgram->mAttributes[iattribute], numComponents, dataType, 
+            attribute.mNormalized ? GL_TRUE : GL_FALSE, 
+            streamDefinition.mDataStride, BUFFER_OFFSET(attribute.mDataOffset + streamDefinition.mBaseOffset));
+        glCheckError();
+    }
 }

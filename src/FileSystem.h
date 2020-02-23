@@ -5,7 +5,7 @@ class FileSystemArchive;
 class BinaryInputStream;
 
 // file system manager
-class FileSystem final: public cxx::noncopyable
+class FileSystem: public cxx::noncopyable
 {
 public:
     // readonly

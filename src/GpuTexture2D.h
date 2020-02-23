@@ -1,0 +1,57 @@
+#pragma once
+
+#include "GraphicsDefs.h"
+
+// defines hardware 2d texture object
+class GpuTexture2D: public cxx::noncopyable
+{
+    friend class GraphicsDevice;
+
+public:
+    // readonly
+    eTextureFilterMode mFiltering;
+    eTextureWrapMode mRepeating;
+    Size2D mSize;
+    eTextureFormat mFormat;
+
+public:
+    GpuTexture2D(GraphicsDeviceContext& graphicsContext);
+    ~GpuTexture2D();
+
+    // create texture of specified format and upload pixels data, no mipmaps
+    // @param textureFormat: Format
+    // @param sizex, sizey: Texture dimensions, must be POT!
+    // @param sourceData: Source data buffer
+    bool Setup(eTextureFormat textureFormat, int sizex, int sizey, const void* sourceData);
+
+    // uploads pixels data
+    // @param mipLevel: Specifies the level-of-detail number; level 0 is the base image level
+    // @param xoffset, yoffset: Specifies a texel offset within the texture array
+    // @param sizex, sizey: Specifies the size of the texture subimage
+    // @param sourceData: Specifies a pointer to the source data
+    bool Upload(int mipLevel, int xoffset, int yoffset, int sizex, int sizey, const void* sourceData);
+    bool Upload(const void* sourceData);
+
+    // set texture filter and wrap parameters
+    // @param filtering: Filtering mode
+    // @param repeating: Addressing mode
+    void SetSamplerState(eTextureFilterMode filtering, eTextureWrapMode repeating);
+
+    // test whether texture is currently bound at specified texture unit
+    // @param unitIndex: Index of texture unit
+    bool IsTextureBound(eTextureUnit textureUnit) const;
+    bool IsTextureBound() const;
+
+    // test whether texture is created
+    bool IsTextureInited() const;
+
+private:
+    class ScopedTexture2DBinder;
+
+    void SetSamplerStateImpl(eTextureFilterMode filtering, eTextureWrapMode repeating);
+    void SetUnbound();
+
+private:
+    GpuTextureHandle mResourceHandle;
+    GraphicsDeviceContext& mGraphicsContext;
+};

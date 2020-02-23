@@ -32,10 +32,10 @@
 
 #ifdef FS_EXPERIMENTAL
     #include <experimental/filesystem>
-    namespace filesystem = std::experimental::filesystem;
+    namespace fs = std::experimental::filesystem;
 #else
     #include <filesystem>
-namespace filesystem = std::filesystem;
+    namespace fs = std::filesystem;
 #endif
 
 // opengl
@@ -62,3 +62,4 @@ namespace filesystem = std::filesystem;
 #include "math_defs.h"
 #include "math_utils.h"
 #include "file_utils.h"
+#include "path_utils.h"

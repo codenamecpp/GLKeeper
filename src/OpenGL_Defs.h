@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GraphicsDefs.h"
+#include "Console.h"
 
 #define BUFFER_OFFSET(offset) ((unsigned char*)0 + (offset))
 

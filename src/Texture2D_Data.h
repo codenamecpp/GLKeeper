@@ -6,22 +6,28 @@
 class Texture2D_Data
 {
 public:
-    
-    // contains data for single mipmap level
+
+    // data for single mipmap level
     struct MipmapData
     {
+    public:
+        int mDimsW = 0;
+        int mDimsH = 0;
+
         ByteArray mBitmap;
     };
     std::vector<MipmapData> mMipmaps;
+
+    // contains pixels data for primary texture bitmap
+    ByteArray mBitmap;
 
     // texture dimensions
     int mDimsW = 0;
     int mDimsH = 0;
 
-    eTextureFormat mPixelsFormat = eTextureFormat_Null;
+    bool mTransparent = false;
 
-    // contains pixels data for texture
-    ByteArray mBitmap;
+    eTextureFormat mPixelsFormat = eTextureFormat_Null;
 
 public:
     Texture2D_Data();
@@ -31,21 +37,28 @@ public:
     // @param format: Pixels format
     // @param sizex, sizey: Texture dimensions
     // @param sourceData: Source pixels data, optional
-    void Create(eTextureFormat format, int sizex, int sizey, const unsigned char* sourceData);
+    void Setup(eTextureFormat format, int sizex, int sizey, bool transparent, const unsigned char* sourceData);
+    void Clear();
 
-    // allocate mipmap data
-    // @param sourceData: Source pixels data, optional
-    void CreateMipmap(const unsigned char* sourceData);
+    // allocate memory for mipmaps, bitmap params must be specified
+    // @param mipmapsCount: New mipmaps count not counting primary bitmap
+    void SetupMipmaps(int mipmapsCount);
+    void ClearMipmaps();
+
+    // test whether texture has additional mipmap levels
+    inline bool HasMipmaps() const
+    {
+        return GetMipmapsCount() > 0;
+    }
+
+    // get number of additional mipmaps not counting primary bitmap
+    int GetMipmapsCount() const;
 
     // save bitmap content to external file
     // @param filePath: File path
-    // @param mipIndex: Mipmap level
+    // @param mipmapIndex: Mipmap level
     bool SaveToFile(const std::string& filePath);
-    bool SaveToFileMip(const std::string& filePath, int mipIndex);
-
-    // free texture data
-    void ClearContent();
-    void ClearMipmaps();
+    bool SaveToFileMip(const std::string& filePath, int mipmapIndex);
 
     // swap data
     // @param sourceData: Source texture data container to swap with

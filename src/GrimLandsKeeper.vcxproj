@@ -186,6 +186,11 @@
     <ClInclude Include="FileSystem.h" />
     <ClInclude Include="FileSystemArchive.h" />
     <ClInclude Include="file_utils.h" />
+    <ClInclude Include="GpuBuffer.h" />
+    <ClInclude Include="GpuBufferTexture.h" />
+    <ClInclude Include="GpuProgram.h" />
+    <ClInclude Include="GpuTexture2D.h" />
+    <ClInclude Include="GpuTextureArray2D.h" />
     <ClInclude Include="GraphicsDefs.h" />
     <ClInclude Include="GraphicsDevice.h" />
     <ClInclude Include="GraphicsDeviceContext.h" />
@@ -199,6 +204,7 @@
     <ClInclude Include="noncopyable.h" />
     <ClInclude Include="object_pool.h" />
     <ClInclude Include="OpenGL_Defs.h" />
+    <ClInclude Include="path_utils.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="randomizer.h" />
     <ClInclude Include="string_utils.h" />
@@ -222,6 +228,11 @@
     <ClCompile Include="enums_impl.cpp" />
     <ClCompile Include="FileSystem.cpp" />
     <ClCompile Include="FileSystemArchive.cpp" />
+    <ClCompile Include="GpuBuffer.cpp" />
+    <ClCompile Include="GpuBufferTexture.cpp" />
+    <ClCompile Include="GpuProgram.cpp" />
+    <ClCompile Include="GpuTexture2D.cpp" />
+    <ClCompile Include="GpuTextureArray2D.cpp" />
     <ClCompile Include="GraphicsDevice.cpp" />
     <ClCompile Include="InputsManager.cpp" />
     <ClCompile Include="Main.cpp" />

@@ -3,7 +3,7 @@
 #include "InputsDefs.h"
 
 // inputs manager class
-class InputsManager final: public cxx::noncopyable
+class InputsManager: public cxx::noncopyable
 {
 public:
     // readonly

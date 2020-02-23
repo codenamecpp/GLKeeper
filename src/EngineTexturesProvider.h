@@ -26,6 +26,10 @@ public:
     // @param textureData: Output texture data
     bool ExtractTexture(const std::string& textureName, Texture2D_Data& textureData) const;
 
+    // extract all textures with their mipmaps to specified directory
+    // @param outputDirectory: Output directory path
+    void DumpTextures(const std::string& outputDirectory) const;
+
 private:
     bool ParseDirContent(const std::string& dirFilepath, const std::string& datFilepath);
 
@@ -59,6 +63,7 @@ private:
     struct TextureEntryIndex
     {
     public:
+        int mMipsCount = 0;
         int mMipIndices[TEXTURE_MIP_LEVEL_COUNT] = {-1, -1, -1, -1};
     };
 

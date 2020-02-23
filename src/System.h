@@ -3,7 +3,7 @@
 #include "SystemSettings.h"
 
 // this class provides common system functionality
-class System final: public cxx::noncopyable
+class System: public cxx::noncopyable
 {
 public:
     // readonly

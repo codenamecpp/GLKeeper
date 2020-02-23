@@ -5,7 +5,7 @@
 #include "GraphicsDeviceContext.h"
 #include "VertexFormat.h"
 
-class GraphicsDevice final: public cxx::noncopyable
+class GraphicsDevice: public cxx::noncopyable
 {
 public:
     // readonly
@@ -150,6 +150,9 @@ private:
     void InternalSetRenderStates(const RenderStates& renderStates, bool forceState);
     bool InitOpenGLExtensions();
     void QueryGraphicsDeviceCaps();
+    void ActivateTextureUnit(eTextureUnit textureUnit);
+
+    void SetupVertexAttributes(const VertexFormat& streamDefinition);
 
 private:
     GraphicsDeviceContext mDeviceContext;

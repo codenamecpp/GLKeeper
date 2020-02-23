@@ -167,6 +167,24 @@
     <ClInclude Include="Texture2D_Data.h">
       <Filter>Application\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="path_utils.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="GpuTextureArray2D.h">
+      <Filter>Application\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="GpuTexture2D.h">
+      <Filter>Application\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="GpuBuffer.h">
+      <Filter>Application\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="GpuBufferTexture.h">
+      <Filter>Application\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="GpuProgram.h">
+      <Filter>Application\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -227,6 +245,21 @@
     </ClCompile>
     <ClCompile Include="stb_image.cpp">
       <Filter>Third_Party\stb</Filter>
+    </ClCompile>
+    <ClCompile Include="GpuTextureArray2D.cpp">
+      <Filter>Application\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="GpuTexture2D.cpp">
+      <Filter>Application\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="GpuBuffer.cpp">
+      <Filter>Application\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="GpuBufferTexture.cpp">
+      <Filter>Application\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="GpuProgram.cpp">
+      <Filter>Application\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

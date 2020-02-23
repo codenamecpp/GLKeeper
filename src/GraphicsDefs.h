@@ -9,7 +9,7 @@ class GpuProgram;
 class GpuBufferTexture;
 class GpuTexture2D;
 class GpuTextureArray2D;
-class GraphicsContext;
+class GraphicsDeviceContext;
 
 // internal types
 using GpuProgramHandle = unsigned int;

@@ -19,6 +19,13 @@ public:
 
         debug_assert(vertexFormat != eVertexAttributeFormat_Unknown);
         mAttributes[attribute].mFormat = vertexFormat;
+
+        mAttributes[attribute].mNormalized = false;
+    }
+
+    inline void SetAttributeNormalized(eVertexAttribute attribute, bool isNormalized)
+    {
+        mAttributes[attribute].mNormalized = isNormalized;
     }
 
 public:
@@ -29,6 +36,11 @@ public:
     public:
         eVertexAttributeFormat mFormat = eVertexAttributeFormat_Unknown;
         unsigned int mDataOffset = 0;
+
+        // attribute normalization - opengl specific
+        // if set to true, it indicates that values stored in an integer format are 
+        // to be mapped to the range [-1,1] (for signed values) or [0,1] (for unsigned values) when they are accessed and converted to floating point
+        bool mNormalized = false;
     };
 
     SingleAttribute mAttributes[eVertexAttribute_COUNT];

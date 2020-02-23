@@ -54,14 +54,14 @@ bool FileSystem::SetupDataPath()
 {
     mDataPath.clear();
 
-    filesystem::path dataPath = filesystem::path(mExecutablePath).parent_path().parent_path() / filesystem::path("data");
-    if (!filesystem::is_directory(dataPath))
+    fs::path dataPath = fs::path(mExecutablePath).parent_path().parent_path() / fs::path("data");
+    if (!fs::is_directory(dataPath))
     {
         debug_assert(false);
         gConsole.LogMessage(eLogMessage_Warning, "Data directory does not exists");
         return false;
     }
-    mDataPath = filesystem::canonical(dataPath).generic_string();
+    mDataPath = fs::canonical(dataPath).generic_string();
     return true;
 }
 
@@ -77,19 +77,19 @@ bool FileSystem::SetupDungeonKeeperGamePaths()
         return false;
     }
 
-    filesystem::path basePath { gSystem.mStartupParams.mDungeonKeeperGamePath };
+    fs::path basePath { gSystem.mStartupParams.mDungeonKeeperGamePath };
     mDungeonKeeperGameRootPath = basePath.generic_string();
 
     gConsole.LogMessage(eLogMessage_Debug, "Base game directory is '%s'", mDungeonKeeperGameRootPath.c_str());
 
-    if (!filesystem::is_directory(basePath))
+    if (!fs::is_directory(basePath))
     {
         gConsole.LogMessage(eLogMessage_Warning, "Base game directory is invalid");
         return false;
     }
 
-    filesystem::path dataPath = basePath / "Data";
-    if (!filesystem::is_directory(dataPath))
+    fs::path dataPath = basePath / "Data";
+    if (!fs::is_directory(dataPath))
     {
         gConsole.LogMessage(eLogMessage_Warning, "Game data directory is invalid");
         return false;
@@ -97,8 +97,8 @@ bool FileSystem::SetupDungeonKeeperGamePaths()
 
     mDungeonKeeperGameDataPath = dataPath.generic_string();
     
-    filesystem::path textureCachePath = basePath / "DK2TextureCache";
-    if (!filesystem::is_directory(textureCachePath))
+    fs::path textureCachePath = basePath / "DK2TextureCache";
+    if (!fs::is_directory(textureCachePath))
     {
         gConsole.LogMessage(eLogMessage_Warning, "Game texture cache directory is invalid");
         return false;
@@ -110,22 +110,22 @@ bool FileSystem::SetupDungeonKeeperGamePaths()
 
 bool FileSystem::MountDungeonKeeperGameArchives()
 {
-    if (!filesystem::exists(mDungeonKeeperGameDataPath))
+    if (!fs::exists(mDungeonKeeperGameDataPath))
     {
         gConsole.LogMessage(eLogMessage_Warning, "Game data directory is invalid");
         return false;
     }
 
-    std::vector<filesystem::path> wads;
+    std::vector<fs::path> wads;
     const std::string archiveFileExtension { ".WAD" };
 
     // find all wads
-    filesystem::directory_iterator iter_directory_end;
-    for (filesystem::directory_iterator iter_directory(mDungeonKeeperGameDataPath); 
+    fs::directory_iterator iter_directory_end;
+    for (fs::directory_iterator iter_directory(mDungeonKeeperGameDataPath); 
         iter_directory != iter_directory_end; ++iter_directory)
     {
-        const filesystem::path& currentFile = iter_directory->path();
-        if (filesystem::is_regular_file(currentFile))
+        const fs::path& currentFile = iter_directory->path();
+        if (fs::is_regular_file(currentFile))
         {
             if (currentFile.has_extension() && archiveFileExtension == currentFile.extension())
             {
@@ -141,7 +141,7 @@ bool FileSystem::MountDungeonKeeperGameArchives()
     }
 
     gConsole.LogMessage(eLogMessage_Info, "Mounting game resource archives:");
-    for (const filesystem::path& currpath: wads)
+    for (const fs::path& currpath: wads)
     {
         bool isSuccess = false;
 
@@ -176,10 +176,10 @@ void FileSystem::UnmountDungeonKeeperGameArchives()
 BinaryInputStream* FileSystem::OpenFileStream(const std::string& fileName)
 {
     // 1 engine data path 
-    filesystem::path fullFilePath = filesystem::path {mDataPath} / filesystem::path {fileName};
-    if (filesystem::exists(fullFilePath))
+    fs::path fullFilePath = fs::path {mDataPath} / fs::path {fileName};
+    if (fs::exists(fullFilePath))
     {
-        if (filesystem::is_regular_file(fullFilePath))
+        if (fs::is_regular_file(fullFilePath))
         {
             FileInputStream* inputStream = new FileInputStream;
             if (inputStream->OpenFileStream(fullFilePath.generic_string()))
@@ -193,10 +193,10 @@ BinaryInputStream* FileSystem::OpenFileStream(const std::string& fileName)
     }
 
     // 2 game data path
-    fullFilePath = filesystem::path {mDungeonKeeperGameDataPath} / filesystem::path {fileName};
-    if (filesystem::exists(fullFilePath))
+    fullFilePath = fs::path {mDungeonKeeperGameDataPath} / fs::path {fileName};
+    if (fs::exists(fullFilePath))
     {
-        if (filesystem::is_regular_file(fullFilePath))
+        if (fs::is_regular_file(fullFilePath))
         {
             FileInputStream* inputStream = new FileInputStream;
             if (inputStream->OpenFileStream(fullFilePath.generic_string()))
