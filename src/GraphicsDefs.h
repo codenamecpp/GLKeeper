@@ -56,6 +56,27 @@ public:
 
 const unsigned int Sizeof_Vertex3D_Debug = sizeof(Vertex3D_Debug);
 
+// render vertex 3d terrain mesh
+struct Vertex3D_Terrain
+{
+public:
+    glm::vec3 mPosition; // 12 bytes
+    glm::vec3 mNormal; // 12 bytes
+    glm::vec2 mTexcoord; // 8 bytes
+                         // terrain tile logical coordinate
+    union // 4 bytes
+    {
+        unsigned int mTileCoord;
+        struct
+        {
+            unsigned short mTileX;
+            unsigned short mTileY;
+        };
+    };
+};
+
+const unsigned int Sizeof_Vertex3D_Terrain = sizeof(Vertex3D_Terrain);
+
 //////////////////////////////////////////////////////////////////////////
 
 enum eTextureFilterMode
@@ -188,6 +209,7 @@ enum eVertexAttributeFormat
     eVertexAttributeFormat_3F,      // 3 floats
     eVertexAttributeFormat_4UB,     // 4 unsigned bytes
     eVertexAttributeFormat_1US,     // 1 unsigned short
+    eVertexAttributeFormat_2US,     // 2 unsigned shorts
     eVertexAttributeFormat_Unknown
 };
 
@@ -219,6 +241,7 @@ inline unsigned int GetAttributeComponentCount(eVertexAttributeFormat attributeF
         case eVertexAttributeFormat_3F: return 3;
         case eVertexAttributeFormat_4UB: return 4;
         case eVertexAttributeFormat_1US: return 1;
+        case eVertexAttributeFormat_2US: return 2;
     }
     debug_assert(false);
     return 0;
@@ -234,6 +257,7 @@ inline unsigned int GetAttributeSizeBytes(eVertexAttributeFormat attributeFormat
         case eVertexAttributeFormat_3F: return 3 * sizeof(float);
         case eVertexAttributeFormat_4UB: return 4 * sizeof(unsigned char);
         case eVertexAttributeFormat_1US: return 1 * sizeof(unsigned short);
+        case eVertexAttributeFormat_2US: return 2 * sizeof(unsigned short);
     }
     debug_assert(false);
     return 0;
@@ -286,7 +310,7 @@ const BufferAccessBits BufferAccess_UnsynchronizedWrite = BufferAccess_Unsynchro
 
 //////////////////////////////////////////////////////////////////////////
 
-enum eBlendingMode : unsigned short
+enum eBlendingMode : unsigned char
 {
     eBlendingMode_Alpha,
     eBlendingMode_Additive,
@@ -297,7 +321,7 @@ enum eBlendingMode : unsigned short
 
 decl_enum_strings(eBlendingMode);
 
-enum eDepthTestFunc : unsigned short
+enum eDepthTestFunc : unsigned char
 {
     eDepthTestFunc_Always,
     eDepthTestFunc_Equal,
@@ -310,16 +334,16 @@ enum eDepthTestFunc : unsigned short
 
 decl_enum_strings(eDepthTestFunc);
 
-enum eCullMode : unsigned short
+enum eCullingMode : unsigned char
 {
-    eCullMode_Front,
-    eCullMode_Back,
-    eCullMode_FrontAndBack,
+    eCullingMode_Front,
+    eCullingMode_Back,
+    eCullingMode_FrontAndBack,
 };
 
-decl_enum_strings(eCullMode);
+decl_enum_strings(eCullingMode);
 
-enum ePolygonFillMode : unsigned short
+enum ePolygonFillMode : unsigned char
 {
     ePolygonFillMode_Solid,
     ePolygonFillMode_WireFrame,
@@ -327,54 +351,50 @@ enum ePolygonFillMode : unsigned short
 
 decl_enum_strings(ePolygonFillMode);
 
-enum RenderStateFlags : unsigned short
-{
-    RenderStateFlags_AlphaBlend = (1 << 0),
-    RenderStateFlags_ColorWrite = (1 << 1),
-    RenderStateFlags_DepthWrite = (1 << 2),
-    RenderStateFlags_DepthTest = (1 << 3),
-    RenderStateFlags_FaceCulling = (1 << 4),
-};
-
-inline RenderStateFlags operator | (RenderStateFlags lhs, RenderStateFlags rhs)
-{
-    return static_cast<RenderStateFlags>(static_cast<unsigned short>(lhs) | static_cast<unsigned short>(rhs));
-}
-inline RenderStateFlags operator & (RenderStateFlags lhs, RenderStateFlags rhs)
-{
-    return static_cast<RenderStateFlags>(static_cast<unsigned short>(lhs) & static_cast<unsigned short>(rhs));
-}
-inline RenderStateFlags operator ^ (RenderStateFlags lhs, RenderStateFlags rhs)
-{
-    return static_cast<RenderStateFlags>(static_cast<unsigned short>(lhs) ^ static_cast<unsigned short>(rhs));
-}
-
-const RenderStateFlags RenderStateFlags_Defaults = RenderStateFlags_ColorWrite | RenderStateFlags_DepthWrite | 
-    RenderStateFlags_DepthTest | RenderStateFlags_FaceCulling;
-
 // defines render states
 struct RenderStates
 {
 public:
-    RenderStates() = default;
-    // test whether render state flags is enabled
-    inline bool IsEnabled(RenderStateFlags renderStateFlags) const
+    RenderStates()
+        : mIsColorWriteEnabled(true)
+        , mIsDepthWriteEnabled(true)
+        , mIsDepthTestEnabled(true)
+        , mIsFaceCullingEnabled(true)
+        , mIsAlphaBlendEnabled() // is disabled by default, do not draw dungeon geometry with it
     {
-        return (mStateFlags & renderStateFlags) == renderStateFlags;
     }
-    // test whether specific state flags are same
-    // @param otherStates: States reference
-    // @param renderStateFlags: Flags to test
-    inline bool MatchFlags(const RenderStates& otherStates, RenderStateFlags renderStateFlags) const
+
+    // get default render states for ui drawing
+    static RenderStates GetForUI()
     {
-        return (otherStates.mStateFlags & renderStateFlags) == (mStateFlags & renderStateFlags);
+        RenderStates states;
+        states.mIsDepthWriteEnabled = false;
+        states.mIsDepthTestEnabled = false;
+        states.mIsFaceCullingEnabled = false;
+        states.mIsAlphaBlendEnabled = true;
+        states.mBlendingMode = eBlendingMode_Alpha;
+        return states;
     }
+
 public:
-    RenderStateFlags mStateFlags = RenderStateFlags_Defaults;
+    // polygon fill mode state
+    ePolygonFillMode mPolygonFillMode = ePolygonFillMode_Solid;
+
+    // blend mode state
     eBlendingMode mBlendingMode = eBlendingMode_Alpha;
-    ePolygonFillMode mFillMode = ePolygonFillMode_Solid;
-    eCullMode mCullMode = eCullMode_Back;
+
+    // cull mode state
+    eCullingMode mCullingMode = eCullingMode_Back;
+
+    // depth func state
     eDepthTestFunc mDepthFunc = eDepthTestFunc_LessEqual;
+
+    // state flags
+    bool mIsAlphaBlendEnabled : 1;
+    bool mIsColorWriteEnabled : 1;
+    bool mIsDepthWriteEnabled : 1;
+    bool mIsDepthTestEnabled : 1;
+    bool mIsFaceCullingEnabled : 1;
 };
 
 const unsigned int Sizeof_RenderStates = sizeof(RenderStates);

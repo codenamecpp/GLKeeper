@@ -65,7 +65,7 @@ public:
         return sDefinition; 
     }
     using TVertexType = Vertex3D;
-    // initialzie definition
+    // initialize definition
     inline void Setup()
     {
         this->mDataStride = Sizeof_Vertex3D;
@@ -73,6 +73,8 @@ public:
         this->SetAttribute(eVertexAttribute_Normal0,    eVertexAttributeFormat_3F, offsetof(TVertexType, mNormal));
         this->SetAttribute(eVertexAttribute_Texcoord0,  eVertexAttributeFormat_2F, offsetof(TVertexType, mTexcoord));
         this->SetAttribute(eVertexAttribute_Color0,     eVertexAttributeFormat_4UB, offsetof(TVertexType, mColor));
+
+        this->SetAttributeNormalized(eVertexAttribute_Color0, true);
     }
 };
 
@@ -93,13 +95,15 @@ public:
         return sDefinition; 
     }
     using TVertexType = Vertex2D;
-    // initialzie definition
+    // initialize definition
     inline void Setup()
     {
         this->mDataStride = Sizeof_Vertex2D;
-        this->SetAttribute(eVertexAttribute_Texcoord0,  eVertexAttributeFormat_2F, offsetof(TVertexType, mTexcoord));
-        this->SetAttribute(eVertexAttribute_Position0,  eVertexAttributeFormat_2F, offsetof(TVertexType, mPosition));
+        this->SetAttribute(eVertexAttribute_Texcoord0, eVertexAttributeFormat_2F, offsetof(TVertexType, mTexcoord));
+        this->SetAttribute(eVertexAttribute_Position0, eVertexAttributeFormat_2F, offsetof(TVertexType, mPosition));
         this->SetAttribute(eVertexAttribute_Color0,     eVertexAttributeFormat_4UB, offsetof(TVertexType, mColor));
+
+        this->SetAttributeNormalized(eVertexAttribute_Color0, true);
     }
 };
 
@@ -120,11 +124,93 @@ public:
         return sDefinition; 
     }
     using TVertexType = Vertex3D_Debug;
-    // initialzie definition
+    // initialize definition
     inline void Setup()
     {
         this->mDataStride = Sizeof_Vertex3D_Debug;
         this->SetAttribute(eVertexAttribute_Position0,  eVertexAttributeFormat_3F, offsetof(TVertexType, mPosition));
         this->SetAttribute(eVertexAttribute_Color0,     eVertexAttributeFormat_4UB, offsetof(TVertexType, mColor));
+
+        this->SetAttributeNormalized(eVertexAttribute_Color0, true);
+    }
+};
+
+//////////////////////////////////////////////////////////////////////////
+
+// terrain vertex definition
+struct Vertex3D_Terrain_Format: public VertexFormat
+{
+    Vertex3D_Terrain_Format()
+    {
+        Setup();
+    }
+    // get definition instance
+    static const Vertex3D_Terrain_Format& Get() 
+    { 
+        static const Vertex3D_Terrain_Format sDefinition; 
+        return sDefinition; 
+    }
+    using TVertexType = Vertex3D_Terrain;
+    // initialize definition
+    inline void Setup()
+    {
+        this->mDataStride = Sizeof_Vertex3D_Terrain;
+        this->SetAttribute(eVertexAttribute_Position0,  eVertexAttributeFormat_3F, offsetof(TVertexType, mPosition));
+        this->SetAttribute(eVertexAttribute_Normal0,    eVertexAttributeFormat_3F, offsetof(TVertexType, mNormal));
+        this->SetAttribute(eVertexAttribute_Texcoord0,  eVertexAttributeFormat_2F, offsetof(TVertexType, mTexcoord));
+        this->SetAttribute(eVertexAttribute_Position1,  eVertexAttributeFormat_2US, offsetof(TVertexType, mTileCoord));
+    }
+};
+
+//////////////////////////////////////////////////////////////////////////
+
+// morph/keyframe animation vertex definition
+// no color data stored!
+struct Vertex3D_Anim_Format: public VertexFormat
+{
+    // does not declare TVertexType due to specific attributes layout
+
+    Vertex3D_Anim_Format()
+    {
+        this->mDataStride = 0;
+    }
+
+    // Initialzie definition
+
+    // attributes layout:
+    // submesh #0 - [texture coords] [positions of all animation frames] [normals of all animation frames]
+    // submesh #1 - [texture coords] [positions of all animation frames] [normals of all animation frames]
+    // and so on
+
+    enum 
+    { 
+        Sizeof_Texcoord = sizeof(glm::vec2),
+        Sizeof_Position = sizeof(glm::vec3),
+        Sizeof_Normal = sizeof(glm::vec3),
+    };
+
+    inline void Setup(int dataOffset, int numVertsPerFrame, int numFrames, int frame0, int frame1)
+    {
+        this->SetAttribute(eVertexAttribute_Texcoord0, eVertexAttributeFormat_2F, dataOffset);
+
+        // frame 0
+        this->SetAttribute(eVertexAttribute_Position0, eVertexAttributeFormat_3F,
+            (dataOffset + numVertsPerFrame * Sizeof_Texcoord) + 
+            (numVertsPerFrame * Sizeof_Position * frame0));
+
+        this->SetAttribute(eVertexAttribute_Normal0, eVertexAttributeFormat_3F, 
+            (dataOffset + numVertsPerFrame * Sizeof_Texcoord) + 
+            (numVertsPerFrame * Sizeof_Position * numFrames) + 
+            (numVertsPerFrame * Sizeof_Normal * frame0));
+
+        // frame 1
+        this->SetAttribute(eVertexAttribute_Position1, eVertexAttributeFormat_3F, 
+            (dataOffset + numVertsPerFrame * Sizeof_Texcoord) + 
+            (numVertsPerFrame * Sizeof_Position * frame1));
+
+        this->SetAttribute(eVertexAttribute_Normal1, eVertexAttributeFormat_3F, 
+            (dataOffset + numVertsPerFrame * Sizeof_Texcoord) + 
+            (numVertsPerFrame * Sizeof_Position * numFrames) + 
+            (numVertsPerFrame * Sizeof_Normal * frame1));
     }
 };

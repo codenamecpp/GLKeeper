@@ -358,10 +358,10 @@ void GraphicsDevice::InternalSetRenderStates(const RenderStates& renderStates, b
         return;
 
     // polygon mode
-    if (forceState || (mCurrentStates.mFillMode != renderStates.mFillMode))
+    if (forceState || (mCurrentStates.mPolygonFillMode != renderStates.mPolygonFillMode))
     {
         GLenum mode = GL_FILL;
-        switch (renderStates.mFillMode)
+        switch (renderStates.mPolygonFillMode)
         {
             case ePolygonFillMode_WireFrame: mode = GL_LINE; break;
             case ePolygonFillMode_Solid: mode = GL_FILL; break;
@@ -374,9 +374,9 @@ void GraphicsDevice::InternalSetRenderStates(const RenderStates& renderStates, b
     }
 
     // depth testing
-    if (forceState || !mCurrentStates.MatchFlags(renderStates, RenderStateFlags_DepthTest))
+    if (forceState || mCurrentStates.mIsDepthTestEnabled != renderStates.mIsDepthTestEnabled)
     {
-        if (renderStates.IsEnabled(RenderStateFlags_DepthTest))
+        if (renderStates.mIsDepthTestEnabled)
         {
             ::glEnable(GL_DEPTH_TEST);
         }
@@ -408,23 +408,23 @@ void GraphicsDevice::InternalSetRenderStates(const RenderStates& renderStates, b
         glCheckError();
     }
 
-    if (forceState || !mCurrentStates.MatchFlags(renderStates, RenderStateFlags_DepthWrite))
+    if (forceState || mCurrentStates.mIsDepthWriteEnabled != renderStates.mIsDepthWriteEnabled)
     {
-        ::glDepthMask(renderStates.IsEnabled(RenderStateFlags_DepthWrite) ? GL_TRUE : GL_FALSE);
+        ::glDepthMask(renderStates.mIsDepthWriteEnabled ? GL_TRUE : GL_FALSE);
         glCheckError();
     }
 
-    if (forceState || !mCurrentStates.MatchFlags(renderStates, RenderStateFlags_ColorWrite))
+    if (forceState || mCurrentStates.mIsColorWriteEnabled != renderStates.mIsColorWriteEnabled)
     {
-        const GLboolean isEnabled = renderStates.IsEnabled(RenderStateFlags_ColorWrite) ? GL_TRUE : GL_FALSE;
+        const GLboolean isEnabled = renderStates.mIsColorWriteEnabled ? GL_TRUE : GL_FALSE;
         ::glColorMask(isEnabled, isEnabled, isEnabled, isEnabled);
         glCheckError();
     }
 
     // blending
-    if (forceState || !mCurrentStates.MatchFlags(renderStates, RenderStateFlags_AlphaBlend))
+    if (forceState || mCurrentStates.mIsAlphaBlendEnabled != renderStates.mIsAlphaBlendEnabled)
     {
-        if (renderStates.IsEnabled(RenderStateFlags_AlphaBlend))
+        if (renderStates.mIsAlphaBlendEnabled)
         {
             ::glEnable(GL_BLEND);
         }
@@ -472,9 +472,9 @@ void GraphicsDevice::InternalSetRenderStates(const RenderStates& renderStates, b
     }
 
     // culling
-    if (forceState || !mCurrentStates.MatchFlags(renderStates, RenderStateFlags_FaceCulling))
+    if (forceState || mCurrentStates.mIsFaceCullingEnabled != renderStates.mIsFaceCullingEnabled)
     {
-        if (renderStates.IsEnabled(RenderStateFlags_FaceCulling))
+        if (renderStates.mIsFaceCullingEnabled)
         {
             ::glEnable(GL_CULL_FACE);
         }
@@ -485,14 +485,14 @@ void GraphicsDevice::InternalSetRenderStates(const RenderStates& renderStates, b
         glCheckError();
     }
 
-    if (forceState || (mCurrentStates.mCullMode != renderStates.mCullMode))
+    if (forceState || (mCurrentStates.mCullingMode != renderStates.mCullingMode))
     {
         GLenum mode = GL_BACK;
-        switch (renderStates.mCullMode)
+        switch (renderStates.mCullingMode)
         {
-            case eCullMode_Back: mode = GL_BACK; break;
-            case eCullMode_Front: mode = GL_FRONT; break;
-            case eCullMode_FrontAndBack: mode = GL_FRONT_AND_BACK; break;
+            case eCullingMode_Back: mode = GL_BACK; break;
+            case eCullingMode_Front: mode = GL_FRONT; break;
+            case eCullingMode_FrontAndBack: mode = GL_FRONT_AND_BACK; break;
             default:
                 debug_assert(false);
             break;

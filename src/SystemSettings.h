@@ -4,7 +4,16 @@
 struct SystemSettings
 {
 public:
-    // todo
+    // graphics
+    int mScreenSizex = 0; // screen dimensions
+    int mScreenSizey = 0; 
+    bool mFullscreen = false; // enable fullscreen mode
+    bool mEnableVSync = false; // enable vertical synchronization
+
+public:
+    SystemSettings() = default;
+
+    void SetDefaults();
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -20,8 +29,8 @@ public:
     std::string mDungeonKeeperGamePath;
 
 public:
+    SystemStartupParams() = default;
 
     bool ParseStartupParams(int argc, char *argv[]);
     void Clear();
-   
 };

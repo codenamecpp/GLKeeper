@@ -2,6 +2,7 @@
 #include "CommonTypes.h"
 #include "GraphicsDefs.h"
 #include "InputsDefs.h"
+#include "RenderDefs.h"
 
 impl_enum_strings(eLogMessage)
 {
@@ -78,6 +79,7 @@ impl_enum_strings(eVertexAttributeFormat)
     {eVertexAttributeFormat_3F, "3f"},
     {eVertexAttributeFormat_4UB, "4ub"},
     {eVertexAttributeFormat_1US, "1us"},
+    {eVertexAttributeFormat_2US, "2us"},
     {eVertexAttributeFormat_Unknown, "unknown"},
 };
 
@@ -126,11 +128,11 @@ impl_enum_strings(eDepthTestFunc)
     {eDepthTestFunc_GreaterEqual, "greater_equal"},
 };
 
-impl_enum_strings(eCullMode)
+impl_enum_strings(eCullingMode)
 {
-    {eCullMode_Front, "front"},
-    {eCullMode_Back, "back"},
-    {eCullMode_FrontAndBack, "front_and_back"},
+    {eCullingMode_Front, "front"},
+    {eCullingMode_Back, "back"},
+    {eCullingMode_FrontAndBack, "front_and_back"},
 };
 
 impl_enum_strings(ePolygonFillMode)
@@ -199,4 +201,10 @@ impl_enum_strings(eMouseButton)
     {eMouseButton_Left, "Left"},
     {eMouseButton_Right, "Right"},
     {eMouseButton_Middle, "Middle"},
+};
+
+impl_enum_strings(eRenderPass)
+{
+    {eRenderPass_Opaque, "opaque"},
+    {eRenderPass_Translucent, "translucent"},
 };

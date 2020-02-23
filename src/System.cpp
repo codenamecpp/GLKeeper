@@ -5,6 +5,7 @@
 #include "InputsManager.h"
 #include "GraphicsDevice.h"
 #include "EngineTexturesProvider.h"
+#include "RenderManager.h"
 
 System gSystem;
 
@@ -55,9 +56,15 @@ void System::Initialize(int argc, char *argv[])
         Terminate();
     }
 
-    if (!gGraphicsDevice.Initialize(1024, 768, false, false))
+    if (!gGraphicsDevice.Initialize(mSettings.mScreenSizex, mSettings.mScreenSizey, mSettings.mFullscreen, mSettings.mEnableVSync))
     {
         gConsole.LogMessage(eLogMessage_Error, "Cannot initialize graphics device");
+        Terminate();
+    }
+
+    if (!gRenderManager.Initialize())
+    {
+        gConsole.LogMessage(eLogMessage_Error, "Cannot initialize render manager");
         Terminate();
     }
 
@@ -71,6 +78,7 @@ void System::Deinit()
 {
     gConsole.LogMessage(eLogMessage_Info, "System shutdown");
 
+    gRenderManager.Deinit();
     gGraphicsDevice.Deinit();
     gInputsManager.Deinit();
     gEngineTexturesProvider.Deinit();
@@ -114,12 +122,7 @@ void System::Execute()
 
         // todo process game logic
 
-        gGraphicsDevice.ClearScreen();
-
-        // todo render
-
-        gGraphicsDevice.Present();
-
+        gRenderManager.RenderFrame();
         previousFrameTime = currentFrameTime;
     }
 }
@@ -149,5 +152,7 @@ bool System::SaveSettings()
 
 bool System::LoadSettings()
 {
+    mSettings.SetDefaults();
+
     return true;
 }

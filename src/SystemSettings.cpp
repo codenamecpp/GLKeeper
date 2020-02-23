@@ -2,6 +2,21 @@
 #include "SystemSettings.h"
 #include "Console.h"
 
+const int DefaultScreenResolutionX = 1024;
+const int DefaultScreenResolutionY = 768;
+
+//////////////////////////////////////////////////////////////////////////
+
+void SystemSettings::SetDefaults()
+{
+    mScreenSizex = DefaultScreenResolutionX;
+    mScreenSizey = DefaultScreenResolutionY; 
+    mFullscreen = false;
+    mEnableVSync = false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+
 bool SystemStartupParams::ParseStartupParams(int argc, char *argv[])
 {
     Clear();

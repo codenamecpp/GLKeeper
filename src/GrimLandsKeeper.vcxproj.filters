@@ -47,6 +47,12 @@
     <Filter Include="Application\Resources">
       <UniqueIdentifier>{da58dec7-37a5-4133-a053-5fdd4ea0ad7f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Render">
+      <UniqueIdentifier>{e607d4ee-67e8-4d5f-b41f-1bfc554959f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Scene">
+      <UniqueIdentifier>{5d7e5c39-c126-4d85-af00-6cd205e2a863}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -185,6 +191,15 @@
     <ClInclude Include="GpuProgram.h">
       <Filter>Application\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="json_document.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderManager.h">
+      <Filter>Game\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderDefs.h">
+      <Filter>Game\Render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -261,5 +276,28 @@
     <ClCompile Include="GpuProgram.cpp">
       <Filter>Application\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="json_document.cpp">
+      <Filter>Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderManager.cpp">
+      <Filter>Game\Render</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\docs\creatures_anims.txt">
+      <Filter>Docs</Filter>
+    </Text>
+    <Text Include="..\docs\engine_textures.txt">
+      <Filter>Docs</Filter>
+    </Text>
+    <Text Include="..\docs\jobs.txt">
+      <Filter>Docs</Filter>
+    </Text>
+    <Text Include="..\docs\objects_names.txt">
+      <Filter>Docs</Filter>
+    </Text>
+    <Text Include="..\docs\terrains.txt">
+      <Filter>Docs</Filter>
+    </Text>
   </ItemGroup>
 </Project>
