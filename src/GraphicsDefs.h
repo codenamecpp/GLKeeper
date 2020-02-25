@@ -10,6 +10,7 @@ class GpuBufferTexture;
 class GpuTexture2D;
 class GpuTextureArray2D;
 class GraphicsDeviceContext;
+class Texture2D_Data;
 
 // internal types
 using GpuProgramHandle = unsigned int;
@@ -225,6 +226,7 @@ enum eVertexAttribute
     eVertexAttribute_Normal1,
     eVertexAttribute_Color0,
     eVertexAttribute_Color1,
+    eVertexAttribute_TerrainTilePosition,
     eVertexAttribute_COUNT,
     eVertexAttribute_MAX = 16,
 };

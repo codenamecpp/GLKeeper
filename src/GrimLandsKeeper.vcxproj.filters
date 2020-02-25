@@ -53,6 +53,15 @@
     <Filter Include="Game\Scene">
       <UniqueIdentifier>{5d7e5c39-c126-4d85-af00-6cd205e2a863}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Scene\Camera">
+      <UniqueIdentifier>{23269d5d-8ec3-4467-95fb-43902adf5c8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\Shaders">
+      <UniqueIdentifier>{8b0aa962-d3ec-4c9f-a33f-afa0b1fe407e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\GUI">
+      <UniqueIdentifier>{29e877b2-cd75-42db-97e8-6988bfc8e0c9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -200,6 +209,12 @@
     <ClInclude Include="RenderDefs.h">
       <Filter>Game\Render</Filter>
     </ClInclude>
+    <ClInclude Include="ImGuiManager.h">
+      <Filter>Game\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeManager.h">
+      <Filter>Application</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -282,6 +297,12 @@
     <ClCompile Include="RenderManager.cpp">
       <Filter>Game\Render</Filter>
     </ClCompile>
+    <ClCompile Include="ImGuiManager.cpp">
+      <Filter>Game\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeManager.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\docs\creatures_anims.txt">
@@ -299,5 +320,10 @@
     <Text Include="..\docs\terrains.txt">
       <Filter>Docs</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="gui.glsl">
+      <Filter>Data\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

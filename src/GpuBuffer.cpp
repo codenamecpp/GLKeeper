@@ -5,10 +5,10 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-class GpuBuffer::ScopedBufferBinder
+class GpuBuffer::ScopeBinder
 {
 public:
-    ScopedBufferBinder(GpuBuffer* gpuBuffer)
+    ScopeBinder(GpuBuffer* gpuBuffer)
         : mPreviousBuffer(gpuBuffer->mGraphicsContext.mCurrentBuffers[gpuBuffer->mContent])
         , mBuffer(gpuBuffer)
     {
@@ -21,7 +21,7 @@ public:
             glCheckError();
         }
     }
-    ~ScopedBufferBinder()
+    ~ScopeBinder()
     {
         if (mBuffer != mPreviousBuffer)
         {
@@ -75,7 +75,7 @@ bool GpuBuffer::Setup(eBufferUsage bufferUsage, unsigned int bufferLength, const
     mUsageHint = bufferUsage;
     debug_assert(mUsageHint < eBufferUsage_COUNT);
 
-    ScopedBufferBinder scopedBind {this};
+    ScopeBinder scopedBind {this};
     GLenum bufferTargetGL = EnumToGL(mContent);
     GLenum bufferUsageGL = EnumToGL(mUsageHint);
     ::glBufferData(bufferTargetGL, mBufferCapacity, nullptr, bufferUsageGL);
@@ -172,7 +172,7 @@ bool GpuBuffer::SubData(unsigned int dataOffset, unsigned int dataLength, const 
     debug_assert(dataLength && dataSource);
     debug_assert(dataOffset + dataLength < mBufferCapacity);
 
-    ScopedBufferBinder scopedBind {this};
+    ScopeBinder scopedBind {this};
     GLenum bufferTargetGL = EnumToGL(mContent);
     ::glBufferSubData(bufferTargetGL, dataOffset, dataLength, dataSource);
     glCheckError();
@@ -209,7 +209,7 @@ void* GpuBuffer::Lock(BufferAccessBits accessBits, unsigned int bufferOffset, un
         return nullptr;
     }
 
-    ScopedBufferBinder scopedBind {this};
+    ScopeBinder scopedBind {this};
     GLenum bufferTargetGL = EnumToGL(mContent);
     void* pMappedData = ::glMapBufferRange(bufferTargetGL, bufferOffset, dataLength, accessBitsGL);
     glCheckError();
@@ -224,7 +224,7 @@ bool GpuBuffer::Unlock()
         return false;
     }
 
-    ScopedBufferBinder scopedBind {this};
+    ScopeBinder scopedBind {this};
     GLenum bufferTargetGL = EnumToGL(mContent);
     GLboolean unmapResult = ::glUnmapBuffer(bufferTargetGL);
     glCheckError();
@@ -239,7 +239,7 @@ void GpuBuffer::Invalidate()
         return;
     }
 
-    ScopedBufferBinder scopedBind {this};
+    ScopeBinder scopedBind {this};
     GLenum bufferTargetGL = EnumToGL(mContent);
     GLenum bufferUsageGL = EnumToGL(mUsageHint);
     ::glBufferData(bufferTargetGL, mBufferCapacity, nullptr, bufferUsageGL);

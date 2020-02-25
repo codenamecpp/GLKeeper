@@ -42,18 +42,19 @@ public:
 
     // create 2D texture, client is responsible for destroying resource
     // @param textureFormat: Format
-    // @param sizex, sizey: Texture dimensions, must be POT!
-    // @param sourceData: Source data buffer
+    // @param dimensions: Texture dimensions, must be POT!
     GpuTexture2D* CreateTexture2D();
-    GpuTexture2D* CreateTexture2D(eTextureFormat textureFormat, int sizex, int sizey, const void* sourceData);
+    GpuTexture2D* CreateTexture2D(eTextureFormat textureFormat, const Size2D& dimensions, const void* sourceData);
+    // @param textureData: Texture data
+    GpuTexture2D* CreateTexture2D(const Texture2D_Data& textureData);
 
     // create texture array 2D, client is responsible for destroying resource
     // @param textureFormat: Format
-    // @param sizex, sizey: Texture dimensions, must be POT!
+    // @param dimensions: Texture dimensions, must be POT!
     // @param layersCount: Number of textures in array
     // @param sourceData: Source data buffer, all layers must be specified if not null
     GpuTextureArray2D* CreateTextureArray2D();
-    GpuTextureArray2D* CreateTextureArray2D(eTextureFormat textureFormat, int sizex, int sizey, int layersCount, const void* sourceData);
+    GpuTextureArray2D* CreateTextureArray2D(eTextureFormat textureFormat, const Size2D& dimensions, int layersCount, const void* sourceData);
 
     // create render program, client is responsible for destroying resource
     // @param shaderSource: Source code

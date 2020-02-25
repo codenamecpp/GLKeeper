@@ -6,6 +6,7 @@
 #include "GraphicsDevice.h"
 #include "EngineTexturesProvider.h"
 #include "RenderManager.h"
+#include "TimeManager.h"
 
 System gSystem;
 
@@ -62,6 +63,8 @@ void System::Initialize(int argc, char *argv[])
         Terminate();
     }
 
+    gTimeManager.Initialize();
+
     if (!gRenderManager.Initialize())
     {
         gConsole.LogMessage(eLogMessage_Error, "Cannot initialize render manager");
@@ -79,6 +82,7 @@ void System::Deinit()
     gConsole.LogMessage(eLogMessage_Info, "System shutdown");
 
     gRenderManager.Deinit();
+    gTimeManager.Deinit();
     gGraphicsDevice.Deinit();
     gInputsManager.Deinit();
     gEngineTexturesProvider.Deinit();
@@ -115,6 +119,7 @@ void System::Execute()
             currentFrameTime = ::glfwGetTime();
         }
 
+        gTimeManager.UpdateFrame(currentFrameDelta);
         gGraphicsDevice.ProcessInputEvents();
 
         if (mQuitRequested)

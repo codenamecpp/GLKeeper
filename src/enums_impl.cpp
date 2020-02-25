@@ -93,6 +93,7 @@ impl_enum_strings(eVertexAttribute)
     {eVertexAttribute_Normal1, "in_normal1"},
     {eVertexAttribute_Color0, "in_color0"},
     {eVertexAttribute_Color1, "in_color1"},
+    {eVertexAttribute_TerrainTilePosition, "terrain_tile_pos"},
 };
 
 impl_enum_strings(eBufferContent)

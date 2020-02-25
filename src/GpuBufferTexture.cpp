@@ -6,10 +6,10 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-class GpuBufferTexture::ScopedBufferTextureBinder
+class GpuBufferTexture::ScopeBinder
 {
 public:
-    ScopedBufferTextureBinder(GpuBufferTexture* gpuTexture)
+    ScopeBinder(GpuBufferTexture* gpuTexture)
         : mPreviousTexture(gpuTexture->mGraphicsContext.mCurrentTextures[gpuTexture->mGraphicsContext.mCurrentTextureUnit].mBufferTexture)
         , mTexture(gpuTexture)
     {
@@ -20,7 +20,7 @@ public:
             glCheckError();
         }
     }
-    ~ScopedBufferTextureBinder()
+    ~ScopeBinder()
     {
         if (mTexture != mPreviousTexture)
         {
@@ -79,7 +79,7 @@ bool GpuBufferTexture::Setup(eTextureFormat textureFormat, int dataLength, const
         gConsole.LogMessage(eLogMessage_Warning, "Exceeded max texture buffer size (%d, max is %d)", dataLength, maxTextureBufferSize);
     }
     
-    ScopedBufferTextureBinder scopedBind {this};
+    ScopeBinder scopedBind {this};
 
 	::glBindBuffer(GL_TEXTURE_BUFFER, mBufferHandle);
     glCheckError();

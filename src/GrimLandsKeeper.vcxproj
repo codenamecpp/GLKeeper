@@ -181,6 +181,7 @@
     <ClInclude Include="BinaryInputStream.h" />
     <ClInclude Include="CommonTypes.h" />
     <ClInclude Include="Console.h" />
+    <ClInclude Include="ImGuiManager.h" />
     <ClInclude Include="EngineTexturesProvider.h" />
     <ClInclude Include="enum_utils.h" />
     <ClInclude Include="FileSystem.h" />
@@ -214,6 +215,7 @@
     <ClInclude Include="System.h" />
     <ClInclude Include="SystemSettings.h" />
     <ClInclude Include="Texture2D_Data.h" />
+    <ClInclude Include="TimeManager.h" />
     <ClInclude Include="version.h" />
     <ClInclude Include="VertexFormat.h" />
   </ItemGroup>
@@ -237,6 +239,7 @@
     <ClCompile Include="GpuTexture2D.cpp" />
     <ClCompile Include="GpuTextureArray2D.cpp" />
     <ClCompile Include="GraphicsDevice.cpp" />
+    <ClCompile Include="ImGuiManager.cpp" />
     <ClCompile Include="InputsManager.cpp" />
     <ClCompile Include="json_document.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -251,6 +254,7 @@
     <ClCompile Include="System.cpp" />
     <ClCompile Include="SystemSettings.cpp" />
     <ClCompile Include="Texture2D_Data.cpp" />
+    <ClCompile Include="TimeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="GLEW\GLEW.vcxproj">
@@ -266,6 +270,9 @@
     <Text Include="..\docs\jobs.txt" />
     <Text Include="..\docs\objects_names.txt" />
     <Text Include="..\docs\terrains.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="gui.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

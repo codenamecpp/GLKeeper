@@ -79,6 +79,13 @@ enum eKeycode
 
 decl_enum_strings(eKeycode);
 
+enum
+{
+    KeyModifier_Shift = 1,
+    KeyModifier_Ctrl = 2,
+    KeyModifier_Alt = 4,
+};
+
 // input events
 struct BaseInputEvent
 {

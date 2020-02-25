@@ -1,9 +1,7 @@
 #pragma once
 
 #include "CommonTypes.h"
-
-// forwards
-class Texture2D_Data;
+#include "GraphicsDefs.h"
 
 // dungeon keeper engine textures provider
 class EngineTexturesProvider: public cxx::noncopyable

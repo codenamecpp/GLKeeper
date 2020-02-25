@@ -21,10 +21,10 @@ public:
 
     // create texture of specified format and upload pixels data, no mipmaps
     // @param textureFormat: Format
-    // @param sizex, sizey: Texture dimensions, must be POT!
+    // @param dimensions: Texture dimensions, must be POT!
     // @param layersCount: Number of textures in array
     // @param sourceData: Source data buffer, all layers must be specified if not null
-    bool Setup(eTextureFormat textureFormat, int sizex, int sizey, int layersCount, const void* sourceData);
+    bool Setup(eTextureFormat textureFormat, const Size2D& dimensions, int layersCount, const void* sourceData);
 
     // uploads pixels data for layers, size of source bitmap should match current texture dimensions
     // @param startLayerIndex: First layer index
@@ -46,7 +46,7 @@ public:
     bool IsTextureInited() const;
 
 private:
-    class ScopedTextureArray2DBinder;
+    class ScopeBinder;
 
     void SetSamplerStateImpl(eTextureFilterMode filtering, eTextureWrapMode repeating);
     void SetUnbound();

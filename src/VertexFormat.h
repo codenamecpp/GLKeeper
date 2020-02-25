@@ -69,10 +69,10 @@ public:
     inline void Setup()
     {
         this->mDataStride = Sizeof_Vertex3D;
-        this->SetAttribute(eVertexAttribute_Position0,  eVertexAttributeFormat_3F, offsetof(TVertexType, mPosition));
-        this->SetAttribute(eVertexAttribute_Normal0,    eVertexAttributeFormat_3F, offsetof(TVertexType, mNormal));
-        this->SetAttribute(eVertexAttribute_Texcoord0,  eVertexAttributeFormat_2F, offsetof(TVertexType, mTexcoord));
-        this->SetAttribute(eVertexAttribute_Color0,     eVertexAttributeFormat_4UB, offsetof(TVertexType, mColor));
+        this->SetAttribute(eVertexAttribute_Position0, eVertexAttributeFormat_3F, offsetof(TVertexType, mPosition));
+        this->SetAttribute(eVertexAttribute_Texcoord0, eVertexAttributeFormat_2F, offsetof(TVertexType, mTexcoord));
+        this->SetAttribute(eVertexAttribute_Normal0, eVertexAttributeFormat_3F, offsetof(TVertexType, mNormal));
+        this->SetAttribute(eVertexAttribute_Color0, eVertexAttributeFormat_4UB, offsetof(TVertexType, mColor));
 
         this->SetAttributeNormalized(eVertexAttribute_Color0, true);
     }
@@ -101,7 +101,7 @@ public:
         this->mDataStride = Sizeof_Vertex2D;
         this->SetAttribute(eVertexAttribute_Texcoord0, eVertexAttributeFormat_2F, offsetof(TVertexType, mTexcoord));
         this->SetAttribute(eVertexAttribute_Position0, eVertexAttributeFormat_2F, offsetof(TVertexType, mPosition));
-        this->SetAttribute(eVertexAttribute_Color0,     eVertexAttributeFormat_4UB, offsetof(TVertexType, mColor));
+        this->SetAttribute(eVertexAttribute_Color0, eVertexAttributeFormat_4UB, offsetof(TVertexType, mColor));
 
         this->SetAttributeNormalized(eVertexAttribute_Color0, true);
     }
@@ -128,8 +128,8 @@ public:
     inline void Setup()
     {
         this->mDataStride = Sizeof_Vertex3D_Debug;
-        this->SetAttribute(eVertexAttribute_Position0,  eVertexAttributeFormat_3F, offsetof(TVertexType, mPosition));
-        this->SetAttribute(eVertexAttribute_Color0,     eVertexAttributeFormat_4UB, offsetof(TVertexType, mColor));
+        this->SetAttribute(eVertexAttribute_Position0, eVertexAttributeFormat_3F, offsetof(TVertexType, mPosition));
+        this->SetAttribute(eVertexAttribute_Color0, eVertexAttributeFormat_4UB, offsetof(TVertexType, mColor));
 
         this->SetAttributeNormalized(eVertexAttribute_Color0, true);
     }
@@ -155,10 +155,10 @@ struct Vertex3D_Terrain_Format: public VertexFormat
     inline void Setup()
     {
         this->mDataStride = Sizeof_Vertex3D_Terrain;
-        this->SetAttribute(eVertexAttribute_Position0,  eVertexAttributeFormat_3F, offsetof(TVertexType, mPosition));
-        this->SetAttribute(eVertexAttribute_Normal0,    eVertexAttributeFormat_3F, offsetof(TVertexType, mNormal));
-        this->SetAttribute(eVertexAttribute_Texcoord0,  eVertexAttributeFormat_2F, offsetof(TVertexType, mTexcoord));
-        this->SetAttribute(eVertexAttribute_Position1,  eVertexAttributeFormat_2US, offsetof(TVertexType, mTileCoord));
+        this->SetAttribute(eVertexAttribute_Position0, eVertexAttributeFormat_3F, offsetof(TVertexType, mPosition));
+        this->SetAttribute(eVertexAttribute_Texcoord0, eVertexAttributeFormat_2F, offsetof(TVertexType, mTexcoord));
+        this->SetAttribute(eVertexAttribute_Normal0, eVertexAttributeFormat_3F, offsetof(TVertexType, mNormal));
+        this->SetAttribute(eVertexAttribute_TerrainTilePosition, eVertexAttributeFormat_2US, offsetof(TVertexType, mTileCoord));
     }
 };
 

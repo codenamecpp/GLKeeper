@@ -70,7 +70,7 @@ public:
     bool IsBufferInited() const;
 
 private:
-    class ScopedBufferBinder;
+    class ScopeBinder;
 
     void SetUnbound();
 

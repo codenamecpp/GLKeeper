@@ -38,7 +38,7 @@ public:
     bool IsTextureInited() const;
 
 private:
-    class ScopedBufferTextureBinder;
+    class ScopeBinder;
 
     void SetUnbound();
 

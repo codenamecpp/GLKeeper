@@ -6,10 +6,10 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-class GpuTextureArray2D::ScopedTextureArray2DBinder final
+class GpuTextureArray2D::ScopeBinder
 {
 public:
-    ScopedTextureArray2DBinder(GpuTextureArray2D* gpuTexture)
+    ScopeBinder(GpuTextureArray2D* gpuTexture)
         : mPreviousTexture(gpuTexture->mGraphicsContext.mCurrentTextures[gpuTexture->mGraphicsContext.mCurrentTextureUnit].mTextureArray2D)
         , mTexture(gpuTexture)
     {
@@ -20,7 +20,7 @@ public:
             glCheckError();
         }
     }
-    ~ScopedTextureArray2DBinder()
+    ~ScopeBinder()
     {
         if (mTexture != mPreviousTexture)
         {
@@ -56,7 +56,7 @@ GpuTextureArray2D::~GpuTextureArray2D()
     glCheckError();
 }
 
-bool GpuTextureArray2D::Setup(eTextureFormat textureFormat, int sizex, int sizey, int layersCount, const void* sourceData)
+bool GpuTextureArray2D::Setup(eTextureFormat textureFormat, const Size2D& dimensions, int layersCount, const void* sourceData)
 {
     GLuint formatGL = GetTextureInputFormatGL(textureFormat);
     GLint internalFormatGL = GetTextureInternalFormatGL(textureFormat);
@@ -68,8 +68,7 @@ bool GpuTextureArray2D::Setup(eTextureFormat textureFormat, int sizex, int sizey
     }
 
     mFormat = textureFormat;
-    mSize.x = sizex;
-    mSize.y = sizey;
+    mSize = dimensions;
     mLayersCount = layersCount;
 
     int MaxLayers = gGraphicsDevice.mCaps.mMaxArrayTextureLayers;
@@ -80,7 +79,7 @@ bool GpuTextureArray2D::Setup(eTextureFormat textureFormat, int sizex, int sizey
         mLayersCount = MaxLayers;
     }
 
-    ScopedTextureArray2DBinder scopedBind {this};
+    ScopeBinder scopedBind {this};
 
     ::glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, internalFormatGL, mSize.x, mSize.y, layersCount);
     glCheckError();
@@ -113,7 +112,7 @@ bool GpuTextureArray2D::Upload(int startLayerIndex, int layersCount, const void*
         return false;
     }
 
-    ScopedTextureArray2DBinder scopedBind {this};
+    ScopeBinder scopedBind {this};
 
     glTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, startLayerIndex, mSize.x, mSize.y, layersCount, formatGL, dataType, sourceData);
     glCheckError();
@@ -132,7 +131,7 @@ void GpuTextureArray2D::SetSamplerState(eTextureFilterMode filtering, eTextureWr
     if (mFiltering == filtering && mRepeating == repeating)
         return;
 
-    ScopedTextureArray2DBinder scopedBind {this};
+    ScopeBinder scopedBind {this};
 
     SetSamplerStateImpl(filtering, repeating);
 }

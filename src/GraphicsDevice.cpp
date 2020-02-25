@@ -170,7 +170,21 @@ bool GraphicsDevice::Initialize(int screensizex, int screensizey, bool fullscree
         eKeycode keycodeNative = GLFW_KeycodeToNative(keycode);
         if (keycodeNative != eKeycode_null)
         {
-            KeyInputEvent ev { keycodeNative, scancode, mods, action == GLFW_PRESS };
+            int nativeMods = 0;
+            if (mods & GLFW_MOD_SHIFT)
+            {
+                nativeMods |= KeyModifier_Shift;
+            }
+            if (mods & GLFW_MOD_CONTROL)
+            {
+                nativeMods |= KeyModifier_Ctrl;
+            }
+            if (mods & GLFW_MOD_ALT)
+            {
+                nativeMods |= KeyModifier_Alt;
+            }
+
+            KeyInputEvent ev { keycodeNative, scancode, nativeMods, action == GLFW_PRESS };
             gInputsManager.HandleInputEvent(ev);
         }
     });
@@ -590,12 +604,25 @@ GpuTexture2D* GraphicsDevice::CreateTexture2D()
     return texture;
 }
 
-GpuTexture2D* GraphicsDevice::CreateTexture2D(eTextureFormat textureFormat, int sizex, int sizey, const void* sourceData)
+GpuTexture2D* GraphicsDevice::CreateTexture2D(const Texture2D_Data& textureData)
 {
     debug_assert(mWindowHandle);
 
     GpuTexture2D* texture = new GpuTexture2D(mDeviceContext);
-    if (!texture->Setup(textureFormat, sizex, sizey, sourceData))
+    if (!texture->Setup(textureData))
+    {
+        DestroyTexture(texture);
+        return nullptr;
+    }
+    return texture;
+}
+
+GpuTexture2D* GraphicsDevice::CreateTexture2D(eTextureFormat textureFormat, const Size2D& dimensions, const void* sourceData)
+{
+    debug_assert(mWindowHandle);
+
+    GpuTexture2D* texture = new GpuTexture2D(mDeviceContext);
+    if (!texture->Setup(textureFormat, dimensions, sourceData))
     {
         DestroyTexture(texture);
         return nullptr;
@@ -611,12 +638,12 @@ GpuTextureArray2D* GraphicsDevice::CreateTextureArray2D()
     return texture;   
 }
 
-GpuTextureArray2D* GraphicsDevice::CreateTextureArray2D(eTextureFormat textureFormat, int sizex, int sizey, int layersCount, const void* sourceData)
+GpuTextureArray2D* GraphicsDevice::CreateTextureArray2D(eTextureFormat textureFormat, const Size2D& dimensions, int layersCount, const void* sourceData)
 {
     debug_assert(mWindowHandle);
 
     GpuTextureArray2D* texture = new GpuTextureArray2D(mDeviceContext);
-    if (!texture->Setup(textureFormat, sizex, sizey, layersCount, sourceData))
+    if (!texture->Setup(textureFormat, dimensions, layersCount, sourceData))
     {
         DestroyTexture(texture);
         return nullptr;

@@ -18,19 +18,21 @@ public:
     GpuTexture2D(GraphicsDeviceContext& graphicsContext);
     ~GpuTexture2D();
 
-    // create texture of specified format and upload pixels data, no mipmaps
+    // create texture of specified format and upload pixels data
     // @param textureFormat: Format
-    // @param sizex, sizey: Texture dimensions, must be POT!
+    // @param dimensions: Texture dimensions, must be POT!
     // @param sourceData: Source data buffer
-    bool Setup(eTextureFormat textureFormat, int sizex, int sizey, const void* sourceData);
+    bool Setup(eTextureFormat textureFormat, const Size2D& dimensions, const void* sourceData);
+    // @param textureData: Texture data
+    bool Setup(const Texture2D_Data& textureData);
 
     // uploads pixels data
     // @param mipLevel: Specifies the level-of-detail number; level 0 is the base image level
     // @param xoffset, yoffset: Specifies a texel offset within the texture array
     // @param sizex, sizey: Specifies the size of the texture subimage
     // @param sourceData: Specifies a pointer to the source data
-    bool Upload(int mipLevel, int xoffset, int yoffset, int sizex, int sizey, const void* sourceData);
-    bool Upload(const void* sourceData);
+    bool TexSubImage(int mipLevel, int xoffset, int yoffset, int sizex, int sizey, const void* sourceData);
+    bool TexSubImage(int mipLevel, int sizex, int sizey, const void* sourceData);
 
     // set texture filter and wrap parameters
     // @param filtering: Filtering mode
@@ -46,7 +48,7 @@ public:
     bool IsTextureInited() const;
 
 private:
-    class ScopedTexture2DBinder;
+    class ScopeBinder;
 
     void SetSamplerStateImpl(eTextureFilterMode filtering, eTextureWrapMode repeating);
     void SetUnbound();
