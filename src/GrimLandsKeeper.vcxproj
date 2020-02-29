@@ -182,7 +182,7 @@
     <ClInclude Include="CommonTypes.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="GuiRenderProgram.h" />
-    <ClInclude Include="ImGuiManager.h" />
+    <ClInclude Include="DebugGuiManager.h" />
     <ClInclude Include="EngineTexturesProvider.h" />
     <ClInclude Include="enum_utils.h" />
     <ClInclude Include="FileSystem.h" />
@@ -197,6 +197,7 @@
     <ClInclude Include="GraphicsDevice.h" />
     <ClInclude Include="GraphicsDeviceContext.h" />
     <ClInclude Include="handle.h" />
+    <ClInclude Include="DebugGuiWindow.h" />
     <ClInclude Include="InputsDefs.h" />
     <ClInclude Include="InputsManager.h" />
     <ClInclude Include="intrusive_list.h" />
@@ -241,7 +242,7 @@
     <ClCompile Include="GpuTexture2D.cpp" />
     <ClCompile Include="GpuTextureArray2D.cpp" />
     <ClCompile Include="GraphicsDevice.cpp" />
-    <ClCompile Include="ImGuiManager.cpp" />
+    <ClCompile Include="DebugGuiManager.cpp" />
     <ClCompile Include="InputsManager.cpp" />
     <ClCompile Include="json_document.cpp" />
     <ClCompile Include="Main.cpp" />

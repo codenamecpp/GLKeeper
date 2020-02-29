@@ -4,10 +4,12 @@
 #include "GraphicsDefs.h"
 
 // forwards
+class DebugGuiWindow;
+
 struct ImGuiIO;
 
 // immediate mode gui manager
-class ImGuiManager: public cxx::noncopyable
+class DebugGuiManager: public cxx::noncopyable
 {
 public:
 
@@ -40,4 +42,4 @@ private:
     GpuBuffer* mTrisBuffer = nullptr;
 };
 
-extern ImGuiManager gImGuiManager;
+extern DebugGuiManager gDebugGuiManager;

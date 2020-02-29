@@ -7,7 +7,7 @@
 #include "EngineTexturesProvider.h"
 #include "RenderManager.h"
 #include "TimeManager.h"
-#include "ImGuiManager.h"
+#include "DebugGuiManager.h"
 
 System gSystem;
 
@@ -72,7 +72,7 @@ void System::Initialize(int argc, char *argv[])
         Terminate();
     }
 
-    if (gImGuiManager.Initialize())
+    if (gDebugGuiManager.Initialize())
     {
         gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize ImGUI system");
         // ignore failure
@@ -88,7 +88,7 @@ void System::Deinit()
 {
     gConsole.LogMessage(eLogMessage_Info, "System shutdown");
 
-    gImGuiManager.Deinit();
+    gDebugGuiManager.Deinit();
     gRenderManager.Deinit();
     gTimeManager.Deinit();
     gGraphicsDevice.Deinit();
@@ -123,7 +123,7 @@ void System::Execute()
 
         // todo process game logic
 
-        gImGuiManager.UpdateFrame();
+        gDebugGuiManager.UpdateFrame();
 
         gRenderManager.RenderFrame();
         previousFrameTime = currentFrameTime;

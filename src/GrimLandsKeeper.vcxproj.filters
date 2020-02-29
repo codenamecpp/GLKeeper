@@ -224,7 +224,10 @@
     <ClInclude Include="GuiRenderProgram.h">
       <Filter>Game\Render\Programs</Filter>
     </ClInclude>
-    <ClInclude Include="ImGuiManager.h">
+    <ClInclude Include="DebugGuiManager.h">
+      <Filter>Application\DebugUI</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugGuiWindow.h">
       <Filter>Application\DebugUI</Filter>
     </ClInclude>
   </ItemGroup>
@@ -315,7 +318,7 @@
     <ClCompile Include="RenderProgram.cpp">
       <Filter>Game\Render</Filter>
     </ClCompile>
-    <ClCompile Include="ImGuiManager.cpp">
+    <ClCompile Include="DebugGuiManager.cpp">
       <Filter>Application\DebugUI</Filter>
     </ClCompile>
   </ItemGroup>

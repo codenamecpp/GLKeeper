@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "ImGuiManager.h"
+#include "DebugGuiManager.h"
 #include "imgui.h"
 #include "GraphicsDevice.h"
 #include "FileSystem.h"
@@ -7,14 +7,15 @@
 #include "InputsManager.h"
 #include "TimeManager.h"
 #include "GpuBuffer.h"
+#include "DebugGuiWindow.h"
 
-ImGuiManager gImGuiManager;
+DebugGuiManager gDebugGuiManager;
 
 // imgui specific data size constants
 const unsigned int Sizeof_ImGuiVertex = sizeof(ImDrawVert);
 const unsigned int Sizeof_ImGuiIndex = sizeof(ImDrawIdx);
 
-bool ImGuiManager::Initialize()
+bool DebugGuiManager::Initialize()
 {
     // initialize imgui context
     IMGUI_CHECKVERSION();
@@ -73,7 +74,7 @@ bool ImGuiManager::Initialize()
     return true;
 }
 
-void ImGuiManager::Deinit()
+void DebugGuiManager::Deinit()
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -100,7 +101,7 @@ void ImGuiManager::Deinit()
     }
 }
 
-void ImGuiManager::RenderFrame()
+void DebugGuiManager::RenderFrame()
 {
     ImDrawData* imGuiDrawData = ImGui::GetDrawData();
 
@@ -169,7 +170,7 @@ void ImGuiManager::RenderFrame()
     }
 }
 
-void ImGuiManager::UpdateFrame()
+void DebugGuiManager::UpdateFrame()
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -184,7 +185,7 @@ void ImGuiManager::UpdateFrame()
 
     ImGui::NewFrame();
 
-    if (true)
+    if (false)
     {
         ImGui::ShowDemoWindow();
     }
@@ -197,7 +198,7 @@ void ImGuiManager::UpdateFrame()
     ImGui::Render();
 }
 
-void ImGuiManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
+void DebugGuiManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -207,7 +208,7 @@ void ImGuiManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
     }
 }
 
-void ImGuiManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
+void DebugGuiManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -217,7 +218,7 @@ void ImGuiManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
     }
 }
 
-void ImGuiManager::HandleInputEvent(MouseScrollInputEvent& inputEvent)
+void DebugGuiManager::HandleInputEvent(MouseScrollInputEvent& inputEvent)
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -230,7 +231,7 @@ void ImGuiManager::HandleInputEvent(MouseScrollInputEvent& inputEvent)
     }
 }
 
-void ImGuiManager::HandleInputEvent(KeyInputEvent& inputEvent)
+void DebugGuiManager::HandleInputEvent(KeyInputEvent& inputEvent)
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -245,7 +246,7 @@ void ImGuiManager::HandleInputEvent(KeyInputEvent& inputEvent)
     }
 }
 
-void ImGuiManager::HandleInputEvent(KeyCharEvent& inputEvent)
+void DebugGuiManager::HandleInputEvent(KeyCharEvent& inputEvent)
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -257,7 +258,7 @@ void ImGuiManager::HandleInputEvent(KeyCharEvent& inputEvent)
     }
 }
 
-bool ImGuiManager::AddFontFromExternalFile(ImGuiIO& imguiIO, const char* fontFile, float fontSize)
+bool DebugGuiManager::AddFontFromExternalFile(ImGuiIO& imguiIO, const char* fontFile, float fontSize)
 {
     bool isSuccess = false;
 
@@ -284,7 +285,7 @@ bool ImGuiManager::AddFontFromExternalFile(ImGuiIO& imguiIO, const char* fontFil
     return isSuccess;
 }
 
-void ImGuiManager::SetupStyle(ImGuiIO& imguiIO)
+void DebugGuiManager::SetupStyle(ImGuiIO& imguiIO)
 {
     //ImGui::StyleColorsDark();
     ImGuiStyle & style = ImGui::GetStyle();

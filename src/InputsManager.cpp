@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "InputsManager.h"
-#include "ImGuiManager.h"
+#include "DebugGuiManager.h"
 
 InputsManager gInputsManager;
 
@@ -19,7 +19,7 @@ void InputsManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
     mMouseButtons[inputEvent.mButton] = inputEvent.mPressed;
 
-    gImGuiManager.HandleInputEvent(inputEvent);
+    gDebugGuiManager.HandleInputEvent(inputEvent);
 }
 
 void InputsManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
@@ -27,24 +27,24 @@ void InputsManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
     mCursorPositionX = inputEvent.mCursorPositionX;
     mCursorPositionY = inputEvent.mCursorPositionY;
 
-    gImGuiManager.HandleInputEvent(inputEvent);
+    gDebugGuiManager.HandleInputEvent(inputEvent);
 }
 
 void InputsManager::HandleInputEvent(MouseScrollInputEvent& inputEvent)
 {
-    gImGuiManager.HandleInputEvent(inputEvent);
+    gDebugGuiManager.HandleInputEvent(inputEvent);
 }
 
 void InputsManager::HandleInputEvent(KeyInputEvent& inputEvent)
 {
     mKeyboardKeys[inputEvent.mKeycode] = inputEvent.mPressed;
 
-    gImGuiManager.HandleInputEvent(inputEvent);
+    gDebugGuiManager.HandleInputEvent(inputEvent);
 }
 
 void InputsManager::HandleInputEvent(KeyCharEvent& inputEvent)
 {
-    gImGuiManager.HandleInputEvent(inputEvent);
+    gDebugGuiManager.HandleInputEvent(inputEvent);
 }
 
 void InputsManager::Clear()
