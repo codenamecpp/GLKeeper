@@ -14,6 +14,8 @@ public:
     Size2D mSize;
     eTextureFormat mFormat;
 
+    int mMipmapsCount;
+
 public:
     GpuTexture2D(GraphicsDeviceContext& graphicsContext);
     ~GpuTexture2D();
@@ -22,9 +24,13 @@ public:
     // @param textureFormat: Format
     // @param dimensions: Texture dimensions, must be POT!
     // @param sourceData: Source data buffer
-    bool Setup(eTextureFormat textureFormat, const Size2D& dimensions, const void* sourceData);
+    bool SetTextureData(eTextureFormat textureFormat, const Size2D& dimensions, const void* sourceData);
     // @param textureData: Texture data
-    bool Setup(const Texture2D_Data& textureData);
+    bool SetTextureData(const Texture2D_Data& textureData);
+
+    // set max mipmap levels count for texture
+    // @param mipmapsCount: New mipmaps count
+    void SetMipmapsCount(int mipmapsCount);
 
     // uploads pixels data
     // @param mipLevel: Specifies the level-of-detail number; level 0 is the base image level

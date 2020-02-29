@@ -88,7 +88,7 @@ static eKeycode GLFW_KeycodeToNative(int keycode)
 
 //////////////////////////////////////////////////////////////////////////
 
-bool GraphicsDevice::Initialize(int screensizex, int screensizey, bool fullscreen, bool vsync)
+bool GraphicsDevice::Initialize(const Size2D& screenDimensions, bool fullscreen, bool vsync)
 {
     ::glfwSetErrorCallback([](int errorCode, const char * errorString)
     {
@@ -96,7 +96,7 @@ bool GraphicsDevice::Initialize(int screensizex, int screensizey, bool fullscree
     });
 
     gConsole.LogMessage(eLogMessage_Debug, "GraphicsDevice Initialization (%dx%d, Vsync: %s, Fullscreen: %s)",
-        screensizex, screensizey, vsync ? "enabled" : "disabled", fullscreen ? "yes" : "no");
+        screenDimensions.x, screenDimensions.y, vsync ? "enabled" : "disabled", fullscreen ? "yes" : "no");
 
     if (::glfwInit() == GL_FALSE)
     {
@@ -139,7 +139,7 @@ bool GraphicsDevice::Initialize(int screensizex, int screensizey, bool fullscree
     ::glfwWindowHint(GLFW_DEPTH_BITS, 16);
 
     // create window and set current context
-    GLFWwindow* graphicsWindow = ::glfwCreateWindow(screensizex, screensizey, GAME_TITLE, graphicsMonitor, nullptr);
+    GLFWwindow* graphicsWindow = ::glfwCreateWindow(screenDimensions.x, screenDimensions.y, GAME_TITLE, graphicsMonitor, nullptr);
     debug_assert(graphicsWindow);
     if (graphicsWindow == nullptr)
     {
@@ -239,7 +239,7 @@ bool GraphicsDevice::Initialize(int screensizex, int screensizey, bool fullscree
     glCheckError();
 
     // setup viewport
-    mViewportRect.Set(0, 0, screensizex, screensizey);
+    mViewportRect.Set(0, 0, screenDimensions.x, screenDimensions.y);
 
     ::glViewport(mViewportRect.mX, mViewportRect.mY, mViewportRect.mSizeX, mViewportRect.mSizeY);
     glCheckError();
@@ -609,7 +609,7 @@ GpuTexture2D* GraphicsDevice::CreateTexture2D(const Texture2D_Data& textureData)
     debug_assert(mWindowHandle);
 
     GpuTexture2D* texture = new GpuTexture2D(mDeviceContext);
-    if (!texture->Setup(textureData))
+    if (!texture->SetTextureData(textureData))
     {
         DestroyTexture(texture);
         return nullptr;
@@ -622,7 +622,7 @@ GpuTexture2D* GraphicsDevice::CreateTexture2D(eTextureFormat textureFormat, cons
     debug_assert(mWindowHandle);
 
     GpuTexture2D* texture = new GpuTexture2D(mDeviceContext);
-    if (!texture->Setup(textureFormat, dimensions, sourceData))
+    if (!texture->SetTextureData(textureFormat, dimensions, sourceData))
     {
         DestroyTexture(texture);
         return nullptr;

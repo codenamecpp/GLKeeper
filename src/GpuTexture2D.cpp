@@ -43,6 +43,7 @@ GpuTexture2D::GpuTexture2D(GraphicsDeviceContext& renderContext)
     , mRepeating()
     , mSize()
     , mFormat()
+    , mMipmapsCount()
 {
     ::glGenTextures(1, &mResourceHandle);
     glCheckError();
@@ -56,7 +57,7 @@ GpuTexture2D::~GpuTexture2D()
     glCheckError();
 }
 
-bool GpuTexture2D::Setup(eTextureFormat textureFormat, const Size2D& dimensions, const void* sourceData)
+bool GpuTexture2D::SetTextureData(eTextureFormat textureFormat, const Size2D& dimensions, const void* sourceData)
 {
     if (textureFormat == eTextureFormat_Null)
         return false;
@@ -75,6 +76,7 @@ bool GpuTexture2D::Setup(eTextureFormat textureFormat, const Size2D& dimensions,
 
     mFormat = textureFormat;
     mSize = dimensions;
+    mMipmapsCount = 0;
 
     ScopeBinder scopedBind {this};
 
@@ -86,7 +88,7 @@ bool GpuTexture2D::Setup(eTextureFormat textureFormat, const Size2D& dimensions,
     return true;
 }
 
-bool GpuTexture2D::Setup(const Texture2D_Data& textureData)
+bool GpuTexture2D::SetTextureData(const Texture2D_Data& textureData)
 {
     if (textureData.IsNull())
     {
@@ -108,6 +110,7 @@ bool GpuTexture2D::Setup(const Texture2D_Data& textureData)
     mFormat = textureData.mPixelsFormat;
     mSize.x = textureData.mDimsW;
     mSize.y = textureData.mDimsH;
+    mMipmapsCount = textureData.GetMipmapsCount();
 
     ScopeBinder scopedBind {this};
 
@@ -121,7 +124,7 @@ bool GpuTexture2D::Setup(const Texture2D_Data& textureData)
     glCheckError();
 
     // upload mipmaps
-    for (int iMipmap = 0; iMipmap < textureData.GetMipmapsCount(); ++iMipmap)
+    for (int iMipmap = 0; iMipmap < mMipmapsCount; ++iMipmap)
     {
         ::glTexImage2D(GL_TEXTURE_2D, iMipmap + 1, internalFormatGL, 
             textureData.mMipmaps[iMipmap].mDimsW, 
@@ -133,6 +136,31 @@ bool GpuTexture2D::Setup(const Texture2D_Data& textureData)
     // set default filter and repeat mode for texture
     SetSamplerStateImpl(eTextureFilterMode_Nearest, eTextureWrapMode_ClampToEdge);
     return true;
+}
+
+void GpuTexture2D::SetMipmapsCount(int mipmapsCount)
+{
+    if (!IsTextureInited())
+    {
+        debug_assert(false);
+        return;
+    }
+
+    if (mMipmapsCount == mipmapsCount)
+        return;
+
+    bool forceSetSamplerState = (mipmapsCount == 0) || (mMipmapsCount == 0);
+    mMipmapsCount = mipmapsCount;
+
+    ScopeBinder scopedBind {this};
+
+    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, mMipmapsCount);
+    glCheckError();
+
+    if (forceSetSamplerState)
+    {
+        SetSamplerStateImpl(mFiltering, mRepeating);
+    }
 }
 
 void GpuTexture2D::SetSamplerState(eTextureFilterMode filtering, eTextureWrapMode repeating)
@@ -180,6 +208,8 @@ bool GpuTexture2D::TexSubImage(int mipLevel, int xoffset, int yoffset, int sizex
     if (!IsTextureInited())
         return false;
 
+    debug_assert(mipLevel < mMipmapsCount);
+
     debug_assert(sourceData);
     GLuint formatGL = GetTextureInputFormatGL(mFormat);
     GLenum dataType = GetTextureDataTypeGL(mFormat);
@@ -212,24 +242,24 @@ void GpuTexture2D::SetSamplerStateImpl(eTextureFilterMode filtering, eTextureWra
 
     // set filtering
     GLint magFilterGL = GL_NEAREST;
-    GLint minFilterGL = GL_NEAREST_MIPMAP_NEAREST;
+    GLint minFilterGL = mMipmapsCount > 0 ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST;
     switch (filtering)
     {
-    case eTextureFilterMode_Nearest: 
+        case eTextureFilterMode_Nearest: 
+            break;
+        case eTextureFilterMode_Bilinear:
+            magFilterGL = GL_LINEAR;
+            minFilterGL = mMipmapsCount > 0 ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR;
+            break;
+        case eTextureFilterMode_Trilinear:
+            magFilterGL = GL_LINEAR;
+            minFilterGL = mMipmapsCount > 0 ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR;
+            break;
+        default:
+        {
+            debug_assert(false);
+        }
         break;
-    case eTextureFilterMode_Bilinear:
-        magFilterGL = GL_LINEAR;
-        minFilterGL = GL_LINEAR_MIPMAP_NEAREST;
-        break;
-    case eTextureFilterMode_Trilinear:
-        magFilterGL = GL_LINEAR;
-        minFilterGL = GL_LINEAR_MIPMAP_LINEAR;
-        break;
-    default:
-    {
-        debug_assert(filtering == eTextureFilterMode_Nearest);
-    }
-    break;
     }
 
     ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilterGL);
@@ -243,17 +273,17 @@ void GpuTexture2D::SetSamplerStateImpl(eTextureFilterMode filtering, eTextureWra
     GLint wrapTGL = GL_CLAMP_TO_EDGE;
     switch (repeating)
     {
-    case eTextureWrapMode_Repeat:
-        wrapSGL = GL_REPEAT;
-        wrapTGL = GL_REPEAT;
+        case eTextureWrapMode_Repeat:
+            wrapSGL = GL_REPEAT;
+            wrapTGL = GL_REPEAT;
+            break;
+        case eTextureWrapMode_ClampToEdge:
+            break;
+        default:
+        {
+            debug_assert(false);
+        }
         break;
-    case eTextureWrapMode_ClampToEdge:
-        break;
-    default:
-    {
-        debug_assert(repeating == eTextureWrapMode_ClampToEdge);
-    }
-    break;
     }
 
     ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapSGL);

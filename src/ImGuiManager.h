@@ -19,7 +19,6 @@ public:
     void RenderFrame();
 
     // process logic
-    // @param deltaTime: Time passed since previous update
     void UpdateFrame();
 
     // process input event
@@ -30,16 +29,12 @@ public:
     void HandleInputEvent(KeyInputEvent& inputEvent);
     void HandleInputEvent(KeyCharEvent& inputEvent);
 
-    bool IsInitialized() const;
-
 private:
 
     bool AddFontFromExternalFile(ImGuiIO& imguiIO, const char* fontFile, float fontSize);
     void SetupStyle(ImGuiIO& imguiIO);
 
 private:
-    bool mInitialized = false;
-
     // geometry buffers
     GpuBuffer* mVertsBuffer = nullptr;
     GpuBuffer* mTrisBuffer = nullptr;

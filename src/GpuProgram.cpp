@@ -92,63 +92,63 @@ bool GpuProgram::IsProgramCompiled() const
     return mInputLayout.mEnabledAttributes > 0;
 }
 
-void GpuProgram::SetCustomUniform(GpuVariableLocation constantLocation, float param0)
+void GpuProgram::SetUniformParam(GpuVariableLocation constantLocation, float param0)
 {
     debug_assert(constantLocation != GpuVariable_NULL);
     ::glProgramUniform1f(mResourceHandle, constantLocation, param0);
     glCheckError();
 }
 
-void GpuProgram::SetCustomUniform(GpuVariableLocation constantLocation, float param0, float param1)
+void GpuProgram::SetUniformParam(GpuVariableLocation constantLocation, float param0, float param1)
 {
     debug_assert(constantLocation != GpuVariable_NULL);
     ::glProgramUniform2f(mResourceHandle, constantLocation, param0, param1);
     glCheckError();
 }
 
-void GpuProgram::SetCustomUniform(GpuVariableLocation constantLocation, float param0, float param1, float param2)
+void GpuProgram::SetUniformParam(GpuVariableLocation constantLocation, float param0, float param1, float param2)
 {
     debug_assert(constantLocation != GpuVariable_NULL);
     ::glProgramUniform3f(mResourceHandle, constantLocation, param0, param1, param2);
     glCheckError();
 }
 
-void GpuProgram::SetCustomUniform(GpuVariableLocation constantLocation, int param0)
+void GpuProgram::SetUniformParam(GpuVariableLocation constantLocation, int param0)
 {
     debug_assert(constantLocation != GpuVariable_NULL);
     ::glProgramUniform1i(mResourceHandle, constantLocation, param0);
     glCheckError();
 }
 
-void GpuProgram::SetCustomUniform(GpuVariableLocation constantLocation, const glm::vec2& floatVector2)
+void GpuProgram::SetUniformParam(GpuVariableLocation constantLocation, const glm::vec2& floatVector2)
 {
     debug_assert(constantLocation != GpuVariable_NULL);
     ::glProgramUniform2fv(mResourceHandle, constantLocation, 1, &floatVector2.x);
     glCheckError();
 }
 
-void GpuProgram::SetCustomUniform(GpuVariableLocation constantLocation, const glm::vec3& floatVector3)
+void GpuProgram::SetUniformParam(GpuVariableLocation constantLocation, const glm::vec3& floatVector3)
 {
     debug_assert(constantLocation != GpuVariable_NULL);
     ::glProgramUniform3fv(mResourceHandle, constantLocation, 1, &floatVector3.x);
     glCheckError();
 }
 
-void GpuProgram::SetCustomUniform(GpuVariableLocation constantLocation, const glm::vec4& floatVector4)
+void GpuProgram::SetUniformParam(GpuVariableLocation constantLocation, const glm::vec4& floatVector4)
 {
     debug_assert(constantLocation != GpuVariable_NULL);
     ::glProgramUniform4fv(mResourceHandle, constantLocation, 1, &floatVector4.x);
     glCheckError();
 }
 
-void GpuProgram::SetCustomUniform(GpuVariableLocation constantLocation, const glm::mat3& floatMatrix3)
+void GpuProgram::SetUniformParam(GpuVariableLocation constantLocation, const glm::mat3& floatMatrix3)
 {
     debug_assert(constantLocation != GpuVariable_NULL);
     ::glProgramUniformMatrix3fv(mResourceHandle, constantLocation, 1, GL_FALSE, &floatMatrix3[0][0]);
     glCheckError();
 }
 
-void GpuProgram::SetCustomUniform(GpuVariableLocation constantLocation, const glm::mat4& floatMatrix4)
+void GpuProgram::SetUniformParam(GpuVariableLocation constantLocation, const glm::mat4& floatMatrix4)
 {
     debug_assert(constantLocation != GpuVariable_NULL);
     ::glProgramUniformMatrix4fv(mResourceHandle, constantLocation, 1, GL_FALSE, &floatMatrix4[0][0]);

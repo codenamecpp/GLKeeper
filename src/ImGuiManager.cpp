@@ -16,9 +16,6 @@ const unsigned int Sizeof_ImGuiIndex = sizeof(ImDrawIdx);
 
 bool ImGuiManager::Initialize()
 {
-    if (mInitialized)
-        return true;
-
     // initialize imgui context
     IMGUI_CHECKVERSION();
 
@@ -53,7 +50,7 @@ bool ImGuiManager::Initialize()
     Size2D fontTextureDimensions;
     unsigned char *pcPixels;
 
-    if (!AddFontFromExternalFile(io, "fonts/cousine_regular.ttf", 25.0f))
+    if (!AddFontFromExternalFile(io, "fonts/cousine_regular.ttf", 17.0f))
     {
         Deinit();
         return false;
@@ -73,27 +70,22 @@ bool ImGuiManager::Initialize()
 
     io.Fonts->TexID = fontTexture;
 
-    mInitialized = true;
-    return mInitialized;
+    return true;
 }
 
 void ImGuiManager::Deinit()
 {
-    if (mInitialized)
+    ImGuiIO& io = ImGui::GetIO();
+
+    // destroy font texture
+    GpuTexture2D* fontTexture = static_cast<GpuTexture2D*>(io.Fonts->TexID);
+    if (fontTexture)
     {
-        ImGuiIO& io = ImGui::GetIO();
-
-        // destroy font texture
-        GpuTexture2D* fontTexture = static_cast<GpuTexture2D*>(io.Fonts->TexID);
-        if (fontTexture)
-        {
-            gGraphicsDevice.DestroyTexture(fontTexture);
-            io.Fonts->TexID = nullptr;
-        }
-
-        ImGui::DestroyContext();
-        mInitialized = false;
+        gGraphicsDevice.DestroyTexture(fontTexture);
+        io.Fonts->TexID = nullptr;
     }
+
+    ImGui::DestroyContext();
 
     if (mTrisBuffer)
     {
@@ -110,9 +102,6 @@ void ImGuiManager::Deinit()
 
 void ImGuiManager::RenderFrame()
 {
-    if (!mInitialized)
-        return;
-
     ImDrawData* imGuiDrawData = ImGui::GetDrawData();
 
     // Avoid rendering when minimized, scale coordinates for retina displays (screen coordinates != framebuffer coordinates)
@@ -182,9 +171,6 @@ void ImGuiManager::RenderFrame()
 
 void ImGuiManager::UpdateFrame()
 {
-    if (!mInitialized)
-        return;
-
     ImGuiIO& io = ImGui::GetIO();
 
     io.DeltaTime = (float) gTimeManager.GetRealtimeFrameDelta(); // set the time elapsed since the previous frame (in seconds)
@@ -213,9 +199,6 @@ void ImGuiManager::UpdateFrame()
 
 void ImGuiManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
-    if (!mInitialized)
-        return;
-
     ImGuiIO& io = ImGui::GetIO();
 
     if (io.WantCaptureMouse)
@@ -226,9 +209,6 @@ void ImGuiManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 
 void ImGuiManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
 {
-    if (!mInitialized)
-        return;
-
     ImGuiIO& io = ImGui::GetIO();
 
     if (io.WantCaptureMouse)
@@ -239,9 +219,6 @@ void ImGuiManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
 
 void ImGuiManager::HandleInputEvent(MouseScrollInputEvent& inputEvent)
 {
-    if (!mInitialized)
-        return;
-
     ImGuiIO& io = ImGui::GetIO();
 
     io.MouseWheelH += inputEvent.mScrollX * 1.0f;
@@ -255,9 +232,6 @@ void ImGuiManager::HandleInputEvent(MouseScrollInputEvent& inputEvent)
 
 void ImGuiManager::HandleInputEvent(KeyInputEvent& inputEvent)
 {
-    if (!mInitialized)
-        return;
-
     ImGuiIO& io = ImGui::GetIO();
 
     io.KeysDown[inputEvent.mKeycode] = inputEvent.mPressed;
@@ -273,9 +247,6 @@ void ImGuiManager::HandleInputEvent(KeyInputEvent& inputEvent)
 
 void ImGuiManager::HandleInputEvent(KeyCharEvent& inputEvent)
 {
-    if (!mInitialized)
-        return;
-
     ImGuiIO& io = ImGui::GetIO();
 
     io.AddInputCharacter(inputEvent.mUnicodeChar);
@@ -284,11 +255,6 @@ void ImGuiManager::HandleInputEvent(KeyCharEvent& inputEvent)
     {
         inputEvent.SetConsumed();
     }
-}
-
-bool ImGuiManager::IsInitialized() const
-{
-    return mInitialized;
 }
 
 bool ImGuiManager::AddFontFromExternalFile(ImGuiIO& imguiIO, const char* fontFile, float fontSize)
@@ -300,13 +266,12 @@ bool ImGuiManager::AddFontFromExternalFile(ImGuiIO& imguiIO, const char* fontFil
         long fileStreamLength = fileStream->GetLength();
         if (fileStreamLength > 0)
         {
-            ByteArray dataBuffer;
-            dataBuffer.resize(fileStreamLength);
+            void* dataBuffer = IM_ALLOC(fileStreamLength);
 
-            long readBytes = fileStream->ReadData(dataBuffer.data(), fileStreamLength);
+            long readBytes = fileStream->ReadData(dataBuffer, fileStreamLength);
             debug_assert(readBytes == fileStreamLength);
 
-            ImFont* imFont = imguiIO.Fonts->AddFontFromMemoryTTF(dataBuffer.data(), fileStreamLength, fontSize);
+            ImFont* imFont = imguiIO.Fonts->AddFontFromMemoryTTF(dataBuffer, fileStreamLength, fontSize);
             if (imFont)
             {
                 isSuccess = true;

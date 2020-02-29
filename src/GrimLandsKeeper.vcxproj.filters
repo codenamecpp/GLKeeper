@@ -62,6 +62,12 @@
     <Filter Include="Game\GUI">
       <UniqueIdentifier>{29e877b2-cd75-42db-97e8-6988bfc8e0c9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Render\Programs">
+      <UniqueIdentifier>{cfb6657e-5426-4871-9802-c0f6ab065078}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\DebugUI">
+      <UniqueIdentifier>{cab02080-9d94-428b-9fe1-8cc097e21510}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -209,11 +215,17 @@
     <ClInclude Include="RenderDefs.h">
       <Filter>Game\Render</Filter>
     </ClInclude>
-    <ClInclude Include="ImGuiManager.h">
-      <Filter>Game\GUI</Filter>
-    </ClInclude>
     <ClInclude Include="TimeManager.h">
       <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderProgram.h">
+      <Filter>Game\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="GuiRenderProgram.h">
+      <Filter>Game\Render\Programs</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuiManager.h">
+      <Filter>Application\DebugUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -297,11 +309,14 @@
     <ClCompile Include="RenderManager.cpp">
       <Filter>Game\Render</Filter>
     </ClCompile>
-    <ClCompile Include="ImGuiManager.cpp">
-      <Filter>Game\GUI</Filter>
-    </ClCompile>
     <ClCompile Include="TimeManager.cpp">
       <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderProgram.cpp">
+      <Filter>Game\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGuiManager.cpp">
+      <Filter>Application\DebugUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -322,7 +337,7 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <None Include="gui.glsl">
+    <None Include="..\data\shaders\gui.glsl">
       <Filter>Data\Shaders</Filter>
     </None>
   </ItemGroup>

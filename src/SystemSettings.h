@@ -1,12 +1,12 @@
 #pragma once
 
+#include "CommonTypes.h"
+
 // system settings from file
 struct SystemSettings
 {
 public:
-    // graphics
-    int mScreenSizex = 0; // screen dimensions
-    int mScreenSizey = 0; 
+    Size2D mScreenDimensions;
     bool mFullscreen = false; // enable fullscreen mode
     bool mEnableVSync = false; // enable vertical synchronization
 

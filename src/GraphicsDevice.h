@@ -17,10 +17,10 @@ public:
 public:
 
     // initialize graphics system, setup resolution and vsync mode
-    // @param screensizex, screensizey: Screen dimensions
+    // @param screenDimensions: Screen dimensions
     // @param fullscreen: Fullscreen or windowed mode
     // @param vsync: Vertical synchronization enabled or disabled
-    bool Initialize(int screensizex, int screensizey, bool fullscreen, bool vsync);
+    bool Initialize(const Size2D& screenDimensions, bool fullscreen, bool vsync);
 
     // shutdown graphics system, any render operations will be ignored after this
     void Deinit();

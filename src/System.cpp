@@ -7,6 +7,7 @@
 #include "EngineTexturesProvider.h"
 #include "RenderManager.h"
 #include "TimeManager.h"
+#include "ImGuiManager.h"
 
 System gSystem;
 
@@ -57,7 +58,7 @@ void System::Initialize(int argc, char *argv[])
         Terminate();
     }
 
-    if (!gGraphicsDevice.Initialize(mSettings.mScreenSizex, mSettings.mScreenSizey, mSettings.mFullscreen, mSettings.mEnableVSync))
+    if (!gGraphicsDevice.Initialize(mSettings.mScreenDimensions, mSettings.mFullscreen, mSettings.mEnableVSync))
     {
         gConsole.LogMessage(eLogMessage_Error, "Cannot initialize graphics device");
         Terminate();
@@ -71,6 +72,12 @@ void System::Initialize(int argc, char *argv[])
         Terminate();
     }
 
+    if (gImGuiManager.Initialize())
+    {
+        gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize ImGUI system");
+        // ignore failure
+    }
+
     mStartSystemTime = ::glfwGetTime();
     debug_assert(mStartSystemTime > 0.0);
 
@@ -81,6 +88,7 @@ void System::Deinit()
 {
     gConsole.LogMessage(eLogMessage_Info, "System shutdown");
 
+    gImGuiManager.Deinit();
     gRenderManager.Deinit();
     gTimeManager.Deinit();
     gGraphicsDevice.Deinit();
@@ -92,12 +100,8 @@ void System::Deinit()
 
 void System::Execute()
 {
-    const double MaxFPS = 1000.0;
     const double MinFPS = 20.0;
     const double MaxFrameDelta = (1.0 / MinFPS);
-    const double MinFrameDelta = (1.0 / MaxFPS);
-
-    const long long MinFrameDeltaMilliseconds = static_cast<long long>(MinFrameDelta * 1000.0);
 
     // main loop
     double previousFrameTime = ::glfwGetTime();
@@ -111,14 +115,6 @@ void System::Execute()
             currentFrameDelta = MaxFrameDelta;
         }
 
-        if (currentFrameDelta < MinFrameDelta)
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds(MinFrameDeltaMilliseconds));
-            currentFrameDelta = MinFrameDelta;
-
-            currentFrameTime = ::glfwGetTime();
-        }
-
         gTimeManager.UpdateFrame(currentFrameDelta);
         gGraphicsDevice.ProcessInputEvents();
 
@@ -126,6 +122,8 @@ void System::Execute()
             break;
 
         // todo process game logic
+
+        gImGuiManager.UpdateFrame();
 
         gRenderManager.RenderFrame();
         previousFrameTime = currentFrameTime;

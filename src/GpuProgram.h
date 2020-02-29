@@ -23,15 +23,15 @@ public:
 
     // constant setters
     // @param constantLocation: Constant location
-    void SetCustomUniform(GpuVariableLocation constantLocation, float param0);
-    void SetCustomUniform(GpuVariableLocation constantLocation, float param0, float param1);
-    void SetCustomUniform(GpuVariableLocation constantLocation, float param0, float param1, float param2);
-    void SetCustomUniform(GpuVariableLocation constantLocation, int param0);
-    void SetCustomUniform(GpuVariableLocation constantLocation, const glm::vec2& floatVector2);
-    void SetCustomUniform(GpuVariableLocation constantLocation, const glm::vec3& floatVector3);
-    void SetCustomUniform(GpuVariableLocation constantLocation, const glm::vec4& floatVector4);
-    void SetCustomUniform(GpuVariableLocation constantLocation, const glm::mat3& floatMatrix3);
-    void SetCustomUniform(GpuVariableLocation constantLocation, const glm::mat4& floatMatrix4);
+    void SetUniformParam(GpuVariableLocation constantLocation, float param0);
+    void SetUniformParam(GpuVariableLocation constantLocation, float param0, float param1);
+    void SetUniformParam(GpuVariableLocation constantLocation, float param0, float param1, float param2);
+    void SetUniformParam(GpuVariableLocation constantLocation, int param0);
+    void SetUniformParam(GpuVariableLocation constantLocation, const glm::vec2& floatVector2);
+    void SetUniformParam(GpuVariableLocation constantLocation, const glm::vec3& floatVector3);
+    void SetUniformParam(GpuVariableLocation constantLocation, const glm::vec4& floatVector4);
+    void SetUniformParam(GpuVariableLocation constantLocation, const glm::mat3& floatMatrix3);
+    void SetUniformParam(GpuVariableLocation constantLocation, const glm::mat4& floatMatrix4);
 
     // custom constants support
     // @param constantName: Uniform name

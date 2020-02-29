@@ -2,15 +2,15 @@
 #include "SystemSettings.h"
 #include "Console.h"
 
-const int DefaultScreenResolutionX = 1024;
-const int DefaultScreenResolutionY = 768;
+const int DefaultScreenResolutionX = 1280;
+const int DefaultScreenResolutionY = 900;
 
 //////////////////////////////////////////////////////////////////////////
 
 void SystemSettings::SetDefaults()
 {
-    mScreenSizex = DefaultScreenResolutionX;
-    mScreenSizey = DefaultScreenResolutionY; 
+    mScreenDimensions.x = DefaultScreenResolutionX;
+    mScreenDimensions.y = DefaultScreenResolutionY; 
     mFullscreen = false;
     mEnableVSync = false;
 }
