@@ -230,6 +230,9 @@
     <ClInclude Include="DebugGuiWindow.h">
       <Filter>Application\DebugUI</Filter>
     </ClInclude>
+    <ClInclude Include="DebugConsoleWindow.h">
+      <Filter>Application\Console</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -319,6 +322,12 @@
       <Filter>Game\Render</Filter>
     </ClCompile>
     <ClCompile Include="DebugGuiManager.cpp">
+      <Filter>Application\DebugUI</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugConsoleWindow.cpp">
+      <Filter>Application\Console</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugGuiWindow.cpp">
       <Filter>Application\DebugUI</Filter>
     </ClCompile>
   </ItemGroup>

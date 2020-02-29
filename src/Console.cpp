@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "Console.h"
+#include "DebugConsoleWindow.h"
+#include "DebugGuiManager.h"
 
 #define SEND_LOG_TO_STDOUT
 
@@ -7,11 +9,14 @@ Console gConsole;
 
 bool Console::Initialize()
 {
+    gDebugGuiManager.RegisterWindow(&gConsoleWindow);
     return true;
 }
 
 void Console::Deinit()
 {
+    gDebugGuiManager.UnregisterWindow(&gConsoleWindow);
+
     Clear();
 }
 
@@ -30,7 +35,7 @@ void Console::LogMessage(eLogMessage cat, const char* format, ...)
     printf("%s\n", consoleMessageBuffer);
 #endif
 
-    LogLineData consoleLine;
+    LineStruct consoleLine;
         consoleLine.mMessageCategory = cat;
         consoleLine.mMessageString = consoleMessageBuffer;
     mLogLines.push_back(std::move(consoleLine));

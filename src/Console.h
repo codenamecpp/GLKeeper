@@ -30,13 +30,13 @@ public:
 
 public:
 
-    struct LogLineData
+    struct LineStruct
     {
         eLogMessage mMessageCategory;
         std::string mMessageString;
     };
 
-    std::deque<LogLineData> mLogLines;
+    std::deque<LineStruct> mLogLines;
     int mMaxLogLines = 0; // no limits default
 };
 

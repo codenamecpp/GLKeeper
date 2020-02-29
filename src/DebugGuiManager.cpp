@@ -190,10 +190,34 @@ void DebugGuiManager::UpdateFrame()
         ImGui::ShowDemoWindow();
     }
 
-    //for (BLImGuiWindow* currWindow: mWindowsList)
-    //{
-    //    currWindow->DoUI(*this, dt);
-    //}
+    for (DebugGuiWindow* currWindow: mAllWindowsList)
+    {
+        if (!currWindow->mWindowShown)
+            continue;
+
+        const ImVec2 initialPosition { currWindow->mInitialPosition.x * 1.0f, currWindow->mInitialPosition.y * 1.0f };
+        ImGui::SetNextWindowPos(initialPosition, ImGuiCond_Appearing);
+
+        const ImVec2 initialSize { currWindow->mInitialSize.x * 1.0f, currWindow->mInitialSize.y * 1.0f };
+        ImGui::SetNextWindowSize(initialSize, ImGuiCond_Appearing);
+
+        ImGuiWindowFlags windowFlags = 
+            (currWindow->mWindowNoTitleBar ? ImGuiWindowFlags_NoTitleBar : 0) |
+            (currWindow->mWindowNoResize ? ImGuiWindowFlags_NoResize : 0) |
+            (currWindow->mWindowNoMove ? ImGuiWindowFlags_NoMove : 0) |
+            (currWindow->mWindowNoCollapse ? ImGuiWindowFlags_NoCollapse : 0) |
+            (currWindow->mAlwaysAutoResize ? ImGuiWindowFlags_AlwaysAutoResize : 0) |
+            (currWindow->mWindowNoBackground ? ImGuiWindowFlags_NoBackground : 0) |
+            (currWindow->mWindowNoMouseInput ? ImGuiWindowFlags_NoMouseInputs : 0) |
+            (currWindow->mNoFocusOnAppearing ? ImGuiWindowFlags_NoFocusOnAppearing : 0) |
+            (currWindow->mNoNavigation ? ImGuiWindowFlags_NoNav : 0);
+
+        if (ImGui::Begin(currWindow->mWindowName.c_str(), &currWindow->mWindowShown, windowFlags))
+        {
+            currWindow->DoUI(io);
+        }
+        ImGui::End();
+    }
 
     ImGui::Render();
 }
@@ -372,4 +396,24 @@ void DebugGuiManager::SetupStyle(ImGuiIO& imguiIO)
         style.Colors[ImGuiCol_WindowBg].w = 1.0f;
     }
 #endif
+}
+
+void DebugGuiManager::RegisterWindow(DebugGuiWindow* debugWindow)
+{
+    debug_assert(debugWindow);
+    auto found_iterator = std::find(mAllWindowsList.begin(), mAllWindowsList.end(), debugWindow);
+    if (found_iterator == mAllWindowsList.end())
+    {
+        mAllWindowsList.push_back(debugWindow);
+    }
+}
+
+void DebugGuiManager::UnregisterWindow(DebugGuiWindow* debugWindow)
+{
+    debug_assert(debugWindow);
+    auto found_iterator = std::find(mAllWindowsList.begin(), mAllWindowsList.end(), debugWindow);
+    if (found_iterator != mAllWindowsList.end())
+    {
+        mAllWindowsList.erase(found_iterator);
+    }
 }

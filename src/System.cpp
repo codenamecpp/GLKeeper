@@ -8,6 +8,7 @@
 #include "RenderManager.h"
 #include "TimeManager.h"
 #include "DebugGuiManager.h"
+#include "DebugConsoleWindow.h"
 
 System gSystem;
 
@@ -72,14 +73,17 @@ void System::Initialize(int argc, char *argv[])
         Terminate();
     }
 
-    if (gDebugGuiManager.Initialize())
+    if (!gDebugGuiManager.Initialize())
     {
-        gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize ImGUI system");
+        gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize debug gui system");
         // ignore failure
     }
 
     mStartSystemTime = ::glfwGetTime();
     debug_assert(mStartSystemTime > 0.0);
+
+    // show console window
+    gConsoleWindow.SetWindowShown(true);
 
     mQuitRequested = false;
 }

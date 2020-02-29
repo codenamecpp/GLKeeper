@@ -181,6 +181,7 @@
     <ClInclude Include="BinaryInputStream.h" />
     <ClInclude Include="CommonTypes.h" />
     <ClInclude Include="Console.h" />
+    <ClInclude Include="DebugConsoleWindow.h" />
     <ClInclude Include="GuiRenderProgram.h" />
     <ClInclude Include="DebugGuiManager.h" />
     <ClInclude Include="EngineTexturesProvider.h" />
@@ -232,6 +233,8 @@
     <ClCompile Include="BinaryInputStream.cpp" />
     <ClCompile Include="CommonTypes.cpp" />
     <ClCompile Include="Console.cpp" />
+    <ClCompile Include="DebugConsoleWindow.cpp" />
+    <ClCompile Include="DebugGuiWindow.cpp" />
     <ClCompile Include="EngineTexturesProvider.cpp" />
     <ClCompile Include="enums_impl.cpp" />
     <ClCompile Include="FileSystem.cpp" />

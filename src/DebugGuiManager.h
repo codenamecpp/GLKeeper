@@ -2,10 +2,9 @@
 
 #include "InputsDefs.h"
 #include "GraphicsDefs.h"
+#include "DebugGuiWindow.h"
 
 // forwards
-class DebugGuiWindow;
-
 struct ImGuiIO;
 
 // immediate mode gui manager
@@ -31,13 +30,20 @@ public:
     void HandleInputEvent(KeyInputEvent& inputEvent);
     void HandleInputEvent(KeyCharEvent& inputEvent);
 
+    // add or remove debug window to global debug windows list
+    // @param debugWindow: Window
+    void RegisterWindow(DebugGuiWindow* debugWindow);
+    void UnregisterWindow(DebugGuiWindow* debugWindow);
+
 private:
 
     bool AddFontFromExternalFile(ImGuiIO& imguiIO, const char* fontFile, float fontSize);
     void SetupStyle(ImGuiIO& imguiIO);
 
 private:
-    // geometry buffers
+
+    std::list<DebugGuiWindow*> mAllWindowsList;
+
     GpuBuffer* mVertsBuffer = nullptr;
     GpuBuffer* mTrisBuffer = nullptr;
 };
