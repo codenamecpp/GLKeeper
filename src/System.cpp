@@ -82,8 +82,8 @@ void System::Initialize(int argc, char *argv[])
     mStartSystemTime = ::glfwGetTime();
     debug_assert(mStartSystemTime > 0.0);
 
-    // show console window
-    gConsoleWindow.SetWindowShown(true);
+    // hide console window initially
+    gConsoleWindow.SetWindowShown(false);
 
     mQuitRequested = false;
 }
