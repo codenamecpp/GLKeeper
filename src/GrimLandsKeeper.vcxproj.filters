@@ -233,6 +233,9 @@
     <ClInclude Include="DebugConsoleWindow.h">
       <Filter>Application\Console</Filter>
     </ClInclude>
+    <ClInclude Include="BinaryOutputStream.h">
+      <Filter>Application\FileSystem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -329,6 +332,9 @@
     </ClCompile>
     <ClCompile Include="DebugGuiWindow.cpp">
       <Filter>Application\DebugUI</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryOutputStream.cpp">
+      <Filter>Application\FileSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

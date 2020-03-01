@@ -30,8 +30,8 @@ public:
 
 private:
     // save/load settings to/from external file
-    bool SaveSettings();
-    bool LoadSettings();
+    void SaveSettings();
+    void LoadSettings();
 
 private:
     double mStartSystemTime = 0.0;

@@ -37,7 +37,7 @@ class FileInputStream: public BinaryInputStream
 public:
     ~FileInputStream();
 
-    // open file stream in binary mode for reading
+    // open existing file in binary mode for reading
     // @param filePath: File path
     bool OpenFileStream(const std::string& filePath);
     void CloseFileStream();

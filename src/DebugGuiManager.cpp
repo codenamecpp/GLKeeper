@@ -286,7 +286,7 @@ bool DebugGuiManager::AddFontFromExternalFile(ImGuiIO& imguiIO, const char* font
 {
     bool isSuccess = false;
 
-    if (BinaryInputStream* fileStream = gFileSystem.OpenFileStream(fontFile))
+    if (BinaryInputStream* fileStream = gFileSystem.OpenDataFile(fontFile))
     {
         long fileStreamLength = fileStream->GetLength();
         if (fileStreamLength > 0)

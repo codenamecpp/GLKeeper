@@ -48,7 +48,7 @@ bool RenderProgram::ReloadProgram()
 
     // load source code
     std::string shaderSourceCode;
-    if (!gFileSystem.GetTextFromFile(mProgramSrcPath, shaderSourceCode))
+    if (!gFileSystem.ReadTextFile(mProgramSrcPath, shaderSourceCode))
     {
         gConsole.LogMessage(eLogMessage_Warning, "Cannot read shader source from %s", mProgramSrcPath.c_str());
         return false;

@@ -38,6 +38,15 @@ json_document_node json_document_node::operator[](const std::string& name) const
     return json_document_node { element };
 }
 
+json_document_node json_document_node::operator [] (const char* name) const
+{
+    if (mJsonElement == nullptr)
+        return json_document_node { nullptr };
+
+    cJSON* element = cJSON_GetObjectItem(mJsonElement, name);
+    return json_document_node { element };
+}
+
 json_document_node json_document_node::next_sibling() const
 {
     if (mJsonElement == nullptr)

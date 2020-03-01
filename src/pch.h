@@ -64,3 +64,4 @@
 #include "file_utils.h"
 #include "path_utils.h"
 #include "intrusive_list.h"
+#include "json_document.h"

@@ -2,6 +2,8 @@
 
 #include "CommonTypes.h"
 
+#define SYSTEM_SETTINGS_FILE "config/system_settings.json"
+
 // system settings from file
 struct SystemSettings
 {
@@ -14,6 +16,8 @@ public:
     SystemSettings() = default;
 
     void SetDefaults();
+    void SetFromJsonDocument(const cxx::json_document& sourceDocument);
+    void StoreToJsonDocument(cxx::json_document& sourceDocument);
 };
 
 //////////////////////////////////////////////////////////////////////////

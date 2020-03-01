@@ -15,6 +15,43 @@ void SystemSettings::SetDefaults()
     mEnableVSync = false;
 }
 
+void SystemSettings::SetFromJsonDocument(const cxx::json_document& sourceDocument)
+{
+    cxx::json_document_node rootNode = sourceDocument.get_root_node();
+
+    // graphics settings
+    if (cxx::json_node_numeric screen_size_w = rootNode["screen_size_w"])
+    {
+        mScreenDimensions.x = screen_size_w.get_value_integer();
+    }
+
+    if (cxx::json_node_numeric screen_size_h = rootNode["screen_size_h"])
+    {
+        mScreenDimensions.y = screen_size_h.get_value_integer();
+    }
+
+    if (cxx::json_node_boolean set_fullscreen = rootNode["set_fullscreen"])
+    {
+        mFullscreen = set_fullscreen.get_value();
+    }
+
+    if (cxx::json_node_boolean enable_vsync = rootNode["enable_vsync"])
+    {
+        mEnableVSync = enable_vsync.get_value();
+    }
+}
+
+void SystemSettings::StoreToJsonDocument(cxx::json_document& sourceDocument)
+{
+    cxx::json_document_node rootNode = sourceDocument.get_root_node();
+
+    // graphics settings
+    sourceDocument.create_numeric_node(rootNode, "screen_size_w", mScreenDimensions.x);
+    sourceDocument.create_numeric_node(rootNode, "screen_size_h", mScreenDimensions.y);
+    sourceDocument.create_boolean_node(rootNode, "set_fullscreen", mFullscreen);
+    sourceDocument.create_boolean_node(rootNode, "enable_vsync", mEnableVSync);
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 bool SystemStartupParams::ParseStartupParams(int argc, char *argv[])

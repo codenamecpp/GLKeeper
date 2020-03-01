@@ -4,6 +4,7 @@
 #include "System.h"
 #include "FileSystemArchive.h"
 #include "BinaryInputStream.h"
+#include "BinaryOutputStream.h"
 
 FileSystem gFileSystem;
 
@@ -173,7 +174,7 @@ void FileSystem::UnmountDungeonKeeperGameArchives()
     mResourceArchives.clear();
 }
 
-BinaryInputStream* FileSystem::OpenFileStream(const std::string& fileName)
+BinaryInputStream* FileSystem::OpenDataFile(const std::string& fileName)
 {
     // 1 engine data path 
     fs::path fullFilePath = fs::path {mDataPath} / fs::path {fileName};
@@ -231,15 +232,41 @@ BinaryInputStream* FileSystem::OpenFileStream(const std::string& fileName)
     return nullptr;
 }
 
+BinaryOutputStream* FileSystem::CreateDataFile(const std::string& fileName)
+{
+    fs::path filePath {fileName};
+    if (filePath.is_absolute())
+    {
+        debug_assert(false); // forbidden
+        return nullptr;
+    }
+
+    fs::path fullPath = fs::path { mDataPath } / filePath;
+   
+    FileOutputStream* outputStream = new FileOutputStream;
+    if (outputStream->OpenFileStream(fullPath.generic_string()))
+        return outputStream;
+
+    debug_assert(false);
+    delete outputStream;
+    return nullptr;
+}
+
 void FileSystem::CloseFileStream(BinaryInputStream* fileStream)
 {
     debug_assert(fileStream);
     delete fileStream;
 }
 
-bool FileSystem::GetTextFromFile(const std::string& fileName, std::string& stringBuffer)
+void FileSystem::CloseFileStream(BinaryOutputStream* fileStream)
 {
-    BinaryInputStream* inputStream = OpenFileStream(fileName);
+    debug_assert(fileStream);
+    delete fileStream;
+}
+
+bool FileSystem::ReadTextFile(const std::string& fileName, std::string& stringBuffer)
+{
+    BinaryInputStream* inputStream = OpenDataFile(fileName);
     if (inputStream == nullptr)
         return false;
 
@@ -261,5 +288,16 @@ bool FileSystem::GetTextFromFile(const std::string& fileName, std::string& strin
     }
 
     CloseFileStream(inputStream);
+    return true;
+}
+
+bool FileSystem::WriteTextFile(const std::string& fileName, const std::string& stringBuffer)
+{
+    BinaryOutputStream* outputStream = CreateDataFile(fileName);
+    if (outputStream == nullptr)
+        return false;
+
+    outputStream->WriteData(stringBuffer.data(), stringBuffer.length());
+    CloseFileStream(outputStream);
     return true;
 }

@@ -179,6 +179,7 @@
     <ClInclude Include="3rd_party\stb_sprintf.h" />
     <ClInclude Include="3rd_party\std_image.h" />
     <ClInclude Include="BinaryInputStream.h" />
+    <ClInclude Include="BinaryOutputStream.h" />
     <ClInclude Include="CommonTypes.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="DebugConsoleWindow.h" />
@@ -231,6 +232,7 @@
     <ClCompile Include="3rd_party\imgui_widgets.cpp" />
     <ClCompile Include="3rd_party\stb_rect_pack.cpp" />
     <ClCompile Include="BinaryInputStream.cpp" />
+    <ClCompile Include="BinaryOutputStream.cpp" />
     <ClCompile Include="CommonTypes.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="DebugConsoleWindow.cpp" />

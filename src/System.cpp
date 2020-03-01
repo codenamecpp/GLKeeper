@@ -152,14 +152,33 @@ double System::GetSysTime() const
     return currentTime - mStartSystemTime;
 }
 
-bool System::SaveSettings()
+void System::SaveSettings()
 {
-    return true;
+    cxx::json_document configDocument;
+    configDocument.create_document();
+    mSettings.StoreToJsonDocument(configDocument);
+
+    std::string configDocumentData;
+    configDocument.dump_document(configDocumentData);
+    if (!gFileSystem.WriteTextFile(SYSTEM_SETTINGS_FILE, configDocumentData))
+    {
+        debug_assert(false);
+        return;
+    }
 }
 
-bool System::LoadSettings()
+void System::LoadSettings()
 {
     mSettings.SetDefaults();
 
-    return true;
+    cxx::json_document configDocument;
+    std::string configDocumentData;
+    if (gFileSystem.ReadTextFile(SYSTEM_SETTINGS_FILE, configDocumentData) && configDocument.parse_document(configDocumentData))
+    {
+        mSettings.SetFromJsonDocument(configDocument);
+        return;
+    }
+
+    // create default config document
+    SaveSettings();
 }

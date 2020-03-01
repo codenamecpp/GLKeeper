@@ -26,6 +26,7 @@ namespace cxx
         // get child node element by name
         // @param name: Node name
         json_document_node operator [] (const std::string& name) const;
+        json_document_node operator [] (const char* name) const;
 
         // get array element by index if array
         // get child element by index if object
