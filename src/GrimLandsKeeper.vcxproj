@@ -264,6 +264,9 @@
     <ClCompile Include="TimeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="Box2D\Box2D.vcxproj">
+      <Project>{ea8a359e-b553-4ff1-81cf-e7cf465cf94c}</Project>
+    </ProjectReference>
     <ProjectReference Include="GLEW\GLEW.vcxproj">
       <Project>{282ddb45-29cb-4ba9-b1e0-3be91a3f6860}</Project>
     </ProjectReference>

@@ -12,6 +12,8 @@ namespace cxx
 
     public:
         json_document_node();
+        json_document_node(const json_document_node& other);
+        json_document_node& operator = (const json_document_node& other);
         ~json_document_node();
 
         // get next / previous sibling element
@@ -23,7 +25,7 @@ namespace cxx
 
         // get child node element by name
         // @param name: Node name
-        json_document_node operator [] (const char* name) const;
+        json_document_node operator [] (const std::string& name) const;
 
         // get array element by index if array
         // get child element by index if object
@@ -36,55 +38,175 @@ namespace cxx
 
         // test whether child node element is exists
         // @param name: Name
-        bool is_child_exists(const char* name) const;
-
-        // determine type of element value
-        bool is_string_element() const;
-        bool is_number_element() const;
-        bool is_boolean_element() const;
-        bool is_array_element() const;
-        bool is_object_element() const;
-
-        // get element value
-        const char* get_value_string() const;
-        bool get_value_boolean() const;
-        int get_value_integer() const;
-        float get_value_float() const;
+        bool is_child_exists(const std::string& name) const;
 
         // get name of element
-        const char* get_element_name() const;
+        std::string get_element_name() const;
 
         // operators
         inline bool operator == (const json_document_node& rhs) const { return mJsonElement && rhs.mJsonElement == mJsonElement; }
         inline bool operator != (const json_document_node& rhs) const { return !mJsonElement || rhs.mJsonElement != mJsonElement; }
         inline operator bool () const { return mJsonElement != nullptr; }
         
-    private:
+    protected:
         json_document_node(cJSON* jsonElementImplementation);
 
-    private:
-        cJSON* mJsonElement;
+    protected:
+        cJSON* mJsonElement = nullptr;
     };
+
+    //////////////////////////////////////////////////////////////////////////
+
+    // to set new node value just remove that node and create new of same type
+
+    class json_node_boolean: public json_document_node
+    {
+    public:
+        // cast generic node to boolean
+        // @param genericNode: Generic json node
+        json_node_boolean(const json_document_node& genericNode);
+        json_node_boolean& operator = (const json_document_node& genericNode);
+
+        // get/set boolean value
+        bool get_value() const;
+    
+    private:
+        void validate();
+    };
+
+    //////////////////////////////////////////////////////////////////////////
+
+    class json_node_string: public json_document_node
+    {
+    public:
+        // cast generic node to string
+        // @param genericNode: Generic json node
+        json_node_string(const json_document_node& genericNode);
+        json_node_string& operator = (const json_node_string& genericNode);
+
+        // get/set string value
+        std::string get_value() const;
+
+    private:
+        void validate();
+    };
+
+    //////////////////////////////////////////////////////////////////////////
+
+    class json_node_numeric: public json_document_node
+    {
+    public:
+        // cast generic node to numeric
+        // @param genericNode: Generic json node
+        json_node_numeric(const json_document_node& genericNode);
+        json_node_numeric& operator = (const json_node_numeric& genericNode);
+
+        // get numeric value
+        float get_value_float() const;
+        int get_value_integer() const;
+
+    private:
+        void validate();
+    };
+
+    //////////////////////////////////////////////////////////////////////////
+
+    class json_node_object: public json_document_node
+    {
+    public:
+        // cast generic node to object
+        // @param genericNode: Generic json node
+        json_node_object(const json_document_node& genericNode);
+        json_node_object& operator = (const json_node_object& genericNode);
+
+    private:
+        void validate();
+    };
+
+    //////////////////////////////////////////////////////////////////////////
+
+    class json_node_array: public json_document_node
+    {
+    public:
+        // cast generic node to array
+        // @param genericNode: Generic json node
+        json_node_array(const json_document_node& genericNode);
+        json_node_array& operator = (const json_node_array& genericNode);
+
+    private:
+        void validate();
+    };
+
+    //////////////////////////////////////////////////////////////////////////
 
     // json document
     class json_document: public noncopyable
     {
     public:
         // @param content: Content string
-        json_document(const char* content);
+        json_document(const std::string& content);
         json_document();
         ~json_document();
 
         // parse json document from string
         // @param content: Content string
-        bool parse_document(const char* content);
+        bool parse_document(const std::string& content);
         void close_document();
 
-        // Get root json object of document
+        // create empty document with initial root node
+        void create_document();
+
+        // save document content to string
+        // @param outputContent: Document data
+        void dump_document(std::string& outputContent) const;
+
+        // get root json object of document
         json_document_node get_root_node() const;
 
-        // test whether json document is loaded
-        bool is_loaded() const;
+        // add child object node
+        // @param parent: Parent node, must be non null, must be object type or array type
+        // @param nodeName: New node name
+        // @returns null if node with same name already exists
+        json_node_object create_object_node(const json_document_node& parent, const std::string& nodeName);
+
+        // add child string node
+        // @param parent: Parent node, must be non null, must be object type or array type
+        // @param nodeName: New node name
+        // @param value: Initial value
+        // @returns null if node with same name already exists
+        json_node_string create_string_node(const json_document_node& parent, const std::string& nodeName, const std::string& value);
+
+        // add child boolean node
+        // @param parent: Parent node, must be non null, must be object type or array type
+        // @param nodeName: New node name
+        // @param value: Initial value
+        // @returns null if node with same name already exists
+        json_node_boolean create_boolean_node(const json_document_node& parent, const std::string& nodeName, bool value);
+
+        // add child numeric node
+        // @param parent: Parent node, must be non null, must be object type or array type
+        // @param nodeName: New node name
+        // @param value: Initial value
+        // @returns null if node with same name already exists
+        json_node_numeric create_numeric_node(const json_document_node& parent, const std::string& nodeName, int value);
+
+        // add child numeric node
+        // @param parent: Parent node, must be non null, must be object type or array type
+        // @param nodeName: New node name
+        // @param value: Initial value
+        // @returns null if node with same name already exists
+        json_node_numeric create_numeric_node(const json_document_node& parent, const std::string& nodeName, float value);
+
+        // add child array node
+        // @param parent: Parent node, must be non null, must be object type or array type
+        // @param nodeName: New node name
+        // @returns null if node with same name already exists
+        json_node_array create_array_node(const json_document_node& parent, const std::string& nodeName);
+
+        // operators
+        inline bool operator == (const json_document& rhs) const { return mJsonElement && rhs.mJsonElement == mJsonElement; }
+        inline bool operator != (const json_document& rhs) const { return !mJsonElement || rhs.mJsonElement != mJsonElement; }
+        inline operator bool () const { return mJsonElement != nullptr; }
 
     private:
         cJSON* mJsonElement;

@@ -18,13 +18,23 @@ json_document_node::~json_document_node()
 {
 }
 
+json_document_node::json_document_node(const json_document_node& other)
+    : mJsonElement(other.mJsonElement)
+{
+}
 
-json_document_node json_document_node::operator[](const char* name) const
+json_document_node& json_document_node::operator = (const json_document_node& other)
+{
+    mJsonElement = other.mJsonElement;
+    return *this;
+}
+
+json_document_node json_document_node::operator[](const std::string& name) const
 {
     if (mJsonElement == nullptr)
         return json_document_node { nullptr };
 
-    cJSON* element = cJSON_GetObjectItem(mJsonElement, name);
+    cJSON* element = cJSON_GetObjectItem(mJsonElement, name.c_str());
     return json_document_node { element };
 }
 
@@ -104,84 +114,25 @@ int json_document_node::get_elements_count() const
     return 0;
 }
 
-bool json_document_node::is_child_exists(const char* name) const
+bool json_document_node::is_child_exists(const std::string& name) const
 {
     if (mJsonElement == nullptr)
         return false;
 
-    return cJSON_HasObjectItem(mJsonElement, name) > 0;
+    return cJSON_HasObjectItem(mJsonElement, name.c_str()) > 0;
 }
 
-const char* json_document_node::get_element_name() const
+std::string json_document_node::get_element_name() const
 {
     if (mJsonElement == nullptr || mJsonElement->string == nullptr)
-        return "";
+        return std::string();
 
     return mJsonElement->string;
 }
 
-bool json_document_node::is_string_element() const
-{
-    return mJsonElement && mJsonElement->type == cJSON_String;
-}
-
-bool json_document_node::is_number_element() const
-{
-    return mJsonElement && mJsonElement->type == cJSON_Number;
-}
-
-bool json_document_node::is_boolean_element() const
-{
-    return mJsonElement && (mJsonElement->type == cJSON_True || mJsonElement->type == cJSON_False);
-}
-
-bool json_document_node::is_array_element() const
-{
-    return mJsonElement && mJsonElement->type == cJSON_Array;
-}
-
-bool json_document_node::is_object_element() const
-{
-    return mJsonElement && mJsonElement->type == cJSON_Object;
-}
-
-const char* json_document_node::get_value_string() const
-{
-    debug_assert(is_string_element());
-
-    if (mJsonElement == nullptr || mJsonElement->valuestring == nullptr)
-        return "";
-
-    return mJsonElement->valuestring;
-}
-
-bool json_document_node::get_value_boolean() const
-{
-    debug_assert(is_boolean_element());
-    return mJsonElement && mJsonElement->valueint != 0;
-}
-
-int json_document_node::get_value_integer() const
-{
-    debug_assert(is_number_element());
-    if (mJsonElement == nullptr)
-        return 0;
-
-    return mJsonElement->valueint;
-}
-
-float json_document_node::get_value_float() const
-{
-    debug_assert(is_number_element());
-    if (mJsonElement == nullptr)
-        return 0.0f;
-
-    return static_cast<float>(mJsonElement->valuedouble);
-}
-
 //////////////////////////////////////////////////////////////////////////
 
-json_document::json_document(const char* content)
+json_document::json_document(const std::string& content)
     : mJsonElement()
 {
     parse_document(content);
@@ -197,11 +148,11 @@ json_document::~json_document()
     close_document();
 }
 
-bool json_document::parse_document(const char* content)
+bool json_document::parse_document(const std::string& content)
 {
     close_document();
 
-    mJsonElement = cJSON_Parse(content);
+    mJsonElement = cJSON_Parse(content.c_str());
     return mJsonElement != nullptr;
 }
 
@@ -214,14 +165,321 @@ void json_document::close_document()
     }
 }
 
+void json_document::create_document()
+{
+    close_document();
+
+    const char* null_document_data = "{" "}";
+
+    mJsonElement = cJSON_Parse(null_document_data);
+    debug_assert(mJsonElement);
+}
+
+void json_document::dump_document(std::string& outputContent) const
+{
+    outputContent.clear();
+
+    if (mJsonElement)
+    {
+        char* jsonData = cJSON_Print(mJsonElement);
+        debug_assert(jsonData);
+        outputContent.assign(jsonData);
+        free(jsonData);
+    }
+}
+
 json_document_node json_document::get_root_node() const
 {
     return json_document_node { mJsonElement };
 }
 
-bool json_document::is_loaded() const
+json_node_object json_document::create_object_node(const json_document_node& parent, const std::string& nodeName)
 {
-    return mJsonElement != nullptr;
+    if (!parent || parent.is_child_exists(nodeName))
+    {
+        debug_assert(false);
+        return json_document_node { nullptr };
+    }
+
+    bool validType = (parent.mJsonElement->type == cJSON_Object) || (parent.mJsonElement->type == cJSON_Array);
+    if (!validType)
+    {
+        debug_assert(false);
+        return json_document_node { nullptr };
+    }
+
+    cJSON* jsonObject = cJSON_CreateObject();
+
+    cJSON_AddItemToObject(parent.mJsonElement, nodeName.c_str(), jsonObject);
+    return json_document_node { jsonObject };
+}
+
+json_node_string json_document::create_string_node(const json_document_node& parent, const std::string& nodeName, const std::string& value)
+{
+    if (!parent || parent.is_child_exists(nodeName))
+    {
+        debug_assert(false);
+        return json_document_node { nullptr };
+    }
+
+    bool validType = (parent.mJsonElement->type == cJSON_Object) || (parent.mJsonElement->type == cJSON_Array);
+    if (!validType)
+    {
+        debug_assert(false);
+        return json_document_node { nullptr };
+    }
+
+    cJSON* jsonObject = cJSON_CreateString(value.c_str());
+
+    cJSON_AddItemToObject(parent.mJsonElement, nodeName.c_str(), jsonObject);
+    return json_document_node { jsonObject };
+}
+
+json_node_boolean json_document::create_boolean_node(const json_document_node& parent, const std::string& nodeName, bool value)
+{
+    if (!parent || parent.is_child_exists(nodeName))
+    {
+        debug_assert(false);
+        return json_document_node { nullptr };
+    }
+
+    bool validType = (parent.mJsonElement->type == cJSON_Object) || (parent.mJsonElement->type == cJSON_Array);
+    if (!validType)
+    {
+        debug_assert(false);
+        return json_document_node { nullptr };
+    }
+
+    cJSON* jsonObject = cJSON_CreateBool(value);
+
+    cJSON_AddItemToObject(parent.mJsonElement, nodeName.c_str(), jsonObject);
+    return json_document_node { jsonObject };
+}
+
+json_node_numeric json_document::create_numeric_node(const json_document_node& parent, const std::string& nodeName, int value)
+{
+    if (!parent || parent.is_child_exists(nodeName))
+    {
+        debug_assert(false);
+        return json_document_node { nullptr };
+    }
+
+    bool validType = (parent.mJsonElement->type == cJSON_Object) || (parent.mJsonElement->type == cJSON_Array);
+    if (!validType)
+    {
+        debug_assert(false);
+        return json_document_node { nullptr };
+    }
+
+    cJSON* jsonObject = cJSON_CreateNumberInt(value);
+
+    cJSON_AddItemToObject(parent.mJsonElement, nodeName.c_str(), jsonObject);
+    return json_document_node { jsonObject };
+}
+
+cxx::json_node_numeric json_document::create_numeric_node(const json_document_node& parent, const std::string& nodeName, float value)
+{
+    if (!parent || parent.is_child_exists(nodeName))
+    {
+        debug_assert(false);
+        return json_document_node { nullptr };
+    }
+
+    bool validType = (parent.mJsonElement->type == cJSON_Object) || (parent.mJsonElement->type == cJSON_Array);
+    if (!validType)
+    {
+        debug_assert(false);
+        return json_document_node { nullptr };
+    }
+
+    cJSON* jsonObject = cJSON_CreateNumber(value);
+
+    cJSON_AddItemToObject(parent.mJsonElement, nodeName.c_str(), jsonObject);
+    return json_document_node { jsonObject };
+}
+
+json_node_array json_document::create_array_node(const json_document_node& parent, const std::string& nodeName)
+{
+    if (!parent || parent.is_child_exists(nodeName))
+    {
+        debug_assert(false);
+        return json_document_node { nullptr };
+    }
+
+    bool validType = (parent.mJsonElement->type == cJSON_Object) || (parent.mJsonElement->type == cJSON_Array);
+    if (!validType)
+    {
+        debug_assert(false);
+        return json_document_node { nullptr };
+    }
+
+    cJSON* jsonObject = cJSON_CreateArray();
+
+    cJSON_AddItemToObject(parent.mJsonElement, nodeName.c_str(), jsonObject);
+    return json_document_node { jsonObject };
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+json_node_boolean::json_node_boolean(const json_document_node& genericNode)
+    : json_document_node(genericNode)
+{
+    validate();
+}
+
+json_node_boolean& json_node_boolean::operator = (const json_document_node& genericNode)
+{
+    json_document_node::operator = (genericNode);
+    validate();
+    return *this;
+}
+
+void json_node_boolean::validate()
+{
+    if (mJsonElement)
+    {
+        bool validType = mJsonElement->type == cJSON_True || mJsonElement->type == cJSON_False;
+        if (!validType)
+        {
+            mJsonElement = nullptr; // invalid type
+        }
+    }
+}
+
+bool json_node_boolean::get_value() const
+{
+    debug_assert(mJsonElement);
+    return mJsonElement && mJsonElement->valueint > 0;
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+json_node_string::json_node_string(const json_document_node& genericNode)
+    : json_document_node(genericNode)
+{
+    validate();
+}
+
+json_node_string& json_node_string::operator = (const json_node_string& genericNode)
+{
+    json_document_node::operator = (genericNode);
+    validate();
+    return *this;
+}
+
+std::string json_node_string::get_value() const
+{
+    debug_assert(mJsonElement);
+
+    if (mJsonElement && mJsonElement->valuestring)
+        return mJsonElement->valuestring;
+
+    return std::string();
+}
+
+void json_node_string::validate()
+{
+    if (mJsonElement)
+    {
+        bool validType = mJsonElement->type == cJSON_String;
+        if (!validType)
+        {
+            mJsonElement = nullptr; // invalid type
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+json_node_numeric::json_node_numeric(const json_document_node& genericNode)
+    : json_document_node(genericNode)
+{
+    validate();
+}
+
+json_node_numeric& json_node_numeric::operator = (const json_node_numeric& genericNode)
+{
+    json_document_node::operator = (genericNode);
+    validate();
+    return *this;
+}
+
+float json_node_numeric::get_value_float() const
+{
+    debug_assert(mJsonElement);
+    return mJsonElement ? (float) mJsonElement->valuedouble : 0.0f;
+}
+
+int json_node_numeric::get_value_integer() const
+{
+    debug_assert(mJsonElement);
+    return mJsonElement ? mJsonElement->valueint : 0;
+}
+
+void json_node_numeric::validate()
+{
+    if (mJsonElement)
+    {
+        bool validType = mJsonElement->type == cJSON_Number;
+        if (!validType)
+        {
+            mJsonElement = nullptr; // invalid type
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+json_node_object::json_node_object(const json_document_node& genericNode)
+    : json_document_node(genericNode)
+{
+    validate();
+}
+
+json_node_object& json_node_object::operator = (const json_node_object& genericNode)
+{
+    json_document_node::operator = (genericNode);
+    validate();
+    return *this;
+}
+
+void json_node_object::validate()
+{
+    if (mJsonElement)
+    {
+        bool validType = mJsonElement->type == cJSON_Object;
+        if (!validType)
+        {
+            mJsonElement = nullptr; // invalid type
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+json_node_array::json_node_array(const json_document_node& genericNode)
+    : json_document_node(genericNode)
+{
+    validate();
+}
+
+json_node_array& json_node_array::operator = (const json_node_array& genericNode)
+{
+    json_document_node::operator = (genericNode);
+    validate();
+    return *this;
+}
+
+void json_node_array::validate()
+{
+    if (mJsonElement)
+    {
+        bool validType = mJsonElement->type == cJSON_Array;
+        if (!validType)
+        {
+            mJsonElement = nullptr; // invalid type
+        }
+    }
 }
 
 } // namespace cxx
