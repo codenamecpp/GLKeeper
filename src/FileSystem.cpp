@@ -6,6 +6,12 @@
 #include "BinaryInputStream.h"
 #include "BinaryOutputStream.h"
 
+#if OS_NAME == OS_WINDOWS
+    #define WIN32_LEAN_AND_MEAN
+    #define NOMINMAX
+    #include <windows.h>
+#endif
+
 FileSystem gFileSystem;
 
 bool FileSystem::Initialize()

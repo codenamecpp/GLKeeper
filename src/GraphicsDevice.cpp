@@ -12,6 +12,10 @@
 
 GraphicsDevice gGraphicsDevice;
 
+// globals
+static GLFWwindow* gGLFW_WindowHandle = nullptr;
+static GLFWmonitor* gGLFW_MonitorHandle = nullptr;
+
 //////////////////////////////////////////////////////////////////////////
 
 // glfw to native input mapping
@@ -212,8 +216,8 @@ bool GraphicsDevice::Initialize(const Size2D& screenDimensions, bool fullscreen,
         gInputsManager.HandleInputEvent(ev);
     });
 
-    mWindowHandle = graphicsWindow;
-    mMonitorHandle = graphicsMonitor;
+    gGLFW_WindowHandle = graphicsWindow;
+    gGLFW_MonitorHandle = graphicsMonitor;
 
     // setup opengl extensions
     if (!InitOpenGLExtensions())
@@ -254,7 +258,7 @@ bool GraphicsDevice::Initialize(const Size2D& screenDimensions, bool fullscreen,
     glCheckError();
 
     // force clear screen at stratup
-    ::glfwSwapBuffers(mWindowHandle);
+    ::glfwSwapBuffers(gGLFW_WindowHandle);
     glCheckError();
 
     // setup default render state
@@ -269,7 +273,7 @@ bool GraphicsDevice::Initialize(const Size2D& screenDimensions, bool fullscreen,
 
 void GraphicsDevice::Deinit()
 {
-    if (mWindowHandle == nullptr)
+    if (gGLFW_WindowHandle == nullptr)
         return;
 
     if (mDeviceContext.mMainVaoHandle)
@@ -279,30 +283,30 @@ void GraphicsDevice::Deinit()
         glCheckError();
     }
 
-    ::glfwDestroyWindow(mWindowHandle);
+    ::glfwDestroyWindow(gGLFW_WindowHandle);
     ::glfwTerminate();
-    mWindowHandle = nullptr;
-    mMonitorHandle = nullptr;
+    gGLFW_WindowHandle = nullptr;
+    gGLFW_MonitorHandle = nullptr;
 }
 
 void GraphicsDevice::EnableVSync(bool vsyncEnabled)
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
     ::glfwSwapInterval(vsyncEnabled ? 1 : 0);
 }
 
 void GraphicsDevice::EnableFullscreen(bool fullscreenEnabled)
 {
-    debug_assert(mWindowHandle);
-    if (mMonitorHandle == nullptr && fullscreenEnabled)
+    debug_assert(gGLFW_WindowHandle);
+    if (gGLFW_MonitorHandle == nullptr && fullscreenEnabled)
     {
-        mMonitorHandle = ::glfwGetPrimaryMonitor();
-        ::glfwSetWindowMonitor(mWindowHandle, mMonitorHandle, 0, 0, mViewportRect.mSizeX, mViewportRect.mSizeY, 0);
+        gGLFW_MonitorHandle = ::glfwGetPrimaryMonitor();
+        ::glfwSetWindowMonitor(gGLFW_WindowHandle, gGLFW_MonitorHandle, 0, 0, mViewportRect.mSizeX, mViewportRect.mSizeY, 0);
     }
     else
     {
-        mMonitorHandle = nullptr;
-        ::glfwSetWindowMonitor(mWindowHandle, mMonitorHandle, 60, 60, mViewportRect.mSizeX, mViewportRect.mSizeY, 0);
+        gGLFW_MonitorHandle = nullptr;
+        ::glfwSetWindowMonitor(gGLFW_WindowHandle, gGLFW_MonitorHandle, 60, 60, mViewportRect.mSizeX, mViewportRect.mSizeY, 0);
     }
 }
 
@@ -520,10 +524,10 @@ void GraphicsDevice::InternalSetRenderStates(const RenderStates& renderStates, b
 
 void GraphicsDevice::ProcessInputEvents()
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
     // process window messages
     ::glfwPollEvents();
-    if (::glfwWindowShouldClose(mWindowHandle) == GL_TRUE)
+    if (::glfwWindowShouldClose(gGLFW_WindowHandle) == GL_TRUE)
     {
         gSystem.QuitRequest();
         return;
@@ -532,13 +536,13 @@ void GraphicsDevice::ProcessInputEvents()
 
 void GraphicsDevice::Present()
 {
-    debug_assert(mWindowHandle);
-    ::glfwSwapBuffers(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
+    ::glfwSwapBuffers(gGLFW_WindowHandle);
 }
 
 void GraphicsDevice::SetViewportRect(const Rect2D& sourceRectangle)
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
     if (mViewportRect == sourceRectangle)
         return;
 
@@ -549,7 +553,7 @@ void GraphicsDevice::SetViewportRect(const Rect2D& sourceRectangle)
 
 void GraphicsDevice::SetScissorRect(const Rect2D& sourceRectangle)
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
     if (mScissorBox == sourceRectangle)
         return;
 
@@ -560,7 +564,7 @@ void GraphicsDevice::SetScissorRect(const Rect2D& sourceRectangle)
 
 void GraphicsDevice::SetClearColor(Color32 clearColor)
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
 
     const float inv = 1.0f / 255.0f;
     ::glClearColor(clearColor.mR * inv, clearColor.mG * inv, clearColor.mB * inv, clearColor.mA * inv);
@@ -569,7 +573,7 @@ void GraphicsDevice::SetClearColor(Color32 clearColor)
 
 void GraphicsDevice::ClearScreen()
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
 
     ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glCheckError();
@@ -577,7 +581,7 @@ void GraphicsDevice::ClearScreen()
 
 GpuBufferTexture* GraphicsDevice::CreateBufferTexture()
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
 
     GpuBufferTexture* texture = new GpuBufferTexture(mDeviceContext);
     return texture;
@@ -585,7 +589,7 @@ GpuBufferTexture* GraphicsDevice::CreateBufferTexture()
 
 GpuBufferTexture* GraphicsDevice::CreateBufferTexture(eTextureFormat textureFormat, int dataLength, const void* sourceData)
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
 
     GpuBufferTexture* texture = new GpuBufferTexture(mDeviceContext);
     if (!texture->Setup(textureFormat, dataLength, sourceData))
@@ -598,7 +602,7 @@ GpuBufferTexture* GraphicsDevice::CreateBufferTexture(eTextureFormat textureForm
 
 GpuTexture2D* GraphicsDevice::CreateTexture2D()
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
 
     GpuTexture2D* texture = new GpuTexture2D(mDeviceContext);
     return texture;
@@ -606,7 +610,7 @@ GpuTexture2D* GraphicsDevice::CreateTexture2D()
 
 GpuTexture2D* GraphicsDevice::CreateTexture2D(const Texture2D_Data& textureData)
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
 
     GpuTexture2D* texture = new GpuTexture2D(mDeviceContext);
     if (!texture->SetTextureData(textureData))
@@ -619,7 +623,7 @@ GpuTexture2D* GraphicsDevice::CreateTexture2D(const Texture2D_Data& textureData)
 
 GpuTexture2D* GraphicsDevice::CreateTexture2D(eTextureFormat textureFormat, const Size2D& dimensions, const void* sourceData)
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
 
     GpuTexture2D* texture = new GpuTexture2D(mDeviceContext);
     if (!texture->SetTextureData(textureFormat, dimensions, sourceData))
@@ -632,7 +636,7 @@ GpuTexture2D* GraphicsDevice::CreateTexture2D(eTextureFormat textureFormat, cons
 
 GpuTextureArray2D* GraphicsDevice::CreateTextureArray2D()
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
 
     GpuTextureArray2D* texture = new GpuTextureArray2D(mDeviceContext);
     return texture;   
@@ -640,7 +644,7 @@ GpuTextureArray2D* GraphicsDevice::CreateTextureArray2D()
 
 GpuTextureArray2D* GraphicsDevice::CreateTextureArray2D(eTextureFormat textureFormat, const Size2D& dimensions, int layersCount, const void* sourceData)
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
 
     GpuTextureArray2D* texture = new GpuTextureArray2D(mDeviceContext);
     if (!texture->Setup(textureFormat, dimensions, layersCount, sourceData))
@@ -653,7 +657,7 @@ GpuTextureArray2D* GraphicsDevice::CreateTextureArray2D(eTextureFormat textureFo
 
 GpuProgram* GraphicsDevice::CreateRenderProgram()
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
 
     GpuProgram* program = new GpuProgram(mDeviceContext);
     return program;
@@ -661,7 +665,7 @@ GpuProgram* GraphicsDevice::CreateRenderProgram()
 
 GpuProgram* GraphicsDevice::CreateRenderProgram(const char* shaderSource)
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
 
     GpuProgram* program = new GpuProgram(mDeviceContext);
     if (!program->CompileSourceCode(shaderSource))
@@ -674,7 +678,7 @@ GpuProgram* GraphicsDevice::CreateRenderProgram(const char* shaderSource)
 
 GpuBuffer* GraphicsDevice::CreateBuffer(eBufferContent bufferContent)
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
     debug_assert(bufferContent < eBufferContent_COUNT);
     GpuBuffer* bufferObject = new GpuBuffer(mDeviceContext, bufferContent);
     return bufferObject;
@@ -682,7 +686,7 @@ GpuBuffer* GraphicsDevice::CreateBuffer(eBufferContent bufferContent)
 
 GpuBuffer* GraphicsDevice::CreateBuffer(eBufferContent bufferContent, eBufferUsage bufferUsage, unsigned int bufferLength, const void* dataBuffer)
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
     debug_assert(bufferContent < eBufferContent_COUNT);
     GpuBuffer* bufferObject = new GpuBuffer(mDeviceContext, bufferContent);
     if (!bufferObject->Setup(bufferUsage, bufferLength, dataBuffer))
@@ -695,7 +699,7 @@ GpuBuffer* GraphicsDevice::CreateBuffer(eBufferContent bufferContent, eBufferUsa
 
 void GraphicsDevice::BindVertexBuffer(GpuBuffer* sourceBuffer, const VertexFormat& streamDefinition)
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
     debug_assert(mDeviceContext.mCurrentProgram);
     if (sourceBuffer)
     {
@@ -718,7 +722,7 @@ void GraphicsDevice::BindVertexBuffer(GpuBuffer* sourceBuffer, const VertexForma
 
 void GraphicsDevice::BindIndexBuffer(GpuBuffer* sourceBuffer)
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
     if (sourceBuffer)
     {
         debug_assert(sourceBuffer->mContent == eBufferContent_Indices);
@@ -735,7 +739,7 @@ void GraphicsDevice::BindIndexBuffer(GpuBuffer* sourceBuffer)
 
 void GraphicsDevice::BindTexture(eTextureUnit textureUnit, GpuBufferTexture* texture)
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
     debug_assert(textureUnit < eTextureUnit_COUNT);
     if (mDeviceContext.mCurrentTextures[textureUnit].mBufferTexture == texture)
         return;
@@ -749,7 +753,7 @@ void GraphicsDevice::BindTexture(eTextureUnit textureUnit, GpuBufferTexture* tex
 
 void GraphicsDevice::BindTexture(eTextureUnit textureUnit, GpuTexture2D* texture)
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
     debug_assert(textureUnit < eTextureUnit_COUNT);
     if (mDeviceContext.mCurrentTextures[textureUnit].mTexture2D == texture)
         return;
@@ -763,7 +767,7 @@ void GraphicsDevice::BindTexture(eTextureUnit textureUnit, GpuTexture2D* texture
 
 void GraphicsDevice::BindTexture(eTextureUnit textureUnit, GpuTextureArray2D* texture)
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
     debug_assert(textureUnit < eTextureUnit_COUNT);
     if (mDeviceContext.mCurrentTextures[textureUnit].mTextureArray2D == texture)
         return;
@@ -777,7 +781,7 @@ void GraphicsDevice::BindTexture(eTextureUnit textureUnit, GpuTextureArray2D* te
 
 void GraphicsDevice::BindRenderProgram(GpuProgram* program)
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
     if (mDeviceContext.mCurrentProgram == program)
         return;
 
@@ -822,42 +826,42 @@ void GraphicsDevice::BindRenderProgram(GpuProgram* program)
 
 void GraphicsDevice::DestroyTexture(GpuBufferTexture* textureResource)
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
     debug_assert(textureResource);
     delete textureResource;
 }
 
 void GraphicsDevice::DestroyTexture(GpuTexture2D* textureResource)
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
     debug_assert(textureResource);
     delete textureResource;
 }
 
 void GraphicsDevice::DestroyTexture(GpuTextureArray2D* textureResource)
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
     debug_assert(textureResource);
     delete textureResource;
 }
 
 void GraphicsDevice::DestroyProgram(GpuProgram* programResource)
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
     debug_assert(programResource);
     delete programResource;
 }
 
 void GraphicsDevice::DestroyBuffer(GpuBuffer* bufferResource)
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
     debug_assert(bufferResource);
     delete bufferResource;
 }
 
 void GraphicsDevice::RenderIndexedPrimitives(ePrimitiveType primitive, eIndicesType indices, unsigned int offset, unsigned int numIndices)
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
 
     GpuBuffer* indexBuffer = mDeviceContext.mCurrentBuffers[eBufferContent_Indices];
     GpuBuffer* vertexBuffer = mDeviceContext.mCurrentBuffers[eBufferContent_Vertices];
@@ -871,7 +875,7 @@ void GraphicsDevice::RenderIndexedPrimitives(ePrimitiveType primitive, eIndicesT
 
 void GraphicsDevice::RenderIndexedPrimitives(ePrimitiveType primitive, eIndicesType indices, unsigned int offset, unsigned int numIndices, unsigned int baseVertex)
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
 
     GpuBuffer* indexBuffer = mDeviceContext.mCurrentBuffers[eBufferContent_Indices];
     GpuBuffer* vertexBuffer = mDeviceContext.mCurrentBuffers[eBufferContent_Vertices];
@@ -885,7 +889,7 @@ void GraphicsDevice::RenderIndexedPrimitives(ePrimitiveType primitive, eIndicesT
 
 void GraphicsDevice::RenderPrimitives(ePrimitiveType primitiveType, unsigned int firstIndex, unsigned int numElements)
 {
-    debug_assert(mWindowHandle);
+    debug_assert(gGLFW_WindowHandle);
 
     GpuBuffer* vertexBuffer = mDeviceContext.mCurrentBuffers[eBufferContent_Vertices];
     debug_assert(vertexBuffer && mDeviceContext.mCurrentProgram);

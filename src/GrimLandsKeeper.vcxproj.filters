@@ -8,9 +8,6 @@
     <Filter Include="Application">
       <UniqueIdentifier>{56ef4ddf-1f75-423f-bd52-c89e0a6d8682}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Application\FileSystem">
-      <UniqueIdentifier>{6c249930-f16e-4aa9-ba23-2f2a82c2812d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Lib">
       <UniqueIdentifier>{39abdf3c-23ad-40a3-8de6-37fa7c3297f3}</UniqueIdentifier>
     </Filter>
@@ -68,6 +65,12 @@
     <Filter Include="Application\DebugUI">
       <UniqueIdentifier>{cab02080-9d94-428b-9fe1-8cc097e21510}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Third_Party\micropather">
+      <UniqueIdentifier>{587d3ed4-1e6f-4f29-a0f0-70825ca6bc5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\IO">
+      <UniqueIdentifier>{6c249930-f16e-4aa9-ba23-2f2a82c2812d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -86,7 +89,7 @@
       <Filter>Lib</Filter>
     </ClInclude>
     <ClInclude Include="FileSystem.h">
-      <Filter>Application\FileSystem</Filter>
+      <Filter>Application\IO</Filter>
     </ClInclude>
     <ClInclude Include="string_utils.h">
       <Filter>Lib</Filter>
@@ -126,13 +129,13 @@
       <Filter>Application</Filter>
     </ClInclude>
     <ClInclude Include="FileSystemArchive.h">
-      <Filter>Application\FileSystem</Filter>
+      <Filter>Application\IO</Filter>
     </ClInclude>
     <ClInclude Include="file_utils.h">
       <Filter>Lib</Filter>
     </ClInclude>
     <ClInclude Include="BinaryInputStream.h">
-      <Filter>Application\FileSystem</Filter>
+      <Filter>Application\IO</Filter>
     </ClInclude>
     <ClInclude Include="randomizer.h">
       <Filter>Lib</Filter>
@@ -234,7 +237,7 @@
       <Filter>Application\Console</Filter>
     </ClInclude>
     <ClInclude Include="BinaryOutputStream.h">
-      <Filter>Application\FileSystem</Filter>
+      <Filter>Application\IO</Filter>
     </ClInclude>
     <ClInclude Include="KeeperGame.h">
       <Filter>Game</Filter>
@@ -245,6 +248,9 @@
     <ClInclude Include="GameDefs.h">
       <Filter>Game</Filter>
     </ClInclude>
+    <ClInclude Include="micropather.h">
+      <Filter>Third_Party\micropather</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -253,7 +259,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="enums_impl.cpp" />
     <ClCompile Include="FileSystem.cpp">
-      <Filter>Application\FileSystem</Filter>
+      <Filter>Application\IO</Filter>
     </ClCompile>
     <ClCompile Include="CommonTypes.cpp">
       <Filter>Application</Filter>
@@ -274,10 +280,10 @@
       <Filter>Application</Filter>
     </ClCompile>
     <ClCompile Include="FileSystemArchive.cpp">
-      <Filter>Application\FileSystem</Filter>
+      <Filter>Application\IO</Filter>
     </ClCompile>
     <ClCompile Include="BinaryInputStream.cpp">
-      <Filter>Application\FileSystem</Filter>
+      <Filter>Application\IO</Filter>
     </ClCompile>
     <ClCompile Include="3rd_party\cJSON.cpp">
       <Filter>Third_Party\cjson</Filter>
@@ -343,10 +349,13 @@
       <Filter>Application\DebugUI</Filter>
     </ClCompile>
     <ClCompile Include="BinaryOutputStream.cpp">
-      <Filter>Application\FileSystem</Filter>
+      <Filter>Application\IO</Filter>
     </ClCompile>
     <ClCompile Include="KeeperGame.cpp">
       <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="micropather.cpp">
+      <Filter>Third_Party\micropather</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -10,6 +10,8 @@
 #include "DebugGuiManager.h"
 #include "DebugConsoleWindow.h"
 
+#include "GLFW/glfw3.h"
+
 System gSystem;
 
 void System::Initialize(int argc, char *argv[])

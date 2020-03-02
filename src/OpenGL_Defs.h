@@ -3,6 +3,10 @@
 #include "GraphicsDefs.h"
 #include "Console.h"
 
+// opengl
+#include <GL/glew.h>
+#include "GLFW/glfw3.h"
+
 #define BUFFER_OFFSET(offset) ((unsigned char*)0 + (offset))
 
 // target opengl version code

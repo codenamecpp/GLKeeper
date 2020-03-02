@@ -157,8 +157,6 @@ private:
 
 private:
     GraphicsDeviceContext mDeviceContext;
-    GLFWwindow* mWindowHandle = nullptr;
-    GLFWmonitor* mMonitorHandle = nullptr;
 };
 
 extern GraphicsDevice gGraphicsDevice;
