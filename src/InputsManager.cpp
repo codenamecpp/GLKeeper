@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "InputsManager.h"
 #include "DebugGuiManager.h"
+#include "KeeperGame.h"
 
 InputsManager gInputsManager;
 
@@ -20,6 +21,10 @@ void InputsManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
     mMouseButtons[inputEvent.mButton] = inputEvent.mPressed;
 
     gDebugGuiManager.HandleInputEvent(inputEvent);
+    if (!inputEvent.mConsumed)
+    {
+        gKeeperGame.HandleInputEvent(inputEvent);
+    }
 }
 
 void InputsManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
@@ -28,11 +33,19 @@ void InputsManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
     mCursorPositionY = inputEvent.mCursorPositionY;
 
     gDebugGuiManager.HandleInputEvent(inputEvent);
+    if (!inputEvent.mConsumed)
+    {
+        gKeeperGame.HandleInputEvent(inputEvent);
+    }
 }
 
 void InputsManager::HandleInputEvent(MouseScrollInputEvent& inputEvent)
 {
     gDebugGuiManager.HandleInputEvent(inputEvent);
+    if (!inputEvent.mConsumed)
+    {
+        gKeeperGame.HandleInputEvent(inputEvent);
+    }
 }
 
 void InputsManager::HandleInputEvent(KeyInputEvent& inputEvent)
@@ -40,11 +53,19 @@ void InputsManager::HandleInputEvent(KeyInputEvent& inputEvent)
     mKeyboardKeys[inputEvent.mKeycode] = inputEvent.mPressed;
 
     gDebugGuiManager.HandleInputEvent(inputEvent);
+    if (!inputEvent.mConsumed)
+    {
+        gKeeperGame.HandleInputEvent(inputEvent);
+    }
 }
 
 void InputsManager::HandleInputEvent(KeyCharEvent& inputEvent)
 {
     gDebugGuiManager.HandleInputEvent(inputEvent);
+    if (!inputEvent.mConsumed)
+    {
+        gKeeperGame.HandleInputEvent(inputEvent);
+    }
 }
 
 void InputsManager::Clear()

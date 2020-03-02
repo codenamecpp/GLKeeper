@@ -97,7 +97,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CRT_SECURE_NO_WARNINGS;_CONSOLE;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CRT_SECURE_NO_WARNINGS;_CONSOLE;GLEW_STATIC;CJSON_HIDE_SYMBOLS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SDKDIR)\GLM\include;$(SolutionDir)GLEW\;$(SolutionDir)3rd_party\;$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -133,7 +133,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CRT_SECURE_NO_WARNINGS;_CONSOLE;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CRT_SECURE_NO_WARNINGS;_CONSOLE;GLEW_STATIC;CJSON_HIDE_SYMBOLS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>$(SDKDIR)\GLM\include;$(SolutionDir)GLEW\;$(SolutionDir)3rd_party\;$(SolutionDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -183,6 +183,8 @@
     <ClInclude Include="CommonTypes.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="DebugConsoleWindow.h" />
+    <ClInclude Include="GameDefs.h" />
+    <ClInclude Include="GenericGamestate.h" />
     <ClInclude Include="GuiRenderProgram.h" />
     <ClInclude Include="DebugGuiManager.h" />
     <ClInclude Include="EngineTexturesProvider.h" />
@@ -204,6 +206,7 @@
     <ClInclude Include="InputsManager.h" />
     <ClInclude Include="intrusive_list.h" />
     <ClInclude Include="json_document.h" />
+    <ClInclude Include="KeeperGame.h" />
     <ClInclude Include="macro.h" />
     <ClInclude Include="math_defs.h" />
     <ClInclude Include="math_utils.h" />
@@ -250,6 +253,7 @@
     <ClCompile Include="DebugGuiManager.cpp" />
     <ClCompile Include="InputsManager.cpp" />
     <ClCompile Include="json_document.cpp" />
+    <ClCompile Include="KeeperGame.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

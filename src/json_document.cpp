@@ -280,7 +280,7 @@ json_node_numeric json_document::create_numeric_node(const json_document_node& p
         return json_document_node { nullptr };
     }
 
-    cJSON* jsonObject = cJSON_CreateNumberInt(value);
+    cJSON* jsonObject = cJSON_CreateNumber(value * 1.0);
 
     cJSON_AddItemToObject(parent.mJsonElement, nodeName.c_str(), jsonObject);
     return json_document_node { jsonObject };

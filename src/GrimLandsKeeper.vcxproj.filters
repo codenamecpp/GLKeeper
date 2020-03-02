@@ -236,6 +236,15 @@
     <ClInclude Include="BinaryOutputStream.h">
       <Filter>Application\FileSystem</Filter>
     </ClInclude>
+    <ClInclude Include="KeeperGame.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="GenericGamestate.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefs.h">
+      <Filter>Game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -335,6 +344,9 @@
     </ClCompile>
     <ClCompile Include="BinaryOutputStream.cpp">
       <Filter>Application\FileSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="KeeperGame.cpp">
+      <Filter>Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
