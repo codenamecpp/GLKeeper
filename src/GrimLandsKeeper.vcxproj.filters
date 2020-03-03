@@ -257,6 +257,9 @@
     <ClInclude Include="Texture2D.h">
       <Filter>Application\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="common_utils.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

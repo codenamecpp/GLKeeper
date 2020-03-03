@@ -181,6 +181,7 @@
     <ClInclude Include="BinaryInputStream.h" />
     <ClInclude Include="BinaryOutputStream.h" />
     <ClInclude Include="CommonTypes.h" />
+    <ClInclude Include="common_utils.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="DebugConsoleWindow.h" />
     <ClInclude Include="GameDefs.h" />

@@ -9,6 +9,7 @@
 #include "TimeManager.h"
 #include "DebugGuiManager.h"
 #include "DebugConsoleWindow.h"
+#include "TexturesManager.h"
 
 #include "GLFW/glfw3.h"
 
@@ -81,6 +82,12 @@ void System::Initialize(int argc, char *argv[])
         // ignore failure
     }
 
+    if (!gTexturesManager.Initialize())
+    {
+        gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize textures manager");
+        // ignore failure
+    }
+
     mStartSystemTime = ::glfwGetTime();
     debug_assert(mStartSystemTime > 0.0);
 
@@ -94,6 +101,7 @@ void System::Deinit()
 {
     gConsole.LogMessage(eLogMessage_Info, "System shutdown");
 
+    gTexturesManager.Deinit();
     gDebugGuiManager.Deinit();
     gRenderManager.Deinit();
     gTimeManager.Deinit();

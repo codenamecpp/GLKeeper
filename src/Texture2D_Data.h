@@ -47,13 +47,13 @@ public:
     void ClearMipmaps();
 
     // create checker board pattern, bitmap must be allocated
-    // does not affects on mipmaps
+    // does not affect on mipmaps
     // @returns false if pixels format not supported
     bool FillWithCheckerBoard();
     bool FillWithCheckerBoard(const Rect2D& fillArea);
 
     // fill canvas with color, bitmap must be allocated
-    // does not affects on mipmaps
+    // does not affect on mipmaps
     // @returns false if pixels format not supported
     bool FillWithColor(Color32 color);
     bool FillWithColor(Color32 color, const Rect2D& fillArea);
@@ -61,7 +61,7 @@ public:
     // resize texture image to nearest pot dimensions
     // actual size of image will be stored in mImageSize
     // @param freeCurrentBitmap: Don't keep old image content
-    void ResizeToPOT(bool freeCurrent);
+    void ResizeToPOT(bool freeCurrent = false);
 
     // save bitmap content to external file
     // @param filePath: File path
