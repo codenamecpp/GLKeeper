@@ -10,11 +10,10 @@ class GpuTexture2D: public cxx::noncopyable
 public:
     // readonly
     eTextureFilterMode mFiltering;
-    eTextureWrapMode mRepeating;
+    eTextureRepeatMode mRepeating;
     Size2D mSize;
+    int mMipmapCount;
     eTextureFormat mFormat;
-
-    int mMipmapsCount;
 
 public:
     GpuTexture2D(GraphicsDeviceContext& graphicsContext);
@@ -43,20 +42,17 @@ public:
     // set texture filter and wrap parameters
     // @param filtering: Filtering mode
     // @param repeating: Addressing mode
-    void SetSamplerState(eTextureFilterMode filtering, eTextureWrapMode repeating);
+    void SetSamplerState(eTextureFilterMode filtering, eTextureRepeatMode repeating);
 
     // test whether texture is currently bound at specified texture unit
     // @param unitIndex: Index of texture unit
     bool IsTextureBound(eTextureUnit textureUnit) const;
     bool IsTextureBound() const;
 
-    // test whether texture is created
-    bool IsTextureInited() const;
-
 private:
     class ScopeBinder;
 
-    void SetSamplerStateImpl(eTextureFilterMode filtering, eTextureWrapMode repeating);
+    void SetSamplerStateImpl(eTextureFilterMode filtering, eTextureRepeatMode repeating);
     void SetUnbound();
 
 private:

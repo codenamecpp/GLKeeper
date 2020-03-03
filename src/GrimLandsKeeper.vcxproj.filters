@@ -185,9 +185,6 @@
     <ClInclude Include="3rd_party\stb_image_write.h">
       <Filter>Third_Party\stb</Filter>
     </ClInclude>
-    <ClInclude Include="EngineTexturesProvider.h">
-      <Filter>Application\Resources</Filter>
-    </ClInclude>
     <ClInclude Include="Texture2D_Data.h">
       <Filter>Application\Resources</Filter>
     </ClInclude>
@@ -251,6 +248,15 @@
     <ClInclude Include="micropather.h">
       <Filter>Third_Party\micropather</Filter>
     </ClInclude>
+    <ClInclude Include="EngineTexturesProvider.h">
+      <Filter>Application\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="TexturesManager.h">
+      <Filter>Application\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture2D.h">
+      <Filter>Application\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -303,9 +309,6 @@
     <ClCompile Include="3rd_party\stb_rect_pack.cpp">
       <Filter>Third_Party\stb</Filter>
     </ClCompile>
-    <ClCompile Include="EngineTexturesProvider.cpp">
-      <Filter>Application\Resources</Filter>
-    </ClCompile>
     <ClCompile Include="Texture2D_Data.cpp">
       <Filter>Application\Resources</Filter>
     </ClCompile>
@@ -356,6 +359,15 @@
     </ClCompile>
     <ClCompile Include="micropather.cpp">
       <Filter>Third_Party\micropather</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineTexturesProvider.cpp">
+      <Filter>Application\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="TexturesManager.cpp">
+      <Filter>Application\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture2D.cpp">
+      <Filter>Application\Resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

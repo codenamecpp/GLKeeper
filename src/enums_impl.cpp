@@ -12,10 +12,10 @@ impl_enum_strings(eLogMessage)
     {eLogMessage_Error, "error"},
 };
 
-impl_enum_strings(eTextureWrapMode)
+impl_enum_strings(eTextureRepeatMode)
 {
-    {eTextureWrapMode_Repeat, "repeat"},
-    {eTextureWrapMode_ClampToEdge, "clamp_to_edge"},
+    {eTextureRepeatMode_Repeat, "repeat"},
+    {eTextureRepeatMode_ClampToEdge, "clamp_to_edge"},
 };
 
 impl_enum_strings(eTextureFilterMode)

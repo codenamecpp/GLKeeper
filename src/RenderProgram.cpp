@@ -6,7 +6,7 @@
 #include "Console.h"
 
 RenderProgram::RenderProgram(const std::string& srcFilePath)
-    : mProgramSrcPath(srcFilePath)
+    : mProgramName(srcFilePath)
 {
 }
 
@@ -48,9 +48,9 @@ bool RenderProgram::ReloadProgram()
 
     // load source code
     std::string shaderSourceCode;
-    if (!gFileSystem.ReadTextFile(mProgramSrcPath, shaderSourceCode))
+    if (!gFileSystem.ReadTextFile(mProgramName, shaderSourceCode))
     {
-        gConsole.LogMessage(eLogMessage_Warning, "Cannot read shader source from %s", mProgramSrcPath.c_str());
+        gConsole.LogMessage(eLogMessage_Warning, "Cannot read shader source from %s", mProgramName.c_str());
         return false;
     }
 
@@ -58,11 +58,11 @@ bool RenderProgram::ReloadProgram()
     if (isCompiled)
     {
         OnProgramLoad();
-        gConsole.LogMessage(eLogMessage_Info, "Render program loaded %s", mProgramSrcPath.c_str());
+        gConsole.LogMessage(eLogMessage_Info, "Render program loaded %s", mProgramName.c_str());
     }
     else
     {
-        gConsole.LogMessage(eLogMessage_Info, "Cannot load render program %s", mProgramSrcPath.c_str());
+        gConsole.LogMessage(eLogMessage_Info, "Cannot load render program %s", mProgramName.c_str());
     }
     return isCompiled;
 }

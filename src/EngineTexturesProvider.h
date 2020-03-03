@@ -24,7 +24,7 @@ public:
     // @param textureData: Output texture data
     bool ExtractTexture(const std::string& textureName, Texture2D_Data& textureData) const;
 
-    // extract all textures with their mipmaps to specified directory
+    // extract all textures to specified directory
     // @param outputDirectory: Output directory path
     void DumpTextures(const std::string& outputDirectory) const;
 

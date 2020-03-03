@@ -91,7 +91,7 @@ bool GpuTextureArray2D::Setup(eTextureFormat textureFormat, const Size2D& dimens
     }
 
     // set default filter and repeat mode for texture
-    SetSamplerStateImpl(eTextureFilterMode_Nearest, eTextureWrapMode_ClampToEdge);
+    SetSamplerStateImpl(eTextureFilterMode_Nearest, eTextureRepeatMode_ClampToEdge);
     return true;
 }
 
@@ -119,7 +119,7 @@ bool GpuTextureArray2D::Upload(int startLayerIndex, int layersCount, const void*
     return true;
 }
 
-void GpuTextureArray2D::SetSamplerState(eTextureFilterMode filtering, eTextureWrapMode repeating)
+void GpuTextureArray2D::SetSamplerState(eTextureFilterMode filtering, eTextureRepeatMode repeating)
 {
     if (!IsTextureInited())
     {
@@ -164,7 +164,7 @@ bool GpuTextureArray2D::IsTextureInited() const
     return mFormat != eTextureFormat_Null;
 }
 
-void GpuTextureArray2D::SetSamplerStateImpl(eTextureFilterMode filtering, eTextureWrapMode repeating)
+void GpuTextureArray2D::SetSamplerStateImpl(eTextureFilterMode filtering, eTextureRepeatMode repeating)
 {
     mFiltering = filtering;
     mRepeating = repeating;
@@ -202,15 +202,15 @@ void GpuTextureArray2D::SetSamplerStateImpl(eTextureFilterMode filtering, eTextu
     GLint wrapTGL = GL_CLAMP_TO_EDGE;
     switch (repeating)
     {
-    case eTextureWrapMode_Repeat:
+    case eTextureRepeatMode_Repeat:
         wrapSGL = GL_REPEAT;
         wrapTGL = GL_REPEAT;
         break;
-    case eTextureWrapMode_ClampToEdge:
+    case eTextureRepeatMode_ClampToEdge:
         break;
     default:
     {
-        debug_assert(repeating == eTextureWrapMode_ClampToEdge);
+        debug_assert(repeating == eTextureRepeatMode_ClampToEdge);
     }
     break;
     }

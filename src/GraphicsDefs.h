@@ -90,14 +90,14 @@ enum eTextureFilterMode
 
 decl_enum_strings(eTextureFilterMode);
 
-enum eTextureWrapMode
+enum eTextureRepeatMode
 {
-    eTextureWrapMode_Repeat, 
-    eTextureWrapMode_ClampToEdge,
-    eTextureWrapMode_COUNT
+    eTextureRepeatMode_Repeat, 
+    eTextureRepeatMode_ClampToEdge,
+    eTextureRepeatMode_COUNT
 };
 
-decl_enum_strings(eTextureWrapMode);
+decl_enum_strings(eTextureRepeatMode);
 
 enum eTextureFormat
 {

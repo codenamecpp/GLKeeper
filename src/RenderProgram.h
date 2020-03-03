@@ -7,7 +7,7 @@ class RenderProgram: public cxx::noncopyable
 {
 public:
     // readonly
-    std::string mProgramSrcPath;
+    std::string mProgramName;
     
     GpuProgram* mGpuProgram = nullptr;
 
