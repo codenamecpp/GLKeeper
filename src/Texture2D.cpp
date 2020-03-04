@@ -8,8 +8,7 @@
 
 Texture2D::Texture2D(const std::string& textureName)
     : mTextureName(textureName)
-    , mRepeatMode(eTextureRepeatMode_ClampToEdge)
-    , mFilterMode(eTextureFilterMode_Nearest)
+    , mSamplerState()
 {
 }
 
@@ -29,27 +28,12 @@ void Texture2D::DestroyTextureObject()
     mLoadedFromFile = false;
 }
 
-void Texture2D::SetFilterMode(eTextureFilterMode filterMode)
+void Texture2D::SetSamplerState(const TextureSamplerState& samplerState)
 {
-    if (mFilterMode == filterMode)
-        return;
-
-    mFilterMode = filterMode;
+    mSamplerState = samplerState;
     if (mGpuTextureObject)
     {
-        mGpuTextureObject->SetSamplerState(mFilterMode, mRepeatMode);
-    }
-}
-
-void Texture2D::SetRepeatMode(eTextureRepeatMode repeatMode)
-{
-    if (mRepeatMode == repeatMode)
-        return;
-
-    mRepeatMode = repeatMode;
-    if (mGpuTextureObject)
-    {
-        mGpuTextureObject->SetSamplerState(mFilterMode, mRepeatMode);
+        mGpuTextureObject->SetSamplerState(samplerState);
     }
 }
 
@@ -101,7 +85,7 @@ bool Texture2D::LoadTexture()
         debug_assert(false);
     }
 
-    mGpuTextureObject->SetSamplerState(mFilterMode, mRepeatMode);
+    mGpuTextureObject->SetSamplerState(mSamplerState);
     return true;
 }
 
@@ -143,7 +127,7 @@ bool Texture2D::CreateTexture(const Texture2D_Data& textureData)
         debug_assert(false);
     }
 
-    mGpuTextureObject->SetSamplerState(mFilterMode, mRepeatMode);
+    mGpuTextureObject->SetSamplerState(mSamplerState);
 
     mTransparent = textureData.mTransparent;
     mLoadedFromFile = false;

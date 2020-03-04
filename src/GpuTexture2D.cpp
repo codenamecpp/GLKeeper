@@ -39,8 +39,7 @@ private:
 GpuTexture2D::GpuTexture2D(GraphicsDeviceContext& renderContext)
     : mGraphicsContext(renderContext)
     , mResourceHandle()
-    , mFiltering()
-    , mRepeating()
+    , mSamplerState()
     , mSize()
     , mFormat()
     , mMipmapCount()
@@ -84,7 +83,7 @@ bool GpuTexture2D::SetTextureData(eTextureFormat textureFormat, const Size2D& di
     glCheckError();
 
     // set default filter and repeat mode for texture
-    SetSamplerStateImpl(eTextureFilterMode_Nearest, eTextureRepeatMode_ClampToEdge);
+    SetSamplerStateImpl();
     return true;
 }
 
@@ -133,7 +132,7 @@ bool GpuTexture2D::SetTextureData(const Texture2D_Data& textureData)
     }
 
     // set default filter and repeat mode for texture
-    SetSamplerStateImpl(eTextureFilterMode_Nearest, eTextureRepeatMode_ClampToEdge);
+    SetSamplerStateImpl();
     return true;
 }
 
@@ -152,19 +151,19 @@ void GpuTexture2D::SetMipmapsCount(int mipmapsCount)
 
     if (forceSetSamplerState)
     {
-        SetSamplerStateImpl(mFiltering, mRepeating);
+        SetSamplerStateImpl();
     }
 }
 
-void GpuTexture2D::SetSamplerState(eTextureFilterMode filtering, eTextureRepeatMode repeating)
+void GpuTexture2D::SetSamplerState(const TextureSamplerState& samplerState)
 {
-    // already set
-    if (mFiltering == filtering && mRepeating == repeating)
+    if (mSamplerState == samplerState)
         return;
 
-    ScopeBinder scopedBind {this};
+    mSamplerState = samplerState;
 
-    SetSamplerStateImpl(filtering, repeating);
+    ScopeBinder scopedBind {this};
+    SetSamplerStateImpl();
 }
 
 bool GpuTexture2D::IsTextureBound(eTextureUnit textureUnit) const
@@ -208,15 +207,12 @@ bool GpuTexture2D::TexSubImage(int mipLevel, int sizex, int sizey, const void* s
     return TexSubImage(mipLevel, 0, 0, mSize.x, mSize.y, sourceData);
 }
 
-void GpuTexture2D::SetSamplerStateImpl(eTextureFilterMode filtering, eTextureRepeatMode repeating)
+void GpuTexture2D::SetSamplerStateImpl()
 {
-    mFiltering = filtering;
-    mRepeating = repeating;
-
     // set filtering
     GLint magFilterGL = GL_NEAREST;
     GLint minFilterGL = mMipmapCount > 0 ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST;
-    switch (filtering)
+    switch (mSamplerState.mFilterMode)
     {
         case eTextureFilterMode_Nearest: 
             break;
@@ -241,28 +237,18 @@ void GpuTexture2D::SetSamplerStateImpl(eTextureFilterMode filtering, eTextureRep
     ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilterGL);
     glCheckError();
 
-    // set repeating
-    GLint wrapSGL = GL_CLAMP_TO_EDGE;
-    GLint wrapTGL = GL_CLAMP_TO_EDGE;
-    switch (repeating)
-    {
-        case eTextureRepeatMode_Repeat:
-            wrapSGL = GL_REPEAT;
-            wrapTGL = GL_REPEAT;
-            break;
-        case eTextureRepeatMode_ClampToEdge:
-            break;
-        default:
-        {
-            debug_assert(false);
-        }
-        break;
-    }
+    // set wrap mode
+    GLint gl_wrapS = EnumToGL(mSamplerState.mRepeatModeS);
+    GLint gl_wrapT = EnumToGL(mSamplerState.mRepeatModeT);
+    GLint gl_wrapR = EnumToGL(mSamplerState.mRepeatModeR);
 
-    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapSGL);
+    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, gl_wrapS);
     glCheckError();
 
-    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapTGL);
+    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, gl_wrapT);
+    glCheckError();
+
+    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, gl_wrapR);
     glCheckError();
 }
 

@@ -88,6 +88,17 @@ inline GLenum EnumToGL(ePrimitiveType primitiveType)
     return GL_TRIANGLES;
 }
 
+inline GLint EnumToGL(eTextureRepeatMode repeatMode)
+{
+    switch (repeatMode)
+    {
+        case eTextureRepeatMode_Repeat: return GL_REPEAT;
+        case eTextureRepeatMode_ClampToEdge: return GL_CLAMP_TO_EDGE;
+    }
+    debug_assert(false);
+    return GL_CLAMP_TO_EDGE;
+}
+
 inline GLuint GetTextureInputFormatGL(eTextureFormat textureFormat)
 {
     switch (textureFormat)

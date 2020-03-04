@@ -114,6 +114,43 @@ enum eTextureFormat
 
 decl_enum_strings(eTextureFormat);
 
+// texture sampler state
+struct TextureSamplerState
+{
+public:
+    TextureSamplerState() = default;
+    TextureSamplerState(eTextureFilterMode filter)
+        : mFilterMode(filter)
+    {
+    }
+    TextureSamplerState(eTextureFilterMode filter, eTextureRepeatMode repeat)
+        : mFilterMode(filter)
+        , mRepeatModeS(repeat)
+        , mRepeatModeT(repeat)
+        , mRepeatModeR(repeat)
+    {
+    }
+public:
+    eTextureFilterMode mFilterMode = eTextureFilterMode_Nearest;
+    eTextureRepeatMode mRepeatModeS = eTextureRepeatMode_ClampToEdge; // wrap x coord
+    eTextureRepeatMode mRepeatModeT = eTextureRepeatMode_ClampToEdge; // wrap y coord
+    eTextureRepeatMode mRepeatModeR = eTextureRepeatMode_ClampToEdge; // wrap z coord
+};
+
+// compare operators
+inline bool operator == (const TextureSamplerState& lhs, const TextureSamplerState& rhs)
+{
+    return lhs.mFilterMode == rhs.mFilterMode &&
+        lhs.mRepeatModeS == rhs.mRepeatModeS &&
+        lhs.mRepeatModeT == rhs.mRepeatModeT &&
+        lhs.mRepeatModeR == rhs.mRepeatModeR;
+}
+
+inline bool operator != (const TextureSamplerState& lhs, const TextureSamplerState& rhs)
+{
+    return !(lhs == rhs);
+}
+
 // get number of bytes per pixel for specific texture format
 // @param format: Format identifier
 inline int GetTextureFormatBytesCount(eTextureFormat format) 

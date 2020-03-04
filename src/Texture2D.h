@@ -9,8 +9,7 @@ public:
     // readonly
     std::string mTextureName;
 
-    eTextureRepeatMode mRepeatMode;
-    eTextureFilterMode mFilterMode;
+    TextureSamplerState mSamplerState;
 
     GpuTexture2D* mGpuTextureObject = nullptr;
 
@@ -28,8 +27,8 @@ public:
     bool CreateTexture(const Texture2D_Data& textureData);
 
     // set texture filtering and repeating modes
-    void SetFilterMode(eTextureFilterMode filterMode);
-    void SetRepeatMode(eTextureRepeatMode repeatMode);
+    // @param samplerState: Sampler state params
+    void SetSamplerState(const TextureSamplerState& samplerState);
 
     // test whether texture is initialized and currently active
     bool IsTextureLoaded() const;

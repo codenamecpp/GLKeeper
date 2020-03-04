@@ -87,10 +87,11 @@ void TexturesManager::InitDefaultTextures()
     Size2D dummyTextureDims { 64, 64 };
     textureData.Setup(eTextureFormat_RGBA8, colorTextureDims, false, nullptr);
 
+    TextureSamplerState textureSamplerState { eTextureFilterMode_Bilinear, eTextureRepeatMode_Repeat };
+
     mWhiteTexture = new Texture2D { "white" };
     mWhiteTexture->SetPersistent(true);
-    mWhiteTexture->SetFilterMode(eTextureFilterMode_Bilinear);
-    mWhiteTexture->SetRepeatMode(eTextureRepeatMode_Repeat);
+    mWhiteTexture->SetSamplerState(textureSamplerState);
 
     textureData.FillWithColor(Color32_White);
     if (!mWhiteTexture->CreateTexture(textureData))
@@ -100,8 +101,7 @@ void TexturesManager::InitDefaultTextures()
 
     mBlackTexture = new Texture2D { "black" };
     mBlackTexture->SetPersistent(true);
-    mBlackTexture->SetFilterMode(eTextureFilterMode_Bilinear);
-    mBlackTexture->SetRepeatMode(eTextureRepeatMode_Repeat);
+    mBlackTexture->SetSamplerState(textureSamplerState);
 
     textureData.FillWithColor(Color32_Black);
     if (!mBlackTexture->CreateTexture(textureData))
@@ -111,8 +111,7 @@ void TexturesManager::InitDefaultTextures()
 
     mDummyTexture = new Texture2D { "dummy" };
     mDummyTexture->SetPersistent(true);
-    mDummyTexture->SetFilterMode(eTextureFilterMode_Bilinear);
-    mDummyTexture->SetRepeatMode(eTextureRepeatMode_Repeat);
+    mDummyTexture->SetSamplerState(textureSamplerState);
 
     textureData.Setup(eTextureFormat_RGBA8, dummyTextureDims, false, nullptr);
     textureData.FillWithCheckerBoard();

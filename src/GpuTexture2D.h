@@ -9,8 +9,7 @@ class GpuTexture2D: public cxx::noncopyable
 
 public:
     // readonly
-    eTextureFilterMode mFiltering;
-    eTextureRepeatMode mRepeating;
+    TextureSamplerState mSamplerState;
     Size2D mSize;
     int mMipmapCount;
     eTextureFormat mFormat;
@@ -40,9 +39,8 @@ public:
     bool TexSubImage(int mipLevel, int sizex, int sizey, const void* sourceData);
 
     // set texture filter and wrap parameters
-    // @param filtering: Filtering mode
-    // @param repeating: Addressing mode
-    void SetSamplerState(eTextureFilterMode filtering, eTextureRepeatMode repeating);
+    // @param samplerState: Params
+    void SetSamplerState(const TextureSamplerState& samplerState);
 
     // test whether texture is currently bound at specified texture unit
     // @param unitIndex: Index of texture unit
@@ -52,7 +50,7 @@ public:
 private:
     class ScopeBinder;
 
-    void SetSamplerStateImpl(eTextureFilterMode filtering, eTextureRepeatMode repeating);
+    void SetSamplerStateImpl();
     void SetUnbound();
 
 private:
