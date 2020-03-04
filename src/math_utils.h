@@ -19,13 +19,6 @@ namespace cxx
         return value;
     }
 
-    // test whether value is power of two
-    inline bool is_pot(unsigned int value)
-    {
-        unsigned int nextPowerOfTwo = get_next_pot(value);
-        return nextPowerOfTwo == value;
-    }
-
     // round up value
     inline unsigned int round_up_to(unsigned int value, unsigned int pad)
     {

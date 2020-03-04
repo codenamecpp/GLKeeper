@@ -61,8 +61,8 @@ bool GpuTexture2D::SetTextureData(eTextureFormat textureFormat, const Size2D& di
     if (textureFormat == eTextureFormat_Null)
         return false;
 
-    debug_assert(cxx::is_pot(dimensions.x));
-    debug_assert(cxx::is_pot(dimensions.y));
+    debug_assert(cxx::get_next_pot(dimensions.x) == dimensions.x);
+    debug_assert(cxx::get_next_pot(dimensions.y) == dimensions.y);
 
     GLuint formatGL = GetTextureInputFormatGL(textureFormat);
     GLint internalFormatGL = GetTextureInternalFormatGL(textureFormat);

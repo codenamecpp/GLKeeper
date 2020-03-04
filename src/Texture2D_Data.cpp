@@ -202,8 +202,8 @@ bool Texture2D_Data::NonNull() const
 
 bool Texture2D_Data::IsPOT() const
 {
-    bool wpot = cxx::is_pot(mSize.x);
-    bool hpot = cxx::is_pot(mSize.y);
+    bool wpot = cxx::get_next_pot(mSize.x) == mSize.x;
+    bool hpot = cxx::get_next_pot(mSize.y) == mSize.y;
 
     return wpot && hpot;
 }
