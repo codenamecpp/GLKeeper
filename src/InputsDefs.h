@@ -115,6 +115,11 @@ public:
     {
         return (mMods & bits) == bits;
     }
+    // test whether specific key was pressed
+    inline bool HasPressed(eKeycode keycode) const
+    {
+        return mPressed && keycode == mKeycode;
+    }
 public:
     eKeycode mKeycode;
     int mScancode;

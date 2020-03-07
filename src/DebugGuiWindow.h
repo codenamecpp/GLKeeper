@@ -29,6 +29,13 @@ public:
     {
         mWindowShown = isShown;
     }
+    
+    inline void ToggleWindowShown()
+    {
+        SetWindowShown(!mWindowShown);
+    }
+
+    inline bool IsWindowShown() const { return mWindowShown; }
 
 protected:
     // initial show params

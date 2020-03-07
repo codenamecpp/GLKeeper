@@ -3,6 +3,8 @@
 #include "GameScene.h"
 #include "Console.h"
 #include "GenericGamestate.h"
+#include "DebugConsoleWindow.h"
+#include "System.h"
 
 KeeperGame gKeeperGame;
 
@@ -60,6 +62,24 @@ void KeeperGame::HandleInputEvent(MouseScrollInputEvent& inputEvent)
 
 void KeeperGame::HandleInputEvent(KeyInputEvent& inputEvent)
 {
+    // show console
+    if (inputEvent.HasPressed(eKeycode_TILDE))
+    {
+        gConsoleWindow.ToggleWindowShown();
+
+        inputEvent.SetConsumed();
+        return;
+    }
+
+    // exit game
+    if (inputEvent.HasPressed(eKeycode_ESCAPE))
+    {
+        gSystem.QuitRequest();
+
+        inputEvent.SetConsumed();
+        return;
+    }
+
     if (mCurrentGamestate)
     {
         mCurrentGamestate->HandleInputEvent(inputEvent);
