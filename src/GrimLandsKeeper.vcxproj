@@ -225,7 +225,7 @@
     <ClInclude Include="System.h" />
     <ClInclude Include="SystemSettings.h" />
     <ClInclude Include="Texture2D.h" />
-    <ClInclude Include="Texture2D_Data.h" />
+    <ClInclude Include="Texture2D_Image.h" />
     <ClInclude Include="TexturesManager.h" />
     <ClInclude Include="TimeManager.h" />
     <ClInclude Include="version.h" />
@@ -272,7 +272,7 @@
     <ClCompile Include="System.cpp" />
     <ClCompile Include="SystemSettings.cpp" />
     <ClCompile Include="Texture2D.cpp" />
-    <ClCompile Include="Texture2D_Data.cpp" />
+    <ClCompile Include="Texture2D_Image.cpp" />
     <ClCompile Include="TexturesManager.cpp" />
     <ClCompile Include="TimeManager.cpp" />
   </ItemGroup>

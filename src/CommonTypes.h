@@ -89,19 +89,19 @@ public:
         , mSizeY(sizey)
     {
     }
-    inline void SetNull()
-    {
-        mX = 0;
-        mY = 0;
-        mSizeX = 0;
-        mSizeY = 0;
-    }
     inline void Set(int posx, int posy, int sizex, int sizey)
     {
         mX = posx;
         mY = posy;
         mSizeX = sizex;
         mSizeY = sizey;
+    }
+    inline void SetNull()
+    {
+        mX = 0;
+        mY = 0;
+        mSizeX = 0;
+        mSizeY = 0;
     }
 public:
     int mX, mY;

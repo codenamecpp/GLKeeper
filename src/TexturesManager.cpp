@@ -1,20 +1,20 @@
 #include "pch.h"
 #include "TexturesManager.h"
 #include "Texture2D.h"
-#include "Texture2D_Data.h"
+#include "Texture2D_Image.h"
 
 TexturesManager gTexturesManager;
 
 bool TexturesManager::Initialize()
 {
-    InitDefaultTextures();
+    //InitDefaultTextures();
 
     return true;
 }
 
 void TexturesManager::Deinit()
 {
-    FreeDefaultTextures();
+    //FreeDefaultTextures();
     FreeTextures();
 }
 
@@ -82,10 +82,10 @@ void TexturesManager::PurgeLoadedTextures()
 
 void TexturesManager::InitDefaultTextures()
 {
-    Texture2D_Data textureData;
+    Texture2D_Image textureData;
     Size2D colorTextureDims { 1, 1 };
     Size2D dummyTextureDims { 64, 64 };
-    textureData.Setup(eTextureFormat_RGBA8, colorTextureDims, false, nullptr);
+    textureData.CreateImage(eTextureFormat_RGBA8, colorTextureDims, 0, false);
 
     TextureSamplerState textureSamplerState { eTextureFilterMode_Bilinear, eTextureRepeatMode_Repeat };
 
@@ -93,7 +93,7 @@ void TexturesManager::InitDefaultTextures()
     mWhiteTexture->SetPersistent(true);
     mWhiteTexture->SetSamplerState(textureSamplerState);
 
-    textureData.FillWithColor(Color32_White);
+    textureData.FillWithColor(Color32_White, 0);
     if (!mWhiteTexture->CreateTexture(textureData))
     {
         debug_assert(false);
@@ -103,7 +103,7 @@ void TexturesManager::InitDefaultTextures()
     mBlackTexture->SetPersistent(true);
     mBlackTexture->SetSamplerState(textureSamplerState);
 
-    textureData.FillWithColor(Color32_Black);
+    textureData.FillWithColor(Color32_Black, 0);
     if (!mBlackTexture->CreateTexture(textureData))
     {
         debug_assert(false);
@@ -113,8 +113,8 @@ void TexturesManager::InitDefaultTextures()
     mDummyTexture->SetPersistent(true);
     mDummyTexture->SetSamplerState(textureSamplerState);
 
-    textureData.Setup(eTextureFormat_RGBA8, dummyTextureDims, false, nullptr);
-    textureData.FillWithCheckerBoard();
+    textureData.CreateImage(eTextureFormat_RGBA8, dummyTextureDims, 0, false);
+    textureData.FillWithCheckerBoard(0);
     if (!mDummyTexture->CreateTexture(textureData))
     {
         debug_assert(false);

@@ -10,7 +10,7 @@ class GpuBufferTexture;
 class GpuTexture2D;
 class GpuTextureArray2D;
 class GraphicsDeviceContext;
-class Texture2D_Data;
+class Texture2D_Image;
 
 // internal types
 using GpuProgramHandle = unsigned int;
@@ -21,6 +21,7 @@ using GpuVariableLocation = int;
 
 // predefined value for unspecified render program variable location
 const GpuVariableLocation GpuVariable_NULL = -1;
+const GpuTextureHandle GpuTextureHandle_NULL = 0;
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -151,6 +152,63 @@ inline bool operator != (const TextureSamplerState& lhs, const TextureSamplerSta
     return !(lhs == rhs);
 }
 
+// texture2d description structure
+struct Texture2D_Desc
+{
+public:
+    Texture2D_Desc(): mDimensions(), mImageDimensions()
+        , mMaxU(1.0f)
+        , mMaxV(1.0f)
+        , mMipmapsCount() // default no mipmaps
+        , mTransparent() // default is opaque
+        , mGenerateMipmaps() // do not generate on upload
+    {
+    }
+    Texture2D_Desc(eTextureFormat format, const Size2D& dimensions, int mipmapsCount, bool transparent, bool generateMipmaps)
+        : mDimensions(dimensions), mImageDimensions(dimensions)
+        , mTextureFormat(format)
+        , mMaxU(1.0f)
+        , mMaxV(1.0f)
+        , mMipmapsCount(mipmapsCount)
+        , mTransparent(transparent)
+        , mGenerateMipmaps(generateMipmaps)
+    {
+    }
+
+    // texture format of base level and of all mipmaps is the same
+    eTextureFormat mTextureFormat = eTextureFormat_Null;
+
+    // base level texture dimensions
+    Size2D mDimensions;
+    Size2D mImageDimensions; // NPOT size of texture image
+
+    // normalized image size uv
+    float mMaxU;
+    float mMaxV;
+
+    int mMipmapsCount; // 0 means that mipmaps are disabled
+    // texture has transparent pixels
+    bool mTransparent; 
+    bool mGenerateMipmaps; // auto generate mipmaps on data upload
+};
+
+// get dimensions of specific texture mipmap level
+// @param baseDimensions: Base texture dimensions
+// @param mipmapLevel: Mipmap, 0 is base texture dimensions
+inline int GetTextureMipmapDims(int baseDimensions, int mipmapLevel)
+{
+    if (mipmapLevel > 0)
+    {
+        baseDimensions = (baseDimensions >> mipmapLevel);
+    }
+
+    if (baseDimensions < 1)
+    {
+        baseDimensions = 1;
+    }
+    return baseDimensions;
+}
+
 // get number of bytes per pixel for specific texture format
 // @param format: Format identifier
 inline int GetTextureFormatBytesCount(eTextureFormat format) 
@@ -177,20 +235,15 @@ inline int GetTextureFormatBitsCount(eTextureFormat format)
     return numBytes * 8;
 }
 
-inline int GetTextureMipmapDimensions(int dimensions, int mipmap)
+// compute texture data size in bytes
+// @param format: Texture format
+// @param baseImageDims: Base image dimensions
+// @param mipmapLevel: Texture mipmap, 0 is for base image
+inline int GetTextureDataSize(eTextureFormat format, const Size2D& baseImageDims, int mipmapLevel)
 {
-    if (mipmap < 1)
-        return dimensions;
-
-    if (dimensions < 1)
-        return 0;
-
-    dimensions = dimensions >> mipmap;
-    if (dimensions < 1)
-    {
-        dimensions = 1;
-    }
-    return dimensions;
+    int dimx = GetTextureMipmapDims(baseImageDims.x, mipmapLevel);
+    int dimy = GetTextureMipmapDims(baseImageDims.y, mipmapLevel);
+    return dimx * dimy * GetTextureFormatBytesCount(format);
 }
 
 enum ePrimitiveType

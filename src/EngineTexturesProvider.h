@@ -22,7 +22,7 @@ public:
     // extract texture with all mipmaps from engine textures cache
     // @param textureName: Entry name
     // @param textureData: Output texture data
-    bool ExtractTexture(const std::string& textureName, Texture2D_Data& textureData) const;
+    bool ExtractTexture(const std::string& textureName, Texture2D_Image& textureData) const;
 
     // extract all textures to specified directory
     // @param outputDirectory: Output directory path
@@ -61,7 +61,7 @@ private:
     struct TextureEntryIndex
     {
     public:
-        int mMipsCount = 0;
+        int mNumImages = 0;
         int mMipIndices[TEXTURE_MIP_LEVEL_COUNT] = {-1, -1, -1, -1};
     };
 

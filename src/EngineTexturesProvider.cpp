@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "EngineTexturesProvider.h"
-#include "Texture2D_Data.h"
+#include "Texture2D_Image.h"
 #include "Console.h"
 #include "FileSystem.h"
 
@@ -818,7 +818,7 @@ bool EngineTexturesProvider::ContainsTexture(const std::string& textureName) con
     return true;
 }
 
-bool EngineTexturesProvider::ExtractTexture(const std::string& textureName, Texture2D_Data& textureData) const
+bool EngineTexturesProvider::ExtractTexture(const std::string& textureName, Texture2D_Image& imageData) const
 {
     auto find_iterator = mIndicesMap.find(textureName);
     if (find_iterator == mIndicesMap.end())
@@ -833,35 +833,34 @@ bool EngineTexturesProvider::ExtractTexture(const std::string& textureName, Text
     debug_assert(linearIndex != -1);
     const TextureEntryStruct& entryStruct = mEntiesArray[linearIndex];
 
-    // extract primary bitmap
+    // extract texture with all mipmaps
     Size2D textureDimensions { entryStruct.mSizeX, entryStruct.mSizeY };
-    textureData.Setup(eTextureFormat_RGBA8, textureDimensions, entryStruct.mHasAlpha, nullptr);
-    if (!ExtractTexturePixels(linearIndex, textureData.mBitmap.data()))
+    imageData.CreateImage(eTextureFormat_RGBA8, textureDimensions, entryIndex.mNumImages - 1, entryStruct.mHasAlpha);
+    for (int icurr = 0; icurr < entryIndex.mNumImages; ++icurr)
     {
-        debug_assert(false);
-        gConsole.LogMessage(eLogMessage_Warning, "Cannot extract texture data '%s'", textureName.c_str());
-        return false;
-    }
-
-    // extract mipmaps
-    if (entryIndex.mMipsCount > 1)
-    {
-        textureData.SetupMipmaps(entryIndex.mMipsCount - 1);
-
-        for (int imipmap = 1; imipmap < entryIndex.mMipsCount; ++imipmap)
+        unsigned char* dataBuffer = imageData.GetImageDataBuffer(icurr);
+        if (icurr == 0)
         {
-            const int mipLinearIndex = entryIndex.mMipIndices[imipmap];
+            if (!ExtractTexturePixels(linearIndex, dataBuffer))
+            {
+                debug_assert(false);
+                gConsole.LogMessage(eLogMessage_Warning, "Cannot extract texture data '%s'", textureName.c_str());
+                return false;
+            }
+        }
+        else
+        {
+            const int mipLinearIndex = entryIndex.mMipIndices[icurr];
             debug_assert(mipLinearIndex != -1);
 
             const TextureEntryStruct& mipmapStruct = mEntiesArray[mipLinearIndex];
-            debug_assert(mipmapStruct.mSizeX == GetTextureMipmapDimensions(entryStruct.mSizeX, imipmap));
-            debug_assert(mipmapStruct.mSizeY == GetTextureMipmapDimensions(entryStruct.mSizeY, imipmap));
+            debug_assert(mipmapStruct.mSizeX == GetTextureMipmapDims(textureDimensions.x, icurr));
+            debug_assert(mipmapStruct.mSizeY == GetTextureMipmapDims(textureDimensions.y, icurr));
 
-            if (!ExtractTexturePixels(mipLinearIndex, textureData.mMipmaps[imipmap - 1].mBitmap.data()))
+            if (!ExtractTexturePixels(mipLinearIndex, dataBuffer))
             {
                 debug_assert(false);
                 gConsole.LogMessage(eLogMessage_Warning, "Cannot extract texture mipmap data '%s'", textureName.c_str());
-                break;
             }
         }
     }
@@ -880,19 +879,23 @@ void EngineTexturesProvider::DumpTextures(const std::string& outputDirectory) co
         }
     }
 
-    Texture2D_Data textureData;
+    Texture2D_Image imageData;
     for (const auto& indices_iterator: mIndicesMap)
     {
+        imageData.Clear();
+
         const TextureEntryIndex& entryIndex = indices_iterator.second;
-        debug_assert(entryIndex.mMipsCount > 0);
+        debug_assert(entryIndex.mNumImages > 0);
 
         const int primaryIndex = entryIndex.mMipIndices[0];
         debug_assert(primaryIndex != -1);
         const TextureEntryStruct& primaryEntry = mEntiesArray[primaryIndex];
 
         Size2D textureDimensions { primaryEntry.mSizeX, primaryEntry.mSizeY };
-        textureData.Setup(eTextureFormat_RGBA8, textureDimensions, primaryEntry.mHasAlpha, nullptr);
-        if (!ExtractTexturePixels(primaryIndex, textureData.mBitmap.data()))
+        imageData.CreateImage(eTextureFormat_RGBA8, textureDimensions, 0, primaryEntry.mHasAlpha);
+
+        unsigned char* dataBuffer = imageData.GetImageDataBuffer(0);
+        if (!ExtractTexturePixels(primaryIndex, dataBuffer))
         {
             debug_assert(false);
             gConsole.LogMessage(eLogMessage_Warning, "Cannot extract texture data '%s'", indices_iterator.first.c_str());
@@ -904,7 +907,7 @@ void EngineTexturesProvider::DumpTextures(const std::string& outputDirectory) co
         cxx::path_remove_forbidden_chars(tempName); // make sure path is good
 
         fs::path filePath = outDirectoryPath / fs::path { tempName };
-        if (!textureData.DumpToFile(filePath.generic_string()))
+        if (!imageData.DumpToFile(filePath.generic_string()))
         {
             debug_assert(false);
             gConsole.LogMessage(eLogMessage_Warning, "Cannot save texture '%s'", indices_iterator.first.c_str());
@@ -980,7 +983,7 @@ bool EngineTexturesProvider::ParseDirContent(const std::string& dirFilepath, con
             TextureEntryIndex& entryIndex = mIndicesMap[nameString];
             debug_assert(entryIndex.mMipIndices[mipIndex] == -1);
             entryIndex.mMipIndices[mipIndex] = i;
-            ++entryIndex.mMipsCount;
+            ++entryIndex.mNumImages;
         }
 
         TextureEntryStruct& entryStruct = mEntiesArray[i];

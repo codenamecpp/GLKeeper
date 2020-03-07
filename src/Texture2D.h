@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GraphicsDefs.h"
+#include "Texture2D_Image.h"
 
 // texture 2d resource
 class Texture2D: public cxx::noncopyable
@@ -10,6 +11,7 @@ public:
     std::string mTextureName;
 
     TextureSamplerState mSamplerState;
+    Texture2D_Desc mTextureDesc;
 
     GpuTexture2D* mGpuTextureObject = nullptr;
 
@@ -24,7 +26,7 @@ public:
     // create texture from source data
     // @param textureData: Data
     // @returns false on error
-    bool CreateTexture(const Texture2D_Data& textureData);
+    bool CreateTexture(const Texture2D_Image& textureData);
 
     // set texture filtering and repeating modes
     // @param samplerState: Sampler state params
@@ -40,7 +42,6 @@ public:
 
     bool IsLoadedFromFile() const { return mLoadedFromFile; }
     bool IsPersistent() const { return mPersistent; }
-    bool IsTransparent() const { return mTransparent; }
 
 private:
     // internals
@@ -49,5 +50,4 @@ private:
 private:
     bool mLoadedFromFile = false; // image was loaded from image file so it can be reloaded
     bool mPersistent = false; // once it was loaded keep alive forever
-    bool mTransparent = false; // texture is transparent
 };

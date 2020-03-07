@@ -8,6 +8,7 @@
 #include "TimeManager.h"
 #include "GpuBuffer.h"
 #include "DebugGuiWindow.h"
+#include "GpuTexture2D.h"
 
 DebugGuiManager gDebugGuiManager;
 
@@ -56,12 +57,16 @@ bool DebugGuiManager::Initialize()
         Deinit();
         return false;
     }
-
     io.Fonts->Build();
     io.Fonts->GetTexDataAsRGBA32(&pcPixels, &fontTextureDimensions.x, &fontTextureDimensions.y);
 
-    GpuTexture2D* fontTexture = gGraphicsDevice.CreateTexture2D(eTextureFormat_RGBA8, fontTextureDimensions, pcPixels);
-    debug_assert(fontTexture);
+    GpuTexture2D* fontTexture = gGraphicsDevice.CreateTexture2D();
+
+    Texture2D_Desc textureDesc { eTextureFormat_RGBA8, fontTextureDimensions, 0, false, false };
+    if (!fontTexture->InitTextureObject(textureDesc, pcPixels))
+    {
+        debug_assert(false);
+    }
 
     mVertsBuffer = gGraphicsDevice.CreateBuffer(eBufferContent_Vertices);
     debug_assert(mVertsBuffer);

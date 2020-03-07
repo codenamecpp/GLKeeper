@@ -41,12 +41,7 @@ public:
     GpuBufferTexture* CreateBufferTexture(eTextureFormat textureFormat, int dataLength, const void* sourceData);
 
     // create 2D texture, client is responsible for destroying resource
-    // @param textureFormat: Format
-    // @param dimensions: Texture dimensions, must be POT!
     GpuTexture2D* CreateTexture2D();
-    GpuTexture2D* CreateTexture2D(eTextureFormat textureFormat, const Size2D& dimensions, const void* sourceData);
-    // @param textureData: Texture data
-    GpuTexture2D* CreateTexture2D(const Texture2D_Data& textureData);
 
     // create texture array 2D, client is responsible for destroying resource
     // @param textureFormat: Format

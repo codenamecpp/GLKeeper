@@ -608,32 +608,6 @@ GpuTexture2D* GraphicsDevice::CreateTexture2D()
     return texture;
 }
 
-GpuTexture2D* GraphicsDevice::CreateTexture2D(const Texture2D_Data& textureData)
-{
-    debug_assert(gGLFW_WindowHandle);
-
-    GpuTexture2D* texture = new GpuTexture2D(mDeviceContext);
-    if (!texture->SetTextureData(textureData))
-    {
-        DestroyTexture(texture);
-        return nullptr;
-    }
-    return texture;
-}
-
-GpuTexture2D* GraphicsDevice::CreateTexture2D(eTextureFormat textureFormat, const Size2D& dimensions, const void* sourceData)
-{
-    debug_assert(gGLFW_WindowHandle);
-
-    GpuTexture2D* texture = new GpuTexture2D(mDeviceContext);
-    if (!texture->SetTextureData(textureFormat, dimensions, sourceData))
-    {
-        DestroyTexture(texture);
-        return nullptr;
-    }
-    return texture;
-}
-
 GpuTextureArray2D* GraphicsDevice::CreateTextureArray2D()
 {
     debug_assert(gGLFW_WindowHandle);

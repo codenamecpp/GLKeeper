@@ -2,7 +2,7 @@
 #include "Texture2D.h"
 #include "GpuTexture2D.h"
 #include "GraphicsDevice.h"
-#include "Texture2D_Data.h"
+#include "Texture2D_Image.h"
 #include "EngineTexturesProvider.h"
 #include "Console.h"
 
@@ -42,10 +42,10 @@ bool Texture2D::LoadTexture()
     if (IsTextureLoaded())
         return true;
 
-    Texture2D_Data textureData;
+    Texture2D_Image imageData;
     if (gEngineTexturesProvider.ContainsTexture(mTextureName))
     {
-        if (!gEngineTexturesProvider.ExtractTexture(mTextureName, textureData))
+        if (!gEngineTexturesProvider.ExtractTexture(mTextureName, imageData))
         {
             gConsole.LogMessage(eLogMessage_Debug, "Fail to load texture '%s'", mTextureName.c_str());
         }
@@ -54,13 +54,13 @@ bool Texture2D::LoadTexture()
     {
         // todo: load textures from wad
     }
-
-    if (textureData.IsNull()) // create dummy texture
+    
+    if (imageData.IsNull()) // create dummy texture
     {
         Size2D dummyTextureDims { 64, 64 };
-        textureData.Setup(eTextureFormat_RGBA8, dummyTextureDims, false, nullptr);
-        textureData.FillWithCheckerBoard();
-        if (!CreateTexture(textureData))
+        imageData.CreateImage(eTextureFormat_RGBA8, dummyTextureDims, 0, false);
+        imageData.FillWithCheckerBoard(0);
+        if (!CreateTexture(imageData))
         {
             debug_assert(false);
         }
@@ -68,22 +68,25 @@ bool Texture2D::LoadTexture()
     }
 
     // force pot dims
-    if (textureData.NonPOT())
+    if (imageData.NonPOT())
     {
-        textureData.ResizeToPOT(false);
+        imageData.ResizeToPOT();
     }
 
     mLoadedFromFile = true;
+    mTextureDesc = imageData.mTextureDesc;
     if (mGpuTextureObject == nullptr)
     {
         mGpuTextureObject = gGraphicsDevice.CreateTexture2D();
         debug_assert(mGpuTextureObject);
     }
 
-    if (!mGpuTextureObject->SetTextureData(textureData))
+    if (!mGpuTextureObject->InitTextureObject(mTextureDesc, nullptr))
     {
         debug_assert(false);
     }
+    // TODO upload data
+    debug_assert(false);
 
     mGpuTextureObject->SetSamplerState(mSamplerState);
     return true;
@@ -98,10 +101,9 @@ void Texture2D::FreeTexture()
     // reset values
     mPersistent     = false;
     mLoadedFromFile = false;
-    mTransparent    = false;
 }
 
-bool Texture2D::CreateTexture(const Texture2D_Data& textureData)
+bool Texture2D::CreateTexture(const Texture2D_Image& textureData)
 {
     if (textureData.IsNull())
     {
@@ -122,14 +124,17 @@ bool Texture2D::CreateTexture(const Texture2D_Data& textureData)
         debug_assert(mGpuTextureObject);
     }
 
-    if (!mGpuTextureObject->SetTextureData(textureData))
+    mTextureDesc = textureData.mTextureDesc;
+
+    if (!mGpuTextureObject->InitTextureObject(mTextureDesc, nullptr))
     {
         debug_assert(false);
     }
+    // TODO upload data
+    debug_assert(false);
 
     mGpuTextureObject->SetSamplerState(mSamplerState);
 
-    mTransparent = textureData.mTransparent;
     mLoadedFromFile = false;
     return true;
 }

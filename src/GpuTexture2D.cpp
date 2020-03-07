@@ -3,7 +3,7 @@
 #include "OpenGL_Defs.h"
 #include "GraphicsDeviceContext.h"
 #include "GraphicsDevice.h"
-#include "Texture2D_Data.h"
+#include "Texture2D_Image.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -38,132 +38,126 @@ private:
 
 GpuTexture2D::GpuTexture2D(GraphicsDeviceContext& renderContext)
     : mGraphicsContext(renderContext)
-    , mResourceHandle()
+    , mResourceHandle(GpuTextureHandle_NULL)
     , mSamplerState()
-    , mSize()
-    , mFormat()
-    , mMipmapCount()
+    , mDesc()
 {
-    ::glGenTextures(1, &mResourceHandle);
-    glCheckError();
 }
 
 GpuTexture2D::~GpuTexture2D()
 {
-    SetUnbound();
-
-    ::glDeleteTextures(1, &mResourceHandle);
-    glCheckError();
+    FreeTextureObject();
 }
 
-bool GpuTexture2D::SetTextureData(eTextureFormat textureFormat, const Size2D& dimensions, const void* sourceData)
+bool GpuTexture2D::InitTextureObject(const Texture2D_Desc& textureDesc, const void* sourceData)
 {
-    if (textureFormat == eTextureFormat_Null)
+    if (IsInitialized())
+    {   
+        debug_assert(false);
         return false;
+    }
 
-    debug_assert(cxx::get_next_pot(dimensions.x) == dimensions.x);
-    debug_assert(cxx::get_next_pot(dimensions.y) == dimensions.y);
-
-    GLuint formatGL = GetTextureInputFormatGL(textureFormat);
-    GLint internalFormatGL = GetTextureInternalFormatGL(textureFormat);
-    GLenum dataType = GetTextureDataTypeGL(textureFormat);
-    if (formatGL == 0 || internalFormatGL == 0 || dataType == 0)
+    // invalid format
+    if (textureDesc.mTextureFormat == eTextureFormat_Null)
     {
         debug_assert(false);
         return false;
     }
 
-    mFormat = textureFormat;
-    mSize = dimensions;
-    mMipmapCount = 0;
+    // expect pot dimensions
+    bool is_pot_x = cxx::get_next_pot(textureDesc.mDimensions.x) == textureDesc.mDimensions.x;
+    bool is_pot_y = cxx::get_next_pot(textureDesc.mDimensions.y) == textureDesc.mDimensions.y;
+
+    if (!is_pot_x || !is_pot_y)
+    {
+        debug_assert(false);
+        return false;
+    }
+
+    GLuint gl_format = GetTextureInputFormatGL(textureDesc.mTextureFormat);
+    GLenum gl_data_type = GetTextureDataTypeGL(textureDesc.mTextureFormat);
+    GLint gl_format_internal = GetTextureInternalFormatGL(textureDesc.mTextureFormat);
+    if (gl_format == 0 || gl_format_internal == 0 || gl_data_type == 0)
+    {
+        debug_assert(false);
+        return false;
+    }
+
+    ::glGenTextures(1, &mResourceHandle);
+    glCheckError();
+
+    if (mResourceHandle == GpuTextureHandle_NULL)
+    {
+        debug_assert(false);
+        return false;
+    }
+
+    // init texture data
+    mDesc = textureDesc;
 
     ScopeBinder scopedBind {this};
 
-    ::glTexImage2D(GL_TEXTURE_2D, 0, internalFormatGL, mSize.x, mSize.y, 0, formatGL, dataType, sourceData);
+    ::glTexImage2D(GL_TEXTURE_2D, 0, gl_format_internal, mDesc.mDimensions.x, mDesc.mDimensions.y, 0, gl_format, gl_data_type, sourceData);
     glCheckError();
+
+    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, mDesc.mMipmapsCount);
+    glCheckError();
+
+    // init mipmaps
+    if (mDesc.mMipmapsCount > 0)
+    {
+        if (!mDesc.mGenerateMipmaps)
+        {
+            for (int iMipmap = 1; iMipmap < mDesc.mMipmapsCount + 1; ++iMipmap)
+            {
+                int mipmapDimsx = GetTextureMipmapDims(mDesc.mDimensions.x, iMipmap);
+                int mipmapDimsy = GetTextureMipmapDims(mDesc.mDimensions.y, iMipmap);
+
+                ::glTexImage2D(GL_TEXTURE_2D, iMipmap, gl_format_internal, mipmapDimsx, mipmapDimsy, 0, gl_format, gl_data_type, nullptr);
+                glCheckError();
+            }
+        }
+        else
+        {
+            GenerateMipmapsImpl();
+        }
+    }
 
     // set default filter and repeat mode for texture
     SetSamplerStateImpl();
     return true;
 }
 
-bool GpuTexture2D::SetTextureData(const Texture2D_Data& textureData)
+void GpuTexture2D::FreeTextureObject()
 {
-    if (textureData.IsNull())
+    if (IsInitialized())
+    {
+        SetUnbound();
+
+        // destroy opengl object
+        ::glDeleteTextures(1, &mResourceHandle);
+        glCheckError();
+    }
+    // clear desc
+    mDesc = Texture2D_Desc();
+}
+
+bool GpuTexture2D::SetSamplerState(const TextureSamplerState& samplerState)
+{
+    if (!IsInitialized())
     {
         debug_assert(false);
         return false;
     }
 
-    debug_assert(textureData.IsPOT());
-
-    GLuint formatGL = GetTextureInputFormatGL(textureData.mPixelsFormat);
-    GLint internalFormatGL = GetTextureInternalFormatGL(textureData.mPixelsFormat);
-    GLenum dataType = GetTextureDataTypeGL(textureData.mPixelsFormat);
-    if (formatGL == 0 || internalFormatGL == 0 || dataType == 0)
-    {
-        debug_assert(false);
-        return false;
-    }
-
-    mFormat = textureData.mPixelsFormat;
-    mSize = textureData.mSize;
-    mMipmapCount = textureData.GetMipmapsCount();
-
-    ScopeBinder scopedBind {this};
-
-    if (textureData.HasMipmaps())
-    {
-        ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, textureData.GetMipmapsCount());
-        glCheckError();
-    }
-
-    ::glTexImage2D(GL_TEXTURE_2D, 0, internalFormatGL, mSize.x, mSize.y, 0, formatGL, dataType, textureData.mBitmap.data());
-    glCheckError();
-
-    // upload mipmaps
-    for (int iMipmap = 0; iMipmap < mMipmapCount; ++iMipmap)
-    {
-        ::glTexImage2D(GL_TEXTURE_2D, iMipmap + 1, internalFormatGL, 
-            textureData.mMipmaps[iMipmap].mSize.x, 
-            textureData.mMipmaps[iMipmap].mSize.y, 0, formatGL, dataType, 
-            textureData.mMipmaps[iMipmap].mBitmap.data());
-        glCheckError();
-    }
-
-    // set default filter and repeat mode for texture
-    SetSamplerStateImpl();
-    return true;
-}
-
-void GpuTexture2D::SetMipmapsCount(int mipmapsCount)
-{
-    if (mMipmapCount == mipmapsCount)
-        return;
-
-    bool forceSetSamplerState = (mipmapsCount == 0) || (mMipmapCount == 0);
-    mMipmapCount = mipmapsCount;
-
-    ScopeBinder scopedBind {this};
-
-    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, mMipmapCount);
-    glCheckError();
-
-    if (forceSetSamplerState)
-    {
-        SetSamplerStateImpl();
-    }
-}
-
-void GpuTexture2D::SetSamplerState(const TextureSamplerState& samplerState)
-{
     if (mSamplerState == samplerState)
-        return;
+        return true;
 
     mSamplerState = samplerState;
 
     ScopeBinder scopedBind {this};
     SetSamplerStateImpl();
+    return true;
 }
 
 bool GpuTexture2D::IsTextureBound(eTextureUnit textureUnit) const
@@ -183,46 +177,106 @@ bool GpuTexture2D::IsTextureBound() const
     return false;
 }
 
-bool GpuTexture2D::TexSubImage(int mipLevel, int xoffset, int yoffset, int sizex, int sizey, const void* sourceData)
+bool GpuTexture2D::IsInitialized() const
 {
-    debug_assert(mipLevel < mMipmapCount);
+    return mResourceHandle != GpuTextureHandle_NULL;
+}
 
-    debug_assert(sourceData);
-    GLuint formatGL = GetTextureInputFormatGL(mFormat);
-    GLenum dataType = GetTextureDataTypeGL(mFormat);
-    if (formatGL == 0 || dataType == 0)
+bool GpuTexture2D::TexSubImage(int mipmapLevel, const Rect2D& rc, const void* sourceData)
+{
+    if (!IsInitialized())
+    {
+        debug_assert(false);
+        return false;
+    }
+
+    debug_assert(mipmapLevel <= mDesc.mMipmapsCount);
+
+    if (sourceData == nullptr)
+        return true;
+
+    int mipmapDimX = GetTextureMipmapDims(mipmapLevel, mDesc.mDimensions.x);
+    int mipmapDimY = GetTextureMipmapDims(mipmapLevel, mDesc.mDimensions.y);
+
+    debug_assert(rc.mX >= 0);
+    debug_assert(rc.mY >= 0);
+    debug_assert(rc.mX + rc.mSizeX <= mipmapDimX);
+    debug_assert(rc.mY + rc.mSizeY <= mipmapDimY);
+
+    GLuint gl_format = GetTextureInputFormatGL(mDesc.mTextureFormat);
+    GLenum gl_data_type = GetTextureDataTypeGL(mDesc.mTextureFormat);
+    if (gl_format == 0 || gl_data_type == 0)
     {
         debug_assert(false);
         return false;
     }
 
     ScopeBinder scopedBind {this};
-    ::glTexSubImage2D(GL_TEXTURE_2D, mipLevel, xoffset, yoffset, sizex, sizey, formatGL, dataType, sourceData);
+    ::glTexSubImage2D(GL_TEXTURE_2D, mipmapLevel, rc.mX, rc.mY, rc.mSizeX, rc.mSizeY, gl_format, gl_data_type, sourceData);
     glCheckError();
     return true;
 }
 
-bool GpuTexture2D::TexSubImage(int mipLevel, int sizex, int sizey, const void* sourceData)
+bool GpuTexture2D::TexSubImage(int mipmapLevel, const Size2D& dimensions, const void* sourceData)
 {
-    return TexSubImage(mipLevel, 0, 0, mSize.x, mSize.y, sourceData);
+    if (!IsInitialized())
+    {
+        debug_assert(false);
+        return false;
+    }
+
+    if (sourceData)
+    {
+        Rect2D textureRect 
+        {
+            0,
+            0,
+            dimensions.x,
+            dimensions.y
+        };
+        return TexSubImage(mipmapLevel, textureRect, sourceData);
+    }
+    return true;
+}
+
+bool GpuTexture2D::TexSubImage(int mipmapLevel, const void* sourceData)
+{
+    if (!IsInitialized())
+    {
+        debug_assert(false);
+        return false;
+    }
+
+    if (sourceData)
+    {
+        Rect2D textureRect 
+        {
+            0,
+            0,
+            GetTextureMipmapDims(mipmapLevel, mDesc.mDimensions.x),
+            GetTextureMipmapDims(mipmapLevel, mDesc.mDimensions.y),
+        };
+        return TexSubImage(mipmapLevel, textureRect, sourceData);
+    }
+    return true;
 }
 
 void GpuTexture2D::SetSamplerStateImpl()
 {
     // set filtering
     GLint magFilterGL = GL_NEAREST;
-    GLint minFilterGL = mMipmapCount > 0 ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST;
+    GLint minFilterGL = mDesc.mMipmapsCount > 0 ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST;
     switch (mSamplerState.mFilterMode)
     {
         case eTextureFilterMode_Nearest: 
             break;
         case eTextureFilterMode_Bilinear:
             magFilterGL = GL_LINEAR;
-            minFilterGL = mMipmapCount > 0 ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR;
+            minFilterGL = mDesc.mMipmapsCount > 0 ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR;
             break;
         case eTextureFilterMode_Trilinear:
             magFilterGL = GL_LINEAR;
-            minFilterGL = mMipmapCount > 0 ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR;
+            minFilterGL = mDesc.mMipmapsCount > 0 ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR;
             break;
         default:
         {
@@ -249,6 +303,12 @@ void GpuTexture2D::SetSamplerStateImpl()
     glCheckError();
 
     ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, gl_wrapR);
+    glCheckError();
+}
+
+void GpuTexture2D::GenerateMipmapsImpl()
+{
+    ::glGenerateMipmap(GL_TEXTURE_2D);
     glCheckError();
 }
 

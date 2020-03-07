@@ -3,7 +3,7 @@
 #include "System.h"
 #include "FileSystem.h"
 #include "EngineTexturesProvider.h"
-#include "Texture2D_Data.h"
+#include "Texture2D_Image.h"
 
 int main(int argc, char *argv[])
 {

@@ -185,9 +185,6 @@
     <ClInclude Include="3rd_party\stb_image_write.h">
       <Filter>Third_Party\stb</Filter>
     </ClInclude>
-    <ClInclude Include="Texture2D_Data.h">
-      <Filter>Application\Resources</Filter>
-    </ClInclude>
     <ClInclude Include="path_utils.h">
       <Filter>Lib</Filter>
     </ClInclude>
@@ -260,6 +257,9 @@
     <ClInclude Include="common_utils.h">
       <Filter>Lib</Filter>
     </ClInclude>
+    <ClInclude Include="Texture2D_Image.h">
+      <Filter>Application\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -311,9 +311,6 @@
     </ClCompile>
     <ClCompile Include="3rd_party\stb_rect_pack.cpp">
       <Filter>Third_Party\stb</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture2D_Data.cpp">
-      <Filter>Application\Resources</Filter>
     </ClCompile>
     <ClCompile Include="stb_image.cpp">
       <Filter>Third_Party\stb</Filter>
@@ -370,6 +367,9 @@
       <Filter>Application\Resources</Filter>
     </ClCompile>
     <ClCompile Include="Texture2D.cpp">
+      <Filter>Application\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture2D_Image.cpp">
       <Filter>Application\Resources</Filter>
     </ClCompile>
   </ItemGroup>
