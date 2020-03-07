@@ -37,11 +37,13 @@ public:
     // @param mipmap: Mipmap level, 0 is for base image
     // @returns false if pixels format not supported
     bool FillWithCheckerBoard(int mipmap);
+    bool FillWithCheckerBoard();
 
     // fill canvas with color, base image must be allocated
     // @param mipmap: Mipmap level, 0 is for base image
     // @returns false if pixels format not supported
     bool FillWithColor(Color32 color, int mipmap);
+    bool FillWithColor(Color32 color);
 
     // resize base image to nearest pot dimensions, discards any mipmaps
     // source image size will be stored in mImageSize
@@ -53,12 +55,6 @@ public:
     // test whether texture bitmap has power of two dimensions
     bool IsPOT() const;
     bool NonPOT() const;
-
-    // get number of additional mipmaps not counting primary bitmap
-    inline int GetMipmapsCount() const
-    {
-        return mTextureDesc.mMipmapsCount;
-    }
 
     // test whether image has additional mipmap levels
     inline bool HasMipmaps() const
@@ -73,7 +69,10 @@ public:
     // @param mipmap: Mipmap level, 0 is for base image
     // @returns num bytes within mImageData array
     unsigned char* GetImageDataBuffer(int mipmap);
+    unsigned char* GetImageDataBuffer();
+
     const unsigned char* GetImageDataBuffer(int mipmap) const;
+    const unsigned char* GetImageDataBuffer() const;
 
     // get image data length in bytes
     // @param mipmap: Mipmap level, 0 is for base image

@@ -894,7 +894,7 @@ void EngineTexturesProvider::DumpTextures(const std::string& outputDirectory) co
         Size2D textureDimensions { primaryEntry.mSizeX, primaryEntry.mSizeY };
         imageData.CreateImage(eTextureFormat_RGBA8, textureDimensions, 0, primaryEntry.mHasAlpha);
 
-        unsigned char* dataBuffer = imageData.GetImageDataBuffer(0);
+        unsigned char* dataBuffer = imageData.GetImageDataBuffer();
         if (!ExtractTexturePixels(primaryIndex, dataBuffer))
         {
             debug_assert(false);

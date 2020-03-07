@@ -232,6 +232,19 @@ bool Texture2D_Image::FillWithCheckerBoard(int mipmap)
     return false;
 }
 
+bool Texture2D_Image::FillWithCheckerBoard()
+{
+    for (int imipmap = 0; imipmap < mTextureDesc.mMipmapsCount + 1; ++imipmap)
+    {
+        if (!FillWithCheckerBoard(imipmap))
+        {
+            debug_assert(false);
+            break;
+        }
+    }
+    return true;
+}
+
 bool Texture2D_Image::FillWithColor(Color32 color, int mipmap)
 {
     if (!HasMipmap(mipmap))
@@ -287,6 +300,19 @@ bool Texture2D_Image::FillWithColor(Color32 color, int mipmap)
     return false;
 }
 
+bool Texture2D_Image::FillWithColor(Color32 color)
+{
+    for (int imipmap = 0; imipmap < mTextureDesc.mMipmapsCount + 1; ++imipmap)
+    {
+        if (!FillWithColor(color, imipmap))
+        {
+            debug_assert(false);
+            break;
+        }
+    }
+    return true;
+}
+
 int Texture2D_Image::GetImageDataSize(int mipmap) const
 {
     if (mTextureDesc.mTextureFormat == eTextureFormat_Null)
@@ -335,4 +361,14 @@ const unsigned char* Texture2D_Image::GetImageDataBuffer(int mipmap) const
     }
     debug_assert(false);
     return nullptr;
+}
+
+unsigned char* Texture2D_Image::GetImageDataBuffer()
+{
+    return GetImageDataBuffer(0);
+}
+
+const unsigned char* Texture2D_Image::GetImageDataBuffer() const
+{
+    return GetImageDataBuffer(0);
 }

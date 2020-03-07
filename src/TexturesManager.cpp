@@ -7,14 +7,14 @@ TexturesManager gTexturesManager;
 
 bool TexturesManager::Initialize()
 {
-    //InitDefaultTextures();
+    InitDefaultTextures();
 
     return true;
 }
 
 void TexturesManager::Deinit()
 {
-    //FreeDefaultTextures();
+    FreeDefaultTextures();
     FreeTextures();
 }
 
