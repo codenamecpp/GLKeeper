@@ -95,7 +95,7 @@ void SceneCamera::SetIdentity()
     mViewMatrixDirty = true;
 }
 
-void SceneCamera::SetIdentityOrientation()
+void SceneCamera::ResetOrientation()
 {
     mFrontDirection = -SceneAxes::Z; // look along negative axis
     mUpDirection = SceneAxes::X;

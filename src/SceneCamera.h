@@ -46,7 +46,7 @@ public:
     void SetIdentity();
 
     // reset camera orientation to initial state
-    void SetIdentityOrientation();
+    void ResetOrientation();
 
     // set camera orientation vectors
     // @param dirForward, dirRight, dirUp: Axes, should be normalized 

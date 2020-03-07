@@ -12,11 +12,28 @@ bool GameScene::Initialize()
 void GameScene::Deinit()
 {
     mAABBTree.Cleanup();
+
+    DestroyAttachedSceneObjects();
 }
 
 void GameScene::UpdateFrame()
 {
 
+}
+
+SceneObject3D* GameScene::CreateSceneObject(const glm::vec3& position, const glm::vec3& direction, float scaling)
+{
+    SceneObject3D* sceneEntity = mObjectsPool.create();
+    sceneEntity->SetPositionOnScene(position);
+    // todo : direction
+    sceneEntity->SetScaling(scaling);
+    return sceneEntity;
+}
+
+SceneObject3D* GameScene::CreateSceneObject()
+{
+    SceneObject3D* sceneEntity = mObjectsPool.create();
+    return sceneEntity;
 }
 
 void GameScene::HandleSceneObjectTransformChange(SceneObject3D* sceneEntity)
@@ -66,6 +83,14 @@ void GameScene::DetachSceneEntity(SceneObject3D* sceneEntity)
     mAABBTree.RemoveObject(sceneEntity);
 }
 
+void GameScene::DestroySceneObject(SceneObject3D* sceneEntity)
+{
+    debug_assert(sceneEntity);
+
+    DetachSceneEntity(sceneEntity);
+    mObjectsPool.destroy(sceneEntity);
+}
+
 void GameScene::BuildAABBTree()
 {
     while (mTransformEntities.has_elements())
@@ -76,5 +101,24 @@ void GameScene::BuildAABBTree()
         // refresh aabbtree node
         SceneObject3D* sceneEntity = entityNode->get_element();
         mAABBTree.UpdateObject(sceneEntity);
+    }
+}
+
+void GameScene::DestroyAttachedSceneObjects()
+{
+    while (mTransformEntities.has_elements())
+    {
+        cxx::intrusive_node<SceneObject3D>* entityNode = mTransformEntities.get_head_node();
+
+        SceneObject3D* currentEntity = entityNode->get_element();
+        DestroySceneObject(currentEntity);
+    }
+
+    while (mSceneEntities.has_elements())
+    {
+        cxx::intrusive_node<SceneObject3D>* entityNode = mSceneEntities.get_head_node();
+
+        SceneObject3D* currentEntity = entityNode->get_element();
+        DestroySceneObject(currentEntity);
     }
 }
