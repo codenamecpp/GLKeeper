@@ -19,6 +19,9 @@ public:
     bool Initialize();
     void Deinit();
 
+    // process single frame logic
+    void UpdateFrame();
+
     // process input event
     // @param inputEvent: Event data
     void HandleInputEvent(MouseButtonInputEvent& inputEvent);

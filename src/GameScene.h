@@ -16,6 +16,9 @@ public:
     bool Initialize();
     void Deinit();
 
+    // process single frame logic
+    void UpdateFrame();
+
 };
 
 extern GameScene gGameScene;

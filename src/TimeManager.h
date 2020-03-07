@@ -8,7 +8,7 @@ public:
     bool Initialize();
     void Deinit();
 
-    // process update frame
+    // process single frame logic
     // @param deltaTime: Time elapsed since last frame in seconds, realtime
     void UpdateFrame(double deltaTime);
 

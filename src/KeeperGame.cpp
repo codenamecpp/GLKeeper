@@ -23,6 +23,11 @@ void KeeperGame::Deinit()
     gGameScene.Deinit();
 }
 
+void KeeperGame::UpdateFrame()
+{
+    gGameScene.UpdateFrame();
+}
+
 void KeeperGame::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
 }

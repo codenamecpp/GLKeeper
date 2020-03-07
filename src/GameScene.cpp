@@ -11,3 +11,8 @@ bool GameScene::Initialize()
 void GameScene::Deinit()
 {
 }
+
+void GameScene::UpdateFrame()
+{
+
+}

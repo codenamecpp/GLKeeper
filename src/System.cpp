@@ -10,6 +10,7 @@
 #include "DebugGuiManager.h"
 #include "DebugConsoleWindow.h"
 #include "TexturesManager.h"
+#include "KeeperGame.h"
 
 #include "GLFW/glfw3.h"
 
@@ -135,11 +136,12 @@ void System::Execute()
         if (mQuitRequested)
             break;
 
-        // todo process game logic
+        // update frame
         gTexturesManager.UpdateFrame();
-
+        gKeeperGame.UpdateFrame();
         gDebugGuiManager.UpdateFrame();
 
+        // render frame
         gRenderManager.RenderFrame();
         previousFrameTime = currentFrameTime;
     }

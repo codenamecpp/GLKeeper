@@ -19,7 +19,7 @@ public:
     // render 
     void RenderFrame();
 
-    // process logic
+    // process single frame logic
     void UpdateFrame();
 
     // process input event
