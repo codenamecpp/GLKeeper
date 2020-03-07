@@ -1,7 +1,7 @@
 #pragma once
 
 // forwards
-class SceneObject3D;
+class SceneObject;
 class SceneCamera;
 class GameScene;
 

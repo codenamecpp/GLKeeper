@@ -4,7 +4,7 @@
 
 // refines 3d object that lives on game scene
 // it has location and orientation in space along with bounding volume
-class SceneObject3D final: public cxx::noncopyable
+class SceneObject final: public cxx::noncopyable
 {
     friend class GameScene;
 
@@ -24,8 +24,8 @@ public:
     float mDistanceToCamera; // this value gets updated during scene rendition
 
 public:
-    SceneObject3D();
-    ~SceneObject3D();
+    SceneObject();
+    ~SceneObject();
 
     // set entity orienation vectors, expecting all normalized
     // @param directionRight: Vector X
@@ -80,8 +80,8 @@ private:
 
 private:
     // scene data
-    cxx::intrusive_node<SceneObject3D> mListNodeTransformed;
-    cxx::intrusive_node<SceneObject3D> mListNodeAttached;
+    cxx::intrusive_node<SceneObject> mListNodeTransformed;
+    cxx::intrusive_node<SceneObject> mListNodeAttached;
 
     // dirty flags
     bool mTransformationDirty;

@@ -272,9 +272,6 @@
     <ClInclude Include="DebugRenderer.h">
       <Filter>Game\Render</Filter>
     </ClInclude>
-    <ClInclude Include="SceneObject3D.h">
-      <Filter>Game\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="Texture2DAnimation.h">
       <Filter>Application\Resources</Filter>
     </ClInclude>
@@ -292,6 +289,9 @@
     </ClInclude>
     <ClInclude Include="GenericGamestate.h">
       <Filter>Game\GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneObject.h">
+      <Filter>Game\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -411,9 +411,6 @@
     <ClCompile Include="DebugRenderer.cpp">
       <Filter>Game\Render</Filter>
     </ClCompile>
-    <ClCompile Include="SceneObject3D.cpp">
-      <Filter>Game\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Texture2DAnimation.cpp">
       <Filter>Application\Resources</Filter>
     </ClCompile>
@@ -421,6 +418,9 @@
       <Filter>Game\Scene</Filter>
     </ClCompile>
     <ClCompile Include="GameScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneObject.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
   </ItemGroup>

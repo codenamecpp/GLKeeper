@@ -227,7 +227,7 @@
     <ClInclude Include="RenderManager.h" />
     <ClInclude Include="RenderProgram.h" />
     <ClInclude Include="SceneDefs.h" />
-    <ClInclude Include="SceneObject3D.h" />
+    <ClInclude Include="SceneObject.h" />
     <ClInclude Include="string_utils.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="SystemSettings.h" />
@@ -280,7 +280,7 @@
     <ClCompile Include="RenderManager.cpp" />
     <ClCompile Include="RenderProgram.cpp" />
     <ClCompile Include="SceneCamera.cpp" />
-    <ClCompile Include="SceneObject3D.cpp" />
+    <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="System.cpp" />
     <ClCompile Include="SystemSettings.cpp" />

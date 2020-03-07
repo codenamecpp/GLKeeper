@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "GameScene.h"
-#include "SceneObject3D.h"
+#include "SceneObject.h"
 
 GameScene gGameScene;
 
@@ -21,22 +21,22 @@ void GameScene::UpdateFrame()
 
 }
 
-SceneObject3D* GameScene::CreateSceneObject(const glm::vec3& position, const glm::vec3& direction, float scaling)
+SceneObject* GameScene::CreateSceneObject(const glm::vec3& position, const glm::vec3& direction, float scaling)
 {
-    SceneObject3D* sceneEntity = mObjectsPool.create();
+    SceneObject* sceneEntity = mObjectsPool.create();
     sceneEntity->SetPositionOnScene(position);
     // todo : direction
     sceneEntity->SetScaling(scaling);
     return sceneEntity;
 }
 
-SceneObject3D* GameScene::CreateSceneObject()
+SceneObject* GameScene::CreateSceneObject()
 {
-    SceneObject3D* sceneEntity = mObjectsPool.create();
+    SceneObject* sceneEntity = mObjectsPool.create();
     return sceneEntity;
 }
 
-void GameScene::HandleSceneObjectTransformChange(SceneObject3D* sceneEntity)
+void GameScene::HandleSceneObjectTransformChange(SceneObject* sceneEntity)
 {
     debug_assert(sceneEntity);
     if (!mTransformEntities.contains(&sceneEntity->mListNodeTransformed))
@@ -45,7 +45,7 @@ void GameScene::HandleSceneObjectTransformChange(SceneObject3D* sceneEntity)
     }
 }
 
-void GameScene::AttachSceneEntity(SceneObject3D* sceneEntity)
+void GameScene::AttachSceneEntity(SceneObject* sceneEntity)
 {
     debug_assert(sceneEntity);
     // already attached to scene
@@ -62,7 +62,7 @@ void GameScene::AttachSceneEntity(SceneObject3D* sceneEntity)
     mAABBTree.InsertObject(sceneEntity);
 }
 
-void GameScene::DetachSceneEntity(SceneObject3D* sceneEntity)
+void GameScene::DetachSceneEntity(SceneObject* sceneEntity)
 {
     debug_assert(sceneEntity);
 
@@ -83,7 +83,7 @@ void GameScene::DetachSceneEntity(SceneObject3D* sceneEntity)
     mAABBTree.RemoveObject(sceneEntity);
 }
 
-void GameScene::DestroySceneObject(SceneObject3D* sceneEntity)
+void GameScene::DestroySceneObject(SceneObject* sceneEntity)
 {
     debug_assert(sceneEntity);
 
@@ -95,11 +95,11 @@ void GameScene::BuildAABBTree()
 {
     while (mTransformEntities.has_elements())
     {
-        cxx::intrusive_node<SceneObject3D>* entityNode = mTransformEntities.get_head_node();
+        cxx::intrusive_node<SceneObject>* entityNode = mTransformEntities.get_head_node();
         mTransformEntities.remove(entityNode);
 
         // refresh aabbtree node
-        SceneObject3D* sceneEntity = entityNode->get_element();
+        SceneObject* sceneEntity = entityNode->get_element();
         mAABBTree.UpdateObject(sceneEntity);
     }
 }
@@ -108,17 +108,17 @@ void GameScene::DestroyAttachedSceneObjects()
 {
     while (mTransformEntities.has_elements())
     {
-        cxx::intrusive_node<SceneObject3D>* entityNode = mTransformEntities.get_head_node();
+        cxx::intrusive_node<SceneObject>* entityNode = mTransformEntities.get_head_node();
 
-        SceneObject3D* currentEntity = entityNode->get_element();
+        SceneObject* currentEntity = entityNode->get_element();
         DestroySceneObject(currentEntity);
     }
 
     while (mSceneEntities.has_elements())
     {
-        cxx::intrusive_node<SceneObject3D>* entityNode = mSceneEntities.get_head_node();
+        cxx::intrusive_node<SceneObject>* entityNode = mSceneEntities.get_head_node();
 
-        SceneObject3D* currentEntity = entityNode->get_element();
+        SceneObject* currentEntity = entityNode->get_element();
         DestroySceneObject(currentEntity);
     }
 }

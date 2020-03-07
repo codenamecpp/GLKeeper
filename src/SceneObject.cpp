@@ -1,8 +1,8 @@
 #include "pch.h"
-#include "SceneObject3D.h"
+#include "SceneObject.h"
 #include "GameScene.h"
 
-SceneObject3D::SceneObject3D()
+SceneObject::SceneObject()
     : mListNodeTransformed(this)
     , mListNodeAttached(this)
     , mTransformationDirty()
@@ -16,13 +16,13 @@ SceneObject3D::SceneObject3D()
 {
 }
 
-SceneObject3D::~SceneObject3D()
+SceneObject::~SceneObject()
 {
     // entity must be detached from scene before destroy
     debug_assert(IsAttachedToScene() == false);
 }
 
-void SceneObject3D::ComputeTransformation()
+void SceneObject::ComputeTransformation()
 {
     // refresh transformations matrix
     if (mTransformationDirty)
@@ -49,28 +49,28 @@ void SceneObject3D::ComputeTransformation()
     }
 }
 
-void SceneObject3D::SetLocalBoundingBox(const cxx::aabbox& aabox)
+void SceneObject::SetLocalBoundingBox(const cxx::aabbox& aabox)
 {
     mBounds = aabox;
 
     InvalidateBounds();
 }
 
-void SceneObject3D::SetPositionOnScene(const glm::vec3& position)
+void SceneObject::SetPositionOnScene(const glm::vec3& position)
 {
     mPosition = position;
 
     InvalidateTransform();
 }
 
-void SceneObject3D::SetScaling(float scaling)
+void SceneObject::SetScaling(float scaling)
 {
     mScaling = scaling;
 
     InvalidateTransform();
 }
 
-void SceneObject3D::SetOrientation(const glm::vec3& directionRight, const glm::vec3& directionForward, const glm::vec3& directionUpward)
+void SceneObject::SetOrientation(const glm::vec3& directionRight, const glm::vec3& directionForward, const glm::vec3& directionUpward)
 {
     mDirectionForward = directionForward;
     mDirectionRight = directionRight;
@@ -79,17 +79,17 @@ void SceneObject3D::SetOrientation(const glm::vec3& directionRight, const glm::v
     InvalidateTransform();
 }
 
-void SceneObject3D::SetOrientation(const glm::vec3& directionRight, const glm::vec3& directionForward)
+void SceneObject::SetOrientation(const glm::vec3& directionRight, const glm::vec3& directionForward)
 {
     debug_assert(!"not yet implemented"); // todo
 }
 
-void SceneObject3D::OrientTowards(const glm::vec3& point)
+void SceneObject::OrientTowards(const glm::vec3& point)
 {
     OrientTowards(point, SceneAxes::Y);
 }
 
-void SceneObject3D::Rotate(const glm::vec3& rotationAxis, float rotationAngle)
+void SceneObject::Rotate(const glm::vec3& rotationAxis, float rotationAngle)
 {
     glm::mat3 rotationMatrix = glm::mat3(glm::rotate(rotationAngle, rotationAxis)); 
 
@@ -100,14 +100,14 @@ void SceneObject3D::Rotate(const glm::vec3& rotationAxis, float rotationAngle)
     InvalidateTransform();
 }
 
-void SceneObject3D::Translate(const glm::vec3& translation)
+void SceneObject::Translate(const glm::vec3& translation)
 {
     mPosition += translation;
 
     InvalidateTransform();
 }
 
-void SceneObject3D::OrientTowards(const glm::vec3& point, const glm::vec3& upward)
+void SceneObject::OrientTowards(const glm::vec3& point, const glm::vec3& upward)
 {
     glm::vec3 zaxis = glm::normalize(point - mPosition);
     glm::vec3 xaxis = glm::normalize(glm::cross(upward, zaxis));
@@ -117,7 +117,7 @@ void SceneObject3D::OrientTowards(const glm::vec3& point, const glm::vec3& upwar
     SetOrientation(xaxis, zaxis, yaxis);
 }
 
-void SceneObject3D::ResetTransformation()
+void SceneObject::ResetTransformation()
 {
     mTransformation = glm::mat4{1.0f};
     mScaling = 1.0f;
@@ -129,7 +129,7 @@ void SceneObject3D::ResetTransformation()
     InvalidateTransform();
 }
 
-void SceneObject3D::InvalidateTransform()
+void SceneObject::InvalidateTransform()
 {
     if (mTransformationDirty)
         return;
@@ -143,7 +143,7 @@ void SceneObject3D::InvalidateTransform()
     }
 }
 
-void SceneObject3D::InvalidateBounds()
+void SceneObject::InvalidateBounds()
 {
     if (mBoundingBoxDirty)
         return;
@@ -155,12 +155,12 @@ void SceneObject3D::InvalidateBounds()
     }
 }
 
-void SceneObject3D::ResetOrientation()
+void SceneObject::ResetOrientation()
 {
     SetOrientation(SceneAxes::X, SceneAxes::Z, SceneAxes::Y);
 }
 
-bool SceneObject3D::IsAttachedToScene() const
+bool SceneObject::IsAttachedToScene() const
 {
     return mListNodeAttached.is_linked();
 }
