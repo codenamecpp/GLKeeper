@@ -11,9 +11,9 @@ bool RenderManager::Initialize()
     // initialize render programs
     if (!mGuiRenderProgram.LoadProgram())
     {
-        Deinit();
-
         gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize render manager");
+
+        Deinit();
         return false;
     }
 
@@ -29,7 +29,7 @@ bool RenderManager::Initialize()
 
 void RenderManager::Deinit()
 {
-    mDebugRenderer.Shutdown();
+    mDebugRenderer.Deinit();
     mGuiRenderProgram.FreeProgram();
 }
 

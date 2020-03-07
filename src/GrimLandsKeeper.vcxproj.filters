@@ -50,9 +50,6 @@
     <Filter Include="Game\Scene">
       <UniqueIdentifier>{5d7e5c39-c126-4d85-af00-6cd205e2a863}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Scene\Camera">
-      <UniqueIdentifier>{23269d5d-8ec3-4467-95fb-43902adf5c8d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Data\Shaders">
       <UniqueIdentifier>{8b0aa962-d3ec-4c9f-a33f-afa0b1fe407e}</UniqueIdentifier>
     </Filter>
@@ -76,6 +73,9 @@
     </Filter>
     <Filter Include="Third_Party\debug_draw">
       <UniqueIdentifier>{b847e29e-64b6-4270-86ce-dde98ff4446c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Scene\CameraControl">
+      <UniqueIdentifier>{23269d5d-8ec3-4467-95fb-43902adf5c8d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -281,6 +281,15 @@
     <ClInclude Include="debug_draw.hpp">
       <Filter>Third_Party\debug_draw</Filter>
     </ClInclude>
+    <ClInclude Include="SceneDefs.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneCamera.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -404,6 +413,12 @@
     </ClCompile>
     <ClCompile Include="Texture2DAnimation.cpp">
       <Filter>Application\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneCamera.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>Game\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

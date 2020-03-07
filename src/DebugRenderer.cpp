@@ -9,7 +9,7 @@ bool DebugRenderer::Initialize()
     return true;
 }
 
-void DebugRenderer::Shutdown()
+void DebugRenderer::Deinit()
 {
 
 }

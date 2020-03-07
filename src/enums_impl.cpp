@@ -3,6 +3,7 @@
 #include "GraphicsDefs.h"
 #include "InputsDefs.h"
 #include "RenderDefs.h"
+#include "SceneDefs.h"
 
 impl_enum_strings(eLogMessage)
 {
@@ -208,4 +209,10 @@ impl_enum_strings(eRenderPass)
 {
     {eRenderPass_Opaque, "opaque"},
     {eRenderPass_Translucent, "translucent"},
+};
+
+impl_enum_strings(eSceneCameraMode)
+{
+    {eSceneCameraMode_Perspective, "perspective"},
+    {eSceneCameraMode_Orthographic, "orthographic"},
 };

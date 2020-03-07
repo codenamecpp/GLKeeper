@@ -1,15 +1,26 @@
 #include "pch.h"
 #include "KeeperGame.h"
+#include "GameScene.h"
+#include "Console.h"
 
 KeeperGame gKeeperGame;
 
 bool KeeperGame::Initialize()
 {
+    if (!gGameScene.Initialize())
+    {
+        gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize game scene");
+
+        Deinit();
+        return false;
+    }
+
     return true;
 }
 
 void KeeperGame::Deinit()
 {
+    gGameScene.Deinit();
 }
 
 void KeeperGame::HandleInputEvent(MouseButtonInputEvent& inputEvent)
