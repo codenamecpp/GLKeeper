@@ -2,6 +2,8 @@
 #include "TexturesManager.h"
 #include "Texture2D.h"
 #include "Texture2D_Image.h"
+#include "Texture2DAnimation.h"
+#include "TimeManager.h"
 
 TexturesManager gTexturesManager;
 
@@ -16,6 +18,16 @@ void TexturesManager::Deinit()
 {
     FreeDefaultTextures();
     FreeTextures();
+}
+
+void TexturesManager::UpdateFrame()
+{
+    float deltaTime = static_cast<float>(gTimeManager.GetRealtimeFrameDelta());
+
+    for (auto& curr: mTexture2DAnimations)
+    {
+        curr.second->UpdateAnimation(deltaTime);
+    }
 }
 
 Texture2D* TexturesManager::FindTexture2D(const std::string& textureName) const
@@ -40,6 +52,30 @@ Texture2D* TexturesManager::GetTexture2D(const std::string& textureName)
     Texture2D* newTexture = new Texture2D { textureName };
     mTextures2DMap[textureName] = newTexture;
     return newTexture;
+}
+
+Texture2DAnimation* TexturesManager::FindTexture2DAnimation(const std::string& animationName) const
+{
+    auto anim_iterator = mTexture2DAnimations.find(animationName);
+    if (anim_iterator != mTexture2DAnimations.end())
+    {
+        return anim_iterator->second;
+    }
+
+    return nullptr;
+}
+
+Texture2DAnimation* TexturesManager::GetTexture2DAnimation(const std::string& animationName)
+{
+    auto anim_iterator = mTexture2DAnimations.find(animationName);
+    if (anim_iterator != mTexture2DAnimations.end())
+    {
+        return anim_iterator->second;
+    }
+    // add to cache
+    Texture2DAnimation* newAnimation = new Texture2DAnimation { animationName };
+    mTexture2DAnimations[animationName] = newAnimation;
+    return newAnimation;
 }
 
 Texture2D* TexturesManager::LoadTexture2D(const std::string& textureName)
@@ -135,5 +171,11 @@ void TexturesManager::FreeTextures()
         delete curr.second;
     }
 
+    for (auto& curr: mTexture2DAnimations)
+    {
+        delete curr.second;
+    }
+
+    mTexture2DAnimations.clear();
     mTextures2DMap.clear();
 }

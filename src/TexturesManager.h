@@ -1,6 +1,7 @@
 #pragma once
 
 class Texture2D;
+class Texture2DAnimation;
 
 // render textures manager class
 class TexturesManager: public cxx::noncopyable
@@ -15,6 +16,9 @@ public:
     // setup texture manager internal resources, returns false on error
     bool Initialize();
     void Deinit();
+
+    // process animating textures
+    void UpdateFrame();
 
     // reload unloaded textures to gpu memory
     void ReloadAllTextures();
@@ -35,6 +39,11 @@ public:
     // @param textureName: Texture name
     Texture2D* LoadTexture2D(const std::string& textureName);
 
+    // find or create texture2d animation
+    // @param animationName: Animation name
+    Texture2DAnimation* FindTexture2DAnimation(const std::string& animationName) const;
+    Texture2DAnimation* GetTexture2DAnimation(const std::string& animationName);
+
 private:
     void InitDefaultTextures();
     void FreeDefaultTextures();
@@ -43,6 +52,9 @@ private:
 private:
     using Textures2DMap = std::map<std::string, Texture2D*, cxx::icase_less>;
     Textures2DMap mTextures2DMap;
+
+    using Textures2DAnimsMap = std::map<std::string, Texture2DAnimation*, cxx::icase_less>;
+    Textures2DAnimsMap mTexture2DAnimations;
 };
 
 extern TexturesManager gTexturesManager;

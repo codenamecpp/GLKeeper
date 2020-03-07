@@ -17,6 +17,11 @@ bool RenderManager::Initialize()
         return false;
     }
 
+    if (!mDebugRenderer.Initialize())
+    {
+        debug_assert(false);
+    }
+
     gGraphicsDevice.SetClearColor(Color32_SkyBlue);
 
     return true;
@@ -24,6 +29,7 @@ bool RenderManager::Initialize()
 
 void RenderManager::Deinit()
 {
+    mDebugRenderer.Shutdown();
     mGuiRenderProgram.FreeProgram();
 }
 

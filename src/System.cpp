@@ -136,6 +136,7 @@ void System::Execute()
             break;
 
         // todo process game logic
+        gTexturesManager.UpdateFrame();
 
         gDebugGuiManager.UpdateFrame();
 

@@ -29,6 +29,7 @@
 #include <cctype>
 #include <functional>
 #include <thread>
+#include <unordered_map>
 
 #ifdef FS_EXPERIMENTAL
     #include <experimental/filesystem>

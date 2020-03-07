@@ -178,12 +178,14 @@
     <ClInclude Include="3rd_party\stb_rect_pack.h" />
     <ClInclude Include="3rd_party\stb_sprintf.h" />
     <ClInclude Include="3rd_party\std_image.h" />
+    <ClInclude Include="AABBTree.h" />
     <ClInclude Include="BinaryInputStream.h" />
     <ClInclude Include="BinaryOutputStream.h" />
     <ClInclude Include="CommonTypes.h" />
     <ClInclude Include="common_utils.h" />
     <ClInclude Include="Console.h" />
     <ClInclude Include="DebugConsoleWindow.h" />
+    <ClInclude Include="DebugRenderer.h" />
     <ClInclude Include="GameDefs.h" />
     <ClInclude Include="GenericGamestate.h" />
     <ClInclude Include="GuiRenderProgram.h" />
@@ -221,10 +223,12 @@
     <ClInclude Include="RenderDefs.h" />
     <ClInclude Include="RenderManager.h" />
     <ClInclude Include="RenderProgram.h" />
+    <ClInclude Include="SceneObject3D.h" />
     <ClInclude Include="string_utils.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="SystemSettings.h" />
     <ClInclude Include="Texture2D.h" />
+    <ClInclude Include="Texture2DAnimation.h" />
     <ClInclude Include="Texture2D_Image.h" />
     <ClInclude Include="TexturesManager.h" />
     <ClInclude Include="TimeManager.h" />
@@ -238,12 +242,16 @@
     <ClCompile Include="3rd_party\imgui_draw.cpp" />
     <ClCompile Include="3rd_party\imgui_widgets.cpp" />
     <ClCompile Include="3rd_party\stb_rect_pack.cpp" />
+    <ClCompile Include="AABBTree.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="BinaryInputStream.cpp" />
     <ClCompile Include="BinaryOutputStream.cpp" />
     <ClCompile Include="CommonTypes.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="DebugConsoleWindow.cpp" />
     <ClCompile Include="DebugGuiWindow.cpp" />
+    <ClCompile Include="DebugRenderer.cpp" />
     <ClCompile Include="EngineTexturesProvider.cpp" />
     <ClCompile Include="enums_impl.cpp" />
     <ClCompile Include="FileSystem.cpp" />
@@ -268,10 +276,12 @@
     </ClCompile>
     <ClCompile Include="RenderManager.cpp" />
     <ClCompile Include="RenderProgram.cpp" />
+    <ClCompile Include="SceneObject3D.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="System.cpp" />
     <ClCompile Include="SystemSettings.cpp" />
     <ClCompile Include="Texture2D.cpp" />
+    <ClCompile Include="Texture2DAnimation.cpp" />
     <ClCompile Include="Texture2D_Image.cpp" />
     <ClCompile Include="TexturesManager.cpp" />
     <ClCompile Include="TimeManager.cpp" />
@@ -296,6 +306,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\data\shaders\gui.glsl" />
+    <None Include="AABBTree.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -71,6 +71,9 @@
     <Filter Include="Application\IO">
       <UniqueIdentifier>{6c249930-f16e-4aa9-ba23-2f2a82c2812d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\Scene\BVH">
+      <UniqueIdentifier>{19bc7d6f-74f7-491e-aa51-f41bd63083b6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -260,6 +263,18 @@
     <ClInclude Include="Texture2D_Image.h">
       <Filter>Application\Resources</Filter>
     </ClInclude>
+    <ClInclude Include="AABBTree.h">
+      <Filter>Game\Scene\BVH</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugRenderer.h">
+      <Filter>Game\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneObject3D.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture2DAnimation.h">
+      <Filter>Application\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -372,6 +387,18 @@
     <ClCompile Include="Texture2D_Image.cpp">
       <Filter>Application\Resources</Filter>
     </ClCompile>
+    <ClCompile Include="AABBTree.cpp">
+      <Filter>Game\Scene\BVH</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugRenderer.cpp">
+      <Filter>Game\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneObject3D.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture2DAnimation.cpp">
+      <Filter>Application\Resources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\docs\creatures_anims.txt">
@@ -393,6 +420,9 @@
   <ItemGroup>
     <None Include="..\data\shaders\gui.glsl">
       <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="AABBTree.inl">
+      <Filter>Game\Scene\BVH</Filter>
     </None>
   </ItemGroup>
 </Project>

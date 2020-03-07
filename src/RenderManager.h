@@ -2,6 +2,7 @@
 
 #include "GraphicsDefs.h"
 #include "GuiRenderProgram.h"
+#include "DebugRenderer.h"
 
 // master render system, it is intended to manage rendering pipeline of the game
 class RenderManager: public cxx::noncopyable
@@ -29,6 +30,7 @@ private:
 
 private:
     GuiRenderProgram mGuiRenderProgram;
+    DebugRenderer mDebugRenderer;
 
     glm::mat4 mTransformationMatrix2D;
 };
