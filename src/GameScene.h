@@ -19,6 +19,9 @@ public:
     // process single frame logic
     void UpdateFrame();
 
+    // process debug draw
+    void DebugRenderFrame(DebugRenderer& renderer);
+
     // create scene object but not attach it automatically
     // @param position: Position on scene
     // @param direction: Direction vector, must be normalized
@@ -29,8 +32,8 @@ public:
     // attach entity to scene - attached entity will be rendered and updated, 
     // it is recommended to set transformation and bounding volume before attach
     // @param sceneObject: Target
-    void AttachSceneEntity(SceneObject* sceneObject);
-    void DetachSceneEntity(SceneObject* sceneObject);
+    void AttachSceneObject(SceneObject* sceneObject);
+    void DetachSceneObject(SceneObject* sceneObject);
 
     // destroy scene entity and free it internal resources, reference become invalid
     // @param sceneEntity: Target
@@ -49,8 +52,8 @@ private:
     cxx::object_pool<SceneObject> mObjectsPool;
 
     // entities lists
-    cxx::intrusive_list<SceneObject> mTransformEntities;
-    cxx::intrusive_list<SceneObject> mSceneEntities;
+    cxx::intrusive_list<SceneObject> mTransformObjects;
+    cxx::intrusive_list<SceneObject> mSceneObjects;
 
 };
 

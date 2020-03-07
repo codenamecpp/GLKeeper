@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ConsoleDefs.h"
+
 // forwards
 class SceneObject;
 class SceneCamera;
@@ -19,3 +21,9 @@ enum eSceneCameraMode
 };
 
 decl_enum_strings(eSceneCameraMode);
+
+//////////////////////////////////////////////////////////////////////////
+
+// scene cvars
+
+extern CvarBoolean gCvarScene_DebugDrawAabb;

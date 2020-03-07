@@ -293,6 +293,15 @@
     <ClInclude Include="SceneObject.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="ConsoleDefs.h">
+      <Filter>Application\Console</Filter>
+    </ClInclude>
+    <ClInclude Include="ConsoleVariable.h">
+      <Filter>Application\Console</Filter>
+    </ClInclude>
+    <ClInclude Include="ConsoleVariable.inl">
+      <Filter>Application\Console</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -422,6 +431,9 @@
     </ClCompile>
     <ClCompile Include="SceneObject.cpp">
       <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="ConsoleVariable.cpp">
+      <Filter>Application\Console</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

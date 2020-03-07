@@ -1,16 +1,29 @@
 #include "pch.h"
 #include "GameScene.h"
 #include "SceneObject.h"
+#include "ConsoleVariable.h"
+#include "Console.h"
+
+//////////////////////////////////////////////////////////////////////////
+
+// cvars
+CvarBoolean gCvarScene_DebugDrawAabb ( "dbg_drawSceneAabb", true, "Draw scene aabb debug data", ConsoleVar_Debug | ConsoleVar_Scene );
+
+//////////////////////////////////////////////////////////////////////////
 
 GameScene gGameScene;
 
+//////////////////////////////////////////////////////////////////////////
+
 bool GameScene::Initialize()
 {
+    gConsole.RegisterVariable(&gCvarScene_DebugDrawAabb);
     return true;
 }
 
 void GameScene::Deinit()
 {
+    gConsole.UnregisterVariable(&gCvarScene_DebugDrawAabb);
     mAABBTree.Cleanup();
 
     DestroyAttachedSceneObjects();
@@ -18,7 +31,15 @@ void GameScene::Deinit()
 
 void GameScene::UpdateFrame()
 {
+    BuildAABBTree();
+}
 
+void GameScene::DebugRenderFrame(DebugRenderer& renderer)
+{
+    if (gCvarScene_DebugDrawAabb.mValue)
+    {
+        mAABBTree.DebugRender(renderer);
+    }
 }
 
 SceneObject* GameScene::CreateSceneObject(const glm::vec3& position, const glm::vec3& direction, float scaling)
@@ -39,45 +60,45 @@ SceneObject* GameScene::CreateSceneObject()
 void GameScene::HandleSceneObjectTransformChange(SceneObject* sceneEntity)
 {
     debug_assert(sceneEntity);
-    if (!mTransformEntities.contains(&sceneEntity->mListNodeTransformed))
+    if (!mTransformObjects.contains(&sceneEntity->mListNodeTransformed))
     {
-        mTransformEntities.insert(&sceneEntity->mListNodeTransformed); // queue for update
+        mTransformObjects.insert(&sceneEntity->mListNodeTransformed); // queue for update
     }
 }
 
-void GameScene::AttachSceneEntity(SceneObject* sceneEntity)
+void GameScene::AttachSceneObject(SceneObject* sceneEntity)
 {
     debug_assert(sceneEntity);
     // already attached to scene
-    if (mSceneEntities.contains(&sceneEntity->mListNodeAttached))
+    if (mSceneObjects.contains(&sceneEntity->mListNodeAttached))
     {
         debug_assert(false);
         return;
     }
     else
     {
-        mSceneEntities.insert(&sceneEntity->mListNodeAttached);
+        mSceneObjects.insert(&sceneEntity->mListNodeAttached);
     }
 
     mAABBTree.InsertObject(sceneEntity);
 }
 
-void GameScene::DetachSceneEntity(SceneObject* sceneEntity)
+void GameScene::DetachSceneObject(SceneObject* sceneEntity)
 {
     debug_assert(sceneEntity);
 
-    if (mSceneEntities.contains(&sceneEntity->mListNodeAttached))
+    if (mSceneObjects.contains(&sceneEntity->mListNodeAttached))
     {
-        mSceneEntities.remove(&sceneEntity->mListNodeAttached);
+        mSceneObjects.remove(&sceneEntity->mListNodeAttached);
     }
     else
     {
         return; // already detached
     }
 
-    if (mTransformEntities.contains(&sceneEntity->mListNodeTransformed))
+    if (mTransformObjects.contains(&sceneEntity->mListNodeTransformed))
     {
-        mTransformEntities.remove(&sceneEntity->mListNodeTransformed);
+        mTransformObjects.remove(&sceneEntity->mListNodeTransformed);
     }
 
     mAABBTree.RemoveObject(sceneEntity);
@@ -87,16 +108,16 @@ void GameScene::DestroySceneObject(SceneObject* sceneEntity)
 {
     debug_assert(sceneEntity);
 
-    DetachSceneEntity(sceneEntity);
+    DetachSceneObject(sceneEntity);
     mObjectsPool.destroy(sceneEntity);
 }
 
 void GameScene::BuildAABBTree()
 {
-    while (mTransformEntities.has_elements())
+    while (mTransformObjects.has_elements())
     {
-        cxx::intrusive_node<SceneObject>* entityNode = mTransformEntities.get_head_node();
-        mTransformEntities.remove(entityNode);
+        cxx::intrusive_node<SceneObject>* entityNode = mTransformObjects.get_head_node();
+        mTransformObjects.remove(entityNode);
 
         // refresh aabbtree node
         SceneObject* sceneEntity = entityNode->get_element();
@@ -106,17 +127,17 @@ void GameScene::BuildAABBTree()
 
 void GameScene::DestroyAttachedSceneObjects()
 {
-    while (mTransformEntities.has_elements())
+    while (mTransformObjects.has_elements())
     {
-        cxx::intrusive_node<SceneObject>* entityNode = mTransformEntities.get_head_node();
+        cxx::intrusive_node<SceneObject>* entityNode = mTransformObjects.get_head_node();
 
         SceneObject* currentEntity = entityNode->get_element();
         DestroySceneObject(currentEntity);
     }
 
-    while (mSceneEntities.has_elements())
+    while (mSceneObjects.has_elements())
     {
-        cxx::intrusive_node<SceneObject>* entityNode = mSceneEntities.get_head_node();
+        cxx::intrusive_node<SceneObject>* entityNode = mSceneObjects.get_head_node();
 
         SceneObject* currentEntity = entityNode->get_element();
         DestroySceneObject(currentEntity);

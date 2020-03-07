@@ -1,11 +1,13 @@
 #pragma once
 
-#include "CommonTypes.h"
+#include "ConsoleDefs.h"
 
 // console back-end
 // it is used for debug logging, commands execute and set game variables in runtime
 class Console: public cxx::noncopyable
 {
+    friend class DebugConsoleWindow;
+
 public:
 
     // setup console internal resources, returns false on error
@@ -24,11 +26,16 @@ public:
     // clear all console log messages
     void Clear();
 
+    // manage console variables
+    bool RegisterVariable(CVarBase* consoleVariable);
+    bool UnregisterVariable(CVarBase* consoleVariable);
+    void UnregisterAllVariablesWithFlags(int flags);
+
     // parse and execute commands
     // @param commands: Commands string
     void ExecuteCommands(const char* commands);
 
-public:
+private:
 
     struct LineStruct
     {
@@ -38,6 +45,9 @@ public:
 
     std::deque<LineStruct> mLogLines;
     int mMaxLogLines = 0; // no limits default
+
+    // registered console variables
+    std::vector<CVarBase*> mConsoleVariables;
 };
 
 extern Console gConsole;

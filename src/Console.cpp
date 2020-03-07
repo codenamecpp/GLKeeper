@@ -2,6 +2,7 @@
 #include "Console.h"
 #include "DebugConsoleWindow.h"
 #include "DebugGuiManager.h"
+#include "ConsoleVariable.h"
 
 #define SEND_LOG_TO_STDOUT
 
@@ -18,6 +19,8 @@ void Console::Deinit()
     gDebugGuiManager.UnregisterWindow(&gConsoleWindow);
 
     Clear();
+
+    mConsoleVariables.clear();
 }
 
 void Console::LogMessage(eLogMessage cat, const char* format, ...)
@@ -62,4 +65,43 @@ void Console::SetLogMessagesLimit(int messagesCount)
     }
 
     mMaxLogLines = messagesCount;
+}
+
+bool Console::RegisterVariable(CVarBase* consoleVariable)
+{
+    if (consoleVariable == nullptr)
+    {
+        debug_assert(consoleVariable);
+        return false;
+    }
+
+    UnregisterVariable(consoleVariable);
+
+    mConsoleVariables.push_back(consoleVariable);
+    return true;
+}
+
+bool Console::UnregisterVariable(CVarBase* consoleVariable)
+{
+    auto remove_itarator = std::find(mConsoleVariables.begin(), mConsoleVariables.end(), consoleVariable);
+    if (remove_itarator != mConsoleVariables.end())
+    {
+        mConsoleVariables.erase(remove_itarator);
+        return true;
+    }
+    return false;
+}
+
+void Console::UnregisterAllVariablesWithFlags(int flags)
+{
+    auto remove_iterator = std::remove_if(mConsoleVariables.begin(), mConsoleVariables.end(), 
+        [flags](const CVarBase* currCvar)
+        {
+            return (currCvar->mFlags & flags) > 0;
+        });
+    
+    if (remove_iterator != mConsoleVariables.end())
+    {
+        mConsoleVariables.erase(remove_iterator, mConsoleVariables.end());
+    }
 }
