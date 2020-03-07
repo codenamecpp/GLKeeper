@@ -89,9 +89,9 @@ bool Texture2D::LoadTexture()
     }
 
     // force pot dims
-    if (imageData.NonPOT())
+    if (!imageData.IsPowerOfTwo())
     {
-        imageData.ResizeToPOT();
+        imageData.ResizeToPowerOfTwo();
     }
 
     mLoadedFromFile = true;
@@ -142,7 +142,7 @@ bool Texture2D::CreateTexture(const Texture2D_Image& imageData)
     }
 
     // npot textures must be converted to pot manually
-    if (imageData.NonPOT())
+    if (!imageData.IsPowerOfTwo())
     {
         debug_assert(false);
         return false;

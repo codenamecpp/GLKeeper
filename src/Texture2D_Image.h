@@ -47,14 +47,13 @@ public:
 
     // resize base image to nearest pot dimensions, discards any mipmaps
     // source image size will be stored in mImageSize
-    void ResizeToPOT();
+    void ResizeToPowerOfTwo();
 
     // test whether texture data is null
     bool IsNull() const;
 
     // test whether texture bitmap has power of two dimensions
-    bool IsPOT() const;
-    bool NonPOT() const;
+    bool IsPowerOfTwo() const;
 
     // test whether image has additional mipmap levels
     inline bool HasMipmaps() const

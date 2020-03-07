@@ -77,7 +77,7 @@ bool Texture2D_Image::DumpToFile(const std::string& filePath, int mipmap) const
     return stbi_write_png(filePath.c_str(), dimx, dimy, comp, imageData, dimx * comp) > 0;
 }
 
-void Texture2D_Image::ResizeToPOT()
+void Texture2D_Image::ResizeToPowerOfTwo()
 {
     if (IsNull())
     {
@@ -85,7 +85,7 @@ void Texture2D_Image::ResizeToPOT()
         return;
     }
 
-    if (IsPOT())
+    if (IsPowerOfTwo())
     {
         // nothing to do, pot already
         return;
@@ -149,17 +149,12 @@ bool Texture2D_Image::IsNull() const
         mTextureDesc.mDimensions.x == 0 || mTextureDesc.mDimensions.y == 0 || mImageData.empty();
 }
 
-bool Texture2D_Image::IsPOT() const
+bool Texture2D_Image::IsPowerOfTwo() const
 {
     bool wpot = cxx::get_next_pot(mTextureDesc.mDimensions.x) == mTextureDesc.mDimensions.x;
     bool hpot = cxx::get_next_pot(mTextureDesc.mDimensions.y) == mTextureDesc.mDimensions.y;
 
     return wpot && hpot;
-}
-
-bool Texture2D_Image::NonPOT() const
-{
-    return !IsPOT();
 }
 
 bool Texture2D_Image::FillWithCheckerBoard(int mipmap)
