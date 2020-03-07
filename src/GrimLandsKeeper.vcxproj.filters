@@ -74,6 +74,9 @@
     <Filter Include="Game\Scene\BVH">
       <UniqueIdentifier>{19bc7d6f-74f7-491e-aa51-f41bd63083b6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Third_Party\debug_draw">
+      <UniqueIdentifier>{b847e29e-64b6-4270-86ce-dde98ff4446c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -274,6 +277,9 @@
     </ClInclude>
     <ClInclude Include="Texture2DAnimation.h">
       <Filter>Application\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="debug_draw.hpp">
+      <Filter>Third_Party\debug_draw</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

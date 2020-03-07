@@ -186,6 +186,7 @@
     <ClInclude Include="Console.h" />
     <ClInclude Include="DebugConsoleWindow.h" />
     <ClInclude Include="DebugRenderer.h" />
+    <ClInclude Include="debug_draw.hpp" />
     <ClInclude Include="GameDefs.h" />
     <ClInclude Include="GenericGamestate.h" />
     <ClInclude Include="GuiRenderProgram.h" />
