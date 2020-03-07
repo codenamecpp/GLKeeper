@@ -271,8 +271,8 @@ void AABBTree::DebugRenderNode(DebugRenderer& renderer, TreeNode& treeNode)
 {
     if (treeNode.IsLeafNode())
     {
-        renderer.SetRenderColor(COLOR_GREEN);
-        renderer.RenderAABoundingBox(treeNode.mBoundingBox);
+        //renderer.SetRenderColor(COLOR_GREEN);
+        //renderer.RenderAABoundingBox(treeNode.mBoundingBox);
         return;
     }
     if (treeNode.mLeftNodeIndex != NULL_TREE_NODE)

@@ -77,6 +77,9 @@
     <Filter Include="Game\Scene\CameraControl">
       <UniqueIdentifier>{23269d5d-8ec3-4467-95fb-43902adf5c8d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\GameStates">
+      <UniqueIdentifier>{3cbb3161-b8b6-449a-ae6c-515a998262af}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -242,9 +245,6 @@
     <ClInclude Include="KeeperGame.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="GenericGamestate.h">
-      <Filter>Game</Filter>
-    </ClInclude>
     <ClInclude Include="GameDefs.h">
       <Filter>Game</Filter>
     </ClInclude>
@@ -289,6 +289,9 @@
     </ClInclude>
     <ClInclude Include="GameScene.h">
       <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="GenericGamestate.h">
+      <Filter>Game\GameStates</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

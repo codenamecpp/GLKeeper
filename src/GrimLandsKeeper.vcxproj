@@ -246,9 +246,7 @@
     <ClCompile Include="3rd_party\imgui_draw.cpp" />
     <ClCompile Include="3rd_party\imgui_widgets.cpp" />
     <ClCompile Include="3rd_party\stb_rect_pack.cpp" />
-    <ClCompile Include="AABBTree.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="AABBTree.cpp" />
     <ClCompile Include="BinaryInputStream.cpp" />
     <ClCompile Include="BinaryOutputStream.cpp" />
     <ClCompile Include="CommonTypes.cpp" />
