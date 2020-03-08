@@ -6,18 +6,18 @@
 uniform mat4 view_projection_matrix;
 
 // attributes
-in vec3 in_position0;
+in vec3 in_pos0;
 in vec4 in_color0;
 
 // pass to fragment shader
-out vec4 Color;
+out vec4 FragColor;
 
 // entry point
 void main() 
 {
-	Color = in_color0;
+	FragColor = in_color0;
 
-    gl_Position = view_projection_matrix * vec4(in_position0, 1.0f);
+    gl_Position = view_projection_matrix * vec4(in_pos0, 1.0f);
 }
 
 #endif
@@ -26,7 +26,7 @@ void main()
 #ifdef FRAGMENT_SHADER
 
 // passed from vertex shader
-in vec4 Color;
+in vec4 FragColor;
 
 // result
 out vec4 FinalColor;
@@ -34,7 +34,7 @@ out vec4 FinalColor;
 // entry point
 void main() 
 {
-	FinalColor = Color;
+	FinalColor = FragColor;
 }
 
 #endif

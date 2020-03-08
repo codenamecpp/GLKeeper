@@ -303,21 +303,14 @@ void DebugRenderer::FlushDebugVertices(bool depth_test)
     gGraphicsDevice.BindVertexBuffer(mGpuVerticesBuffer, Vertex3D_Debug_Format::Get());
 
     int vertexDataSizeBytes = mDebugVerticesCount * Sizeof_Vertex3D_Debug;
-    if (void* bufferData = mGpuVerticesBuffer->Lock(BufferAccess_Write | BufferAccess_InvalidateBuffer, 0, vertexDataSizeBytes))
-    {
-        ::memcpy(bufferData, mDebugVertices, vertexDataSizeBytes);
-        if (!mGpuVerticesBuffer->Unlock())
-        {
-            debug_assert(false);
-        }
-
-        // issue draw call
-        gGraphicsDevice.RenderPrimitives(ePrimitiveType_Lines, 0, mDebugVerticesCount / 2);
-    }
-    else
+    if (!mGpuVerticesBuffer->Setup(eBufferUsage_Stream, vertexDataSizeBytes, mDebugVertices))
     {
         debug_assert(false);
     }
+
+    // issue draw call
+    gGraphicsDevice.RenderPrimitives(ePrimitiveType_Lines, 0, mDebugVerticesCount);
+
     mDebugVerticesCount = 0;
 }
 

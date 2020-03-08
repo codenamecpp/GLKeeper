@@ -464,7 +464,6 @@ public:
         states.mIsDepthTestEnabled = false;
         states.mIsFaceCullingEnabled = false;
         states.mIsAlphaBlendEnabled = true;
-        states.mBlendingMode = eBlendingMode_Alpha;
         return states;
     }
 

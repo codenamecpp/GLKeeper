@@ -278,9 +278,6 @@
     <ClInclude Include="GameScene.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="GenericGamestate.h">
-      <Filter>Game\GameStates</Filter>
-    </ClInclude>
     <ClInclude Include="SceneObject.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
@@ -307,6 +304,9 @@
     </ClInclude>
     <ClInclude Include="MeshViewGamestate.h">
       <Filter>Game\GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="GenericGamestate.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
