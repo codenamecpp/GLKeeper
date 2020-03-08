@@ -2,12 +2,13 @@
 
 #include "GameDefs.h"
 #include "InputsDefs.h"
+#include "RenderDefs.h"
 
 // forwards
 class GenericGamestate;
 
 // game core
-class KeeperGame: public cxx::noncopyable
+class GameMain: public cxx::noncopyable
 {
 public:
     // readonly
@@ -22,6 +23,9 @@ public:
     // process single frame logic
     void UpdateFrame();
 
+    // process debug draw
+    void DebugRenderFrame(DebugRenderer& renderer);
+
     // process input event
     // @param inputEvent: Event data
     void HandleInputEvent(MouseButtonInputEvent& inputEvent);
@@ -34,4 +38,4 @@ private:
 
 };
 
-extern KeeperGame gKeeperGame;
+extern GameMain gGameMain;

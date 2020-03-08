@@ -10,7 +10,7 @@
 #include "DebugGuiManager.h"
 #include "DebugConsoleWindow.h"
 #include "TexturesManager.h"
-#include "KeeperGame.h"
+#include "GameMain.h"
 
 #include "GLFW/glfw3.h"
 
@@ -138,7 +138,7 @@ void System::Execute()
 
         // update frame
         gTexturesManager.UpdateFrame();
-        gKeeperGame.UpdateFrame();
+        gGameMain.UpdateFrame();
         gDebugGuiManager.UpdateFrame();
 
         // render frame

@@ -1,14 +1,14 @@
 #include "pch.h"
-#include "KeeperGame.h"
+#include "GameMain.h"
 #include "GameScene.h"
 #include "Console.h"
 #include "GenericGamestate.h"
 #include "DebugConsoleWindow.h"
 #include "System.h"
 
-KeeperGame gKeeperGame;
+GameMain gGameMain;
 
-bool KeeperGame::Initialize()
+bool GameMain::Initialize()
 {
     if (!gGameScene.Initialize())
     {
@@ -21,12 +21,12 @@ bool KeeperGame::Initialize()
     return true;
 }
 
-void KeeperGame::Deinit()
+void GameMain::Deinit()
 {
     gGameScene.Deinit();
 }
 
-void KeeperGame::UpdateFrame()
+void GameMain::UpdateFrame()
 {
     gGameScene.UpdateFrame();
 
@@ -36,7 +36,12 @@ void KeeperGame::UpdateFrame()
     }
 }
 
-void KeeperGame::HandleInputEvent(MouseButtonInputEvent& inputEvent)
+void GameMain::DebugRenderFrame(DebugRenderer& renderer)
+{
+    gGameScene.DebugRenderFrame(renderer);
+}
+
+void GameMain::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
     if (mCurrentGamestate)
     {
@@ -44,7 +49,7 @@ void KeeperGame::HandleInputEvent(MouseButtonInputEvent& inputEvent)
     }
 }
 
-void KeeperGame::HandleInputEvent(MouseMovedInputEvent& inputEvent)
+void GameMain::HandleInputEvent(MouseMovedInputEvent& inputEvent)
 {
     if (mCurrentGamestate)
     {
@@ -52,7 +57,7 @@ void KeeperGame::HandleInputEvent(MouseMovedInputEvent& inputEvent)
     }
 }
 
-void KeeperGame::HandleInputEvent(MouseScrollInputEvent& inputEvent)
+void GameMain::HandleInputEvent(MouseScrollInputEvent& inputEvent)
 {
     if (mCurrentGamestate)
     {
@@ -60,7 +65,7 @@ void KeeperGame::HandleInputEvent(MouseScrollInputEvent& inputEvent)
     }
 }
 
-void KeeperGame::HandleInputEvent(KeyInputEvent& inputEvent)
+void GameMain::HandleInputEvent(KeyInputEvent& inputEvent)
 {
     // show console
     if (inputEvent.HasPressed(eKeycode_TILDE))
@@ -86,7 +91,7 @@ void KeeperGame::HandleInputEvent(KeyInputEvent& inputEvent)
     }
 }
 
-void KeeperGame::HandleInputEvent(KeyCharEvent& inputEvent)
+void GameMain::HandleInputEvent(KeyCharEvent& inputEvent)
 {
     if (mCurrentGamestate)
     {

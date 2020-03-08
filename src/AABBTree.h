@@ -106,7 +106,7 @@ private:
         inline bool IsLeafNode() const { return mLeftNodeIndex == NULL_TREE_NODE; }
 
     public:
-        cxx::aabbox mBoundingBox;
+        cxx::aabbox mBoundingBox; // world space aabb
         SceneObject* mSceneEntity;
         TreeNodeIndex mParentNodeIndex;
         TreeNodeIndex mLeftNodeIndex;

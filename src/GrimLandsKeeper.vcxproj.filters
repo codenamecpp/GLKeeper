@@ -71,9 +71,6 @@
     <Filter Include="Game\Scene\BVH">
       <UniqueIdentifier>{19bc7d6f-74f7-491e-aa51-f41bd63083b6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Third_Party\debug_draw">
-      <UniqueIdentifier>{b847e29e-64b6-4270-86ce-dde98ff4446c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\Scene\CameraControl">
       <UniqueIdentifier>{23269d5d-8ec3-4467-95fb-43902adf5c8d}</UniqueIdentifier>
     </Filter>
@@ -242,9 +239,6 @@
     <ClInclude Include="BinaryOutputStream.h">
       <Filter>Application\IO</Filter>
     </ClInclude>
-    <ClInclude Include="KeeperGame.h">
-      <Filter>Game</Filter>
-    </ClInclude>
     <ClInclude Include="GameDefs.h">
       <Filter>Game</Filter>
     </ClInclude>
@@ -275,9 +269,6 @@
     <ClInclude Include="Texture2DAnimation.h">
       <Filter>Application\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="debug_draw.hpp">
-      <Filter>Third_Party\debug_draw</Filter>
-    </ClInclude>
     <ClInclude Include="SceneDefs.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
@@ -301,6 +292,9 @@
     </ClInclude>
     <ClInclude Include="ConsoleVariable.inl">
       <Filter>Application\Console</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMain.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -396,9 +390,6 @@
     <ClCompile Include="BinaryOutputStream.cpp">
       <Filter>Application\IO</Filter>
     </ClCompile>
-    <ClCompile Include="KeeperGame.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
     <ClCompile Include="micropather.cpp">
       <Filter>Third_Party\micropather</Filter>
     </ClCompile>
@@ -434,6 +425,9 @@
     </ClCompile>
     <ClCompile Include="ConsoleVariable.cpp">
       <Filter>Application\Console</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMain.cpp">
+      <Filter>Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -3,8 +3,20 @@
 #include "GraphicsDevice.h"
 #include "Console.h"
 #include "DebugGuiManager.h"
+#include "GameMain.h"
+#include "ConsoleVariable.h"
+
+//////////////////////////////////////////////////////////////////////////
+
+// cvars
+
+CvarBoolean gCvarRender_DebugDrawEnabled ("r_debugDraw", true, "Enable debug draw", ConsoleVar_Debug | ConsoleVar_Renderer);
+
+//////////////////////////////////////////////////////////////////////////
 
 RenderManager gRenderManager;
+
+//////////////////////////////////////////////////////////////////////////
 
 bool RenderManager::Initialize()
 {
@@ -36,8 +48,14 @@ void RenderManager::Deinit()
 void RenderManager::RenderFrame()
 {
     gGraphicsDevice.ClearScreen();
-    // todo render
-    // render gui
+
+    // debug draw
+    if (gCvarRender_DebugDrawEnabled.mValue)
+    {
+        mDebugRenderer.RenderFrameBegin();
+        gGameMain.DebugRenderFrame(mDebugRenderer);
+        mDebugRenderer.RenderFrameEnd();
+    }
 
     RenderStates prevRenderStates = gGraphicsDevice.mCurrentStates;
 

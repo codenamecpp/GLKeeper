@@ -35,6 +35,9 @@ public:
         return ((unsigned int)(cr)) | (((unsigned int)(cg)) << 8U) | (((unsigned int)(cb)) << 16U) | (((unsigned int)(ca)) << 24U);
     }
 
+    // implicit conversion to int
+    inline operator unsigned int () const { return mRGBA; }
+
 public:
     union
     {

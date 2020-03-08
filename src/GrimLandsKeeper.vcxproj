@@ -191,7 +191,6 @@
     <ClInclude Include="Console.h" />
     <ClInclude Include="DebugConsoleWindow.h" />
     <ClInclude Include="DebugRenderer.h" />
-    <ClInclude Include="debug_draw.hpp" />
     <ClInclude Include="GameDefs.h" />
     <ClInclude Include="GenericGamestate.h" />
     <ClInclude Include="GuiRenderProgram.h" />
@@ -215,7 +214,7 @@
     <ClInclude Include="InputsManager.h" />
     <ClInclude Include="intrusive_list.h" />
     <ClInclude Include="json_document.h" />
-    <ClInclude Include="KeeperGame.h" />
+    <ClInclude Include="GameMain.h" />
     <ClInclude Include="macro.h" />
     <ClInclude Include="math_defs.h" />
     <ClInclude Include="math_utils.h" />
@@ -272,7 +271,7 @@
     <ClCompile Include="DebugGuiManager.cpp" />
     <ClCompile Include="InputsManager.cpp" />
     <ClCompile Include="json_document.cpp" />
-    <ClCompile Include="KeeperGame.cpp" />
+    <ClCompile Include="GameMain.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="micropather.cpp" />
     <ClCompile Include="pch.cpp">

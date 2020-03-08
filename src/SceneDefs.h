@@ -22,8 +22,6 @@ enum eSceneCameraMode
 
 decl_enum_strings(eSceneCameraMode);
 
-//////////////////////////////////////////////////////////////////////////
-
 // scene cvars
 
 extern CvarBoolean gCvarScene_DebugDrawAabb;

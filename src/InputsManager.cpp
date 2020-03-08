@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "InputsManager.h"
 #include "DebugGuiManager.h"
-#include "KeeperGame.h"
+#include "GameMain.h"
 
 InputsManager gInputsManager;
 
@@ -23,7 +23,7 @@ void InputsManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
     gDebugGuiManager.HandleInputEvent(inputEvent);
     if (!inputEvent.mConsumed)
     {
-        gKeeperGame.HandleInputEvent(inputEvent);
+        gGameMain.HandleInputEvent(inputEvent);
     }
 }
 
@@ -35,7 +35,7 @@ void InputsManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
     gDebugGuiManager.HandleInputEvent(inputEvent);
     if (!inputEvent.mConsumed)
     {
-        gKeeperGame.HandleInputEvent(inputEvent);
+        gGameMain.HandleInputEvent(inputEvent);
     }
 }
 
@@ -44,7 +44,7 @@ void InputsManager::HandleInputEvent(MouseScrollInputEvent& inputEvent)
     gDebugGuiManager.HandleInputEvent(inputEvent);
     if (!inputEvent.mConsumed)
     {
-        gKeeperGame.HandleInputEvent(inputEvent);
+        gGameMain.HandleInputEvent(inputEvent);
     }
 }
 
@@ -55,7 +55,7 @@ void InputsManager::HandleInputEvent(KeyInputEvent& inputEvent)
     gDebugGuiManager.HandleInputEvent(inputEvent);
     if (!inputEvent.mConsumed)
     {
-        gKeeperGame.HandleInputEvent(inputEvent);
+        gGameMain.HandleInputEvent(inputEvent);
     }
 }
 
@@ -64,7 +64,7 @@ void InputsManager::HandleInputEvent(KeyCharEvent& inputEvent)
     gDebugGuiManager.HandleInputEvent(inputEvent);
     if (!inputEvent.mConsumed)
     {
-        gKeeperGame.HandleInputEvent(inputEvent);
+        gGameMain.HandleInputEvent(inputEvent);
     }
 }
 
