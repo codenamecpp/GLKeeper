@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GraphicsDefs.h"
+#include "DebugDrawRenderProgram.h"
 
 // debug geometry visualization manager
 class DebugRenderer: public cxx::noncopyable
@@ -38,8 +39,7 @@ public:
 
 private:
 
-
 private:
-
+    DebugDrawRenderProgram mDebugDrawRenderProgram;
 };
 

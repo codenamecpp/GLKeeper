@@ -296,6 +296,9 @@
     <ClInclude Include="GameMain.h">
       <Filter>Game</Filter>
     </ClInclude>
+    <ClInclude Include="DebugDrawRenderProgram.h">
+      <Filter>Game\Render\Programs</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -453,6 +456,9 @@
     </None>
     <None Include="AABBTree.inl">
       <Filter>Game\Scene\BVH</Filter>
+    </None>
+    <None Include="..\data\shaders\debug.glsl">
+      <Filter>Data\Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

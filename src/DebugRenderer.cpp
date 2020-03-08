@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Console.h"
 #include "DebugRenderer.h"
+#include "GameScene.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -51,20 +52,31 @@ static struct DebugSpherePrecomp
 
 bool DebugRenderer::Initialize()
 {
+    if (!mDebugDrawRenderProgram.LoadProgram())
+    {
+        Deinit();
+        return false;
+    }
+
     return true;
 }
 
 void DebugRenderer::Deinit()
 {
-
+    mDebugDrawRenderProgram.FreeProgram();
 }
 
 void DebugRenderer::RenderFrameBegin()
 {
+    gGameScene.mCamera.ComputeMatrices();
+
+    mDebugDrawRenderProgram.ActivateProgram();
+    mDebugDrawRenderProgram.SetViewProjectionMatrix(gGameScene.mCamera.mViewProjectionMatrix);
 }
 
 void DebugRenderer::RenderFrameEnd()
 {
+    mDebugDrawRenderProgram.DeactivateProgram();
 }
 
 void DebugRenderer::DrawLine(const glm::vec3& start_point, const glm::vec3& end_point, unsigned int color, bool depth_test)

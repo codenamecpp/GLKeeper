@@ -184,6 +184,7 @@
     <ClInclude Include="ConsoleDefs.h" />
     <ClInclude Include="ConsoleVariable.h" />
     <ClInclude Include="ConsoleVariable.inl" />
+    <ClInclude Include="DebugDrawRenderProgram.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="SceneCamera.h" />
     <ClInclude Include="CommonTypes.h" />
@@ -312,6 +313,7 @@
     <Text Include="..\docs\terrains.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\data\shaders\debug.glsl" />
     <None Include="..\data\shaders\gui.glsl" />
     <None Include="AABBTree.inl" />
   </ItemGroup>
