@@ -14,7 +14,7 @@ public:
     void ResetOrientation();
 
     // process frame logic
-    void UpdateFrame(float deltaTime) override;
+    void HandleUpdateFrame(float deltaTime) override;
 
     // process controller is attached to game scene
     void HandleSceneAttach() override;

@@ -35,7 +35,7 @@ void OrbitCameraControl::ResetOrientation()
     UpdateOrientation();
 }
 
-void OrbitCameraControl::UpdateFrame(float deltaTime)
+void OrbitCameraControl::HandleUpdateFrame(float deltaTime)
 {
 }
 

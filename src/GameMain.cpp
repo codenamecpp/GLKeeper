@@ -32,7 +32,7 @@ void GameMain::UpdateFrame()
 
     if (mCurrentGamestate)
     {
-        mCurrentGamestate->HandleGamestateFrame();
+        mCurrentGamestate->HandleUpdateFrame();
     }
 }
 

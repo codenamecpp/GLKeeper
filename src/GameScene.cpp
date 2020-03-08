@@ -39,7 +39,7 @@ void GameScene::UpdateFrame()
 
     if (mCameraControl)
     {
-        mCameraControl->UpdateFrame(deltaTime);
+        mCameraControl->HandleUpdateFrame(deltaTime);
     }
 
     BuildAABBTree();

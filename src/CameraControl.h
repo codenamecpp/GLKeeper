@@ -14,7 +14,7 @@ public:
 
     // process camera controller logic
     // @param deltaTime: Time since last frame
-    virtual void UpdateFrame(float deltaTime)
+    virtual void HandleUpdateFrame(float deltaTime)
     {
         // do nothing
     }

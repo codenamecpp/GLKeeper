@@ -22,7 +22,7 @@ public:
 
     // process game state frame logic
     // @param theDeltaTime: Time since previous frame
-    virtual void HandleGamestateFrame() 
+    virtual void HandleUpdateFrame() 
     {
     }
 

@@ -187,6 +187,7 @@
     <ClInclude Include="ConsoleVariable.inl" />
     <ClInclude Include="DebugDrawRenderProgram.h" />
     <ClInclude Include="GameScene.h" />
+    <ClInclude Include="MeshViewGamestate.h" />
     <ClInclude Include="OrbitCameraControl.h" />
     <ClInclude Include="SceneCamera.h" />
     <ClInclude Include="CommonTypes.h" />
@@ -276,6 +277,7 @@
     <ClCompile Include="json_document.cpp" />
     <ClCompile Include="GameMain.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="MeshViewGamestate.cpp" />
     <ClCompile Include="micropather.cpp" />
     <ClCompile Include="OrbitCameraControl.cpp" />
     <ClCompile Include="pch.cpp">

@@ -10,6 +10,9 @@ class GenericGamestate;
 // game core
 class GameMain: public cxx::noncopyable
 {
+    // all gamestates can access private members
+    friend class MeshViewGamestate;
+
 public:
     // readonly
     GenericGamestate* mCurrentGamestate = nullptr;
@@ -36,6 +39,7 @@ public:
 
 private:
 
+private:
 };
 
 extern GameMain gGameMain;
