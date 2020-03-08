@@ -3,6 +3,7 @@
 #include "SceneDefs.h"
 #include "SceneCamera.h"
 #include "AABBTree.h"
+#include "InputsDefs.h"
 
 // manages scene objects visualization and transformation
 class GameScene: public cxx::noncopyable
@@ -22,6 +23,14 @@ public:
     // process debug draw
     void DebugRenderFrame(DebugRenderer& renderer);
 
+    // process input event
+    // @param inputEvent: Event data
+    void HandleInputEvent(MouseButtonInputEvent& inputEvent);
+    void HandleInputEvent(MouseMovedInputEvent& inputEvent);
+    void HandleInputEvent(MouseScrollInputEvent& inputEvent);
+    void HandleInputEvent(KeyInputEvent& inputEvent);
+    void HandleInputEvent(KeyCharEvent& inputEvent);
+
     // create scene object but not attach it automatically
     // @param position: Position on scene
     // @param direction: Direction vector, must be normalized
@@ -39,6 +48,10 @@ public:
     // @param sceneEntity: Target
     void DestroySceneObject(SceneObject* sceneObject);
 
+    // set active scene camera controller
+    // @param cameraController: Contoller or null to clear current
+    void SetCameraControl(SceneCameraController* cameraController);
+
     // callback from scene entities
     // Transformation or local bounds of object gets changed
     void HandleSceneObjectTransformChange(SceneObject* sceneObject);
@@ -49,12 +62,12 @@ private:
 
 private:
     AABBTree mAABBTree;
-    cxx::object_pool<SceneObject> mObjectsPool;
-
+    SceneCameraController* mCameraControl = nullptr;
     // entities lists
     cxx::intrusive_list<SceneObject> mTransformObjects;
     cxx::intrusive_list<SceneObject> mSceneObjects;
-
+    // object pools
+    cxx::object_pool<SceneObject> mObjectsPool;
 };
 
 extern GameScene gGameScene;

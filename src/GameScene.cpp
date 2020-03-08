@@ -3,6 +3,8 @@
 #include "SceneObject.h"
 #include "ConsoleVariable.h"
 #include "Console.h"
+#include "CameraControl.h"
+#include "TimeManager.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -23,6 +25,8 @@ bool GameScene::Initialize()
 
 void GameScene::Deinit()
 {
+    mCameraControl = nullptr;
+
     gConsole.UnregisterVariable(&gCvarScene_DebugDrawAabb);
     mAABBTree.Cleanup();
 
@@ -31,6 +35,13 @@ void GameScene::Deinit()
 
 void GameScene::UpdateFrame()
 {
+    float deltaTime = (float) gTimeManager.GetRealtimeFrameDelta();
+
+    if (mCameraControl)
+    {
+        mCameraControl->UpdateFrame(deltaTime);
+    }
+
     BuildAABBTree();
 }
 
@@ -39,6 +50,46 @@ void GameScene::DebugRenderFrame(DebugRenderer& renderer)
     if (gCvarScene_DebugDrawAabb.mValue)
     {
         mAABBTree.DebugRender(renderer);
+    }
+}
+
+void GameScene::HandleInputEvent(MouseButtonInputEvent& inputEvent)
+{
+    if (mCameraControl)
+    {
+        mCameraControl->HandleInputEvent(inputEvent);
+    }
+}
+
+void GameScene::HandleInputEvent(MouseMovedInputEvent& inputEvent)
+{
+    if (mCameraControl)
+    {
+        mCameraControl->HandleInputEvent(inputEvent);
+    }
+}
+
+void GameScene::HandleInputEvent(MouseScrollInputEvent& inputEvent)
+{
+    if (mCameraControl)
+    {
+        mCameraControl->HandleInputEvent(inputEvent);
+    }
+}
+
+void GameScene::HandleInputEvent(KeyInputEvent& inputEvent)
+{
+    if (mCameraControl)
+    {
+        mCameraControl->HandleInputEvent(inputEvent);
+    }
+}
+
+void GameScene::HandleInputEvent(KeyCharEvent& inputEvent)
+{
+    if (mCameraControl)
+    {
+        mCameraControl->HandleInputEvent(inputEvent);
     }
 }
 
@@ -110,6 +161,24 @@ void GameScene::DestroySceneObject(SceneObject* sceneEntity)
 
     DetachSceneObject(sceneEntity);
     mObjectsPool.destroy(sceneEntity);
+}
+
+void GameScene::SetCameraControl(SceneCameraController* cameraController)
+{
+    if (mCameraControl == cameraController)
+        return;
+
+    if (mCameraControl)
+    {
+        mCameraControl->HandleSceneDetach();
+        mCameraControl->mSceneCamera = nullptr;
+    }
+    mCameraControl = cameraController;
+    if (mCameraControl)
+    {
+        mCameraControl->mSceneCamera = &mCamera;
+        mCameraControl->HandleSceneDetach();
+    }
 }
 
 void GameScene::BuildAABBTree()

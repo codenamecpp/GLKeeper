@@ -299,6 +299,9 @@
     <ClInclude Include="DebugDrawRenderProgram.h">
       <Filter>Game\Render\Programs</Filter>
     </ClInclude>
+    <ClInclude Include="CameraControl.h">
+      <Filter>Game\Scene\CameraControl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

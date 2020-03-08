@@ -22,7 +22,7 @@ void TexturesManager::Deinit()
 
 void TexturesManager::UpdateFrame()
 {
-    float deltaTime = static_cast<float>(gTimeManager.GetRealtimeFrameDelta());
+    float deltaTime = (float) gTimeManager.GetRealtimeFrameDelta();
 
     for (auto& curr: mTexture2DAnimations)
     {

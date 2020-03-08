@@ -181,6 +181,7 @@
     <ClInclude Include="AABBTree.h" />
     <ClInclude Include="BinaryInputStream.h" />
     <ClInclude Include="BinaryOutputStream.h" />
+    <ClInclude Include="CameraControl.h" />
     <ClInclude Include="ConsoleDefs.h" />
     <ClInclude Include="ConsoleVariable.h" />
     <ClInclude Include="ConsoleVariable.inl" />

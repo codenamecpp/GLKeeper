@@ -47,6 +47,7 @@ void GameMain::HandleInputEvent(MouseButtonInputEvent& inputEvent)
     {
         mCurrentGamestate->HandleInputEvent(inputEvent);
     }
+    gGameScene.HandleInputEvent(inputEvent);
 }
 
 void GameMain::HandleInputEvent(MouseMovedInputEvent& inputEvent)
@@ -55,6 +56,7 @@ void GameMain::HandleInputEvent(MouseMovedInputEvent& inputEvent)
     {
         mCurrentGamestate->HandleInputEvent(inputEvent);
     }
+    gGameScene.HandleInputEvent(inputEvent);
 }
 
 void GameMain::HandleInputEvent(MouseScrollInputEvent& inputEvent)
@@ -63,6 +65,7 @@ void GameMain::HandleInputEvent(MouseScrollInputEvent& inputEvent)
     {
         mCurrentGamestate->HandleInputEvent(inputEvent);
     }
+    gGameScene.HandleInputEvent(inputEvent);
 }
 
 void GameMain::HandleInputEvent(KeyInputEvent& inputEvent)
@@ -89,6 +92,7 @@ void GameMain::HandleInputEvent(KeyInputEvent& inputEvent)
     {
         mCurrentGamestate->HandleInputEvent(inputEvent);
     }
+    gGameScene.HandleInputEvent(inputEvent);
 }
 
 void GameMain::HandleInputEvent(KeyCharEvent& inputEvent)
@@ -97,4 +101,5 @@ void GameMain::HandleInputEvent(KeyCharEvent& inputEvent)
     {
         mCurrentGamestate->HandleInputEvent(inputEvent);
     }
+    gGameScene.HandleInputEvent(inputEvent);
 }
