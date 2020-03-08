@@ -5,10 +5,10 @@
 class SceneCamera;
 
 // scene camera controller base class
-class SceneCameraController
+class SceneCameraControl
 {
 public:
-    virtual ~SceneCameraController()
+    virtual ~SceneCameraControl()
     {
     }
 

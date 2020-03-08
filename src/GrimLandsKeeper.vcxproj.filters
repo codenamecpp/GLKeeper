@@ -302,6 +302,9 @@
     <ClInclude Include="CameraControl.h">
       <Filter>Game\Scene\CameraControl</Filter>
     </ClInclude>
+    <ClInclude Include="OrbitCameraControl.h">
+      <Filter>Game\Scene\CameraControl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -434,6 +437,9 @@
     </ClCompile>
     <ClCompile Include="GameMain.cpp">
       <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="OrbitCameraControl.cpp">
+      <Filter>Game\Scene\CameraControl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

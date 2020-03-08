@@ -163,7 +163,7 @@ void GameScene::DestroySceneObject(SceneObject* sceneEntity)
     mObjectsPool.destroy(sceneEntity);
 }
 
-void GameScene::SetCameraControl(SceneCameraController* cameraController)
+void GameScene::SetCameraControl(SceneCameraControl* cameraController)
 {
     if (mCameraControl == cameraController)
         return;

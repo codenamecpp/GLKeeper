@@ -153,6 +153,11 @@ public:
     {
         return (mMods & bits) == bits;
     }
+    // test whether specific button was pressed
+    inline bool HasPressed(eMouseButton mouseButton) const
+    {
+        return mPressed && mButton == mouseButton;
+    }
 public:
     eMouseButton mButton;
     int mMods;

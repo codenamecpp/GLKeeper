@@ -19,6 +19,17 @@ namespace cxx
         return value;
     }
 
+    // normalize angle
+    inline float normalize_angle_180(float angleDegrees)
+    {
+        angleDegrees = std::fmod(angleDegrees + 180.0f, 360.0f);
+        if (angleDegrees < 0.0f)
+        {
+            angleDegrees += 360.0f;
+        }
+        return angleDegrees - 180.0f;
+    }
+
     // round up value
     inline unsigned int round_up_to(unsigned int value, unsigned int pad)
     {

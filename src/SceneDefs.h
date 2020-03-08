@@ -6,7 +6,7 @@
 class SceneObject;
 class SceneCamera;
 class GameScene;
-class SceneCameraController;
+class SceneCameraControl;
 
 namespace SceneAxes
 {

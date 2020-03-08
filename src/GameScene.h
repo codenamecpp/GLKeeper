@@ -50,7 +50,7 @@ public:
 
     // set active scene camera controller
     // @param cameraController: Contoller or null to clear current
-    void SetCameraControl(SceneCameraController* cameraController);
+    void SetCameraControl(SceneCameraControl* cameraController);
 
     // callback from scene entities
     // Transformation or local bounds of object gets changed
@@ -62,7 +62,7 @@ private:
 
 private:
     AABBTree mAABBTree;
-    SceneCameraController* mCameraControl = nullptr;
+    SceneCameraControl* mCameraControl = nullptr;
     // entities lists
     cxx::intrusive_list<SceneObject> mTransformObjects;
     cxx::intrusive_list<SceneObject> mSceneObjects;
