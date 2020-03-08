@@ -5,6 +5,7 @@
 #include "Console.h"
 #include "CameraControl.h"
 #include "TimeManager.h"
+#include "DebugRenderer.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -28,9 +29,9 @@ void GameScene::Deinit()
     mCameraControl = nullptr;
 
     gConsole.UnregisterVariable(&gCvarScene_DebugDrawAabb);
-    mAABBTree.Cleanup();
 
     DestroyAttachedSceneObjects();
+    mAABBTree.Cleanup();
 }
 
 void GameScene::UpdateFrame()
@@ -47,6 +48,9 @@ void GameScene::UpdateFrame()
 
 void GameScene::DebugRenderFrame(DebugRenderer& renderer)
 {
+
+    renderer.DrawSphere(glm::vec3(0.0f), 5.0f, Color32_Red, true);
+
     if (gCvarScene_DebugDrawAabb.mValue)
     {
         mAABBTree.DebugRender(renderer);
@@ -177,7 +181,7 @@ void GameScene::SetCameraControl(SceneCameraControl* cameraController)
     if (mCameraControl)
     {
         mCameraControl->mSceneCamera = &mCamera;
-        mCameraControl->HandleSceneDetach();
+        mCameraControl->HandleSceneAttach();
     }
 }
 

@@ -89,6 +89,13 @@ void System::Initialize(int argc, char *argv[])
         // ignore failure
     }
 
+    // init game
+    if (!gGameMain.Initialize())
+    {
+        gConsole.LogMessage(eLogMessage_Error, "Cannot initialize game");
+        Terminate();
+    }
+
     mStartSystemTime = ::glfwGetTime();
     debug_assert(mStartSystemTime > 0.0);
 
@@ -102,6 +109,7 @@ void System::Deinit()
 {
     gConsole.LogMessage(eLogMessage_Info, "System shutdown");
 
+    gGameMain.Deinit();
     gTexturesManager.Deinit();
     gDebugGuiManager.Deinit();
     gRenderManager.Deinit();

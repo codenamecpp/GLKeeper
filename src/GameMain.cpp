@@ -18,11 +18,16 @@ bool GameMain::Initialize()
         return false;
     }
 
+    // set initial gamestate
+    SwitchToGameState(&mMeshViewGamestate);
+
     return true;
 }
 
 void GameMain::Deinit()
 {
+    SwitchToGameState(nullptr);
+
     gGameScene.Deinit();
 }
 
@@ -102,4 +107,25 @@ void GameMain::HandleInputEvent(KeyCharEvent& inputEvent)
         mCurrentGamestate->HandleInputEvent(inputEvent);
     }
     gGameScene.HandleInputEvent(inputEvent);
+}
+
+bool GameMain::IsMeshViewGamestate() const
+{
+    return mCurrentGamestate == &mMeshViewGamestate;
+}
+
+void GameMain::SwitchToGameState(GenericGamestate* gamestate)
+{
+    if (mCurrentGamestate == gamestate)
+        return;
+
+    if (mCurrentGamestate)
+    {
+        mCurrentGamestate->HandleGamestateLeave();
+    }
+    mCurrentGamestate = gamestate;
+    if (mCurrentGamestate)
+    {
+        mCurrentGamestate->HandleGamestateEnter();
+    }
 }

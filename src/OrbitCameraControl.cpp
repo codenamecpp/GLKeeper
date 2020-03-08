@@ -58,6 +58,8 @@ void OrbitCameraControl::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 
 void OrbitCameraControl::HandleInputEvent(MouseMovedInputEvent& inputEvent)
 {
+    debug_assert(mSceneCamera);
+
     bool orient = gInputsManager.GetMouseButtonL();
     bool moveorigin = gInputsManager.GetMouseButtonR();
 
@@ -132,6 +134,7 @@ void OrbitCameraControl::HandleInputEvent(KeyCharEvent& inputEvent)
 
 void OrbitCameraControl::UpdateOrientation()
 {
+    debug_assert(mSceneCamera);
     mSceneCamera->ResetOrientation();
 
     glm::vec3 campos;

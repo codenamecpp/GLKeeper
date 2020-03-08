@@ -13,6 +13,7 @@ void SystemSettings::SetDefaults()
     mScreenDimensions.y = DefaultScreenResolutionY; 
     mFullscreen = false;
     mEnableVSync = false;
+    mScreenAspectRatio = (mScreenDimensions.y > 0) ? ((mScreenDimensions.x * 1.0f) / (mScreenDimensions.y * 1.0f)) : 1.0f;
 }
 
 void SystemSettings::SetFromJsonDocument(const cxx::json_document& sourceDocument)

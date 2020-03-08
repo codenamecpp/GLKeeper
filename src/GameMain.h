@@ -3,9 +3,7 @@
 #include "GameDefs.h"
 #include "InputsDefs.h"
 #include "RenderDefs.h"
-
-// forwards
-class GenericGamestate;
+#include "MeshViewGamestate.h"
 
 // game core
 class GameMain: public cxx::noncopyable
@@ -37,9 +35,14 @@ public:
     void HandleInputEvent(KeyInputEvent& inputEvent);
     void HandleInputEvent(KeyCharEvent& inputEvent);
 
-private:
+    // determine current game state
+    bool IsMeshViewGamestate() const;
 
 private:
+    void SwitchToGameState(GenericGamestate* gamestate);
+
+private:
+    MeshViewGamestate mMeshViewGamestate;
 };
 
 extern GameMain gGameMain;

@@ -12,6 +12,8 @@ public:
     bool mFullscreen = false; // enable fullscreen mode
     bool mEnableVSync = false; // enable vertical synchronization
 
+    float mScreenAspectRatio = 1.0f;
+
 public:
     SystemSettings() = default;
 
