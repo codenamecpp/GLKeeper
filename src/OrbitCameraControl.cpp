@@ -97,7 +97,7 @@ void OrbitCameraControl::HandleInputEvent(MouseMovedInputEvent& inputEvent)
         }
         if (deltaY)
         {
-            mFocusPoint += GetSceneAxis_Y() * (deltaY * -0.01f);
+            mFocusPoint += SceneAxis_Y() * (deltaY * -0.01f);
         }
     }
 
@@ -145,5 +145,5 @@ void OrbitCameraControl::UpdateOrientation()
     campos += mFocusPoint;
 
     mSceneCamera->SetPosition(campos);
-    mSceneCamera->FocusAt(mFocusPoint, GetSceneAxis_Y());
+    mSceneCamera->FocusAt(mFocusPoint, SceneAxis_Y());
 }

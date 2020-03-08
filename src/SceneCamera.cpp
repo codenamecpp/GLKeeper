@@ -83,9 +83,9 @@ void SceneCamera::SetIdentity()
     mViewMatrix = glm::mat4(1.0f);
 
     // set default axes
-    mFrontDirection = -GetSceneAxis_Z(); // look along negative axis
-    mUpDirection = GetSceneAxis_X();
-    mRightDirection = GetSceneAxis_Y();
+    mFrontDirection = -SceneAxis_Z(); // look along negative axis
+    mUpDirection = SceneAxis_X();
+    mRightDirection = SceneAxis_Y();
 
     // reset position to origin
     mPosition = glm::vec3(0.0f);
@@ -97,9 +97,9 @@ void SceneCamera::SetIdentity()
 
 void SceneCamera::ResetOrientation()
 {
-    mFrontDirection = -GetSceneAxis_Z(); // look along negative axis
-    mUpDirection = GetSceneAxis_X();
-    mRightDirection = GetSceneAxis_Y();
+    mFrontDirection = -SceneAxis_Z(); // look along negative axis
+    mUpDirection = SceneAxis_X();
+    mRightDirection = SceneAxis_Y();
 
     // force dirty flags
     mViewMatrixDirty = true;
@@ -107,6 +107,9 @@ void SceneCamera::ResetOrientation()
 
 void SceneCamera::FocusAt(const glm::vec3& point, const glm::vec3& upward)
 {
+    if (point == mPosition)
+        return;
+
     mFrontDirection = glm::normalize(point - mPosition);
     mRightDirection = glm::normalize(glm::cross(upward, mFrontDirection));
     mUpDirection = glm::normalize(glm::cross(mFrontDirection, mRightDirection));
@@ -130,8 +133,8 @@ void SceneCamera::SetRotationAngles(const glm::vec3& rotationAngles)
         glm::radians(rotationAngles.x), 
         glm::radians(rotationAngles.z));
 
-    const glm::vec3 rotatedUp = glm::vec3(rotationMatrix * glm::vec4(GetSceneAxis_Y(), 0.0f));
-    mFrontDirection = glm::vec3(rotationMatrix * glm::vec4(-GetSceneAxis_Z(), 0.0f));
+    const glm::vec3 rotatedUp = glm::vec3(rotationMatrix * glm::vec4(SceneAxis_Y(), 0.0f));
+    mFrontDirection = glm::vec3(rotationMatrix * glm::vec4(-SceneAxis_Z(), 0.0f));
     mRightDirection = glm::normalize(glm::cross(rotatedUp, mFrontDirection)); 
     mUpDirection = glm::normalize(glm::cross(mFrontDirection, mRightDirection));
 

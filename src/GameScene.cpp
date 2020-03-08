@@ -48,9 +48,6 @@ void GameScene::UpdateFrame()
 
 void GameScene::DebugRenderFrame(DebugRenderer& renderer)
 {
-
-    renderer.DrawSphere(glm::vec3(0.0f), 5.0f, Color32_Red, true);
-
     if (gCvarScene_DebugDrawAabb.mValue)
     {
         mAABBTree.DebugRender(renderer);
