@@ -22,6 +22,7 @@ using GpuVariableLocation = int;
 // predefined value for unspecified render program variable location
 const GpuVariableLocation GpuVariable_NULL = -1;
 const GpuTextureHandle GpuTextureHandle_NULL = 0;
+const GpuProgramHandle GpuProgramHandle_NULL = 0;
 
 //////////////////////////////////////////////////////////////////////////
 

@@ -62,13 +62,10 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 GpuProgram::GpuProgram(GraphicsDeviceContext& graphicsContext)
-    : mResourceHandle()
+    : mResourceHandle(GpuProgramHandle_NULL)
     , mInputLayout()
     , mGraphicsContext(graphicsContext)
 {
-    mResourceHandle = ::glCreateProgram();
-    glCheckError();
-
     // clear all locations
     for (GpuVariableLocation& location: mAttributes) { location = GpuVariable_NULL; }
     for (GpuVariableLocation& location: mSamplers) { location = GpuVariable_NULL; }
@@ -76,10 +73,7 @@ GpuProgram::GpuProgram(GraphicsDeviceContext& graphicsContext)
 
 GpuProgram::~GpuProgram()
 {
-    SetUnbound();
-
-    ::glDeleteProgram(mResourceHandle);
-    glCheckError();
+    FreeProgram();
 }
 
 bool GpuProgram::IsProgramBound() const
@@ -89,7 +83,24 @@ bool GpuProgram::IsProgramBound() const
 
 bool GpuProgram::IsProgramCompiled() const
 {
+    return mResourceHandle != GpuProgramHandle_NULL;
+}
+
+bool GpuProgram::IsProgramConfigured() const
+{
     return mInputLayout.mEnabledAttributes > 0;
+}
+
+bool GpuProgram::BindAttribute(eVertexAttribute attributeIdentifier, const char* attributeName)
+{
+    mInputLayout.IncludeAttribute(attributeIdentifier);
+    mAttributes[attributeIdentifier] = QueryAttributeLocation(attributeName);
+    if (mAttributes[attributeIdentifier] == GpuVariable_NULL)
+    {
+        debug_assert(false);
+        return false;
+    }
+    return true;
 }
 
 void GpuProgram::SetUniformParam(GpuVariableLocation constantLocation, float param0)
@@ -164,11 +175,9 @@ bool GpuProgram::CompileSourceCode(const char* shaderSource)
     }
 
     bool isSuccessed = false;
-    if (IsProgramCompiled())
     {
         // create temporary program
-        GLuint programHandleGL = 0;
-        programHandleGL = ::glCreateProgram();
+        GLuint programHandleGL = ::glCreateProgram();
         glCheckError();
 
         isSuccessed = CompileSourceCode(programHandleGL, shaderSource);
@@ -180,15 +189,9 @@ bool GpuProgram::CompileSourceCode(const char* shaderSource)
         }
         else
         {
-            // destroy old program object
-            ::glDeleteProgram(mResourceHandle);
-            glCheckError();
+            FreeProgram();
             mResourceHandle = programHandleGL;
         }
-    }
-    else
-    {
-        isSuccessed = CompileSourceCode(mResourceHandle, shaderSource);
     }
 
     if (!isSuccessed)
@@ -200,17 +203,6 @@ bool GpuProgram::CompileSourceCode(const char* shaderSource)
     for (GpuVariableLocation& location: mAttributes) { location = GpuVariable_NULL; }
     for (GpuVariableLocation& location: mSamplers) { location = GpuVariable_NULL; }
 
-    // query attributes
-    for (int iattribute = 0; iattribute < eVertexAttribute_COUNT; ++iattribute)
-    {
-        eVertexAttribute vertexAttribute = (eVertexAttribute) iattribute;
-        mAttributes[iattribute] = ::glGetAttribLocation(mResourceHandle, cxx::enum_to_string(vertexAttribute));
-        glCheckError();
-        if (mAttributes[iattribute] != GpuVariable_NULL)
-        {
-            mInputLayout.IncludeAttribute(vertexAttribute);
-        }        
-    }
     // query samplers
     for (int isampler = 0; isampler < eTextureUnit_COUNT; ++isampler)
     {
@@ -283,9 +275,29 @@ bool GpuProgram::CompileSourceCode(GpuProgramHandle targetHandle, const char* pr
     return true;
 }
 
+void GpuProgram::FreeProgram()
+{
+    SetUnbound();
+    if (mResourceHandle == GpuProgramHandle_NULL)
+        return;
+
+    ::glDeleteProgram(mResourceHandle);
+    glCheckError();
+
+    mResourceHandle = GpuProgramHandle_NULL;
+}
+
 GpuVariableLocation GpuProgram::QueryUniformLocation(const char* constantName) const
 {
     GpuVariableLocation outLocation = ::glGetUniformLocation(mResourceHandle, constantName);
+    glCheckError();
+
+    return outLocation;
+}
+
+GpuVariableLocation GpuProgram::QueryAttributeLocation(const char* attributeName) const
+{
+    GpuVariableLocation outLocation = ::glGetAttribLocation(mResourceHandle, attributeName);
     glCheckError();
 
     return outLocation;

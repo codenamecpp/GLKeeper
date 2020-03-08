@@ -28,6 +28,10 @@ private:
     {
         mUniformID_view_projection_matrix = mGpuProgram->QueryUniformLocation("view_projection_matrix");
         debug_assert(mUniformID_view_projection_matrix != GpuVariable_NULL);
+
+        // configure input layout
+        mGpuProgram->BindAttribute(eVertexAttribute_Position0, "in_pos");
+        mGpuProgram->BindAttribute(eVertexAttribute_Color0, "in_color");
     }
 
     void OnProgramFree() override

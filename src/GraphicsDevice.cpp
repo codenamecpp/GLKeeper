@@ -759,6 +759,11 @@ void GraphicsDevice::BindRenderProgram(GpuProgram* program)
     if (mDeviceContext.mCurrentProgram == program)
         return;
 
+    if (program)
+    {
+        debug_assert(program->IsProgramConfigured() && program->IsProgramConfigured());
+    }
+
     ::glUseProgram(program ? program->mResourceHandle : 0);
     glCheckError();
     if (program)

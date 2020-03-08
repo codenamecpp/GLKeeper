@@ -15,11 +15,20 @@ public:
     // @param shaderSource: Source code
     bool CompileSourceCode(const char* shaderSource);
 
+    // free hardware program object
+    void FreeProgram();
+
     // test whether render program is currently activated
     bool IsProgramBound() const;
 
     // test whether render program is compiled and ready
     bool IsProgramCompiled() const;
+
+    // test whether vertex attributes was set
+    bool IsProgramConfigured() const;
+
+    // configure input layout
+    bool BindAttribute(eVertexAttribute attributeIdentifier, const char* attributeName);
 
     // constant setters
     // @param constantLocation: Constant location
@@ -33,10 +42,11 @@ public:
     void SetUniformParam(GpuVariableLocation constantLocation, const glm::mat3& floatMatrix3);
     void SetUniformParam(GpuVariableLocation constantLocation, const glm::mat4& floatMatrix4);
 
-    // custom constants support
     // @param constantName: Uniform name
-    // @returns -1 on uniform not exists
     GpuVariableLocation QueryUniformLocation(const char* constantName) const;
+
+    // @param attributeName: Vertex attribute name
+    GpuVariableLocation QueryAttributeLocation(const char* attributeName) const;
 
 private:
     // implementation details
