@@ -89,19 +89,21 @@ void DebugRenderer::Deinit()
 
 void DebugRenderer::RenderFrameBegin()
 {
-    gGameScene.mCamera.ComputeMatrices();
-
-    mDebugDrawRenderProgram.ActivateProgram();
-    mDebugDrawRenderProgram.SetViewProjectionMatrix(gGameScene.mCamera.mViewProjectionMatrix);
 }
 
 void DebugRenderer::RenderFrameEnd()
 {
     if (HasPendingDraws())
     {
+        gGameScene.mCamera.ComputeMatrices();
+
+        mDebugDrawRenderProgram.ActivateProgram();
+        mDebugDrawRenderProgram.SetViewProjectionMatrix(gGameScene.mCamera.mViewProjectionMatrix);
+
         Flush();
+
+        mDebugDrawRenderProgram.DeactivateProgram();
     }
-    mDebugDrawRenderProgram.DeactivateProgram();
 }
 
 void DebugRenderer::DrawLine(const glm::vec3& start_point, const glm::vec3& end_point, unsigned int color, bool depth_test)
