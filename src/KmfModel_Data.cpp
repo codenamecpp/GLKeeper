@@ -53,6 +53,7 @@ enum
     KMF_MATERIAL_HAS_ALPHA = 0x01,
     KMF_MATERIAL_SHINYNESS = 0x02,
     KMF_MATERIAL_ALPHA_ADDITIVE = 0x04,
+    KMF_MATERIAL_ENVIRONMENT_MAPPED = 0x0100,
 };
 
 enum KMF_MeshType: unsigned int
@@ -760,6 +761,7 @@ bool KmfModel_Data::ReadMaterials(BinaryInputStream* theStream)
         currentMaterial.mFlagHasAlpha = (materialFlags & KMF_MATERIAL_HAS_ALPHA) > 0;
         currentMaterial.mFlagAlphaAdditive = (materialFlags & KMF_MATERIAL_ALPHA_ADDITIVE) > 0;
         currentMaterial.mFlagShinyness = (materialFlags & KMF_MATERIAL_SHINYNESS) > 0;
+        currentMaterial.mFlagEnvironmentMapped = (materialFlags & KMF_MATERIAL_ENVIRONMENT_MAPPED) > 0;
 
         if (!KMF_ReadCString(theStream, currentMaterial.mEnvMappingTexture))
             return false;

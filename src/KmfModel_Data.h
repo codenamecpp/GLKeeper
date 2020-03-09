@@ -26,6 +26,7 @@ public:
     bool mFlagHasAlpha : 1;
     bool mFlagShinyness : 1;
     bool mFlagAlphaAdditive : 1;
+    bool mFlagEnvironmentMapped : 1;
 };
 
 // defines single piece of model
