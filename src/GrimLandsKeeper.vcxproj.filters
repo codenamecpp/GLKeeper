@@ -312,6 +312,12 @@
       <Filter>Game\Render</Filter>
     </ClInclude>
     <ClInclude Include="cvars.h" />
+    <ClInclude Include="ModelsManager.h">
+      <Filter>Application\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="KmfModel_Data.h">
+      <Filter>Application\Resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -453,6 +459,12 @@
     </ClCompile>
     <ClCompile Include="RenderMaterial.cpp">
       <Filter>Game\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelsManager.cpp">
+      <Filter>Application\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="KmfModel_Data.cpp">
+      <Filter>Application\Resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

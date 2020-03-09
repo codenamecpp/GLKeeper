@@ -1,6 +1,9 @@
 #pragma once
 
-#include "RenderDefs.h"
+#include "GraphicsDefs.h"
+
+// forwards
+class Texture2D;
 
 // various render properties of drawable object
 class RenderMaterial
@@ -11,6 +14,8 @@ public:
     // activate or deactivate render material
     void ActivateMaterial();
     void DeactivateMaterial();
+
+    void PreloadTextures();
 
     void Clear();
     void SetTransparent(bool isTransparent);
@@ -35,6 +40,7 @@ public:
     }
 
 public:
+    std::string mInternalName;
 
     Texture2D* mDiffuseTexture = nullptr;
     Texture2D* mEnvMappingTexture = nullptr;

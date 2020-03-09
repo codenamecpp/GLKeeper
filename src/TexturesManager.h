@@ -3,7 +3,7 @@
 class Texture2D;
 class Texture2DAnimation;
 
-// render textures manager class
+// textures manager class
 class TexturesManager: public cxx::noncopyable
 {
 public:
@@ -13,7 +13,7 @@ public:
 
 public:
 
-    // setup texture manager internal resources, returns false on error
+    // setup manager internal resources, returns false on error
     bool Initialize();
     void Deinit();
 

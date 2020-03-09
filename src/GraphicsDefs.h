@@ -11,7 +11,6 @@ class GpuTexture2D;
 class GpuTextureArray2D;
 class GraphicsDeviceContext;
 class Texture2D_Image;
-class Texture2D;
 
 // internal types
 using GpuProgramHandle = unsigned int;

@@ -188,7 +188,9 @@
     <ClInclude Include="cvars.h" />
     <ClInclude Include="DebugDrawRenderProgram.h" />
     <ClInclude Include="GameScene.h" />
+    <ClInclude Include="KmfModel_Data.h" />
     <ClInclude Include="MeshViewGamestate.h" />
+    <ClInclude Include="ModelsManager.h" />
     <ClInclude Include="OrbitCameraControl.h" />
     <ClInclude Include="RenderMaterial.h" />
     <ClInclude Include="SceneCamera.h" />
@@ -278,9 +280,11 @@
     <ClCompile Include="InputsManager.cpp" />
     <ClCompile Include="json_document.cpp" />
     <ClCompile Include="GameMain.cpp" />
+    <ClCompile Include="KmfModel_Data.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MeshViewGamestate.cpp" />
     <ClCompile Include="micropather.cpp" />
+    <ClCompile Include="ModelsManager.cpp" />
     <ClCompile Include="OrbitCameraControl.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -11,6 +11,7 @@
 #include "DebugConsoleWindow.h"
 #include "TexturesManager.h"
 #include "GameMain.h"
+#include "ModelsManager.h"
 
 #include "GLFW/glfw3.h"
 
@@ -86,7 +87,13 @@ void System::Initialize(int argc, char *argv[])
     if (!gTexturesManager.Initialize())
     {
         gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize textures manager");
-        // ignore failure
+        Terminate();
+    }
+
+    if (!gModelsManager.Initialize())
+    {
+        gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize models manager");
+        Terminate();
     }
 
     // init game
@@ -110,6 +117,7 @@ void System::Deinit()
     gConsole.LogMessage(eLogMessage_Info, "System shutdown");
 
     gGameMain.Deinit();
+    gModelsManager.Deinit();
     gTexturesManager.Deinit();
     gDebugGuiManager.Deinit();
     gRenderManager.Deinit();

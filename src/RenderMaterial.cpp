@@ -38,3 +38,16 @@ void RenderMaterial::DeactivateMaterial()
 {
     // todo
 }
+
+void RenderMaterial::PreloadTextures()
+{
+    if (mDiffuseTexture)
+    {
+        mDiffuseTexture->LoadTexture();
+    }
+
+    if (mEnvMappingTexture)
+    {
+        mEnvMappingTexture->LoadTexture();
+    }
+}
