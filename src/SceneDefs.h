@@ -1,7 +1,5 @@
 #pragma once
 
-#include "ConsoleDefs.h"
-
 // forwards
 class SceneObject;
 class SceneCamera;
@@ -36,7 +34,3 @@ inline const glm::vec3& SceneAxis_Z()
     static const glm::vec3 axis_Z {0.0f, 0.0f, 1.0f};
     return axis_Z;
 }
-
-// scene cvars
-
-extern CvarBoolean gCvarScene_DebugDrawAabb;

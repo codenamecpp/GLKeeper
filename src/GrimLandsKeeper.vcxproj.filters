@@ -308,6 +308,10 @@
     <ClInclude Include="GenericGamestate.h">
       <Filter>Game</Filter>
     </ClInclude>
+    <ClInclude Include="RenderMaterial.h">
+      <Filter>Game\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="cvars.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -446,6 +450,9 @@
     </ClCompile>
     <ClCompile Include="MeshViewGamestate.cpp">
       <Filter>Game\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderMaterial.cpp">
+      <Filter>Game\Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

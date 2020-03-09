@@ -1,10 +1,12 @@
 #pragma once
 
-#include "ConsoleDefs.h"
+#include "GraphicsDefs.h"
 
+// forwards
 class DebugRenderer;
 class RenderManager;
 class RenderProgram;
+class RenderMaterial;
 
 enum eRenderPass
 {
@@ -13,7 +15,3 @@ enum eRenderPass
 };
 
 decl_enum_strings(eRenderPass);
-
-// render common cvars
-
-extern CvarBoolean gCvarRender_DebugDrawEnabled;

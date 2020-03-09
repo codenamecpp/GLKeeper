@@ -11,6 +11,7 @@ class GpuTexture2D;
 class GpuTextureArray2D;
 class GraphicsDeviceContext;
 class Texture2D_Image;
+class Texture2D;
 
 // internal types
 using GpuProgramHandle = unsigned int;
@@ -19,12 +20,10 @@ using GpuTextureHandle = unsigned int;
 using GpuVertexArrayHandle = unsigned int;
 using GpuVariableLocation = int;
 
-// predefined value for unspecified render program variable location
+// predefined values
 const GpuVariableLocation GpuVariable_NULL = -1;
 const GpuTextureHandle GpuTextureHandle_NULL = 0;
 const GpuProgramHandle GpuProgramHandle_NULL = 0;
-
-//////////////////////////////////////////////////////////////////////////
 
 // render vertex 3d
 struct Vertex3D

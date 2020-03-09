@@ -185,10 +185,12 @@
     <ClInclude Include="ConsoleDefs.h" />
     <ClInclude Include="ConsoleVariable.h" />
     <ClInclude Include="ConsoleVariable.inl" />
+    <ClInclude Include="cvars.h" />
     <ClInclude Include="DebugDrawRenderProgram.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="MeshViewGamestate.h" />
     <ClInclude Include="OrbitCameraControl.h" />
+    <ClInclude Include="RenderMaterial.h" />
     <ClInclude Include="SceneCamera.h" />
     <ClInclude Include="CommonTypes.h" />
     <ClInclude Include="common_utils.h" />
@@ -287,6 +289,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="RenderManager.cpp" />
+    <ClCompile Include="RenderMaterial.cpp" />
     <ClCompile Include="RenderProgram.cpp" />
     <ClCompile Include="SceneCamera.cpp" />
     <ClCompile Include="SceneObject.cpp" />
