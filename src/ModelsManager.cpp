@@ -13,6 +13,10 @@ bool ModelsManager::Initialize()
 
 void ModelsManager::Deinit()
 {
+    for (auto& currRecord: mModelsMap)
+    {
+        delete currRecord.second;
+    }
     mModelsMap.clear();
 }
 

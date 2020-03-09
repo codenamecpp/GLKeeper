@@ -45,7 +45,6 @@ class KmfModel_Data: public cxx::noncopyable
 {
 public:
     std::string mName;
-    std::string mInternalName;
 
     std::vector<cxx::aabbox> mFramesBounds;
     std::vector<KmfModel_SubMesh> mMeshArray;

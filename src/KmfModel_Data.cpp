@@ -238,7 +238,6 @@ bool KmfModel_Data::LoadDataFromStream(BinaryInputStream* theStream)
 
 void KmfModel_Data::Clear()
 {
-    mInternalName.clear();
     mFramesBounds.clear();
     mMeshArray.clear();
     mMaterialsArray.clear();
@@ -251,7 +250,6 @@ void KmfModel_Data::Clear()
 void KmfModel_Data::Exchange(KmfModel_Data& sourceData)
 {
     std::swap(mName, sourceData.mName);
-    std::swap(mInternalName, sourceData.mInternalName);
 
     std::swap(mFramesBounds, sourceData.mFramesBounds);
     std::swap(mMeshArray, sourceData.mMeshArray);
