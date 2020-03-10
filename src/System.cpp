@@ -11,7 +11,7 @@
 #include "DebugConsoleWindow.h"
 #include "TexturesManager.h"
 #include "GameMain.h"
-#include "ModelsManager.h"
+#include "ModelAssetsManager.h"
 
 #include "GLFW/glfw3.h"
 

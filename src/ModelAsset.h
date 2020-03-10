@@ -6,50 +6,52 @@
 // forwards
 class BinaryInputStream;
 
-// defines mesh level of details
-struct KmfModel_SubMeshLOD
-{
-public:
-    std::vector<glm::ivec3> mTriangleArray;
-};
-
-// defines mesh draw material properties
-struct KmfModel_SubMeshMaterial
-{
-public:
-    std::string mInternalName;
-    std::vector<std::string> mTextures;
-    std::string mEnvMappingTexture;
-    float mBrightness;
-    float mGamma;
-    // material flags
-    bool mFlagHasAlpha : 1;
-    bool mFlagShinyness : 1;
-    bool mFlagAlphaAdditive : 1;
-    bool mFlagEnvironmentMapped : 1;
-};
-
-// defines single piece of model
-struct KmfModel_SubMesh
-{
-public:
-    std::vector<glm::vec3> mVertexPositionArray; // contains vertices for all animation frames
-    std::vector<glm::vec3> mVertexNormalArray; // contains vertices for all animation frames
-    std::vector<glm::vec2> mVertexTexCoordArray; // texcoords does not changes between frames so we have single frame here
-    std::vector<KmfModel_SubMeshLOD> mLODsArray;
-    int mMaterialIndex = 0;
-    int mFrameVerticesCount = 0; // num vertices per animation frame
-};
-
 // kmf model data container
-class KmfModel_Data: public cxx::noncopyable
+class ModelAsset: public cxx::noncopyable
 {
 public:
-    std::string mName;
+
+    // defines mesh level of details
+    struct SubMeshLOD
+    {
+    public:
+        std::vector<glm::ivec3> mTriangleArray;
+    };
+
+    // defines mesh draw material properties
+    struct SubMeshMaterial
+    {
+    public:
+        std::string mInternalName;
+        std::vector<std::string> mTextures;
+        std::string mEnvMappingTexture;
+        float mBrightness;
+        float mGamma;
+        // material flags
+        bool mFlagHasAlpha : 1;
+        bool mFlagShinyness : 1;
+        bool mFlagAlphaAdditive : 1;
+        bool mFlagEnvironmentMapped : 1;
+    };
+
+    // defines single piece of model
+    struct SubMesh
+    {
+    public:
+        std::vector<glm::vec3> mVertexPositionArray; // contains vertices for all animation frames
+        std::vector<glm::vec3> mVertexNormalArray; // contains vertices for all animation frames
+        std::vector<glm::vec2> mVertexTexCoordArray; // texcoords does not changes between frames so we have single frame here
+        std::vector<SubMeshLOD> mLODsArray;
+        int mMaterialIndex = 0;
+        int mFrameVerticesCount = 0; // num vertices per animation frame
+    };
+
+    std::string mName; // immutable
+    std::string mInternalName;
 
     std::vector<cxx::aabbox> mFramesBounds;
-    std::vector<KmfModel_SubMesh> mMeshArray;
-    std::vector<KmfModel_SubMeshMaterial> mMaterialsArray;
+    std::vector<SubMesh> mMeshArray;
+    std::vector<SubMeshMaterial> mMaterialsArray;
     glm::vec3 mPosition; // base position offset
 
     float mScale = 1.0f; // base scale
@@ -57,19 +59,19 @@ public:
     int mFramesCount = 0; // num animation frames, 1 for static models
 
 public:
-    KmfModel_Data(const std::string& resourceName);
-    ~KmfModel_Data();
+    ModelAsset(const std::string& resourceName);
+    ~ModelAsset();
 
-    // load model data from binary stream
+    // load model data
     // @return false on error
-    bool LoadDataFromStream(BinaryInputStream* binaryStream);
+    bool Load();
 
     // clear model data
     void Clear();
 
     // swap kmf model data
     // @param sourceData: Source kmf model data to swap with
-    void Exchange(KmfModel_Data& sourceData);
+    void Exchange(ModelAsset& sourceData);
 
     // get vertices of specific frame and submesh
     // @param iSubMesh: Submesh index
@@ -112,6 +114,7 @@ public:
     inline bool IsModelLoaded() const { return mFramesCount > 0; }
 
 private:
+    bool LoadFromStream(BinaryInputStream* theStream);
     bool ReadAnimMesh(BinaryInputStream* theStream);
     bool ReadStaticMesh(BinaryInputStream* theStream);
     bool ReadStaticMeshGeometries(BinaryInputStream* theStream, int theNumGeometies);

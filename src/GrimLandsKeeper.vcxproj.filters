@@ -14,9 +14,6 @@
     <Filter Include="Third_Party">
       <UniqueIdentifier>{11573465-8a4d-448f-acc7-67bf43109674}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Data">
-      <UniqueIdentifier>{290e9c1f-d463-4d25-9999-f4a7355a22b2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Docs">
       <UniqueIdentifier>{23335532-d6dd-4c87-ba03-fa3ad5a7d2d7}</UniqueIdentifier>
     </Filter>
@@ -50,9 +47,6 @@
     <Filter Include="Game\Scene">
       <UniqueIdentifier>{5d7e5c39-c126-4d85-af00-6cd205e2a863}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Data\Shaders">
-      <UniqueIdentifier>{8b0aa962-d3ec-4c9f-a33f-afa0b1fe407e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\GUI">
       <UniqueIdentifier>{29e877b2-cd75-42db-97e8-6988bfc8e0c9}</UniqueIdentifier>
     </Filter>
@@ -76,6 +70,12 @@
     </Filter>
     <Filter Include="Game\GameStates">
       <UniqueIdentifier>{3cbb3161-b8b6-449a-ae6c-515a998262af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{290e9c1f-d463-4d25-9999-f4a7355a22b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\Shaders">
+      <UniqueIdentifier>{8b0aa962-d3ec-4c9f-a33f-afa0b1fe407e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -312,10 +312,16 @@
       <Filter>Game\Render</Filter>
     </ClInclude>
     <ClInclude Include="cvars.h" />
-    <ClInclude Include="ModelsManager.h">
+    <ClInclude Include="ModelsRenderer.h">
+      <Filter>Game\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderableModel.h">
+      <Filter>Game\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelAsset.h">
       <Filter>Application\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="KmfModel_Data.h">
+    <ClInclude Include="ModelAssetsManager.h">
       <Filter>Application\Resources</Filter>
     </ClInclude>
   </ItemGroup>
@@ -460,10 +466,16 @@
     <ClCompile Include="RenderMaterial.cpp">
       <Filter>Game\Render</Filter>
     </ClCompile>
-    <ClCompile Include="ModelsManager.cpp">
+    <ClCompile Include="ModelsRenderer.cpp">
+      <Filter>Game\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderableModel.cpp">
+      <Filter>Game\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelAsset.cpp">
       <Filter>Application\Resources</Filter>
     </ClCompile>
-    <ClCompile Include="KmfModel_Data.cpp">
+    <ClCompile Include="ModelAssetsManager.cpp">
       <Filter>Application\Resources</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,8 +1,9 @@
 #include "pch.h"
-#include "KmfModel_Data.h"
+#include "ModelAsset.h"
 #include "BinaryInputStream.h"
 #include "TexturesManager.h"
 #include "Console.h"
+#include "FileSystem.h"
 
 #define MAKE_HEADER_ID(a,b,c,d) ((a) | ((b) << 8) | ((c) << 16) | ((d) << 24))
 
@@ -157,18 +158,20 @@ inline void KMF_DecodeGeomITab(glm::vec3& thePosition, unsigned short& theIndex)
 
 //////////////////////////////////////////////////////////////////////////
 
-KmfModel_Data::KmfModel_Data(const std::string& resourceName)
+ModelAsset::ModelAsset(const std::string& resourceName)
     : mName(resourceName)
 {
 }
 
-KmfModel_Data::~KmfModel_Data()
+ModelAsset::~ModelAsset()
 {
     Clear();
 }
 
-bool KmfModel_Data::LoadDataFromStream(BinaryInputStream* theStream)
+bool ModelAsset::Load()
 {
+    // open stream
+    BinaryInputStream* theStream = gFileSystem.OpenDataFile(mName);
     if (theStream == nullptr)
     {
         debug_assert(false);
@@ -177,6 +180,17 @@ bool KmfModel_Data::LoadDataFromStream(BinaryInputStream* theStream)
 
     Clear();
 
+    bool isLoaded = LoadFromStream(theStream);
+    if (isLoaded)
+    {
+        ComputeBounds();
+    }
+    gFileSystem.CloseFileStream(theStream);
+    return isLoaded;
+}
+
+bool ModelAsset::LoadFromStream(BinaryInputStream* theStream)
+{
     KMFHeader header;
     if (!KMF_ReadSectionHeader(theStream, header, KMF_HEADER_IDENTIFIER))
         return false;
@@ -190,12 +204,12 @@ bool KmfModel_Data::LoadDataFromStream(BinaryInputStream* theStream)
 
     KMF_MeshType meshType;
     READ_FROM_BYTE_STREAM(theStream, meshType); // mesh type
-    
+
     bool meshTypeSupported = meshType == DK2_MESH_TYPE_STATIC || 
         meshType == DK2_MESH_TYPE_ANIMATED;// || 
-        //meshType == DK2_MESH_TYPE_GROUP;
+                                           //meshType == DK2_MESH_TYPE_GROUP;
 
-    // TODO : add groups support
+                                           // TODO : add groups support
 
     debug_assert(meshTypeSupported);
     if (!meshTypeSupported)
@@ -203,7 +217,7 @@ bool KmfModel_Data::LoadDataFromStream(BinaryInputStream* theStream)
 
     SKIP_BYTES(theStream, 4); // unknown data
 
-    //KMSH/MATL
+                              //KMSH/MATL
     if (meshType != DK2_MESH_TYPE_GROUP)
     {
         if (!KMF_ReadSectionHeader(theStream, header, KMF_MATERIALS))
@@ -233,11 +247,10 @@ bool KmfModel_Data::LoadDataFromStream(BinaryInputStream* theStream)
             return false;
     }
 
-    ComputeBounds();
     return true;
 }
 
-void KmfModel_Data::Clear()
+void ModelAsset::Clear()
 {
     mFramesBounds.clear();
     mMeshArray.clear();
@@ -248,7 +261,7 @@ void KmfModel_Data::Clear()
     mFramesCount = 0;
 }
 
-void KmfModel_Data::Exchange(KmfModel_Data& sourceData)
+void ModelAsset::Exchange(ModelAsset& sourceData)
 {
     std::swap(mName, sourceData.mName);
 
@@ -262,7 +275,7 @@ void KmfModel_Data::Exchange(KmfModel_Data& sourceData)
     std::swap(mFramesCount, sourceData.mFramesCount);
 }
 
-void KmfModel_Data::ComputeBounds()
+void ModelAsset::ComputeBounds()
 {
     mFramesBounds.resize(mFramesCount);
 
@@ -271,7 +284,7 @@ void KmfModel_Data::ComputeBounds()
     {
         cxx::aabbox& bounds = mFramesBounds[iAnimFrame];
         bounds.reset();
-        for (const KmfModel_SubMesh& subMesh: mMeshArray)
+        for (const SubMesh& subMesh: mMeshArray)
         {
             const glm::vec3* verticesPos = &subMesh.mVertexPositionArray[iAnimFrame * subMesh.mFrameVerticesCount];
             for (int ivertex = 0; ivertex < subMesh.mFrameVerticesCount; ++ivertex)
@@ -282,7 +295,7 @@ void KmfModel_Data::ComputeBounds()
     } // for
 }
 
-bool KmfModel_Data::ReadAnimMesh(BinaryInputStream* theStream)
+bool ModelAsset::ReadAnimMesh(BinaryInputStream* theStream)
 {
     KMFHeader header;
 
@@ -290,7 +303,7 @@ bool KmfModel_Data::ReadAnimMesh(BinaryInputStream* theStream)
     if (!KMF_ReadSectionHeader(theStream, header, KMF_HEAD))
         return false;
 
-    if (!KMF_ReadCString(theStream, mName))
+    if (!KMF_ReadCString(theStream, mInternalName))
         return false;
 
     unsigned int sprsCount;
@@ -393,7 +406,7 @@ bool KmfModel_Data::ReadAnimMesh(BinaryInputStream* theStream)
     }
 
     // unpack animation frames
-    for (KmfModel_SubMesh& submesh: mMeshArray)
+    for (SubMesh& submesh: mMeshArray)
     {
         std::vector<glm::vec3> frame0_normals;
         std::vector<glm::vec3> frame0_positions;
@@ -457,7 +470,7 @@ bool KmfModel_Data::ReadAnimMesh(BinaryInputStream* theStream)
     return true;
 }
 
-bool KmfModel_Data::ReadStaticMesh(BinaryInputStream* theStream)
+bool ModelAsset::ReadStaticMesh(BinaryInputStream* theStream)
 {
     KMFHeader header;
 
@@ -465,7 +478,7 @@ bool KmfModel_Data::ReadStaticMesh(BinaryInputStream* theStream)
     if (!KMF_ReadSectionHeader(theStream, header, KMF_HEAD))
         return false;
 
-    if (!KMF_ReadCString(theStream, mName))
+    if (!KMF_ReadCString(theStream, mInternalName))
         return false;
 
     mFramesCount = 1; // single frame for static mesh
@@ -510,7 +523,7 @@ bool KmfModel_Data::ReadStaticMesh(BinaryInputStream* theStream)
     return true;
 }
 
-bool KmfModel_Data::ReadStaticMeshGeometries(BinaryInputStream* theStream, int theNumGeometies)
+bool ModelAsset::ReadStaticMeshGeometries(BinaryInputStream* theStream, int theNumGeometies)
 {
     std::vector<glm::vec3> geometries;
     geometries.resize(theNumGeometies);
@@ -523,7 +536,7 @@ bool KmfModel_Data::ReadStaticMeshGeometries(BinaryInputStream* theStream, int t
     }
 
     // decode geometries
-    for (KmfModel_SubMesh& refSprite: mMeshArray)
+    for (SubMesh& refSprite: mMeshArray)
         for (glm::vec3& thePosition: refSprite.mVertexPositionArray)
         {
             unsigned short geo;
@@ -533,7 +546,7 @@ bool KmfModel_Data::ReadStaticMeshGeometries(BinaryInputStream* theStream, int t
     return true;
 }
 
-bool KmfModel_Data::ReadAnimSprites(BinaryInputStream* theStream, int theNumSprites, int theNumLODs)
+bool ModelAsset::ReadAnimSprites(BinaryInputStream* theStream, int theNumSprites, int theNumLODs)
 {
     debug_assert(theNumSprites > 0 && theNumLODs > 0);
 
@@ -542,7 +555,7 @@ bool KmfModel_Data::ReadAnimSprites(BinaryInputStream* theStream, int theNumSpri
     mMeshArray.resize(theNumSprites);
 
     // read headers
-    for (KmfModel_SubMesh& refSprite: mMeshArray)
+    for (SubMesh& refSprite: mMeshArray)
     {
         //KMSH/ANIM/SPRS/SPHD
         if (!KMF_ReadSectionHeader(theStream, header, KMF_MESH_SPRITES_HEADER))
@@ -583,7 +596,7 @@ bool KmfModel_Data::ReadAnimSprites(BinaryInputStream* theStream, int theNumSpri
     }
 
     // read geometries
-    for (KmfModel_SubMesh& refSprite: mMeshArray)
+    for (SubMesh& refSprite: mMeshArray)
     {
         //KMSH/ANIM/SPRS/SPRS
         if (!KMF_ReadSectionHeader(theStream, header, KMF_MESH_SPRITES_DATA_HEADER))
@@ -598,7 +611,7 @@ bool KmfModel_Data::ReadAnimSprites(BinaryInputStream* theStream, int theNumSpri
             return false;
 
         // read triangles for each lod
-        for (KmfModel_SubMeshLOD& currentLOD: refSprite.mLODsArray)
+        for (SubMeshLOD& currentLOD: refSprite.mLODsArray)
         {
             for (glm::ivec3& refTriangle: currentLOD.mTriangleArray)
             {
@@ -625,7 +638,7 @@ bool KmfModel_Data::ReadAnimSprites(BinaryInputStream* theStream, int theNumSpri
     return true;
 }
 
-bool KmfModel_Data::ReadSprites(BinaryInputStream* theStream, int theNumSprites, int theNumLODs)
+bool ModelAsset::ReadSprites(BinaryInputStream* theStream, int theNumSprites, int theNumLODs)
 {
     debug_assert(theNumSprites > 0 && theNumLODs > 0);
 
@@ -635,7 +648,7 @@ bool KmfModel_Data::ReadSprites(BinaryInputStream* theStream, int theNumSprites,
     mMeshArray.resize(theNumSprites);
 
     // read headers
-    for (KmfModel_SubMesh& refSprite: mMeshArray)
+    for (SubMesh& refSprite: mMeshArray)
     {
         //KMSH/MESH/SPRS/SPHD
         if (!KMF_ReadSectionHeader(theStream, header, KMF_MESH_SPRITES_HEADER))
@@ -679,7 +692,7 @@ bool KmfModel_Data::ReadSprites(BinaryInputStream* theStream, int theNumSprites,
     bool hasDummySprites = false;
 
     // read geometries
-    for (KmfModel_SubMesh& refSprite: mMeshArray)
+    for (SubMesh& refSprite: mMeshArray)
     {
         //KMSH/MESH/SPRS/SPRS
         if (!KMF_ReadSectionHeader(theStream, header, KMF_MESH_SPRITES_DATA_HEADER))
@@ -697,7 +710,7 @@ bool KmfModel_Data::ReadSprites(BinaryInputStream* theStream, int theNumSprites,
         refSprite.mMaterialIndex = materialIndex;
 
         // read triangles for each lod
-        for (KmfModel_SubMeshLOD& currentLOD: refSprite.mLODsArray)
+        for (SubMeshLOD& currentLOD: refSprite.mLODsArray)
         {
             for (glm::ivec3& refTriangle: currentLOD.mTriangleArray)
             {
@@ -724,14 +737,14 @@ bool KmfModel_Data::ReadSprites(BinaryInputStream* theStream, int theNumSprites,
     return true;
 }
 
-bool KmfModel_Data::ReadMaterials(BinaryInputStream* theStream)
+bool ModelAsset::ReadMaterials(BinaryInputStream* theStream)
 {
     int numMaterials;
     READ_FROM_BYTE_STREAM(theStream, numMaterials);
 
     mMaterialsArray.resize(numMaterials);
     // read materials
-    for (KmfModel_SubMeshMaterial& currentMaterial: mMaterialsArray)
+    for (SubMeshMaterial& currentMaterial: mMaterialsArray)
     {
         KMFHeader header;
         if (!KMF_ReadSectionHeader(theStream, header, KMF_MATERIAL))

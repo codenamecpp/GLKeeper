@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SceneDefs.h"
+#include "RenderDefs.h"
 
 // refines 3d object that lives on game scene
 // it has location and orientation in space along with bounding volume

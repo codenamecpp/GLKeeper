@@ -1,10 +1,10 @@
 #pragma once
 
 // forwards
-class KmfModel_Data;
+class ModelAsset;
 
 // models manager class
-class ModelsManager: public cxx::noncopyable
+class ModelAssetsManager: public cxx::noncopyable
 {
 public:
 
@@ -14,16 +14,16 @@ public:
 
     // get previously loaded kmf model from cache
     // @param resourceName: Kmf model resource name
-    KmfModel_Data* FindModel(const std::string& resourceName) const;
+    ModelAsset* FindModelAsset(const std::string& resourceName) const;
 
     // load kmf model
     // @param resourceName: Kmf model resource name
     // @returns null if kmf model cannot be loaded
-    KmfModel_Data* LoadModel(const std::string& resourceName);
+    ModelAsset* LoadModelAsset(const std::string& resourceName);
 
 private:
-    using ModelsMap = std::map<std::string, KmfModel_Data*, cxx::icase_less>;
-    ModelsMap mModelsMap;
+    using ModelAssetsMap = std::map<std::string, ModelAsset*, cxx::icase_less>;
+    ModelAssetsMap mModelAssetsMap;
 };
 
-extern ModelsManager gModelsManager;
+extern ModelAssetsManager gModelsManager;

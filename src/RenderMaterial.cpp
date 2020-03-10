@@ -16,11 +16,6 @@ void RenderMaterial::Clear()
     mEnvMappingTexture = nullptr;
 }
 
-void RenderMaterial::SetTransparent(bool isTransparent)
-{
-    mRenderStates.mIsAlphaBlendEnabled = isTransparent;
-}
-
 void RenderMaterial::ActivateMaterial()
 {
     gGraphicsDevice.SetRenderStates(mRenderStates);

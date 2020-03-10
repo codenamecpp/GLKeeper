@@ -166,11 +166,11 @@ struct Vertex3D_Terrain_Format: public VertexFormat
 
 // morph/keyframe animation vertex definition
 // no color data stored!
-struct Vertex3D_Anim_Format: public VertexFormat
+struct AnimVertex3D_Format: public VertexFormat
 {
     // does not declare TVertexType due to specific attributes layout
 
-    Vertex3D_Anim_Format()
+    AnimVertex3D_Format()
     {
         this->mDataStride = 0;
     }

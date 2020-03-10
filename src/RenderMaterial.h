@@ -18,7 +18,6 @@ public:
     void PreloadTextures();
 
     void Clear();
-    void SetTransparent(bool isTransparent);
 
     // test whether material must be drawn with transparency
     inline bool IsTransparent() const
