@@ -97,7 +97,7 @@ void GameScene::HandleInputEvent(KeyCharEvent& inputEvent)
 SceneObject* GameScene::CreateSceneObject(const glm::vec3& position, const glm::vec3& direction, float scaling)
 {
     SceneObject* sceneEntity = mObjectsPool.create();
-    sceneEntity->SetPositionOnScene(position);
+    sceneEntity->SetPosition(position);
     // todo : direction
     sceneEntity->SetScaling(scaling);
     return sceneEntity;

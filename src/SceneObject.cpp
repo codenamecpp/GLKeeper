@@ -56,7 +56,7 @@ void SceneObject::SetLocalBoundingBox(const cxx::aabbox& aabox)
     InvalidateBounds();
 }
 
-void SceneObject::SetPositionOnScene(const glm::vec3& position)
+void SceneObject::SetPosition(const glm::vec3& position)
 {
     mPosition = position;
 

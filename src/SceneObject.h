@@ -3,7 +3,7 @@
 #include "SceneDefs.h"
 #include "RenderDefs.h"
 
-// refines 3d object that lives on game scene
+// defines 3d object that lives on game scene
 // it has location and orientation in space along with bounding volume
 class SceneObject final: public cxx::noncopyable
 {
@@ -15,7 +15,7 @@ public:
     glm::vec3 mDirectionUpward; // direction vector along y axis, should be normalized
     glm::vec3 mDirectionForward; // direction vector along z axis, should be normalized
     glm::vec3 mPosition; // position is scene, global
-    float mScaling; // uniform scaling is supported
+    float mScaling; // uniform scaling
     glm::mat4 mTransformation; // should be manually updated so make sure to do ComputeTransformation
 
     // transformed bounds should be manually updated so make sure to ComputeTransformation
@@ -49,7 +49,7 @@ public:
 
     // set entity position on the scene
     // @param position: Position
-    void SetPositionOnScene(const glm::vec3& position);
+    void SetPosition(const glm::vec3& position);
 
     // set entity uniform scale
     // @param scaling: Scaling factor
