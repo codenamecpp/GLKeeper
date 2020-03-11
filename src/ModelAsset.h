@@ -46,7 +46,7 @@ public:
         int mFrameVerticesCount = 0; // num vertices per animation frame
     };
 
-    std::string mName; // immutable
+    std::string mName; // unique model name
     std::string mInternalName;
 
     std::vector<cxx::aabbox> mFramesBounds;

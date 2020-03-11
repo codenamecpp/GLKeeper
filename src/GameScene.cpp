@@ -122,14 +122,14 @@ void GameScene::AttachSceneObject(SceneObject* sceneEntity)
 {
     debug_assert(sceneEntity);
     // already attached to scene
-    if (mSceneObjects.contains(&sceneEntity->mListNodeAttached))
+    if (mSceneObjects.contains(&sceneEntity->mListNodeOnScene))
     {
         debug_assert(false);
         return;
     }
     else
     {
-        mSceneObjects.insert(&sceneEntity->mListNodeAttached);
+        mSceneObjects.insert(&sceneEntity->mListNodeOnScene);
     }
 
     mAABBTree.InsertObject(sceneEntity);
@@ -139,9 +139,9 @@ void GameScene::DetachSceneObject(SceneObject* sceneEntity)
 {
     debug_assert(sceneEntity);
 
-    if (mSceneObjects.contains(&sceneEntity->mListNodeAttached))
+    if (mSceneObjects.contains(&sceneEntity->mListNodeOnScene))
     {
-        mSceneObjects.remove(&sceneEntity->mListNodeAttached);
+        mSceneObjects.remove(&sceneEntity->mListNodeOnScene);
     }
     else
     {

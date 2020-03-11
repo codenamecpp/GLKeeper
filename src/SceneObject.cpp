@@ -4,8 +4,8 @@
 
 SceneObject::SceneObject()
     : mListNodeTransformed(this)
-    , mListNodeAttached(this)
-    , mTransformationDirty()
+    , mListNodeOnScene(this)
+    , mTransformDirty()
     , mBoundingBoxDirty()
     , mTransformation(1.0f)
     , mScaling(1.0f)
@@ -25,7 +25,7 @@ SceneObject::~SceneObject()
 void SceneObject::ComputeTransformation()
 {
     // refresh transformations matrix
-    if (mTransformationDirty)
+    if (mTransformDirty)
     {
         glm::mat4 orientation {1.0f};
         orientation[0] = glm::vec4(mDirectionRight, 0);
@@ -34,7 +34,7 @@ void SceneObject::ComputeTransformation()
 
         glm::vec3 scaling {mScaling, mScaling, mScaling};
         mTransformation = glm::translate(mPosition) * orientation * glm::scale(scaling);
-        mTransformationDirty = false;
+        mTransformDirty = false;
         // force refresh world space bounds
         mBoundsTransformed = cxx::transform_aabbox(mBounds, mTransformation);
         mBoundingBoxDirty = false;
@@ -131,10 +131,10 @@ void SceneObject::ResetTransformation()
 
 void SceneObject::InvalidateTransform()
 {
-    if (mTransformationDirty)
+    if (mTransformDirty)
         return;
 
-    mTransformationDirty = true;
+    mTransformDirty = true;
     mBoundingBoxDirty = true; // force refresh world space bounds 
 
     if (IsAttachedToScene())
@@ -162,6 +162,6 @@ void SceneObject::ResetOrientation()
 
 bool SceneObject::IsAttachedToScene() const
 {
-    return mListNodeAttached.is_linked();
+    return mListNodeOnScene.is_linked();
 }
 

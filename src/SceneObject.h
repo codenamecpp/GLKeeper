@@ -22,7 +22,7 @@ public:
     cxx::aabbox mBoundsTransformed; // world space
     cxx::aabbox mBounds; // untransformed, used for culling and mouse tests
 
-    float mDistanceToCamera; // this value gets updated during scene rendition
+    float mDistanceToCameraSquared; // this value gets updated during scene rendition
 
 public:
     SceneObject();
@@ -82,9 +82,9 @@ private:
 private:
     // scene data
     cxx::intrusive_node<SceneObject> mListNodeTransformed;
-    cxx::intrusive_node<SceneObject> mListNodeAttached;
+    cxx::intrusive_node<SceneObject> mListNodeOnScene;
 
     // dirty flags
-    bool mTransformationDirty;
+    bool mTransformDirty;
     bool mBoundingBoxDirty;
 };
