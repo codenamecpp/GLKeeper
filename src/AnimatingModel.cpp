@@ -2,6 +2,7 @@
 #include "AnimatingModel.h"
 #include "ModelAsset.h"
 #include "TexturesManager.h"
+#include "SceneRenderList.h"
 
 AnimatingModel::AnimatingModel()
 {
@@ -13,7 +14,7 @@ AnimatingModel::~AnimatingModel()
 
 void AnimatingModel::SetModelAsset(ModelAsset* modelAsset)
 {
-    if (mModelAsset == nullptr || !mModelAsset->IsModelLoaded())
+    if (modelAsset == nullptr || !modelAsset->IsModelLoaded())
     {
         debug_assert(false);
         return;
@@ -66,4 +67,11 @@ void AnimatingModel::SetModelAssetNull()
     mModelAsset = nullptr;
 
     mSubmeshMaterials.clear();
+}
+
+void AnimatingModel::RegisterForRendering(SceneRenderList& renderList)
+{
+    // todo
+
+    renderList.RegisterRenderable(eRenderPass_Opaque, this);
 }

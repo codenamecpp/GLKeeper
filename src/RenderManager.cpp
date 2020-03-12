@@ -5,6 +5,7 @@
 #include "DebugGuiManager.h"
 #include "GameMain.h"
 #include "ConsoleVariable.h"
+#include "RenderScene.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -42,11 +43,14 @@ void RenderManager::Deinit()
     mModelsRenderer.Deinit();
     mDebugRenderer.Deinit();
     mGuiRenderProgram.FreeProgram();
+    mSceneRenderList.Clear();
 }
 
 void RenderManager::RenderFrame()
 {
     gGraphicsDevice.ClearScreen();
+
+    DrawScene();
 
     // debug draw
     if (gCvarRender_DebugDrawEnabled.mValue)
@@ -108,4 +112,46 @@ void RenderManager::Leave2D()
     screenRect.mSizeX = gGraphicsDevice.mViewportRect.mSizeX;
     screenRect.mSizeY = gGraphicsDevice.mViewportRect.mSizeY;
     gGraphicsDevice.SetScissorRect(screenRect);
+}
+
+void RenderManager::DrawScene()
+{
+    gRenderScene.CollectRenderables(mSceneRenderList);
+
+    // todo: sort
+
+    // opaque pass
+    
+    for (int i = 0; i < mSceneRenderList.mOpaqueElementsCount; ++i)
+    {
+        const auto& element = mSceneRenderList.mOpaqueElements[i];
+        if (element.mAnimatingModel)
+        {
+            mModelsRenderer.RenderModel(eRenderPass_Opaque, element.mAnimatingModel);
+        }
+    }
+
+    // translucent pass
+
+    // sort by camera distance, from far to near
+    if (mSceneRenderList.mTranslucentElementsCount)
+    {
+        std::sort(mSceneRenderList.mTranslucentElements, mSceneRenderList.mTranslucentElements + 
+            mSceneRenderList.mTranslucentElementsCount, 
+            [](const SceneRenderList::ListElement& lhs, const SceneRenderList::ListElement& rhs)
+        {
+            return lhs.mRenderable->mDistanceToCameraSquared < rhs.mRenderable->mDistanceToCameraSquared;
+        });
+    }
+
+    for (int i = 0; i < mSceneRenderList.mTranslucentElementsCount; ++i)
+    {
+        const auto& element = mSceneRenderList.mTranslucentElements[i];
+        if (element.mAnimatingModel)
+        {
+            mModelsRenderer.RenderModel(eRenderPass_Translucent, element.mAnimatingModel);
+        }
+    }
+
+    mSceneRenderList.Clear();
 }

@@ -272,7 +272,7 @@ void AABBTree::DebugRenderNode(DebugRenderer& renderer, TreeNode& treeNode)
     if (treeNode.IsLeafNode())
     {
         // todo: cull nodes
-        renderer.DrawAabb(treeNode.mBoundingBox, Color32_Green, false);
+        renderer.DrawAabb(treeNode.mBoundingBox, Color32_Green, true);
         return;
     }
     if (treeNode.mLeftNodeIndex != NULL_TREE_NODE)

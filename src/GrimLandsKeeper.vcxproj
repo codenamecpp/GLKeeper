@@ -242,6 +242,7 @@
     <ClInclude Include="RenderProgram.h" />
     <ClInclude Include="SceneDefs.h" />
     <ClInclude Include="Renderable.h" />
+    <ClInclude Include="SceneRenderList.h" />
     <ClInclude Include="string_utils.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="SystemSettings.h" />

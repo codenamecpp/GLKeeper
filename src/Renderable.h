@@ -26,6 +26,10 @@ public:
     Renderable();
     virtual ~Renderable();
 
+    // request entity to register itself in render lists
+    // @param renderList: Render lists
+    virtual void RegisterForRendering(SceneRenderList& renderList) {}
+
     // set entity orienation vectors, expecting all normalized
     // @param directionRight: Vector X
     // @param directionForward: Vector Z

@@ -330,6 +330,9 @@
     <ClInclude Include="MorphAnimRenderProgram.h">
       <Filter>Game\Render\Shaders</Filter>
     </ClInclude>
+    <ClInclude Include="SceneRenderList.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

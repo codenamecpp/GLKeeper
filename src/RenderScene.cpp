@@ -7,6 +7,7 @@
 #include "TimeManager.h"
 #include "DebugRenderer.h"
 #include "AnimatingModel.h"
+#include "SceneRenderList.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -45,6 +46,16 @@ void RenderScene::UpdateFrame()
     }
 
     BuildAABBTree();
+}
+
+void RenderScene::CollectRenderables(SceneRenderList& renderablesList)
+{
+    mCamera.ComputeMatrices();
+    mAABBTree.QueryObjects(mCamera.mFrustum, [&renderablesList, this](Renderable* renderable)
+    {
+        renderable->RegisterForRendering(renderablesList);
+        renderable->mDistanceToCameraSquared = glm::length2(renderable->mPosition - mCamera.mPosition);
+    });
 }
 
 void RenderScene::DebugRenderFrame(DebugRenderer& renderer)
@@ -115,7 +126,7 @@ AnimatingModel* RenderScene::CreateAnimatingModel(ModelAsset* modelAsset, const 
     AnimatingModel* sceneEntity = new AnimatingModel;
     sceneEntity->SetPosition(position);
     // todo : direction
-
+    sceneEntity->SetModelAsset(modelAsset);
     return sceneEntity;
 }
 

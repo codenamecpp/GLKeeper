@@ -4,6 +4,8 @@
 #include "RenderScene.h"
 #include "System.h"
 #include "Renderable.h"
+#include "ModelAssetsManager.h"
+#include "AnimatingModel.h"
 
 #define MESH_VIEW_CAMERA_YAW_DEG    90.0f
 #define MESH_VIEW_CAMERA_PITCH_DEG  75.0f
@@ -24,8 +26,9 @@ void MeshViewGamestate::HandleGamestateEnter()
 
     cxx::aabbox aabox ( glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f) );
 
-    Renderable* sceneObject = gRenderScene.CreateNullRenderable();
-    sceneObject->SetLocalBoundingBox(aabox);
+    ModelAsset* modelAsset = gModelsManager.LoadModelAsset("imp_idle1.kmf");
+
+    AnimatingModel* sceneObject = gRenderScene.CreateAnimatingModel(modelAsset, glm::vec3(0.0f), glm::vec3(0.0f));
     gRenderScene.AttachRenderable(sceneObject);
 }
 

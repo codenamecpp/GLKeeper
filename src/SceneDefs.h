@@ -6,6 +6,7 @@ class SceneCamera;
 class RenderScene;
 class SceneCameraControl;
 class AnimatingModel;
+class SceneRenderList;
 
 enum eSceneCameraMode
 {

@@ -3,6 +3,9 @@
 #include "ModelAsset.h"
 #include "GraphicsDevice.h"
 #include "GpuBuffer.h"
+#include "AnimatingModel.h"
+#include "RenderScene.h"
+#include "VertexFormat.h"
 
 // internal info
 class ModelsRenderData: public cxx::noncopyable
@@ -50,6 +53,69 @@ void ModelsRenderer::Deinit()
         DestroyRenderData(curr_iterator.second);
     }
     mModelsCache.clear();
+}
+
+void ModelsRenderer::RenderModel(eRenderPass renderPass, AnimatingModel* animatingModel)
+{
+    ModelAsset* modelAsset = animatingModel->mModelAsset;
+    if (animatingModel == nullptr || modelAsset== nullptr)
+    {
+        debug_assert(false);
+        return;
+    }
+
+    if (animatingModel->mRenderData == nullptr)
+    {
+        animatingModel->mRenderData = GetRenderData(modelAsset);
+        if (animatingModel->mRenderData == nullptr)
+        {
+            debug_assert(false);
+            return;
+        }
+    }
+    ModelsRenderData* renderData = animatingModel->mRenderData;
+
+    mMorphAnimRenderProgram.SetViewProjectionMatrix(gRenderScene.mCamera.mViewProjectionMatrix);
+    mMorphAnimRenderProgram.SetModelMatrix(animatingModel->mTransformation);
+    mMorphAnimRenderProgram.SetMixFrames(0.0f);
+    mMorphAnimRenderProgram.ActivateProgram();
+
+    // bind indices
+    gGraphicsDevice.BindIndexBuffer(renderData->mIndicesBuffer);
+
+    // select level of details to render
+    int selectLOD = 0;
+
+    Vertex3D_Anim_Format vertexDefs;
+
+    for (size_t icurrSubset = 0, Count = modelAsset->mMeshArray.size(); 
+        icurrSubset < Count; ++icurrSubset)
+    {
+        const ModelAsset::SubMesh& currentSubMesh = modelAsset->mMeshArray[icurrSubset];
+        // if submesh does not have geoemtry for selected lod, then dont draw it
+        if (selectLOD >= (int)currentSubMesh.mLODsArray.size())
+            continue;
+
+        RenderMaterial& renderMaterial = animatingModel->mSubmeshMaterials[currentSubMesh.mMaterialIndex];
+        // filter out submeshes depending on current render pass
+        if (renderPass == eRenderPass_Translucent && !renderMaterial.IsTransparent())
+            continue;
+
+        if (renderPass == eRenderPass_Opaque && renderMaterial.IsTransparent())
+            continue;
+
+        renderMaterial.ActivateMaterial();
+
+        int frame0 = 0;
+        int frame1 = 0;
+
+        // prepare vertex streams definition
+        vertexDefs.Setup(renderData->mSubsets[icurrSubset].mVerticesDataOffset, currentSubMesh.mFrameVerticesCount, modelAsset->mFramesCount, frame0, frame1);
+        gGraphicsDevice.BindVertexBuffer(renderData->mVerticesBuffer, vertexDefs);
+        gGraphicsDevice.RenderIndexedPrimitives(ePrimitiveType_Triangles, eIndicesType_i32,
+            renderData->mSubsets[icurrSubset].mSubsetLODs[selectLOD].mIndicesDataOffset,
+            currentSubMesh.mLODsArray[selectLOD].mTriangleArray.size() * 3);
+    }
 }
 
 ModelsRenderData* ModelsRenderer::GetRenderData(ModelAsset* modelAsset)

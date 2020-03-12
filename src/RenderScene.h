@@ -20,6 +20,10 @@ public:
     // process single frame logic
     void UpdateFrame();
 
+    // collect all visible scene objects
+    // @param renderablesList: Set of renderable entities
+    void CollectRenderables(SceneRenderList& renderablesList);
+
     // process debug draw
     void DebugRenderFrame(DebugRenderer& renderer);
 

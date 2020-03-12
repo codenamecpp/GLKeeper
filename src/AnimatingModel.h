@@ -25,6 +25,11 @@ public:
     void SetModelAsset(ModelAsset* modelAsset);
     void SetModelAssetNull();
 
+    // request entity to register itself in render lists
+    // @param renderPass: Current render pass
+    // @param renderList: Render lists
+    void RegisterForRendering(SceneRenderList& renderList) override;
+
 private:
     ModelsRenderData* mRenderData = nullptr;
 };

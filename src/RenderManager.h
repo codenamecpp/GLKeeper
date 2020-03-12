@@ -4,6 +4,7 @@
 #include "GuiRenderProgram.h"
 #include "DebugRenderer.h"
 #include "ModelsRenderer.h"
+#include "SceneRenderList.h"
 
 // master render system, it is intended to manage rendering pipeline of the game
 class RenderManager: public cxx::noncopyable
@@ -33,11 +34,15 @@ private:
     void Enter2D();
     void Leave2D();
 
+    void DrawScene();
+
 private:
     GuiRenderProgram mGuiRenderProgram;
     DebugRenderer mDebugRenderer;
 
     glm::mat4 mTransformationMatrix2D;
+
+    SceneRenderList mSceneRenderList;
 };
 
 extern RenderManager gRenderManager;
