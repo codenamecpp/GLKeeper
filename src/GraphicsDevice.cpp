@@ -140,7 +140,7 @@ bool GraphicsDevice::Initialize(const Size2D& screenDimensions, bool fullscreen,
     ::glfwWindowHint(GLFW_GREEN_BITS, 8);
     ::glfwWindowHint(GLFW_BLUE_BITS, 8);
     ::glfwWindowHint(GLFW_ALPHA_BITS, 8);
-    ::glfwWindowHint(GLFW_DEPTH_BITS, 16);
+    ::glfwWindowHint(GLFW_DEPTH_BITS, 24);
 
     // create window and set current context
     GLFWwindow* graphicsWindow = ::glfwCreateWindow(screenDimensions.x, screenDimensions.y, GAME_TITLE, graphicsMonitor, nullptr);
@@ -262,7 +262,7 @@ bool GraphicsDevice::Initialize(const Size2D& screenDimensions, bool fullscreen,
     glCheckError();
 
     // setup default render state
-    static const RenderStates defaultRenderStates;
+    RenderStates defaultRenderStates;
     InternalSetRenderStates(defaultRenderStates, true);
 
     EnableFullscreen(fullscreen);

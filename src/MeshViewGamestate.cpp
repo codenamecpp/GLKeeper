@@ -24,9 +24,7 @@ void MeshViewGamestate::HandleGamestateEnter()
     gRenderScene.SetCameraControl(&mOrbitCameraControl);
     mOrbitCameraControl.ResetOrientation();
 
-    cxx::aabbox aabox ( glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f) );
-
-    ModelAsset* modelAsset = gModelsManager.LoadModelAsset("imp_idle1.kmf");
+    ModelAsset* modelAsset = gModelsManager.LoadModelAsset("king-idle1.kmf");
 
     AnimatingModel* sceneObject = gRenderScene.CreateAnimatingModel(modelAsset, glm::vec3(0.0f), glm::vec3(0.0f));
     gRenderScene.AttachRenderable(sceneObject);

@@ -71,7 +71,7 @@ void AnimatingModel::SetModelAssetNull()
 
 void AnimatingModel::RegisterForRendering(SceneRenderList& renderList)
 {
-    // todo
+    // todo: check materials and add to proper render list
 
     renderList.RegisterRenderable(eRenderPass_Opaque, this);
 }
