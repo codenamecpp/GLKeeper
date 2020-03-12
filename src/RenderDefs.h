@@ -8,6 +8,8 @@ class RenderManager;
 class RenderProgram;
 class RenderMaterial;
 
+class ModelsRenderData;
+
 enum eRenderPass
 {
     eRenderPass_Opaque,

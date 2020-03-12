@@ -4,9 +4,9 @@
 #include "SceneCamera.h"
 #include "AABBTree.h"
 #include "InputsDefs.h"
+#include "ResourceDefs.h"
 
-// manages scene objects visualization and transformation
-class GameScene: public cxx::noncopyable
+class RenderScene: public cxx::noncopyable
 {
 public:
     SceneCamera mCamera; // main gamescene camera
@@ -35,18 +35,21 @@ public:
     // @param position: Position on scene
     // @param direction: Direction vector, must be normalized
     // @param scaling: Scaling
-    SceneObject* CreateSceneObject(const glm::vec3& position, const glm::vec3& direction, float scaling);
-    SceneObject* CreateSceneObject();
+    Renderable* CreateNullRenderable(const glm::vec3& position, const glm::vec3& direction, float scaling);
+    Renderable* CreateNullRenderable();
+
+    AnimatingModel* CreateAnimatingModel(ModelAsset* modelAsset, const glm::vec3& position, const glm::vec3& direction);
+    AnimatingModel* CreateAnimatingModel();
 
     // attach entity to scene - attached entity will be rendered and updated, 
     // it is recommended to set transformation and bounding volume before attach
     // @param sceneObject: Target
-    void AttachSceneObject(SceneObject* sceneObject);
-    void DetachSceneObject(SceneObject* sceneObject);
+    void AttachRenderable(Renderable* sceneObject);
+    void DetachRenderable(Renderable* sceneObject);
 
     // destroy scene entity and free it internal resources, reference become invalid
     // @param sceneEntity: Target
-    void DestroySceneObject(SceneObject* sceneObject);
+    void DestroyRenderable(Renderable* sceneObject);
 
     // set active scene camera controller
     // @param cameraController: Contoller or null to clear current
@@ -54,20 +57,18 @@ public:
 
     // callback from scene entities
     // Transformation or local bounds of object gets changed
-    void HandleSceneObjectTransformChange(SceneObject* sceneObject);
+    void HandleTransformChange(Renderable* sceneObject);
 
 private:
     void BuildAABBTree();
-    void DestroyAttachedSceneObjects();
+    void DestroySceneObjects();
 
 private:
     AABBTree mAABBTree;
     SceneCameraControl* mCameraControl = nullptr;
     // entities lists
-    cxx::intrusive_list<SceneObject> mTransformObjects;
-    cxx::intrusive_list<SceneObject> mSceneObjects;
-    // object pools
-    cxx::object_pool<SceneObject> mObjectsPool;
+    cxx::intrusive_list<Renderable> mTransformObjects;
+    cxx::intrusive_list<Renderable> mSceneObjects;
 };
 
-extern GameScene gGameScene;
+extern RenderScene gRenderScene;

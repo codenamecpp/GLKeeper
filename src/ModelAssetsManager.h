@@ -1,7 +1,6 @@
 #pragma once
 
-// forwards
-class ModelAsset;
+#include "ResourceDefs.h"
 
 // models manager class
 class ModelAssetsManager: public cxx::noncopyable

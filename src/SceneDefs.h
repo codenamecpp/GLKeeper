@@ -1,10 +1,11 @@
 #pragma once
 
 // forwards
-class SceneObject;
+class Renderable;
 class SceneCamera;
-class GameScene;
+class RenderScene;
 class SceneCameraControl;
+class AnimatingModel;
 
 enum eSceneCameraMode
 {

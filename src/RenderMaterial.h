@@ -1,9 +1,7 @@
 #pragma once
 
 #include "GraphicsDefs.h"
-
-// forwards
-class Texture2D;
+#include "ResourceDefs.h"
 
 // various render properties of drawable object
 class RenderMaterial
@@ -39,8 +37,6 @@ public:
     }
 
 public:
-    std::string mInternalName;
-
     Texture2D* mDiffuseTexture = nullptr;
     Texture2D* mEnvMappingTexture = nullptr;
 

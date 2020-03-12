@@ -14,12 +14,6 @@ public:
     void SetViewProjectionMatrix(const glm::mat4& viewProjectionMatrix)
     {
         debug_assert(IsProgramLoaded());
-
-        if (mUniformID_view_projection_matrix == GpuVariable_NULL)
-        {
-            debug_assert(false);
-            return;
-        }
         mGpuProgram->SetUniformParam(mUniformID_view_projection_matrix, viewProjectionMatrix);
     }
 

@@ -1,9 +1,7 @@
 #pragma once
 
 #include "GraphicsDefs.h"
-
-// forwards
-class Texture2D;
+#include "ResourceDefs.h"
 
 // texture2d animation clip
 class Texture2DAnimation: public cxx::noncopyable

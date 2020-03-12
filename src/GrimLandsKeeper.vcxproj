@@ -179,6 +179,8 @@
     <ClInclude Include="3rd_party\stb_sprintf.h" />
     <ClInclude Include="3rd_party\std_image.h" />
     <ClInclude Include="AABBTree.h" />
+    <ClInclude Include="AnimatingModel.h" />
+    <ClInclude Include="MorphAnimRenderProgram.h" />
     <ClInclude Include="BinaryInputStream.h" />
     <ClInclude Include="BinaryOutputStream.h" />
     <ClInclude Include="CameraControl.h" />
@@ -187,14 +189,14 @@
     <ClInclude Include="ConsoleVariable.inl" />
     <ClInclude Include="cvars.h" />
     <ClInclude Include="DebugDrawRenderProgram.h" />
-    <ClInclude Include="GameScene.h" />
+    <ClInclude Include="RenderScene.h" />
     <ClInclude Include="ModelAsset.h" />
     <ClInclude Include="MeshViewGamestate.h" />
     <ClInclude Include="ModelAssetsManager.h" />
-    <ClInclude Include="RenderableModel.h" />
     <ClInclude Include="ModelsRenderer.h" />
     <ClInclude Include="OrbitCameraControl.h" />
     <ClInclude Include="RenderMaterial.h" />
+    <ClInclude Include="ResourceDefs.h" />
     <ClInclude Include="SceneCamera.h" />
     <ClInclude Include="CommonTypes.h" />
     <ClInclude Include="common_utils.h" />
@@ -239,7 +241,7 @@
     <ClInclude Include="RenderManager.h" />
     <ClInclude Include="RenderProgram.h" />
     <ClInclude Include="SceneDefs.h" />
-    <ClInclude Include="SceneObject.h" />
+    <ClInclude Include="Renderable.h" />
     <ClInclude Include="string_utils.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="SystemSettings.h" />
@@ -259,6 +261,7 @@
     <ClCompile Include="3rd_party\imgui_widgets.cpp" />
     <ClCompile Include="3rd_party\stb_rect_pack.cpp" />
     <ClCompile Include="AABBTree.cpp" />
+    <ClCompile Include="AnimatingModel.cpp" />
     <ClCompile Include="BinaryInputStream.cpp" />
     <ClCompile Include="BinaryOutputStream.cpp" />
     <ClCompile Include="CommonTypes.cpp" />
@@ -271,7 +274,7 @@
     <ClCompile Include="enums_impl.cpp" />
     <ClCompile Include="FileSystem.cpp" />
     <ClCompile Include="FileSystemArchive.cpp" />
-    <ClCompile Include="GameScene.cpp" />
+    <ClCompile Include="RenderScene.cpp" />
     <ClCompile Include="GpuBuffer.cpp" />
     <ClCompile Include="GpuBufferTexture.cpp" />
     <ClCompile Include="GpuProgram.cpp" />
@@ -287,7 +290,6 @@
     <ClCompile Include="MeshViewGamestate.cpp" />
     <ClCompile Include="micropather.cpp" />
     <ClCompile Include="ModelAssetsManager.cpp" />
-    <ClCompile Include="RenderableModel.cpp" />
     <ClCompile Include="ModelsRenderer.cpp" />
     <ClCompile Include="OrbitCameraControl.cpp" />
     <ClCompile Include="pch.cpp">
@@ -300,7 +302,7 @@
     <ClCompile Include="RenderMaterial.cpp" />
     <ClCompile Include="RenderProgram.cpp" />
     <ClCompile Include="SceneCamera.cpp" />
-    <ClCompile Include="SceneObject.cpp" />
+    <ClCompile Include="Renderable.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="System.cpp" />
     <ClCompile Include="SystemSettings.cpp" />
@@ -329,6 +331,7 @@
     <Text Include="..\docs\terrains.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\data\shaders\anim_blend_frames.glsl" />
     <None Include="..\data\shaders\debug.glsl" />
     <None Include="..\data\shaders\gui.glsl" />
     <None Include="AABBTree.inl" />

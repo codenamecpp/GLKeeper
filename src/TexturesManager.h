@@ -1,6 +1,8 @@
 #pragma once
 
-class Texture2D;
+#include "ResourceDefs.h"
+
+// forwards
 class Texture2DAnimation;
 
 // textures manager class

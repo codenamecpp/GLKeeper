@@ -1,6 +1,8 @@
 #pragma once
 
-#include "RenderableModel.h"
+#include "ResourceDefs.h"
+#include "RenderDefs.h"
+#include "MorphAnimRenderProgram.h"
 
 // models visualization manager
 class ModelsRenderer: public cxx::noncopyable
@@ -11,13 +13,19 @@ public:
     bool Initialize();
     void Deinit();
 
-    RenderableModel* GetRenderableModel(const ModelAsset* sourceModel)
-    {
-        return nullptr;
-    }
+    // create renderdata for model asset and put it in internal cache
+    // @param modelAsset: Model data
+    ModelsRenderData* GetRenderData(ModelAsset* modelAsset);
 
-    void InvalidateRenderableModel(const ModelAsset* sourceModel);
+    // recreate renderdata for specific model asset
+    // @param modelAsset: Model data
+    void InvalidateRenderData(ModelAsset* modelAsset);
 
 private:
+    void DestroyRenderData(ModelsRenderData* renderdata);
+    void InitRenderData(ModelsRenderData* renderdata, ModelAsset* modelAsset);
 
+private:
+    std::map<ModelAsset*, ModelsRenderData*> mModelsCache;
+    MorphAnimRenderProgram mMorphAnimRenderProgram;
 };

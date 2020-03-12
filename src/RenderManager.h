@@ -3,10 +3,15 @@
 #include "GraphicsDefs.h"
 #include "GuiRenderProgram.h"
 #include "DebugRenderer.h"
+#include "ModelsRenderer.h"
 
 // master render system, it is intended to manage rendering pipeline of the game
 class RenderManager: public cxx::noncopyable
 {
+public:
+    // readonly
+    ModelsRenderer mModelsRenderer;
+
 public:
 
     // setup rendering system internal resources

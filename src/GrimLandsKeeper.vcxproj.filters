@@ -50,9 +50,6 @@
     <Filter Include="Game\GUI">
       <UniqueIdentifier>{29e877b2-cd75-42db-97e8-6988bfc8e0c9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Render\Programs">
-      <UniqueIdentifier>{cfb6657e-5426-4871-9802-c0f6ab065078}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Application\DebugUI">
       <UniqueIdentifier>{cab02080-9d94-428b-9fe1-8cc097e21510}</UniqueIdentifier>
     </Filter>
@@ -76,6 +73,9 @@
     </Filter>
     <Filter Include="Data\Shaders">
       <UniqueIdentifier>{8b0aa962-d3ec-4c9f-a33f-afa0b1fe407e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Render\Shaders">
+      <UniqueIdentifier>{cfb6657e-5426-4871-9802-c0f6ab065078}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -225,7 +225,7 @@
       <Filter>Game\Render</Filter>
     </ClInclude>
     <ClInclude Include="GuiRenderProgram.h">
-      <Filter>Game\Render\Programs</Filter>
+      <Filter>Game\Render\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="DebugGuiManager.h">
       <Filter>Application\DebugUI</Filter>
@@ -275,12 +275,6 @@
     <ClInclude Include="SceneCamera.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="GameScene.h">
-      <Filter>Game\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneObject.h">
-      <Filter>Game\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="ConsoleDefs.h">
       <Filter>Application\Console</Filter>
     </ClInclude>
@@ -294,7 +288,7 @@
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="DebugDrawRenderProgram.h">
-      <Filter>Game\Render\Programs</Filter>
+      <Filter>Game\Render\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="CameraControl.h">
       <Filter>Game\Scene\CameraControl</Filter>
@@ -315,14 +309,26 @@
     <ClInclude Include="ModelsRenderer.h">
       <Filter>Game\Render</Filter>
     </ClInclude>
-    <ClInclude Include="RenderableModel.h">
-      <Filter>Game\Render</Filter>
-    </ClInclude>
     <ClInclude Include="ModelAsset.h">
       <Filter>Application\Resources</Filter>
     </ClInclude>
     <ClInclude Include="ModelAssetsManager.h">
       <Filter>Application\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderScene.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderable.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatingModel.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceDefs.h">
+      <Filter>Application\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="MorphAnimRenderProgram.h">
+      <Filter>Game\Render\Shaders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -445,12 +451,6 @@
     <ClCompile Include="SceneCamera.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="GameScene.cpp">
-      <Filter>Game\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneObject.cpp">
-      <Filter>Game\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="ConsoleVariable.cpp">
       <Filter>Application\Console</Filter>
     </ClCompile>
@@ -469,14 +469,20 @@
     <ClCompile Include="ModelsRenderer.cpp">
       <Filter>Game\Render</Filter>
     </ClCompile>
-    <ClCompile Include="RenderableModel.cpp">
-      <Filter>Game\Render</Filter>
-    </ClCompile>
     <ClCompile Include="ModelAsset.cpp">
       <Filter>Application\Resources</Filter>
     </ClCompile>
     <ClCompile Include="ModelAssetsManager.cpp">
       <Filter>Application\Resources</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderScene.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderable.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatingModel.cpp">
+      <Filter>Game\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -504,6 +510,9 @@
       <Filter>Game\Scene\BVH</Filter>
     </None>
     <None Include="..\data\shaders\debug.glsl">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\data\shaders\anim_blend_frames.glsl">
       <Filter>Data\Shaders</Filter>
     </None>
   </ItemGroup>

@@ -3,11 +3,9 @@
 #include "SceneDefs.h"
 #include "RenderDefs.h"
 
-// defines 3d object that lives on game scene
-// it has location and orientation in space along with bounding volume
-class SceneObject final: public cxx::noncopyable
+class Renderable: public cxx::noncopyable
 {
-    friend class GameScene;
+    friend class RenderScene;
 
 public:
     // readonly
@@ -25,8 +23,8 @@ public:
     float mDistanceToCameraSquared; // this value gets updated during scene rendition
 
 public:
-    SceneObject();
-    ~SceneObject();
+    Renderable();
+    virtual ~Renderable();
 
     // set entity orienation vectors, expecting all normalized
     // @param directionRight: Vector X
@@ -81,8 +79,8 @@ private:
 
 private:
     // scene data
-    cxx::intrusive_node<SceneObject> mListNodeTransformed;
-    cxx::intrusive_node<SceneObject> mListNodeOnScene;
+    cxx::intrusive_node<Renderable> mListNodeTransformed;
+    cxx::intrusive_node<Renderable> mListNodeOnScene;
 
     // dirty flags
     bool mTransformDirty;

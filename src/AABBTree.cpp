@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "AABBTree.h"
 #include "DebugRenderer.h"
-#include "SceneObject.h"
+#include "Renderable.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AABBTree implementation borrowed from here
@@ -307,7 +307,7 @@ void AABBTree::Cleanup()
     mTreeNodes[mCapacity - 1].mNextNodeIndex = NULL_TREE_NODE;
 }
 
-void AABBTree::InsertObject(SceneObject* entity)
+void AABBTree::InsertObject(Renderable* entity)
 {
     debug_assert(entity);
     entity->ComputeTransformation();
@@ -323,7 +323,7 @@ void AABBTree::InsertObject(SceneObject* entity)
     mEntitiesMap[entity] = nodeIndex;
 }
 
-void AABBTree::RemoveObject(SceneObject* entity)
+void AABBTree::RemoveObject(Renderable* entity)
 {
     debug_assert(entity);
     TreeNodeIndex nodeIndex = mEntitiesMap[entity];
@@ -333,7 +333,7 @@ void AABBTree::RemoveObject(SceneObject* entity)
     DeallocateTreeNode(nodeIndex);
 }
 
-void AABBTree::UpdateObject(SceneObject* entity)
+void AABBTree::UpdateObject(Renderable* entity)
 {
     debug_assert(entity);
     entity->ComputeTransformation();

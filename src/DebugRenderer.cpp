@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Console.h"
 #include "DebugRenderer.h"
-#include "GameScene.h"
+#include "RenderScene.h"
 #include "GraphicsDevice.h"
 #include "GpuBuffer.h"
 
@@ -95,10 +95,10 @@ void DebugRenderer::RenderFrameEnd()
 {
     if (HasPendingDraws())
     {
-        gGameScene.mCamera.ComputeMatrices();
+        gRenderScene.mCamera.ComputeMatrices();
 
         mDebugDrawRenderProgram.ActivateProgram();
-        mDebugDrawRenderProgram.SetViewProjectionMatrix(gGameScene.mCamera.mViewProjectionMatrix);
+        mDebugDrawRenderProgram.SetViewProjectionMatrix(gRenderScene.mCamera.mViewProjectionMatrix);
 
         Flush();
 

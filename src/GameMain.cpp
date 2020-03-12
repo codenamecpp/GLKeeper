@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "GameMain.h"
-#include "GameScene.h"
+#include "RenderScene.h"
 #include "Console.h"
 #include "GenericGamestate.h"
 #include "DebugConsoleWindow.h"
@@ -10,7 +10,7 @@ GameMain gGameMain;
 
 bool GameMain::Initialize()
 {
-    if (!gGameScene.Initialize())
+    if (!gRenderScene.Initialize())
     {
         gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize game scene");
 
@@ -28,12 +28,12 @@ void GameMain::Deinit()
 {
     SwitchToGameState(nullptr);
 
-    gGameScene.Deinit();
+    gRenderScene.Deinit();
 }
 
 void GameMain::UpdateFrame()
 {
-    gGameScene.UpdateFrame();
+    gRenderScene.UpdateFrame();
 
     if (mCurrentGamestate)
     {
@@ -43,7 +43,7 @@ void GameMain::UpdateFrame()
 
 void GameMain::DebugRenderFrame(DebugRenderer& renderer)
 {
-    gGameScene.DebugRenderFrame(renderer);
+    gRenderScene.DebugRenderFrame(renderer);
 }
 
 void GameMain::HandleInputEvent(MouseButtonInputEvent& inputEvent)
@@ -52,7 +52,7 @@ void GameMain::HandleInputEvent(MouseButtonInputEvent& inputEvent)
     {
         mCurrentGamestate->HandleInputEvent(inputEvent);
     }
-    gGameScene.HandleInputEvent(inputEvent);
+    gRenderScene.HandleInputEvent(inputEvent);
 }
 
 void GameMain::HandleInputEvent(MouseMovedInputEvent& inputEvent)
@@ -61,7 +61,7 @@ void GameMain::HandleInputEvent(MouseMovedInputEvent& inputEvent)
     {
         mCurrentGamestate->HandleInputEvent(inputEvent);
     }
-    gGameScene.HandleInputEvent(inputEvent);
+    gRenderScene.HandleInputEvent(inputEvent);
 }
 
 void GameMain::HandleInputEvent(MouseScrollInputEvent& inputEvent)
@@ -70,7 +70,7 @@ void GameMain::HandleInputEvent(MouseScrollInputEvent& inputEvent)
     {
         mCurrentGamestate->HandleInputEvent(inputEvent);
     }
-    gGameScene.HandleInputEvent(inputEvent);
+    gRenderScene.HandleInputEvent(inputEvent);
 }
 
 void GameMain::HandleInputEvent(KeyInputEvent& inputEvent)
@@ -97,7 +97,7 @@ void GameMain::HandleInputEvent(KeyInputEvent& inputEvent)
     {
         mCurrentGamestate->HandleInputEvent(inputEvent);
     }
-    gGameScene.HandleInputEvent(inputEvent);
+    gRenderScene.HandleInputEvent(inputEvent);
 }
 
 void GameMain::HandleInputEvent(KeyCharEvent& inputEvent)
@@ -106,7 +106,7 @@ void GameMain::HandleInputEvent(KeyCharEvent& inputEvent)
     {
         mCurrentGamestate->HandleInputEvent(inputEvent);
     }
-    gGameScene.HandleInputEvent(inputEvent);
+    gRenderScene.HandleInputEvent(inputEvent);
 }
 
 bool GameMain::IsMeshViewGamestate() const

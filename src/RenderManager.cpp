@@ -19,7 +19,7 @@ RenderManager gRenderManager;
 
 bool RenderManager::Initialize()
 {
-    if (!mGuiRenderProgram.LoadProgram())
+    if (!mGuiRenderProgram.LoadProgram() || !mModelsRenderer.Initialize())
     {
         gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize render manager");
 
@@ -39,6 +39,7 @@ bool RenderManager::Initialize()
 
 void RenderManager::Deinit()
 {
+    mModelsRenderer.Deinit();
     mDebugRenderer.Deinit();
     mGuiRenderProgram.FreeProgram();
 }

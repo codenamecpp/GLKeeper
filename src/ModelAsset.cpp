@@ -264,6 +264,7 @@ void ModelAsset::Clear()
 void ModelAsset::Exchange(ModelAsset& sourceData)
 {
     std::swap(mName, sourceData.mName);
+    std::swap(mInternalName, sourceData.mInternalName);
 
     std::swap(mFramesBounds, sourceData.mFramesBounds);
     std::swap(mMeshArray, sourceData.mMeshArray);

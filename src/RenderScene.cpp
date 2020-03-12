@@ -1,11 +1,12 @@
 #include "pch.h"
-#include "GameScene.h"
-#include "SceneObject.h"
+#include "RenderScene.h"
+#include "Renderable.h"
 #include "ConsoleVariable.h"
 #include "Console.h"
 #include "CameraControl.h"
 #include "TimeManager.h"
 #include "DebugRenderer.h"
+#include "AnimatingModel.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -14,27 +15,27 @@ CvarBoolean gCvarScene_DebugDrawAabb ( "dbg_drawSceneAabb", true, "Draw scene aa
 
 //////////////////////////////////////////////////////////////////////////
 
-GameScene gGameScene;
+RenderScene gRenderScene;
 
 //////////////////////////////////////////////////////////////////////////
 
-bool GameScene::Initialize()
+bool RenderScene::Initialize()
 {
     gConsole.RegisterVariable(&gCvarScene_DebugDrawAabb);
     return true;
 }
 
-void GameScene::Deinit()
+void RenderScene::Deinit()
 {
     mCameraControl = nullptr;
 
     gConsole.UnregisterVariable(&gCvarScene_DebugDrawAabb);
 
-    DestroyAttachedSceneObjects();
+    DestroySceneObjects();
     mAABBTree.Cleanup();
 }
 
-void GameScene::UpdateFrame()
+void RenderScene::UpdateFrame()
 {
     float deltaTime = (float) gTimeManager.GetRealtimeFrameDelta();
 
@@ -46,7 +47,7 @@ void GameScene::UpdateFrame()
     BuildAABBTree();
 }
 
-void GameScene::DebugRenderFrame(DebugRenderer& renderer)
+void RenderScene::DebugRenderFrame(DebugRenderer& renderer)
 {
     if (gCvarScene_DebugDrawAabb.mValue)
     {
@@ -54,7 +55,7 @@ void GameScene::DebugRenderFrame(DebugRenderer& renderer)
     }
 }
 
-void GameScene::HandleInputEvent(MouseButtonInputEvent& inputEvent)
+void RenderScene::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
     if (mCameraControl)
     {
@@ -62,7 +63,7 @@ void GameScene::HandleInputEvent(MouseButtonInputEvent& inputEvent)
     }
 }
 
-void GameScene::HandleInputEvent(MouseMovedInputEvent& inputEvent)
+void RenderScene::HandleInputEvent(MouseMovedInputEvent& inputEvent)
 {
     if (mCameraControl)
     {
@@ -70,7 +71,7 @@ void GameScene::HandleInputEvent(MouseMovedInputEvent& inputEvent)
     }
 }
 
-void GameScene::HandleInputEvent(MouseScrollInputEvent& inputEvent)
+void RenderScene::HandleInputEvent(MouseScrollInputEvent& inputEvent)
 {
     if (mCameraControl)
     {
@@ -78,7 +79,7 @@ void GameScene::HandleInputEvent(MouseScrollInputEvent& inputEvent)
     }
 }
 
-void GameScene::HandleInputEvent(KeyInputEvent& inputEvent)
+void RenderScene::HandleInputEvent(KeyInputEvent& inputEvent)
 {
     if (mCameraControl)
     {
@@ -86,7 +87,7 @@ void GameScene::HandleInputEvent(KeyInputEvent& inputEvent)
     }
 }
 
-void GameScene::HandleInputEvent(KeyCharEvent& inputEvent)
+void RenderScene::HandleInputEvent(KeyCharEvent& inputEvent)
 {
     if (mCameraControl)
     {
@@ -94,22 +95,37 @@ void GameScene::HandleInputEvent(KeyCharEvent& inputEvent)
     }
 }
 
-SceneObject* GameScene::CreateSceneObject(const glm::vec3& position, const glm::vec3& direction, float scaling)
+Renderable* RenderScene::CreateNullRenderable(const glm::vec3& position, const glm::vec3& direction, float scaling)
 {
-    SceneObject* sceneEntity = mObjectsPool.create();
+    Renderable* sceneEntity = new Renderable;
     sceneEntity->SetPosition(position);
     // todo : direction
     sceneEntity->SetScaling(scaling);
     return sceneEntity;
 }
 
-SceneObject* GameScene::CreateSceneObject()
+Renderable* RenderScene::CreateNullRenderable()
 {
-    SceneObject* sceneEntity = mObjectsPool.create();
+    Renderable* sceneEntity = new Renderable;
     return sceneEntity;
 }
 
-void GameScene::HandleSceneObjectTransformChange(SceneObject* sceneEntity)
+AnimatingModel* RenderScene::CreateAnimatingModel(ModelAsset* modelAsset, const glm::vec3& position, const glm::vec3& direction)
+{
+    AnimatingModel* sceneEntity = new AnimatingModel;
+    sceneEntity->SetPosition(position);
+    // todo : direction
+
+    return sceneEntity;
+}
+
+AnimatingModel* RenderScene::CreateAnimatingModel()
+{
+    AnimatingModel* sceneEntity = new AnimatingModel;
+    return sceneEntity;
+}
+
+void RenderScene::HandleTransformChange(Renderable* sceneEntity)
 {
     debug_assert(sceneEntity);
     if (!mTransformObjects.contains(&sceneEntity->mListNodeTransformed))
@@ -118,7 +134,7 @@ void GameScene::HandleSceneObjectTransformChange(SceneObject* sceneEntity)
     }
 }
 
-void GameScene::AttachSceneObject(SceneObject* sceneEntity)
+void RenderScene::AttachRenderable(Renderable* sceneEntity)
 {
     debug_assert(sceneEntity);
     // already attached to scene
@@ -135,7 +151,7 @@ void GameScene::AttachSceneObject(SceneObject* sceneEntity)
     mAABBTree.InsertObject(sceneEntity);
 }
 
-void GameScene::DetachSceneObject(SceneObject* sceneEntity)
+void RenderScene::DetachRenderable(Renderable* sceneEntity)
 {
     debug_assert(sceneEntity);
 
@@ -156,15 +172,15 @@ void GameScene::DetachSceneObject(SceneObject* sceneEntity)
     mAABBTree.RemoveObject(sceneEntity);
 }
 
-void GameScene::DestroySceneObject(SceneObject* sceneEntity)
+void RenderScene::DestroyRenderable(Renderable* sceneEntity)
 {
     debug_assert(sceneEntity);
 
-    DetachSceneObject(sceneEntity);
-    mObjectsPool.destroy(sceneEntity);
+    DetachRenderable(sceneEntity);
+    delete sceneEntity;
 }
 
-void GameScene::SetCameraControl(SceneCameraControl* cameraController)
+void RenderScene::SetCameraControl(SceneCameraControl* cameraController)
 {
     if (mCameraControl == cameraController)
         return;
@@ -182,34 +198,34 @@ void GameScene::SetCameraControl(SceneCameraControl* cameraController)
     }
 }
 
-void GameScene::BuildAABBTree()
+void RenderScene::BuildAABBTree()
 {
     while (mTransformObjects.has_elements())
     {
-        cxx::intrusive_node<SceneObject>* entityNode = mTransformObjects.get_head_node();
+        cxx::intrusive_node<Renderable>* entityNode = mTransformObjects.get_head_node();
         mTransformObjects.remove(entityNode);
 
         // refresh aabbtree node
-        SceneObject* sceneEntity = entityNode->get_element();
+        Renderable* sceneEntity = entityNode->get_element();
         mAABBTree.UpdateObject(sceneEntity);
     }
 }
 
-void GameScene::DestroyAttachedSceneObjects()
+void RenderScene::DestroySceneObjects()
 {
     while (mTransformObjects.has_elements())
     {
-        cxx::intrusive_node<SceneObject>* entityNode = mTransformObjects.get_head_node();
+        cxx::intrusive_node<Renderable>* entityNode = mTransformObjects.get_head_node();
 
-        SceneObject* currentEntity = entityNode->get_element();
-        DestroySceneObject(currentEntity);
+        Renderable* currentEntity = entityNode->get_element();
+        DestroyRenderable(currentEntity);
     }
 
     while (mSceneObjects.has_elements())
     {
-        cxx::intrusive_node<SceneObject>* entityNode = mSceneObjects.get_head_node();
+        cxx::intrusive_node<Renderable>* entityNode = mSceneObjects.get_head_node();
 
-        SceneObject* currentEntity = entityNode->get_element();
-        DestroySceneObject(currentEntity);
+        Renderable* currentEntity = entityNode->get_element();
+        DestroyRenderable(currentEntity);
     }
 }
