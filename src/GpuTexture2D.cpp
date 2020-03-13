@@ -36,8 +36,8 @@ private:
 
 //////////////////////////////////////////////////////////////////////////
 
-GpuTexture2D::GpuTexture2D(GraphicsDeviceContext& renderContext)
-    : mGraphicsContext(renderContext)
+GpuTexture2D::GpuTexture2D(GraphicsDeviceContext& graphicsContext)
+    : mGraphicsContext(graphicsContext)
     , mResourceHandle(GpuTextureHandle_NULL)
     , mSamplerState()
     , mDesc()

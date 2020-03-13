@@ -17,3 +17,12 @@ enum eRenderPass
 };
 
 decl_enum_strings(eRenderPass);
+
+// render context
+class SceneRenderContext
+{
+public:
+
+    eRenderPass mCurrentPass;
+
+};

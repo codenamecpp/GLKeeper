@@ -35,8 +35,8 @@ private:
 
 //////////////////////////////////////////////////////////////////////////
 
-GpuBufferTexture::GpuBufferTexture(GraphicsDeviceContext& renderContext)
-    : mGraphicsContext(renderContext)
+GpuBufferTexture::GpuBufferTexture(GraphicsDeviceContext& graphicsContext)
+    : mGraphicsContext(graphicsContext)
     , mResourceHandle()
     , mBufferHandle()
     , mFormat()

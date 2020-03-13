@@ -55,7 +55,7 @@ void ModelsRenderer::Deinit()
     mModelsCache.clear();
 }
 
-void ModelsRenderer::RenderModel(eRenderPass renderPass, AnimatingModel* animatingModel)
+void ModelsRenderer::RenderModel(SceneRenderContext& renderContext, AnimatingModel* animatingModel)
 {
     ModelAsset* modelAsset = animatingModel->mModelAsset;
     if (animatingModel == nullptr || modelAsset== nullptr)
@@ -98,10 +98,10 @@ void ModelsRenderer::RenderModel(eRenderPass renderPass, AnimatingModel* animati
 
         RenderMaterial& renderMaterial = animatingModel->mSubmeshMaterials[currentSubMesh.mMaterialIndex];
         // filter out submeshes depending on current render pass
-        if (renderPass == eRenderPass_Translucent && !renderMaterial.IsTransparent())
+        if (renderContext.mCurrentPass == eRenderPass_Translucent && !renderMaterial.IsTransparent())
             continue;
 
-        if (renderPass == eRenderPass_Opaque && renderMaterial.IsTransparent())
+        if (renderContext.mCurrentPass == eRenderPass_Opaque && renderMaterial.IsTransparent())
             continue;
 
         renderMaterial.ActivateMaterial();

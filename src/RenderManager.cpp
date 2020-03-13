@@ -116,28 +116,43 @@ void RenderManager::Leave2D()
 
 void RenderManager::DrawScene()
 {
+    SceneRenderContext renderContext;
+
     gRenderScene.CollectRenderables(mSceneRenderList);
 
-    // todo: sort
+    // sort by renderable type
+    if (mSceneRenderList.mOpaqueElementsCount)
+    {
+        std::sort(mSceneRenderList.mOpaqueElements, mSceneRenderList.mOpaqueElements + mSceneRenderList.mOpaqueElementsCount, 
+            [](const SceneRenderList::ListElement& lhs, const SceneRenderList::ListElement& rhs)
+        {
+            // animating models
+            if (lhs.mAnimatingModel != rhs.mAnimatingModel)
+                return lhs.mAnimatingModel != nullptr;
+
+            return lhs.mRenderable < rhs.mRenderable;
+        });
+    }
 
     // opaque pass
+    renderContext.mCurrentPass = eRenderPass_Opaque;
     
     for (int i = 0; i < mSceneRenderList.mOpaqueElementsCount; ++i)
     {
         const auto& element = mSceneRenderList.mOpaqueElements[i];
         if (element.mAnimatingModel)
         {
-            mModelsRenderer.RenderModel(eRenderPass_Opaque, element.mAnimatingModel);
+            mModelsRenderer.RenderModel(renderContext, element.mAnimatingModel);
         }
     }
 
     // translucent pass
+    renderContext.mCurrentPass = eRenderPass_Translucent;
 
     // sort by camera distance, from far to near
     if (mSceneRenderList.mTranslucentElementsCount)
     {
-        std::sort(mSceneRenderList.mTranslucentElements, mSceneRenderList.mTranslucentElements + 
-            mSceneRenderList.mTranslucentElementsCount, 
+        std::sort(mSceneRenderList.mTranslucentElements, mSceneRenderList.mTranslucentElements + mSceneRenderList.mTranslucentElementsCount, 
             [](const SceneRenderList::ListElement& lhs, const SceneRenderList::ListElement& rhs)
         {
             return lhs.mRenderable->mDistanceToCameraSquared < rhs.mRenderable->mDistanceToCameraSquared;
@@ -149,7 +164,7 @@ void RenderManager::DrawScene()
         const auto& element = mSceneRenderList.mTranslucentElements[i];
         if (element.mAnimatingModel)
         {
-            mModelsRenderer.RenderModel(eRenderPass_Translucent, element.mAnimatingModel);
+            mModelsRenderer.RenderModel(renderContext, element.mAnimatingModel);
         }
     }
 

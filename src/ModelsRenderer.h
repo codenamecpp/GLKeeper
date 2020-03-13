@@ -14,10 +14,15 @@ public:
     bool Initialize();
     void Deinit();
 
+    void RenderFrameBegin();
+    void RenderFrameEnd();
+    void RenderPassBegin(eRenderPass renderPass);
+    void RenderPassEnd(eRenderPass renderPass);
+
     // render animating model for current render pass
-    // @param renderPass: Render pass
+    // @param renderContext: Current render context
     // @param animatingModel: Model instance
-    void RenderModel(eRenderPass renderPass, AnimatingModel* animatingModel);
+    void RenderModel(SceneRenderContext& renderContext, AnimatingModel* animatingModel);
 
     // recreate renderdata for specific model asset
     // @param modelAsset: Model data
