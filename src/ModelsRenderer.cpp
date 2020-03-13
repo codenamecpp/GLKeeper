@@ -77,7 +77,7 @@ void ModelsRenderer::RenderModel(SceneRenderContext& renderContext, AnimatingMod
 
     mMorphAnimRenderProgram.SetViewProjectionMatrix(gRenderScene.mCamera.mViewProjectionMatrix);
     mMorphAnimRenderProgram.SetModelMatrix(animatingModel->mTransformation);
-    mMorphAnimRenderProgram.SetMixFrames(0.0f);
+    mMorphAnimRenderProgram.SetMixFrames(animatingModel->mAnimState.mMixFrames);
     mMorphAnimRenderProgram.ActivateProgram();
 
     // bind indices
@@ -106,8 +106,8 @@ void ModelsRenderer::RenderModel(SceneRenderContext& renderContext, AnimatingMod
 
         renderMaterial.ActivateMaterial();
 
-        int frame0 = 0;
-        int frame1 = 0;
+        int frame0 = animatingModel->mAnimState.mFrame0;
+        int frame1 = animatingModel->mAnimState.mFrame1;
 
         // prepare vertex streams definition
         vertexDefs.Setup(renderData->mSubsets[icurrSubset].mVerticesDataOffset, currentSubMesh.mFrameVerticesCount, modelAsset->mFramesCount, frame0, frame1);
