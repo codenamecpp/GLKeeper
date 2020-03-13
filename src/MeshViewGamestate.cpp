@@ -27,13 +27,19 @@ void MeshViewGamestate::HandleGamestateEnter()
 
     ModelAsset* modelAsset = gModelsManager.LoadModelAsset("vampire-pray.kmf");
 
-    AnimatingModel* sceneObject = gRenderScene.CreateAnimatingModel(modelAsset, glm::vec3(0.0f), glm::vec3(0.0f));
-    gRenderScene.AttachRenderable(sceneObject);
-    sceneObject->StartAnimation(20.0f, true);
+    mModelObject = gRenderScene.CreateAnimatingModel(modelAsset, glm::vec3(0.0f), glm::vec3(0.0f));
+    gRenderScene.AttachRenderable(mModelObject);
+    mModelObject->StartAnimation(20.0f, true);
 }
 
 void MeshViewGamestate::HandleGamestateLeave()
 {
+    gRenderScene.SetCameraControl(nullptr);
+    if (mModelObject)
+    {
+        gRenderScene.DestroyRenderable(mModelObject);
+        mModelObject = nullptr;
+    }
 }
 
 void MeshViewGamestate::HandleUpdateFrame()

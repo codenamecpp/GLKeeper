@@ -65,10 +65,13 @@ void RenderScene::CollectRenderables(SceneRenderList& renderablesList)
 
 void RenderScene::DebugRenderFrame(DebugRenderer& renderer)
 {
-    if (gCvarScene_DebugDrawAabb.mValue)
-    {
-        mAABBTree.DebugRender(renderer);
-    }
+    if (!gCvarScene_DebugDrawAabb.mValue)
+        return;
+
+    Size2D cellCount (12, 12);
+    glm::vec2 cellSize (1.0f, 1.0f);
+    renderer.DrawGrid(cellCount, cellSize, Color32_DarkGray, true);
+    mAABBTree.DebugRender(renderer);
 }
 
 void RenderScene::HandleInputEvent(MouseButtonInputEvent& inputEvent)

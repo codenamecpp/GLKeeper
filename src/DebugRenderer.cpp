@@ -116,6 +116,38 @@ void DebugRenderer::DrawLine(const glm::vec3& start_point, const glm::vec3& end_
     }
 }
 
+void DebugRenderer::DrawGrid(const Size2D& cellCount, const glm::vec2& cellSize, unsigned int color, bool depth_test)
+{
+    const glm::vec3 cornerTL = glm::vec3 { 
+        -(cellSize.x * cellCount.x) / 2.0f, 
+        0.0f,
+        -(cellSize.y * cellCount.y) / 2.0f
+    };
+
+    const glm::vec3 cornerTR = glm::vec3 {
+        (cellSize.x * cellCount.x) / 2.0f, 
+        0.0f,
+        -(cellSize.y * cellCount.y) / 2.0f
+    };
+
+    const glm::vec3 cornerBL = glm::vec3 {
+        -(cellSize.x * cellCount.x) / 2.0f,
+        0.0f,
+        (cellSize.y * cellCount.y) / 2.0f
+    };
+
+    for (int iy = 0; iy < cellCount.y + 1; ++iy)
+    {
+        const glm::vec3 voffset{0.0f, 0.0f, iy * cellSize.y};
+        DrawLine(cornerTL + voffset, cornerTR + voffset, color, depth_test);
+    }
+    for (int ix = 0; ix < cellCount.x + 1; ++ix)
+    {
+        const glm::vec3 voffset{ix * cellSize.x, 0.0f, 0.0f};
+        DrawLine(cornerTL + voffset, cornerBL + voffset, color, depth_test);
+    }
+}
+
 void DebugRenderer::DrawSphere(const cxx::bounding_sphere& sphere, unsigned int color, bool depth_test)
 {
     if (DebugLineStruct* linestruct = try_allocate_lines(sg_sphere.NumLines, depth_test))
