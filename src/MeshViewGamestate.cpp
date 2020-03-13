@@ -15,8 +15,6 @@
 #define MESH_VIEW_CAMERA_FAR        100.0f
 #define MESH_VIEW_CAMERA_FOVY       60.0f
 
-AnimatingModel* sceneObject;
-
 void MeshViewGamestate::HandleGamestateEnter()
 {
     mOrbitCameraControl.SetParams(MESH_VIEW_CAMERA_YAW_DEG, MESH_VIEW_CAMERA_PITCH_DEG, MESH_VIEW_CAMERA_DISTANCE);
@@ -29,7 +27,7 @@ void MeshViewGamestate::HandleGamestateEnter()
 
     ModelAsset* modelAsset = gModelsManager.LoadModelAsset("vampire-pray.kmf");
 
-    sceneObject = gRenderScene.CreateAnimatingModel(modelAsset, glm::vec3(0.0f), glm::vec3(0.0f));
+    AnimatingModel* sceneObject = gRenderScene.CreateAnimatingModel(modelAsset, glm::vec3(0.0f), glm::vec3(0.0f));
     gRenderScene.AttachRenderable(sceneObject);
     sceneObject->StartAnimation(20.0f, true);
 }
@@ -40,9 +38,6 @@ void MeshViewGamestate::HandleGamestateLeave()
 
 void MeshViewGamestate::HandleUpdateFrame()
 {
-    float dt = (float) gTimeManager.GetRealtimeFrameDelta();
-
-    sceneObject->AdvanceAnimation(dt);
 }
 
 void MeshViewGamestate::HandleInputEvent(MouseButtonInputEvent& inputEvent)

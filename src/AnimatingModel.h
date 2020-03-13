@@ -15,15 +15,15 @@ public:
     int mStartFrame = 0;
     int mFinalFrame = 0;
 
-    int mFrame0 = 0;
-    int mFrame1 = 0;
+    int mFrame0 = 0; // base blend frame
+    int mFrame1 = 0; // next blend frame
 
     int mCyclesCount = 0; // number of full animation cycles
 
-    float mMixFrames = 0.0f; // value in range [0..1]
-    float mAnimationTime = 0.0f;
+    float mMixFrames = 0.0f; // blend frames value in range [0..1]
+    float mAnimationTime = 0.0f; // current time progress
     float mAnimationEndTime = 0.0f;
-    float mFramesPerSecond = 0.0f; // speed
+    float mFramesPerSecond = 0.0f;  // speed
 
     bool mIsAnimationActive = false;
     bool mIsAnimationLoop = false;
@@ -51,6 +51,10 @@ public:
     // @param modelAsset: Source model data
     void SetModelAsset(ModelAsset* modelAsset);
     void SetModelAssetNull();
+
+    // process scene update frame
+    // @param deltaTime: Time since last update
+    void UpdateFrame(float deltaTime) override;
 
     // request entity to register itself in render lists
     // @param renderPass: Current render pass

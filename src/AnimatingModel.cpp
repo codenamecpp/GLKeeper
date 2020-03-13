@@ -73,6 +73,11 @@ void AnimatingModel::SetModelAssetNull()
     SetAnimationState();
 }
 
+void AnimatingModel::UpdateFrame(float deltaTime)
+{
+    AdvanceAnimation(deltaTime);
+}
+
 void AnimatingModel::RegisterForRendering(SceneRenderList& renderList)
 {
     // todo: check materials and add to proper render list

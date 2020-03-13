@@ -26,6 +26,10 @@ public:
     Renderable();
     virtual ~Renderable();
 
+    // process scene update frame
+    // @param deltaTime: Time since last update
+    virtual void UpdateFrame(float deltaTime) {}
+
     // request entity to register itself in render lists
     // @param renderList: Render lists
     virtual void RegisterForRendering(SceneRenderList& renderList) {}

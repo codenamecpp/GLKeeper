@@ -40,6 +40,11 @@ void RenderScene::UpdateFrame()
 {
     float deltaTime = (float) gTimeManager.GetRealtimeFrameDelta();
 
+    for (Renderable* currRenderable: mSceneObjects)
+    {
+        currRenderable->UpdateFrame(deltaTime);
+    }
+
     if (mCameraControl)
     {
         mCameraControl->HandleUpdateFrame(deltaTime);
