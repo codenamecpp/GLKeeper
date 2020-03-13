@@ -195,8 +195,8 @@ bool GpuTexture2D::TexSubImage(int mipmapLevel, const Rect2D& rc, const void* so
     if (sourceData == nullptr)
         return true;
 
-    int mipmapDimX = GetTextureMipmapDims(mipmapLevel, mDesc.mDimensions.x);
-    int mipmapDimY = GetTextureMipmapDims(mipmapLevel, mDesc.mDimensions.y);
+    int mipmapDimX = GetTextureMipmapDims(mDesc.mDimensions.x, mipmapLevel);
+    int mipmapDimY = GetTextureMipmapDims(mDesc.mDimensions.y, mipmapLevel);
 
     debug_assert(rc.mX >= 0);
     debug_assert(rc.mY >= 0);
@@ -253,8 +253,8 @@ bool GpuTexture2D::TexSubImage(int mipmapLevel, const void* sourceData)
         {
             0,
             0,
-            GetTextureMipmapDims(mipmapLevel, mDesc.mDimensions.x),
-            GetTextureMipmapDims(mipmapLevel, mDesc.mDimensions.y),
+            GetTextureMipmapDims(mDesc.mDimensions.x, mipmapLevel),
+            GetTextureMipmapDims(mDesc.mDimensions.y, mipmapLevel),
         };
         return TexSubImage(mipmapLevel, textureRect, sourceData);
     }

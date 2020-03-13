@@ -11,7 +11,7 @@ class TexturesManager: public cxx::noncopyable
 public:
     Texture2D* mWhiteTexture = nullptr;
     Texture2D* mBlackTexture = nullptr;
-    Texture2D* mDummyTexture = nullptr;
+    Texture2D* mMissingTexture = nullptr;
 
 public:
 

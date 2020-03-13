@@ -145,13 +145,13 @@ void TexturesManager::InitDefaultTextures()
         debug_assert(false);
     }
 
-    mDummyTexture = new Texture2D { "dummy" };
-    mDummyTexture->SetPersistent(true);
-    mDummyTexture->SetSamplerState(textureSamplerState);
+    mMissingTexture = new Texture2D { "missing" };
+    mMissingTexture->SetPersistent(true);
+    mMissingTexture->SetSamplerState(textureSamplerState);
 
     textureData.CreateImage(eTextureFormat_RGBA8, dummyTextureDims, 0, false);
     textureData.FillWithCheckerBoard(0);
-    if (!mDummyTexture->CreateTexture(textureData))
+    if (!mMissingTexture->CreateTexture(textureData))
     {
         debug_assert(false);
     }
@@ -161,7 +161,7 @@ void TexturesManager::FreeDefaultTextures()
 {
     SafeDelete(mWhiteTexture);
     SafeDelete(mBlackTexture);
-    SafeDelete(mDummyTexture);
+    SafeDelete(mMissingTexture);
 }
 
 void TexturesManager::FreeTextures()

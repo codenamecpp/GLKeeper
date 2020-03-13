@@ -49,7 +49,7 @@ void RenderManager::Deinit()
 void RenderManager::RenderFrame()
 {
     gGraphicsDevice.ClearScreen();
-
+    
     DrawScene();
 
     // debug draw
