@@ -128,12 +128,18 @@ void DebugMeshViewWindow::DoUI(ImGuiIO& imguiContext)
                 UpdateFilteredElementsList();
             }
 
-            // list filtered models
-            const int numElements = (int) mFilteredList.size();
-            if (ImGui::ListBox("Models", &mListSelection, mFilteredList.data(), numElements, 18))
+            if (ImGui::BeginChild("child_Frame"))
             {
-                ChangeModelAsset(mFilteredList[mListSelection]);
+                // list filtered models
+                const int numElements = (int) mFilteredList.size();
+                ImGui::PushItemWidth(-1);
+                if (ImGui::ListBox("##", &mListSelection, mFilteredList.data(), numElements, numElements))
+                {
+                    ChangeModelAsset(mFilteredList[mListSelection]);
+                }
+                ImGui::PopItemWidth();
             }
+            ImGui::EndChild();
             ImGui::EndTabItem();
         }
 
