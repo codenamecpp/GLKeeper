@@ -27,6 +27,7 @@ public:
 
     bool mIsAnimationActive = false;
     bool mIsAnimationLoop = false;
+    bool mIsAnimationPaused = false;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -69,12 +70,14 @@ public:
     void RewindToStart();
     void RewingToEnd();
     void AdvanceAnimation(float deltaTime);
+    void SetAnimationPaused(bool isPaused);
 
     bool IsAnimationLoop() const;
     bool IsAnimationActive() const;
     bool IsAnimationFinish() const;
+    bool IsAnimationPaused() const;
     bool IsStatic() const;
-
+   
     void SetPreferredLOD(int lod);
 
 private:

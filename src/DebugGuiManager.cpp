@@ -208,6 +208,8 @@ void DebugGuiManager::UpdateFrame()
         const ImVec2 initialSize { currWindow->mInitialSize.x * 1.0f, currWindow->mInitialSize.y * 1.0f };
         ImGui::SetNextWindowSize(initialSize, ImGuiCond_Appearing);
 
+        ImGui::SetNextWindowBgAlpha(currWindow->mBackgroundAlpha);
+
         ImGuiWindowFlags windowFlags = 
             (currWindow->mWindowNoTitleBar ? ImGuiWindowFlags_NoTitleBar : 0) |
             (currWindow->mWindowNoResize ? ImGuiWindowFlags_NoResize : 0) |

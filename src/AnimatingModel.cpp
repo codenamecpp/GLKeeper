@@ -156,6 +156,7 @@ void AnimatingModel::ClearAnimation()
 
     mAnimState.mIsAnimationActive = false;
     mAnimState.mIsAnimationLoop = false;
+    mAnimState.mIsAnimationPaused = false;
 
     SetLocalBoundingBox(mModelAsset->mFramesBounds[mAnimState.mFrame0]);
 }
@@ -172,7 +173,7 @@ void AnimatingModel::RewingToEnd()
 
 void AnimatingModel::AdvanceAnimation(float deltaTime)
 {
-    if (!IsAnimationActive())
+    if (!IsAnimationActive() || IsAnimationPaused())
         return;
 
     debug_assert(mModelAsset);
@@ -216,6 +217,14 @@ void AnimatingModel::AdvanceAnimation(float deltaTime)
     }
 }
 
+void AnimatingModel::SetAnimationPaused(bool isPaused)
+{
+    if (IsAnimationActive())
+    {
+        mAnimState.mIsAnimationPaused = isPaused;
+    }
+}
+
 bool AnimatingModel::IsAnimationLoop() const
 {
     return mAnimState.mIsAnimationLoop;
@@ -229,6 +238,11 @@ bool AnimatingModel::IsAnimationActive() const
 bool AnimatingModel::IsAnimationFinish() const
 {
     return !mAnimState.mIsAnimationActive && mAnimState.mCyclesCount > 0;
+}
+
+bool AnimatingModel::IsAnimationPaused() const
+{
+    return mAnimState.mIsAnimationPaused;
 }
 
 bool AnimatingModel::IsStatic() const

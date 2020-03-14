@@ -42,6 +42,8 @@ protected:
     Point2D mInitialPosition;
     Size2D mInitialSize;
 
+    float mBackgroundAlpha      = 1.0f;
+
     // debug window flags
     bool mWindowShown           = false;
     bool mWindowNoTitleBar      = false;

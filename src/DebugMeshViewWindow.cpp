@@ -16,6 +16,7 @@ DebugMeshViewWindow::DebugMeshViewWindow(): DebugGuiWindow("Models view")
     mWindowNoCloseButton = true;
     mInitialSize.x = 400;
     mInitialSize.y = 500;
+    mBackgroundAlpha = 0.5f;
 
     mModelsListFilter = new ImGuiTextFilter;
 }
