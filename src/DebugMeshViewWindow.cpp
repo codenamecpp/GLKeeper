@@ -9,6 +9,7 @@
 #include "ModelAssetsManager.h"
 #include "AnimatingModel.h"
 #include "MeshViewGamestate.h"
+#include "cvars.h"
 
 DebugMeshViewWindow::DebugMeshViewWindow(): DebugGuiWindow("Models view")
 {
@@ -56,6 +57,7 @@ void DebugMeshViewWindow::DoUI(ImGuiIO& imguiContext)
     {
         AnimatingModel* animModel = mMeshViewGamestate ? mMeshViewGamestate->mModelObject : nullptr;
 
+        // curr model info
         if (animModel && ImGui::BeginTabItem("Model info"))
         {
             ModelAsset* modelAsset = animModel->mModelAsset;
@@ -126,6 +128,34 @@ void DebugMeshViewWindow::DoUI(ImGuiIO& imguiContext)
             ImGui::EndTabItem();
         }
 
+        // anim control
+        if (!animModel->IsStatic())
+        {
+            if (ImGui::BeginTabItem("Animation"))
+            {
+                ImGui::Text("Cycles counter: %d", animModel->mAnimState.mCyclesCount);
+                ImGui::Separator();
+
+                bool enableBlendFrames = gCvarRender_EnableAnimBlendFrames.mValue;
+                if (ImGui::Checkbox("Enable blend frames", &enableBlendFrames))
+                {
+                    gCvarRender_EnableAnimBlendFrames.SetValue(enableBlendFrames);
+                }
+                ImGui::Separator();
+
+                int currentFrame = animModel->mAnimState.mFrame0;   
+                if (ImGui::SliderInt("Frame", &currentFrame, animModel->mAnimState.mStartFrame, animModel->mAnimState.mFinalFrame))
+                {
+                    // todo
+                    //animModel->SetFrame
+                }
+
+
+                ImGui::EndTabItem();
+            }
+        }
+
+        // model selection
         if (ImGui::BeginTabItem("All Models List"))
         {
             if (mModelsListFilter->Draw("Filter"))

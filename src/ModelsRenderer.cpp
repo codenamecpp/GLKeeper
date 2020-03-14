@@ -6,6 +6,9 @@
 #include "AnimatingModel.h"
 #include "RenderScene.h"
 #include "VertexFormat.h"
+#include "ConsoleVariable.h"
+
+CvarBoolean gCvarRender_EnableAnimBlendFrames("r_animBlendFrames", true, "Smooth animations", ConsoleVar_Renderer);
 
 // internal info
 class ModelsRenderData: public cxx::noncopyable
@@ -77,7 +80,13 @@ void ModelsRenderer::RenderModel(SceneRenderContext& renderContext, AnimatingMod
 
     mMorphAnimRenderProgram.SetViewProjectionMatrix(gRenderScene.mCamera.mViewProjectionMatrix);
     mMorphAnimRenderProgram.SetModelMatrix(animatingModel->mTransformation);
-    mMorphAnimRenderProgram.SetMixFrames(animatingModel->mAnimState.mMixFrames);
+
+    float mixFrames = animatingModel->mAnimState.mMixFrames;
+    if (!gCvarRender_EnableAnimBlendFrames.mValue)
+    {
+        mixFrames = 0.0f;
+    }
+    mMorphAnimRenderProgram.SetMixFrames(mixFrames);
     mMorphAnimRenderProgram.ActivateProgram();
 
     // bind indices

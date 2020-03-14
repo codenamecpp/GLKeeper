@@ -194,6 +194,9 @@ void AnimatingModel::AdvanceAnimation(float deltaTime)
             return;
         }
 
+        float numCycleTimes = (mAnimState.mAnimationTime / mAnimState.mAnimationEndTime);
+        mAnimState.mCyclesCount += (int) numCycleTimes;
+
         // loop enabled
         mAnimState.mAnimationTime = ::fmodf(mAnimState.mAnimationTime, mAnimState.mAnimationEndTime);
     }

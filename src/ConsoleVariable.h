@@ -73,14 +73,14 @@ public:
     }
 
     // set value directly from code
-    inline bool SetValue(TCvarValue&& cvarValue)
+    inline bool SetValue(const TCvarValue& cvarValue)
     {
         if (TCvarValueHandler::ValidateValue(cvarValue))
         {
             if (mValue == cvarValue) // same value
                 return true;
 
-            mValue = std::move(cvarValue);
+            mValue = cvarValue;
             return true;
         }
         return false;
