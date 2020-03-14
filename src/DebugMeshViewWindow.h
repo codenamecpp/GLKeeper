@@ -20,6 +20,7 @@ public:
 private:
     // override DebugGuiWindow
     void DoUI(ImGuiIO& imguiContext) override;
+    void DoInit(ImGuiIO& imguiContext) override;
 
     void UpdateFilteredElementsList();
     void LoadModelsList();
@@ -27,8 +28,10 @@ private:
 
 private:
     int mListSelection = 0; // current selection item index in filtered list
+
     std::vector<const char*> mAllModelsList;
     std::vector<const char*> mFilteredList;
+
     ImGuiTextFilter* mModelsListFilter = nullptr;
     MeshViewGamestate* mMeshViewGamestate = nullptr;
 };

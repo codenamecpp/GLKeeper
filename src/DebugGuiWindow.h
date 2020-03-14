@@ -16,12 +16,14 @@ public:
 public:
     // @param windowName: Window name, must be unique, cannot change once specified
     DebugGuiWindow(const std::string& windowName);
-    DebugGuiWindow(const std::string& windowName, const Point2D& initialPosition, const Size2D& initialSize);
     virtual ~DebugGuiWindow();
 
     // process window logic
     // @param imguiContext: Internal imgui context
     virtual void DoUI(ImGuiIO& imguiContext) = 0;
+    
+    // one time window init
+    virtual void DoInit(ImGuiIO& imguiContext);
 
     // show or hide window
     // @param isShown: Flag
@@ -38,13 +40,13 @@ public:
     inline bool IsWindowShown() const { return mWindowShown; }
 
 protected:
-    // initial show params
-    Point2D mInitialPosition;
-    Size2D mInitialSize;
+
+    // window params
 
     float mBackgroundAlpha      = 1.0f;
 
-    // debug window flags
+    // style flags
+
     bool mWindowShown           = false;
     bool mWindowNoTitleBar      = false;
     bool mWindowNoResize        = false;

@@ -14,8 +14,6 @@
 DebugMeshViewWindow::DebugMeshViewWindow(): DebugGuiWindow("Models view")
 {
     mWindowNoCloseButton = true;
-    mInitialSize.x = 400;
-    mInitialSize.y = 500;
     mBackgroundAlpha = 0.5f;
 
     mModelsListFilter = new ImGuiTextFilter;
@@ -181,6 +179,17 @@ void DebugMeshViewWindow::DoUI(ImGuiIO& imguiContext)
 
         ImGui::EndTabBar();
     }
+}
+
+void DebugMeshViewWindow::DoInit(ImGuiIO& imguiContext)
+{
+    const ImVec2 distance { 10.0f, 10.0f };
+
+    const ImVec2 initialSize { 400.0f, imguiContext.DisplaySize.y - distance.y * 2.0f };
+    ImGui::SetWindowSize(mWindowName.c_str(), initialSize, ImGuiCond_Once);
+
+    const ImVec2 initialPos { imguiContext.DisplaySize.x - initialSize.x - distance.x, distance.y };
+    ImGui::SetWindowPos(mWindowName.c_str(), initialPos, ImGuiCond_Once);
 }
 
 void DebugMeshViewWindow::UpdateFilteredElementsList()

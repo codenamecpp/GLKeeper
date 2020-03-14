@@ -6,10 +6,8 @@
 DebugConsoleWindow gConsoleWindow;
 
 DebugConsoleWindow::DebugConsoleWindow()
-    : DebugGuiWindow("dbgconsole", Point2D(), Size2D(620,360))
+    : DebugGuiWindow("dbgconsole")
 {
-    // set flags
-    mNoFocusOnAppearing = true;
     mNoNavigation = true;
 
     mInputBuffer.reserve(256);
@@ -103,6 +101,17 @@ void DebugConsoleWindow::DoUI(ImGuiIO& imguiContext)
     {
         ImGui::SetKeyboardFocusHere(-1); // Auto focus previous widget
     }
+}
+
+void DebugConsoleWindow::DoInit(ImGuiIO& imguiContext)
+{
+    const ImVec2 distance { 10.0f, 10.0f };
+
+    const ImVec2 initialSize { 700.0f, 420.0f };
+    ImGui::SetWindowSize(mWindowName.c_str(), initialSize, ImGuiCond_Once);
+
+    const ImVec2 initialPos { distance.x, distance.y };
+    ImGui::SetWindowPos(mWindowName.c_str(), initialPos, ImGuiCond_Once);
 }
 
 int DebugConsoleWindow::TextEditCallback(ImGuiInputTextCallbackData* data)

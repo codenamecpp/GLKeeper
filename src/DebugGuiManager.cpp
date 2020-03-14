@@ -9,6 +9,7 @@
 #include "GpuBuffer.h"
 #include "DebugGuiWindow.h"
 #include "Texture2D.h"
+#include "imgui_internal.h"
 
 DebugGuiManager gDebugGuiManager;
 
@@ -197,18 +198,12 @@ void DebugGuiManager::UpdateFrame()
         ImGui::ShowDemoWindow();
     }
 
+    ImGuiContext* imGuiContext = ImGui::GetCurrentContext();
+
     for (DebugGuiWindow* currWindow: mAllWindowsList)
     {
         if (!currWindow->mWindowShown)
             continue;
-
-        const ImVec2 initialPosition { currWindow->mInitialPosition.x * 1.0f, currWindow->mInitialPosition.y * 1.0f };
-        ImGui::SetNextWindowPos(initialPosition, ImGuiCond_Appearing);
-
-        const ImVec2 initialSize { currWindow->mInitialSize.x * 1.0f, currWindow->mInitialSize.y * 1.0f };
-        ImGui::SetNextWindowSize(initialSize, ImGuiCond_Appearing);
-
-        ImGui::SetNextWindowBgAlpha(currWindow->mBackgroundAlpha);
 
         ImGuiWindowFlags windowFlags = 
             (currWindow->mWindowNoTitleBar ? ImGuiWindowFlags_NoTitleBar : 0) |
@@ -221,9 +216,16 @@ void DebugGuiManager::UpdateFrame()
             (currWindow->mNoFocusOnAppearing ? ImGuiWindowFlags_NoFocusOnAppearing : 0) |
             (currWindow->mNoNavigation ? ImGuiWindowFlags_NoNav : 0);
 
+        ImGui::SetNextWindowBgAlpha(currWindow->mBackgroundAlpha);
+
         bool* p_open = currWindow->mWindowNoCloseButton ? nullptr : &currWindow->mWindowShown;
         if (ImGui::Begin(currWindow->mWindowName.c_str(), p_open, windowFlags))
         {
+            if (imGuiContext->CurrentWindow->SetWindowSizeAllowFlags & ImGuiCond_Once)
+            {
+                currWindow->DoInit(io);
+            }
+
             currWindow->DoUI(io);
         }
         ImGui::End();
