@@ -33,7 +33,7 @@ bool RenderManager::Initialize()
         debug_assert(false);
     }
 
-    gGraphicsDevice.SetClearColor(Color32_Black);
+    gGraphicsDevice.SetClearColor(Color32_GrimGray);
 
     return true;
 }
