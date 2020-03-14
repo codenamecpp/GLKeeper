@@ -3,6 +3,7 @@
 #include "GenericGamestate.h"
 #include "OrbitCameraControl.h"
 #include "SceneDefs.h"
+#include "DebugMeshViewWindow.h"
 
 // mesh browser utility gamestate
 class MeshViewGamestate: public GenericGamestate
@@ -29,4 +30,5 @@ public:
 private:
     OrbitCameraControl mOrbitCameraControl;
     AnimatingModel* mModelObject = nullptr;
+    DebugMeshViewWindow mMeshViewWindow;
 };

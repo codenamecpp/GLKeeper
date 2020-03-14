@@ -6,12 +6,29 @@
 class FileSystemArchive: public cxx::noncopyable
 {
 public:
-    FileSystemArchive();
+    // readonly
+    const std::string mName;
+    const std::string mPath;
+
+    // file description stored within wad archive
+    struct ArchiveEntryStruct
+    {
+    public:
+        int mDataOffset;
+        int mDataLength;
+        int mCompressedLength;
+        bool mCompressed;
+    };
+
+    using ArchiveEntriesMap = std::map<std::string, ArchiveEntryStruct, cxx::icase_less>;
+    ArchiveEntriesMap mEtriesMap;
+
+public:
+    FileSystemArchive(const std::string& archiveName, const std::string& archivePath);
     ~FileSystemArchive();
 
     // parse and load wad archive data
-    // @param archivePath: Full path
-    bool OpenArchive(const std::string& archivePath);
+    bool OpenArchive();
 
     // unload archive data
     void CloseArchive();
@@ -29,19 +46,5 @@ private:
     void CloseWithFail(const char* errorMessage);
 
 private:
-
-    // file description stored within wad archive
-    struct ArchiveEntryStruct
-    {
-    public:
-        int mDataOffset;
-        int mDataLength;
-        int mCompressedLength;
-        bool mCompressed;
-    };
-
-    using ArchiveEntriesMap = std::map<std::string, ArchiveEntryStruct, cxx::icase_less>;
-    ArchiveEntriesMap mEtriesMap;
-
     FILE* mFileStream = nullptr;
 };

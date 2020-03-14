@@ -77,6 +77,9 @@
     <Filter Include="Game\Render\Shaders">
       <UniqueIdentifier>{cfb6657e-5426-4871-9802-c0f6ab065078}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Application\DebugUI\Windows">
+      <UniqueIdentifier>{22d845d7-589e-4583-bc6e-5ee20689b6bb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -233,9 +236,6 @@
     <ClInclude Include="DebugGuiWindow.h">
       <Filter>Application\DebugUI</Filter>
     </ClInclude>
-    <ClInclude Include="DebugConsoleWindow.h">
-      <Filter>Application\Console</Filter>
-    </ClInclude>
     <ClInclude Include="BinaryOutputStream.h">
       <Filter>Application\IO</Filter>
     </ClInclude>
@@ -333,6 +333,12 @@
     <ClInclude Include="SceneRenderList.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="DebugConsoleWindow.h">
+      <Filter>Application\DebugUI\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugMeshViewWindow.h">
+      <Filter>Application\DebugUI\Windows</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -418,9 +424,6 @@
     <ClCompile Include="DebugGuiManager.cpp">
       <Filter>Application\DebugUI</Filter>
     </ClCompile>
-    <ClCompile Include="DebugConsoleWindow.cpp">
-      <Filter>Application\Console</Filter>
-    </ClCompile>
     <ClCompile Include="DebugGuiWindow.cpp">
       <Filter>Application\DebugUI</Filter>
     </ClCompile>
@@ -486,6 +489,12 @@
     </ClCompile>
     <ClCompile Include="AnimatingModel.cpp">
       <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugConsoleWindow.cpp">
+      <Filter>Application\DebugUI\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugMeshViewWindow.cpp">
+      <Filter>Application\DebugUI\Windows</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

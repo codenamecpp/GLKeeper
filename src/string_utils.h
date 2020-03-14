@@ -2,16 +2,22 @@
 
 namespace cxx
 {
+    // ignore case string comparsion
+    inline bool iequals(const std::string& lhs, const std::string& rhs)
+    {
+        if (lhs.length() != rhs.length())
+            return false;
+
+        const int iresult = cxx_stricmp(lhs.c_str(), rhs.c_str());
+        return iresult == 0;
+    }
+
     // ignore case string comparators
     struct icase_eq
     {
         inline bool operator () (const std::string& astring, const std::string& bstring) const 
         {
-            if (astring.length() != bstring.length())
-                return false;
-
-            const int iresult = cxx_stricmp(astring.c_str(), bstring.c_str());
-            return iresult == 0;
+            return iequals(astring, bstring);
         }
     };
 

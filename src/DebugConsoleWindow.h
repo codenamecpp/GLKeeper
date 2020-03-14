@@ -14,9 +14,11 @@ public:
 
 public:
     DebugConsoleWindow();
-    void DoUI(ImGuiIO& imguiContext) override;
 
 private:
+    // override DebugGuiWindow
+    void DoUI(ImGuiIO& imguiContext) override;
+
     // internals
     int TextEditCallback(ImGuiInputTextCallbackData* data);
 

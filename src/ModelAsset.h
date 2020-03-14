@@ -107,6 +107,13 @@ public:
         return &mMeshArray[iSubMesh].mLODsArray[iLOD].mTriangleArray[0];
     }
 
+    // get all submesh vertices count for single animation frame
+    int GetFrameVerticesCount() const;
+
+    // get all submesh triangles count for specific lod level
+    // @param lodIndex: Level of details
+    int GetTrianglesCount(int lodIndex) const;
+
     // compute model bounds for each animation frame
     void ComputeBounds();
 

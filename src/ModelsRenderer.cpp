@@ -84,7 +84,7 @@ void ModelsRenderer::RenderModel(SceneRenderContext& renderContext, AnimatingMod
     gGraphicsDevice.BindIndexBuffer(renderData->mIndicesBuffer);
 
     // select level of details to render
-    int selectLOD = 0;
+    int selectLOD = animatingModel->mPreferredLOD;
 
     Vertex3D_Anim_Format vertexDefs;
 

@@ -43,6 +43,8 @@ public:
     std::vector<RenderMaterial> mSubmeshMaterials;
     BlendFramesAnimState mAnimState;
 
+    int mPreferredLOD = 0;
+
 public:
     AnimatingModel();
     ~AnimatingModel();
@@ -72,6 +74,8 @@ public:
     bool IsAnimationActive() const;
     bool IsAnimationFinish() const;
     bool IsStatic() const;
+
+    void SetPreferredLOD(int lod);
 
 private:
     void SetAnimationState();

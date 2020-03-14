@@ -52,6 +52,10 @@ public:
     // @return null on error
     BinaryOutputStream* CreateDataFile(const std::string& fileName);
 
+    // get loaded resource archive with specific name
+    // @param fileName: Archive identifier
+    FileSystemArchive* FindResourceArchive(const std::string& fileName);
+
     // free file stream
     // @param fileStream: File stream
     void CloseFileStream(BinaryInputStream* fileStream);

@@ -47,6 +47,7 @@ protected:
     bool mWindowNoTitleBar      = false;
     bool mWindowNoResize        = false;
     bool mWindowNoMove          = false;
+    bool mWindowNoCloseButton   = false;
     bool mWindowNoCollapse      = false;
     bool mAlwaysAutoResize      = false;
     bool mWindowNoBackground    = false;

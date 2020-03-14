@@ -296,6 +296,27 @@ void ModelAsset::ComputeBounds()
     } // for
 }
 
+int ModelAsset::GetFrameVerticesCount() const
+{
+    int verticesCount = 0;
+    for (const SubMesh& currSubMesh: mMeshArray)
+    {
+        verticesCount += currSubMesh.mFrameVerticesCount;
+    }
+    return verticesCount;
+}
+
+int ModelAsset::GetTrianglesCount(int lodIndex) const
+{
+    int trianglesCount = 0;
+    for (const SubMesh& currSubMesh: mMeshArray)
+    {
+        int count = (int) currSubMesh.mLODsArray[lodIndex].mTriangleArray.size();
+        trianglesCount += count;
+    }
+    return trianglesCount;
+}
+
 bool ModelAsset::ReadAnimMesh(BinaryInputStream* theStream)
 {
     KMFHeader header;

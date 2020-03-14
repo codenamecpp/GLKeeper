@@ -32,8 +32,8 @@ public:
 
     // add or remove debug window to global debug windows list
     // @param debugWindow: Window
-    void RegisterWindow(DebugGuiWindow* debugWindow);
-    void UnregisterWindow(DebugGuiWindow* debugWindow);
+    void AttachWindow(DebugGuiWindow* debugWindow);
+    void DetachWindow(DebugGuiWindow* debugWindow);
 
 private:
 

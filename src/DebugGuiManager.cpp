@@ -216,7 +216,8 @@ void DebugGuiManager::UpdateFrame()
             (currWindow->mNoFocusOnAppearing ? ImGuiWindowFlags_NoFocusOnAppearing : 0) |
             (currWindow->mNoNavigation ? ImGuiWindowFlags_NoNav : 0);
 
-        if (ImGui::Begin(currWindow->mWindowName.c_str(), &currWindow->mWindowShown, windowFlags))
+        bool* p_open = currWindow->mWindowNoCloseButton ? nullptr : &currWindow->mWindowShown;
+        if (ImGui::Begin(currWindow->mWindowName.c_str(), p_open, windowFlags))
         {
             currWindow->DoUI(io);
         }
@@ -402,7 +403,7 @@ void DebugGuiManager::SetupStyle(ImGuiIO& imguiIO)
 #endif
 }
 
-void DebugGuiManager::RegisterWindow(DebugGuiWindow* debugWindow)
+void DebugGuiManager::AttachWindow(DebugGuiWindow* debugWindow)
 {
     debug_assert(debugWindow);
     auto found_iterator = std::find(mAllWindowsList.begin(), mAllWindowsList.end(), debugWindow);
@@ -412,7 +413,7 @@ void DebugGuiManager::RegisterWindow(DebugGuiWindow* debugWindow)
     }
 }
 
-void DebugGuiManager::UnregisterWindow(DebugGuiWindow* debugWindow)
+void DebugGuiManager::DetachWindow(DebugGuiWindow* debugWindow)
 {
     debug_assert(debugWindow);
     auto found_iterator = std::find(mAllWindowsList.begin(), mAllWindowsList.end(), debugWindow);

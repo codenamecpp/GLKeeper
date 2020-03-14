@@ -152,8 +152,8 @@ bool FileSystem::MountDungeonKeeperGameArchives()
     {
         bool isSuccess = false;
 
-        FileSystemArchive* fsArchive = new FileSystemArchive;
-        if (fsArchive->OpenArchive(currpath.generic_string()))
+        FileSystemArchive* fsArchive = new FileSystemArchive(currpath.filename().generic_string(), currpath.generic_string());
+        if (fsArchive->OpenArchive())
         {
             isSuccess = true;
         }
@@ -255,6 +255,16 @@ BinaryOutputStream* FileSystem::CreateDataFile(const std::string& fileName)
 
     debug_assert(false);
     delete outputStream;
+    return nullptr;
+}
+
+FileSystemArchive* FileSystem::FindResourceArchive(const std::string& fileName)
+{
+    for (FileSystemArchive* currArchive: mResourceArchives)
+    {
+        if (cxx::iequals(fileName, currArchive->mName))
+            return currArchive;
+    }
     return nullptr;
 }
 

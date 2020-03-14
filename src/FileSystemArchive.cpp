@@ -162,7 +162,9 @@ static bool dk2_wad_decompress_data(file_stream_range& input, int compressedLeng
 
 //////////////////////////////////////////////////////////////////////////
 
-FileSystemArchive::FileSystemArchive()
+FileSystemArchive::FileSystemArchive(const std::string& archiveName, const std::string& archivePath)
+    : mName(archiveName)
+    , mPath(archivePath)
 {
 }
 
@@ -171,11 +173,11 @@ FileSystemArchive::~FileSystemArchive()
     CloseArchive();
 }
 
-bool FileSystemArchive::OpenArchive(const std::string& archivePath)
+bool FileSystemArchive::OpenArchive()
 {
     CloseArchive();
 
-    mFileStream = fopen(archivePath.c_str(), "rb");
+    mFileStream = fopen(mPath.c_str(), "rb");
     if (mFileStream == nullptr)
         return false;
 

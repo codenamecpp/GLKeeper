@@ -10,13 +10,13 @@ Console gConsole;
 
 bool Console::Initialize()
 {
-    gDebugGuiManager.RegisterWindow(&gConsoleWindow);
+    gDebugGuiManager.AttachWindow(&gConsoleWindow);
     return true;
 }
 
 void Console::Deinit()
 {
-    gDebugGuiManager.UnregisterWindow(&gConsoleWindow);
+    gDebugGuiManager.DetachWindow(&gConsoleWindow);
 
     Clear();
 

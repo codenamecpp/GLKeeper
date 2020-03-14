@@ -20,7 +20,16 @@ void AnimatingModel::SetModelAsset(ModelAsset* modelAsset)
         return;
     }
 
+    if (mModelAsset == modelAsset) // same asset, ignore
+        return;
+
     mModelAsset = modelAsset;
+
+    // reset current renderdata
+    if (mRenderData)
+    {
+        mRenderData = nullptr;
+    }
 
     // setup bounding box
     SetLocalBoundingBox(mModelAsset->mFramesBounds[0]);
@@ -67,6 +76,11 @@ void AnimatingModel::SetModelAsset(ModelAsset* modelAsset)
 void AnimatingModel::SetModelAssetNull()
 {
     mModelAsset = nullptr;
+    // reset current renderdata
+    if (mRenderData)
+    {
+        mRenderData = nullptr;
+    }
 
     mSubmeshMaterials.clear();
 
@@ -187,6 +201,11 @@ bool AnimatingModel::IsAnimationFinish() const
 bool AnimatingModel::IsStatic() const
 {
     return mAnimState.mStartFrame == mAnimState.mFinalFrame;
+}
+
+void AnimatingModel::SetPreferredLOD(int lod)
+{
+    mPreferredLOD = lod;
 }
 
 void AnimatingModel::SetAnimationState()
