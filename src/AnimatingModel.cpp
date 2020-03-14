@@ -56,7 +56,7 @@ void AnimatingModel::SetModelAsset(ModelAsset* modelAsset)
             material.mRenderStates.mBlendingMode = eBlendingMode_Alpha;
         }
 
-        if (currentSourceMaterial.mFlagAlphaAdditive || currentSourceMaterial.mFlagShinyness)
+        if (currentSourceMaterial.mFlagAlphaAdditive)
         {
             material.mRenderStates.mIsAlphaBlendEnabled = true;
             material.mRenderStates.mBlendingMode = eBlendingMode_Additive;
