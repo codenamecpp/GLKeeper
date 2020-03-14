@@ -3,6 +3,8 @@
 #include "DebugGuiWindow.h"
 #include "SceneDefs.h"
 
+class MeshViewGamestate;
+
 // imgui internals
 struct ImGuiTextFilter;
 
@@ -13,14 +15,14 @@ public:
     DebugMeshViewWindow();
     ~DebugMeshViewWindow();
 
-    void LoadModelsList();
-    void SetAnimatingObject(AnimatingModel* animatingModel);
+    void Setup(MeshViewGamestate* meshviewGamestate);
 
 private:
     // override DebugGuiWindow
     void DoUI(ImGuiIO& imguiContext) override;
 
     void UpdateFilteredElementsList();
+    void LoadModelsList();
     void ChangeModelAsset(const char* assetName);
 
 private:
@@ -28,6 +30,6 @@ private:
     std::vector<const char*> mAllModelsList;
     std::vector<const char*> mFilteredList;
     ImGuiTextFilter* mModelsListFilter = nullptr;
-    AnimatingModel* mAnimatingModel = nullptr;
+    MeshViewGamestate* mMeshViewGamestate = nullptr;
 };
 

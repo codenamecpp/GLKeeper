@@ -41,8 +41,7 @@ void MeshViewGamestate::HandleGamestateEnter()
 
     gDebugGuiManager.AttachWindow(&mMeshViewWindow);
     mMeshViewWindow.SetWindowShown(true);
-    mMeshViewWindow.LoadModelsList();
-    mMeshViewWindow.SetAnimatingObject(mModelObject);
+    mMeshViewWindow.Setup(this);
 }
 
 void MeshViewGamestate::HandleGamestateLeave()

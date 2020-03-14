@@ -91,9 +91,33 @@ void AnimatingModel::UpdateFrame(float deltaTime)
 
 void AnimatingModel::RegisterForRendering(SceneRenderList& renderList)
 {
-    // todo: check materials and add to proper render list
+    if (mModelAsset == nullptr)
+        return;
+    
+    bool hasOpaqueParts = false;
+    bool hasTranslucentParts = false;
 
-    renderList.RegisterRenderable(eRenderPass_Opaque, this);
+    for (const RenderMaterial& currentMaterial: mSubmeshMaterials)
+    {
+        if (currentMaterial.IsTransparent())
+        {
+            hasTranslucentParts = true;
+        }
+        else
+        {
+            hasOpaqueParts = true;
+        }
+    }
+
+    if (hasOpaqueParts)
+    {
+        renderList.RegisterRenderable(eRenderPass_Opaque, this);
+    }
+
+    if (hasTranslucentParts)
+    {
+        renderList.RegisterRenderable(eRenderPass_Translucent, this);
+    }
 }
 
 bool AnimatingModel::StartAnimation(float animationSpeed, bool loop)

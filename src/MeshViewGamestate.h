@@ -8,6 +8,8 @@
 // mesh browser utility gamestate
 class MeshViewGamestate: public GenericGamestate
 {
+    friend class DebugMeshViewWindow;
+
 public:
     // enter game state
     void HandleGamestateEnter() override;

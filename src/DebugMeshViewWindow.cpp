@@ -8,6 +8,7 @@
 #include "ModelAsset.h"
 #include "ModelAssetsManager.h"
 #include "AnimatingModel.h"
+#include "MeshViewGamestate.h"
 
 DebugMeshViewWindow::DebugMeshViewWindow(): DebugGuiWindow("Models view")
 {
@@ -21,6 +22,13 @@ DebugMeshViewWindow::DebugMeshViewWindow(): DebugGuiWindow("Models view")
 DebugMeshViewWindow::~DebugMeshViewWindow()
 {
     SafeDelete(mModelsListFilter);
+}
+
+void DebugMeshViewWindow::Setup(MeshViewGamestate* meshviewGamestate)
+{
+    mMeshViewGamestate = meshviewGamestate;
+
+    LoadModelsList();
 }
 
 void DebugMeshViewWindow::LoadModelsList()
@@ -41,25 +49,22 @@ void DebugMeshViewWindow::LoadModelsList()
     UpdateFilteredElementsList();
 }
 
-void DebugMeshViewWindow::SetAnimatingObject(AnimatingModel* animatingModel)
-{
-    mAnimatingModel = animatingModel;
-}
-
 void DebugMeshViewWindow::DoUI(ImGuiIO& imguiContext)
 {
     ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
     if (ImGui::BeginTabBar("Tabs", tab_bar_flags))
     {
-        if (mAnimatingModel && mAnimatingModel && ImGui::BeginTabItem("Model info"))
+        AnimatingModel* animModel = mMeshViewGamestate ? mMeshViewGamestate->mModelObject : nullptr;
+
+        if (animModel && ImGui::BeginTabItem("Model info"))
         {
-            ModelAsset* modelAsset = mAnimatingModel->mModelAsset;
+            ModelAsset* modelAsset = animModel->mModelAsset;
 
             ImGui::Text("Asset name: %s", modelAsset->mName.c_str());
             ImGui::Separator();
             ImGui::Text("Num frame vertices: %d", modelAsset->GetFrameVerticesCount());
 
-            if (!mAnimatingModel->IsStatic())
+            if (!animModel->IsStatic())
             {
                 ImGui::Text("Num frames: %d", modelAsset->mFramesCount);
             }
@@ -94,7 +99,7 @@ void DebugMeshViewWindow::DoUI(ImGuiIO& imguiContext)
                     {
                         if (ImGui::TreeNode((void*)(intptr_t) icurrentTexture, "Texture %s", currTexture.c_str()))
                         {
-                            Texture2D* texture2d = mAnimatingModel->mSubmeshMaterials[currMesh.mMaterialIndex].mDiffuseTexture;
+                            Texture2D* texture2d = animModel->mSubmeshMaterials[currMesh.mMaterialIndex].mDiffuseTexture;
                             ImGui::Image(texture2d, textureSize);
                             ImGui::TreePop();
                         }
@@ -109,12 +114,12 @@ void DebugMeshViewWindow::DoUI(ImGuiIO& imguiContext)
             }
 
             // set level of details
-            int currentLOD = mAnimatingModel->mPreferredLOD;
+            int currentLOD = animModel->mPreferredLOD;
             if (numLODs > 0)
             {
                 if (ImGui::SliderInt("LOD Level", &currentLOD, 0, numLODs - 1))
                 {
-                    mAnimatingModel->SetPreferredLOD(currentLOD);
+                    animModel->SetPreferredLOD(currentLOD);
                 }
             }
             ImGui::Text("Num LOD triangles: %d", modelAsset->GetTrianglesCount(currentLOD));
@@ -163,7 +168,7 @@ void DebugMeshViewWindow::UpdateFilteredElementsList()
 
 void DebugMeshViewWindow::ChangeModelAsset(const char* assetName)
 {
-    if (mAnimatingModel)
+    if (mMeshViewGamestate)
     {
         ModelAsset* modelAsset = gModelsManager.LoadModelAsset(assetName);
         if (modelAsset == nullptr)
@@ -171,7 +176,7 @@ void DebugMeshViewWindow::ChangeModelAsset(const char* assetName)
             return;
         }
 
-        mAnimatingModel->SetModelAsset(modelAsset);
-        mAnimatingModel->StartAnimation(24.0f, true);
+        mMeshViewGamestate->mModelObject->SetModelAsset(modelAsset);
+        mMeshViewGamestate->mModelObject->StartAnimation(24.0f, true);
     }
 }
