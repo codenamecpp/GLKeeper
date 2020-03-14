@@ -80,7 +80,7 @@ void DebugMeshViewWindow::DoUI(ImGuiIO& imguiContext)
                     numLODs = (int)currMesh.mLODsArray.size();
                 }
 
-                if (ImGui::TreeNode((void*)(intptr_t) icurrentSubMesh, "Submesh %d", icurrentSubMesh))
+                if (ImGui::TreeNode((void*)(intptr_t) icurrentSubMesh, "Submesh %d", icurrentSubMesh + 1))
                 {
                     ImGui::Text("Num frame vertices: %d", currMesh.mFrameVerticesCount);
 

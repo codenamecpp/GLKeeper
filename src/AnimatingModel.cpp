@@ -86,6 +86,9 @@ void AnimatingModel::SetModelAssetNull()
 
 void AnimatingModel::UpdateFrame(float deltaTime)
 {
+    if (IsAnimationPaused())
+        return;
+
     AdvanceAnimation(deltaTime);
 }
 
@@ -173,7 +176,7 @@ void AnimatingModel::RewingToEnd()
 
 void AnimatingModel::AdvanceAnimation(float deltaTime)
 {
-    if (!IsAnimationActive() || IsAnimationPaused())
+    if (!IsAnimationActive())
         return;
 
     debug_assert(mModelAsset);
