@@ -75,13 +75,32 @@ void DebugMeshViewWindow::DoUI(ImGuiIO& imguiContext)
                 if (ImGui::TreeNode((void*)(intptr_t) icurrentSubMesh, "Submesh %d", icurrentSubMesh))
                 {
                     ImGui::Text("Num frame vertices: %d", currMesh.mFrameVerticesCount);
+
                     // material
                     const auto& currMaterial = modelAsset->mMaterialsArray[currMesh.mMaterialIndex];
                     ImGui::Text("Material name: %s", currMaterial.mInternalName.c_str());
+                    // flags
                     ImGui::Text("Material Alpha: %s", currMaterial.mFlagHasAlpha ? "yes" : "no");
                     ImGui::Text("Material Shinyness: %s", currMaterial.mFlagShinyness ? "yes" : "no");
                     ImGui::Text("Material AlphaAdditive: %s", currMaterial.mFlagAlphaAdditive ? "yes" : "no");
                     ImGui::Text("Material EnvironmentMapped: %s", currMaterial.mFlagEnvironmentMapped ? "yes" : "no");
+
+                    ImGui::Text("Textures:");
+
+                    const ImVec2 textureSize(128.0f, 128.0f);
+
+                    int icurrentTexture = 0;
+                    for (const std::string& currTexture: currMaterial.mTextures)
+                    {
+                        if (ImGui::TreeNode((void*)(intptr_t) icurrentTexture, "Texture %s", currTexture.c_str()))
+                        {
+                            Texture2D* texture2d = mAnimatingModel->mSubmeshMaterials[currMesh.mMaterialIndex].mDiffuseTexture;
+                            ImGui::Image(texture2d, textureSize);
+                            ImGui::TreePop();
+                        }
+
+                        ++icurrentTexture;
+                    }
 
                     ImGui::TreePop();
                 }

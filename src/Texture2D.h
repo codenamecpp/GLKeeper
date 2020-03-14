@@ -24,6 +24,7 @@ public:
     // @param sourceImage: Image data
     // @returns false on error
     bool CreateTexture(const Texture2D_Image& sourceImage);
+    bool CreateTexture(const Texture2D_Desc& sourceDesc, const void* textureData);
 
     // set texture filtering and repeating modes
     // @param samplerState: Sampler state params

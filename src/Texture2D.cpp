@@ -43,14 +43,12 @@ void Texture2D::SetSamplerState(const TextureSamplerState& samplerState)
 
 bool Texture2D::ActivateTexture(eTextureUnit textureUnit)
 {
-    if (!IsTextureLoaded())
+    if (!LoadTexture()) // try to load
     {
-        if (!LoadTexture()) // try to load
-        {
-            debug_assert(false);
-            return false;
-        }
+        debug_assert(false);
+        return false;
     }
+
     debug_assert(mGpuTextureObject);
     gGraphicsDevice.BindTexture(textureUnit, mGpuTextureObject);
     return true;
@@ -165,6 +163,61 @@ bool Texture2D::CreateTexture(const Texture2D_Image& imageData)
     for (int imipmap = 1; imipmap < imageData.mTextureDesc.mMipmapsCount + 1; ++imipmap)
     {
         const void* mipmapData = imageData.GetImageDataBuffer(imipmap);
+        debug_assert(mipmapData);
+
+        if (!mGpuTextureObject->TexSubImage(imipmap, mipmapData))
+        {
+            debug_assert(false);
+        }
+    }
+
+    mGpuTextureObject->SetSamplerState(mSamplerState);
+
+    mLoadedFromFile = false;
+    return true;
+}
+
+bool Texture2D::CreateTexture(const Texture2D_Desc& sourceDesc, const void* textureData)
+{
+    if (sourceDesc.mTextureFormat == eTextureFormat_Null || sourceDesc.mDimensions.x == 0 || sourceDesc.mDimensions.y == 0 ||
+        sourceDesc.mImageDimensions.x == 0 || sourceDesc.mImageDimensions.y == 0)
+    {
+        debug_assert(false);
+        return false;
+    }
+
+    // npot textures must be converted to pot manually
+    bool is_pot_x = cxx::get_next_pot(sourceDesc.mDimensions.x) == sourceDesc.mDimensions.x;
+    bool is_pot_y = cxx::get_next_pot(sourceDesc.mDimensions.y) == sourceDesc.mDimensions.y;
+    if (!is_pot_x || !is_pot_y)
+    {
+        debug_assert(false);
+        return false;
+    }
+
+    if (mGpuTextureObject == nullptr)
+    {
+        mGpuTextureObject = gGraphicsDevice.CreateTexture2D();
+        debug_assert(mGpuTextureObject);
+    }
+
+    mTextureDesc = sourceDesc;
+
+    if (!mGpuTextureObject->InitTextureObject(mTextureDesc, textureData))
+    {
+        debug_assert(false);
+    }
+
+    // upload mipmaps
+    for (int imipmap = 1; imipmap < mTextureDesc.mMipmapsCount + 1; ++imipmap)
+    {
+        int dataOffset = 0;
+        for (int icurr = 0; icurr < imipmap; ++icurr)
+        {
+            dataOffset += GetTextureDataSize(mTextureDesc.mTextureFormat, mTextureDesc.mDimensions, imipmap);
+        }
+
+        const void* mipmapData = (unsigned char*)textureData + dataOffset;
         debug_assert(mipmapData);
 
         if (!mGpuTextureObject->TexSubImage(imipmap, mipmapData))

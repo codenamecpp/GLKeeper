@@ -41,11 +41,10 @@ private:
     void SetupStyle(ImGuiIO& imguiIO);
 
 private:
-
-    std::list<DebugGuiWindow*> mAllWindowsList;
-
     GpuBuffer* mVertsBuffer = nullptr;
     GpuBuffer* mTrisBuffer = nullptr;
+
+    std::list<DebugGuiWindow*> mAllWindowsList;
 };
 
 extern DebugGuiManager gDebugGuiManager;

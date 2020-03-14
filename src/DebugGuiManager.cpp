@@ -8,7 +8,7 @@
 #include "TimeManager.h"
 #include "GpuBuffer.h"
 #include "DebugGuiWindow.h"
-#include "GpuTexture2D.h"
+#include "Texture2D.h"
 
 DebugGuiManager gDebugGuiManager;
 
@@ -60,10 +60,10 @@ bool DebugGuiManager::Initialize()
     io.Fonts->Build();
     io.Fonts->GetTexDataAsRGBA32(&pcPixels, &fontTextureDimensions.x, &fontTextureDimensions.y);
 
-    GpuTexture2D* fontTexture = gGraphicsDevice.CreateTexture2D();
-
     Texture2D_Desc textureDesc { eTextureFormat_RGBA8, fontTextureDimensions, 0, false, false };
-    if (!fontTexture->InitTextureObject(textureDesc, pcPixels))
+
+    Texture2D* fontTexture = new Texture2D("debugUiFont");
+    if (!fontTexture->CreateTexture(textureDesc, pcPixels))
     {
         debug_assert(false);
     }
@@ -84,10 +84,10 @@ void DebugGuiManager::Deinit()
     ImGuiIO& io = ImGui::GetIO();
 
     // destroy font texture
-    GpuTexture2D* fontTexture = static_cast<GpuTexture2D*>(io.Fonts->TexID);
+    Texture2D* fontTexture = static_cast<Texture2D*>(io.Fonts->TexID);
     if (fontTexture)
     {
-        gGraphicsDevice.DestroyTexture(fontTexture);
+        SafeDelete(fontTexture);
         io.Fonts->TexID = nullptr;
     }
 
@@ -162,8 +162,11 @@ void DebugGuiManager::RenderFrame()
                 static_cast<int>(clip_rect_h - clip_rect_y)
             };
 
-            GpuTexture2D* bindTexture = static_cast<GpuTexture2D*>(pcmd->TextureId);
-            gGraphicsDevice.BindTexture(eTextureUnit_0, bindTexture);
+            Texture2D* bindTexture = static_cast<Texture2D*>(pcmd->TextureId);
+            if (!bindTexture->ActivateTexture(eTextureUnit_0))
+            {
+                debug_assert(false);
+            }
 
             gGraphicsDevice.SetScissorRect(rcClip);
             unsigned int idxBufferOffset = Sizeof_ImGuiIndex * pcmd->IdxOffset;
