@@ -31,9 +31,6 @@ void AnimatingModel::SetModelAsset(ModelAsset* modelAsset)
         mRenderData = nullptr;
     }
 
-    // setup bounding box
-    SetLocalBoundingBox(mModelAsset->mFramesBounds[0]);
-
     // setup materials
     mSubmeshMaterials.clear();
 
@@ -135,6 +132,8 @@ void AnimatingModel::ClearAnimation()
 
     mAnimState.mIsAnimationActive = false;
     mAnimState.mIsAnimationLoop = false;
+
+    SetLocalBoundingBox(mModelAsset->mFramesBounds[mAnimState.mFrame0]);
 }
 
 void AnimatingModel::RewindToStart()
@@ -178,9 +177,16 @@ void AnimatingModel::AdvanceAnimation(float deltaTime)
     float progress = (mAnimState.mAnimationTime / mAnimState.mAnimationEndTime); // [0,1]
 
     float baseFramef = glm::mix(mAnimState.mStartFrame * 1.0f, mAnimState.mFinalFrame * 1.0f, progress);
+
+    int prevFrame = mAnimState.mFrame0;
     mAnimState.mFrame0 = (int) baseFramef;
     mAnimState.mFrame1 = ((mAnimState.mFrame0 - mAnimState.mStartFrame + 1) % mModelAsset->mFramesCount) + mAnimState.mStartFrame;
     mAnimState.mMixFrames = (baseFramef - mAnimState.mFrame0 * 1.0f);
+
+    if (prevFrame != mAnimState.mFrame0)
+    {
+        SetLocalBoundingBox(mModelAsset->mFramesBounds[mAnimState.mFrame0]);
+    }
 }
 
 bool AnimatingModel::IsAnimationLoop() const
@@ -219,4 +225,7 @@ void AnimatingModel::SetAnimationState()
 
     mAnimState.mStartFrame = 0;
     mAnimState.mFinalFrame = mModelAsset->mFramesCount - 1;
+
+    // setup bounding box
+    SetLocalBoundingBox(mModelAsset->mFramesBounds[mAnimState.mFrame0]);
 }
