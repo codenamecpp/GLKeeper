@@ -44,7 +44,6 @@ void AnimatingModel::SetModelAsset(ModelAsset* modelAsset)
             mSubmeshMaterials.push_back(material); // dummy material
             continue;
         }
-
         material.mDiffuseTexture = gTexturesManager.GetTexture2D(currentSourceMaterial.mTextures[0]);
         if (currentSourceMaterial.mEnvMappingTexture.length())
         {
@@ -57,7 +56,7 @@ void AnimatingModel::SetModelAsset(ModelAsset* modelAsset)
             material.mRenderStates.mBlendingMode = eBlendingMode_Alpha;
         }
 
-        if (currentSourceMaterial.mFlagAlphaAdditive)
+        if (currentSourceMaterial.mFlagAlphaAdditive || currentSourceMaterial.mFlagShinyness)
         {
             material.mRenderStates.mIsAlphaBlendEnabled = true;
             material.mRenderStates.mBlendingMode = eBlendingMode_Additive;
