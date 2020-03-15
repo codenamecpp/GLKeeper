@@ -30,7 +30,7 @@ void MeshViewGamestate::HandleGamestateEnter()
     gRenderScene.SetCameraControl(&mOrbitCameraControl);
     mOrbitCameraControl.ResetOrientation();
 
-    ModelAsset* modelAsset = gModelsManager.LoadModelAsset("vampire-pray.kmf");
+    ModelAsset* modelAsset = gModelsManager.LoadModelAsset("vampire-pray");
 
     mModelObject = gRenderScene.CreateAnimatingModel(modelAsset, glm::vec3(0.0f), glm::vec3(0.0f));
     if (mModelObject)

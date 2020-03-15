@@ -16,20 +16,9 @@ void ConsoleWindow::DoUI(ImGuiIO& imguiContext)
 {
     ImGui::Separator();
 
-    const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing(); // 1 separator, 1 input text
-    ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false, ImGuiWindowFlags_HorizontalScrollbar); // Leave room for 1 separator + 1 InputText
+    const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
+    ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false, ImGuiWindowFlags_HorizontalScrollbar);
 
-                                                                                                                             // Display every line as a separate entry so we can change their color or add custom widgets. If you only want raw text you can use ImGui::TextUnformatted(log.begin(), log.end());
-                                                                                                                             // NB- if you have thousands of entries this approach may be too inefficient and may require user-side clipping to only process visible items.
-                                                                                                                             // You can seek and display only the lines that are visible using the ImGuiListClipper helper, if your elements are evenly spaced and you have cheap random access to the elements.
-                                                                                                                             // To use the clipper we could replace the 'for (int i = 0; i < Items.Size; i++)' loop with:
-                                                                                                                             //     ImGuiListClipper clipper(Items.Size);
-                                                                                                                             //     while (clipper.Step())
-                                                                                                                             //         for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
-                                                                                                                             // However, note that you can not use this code as is if a filter is active because it breaks the 'cheap random-access' property. We would need random-access on the post-filtered list.
-                                                                                                                             // A typical application wanting coarse clipping and filtering may want to pre-compute an array of indices that passed the filtering test, recomputing this array when user changes the filter,
-                                                                                                                             // and appending newly elements as they are inserted. This is left as a task to the user until we can manage to improve this example code!
-                                                                                                                             // If your items are of variable size you may want to implement code similar to what ImGuiListClipper does. Or split your data into fixed height items to allow random-seeking into your list.
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4,1)); // Tighten spacing
 
     for (unsigned int i = 0; i < gConsole.mLogLines.size(); i++)
@@ -37,7 +26,6 @@ void ConsoleWindow::DoUI(ImGuiIO& imguiContext)
         const Console::LineStruct& currentLine = gConsole.mLogLines[i];
         const char* item = currentLine.mMessageString.c_str();
 
-        // Normally you would store more information in your item (e.g. make Items[] an array of structure, store color/type etc.)
         bool pop_color = false;
         if (currentLine.mMessageCategory == eLogMessage_Error) 
         { 
@@ -218,16 +206,13 @@ int ConsoleWindow::TextEditCallback(ImGuiInputTextCallbackData* data)
                 data->DeleteChars(0, data->BufTextLen);
                 data->InsertChars(0, history_str);
             }
-
             break;
         }
     case ImGuiInputTextFlags_CallbackResize:
         {
-            // Resize string callback
-            // If for some reason we refuse the new length (BufTextLen) and/or capacity (BufSize) we need to set them back to what we want.
             mInputString.resize(data->BufTextLen);
-            data->Buf = (char*)mInputString.c_str();
 
+            data->Buf = (char*)mInputString.c_str();
             break;
         }
     }

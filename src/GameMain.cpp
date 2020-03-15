@@ -114,6 +114,11 @@ bool GameMain::IsMeshViewGamestate() const
     return mCurrentGamestate == &mMeshViewGamestate;
 }
 
+bool GameMain::IsGameplayGamestate() const
+{
+    return mCurrentGamestate == &mGameplayGamestate;
+}
+
 void GameMain::SwitchToGameState(GenericGamestate* gamestate)
 {
     if (mCurrentGamestate == gamestate)

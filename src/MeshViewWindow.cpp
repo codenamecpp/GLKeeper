@@ -57,13 +57,12 @@ void MeshViewWindow::DoUI(ImGuiIO& imguiContext)
     if (ImGui::BeginTabBar("Tabs", tab_bar_flags))
     {
         AnimatingModel* animModel = mMeshViewGamestate ? mMeshViewGamestate->mModelObject : nullptr;
+        ModelAsset* modelAsset = animModel->mModelAsset;
 
         // curr model info
-        if (animModel && ImGui::BeginTabItem("Model info"))
+        if (animModel && modelAsset && ImGui::BeginTabItem("Model info"))
         {
-            ModelAsset* modelAsset = animModel->mModelAsset;
-
-            ImGui::Text("Asset name: %s", modelAsset->mName.c_str());
+            ImGui::Text("Asset name: %s", modelAsset->mInternalName.c_str());
             ImGui::Text("Num frame vertices: %d", modelAsset->GetFrameVerticesCount());
 
             if (!animModel->IsStatic())
@@ -233,7 +232,10 @@ void MeshViewWindow::ChangeModelAsset(const char* assetName)
 {
     if (mMeshViewGamestate)
     {
-        ModelAsset* modelAsset = gModelsManager.LoadModelAsset(assetName);
+        std::string assetNameWithoutExt(assetName);
+        cxx::path_remove_extension(assetNameWithoutExt);
+
+        ModelAsset* modelAsset = gModelsManager.LoadModelAsset(assetNameWithoutExt);
         if (modelAsset == nullptr)
         {
             return;

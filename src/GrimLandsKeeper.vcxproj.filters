@@ -348,6 +348,9 @@
     <ClInclude Include="ConsoleWindow.h">
       <Filter>Application\DebugUI\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="GameplayGamestate.h">
+      <Filter>Game\GameStates</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -513,6 +516,9 @@
     </ClCompile>
     <ClCompile Include="ConsoleWindow.cpp">
       <Filter>Application\DebugUI\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="GameplayGamestate.cpp">
+      <Filter>Game\GameStates</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

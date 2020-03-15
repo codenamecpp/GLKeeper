@@ -171,7 +171,7 @@ ModelAsset::~ModelAsset()
 bool ModelAsset::Load()
 {
     // open stream
-    BinaryInputStream* theStream = gFileSystem.OpenDataFile(mName);
+    BinaryInputStream* theStream = gFileSystem.OpenDataFile(mName + ".kmf");
     if (theStream == nullptr)
     {
         debug_assert(false);

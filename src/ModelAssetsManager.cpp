@@ -37,7 +37,6 @@ ModelAsset* ModelAssetsManager::LoadModelAsset(const std::string& resourceName)
         return modelResource;
 
     // try to load
-
     ModelAsset modeldata {resourceName};
     if (modeldata.Load())
     {

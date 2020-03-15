@@ -12,11 +12,11 @@ public:
     void Deinit();
 
     // get previously loaded kmf model from cache
-    // @param resourceName: Kmf model resource name
+    // @param resourceName: Kmf model resource name without extension
     ModelAsset* FindModelAsset(const std::string& resourceName) const;
 
     // load kmf model
-    // @param resourceName: Kmf model resource name
+    // @param resourceName: Kmf model resource name without extension
     // @returns null if kmf model cannot be loaded
     ModelAsset* LoadModelAsset(const std::string& resourceName);
 

@@ -4,6 +4,7 @@
 #include "InputsDefs.h"
 #include "RenderDefs.h"
 #include "MeshViewGamestate.h"
+#include "GameplayGamestate.h"
 
 // game core
 class GameMain: public cxx::noncopyable
@@ -37,12 +38,14 @@ public:
 
     // determine current game state
     bool IsMeshViewGamestate() const;
+    bool IsGameplayGamestate() const;
 
 private:
     void SwitchToGameState(GenericGamestate* gamestate);
 
 private:
     MeshViewGamestate mMeshViewGamestate;
+    GameplayGamestate mGameplayGamestate;
 };
 
 extern GameMain gGameMain;

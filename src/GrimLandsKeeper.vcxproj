@@ -180,6 +180,7 @@
     <ClInclude Include="3rd_party\std_image.h" />
     <ClInclude Include="AABBTree.h" />
     <ClInclude Include="AnimatingModel.h" />
+    <ClInclude Include="GameplayGamestate.h" />
     <ClInclude Include="MeshViewWindow.h" />
     <ClInclude Include="MorphAnimRenderProgram.h" />
     <ClInclude Include="BinaryInputStream.h" />
@@ -273,6 +274,7 @@
     <ClCompile Include="ConsoleVariable.cpp" />
     <ClCompile Include="ConsoleWindow.cpp" />
     <ClCompile Include="DebugGuiWindow.cpp" />
+    <ClCompile Include="GameplayGamestate.cpp" />
     <ClCompile Include="MeshViewWindow.cpp" />
     <ClCompile Include="DebugRenderer.cpp" />
     <ClCompile Include="EngineTexturesProvider.cpp" />
