@@ -42,6 +42,7 @@ public:
     ModelAsset* mModelAsset = nullptr;
 
     std::vector<RenderMaterial> mSubmeshMaterials;
+    std::vector<std::vector<Texture2D*>> mSubmeshTextures; // additional textures
     BlendFramesAnimState mAnimState;
 
     int mPreferredLOD = 0;

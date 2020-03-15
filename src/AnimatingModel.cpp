@@ -33,7 +33,12 @@ void AnimatingModel::SetModelAsset(ModelAsset* modelAsset)
 
     // setup materials
     mSubmeshMaterials.clear();
+    mSubmeshMaterials.reserve(modelAsset->mMaterialsArray.size());
 
+    mSubmeshTextures.clear();
+    mSubmeshTextures.resize(modelAsset->mMaterialsArray.size());
+
+    int iCurrentMaterial = 0;
     for (const ModelAsset::SubMeshMaterial& currentSourceMaterial: modelAsset->mMaterialsArray)
     {
         RenderMaterial material;
@@ -62,8 +67,12 @@ void AnimatingModel::SetModelAsset(ModelAsset* modelAsset)
             material.mRenderStates.mBlendingMode = eBlendingMode_Additive;
             material.mRenderStates.mIsDepthWriteEnabled = false;
         }
-
+        for (const std::string& sourceTexture: currentSourceMaterial.mTextures)
+        {
+            mSubmeshTextures[iCurrentMaterial].push_back(gTexturesManager.GetTexture2D(sourceTexture));
+        }
         mSubmeshMaterials.push_back(material);
+        ++iCurrentMaterial;
     }
 
     SetAnimationState();
@@ -79,6 +88,7 @@ void AnimatingModel::SetModelAssetNull()
     }
 
     mSubmeshMaterials.clear();
+    mSubmeshTextures.clear();
 
     SetAnimationState();
 }

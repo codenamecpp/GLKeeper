@@ -120,7 +120,7 @@ void DebugMeshViewWindow::DoUI(ImGuiIO& imguiContext)
                     {
                         if (ImGui::TreeNode((void*)(intptr_t) icurrentTexture, "Texture %s", currTexture.c_str()))
                         {
-                            Texture2D* texture2d = animModel->mSubmeshMaterials[currMesh.mMaterialIndex].mDiffuseTexture;
+                            Texture2D* texture2d = animModel->mSubmeshTextures[currMesh.mMaterialIndex][icurrentTexture];
                             ImGui::Image(texture2d, textureSize);
                             ImGui::TreePop();
                         }
