@@ -2,6 +2,7 @@
 
 #include "SceneDefs.h"
 #include "RenderDefs.h"
+#include "SceneObject.h"
 
 // list for collecting scene entities which will be rendered on current frame
 class SceneRenderList
@@ -40,6 +41,41 @@ public:
     {
         mOpaqueElementsCount = 0;
         mTranslucentElementsCount = 0;
+    }
+
+    // sort opaque objects by render program
+    inline void SortOpaquesByObjectType()
+    {
+        if (mOpaqueElementsCount > 2)
+        {
+            std::sort(mOpaqueElements, mOpaqueElements + mOpaqueElementsCount, 
+                [](const ListElementStruct& lhs, const ListElementStruct& rhs)
+            {
+                // terrain meshes
+                if (lhs.mTerrainMesh != rhs.mTerrainMesh) return (rhs.mTerrainMesh == nullptr);
+
+                // water and lava
+                if (lhs.mWaterLavaMesh != rhs.mWaterLavaMesh) return (rhs.mWaterLavaMesh == nullptr);
+
+                // animating models
+                if (lhs.mAnimatingModel != rhs.mAnimatingModel) return (rhs.mAnimatingModel == nullptr);
+
+                return lhs.mObject < rhs.mObject;
+            });
+        }
+    }
+
+    // sort translucent object by distance to camera
+    inline void SortTranslucentsByDistanceToCamera()
+    {
+        if (mTranslucentElementsCount > 2)
+        {
+            std::sort(mTranslucentElements, mTranslucentElements + mTranslucentElementsCount, 
+                [](const ListElementStruct& lhs, const ListElementStruct& rhs)
+            {
+                return lhs.mObject->mDistanceToCameraSquared < rhs.mObject->mDistanceToCameraSquared;
+            });
+        }
     }
 
 public:

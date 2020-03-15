@@ -14,6 +14,8 @@
 DebugMeshViewWindow::DebugMeshViewWindow(): DebugGuiWindow("Models view")
 {
     mWindowNoCloseButton = true;
+    mWindowNoMove = true;
+    mWindowNoResize = true;
     mBackgroundAlpha = 0.5f;
 
     mModelsListFilter = new ImGuiTextFilter;
@@ -62,13 +64,14 @@ void DebugMeshViewWindow::DoUI(ImGuiIO& imguiContext)
             ModelAsset* modelAsset = animModel->mModelAsset;
 
             ImGui::Text("Asset name: %s", modelAsset->mName.c_str());
-            ImGui::Separator();
             ImGui::Text("Num frame vertices: %d", modelAsset->GetFrameVerticesCount());
 
             if (!animModel->IsStatic())
             {
                 ImGui::Text("Num frames: %d", modelAsset->mFramesCount);
             }
+            ImGui::NewLine();
+
             int icurrentSubMesh = 0;
             int numLODs = 0;
             for (const auto& currMesh: modelAsset->mMeshArray)
@@ -86,11 +89,28 @@ void DebugMeshViewWindow::DoUI(ImGuiIO& imguiContext)
                     const auto& currMaterial = modelAsset->mMaterialsArray[currMesh.mMaterialIndex];
                     ImGui::Text("Material name: %s", currMaterial.mInternalName.c_str());
                     // flags
-                    ImGui::Text("Material Alpha: %s", currMaterial.mFlagHasAlpha ? "yes" : "no");
-                    ImGui::Text("Material Shinyness: %s", currMaterial.mFlagShinyness ? "yes" : "no");
-                    ImGui::Text("Material AlphaAdditive: %s", currMaterial.mFlagAlphaAdditive ? "yes" : "no");
-                    ImGui::Text("Material EnvironmentMapped: %s", currMaterial.mFlagEnvironmentMapped ? "yes" : "no");
-
+                    if (currMaterial.mFlagHasAlpha || currMaterial.mFlagShinyness || 
+                        currMaterial.mFlagAlphaAdditive || currMaterial.mFlagEnvironmentMapped)
+                    {
+                        ImGui::Text("Material Flags:");
+                        if (currMaterial.mFlagHasAlpha)
+                        {
+                            ImGui::BulletText("Alpha");
+                        }
+                        if (currMaterial.mFlagShinyness)
+                        {
+                            ImGui::BulletText("Shinyness");
+                        }
+                        if (currMaterial.mFlagAlphaAdditive)
+                        {
+                            ImGui::BulletText("AlphaAdditive");
+                        }
+                        if (currMaterial.mFlagEnvironmentMapped)
+                        {
+                            ImGui::BulletText("EnvironmentMapped");
+                        }
+                        ImGui::Separator();
+                    }
                     ImGui::Text("Textures:");
 
                     const ImVec2 textureSize(128.0f, 128.0f);
@@ -113,7 +133,7 @@ void DebugMeshViewWindow::DoUI(ImGuiIO& imguiContext)
 
                 ++icurrentSubMesh;
             }
-
+            ImGui::NewLine();
             // set level of details
             int currentLOD = animModel->mPreferredLOD;
             if (numLODs > 0)
@@ -133,14 +153,14 @@ void DebugMeshViewWindow::DoUI(ImGuiIO& imguiContext)
             if (ImGui::BeginTabItem("Animation"))
             {
                 ImGui::Text("Cycles counter: %d", animModel->mAnimState.mCyclesCount);
-                ImGui::Separator();
+                ImGui::NewLine();
 
                 bool enableBlendFrames = gCvarRender_EnableAnimBlendFrames.mValue;
                 if (ImGui::Checkbox("Enable blend frames", &enableBlendFrames))
                 {
                     gCvarRender_EnableAnimBlendFrames.SetValue(enableBlendFrames);
                 }
-                ImGui::Separator();
+                ImGui::NewLine();
 
                 int currentFrame = animModel->mAnimState.mFrame0;   
                 if (ImGui::SliderInt("Frame", &currentFrame, animModel->mAnimState.mStartFrame, animModel->mAnimState.mFinalFrame))

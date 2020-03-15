@@ -511,6 +511,9 @@
     <ClCompile Include="WaterLavaMesh.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="SceneRenderList.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\docs\creatures_anims.txt">

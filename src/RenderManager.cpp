@@ -122,22 +122,7 @@ void RenderManager::DrawScene()
     gRenderScene.CollectObjectsForRendering(mSceneRenderList);
 
     // sort by renderable type
-    if (mSceneRenderList.mOpaqueElementsCount)
-    {
-        std::sort(mSceneRenderList.mOpaqueElements, mSceneRenderList.mOpaqueElements + mSceneRenderList.mOpaqueElementsCount, 
-            [](const SceneRenderList::ListElementStruct& lhs, const SceneRenderList::ListElementStruct& rhs)
-        {
-            // terrain meshes
-            if (lhs.mTerrainMesh != rhs.mTerrainMesh) 
-                return (rhs.mTerrainMesh == nullptr);
-
-            // animating models
-            if (lhs.mAnimatingModel != rhs.mAnimatingModel) 
-                return (rhs.mAnimatingModel == nullptr);
-
-            return &lhs < &rhs;
-        });
-    }
+    mSceneRenderList.SortOpaquesByObjectType();
 
     // opaque pass
     renderContext.mCurrentPass = eRenderPass_Opaque;
@@ -155,14 +140,7 @@ void RenderManager::DrawScene()
     renderContext.mCurrentPass = eRenderPass_Translucent;
 
     // sort by camera distance, from far to near
-    if (mSceneRenderList.mTranslucentElementsCount)
-    {
-        std::sort(mSceneRenderList.mTranslucentElements, mSceneRenderList.mTranslucentElements + mSceneRenderList.mTranslucentElementsCount, 
-            [](const SceneRenderList::ListElementStruct& lhs, const SceneRenderList::ListElementStruct& rhs)
-        {
-            return lhs.mObject->mDistanceToCameraSquared < rhs.mObject->mDistanceToCameraSquared;
-        });
-    }
+    mSceneRenderList.SortTranslucentsByDistanceToCamera();
 
     for (int i = 0; i < mSceneRenderList.mTranslucentElementsCount; ++i)
     {
