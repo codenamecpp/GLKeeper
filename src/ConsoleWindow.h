@@ -6,14 +6,14 @@
 struct ImGuiInputTextCallbackData;
 
 // debug console window
-class DebugConsoleWindow: public DebugGuiWindow
+class ConsoleWindow: public DebugGuiWindow
 {
 public:
     bool mAutoScroll = true;
     bool mScrollToBottom = false;
 
 public:
-    DebugConsoleWindow();
+    ConsoleWindow();
 
 private:
     // override DebugGuiWindow
@@ -22,12 +22,13 @@ private:
 
     // internals
     int TextEditCallback(ImGuiInputTextCallbackData* data);
+    void Exec();
+    void MoveInputToHistory();
 
 private:
-    std::vector<char> mInputBuffer;
-    std::vector<std::string> mCommands;
-    std::vector<std::string> mHistory;
+    std::string mInputString;
+    std::deque<std::string> mHistory;
     int mHistoryPos = -1; // -1: new line, 0..History.Size-1 browsing history.
 };
 
-extern DebugConsoleWindow gConsoleWindow;
+extern ConsoleWindow gConsoleWindow;

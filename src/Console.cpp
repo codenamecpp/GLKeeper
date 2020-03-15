@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Console.h"
-#include "DebugConsoleWindow.h"
+#include "ConsoleWindow.h"
 #include "DebugGuiManager.h"
 #include "ConsoleVariable.h"
 
@@ -46,6 +46,9 @@ void Console::LogMessage(eLogMessage cat, const char* format, ...)
 
 void Console::ExecuteCommands(const char* commands)
 {
+    // todo
+
+    gConsole.LogMessage(eLogMessage_Info, "%s", commands);
 }
 
 void Console::Clear()

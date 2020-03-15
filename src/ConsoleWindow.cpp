@@ -1,20 +1,18 @@
 #include "pch.h"
 #include "imgui.h"
-#include "DebugConsoleWindow.h"
+#include "ConsoleWindow.h"
 #include "Console.h"
+#include "ConsoleVariable.h"
 
-DebugConsoleWindow gConsoleWindow;
+ConsoleWindow gConsoleWindow;
 
-DebugConsoleWindow::DebugConsoleWindow()
+ConsoleWindow::ConsoleWindow()
     : DebugGuiWindow("dbgconsole")
 {
     mNoNavigation = true;
-
-    mInputBuffer.reserve(256);
-    mInputBuffer.push_back(0);
 }
 
-void DebugConsoleWindow::DoUI(ImGuiIO& imguiContext)
+void ConsoleWindow::DoUI(ImGuiIO& imguiContext)
 {
     ImGui::Separator();
 
@@ -76,22 +74,18 @@ void DebugConsoleWindow::DoUI(ImGuiIO& imguiContext)
 
     auto TextEditCallbackStub = [](ImGuiInputTextCallbackData* data) -> int
     {
-        DebugConsoleWindow* this_ = (DebugConsoleWindow*) data->UserData;
+        ConsoleWindow* this_ = (ConsoleWindow*) data->UserData;
         debug_assert(this_);
         return this_->TextEditCallback(data);
     };
 
     // command-line
     bool reclaim_focus = false;
-    if (ImGui::InputText("Input", mInputBuffer.data(), mInputBuffer.size(), 
+    if (ImGui::InputText("Input", (char*)mInputString.c_str(), mInputString.capacity() + 1, 
         ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | 
         ImGuiInputTextFlags_CallbackHistory | ImGuiInputTextFlags_CallbackResize, TextEditCallbackStub, (void*)this))
     {
-        if (!mInputBuffer.empty())
-        {
-            //ExecCommand(mInputBuffer.c_str());
-        }
-        mInputBuffer.clear();
+        Exec();
         reclaim_focus = true;
     }
 
@@ -103,7 +97,7 @@ void DebugConsoleWindow::DoUI(ImGuiIO& imguiContext)
     }
 }
 
-void DebugConsoleWindow::DoInit(ImGuiIO& imguiContext)
+void ConsoleWindow::DoInit(ImGuiIO& imguiContext)
 {
     const ImVec2 distance { 10.0f, 10.0f };
 
@@ -114,7 +108,7 @@ void DebugConsoleWindow::DoInit(ImGuiIO& imguiContext)
     ImGui::SetWindowPos(mWindowName.c_str(), initialPos, ImGuiCond_Once);
 }
 
-int DebugConsoleWindow::TextEditCallback(ImGuiInputTextCallbackData* data)
+int ConsoleWindow::TextEditCallback(ImGuiInputTextCallbackData* data)
 {
     switch (data->EventFlag)
     {
@@ -128,22 +122,27 @@ int DebugConsoleWindow::TextEditCallback(ImGuiInputTextCallbackData* data)
                 const char c = word_start[-1];
                 if (c == ' ' || c == '\t' || c == ',' || c == ';')
                     break;
+
                 word_start--;
             }
 
+            if (word_end == word_start)
+                break;
+
             // Build a list of candidates
             std::vector<const char*> candidates;
-            for (unsigned int i = 0; i < mCommands.size(); i++)
-                if (::strncmp(mCommands[i].c_str(), word_start, (int)(word_end-word_start)) == 0)
+            for (CVarBase* currCvar: gConsole.mConsoleVariables)
+            {
+                if (::strncmp(currCvar->mName.c_str(), word_start, (int)(word_end - word_start)) == 0)
                 {
-                    candidates.push_back(mCommands[i].c_str());
+                    candidates.push_back(currCvar->mName.c_str());
                 }
+            }
 
             int candidatesCount = candidates.size();
             if (candidatesCount == 0)
             {
-                // No match
-                gConsole.LogMessage(eLogMessage_Debug, "No match for \"%.*s\"!\n", (int)(word_end-word_start), word_start);
+                // no match
             }
             else if (candidatesCount == 1)
             {
@@ -177,7 +176,6 @@ int DebugConsoleWindow::TextEditCallback(ImGuiInputTextCallbackData* data)
                 }
 
                 // List matches
-                gConsole.LogMessage(eLogMessage_Debug, "Possible matches:\n");
                 for (int i = 0; i < candidatesCount; i++)
                 {
                     gConsole.LogMessage(eLogMessage_Debug, "- %s\n", candidates[i]);
@@ -220,14 +218,63 @@ int DebugConsoleWindow::TextEditCallback(ImGuiInputTextCallbackData* data)
                 data->DeleteChars(0, data->BufTextLen);
                 data->InsertChars(0, history_str);
             }
+
+            break;
         }
     case ImGuiInputTextFlags_CallbackResize:
         {
             // Resize string callback
             // If for some reason we refuse the new length (BufTextLen) and/or capacity (BufSize) we need to set them back to what we want.
-            mInputBuffer.resize(data->BufTextLen + 1);
-            data->Buf = mInputBuffer.data();
+            mInputString.resize(data->BufTextLen);
+            data->Buf = (char*)mInputString.c_str();
+
+            break;
         }
     }
     return 0;
+}
+
+void ConsoleWindow::Exec()
+{
+    if (!mInputString.empty())
+    {
+        cxx::trim(mInputString);
+    }
+
+    if (mInputString.empty())
+        return;
+
+    // find cvar
+    CVarBase* cvar = nullptr;
+    for (CVarBase* currCvar: gConsole.mConsoleVariables)
+    {
+        if (currCvar->mName == mInputString)
+        {
+            cvar = currCvar;
+            break;
+        }
+    }
+
+    if (cvar)
+    {
+        std::string cvarValue;
+        cvar->GetValueForConsole(cvarValue);
+
+        gConsole.LogMessage(eLogMessage_Info, "'%s' is '%s' (%s)", cvar->mName.c_str(), cvarValue.c_str(), cvar->mDescription.c_str());
+    }
+    else
+    {
+        gConsole.ExecuteCommands(mInputString.c_str());
+    }
+    MoveInputToHistory();
+}
+
+void ConsoleWindow::MoveInputToHistory()
+{
+    const int MaxHistoryEntries = 6;
+    if (mHistory.size() >= MaxHistoryEntries)
+    {
+        mHistory.pop_front();
+    }
+    mHistory.emplace_back(std::move(mInputString));
 }

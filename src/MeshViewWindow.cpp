@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "DebugMeshViewWindow.h"
+#include "MeshViewWindow.h"
 #include "DebugGuiManager.h"
 #include "FileSystem.h"
 #include "Console.h"
@@ -11,7 +11,7 @@
 #include "MeshViewGamestate.h"
 #include "cvars.h"
 
-DebugMeshViewWindow::DebugMeshViewWindow(): DebugGuiWindow("Models view")
+MeshViewWindow::MeshViewWindow(): DebugGuiWindow("Models view")
 {
     mWindowNoCloseButton = true;
     mWindowNoMove = true;
@@ -21,19 +21,19 @@ DebugMeshViewWindow::DebugMeshViewWindow(): DebugGuiWindow("Models view")
     mModelsListFilter = new ImGuiTextFilter;
 }
 
-DebugMeshViewWindow::~DebugMeshViewWindow()
+MeshViewWindow::~MeshViewWindow()
 {
     SafeDelete(mModelsListFilter);
 }
 
-void DebugMeshViewWindow::Setup(MeshViewGamestate* meshviewGamestate)
+void MeshViewWindow::Setup(MeshViewGamestate* meshviewGamestate)
 {
     mMeshViewGamestate = meshviewGamestate;
 
     LoadModelsList();
 }
 
-void DebugMeshViewWindow::LoadModelsList()
+void MeshViewWindow::LoadModelsList()
 {
     mAllModelsList.clear();
     if (FileSystemArchive* archive = gFileSystem.FindResourceArchive("Meshes.WAD"))
@@ -51,7 +51,7 @@ void DebugMeshViewWindow::LoadModelsList()
     UpdateFilteredElementsList();
 }
 
-void DebugMeshViewWindow::DoUI(ImGuiIO& imguiContext)
+void MeshViewWindow::DoUI(ImGuiIO& imguiContext)
 {
     ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
     if (ImGui::BeginTabBar("Tabs", tab_bar_flags))
@@ -204,7 +204,7 @@ void DebugMeshViewWindow::DoUI(ImGuiIO& imguiContext)
     }
 }
 
-void DebugMeshViewWindow::DoInit(ImGuiIO& imguiContext)
+void MeshViewWindow::DoInit(ImGuiIO& imguiContext)
 {
     const ImVec2 distance { 10.0f, 10.0f };
 
@@ -215,7 +215,7 @@ void DebugMeshViewWindow::DoInit(ImGuiIO& imguiContext)
     ImGui::SetWindowPos(mWindowName.c_str(), initialPos, ImGuiCond_Once);
 }
 
-void DebugMeshViewWindow::UpdateFilteredElementsList()
+void MeshViewWindow::UpdateFilteredElementsList()
 {
     mFilteredList.clear();
     mFilteredList.reserve(mAllModelsList.size());
@@ -229,7 +229,7 @@ void DebugMeshViewWindow::UpdateFilteredElementsList()
     }
 }
 
-void DebugMeshViewWindow::ChangeModelAsset(const char* assetName)
+void MeshViewWindow::ChangeModelAsset(const char* assetName)
 {
     if (mMeshViewGamestate)
     {

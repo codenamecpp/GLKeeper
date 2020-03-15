@@ -8,7 +8,7 @@
 #include "RenderManager.h"
 #include "TimeManager.h"
 #include "DebugGuiManager.h"
-#include "DebugConsoleWindow.h"
+#include "ConsoleWindow.h"
 #include "TexturesManager.h"
 #include "GameMain.h"
 #include "ModelAssetsManager.h"

@@ -12,7 +12,7 @@ public:
     int mFlags;
 
 public:
-    CVarBase( const std::string& cvarName, const std::string& cvarDescription, int flags)
+    CVarBase(const std::string& cvarName, const std::string& cvarDescription, int flags)
         : mName(cvarName)
         , mDescription(cvarDescription)
         , mFlags(flags)
@@ -26,8 +26,11 @@ public:
     inline bool IsConst() const { return (mFlags & ConsoleVar_Const) == ConsoleVar_Const; }
     inline bool IsCheat() const { return (mFlags & ConsoleVar_Cheat) == ConsoleVar_Cheat; }
 
-    // try set cver value from console
+    // try set cvar value from console
     virtual bool SetValueFromConsole(const std::string& consoleInput) = 0;
+
+    // dump cvar value for console
+    virtual void GetValueForConsole(std::string& outputString) = 0;
 
 protected:
     // internal stuff
@@ -70,6 +73,13 @@ public:
             }
         }
         return false;
+    }
+
+    // dump cvar value for console
+    void GetValueForConsole(std::string& outputString) override
+    {
+        outputString.clear();
+        TCvarValueHandler::SerializeValue(mValue, outputString);
     }
 
     // set value directly from code

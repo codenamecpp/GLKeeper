@@ -64,4 +64,34 @@ namespace cxx
         ::std::transform(input_string.begin(), input_string.end(), input_string.begin(), ::toupper);
     }
 
+    inline bool is_blank_char(char inchar)
+    {
+        return inchar == ' ' || inchar == '\n' || inchar == '\t' || inchar == '\r';
+    }
+
+    // erase white spaces on left and right of the input string
+    inline void trim_left(std::string& input_string)
+    {
+        input_string.erase(input_string.begin(), std::find_if(input_string.begin(), input_string.end(), 
+            [](char ch) 
+        {
+            return !is_blank_char(ch);
+        }));
+    }
+
+    inline void trim_right(std::string& input_string)
+    {
+        input_string.erase(std::find_if(input_string.rbegin(), input_string.rend(), 
+            [](char ch) 
+        {
+            return !is_blank_char(ch);
+        }).base(), input_string.end());
+    }
+
+    inline void trim(std::string& input_string)
+    {
+        trim_right(input_string);
+        trim_left(input_string);
+    }
+
 } // namespace cxx

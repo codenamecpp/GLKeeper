@@ -3,7 +3,7 @@
 #include "RenderScene.h"
 #include "Console.h"
 #include "GenericGamestate.h"
-#include "DebugConsoleWindow.h"
+#include "ConsoleWindow.h"
 #include "System.h"
 
 GameMain gGameMain;

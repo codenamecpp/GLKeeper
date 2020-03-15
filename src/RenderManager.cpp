@@ -36,11 +36,15 @@ bool RenderManager::Initialize()
 
     gGraphicsDevice.SetClearColor(Color32_GrimGray);
 
+    gConsole.RegisterVariable(&gCvarRender_DebugDrawEnabled);
+
     return true;
 }
 
 void RenderManager::Deinit()
 {
+    gConsole.UnregisterVariable(&gCvarRender_DebugDrawEnabled);
+
     mModelsRenderer.Deinit();
     mDebugRenderer.Deinit();
     mGuiRenderProgram.FreeProgram();

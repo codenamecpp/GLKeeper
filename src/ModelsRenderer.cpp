@@ -7,6 +7,7 @@
 #include "RenderScene.h"
 #include "VertexFormat.h"
 #include "ConsoleVariable.h"
+#include "Console.h"
 
 CvarBoolean gCvarRender_EnableAnimBlendFrames("r_animBlendFrames", true, "Smooth animations", ConsoleVar_Renderer);
 
@@ -45,6 +46,9 @@ bool ModelsRenderer::Initialize()
         Deinit();
         return false;
     }
+
+    gConsole.RegisterVariable(&gCvarRender_EnableAnimBlendFrames);
+
     return true;
 }
 
@@ -55,6 +59,9 @@ void ModelsRenderer::Deinit()
     {
         DestroyRenderData(curr_iterator.second);
     }
+
+    gConsole.UnregisterVariable(&gCvarRender_EnableAnimBlendFrames);
+
     mModelsCache.clear();
 }
 

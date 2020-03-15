@@ -333,12 +333,6 @@
     <ClInclude Include="SceneRenderList.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="DebugConsoleWindow.h">
-      <Filter>Application\DebugUI\Windows</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugMeshViewWindow.h">
-      <Filter>Application\DebugUI\Windows</Filter>
-    </ClInclude>
     <ClInclude Include="SceneObject.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
@@ -347,6 +341,12 @@
     </ClInclude>
     <ClInclude Include="WaterLavaMesh.h">
       <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshViewWindow.h">
+      <Filter>Application\DebugUI\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="ConsoleWindow.h">
+      <Filter>Application\DebugUI\Windows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -496,12 +496,6 @@
     <ClCompile Include="AnimatingModel.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="DebugConsoleWindow.cpp">
-      <Filter>Application\DebugUI\Windows</Filter>
-    </ClCompile>
-    <ClCompile Include="DebugMeshViewWindow.cpp">
-      <Filter>Application\DebugUI\Windows</Filter>
-    </ClCompile>
     <ClCompile Include="SceneObject.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
@@ -513,6 +507,12 @@
     </ClCompile>
     <ClCompile Include="SceneRenderList.cpp">
       <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshViewWindow.cpp">
+      <Filter>Application\DebugUI\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="ConsoleWindow.cpp">
+      <Filter>Application\DebugUI\Windows</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

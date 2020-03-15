@@ -9,11 +9,11 @@ class MeshViewGamestate;
 struct ImGuiTextFilter;
 
 // mesh view ui
-class DebugMeshViewWindow: public DebugGuiWindow
+class MeshViewWindow: public DebugGuiWindow
 {
 public:
-    DebugMeshViewWindow();
-    ~DebugMeshViewWindow();
+    MeshViewWindow();
+    ~MeshViewWindow();
 
     void Setup(MeshViewGamestate* meshviewGamestate);
 

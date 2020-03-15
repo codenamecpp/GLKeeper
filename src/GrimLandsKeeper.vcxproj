@@ -180,7 +180,7 @@
     <ClInclude Include="3rd_party\std_image.h" />
     <ClInclude Include="AABBTree.h" />
     <ClInclude Include="AnimatingModel.h" />
-    <ClInclude Include="DebugMeshViewWindow.h" />
+    <ClInclude Include="MeshViewWindow.h" />
     <ClInclude Include="MorphAnimRenderProgram.h" />
     <ClInclude Include="BinaryInputStream.h" />
     <ClInclude Include="BinaryOutputStream.h" />
@@ -202,7 +202,7 @@
     <ClInclude Include="CommonTypes.h" />
     <ClInclude Include="common_utils.h" />
     <ClInclude Include="Console.h" />
-    <ClInclude Include="DebugConsoleWindow.h" />
+    <ClInclude Include="ConsoleWindow.h" />
     <ClInclude Include="DebugRenderer.h" />
     <ClInclude Include="GameDefs.h" />
     <ClInclude Include="GenericGamestate.h" />
@@ -271,9 +271,9 @@
     <ClCompile Include="CommonTypes.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="ConsoleVariable.cpp" />
-    <ClCompile Include="DebugConsoleWindow.cpp" />
+    <ClCompile Include="ConsoleWindow.cpp" />
     <ClCompile Include="DebugGuiWindow.cpp" />
-    <ClCompile Include="DebugMeshViewWindow.cpp" />
+    <ClCompile Include="MeshViewWindow.cpp" />
     <ClCompile Include="DebugRenderer.cpp" />
     <ClCompile Include="EngineTexturesProvider.cpp" />
     <ClCompile Include="enums_impl.cpp" />
