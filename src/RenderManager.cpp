@@ -6,6 +6,7 @@
 #include "GameMain.h"
 #include "ConsoleVariable.h"
 #include "RenderScene.h"
+#include "SceneObject.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -118,19 +119,23 @@ void RenderManager::DrawScene()
 {
     SceneRenderContext renderContext;
 
-    gRenderScene.CollectRenderables(mSceneRenderList);
+    gRenderScene.CollectObjectsForRendering(mSceneRenderList);
 
     // sort by renderable type
     if (mSceneRenderList.mOpaqueElementsCount)
     {
         std::sort(mSceneRenderList.mOpaqueElements, mSceneRenderList.mOpaqueElements + mSceneRenderList.mOpaqueElementsCount, 
-            [](const SceneRenderList::ListElement& lhs, const SceneRenderList::ListElement& rhs)
+            [](const SceneRenderList::ListElementStruct& lhs, const SceneRenderList::ListElementStruct& rhs)
         {
-            // animating models
-            if (lhs.mAnimatingModel != rhs.mAnimatingModel)
-                return lhs.mAnimatingModel != nullptr;
+            // terrain meshes
+            if (lhs.mTerrainMesh != rhs.mTerrainMesh) 
+                return (rhs.mTerrainMesh == nullptr);
 
-            return lhs.mRenderable < rhs.mRenderable;
+            // animating models
+            if (lhs.mAnimatingModel != rhs.mAnimatingModel) 
+                return (rhs.mAnimatingModel == nullptr);
+
+            return &lhs < &rhs;
         });
     }
 
@@ -153,9 +158,9 @@ void RenderManager::DrawScene()
     if (mSceneRenderList.mTranslucentElementsCount)
     {
         std::sort(mSceneRenderList.mTranslucentElements, mSceneRenderList.mTranslucentElements + mSceneRenderList.mTranslucentElementsCount, 
-            [](const SceneRenderList::ListElement& lhs, const SceneRenderList::ListElement& rhs)
+            [](const SceneRenderList::ListElementStruct& lhs, const SceneRenderList::ListElementStruct& rhs)
         {
-            return lhs.mRenderable->mDistanceToCameraSquared < rhs.mRenderable->mDistanceToCameraSquared;
+            return lhs.mObject->mDistanceToCameraSquared < rhs.mObject->mDistanceToCameraSquared;
         });
     }
 

@@ -1,8 +1,8 @@
 #include "pch.h"
-#include "Renderable.h"
+#include "SceneObject.h"
 #include "RenderScene.h"
 
-Renderable::Renderable()
+SceneObject::SceneObject()
     : mListNodeTransformed(this)
     , mListNodeOnScene(this)
     , mTransformDirty()
@@ -16,13 +16,13 @@ Renderable::Renderable()
 {
 }
 
-Renderable::~Renderable()
+SceneObject::~SceneObject()
 {
     // entity must be detached from scene before destroy
     debug_assert(IsAttachedToScene() == false);
 }
 
-void Renderable::ComputeTransformation()
+void SceneObject::ComputeTransformation()
 {
     // refresh transformations matrix
     if (mTransformDirty)
@@ -49,28 +49,28 @@ void Renderable::ComputeTransformation()
     }
 }
 
-void Renderable::SetLocalBoundingBox(const cxx::aabbox& aabox)
+void SceneObject::SetLocalBoundingBox(const cxx::aabbox& aabox)
 {
     mBounds = aabox;
 
     InvalidateBounds();
 }
 
-void Renderable::SetPosition(const glm::vec3& position)
+void SceneObject::SetPosition(const glm::vec3& position)
 {
     mPosition = position;
 
     InvalidateTransform();
 }
 
-void Renderable::SetScaling(float scaling)
+void SceneObject::SetScaling(float scaling)
 {
     mScaling = scaling;
 
     InvalidateTransform();
 }
 
-void Renderable::SetOrientation(const glm::vec3& directionRight, const glm::vec3& directionForward, const glm::vec3& directionUpward)
+void SceneObject::SetOrientation(const glm::vec3& directionRight, const glm::vec3& directionForward, const glm::vec3& directionUpward)
 {
     mDirectionForward = directionForward;
     mDirectionRight = directionRight;
@@ -79,17 +79,17 @@ void Renderable::SetOrientation(const glm::vec3& directionRight, const glm::vec3
     InvalidateTransform();
 }
 
-void Renderable::SetOrientation(const glm::vec3& directionRight, const glm::vec3& directionForward)
+void SceneObject::SetOrientation(const glm::vec3& directionRight, const glm::vec3& directionForward)
 {
     debug_assert(!"not yet implemented"); // todo
 }
 
-void Renderable::OrientTowards(const glm::vec3& point)
+void SceneObject::OrientTowards(const glm::vec3& point)
 {
     OrientTowards(point, SceneAxis_Y());
 }
 
-void Renderable::Rotate(const glm::vec3& rotationAxis, float rotationAngle)
+void SceneObject::Rotate(const glm::vec3& rotationAxis, float rotationAngle)
 {
     glm::mat3 rotationMatrix = glm::mat3(glm::rotate(rotationAngle, rotationAxis)); 
 
@@ -100,14 +100,14 @@ void Renderable::Rotate(const glm::vec3& rotationAxis, float rotationAngle)
     InvalidateTransform();
 }
 
-void Renderable::Translate(const glm::vec3& translation)
+void SceneObject::Translate(const glm::vec3& translation)
 {
     mPosition += translation;
 
     InvalidateTransform();
 }
 
-void Renderable::OrientTowards(const glm::vec3& point, const glm::vec3& upward)
+void SceneObject::OrientTowards(const glm::vec3& point, const glm::vec3& upward)
 {
     glm::vec3 zaxis = glm::normalize(point - mPosition);
     glm::vec3 xaxis = glm::normalize(glm::cross(upward, zaxis));
@@ -117,7 +117,7 @@ void Renderable::OrientTowards(const glm::vec3& point, const glm::vec3& upward)
     SetOrientation(xaxis, zaxis, yaxis);
 }
 
-void Renderable::ResetTransformation()
+void SceneObject::ResetTransformation()
 {
     mTransformation = glm::mat4{1.0f};
     mScaling = 1.0f;
@@ -129,7 +129,7 @@ void Renderable::ResetTransformation()
     InvalidateTransform();
 }
 
-void Renderable::InvalidateTransform()
+void SceneObject::InvalidateTransform()
 {
     if (mTransformDirty)
         return;
@@ -143,7 +143,7 @@ void Renderable::InvalidateTransform()
     }
 }
 
-void Renderable::InvalidateBounds()
+void SceneObject::InvalidateBounds()
 {
     if (mBoundingBoxDirty)
         return;
@@ -155,12 +155,12 @@ void Renderable::InvalidateBounds()
     }
 }
 
-void Renderable::ResetOrientation()
+void SceneObject::ResetOrientation()
 {
     SetOrientation(SceneAxis_X(), SceneAxis_Z(), SceneAxis_Y());
 }
 
-bool Renderable::IsAttachedToScene() const
+bool SceneObject::IsAttachedToScene() const
 {
     return mListNodeOnScene.is_linked();
 }

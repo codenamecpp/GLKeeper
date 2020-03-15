@@ -2,7 +2,6 @@
 
 #include "SceneDefs.h"
 #include "RenderDefs.h"
-#include "AnimatingModel.h"
 
 // list for collecting scene entities which will be rendered on current frame
 class SceneRenderList
@@ -11,15 +10,17 @@ public:
     SceneRenderList() = default;
 
     static const int MaxElements = 16383;
-    inline void RegisterRenderable(eRenderPass renderPass, AnimatingModel* animatingModel)
+
+    template<typename TSceneObject>
+    inline void RegisterObject(eRenderPass renderPass, TSceneObject* sceneObject)
     {
-        debug_assert(animatingModel);
+        debug_assert(sceneObject);
         if (renderPass == eRenderPass_Opaque)
         {
             if (mOpaqueElementsCount == MaxElements)
                 return;
 
-            mOpaqueElements[mOpaqueElementsCount++].Set(animatingModel);
+            mOpaqueElements[mOpaqueElementsCount++].Set(sceneObject);
             return;
         }
 
@@ -28,7 +29,7 @@ public:
             if (mTranslucentElementsCount == MaxElements)
                 return;
 
-            mTranslucentElements[mTranslucentElementsCount++].Set(animatingModel);
+            mTranslucentElements[mTranslucentElementsCount++].Set(sceneObject);
             return;
         }
         debug_assert(false);
@@ -43,23 +44,37 @@ public:
 
 public:
 
-    struct ListElement
+    // single registered scene object
+    struct ListElementStruct
     {
     public:
         inline void Set(AnimatingModel* animatingModel)
         {
-            mRenderable = animatingModel;
+            Clear();
             mAnimatingModel = animatingModel;
+            mObject = (SceneObject*) animatingModel;
         }
-
+        inline void Set(TerrainMesh* terrainMesh)
+        {
+            Clear();
+            mTerrainMesh = terrainMesh;
+            mObject = (SceneObject*) terrainMesh;
+        }
+        inline void Clear()
+        {
+            mAnimatingModel = nullptr;
+            mTerrainMesh = nullptr;
+            mObject = nullptr;
+        }
     public:
-        Renderable* mRenderable = nullptr;
+        SceneObject* mObject = nullptr; // cannot be null
         AnimatingModel* mAnimatingModel = nullptr;
+        TerrainMesh* mTerrainMesh = nullptr;
     };
 
-    ListElement mOpaqueElements[MaxElements];
+    ListElementStruct mOpaqueElements[MaxElements];
     int mOpaqueElementsCount = 0;
 
-    ListElement mTranslucentElements[MaxElements];
+    ListElementStruct mTranslucentElements[MaxElements];
     int mTranslucentElementsCount = 0;
 };

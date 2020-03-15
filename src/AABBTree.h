@@ -6,7 +6,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 class DebugRenderer;
-class Renderable;
+class SceneObject;
 
 //////////////////////////////////////////////////////////////////////////
 // Bounding Volume Hierarchy Tree
@@ -26,15 +26,15 @@ public:
 
     // Add spatial object to tree
     // @param entity: Object
-    void InsertObject(Renderable* entity);
+    void InsertObject(SceneObject* entity);
 
     // Remove spatial object from tree
     // @param entity: Object
-    void RemoveObject(Renderable* entity);
+    void RemoveObject(SceneObject* entity);
 
     // Update spatial object location in tree
     // @param entity: Object
-    void UpdateObject(Renderable* entity);
+    void UpdateObject(SceneObject* entity);
 
     // Get all objects within bounding volume
     // @param aabbox: Bounding box
@@ -107,7 +107,7 @@ private:
 
     public:
         cxx::aabbox mBoundingBox; // world space aabb
-        Renderable* mSceneEntity;
+        SceneObject* mSceneEntity;
         TreeNodeIndex mParentNodeIndex;
         TreeNodeIndex mLeftNodeIndex;
         TreeNodeIndex mRightNodeIndex;
@@ -115,7 +115,7 @@ private:
     };
     //////////////////////////////////////////////////////////////////////////
 
-    std::unordered_map<Renderable*, TreeNodeIndex> mEntitiesMap;
+    std::unordered_map<SceneObject*, TreeNodeIndex> mEntitiesMap;
     std::vector<TreeNode> mTreeNodes;
     TreeNodeIndex mRootNodeIndex;
     TreeNodeIndex mNextFreeNodeIndex;

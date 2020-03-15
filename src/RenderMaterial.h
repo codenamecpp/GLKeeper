@@ -11,10 +11,8 @@ public:
 
     // activate or deactivate render material
     void ActivateMaterial();
-    void DeactivateMaterial();
 
     void PreloadTextures();
-
     void Clear();
 
     // test whether material must be drawn with transparency

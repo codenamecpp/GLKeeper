@@ -80,6 +80,9 @@
     <Filter Include="Application\DebugUI\Windows">
       <UniqueIdentifier>{22d845d7-589e-4583-bc6e-5ee20689b6bb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\World">
+      <UniqueIdentifier>{407424f7-127b-475d-ba67-a7cf395d1fd5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -318,9 +321,6 @@
     <ClInclude Include="RenderScene.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="Renderable.h">
-      <Filter>Game\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="AnimatingModel.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
@@ -338,6 +338,12 @@
     </ClInclude>
     <ClInclude Include="DebugMeshViewWindow.h">
       <Filter>Application\DebugUI\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneObject.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainMesh.h">
+      <Filter>Game\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -484,9 +490,6 @@
     <ClCompile Include="RenderScene.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Renderable.cpp">
-      <Filter>Game\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="AnimatingModel.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
@@ -495,6 +498,12 @@
     </ClCompile>
     <ClCompile Include="DebugMeshViewWindow.cpp">
       <Filter>Application\DebugUI\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneObject.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainMesh.cpp">
+      <Filter>Game\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

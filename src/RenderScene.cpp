@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "RenderScene.h"
-#include "Renderable.h"
+#include "SceneObject.h"
 #include "ConsoleVariable.h"
 #include "Console.h"
 #include "CameraControl.h"
@@ -8,6 +8,7 @@
 #include "DebugRenderer.h"
 #include "AnimatingModel.h"
 #include "SceneRenderList.h"
+#include "TerrainMesh.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -40,9 +41,9 @@ void RenderScene::UpdateFrame()
 {
     float deltaTime = (float) gTimeManager.GetRealtimeFrameDelta();
 
-    for (Renderable* currRenderable: mSceneObjects)
+    for (SceneObject* currObject: mSceneObjects)
     {
-        currRenderable->UpdateFrame(deltaTime);
+        currObject->UpdateFrame(deltaTime);
     }
 
     if (mCameraControl)
@@ -53,13 +54,13 @@ void RenderScene::UpdateFrame()
     BuildAABBTree();
 }
 
-void RenderScene::CollectRenderables(SceneRenderList& renderablesList)
+void RenderScene::CollectObjectsForRendering(SceneRenderList& renderList)
 {
     mCamera.ComputeMatrices();
-    mAABBTree.QueryObjects(mCamera.mFrustum, [&renderablesList, this](Renderable* renderable)
+    mAABBTree.QueryObjects(mCamera.mFrustum, [&renderList, this](SceneObject* sceneObject)
     {
-        renderable->RegisterForRendering(renderablesList);
-        renderable->mDistanceToCameraSquared = glm::length2(renderable->mPosition - mCamera.mPosition);
+        sceneObject->RegisterForRendering(renderList);
+        sceneObject->mDistanceToCameraSquared = glm::length2(sceneObject->mPosition - mCamera.mPosition);
     });
 }
 
@@ -114,18 +115,18 @@ void RenderScene::HandleInputEvent(KeyCharEvent& inputEvent)
     }
 }
 
-Renderable* RenderScene::CreateNullRenderable(const glm::vec3& position, const glm::vec3& direction, float scaling)
+SceneObject* RenderScene::CreateDummyObject(const glm::vec3& position, const glm::vec3& direction, float scaling)
 {
-    Renderable* sceneEntity = new Renderable;
+    SceneObject* sceneEntity = new SceneObject;
     sceneEntity->SetPosition(position);
     // todo : direction
     sceneEntity->SetScaling(scaling);
     return sceneEntity;
 }
 
-Renderable* RenderScene::CreateNullRenderable()
+SceneObject* RenderScene::CreateDummyObject()
 {
-    Renderable* sceneEntity = new Renderable;
+    SceneObject* sceneEntity = new SceneObject;
     return sceneEntity;
 }
 
@@ -144,7 +145,19 @@ AnimatingModel* RenderScene::CreateAnimatingModel()
     return sceneEntity;
 }
 
-void RenderScene::HandleTransformChange(Renderable* sceneEntity)
+TerrainMesh* RenderScene::CreateTerrainMesh(const Rect2D& mapTerrainArea)
+{
+    TerrainMesh* sceneEntity = new TerrainMesh;
+    return sceneEntity;
+}
+
+TerrainMesh* RenderScene::CreateTerrainMesh()
+{
+    TerrainMesh* sceneEntity = new TerrainMesh;
+    return sceneEntity;
+}
+
+void RenderScene::HandleTransformChange(SceneObject* sceneEntity)
 {
     debug_assert(sceneEntity);
     if (!mTransformObjects.contains(&sceneEntity->mListNodeTransformed))
@@ -153,7 +166,7 @@ void RenderScene::HandleTransformChange(Renderable* sceneEntity)
     }
 }
 
-void RenderScene::AttachRenderable(Renderable* sceneEntity)
+void RenderScene::AttachObject(SceneObject* sceneEntity)
 {
     debug_assert(sceneEntity);
     // already attached to scene
@@ -170,7 +183,7 @@ void RenderScene::AttachRenderable(Renderable* sceneEntity)
     mAABBTree.InsertObject(sceneEntity);
 }
 
-void RenderScene::DetachRenderable(Renderable* sceneEntity)
+void RenderScene::DetachObject(SceneObject* sceneEntity)
 {
     debug_assert(sceneEntity);
 
@@ -191,11 +204,11 @@ void RenderScene::DetachRenderable(Renderable* sceneEntity)
     mAABBTree.RemoveObject(sceneEntity);
 }
 
-void RenderScene::DestroyRenderable(Renderable* sceneEntity)
+void RenderScene::DestroyObject(SceneObject* sceneEntity)
 {
     debug_assert(sceneEntity);
 
-    DetachRenderable(sceneEntity);
+    DetachObject(sceneEntity);
     delete sceneEntity;
 }
 
@@ -221,11 +234,11 @@ void RenderScene::BuildAABBTree()
 {
     while (mTransformObjects.has_elements())
     {
-        cxx::intrusive_node<Renderable>* entityNode = mTransformObjects.get_head_node();
+        cxx::intrusive_node<SceneObject>* entityNode = mTransformObjects.get_head_node();
         mTransformObjects.remove(entityNode);
 
         // refresh aabbtree node
-        Renderable* sceneEntity = entityNode->get_element();
+        SceneObject* sceneEntity = entityNode->get_element();
         mAABBTree.UpdateObject(sceneEntity);
     }
 }
@@ -234,17 +247,17 @@ void RenderScene::DestroySceneObjects()
 {
     while (mTransformObjects.has_elements())
     {
-        cxx::intrusive_node<Renderable>* entityNode = mTransformObjects.get_head_node();
+        cxx::intrusive_node<SceneObject>* entityNode = mTransformObjects.get_head_node();
 
-        Renderable* currentEntity = entityNode->get_element();
-        DestroyRenderable(currentEntity);
+        SceneObject* currentEntity = entityNode->get_element();
+        DestroyObject(currentEntity);
     }
 
     while (mSceneObjects.has_elements())
     {
-        cxx::intrusive_node<Renderable>* entityNode = mSceneObjects.get_head_node();
+        cxx::intrusive_node<SceneObject>* entityNode = mSceneObjects.get_head_node();
 
-        Renderable* currentEntity = entityNode->get_element();
-        DestroyRenderable(currentEntity);
+        SceneObject* currentEntity = entityNode->get_element();
+        DestroyObject(currentEntity);
     }
 }

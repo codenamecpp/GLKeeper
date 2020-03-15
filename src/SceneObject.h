@@ -3,7 +3,7 @@
 #include "SceneDefs.h"
 #include "RenderDefs.h"
 
-class Renderable: public cxx::noncopyable
+class SceneObject: public cxx::noncopyable
 {
     friend class RenderScene;
 
@@ -23,8 +23,8 @@ public:
     float mDistanceToCameraSquared; // this value gets updated during scene rendition
 
 public:
-    Renderable();
-    virtual ~Renderable();
+    SceneObject();
+    virtual ~SceneObject();
 
     // process scene update frame
     // @param deltaTime: Time since last update
@@ -87,8 +87,8 @@ private:
 
 private:
     // scene data
-    cxx::intrusive_node<Renderable> mListNodeTransformed;
-    cxx::intrusive_node<Renderable> mListNodeOnScene;
+    cxx::intrusive_node<SceneObject> mListNodeTransformed;
+    cxx::intrusive_node<SceneObject> mListNodeOnScene;
 
     // dirty flags
     bool mTransformDirty;

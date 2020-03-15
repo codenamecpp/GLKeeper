@@ -4,6 +4,7 @@
 #include "GraphicsDevice.h"
 #include "FileSystem.h"
 #include "Console.h"
+#include "RenderManager.h"
 
 RenderProgram::RenderProgram(const std::string& srcFilePath)
     : mProgramName(srcFilePath)
@@ -84,6 +85,14 @@ void RenderProgram::ActivateProgram()
     if (!isInited || mGpuProgram->IsProgramBound()) // program should be not active
         return;
 
+    // set active render program
+    debug_assert(gRenderManager.mActiveRenderProgram != this);
+    if (gRenderManager.mActiveRenderProgram)
+    {
+        gRenderManager.mActiveRenderProgram->DeactivateProgram();
+    }
+    gRenderManager.mActiveRenderProgram = this;
+
     gGraphicsDevice.BindRenderProgram(mGpuProgram);
     OnProgramActivated();
 }
@@ -94,6 +103,13 @@ void RenderProgram::DeactivateProgram()
     debug_assert(isInited);
     if (!isInited || !mGpuProgram->IsProgramBound()) // program should be active
         return;
+
+    // clear active render program
+    debug_assert(gRenderManager.mActiveRenderProgram == this);
+    if (gRenderManager.mActiveRenderProgram == this)
+    {
+        gRenderManager.mActiveRenderProgram = nullptr;
+    }
 
     gGraphicsDevice.BindRenderProgram(nullptr);
     OnProgramDeactivated();

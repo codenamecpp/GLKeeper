@@ -113,12 +113,12 @@ void AnimatingModel::RegisterForRendering(SceneRenderList& renderList)
 
     if (hasOpaqueParts)
     {
-        renderList.RegisterRenderable(eRenderPass_Opaque, this);
+        renderList.RegisterObject(eRenderPass_Opaque, this);
     }
 
     if (hasTranslucentParts)
     {
-        renderList.RegisterRenderable(eRenderPass_Translucent, this);
+        renderList.RegisterObject(eRenderPass_Translucent, this);
     }
 }
 

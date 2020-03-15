@@ -2,7 +2,7 @@
 
 #include "SceneDefs.h"
 #include "ResourceDefs.h"
-#include "Renderable.h"
+#include "SceneObject.h"
 #include "RenderDefs.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ public:
 //////////////////////////////////////////////////////////////////////////
 
 // model instance on render scene
-class AnimatingModel: public Renderable
+class AnimatingModel: public SceneObject
 {
     friend class ModelsRenderer;
 
@@ -60,7 +60,6 @@ public:
     void UpdateFrame(float deltaTime) override;
 
     // request entity to register itself in render lists
-    // @param renderPass: Current render pass
     // @param renderList: Render lists
     void RegisterForRendering(SceneRenderList& renderList) override;
 

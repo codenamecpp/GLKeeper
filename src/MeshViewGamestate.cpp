@@ -3,7 +3,7 @@
 #include "GameMain.h"
 #include "RenderScene.h"
 #include "System.h"
-#include "Renderable.h"
+#include "SceneObject.h"
 #include "ModelAssetsManager.h"
 #include "AnimatingModel.h"
 #include "TimeManager.h"
@@ -35,7 +35,7 @@ void MeshViewGamestate::HandleGamestateEnter()
     mModelObject = gRenderScene.CreateAnimatingModel(modelAsset, glm::vec3(0.0f), glm::vec3(0.0f));
     if (mModelObject)
     {
-        gRenderScene.AttachRenderable(mModelObject);
+        gRenderScene.AttachObject(mModelObject);
         mModelObject->StartAnimation(24.0f, true);
     }
 
@@ -49,7 +49,7 @@ void MeshViewGamestate::HandleGamestateLeave()
     gRenderScene.SetCameraControl(nullptr);
     if (mModelObject)
     {
-        gRenderScene.DestroyRenderable(mModelObject);
+        gRenderScene.DestroyObject(mModelObject);
         mModelObject = nullptr;
     }
 

@@ -29,11 +29,6 @@ void RenderMaterial::ActivateMaterial()
     }
 }
 
-void RenderMaterial::DeactivateMaterial()
-{
-    // todo
-}
-
 void RenderMaterial::PreloadTextures()
 {
     if (mDiffuseTexture)

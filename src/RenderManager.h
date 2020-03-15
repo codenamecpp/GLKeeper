@@ -13,6 +13,8 @@ public:
     // readonly
     ModelsRenderer mModelsRenderer;
 
+    RenderProgram* mActiveRenderProgram = nullptr;
+
 public:
 
     // setup rendering system internal resources
