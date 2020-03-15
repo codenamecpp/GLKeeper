@@ -7,6 +7,7 @@ class RenderScene;
 class SceneCameraControl;
 class AnimatingModel;
 class TerrainMesh;
+class WaterLavaMesh;
 class SceneRenderList;
 
 enum eSceneCameraMode

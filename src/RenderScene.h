@@ -50,6 +50,8 @@ public:
     TerrainMesh* CreateTerrainMesh(const Rect2D& mapTerrainArea);
     TerrainMesh* CreateTerrainMesh();
 
+    WaterLavaMesh* CreateWaterLavaMesh();
+
     // attach entity to scene - attached entity will be rendered and updated, 
     // it is recommended to set transformation and bounding volume before attach
     // @param sceneObject: Target

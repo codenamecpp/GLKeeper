@@ -9,6 +9,7 @@
 #include "AnimatingModel.h"
 #include "SceneRenderList.h"
 #include "TerrainMesh.h"
+#include "WaterLavaMesh.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -154,6 +155,12 @@ TerrainMesh* RenderScene::CreateTerrainMesh(const Rect2D& mapTerrainArea)
 TerrainMesh* RenderScene::CreateTerrainMesh()
 {
     TerrainMesh* sceneEntity = new TerrainMesh;
+    return sceneEntity;
+}
+
+WaterLavaMesh* RenderScene::CreateWaterLavaMesh()
+{
+    WaterLavaMesh* sceneEntity = new WaterLavaMesh;
     return sceneEntity;
 }
 

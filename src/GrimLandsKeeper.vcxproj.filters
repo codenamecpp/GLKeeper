@@ -345,6 +345,9 @@
     <ClInclude Include="TerrainMesh.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="WaterLavaMesh.h">
+      <Filter>Game\Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -503,6 +506,9 @@
       <Filter>Game\Scene</Filter>
     </ClCompile>
     <ClCompile Include="TerrainMesh.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="WaterLavaMesh.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
   </ItemGroup>

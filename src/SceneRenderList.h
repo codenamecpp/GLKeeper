@@ -60,16 +60,24 @@ public:
             mTerrainMesh = terrainMesh;
             mObject = (SceneObject*) terrainMesh;
         }
+        inline void Set(WaterLavaMesh* waterLavaMesh)
+        {
+            Clear();
+            mWaterLavaMesh = waterLavaMesh;
+            mObject = (SceneObject*) waterLavaMesh;
+        }
         inline void Clear()
         {
             mAnimatingModel = nullptr;
             mTerrainMesh = nullptr;
             mObject = nullptr;
+            mWaterLavaMesh = nullptr;
         }
     public:
         SceneObject* mObject = nullptr; // cannot be null
         AnimatingModel* mAnimatingModel = nullptr;
         TerrainMesh* mTerrainMesh = nullptr;
+        WaterLavaMesh* mWaterLavaMesh = nullptr;
     };
 
     ListElementStruct mOpaqueElements[MaxElements];

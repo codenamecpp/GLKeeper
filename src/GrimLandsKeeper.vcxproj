@@ -255,6 +255,7 @@
     <ClInclude Include="TimeManager.h" />
     <ClInclude Include="version.h" />
     <ClInclude Include="VertexFormat.h" />
+    <ClInclude Include="WaterLavaMesh.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3rd_party\cJSON.cpp" />
@@ -316,6 +317,7 @@
     <ClCompile Include="Texture2D_Image.cpp" />
     <ClCompile Include="TexturesManager.cpp" />
     <ClCompile Include="TimeManager.cpp" />
+    <ClCompile Include="WaterLavaMesh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Box2D\Box2D.vcxproj">
