@@ -148,7 +148,10 @@ void DebugMeshViewWindow::DoUI(ImGuiIO& imguiContext)
                     // todo
                     //animModel->SetFrame
                 }
-
+                if (ImGui::Button("Pause/Unpause"))
+                {
+                    animModel->SetAnimationPaused(!animModel->IsAnimationPaused());
+                }
 
                 ImGui::EndTabItem();
             }
