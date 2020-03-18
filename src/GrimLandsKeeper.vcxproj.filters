@@ -351,6 +351,15 @@
     <ClInclude Include="GameplayGamestate.h">
       <Filter>Game\GameStates</Filter>
     </ClInclude>
+    <ClInclude Include="ScenarioDefs.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameWorld.h">
+      <Filter>Game\World</Filter>
+    </ClInclude>
+    <ClInclude Include="CreatureDefs.h">
+      <Filter>Game\World</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -519,6 +528,9 @@
     </ClCompile>
     <ClCompile Include="GameplayGamestate.cpp">
       <Filter>Game\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="GameWorld.cpp">
+      <Filter>Game\World</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

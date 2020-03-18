@@ -4,6 +4,7 @@
 #include "InputsDefs.h"
 #include "RenderDefs.h"
 #include "SceneDefs.h"
+#include "ScenarioDefs.h"
 
 impl_enum_strings(eLogMessage)
 {
@@ -215,4 +216,83 @@ impl_enum_strings(eSceneCameraMode)
 {
     {eSceneCameraMode_Perspective, "perspective"},
     {eSceneCameraMode_Orthographic, "orthographic"},
+};
+
+impl_enum_strings(ePlayerID)
+{
+    {ePlayerID_Null, "null"},
+    {ePlayerID_Good, "good"},
+    {ePlayerID_Neutral, "neutral"},
+    {ePlayerID_Keeper1, "keeper1"},
+    {ePlayerID_Keeper2, "keeper2"},
+    {ePlayerID_Keeper3, "keeper3"},
+    {ePlayerID_Keeper4, "keeper4"},
+};
+
+impl_enum_strings(eArtResource)
+{    
+    {eArtResource_Null, "null"},
+    {eArtResource_Sprite, "sprite"},
+    {eArtResource_Alpha, "alpha"},
+    {eArtResource_AdditiveAlpha, "additive_alpha"},
+    {eArtResource_TerrainMesh, "terrain_mesh"},
+    {eArtResource_Mesh, "mesh"},
+    {eArtResource_AnimatingMesh, "animating_mesh"},
+    {eArtResource_ProceduralMesh, "procedural_mesh"},
+    {eArtResource_MeshCollection, "mesh_collection"},
+};
+
+impl_enum_strings(ePlayerType)
+{
+    {ePlayerType_Dummy, "dummy"},
+    {ePlayerType_Human, "human"},
+    {ePlayerType_Computer, "computer"},
+};
+
+impl_enum_strings(eComputerAI)
+{
+    {eComputerAI_MasterKeeper, "master_keeper"},
+    {eComputerAI_Conqueror, "conqueror"},
+    {eComputerAI_Psychotic, "phychotic"},
+    {eComputerAI_Stalwart, "stalwart"},
+    {eComputerAI_Greyman, "greyman"},
+    {eComputerAI_Idiot, "idiot"},
+    {eComputerAI_Guardian, "guardian"},
+    {eComputerAI_ThickSkinned, "thick_skinned"},
+    {eComputerAI_Paranoid, "paranoid"},
+};
+
+impl_enum_strings(eBridgeTerrain)
+{
+    {eBridgeTerrain_Water, "water"},
+    {eBridgeTerrain_Lava, "lava"},
+};
+
+impl_enum_strings(eRoomTileConstruction)
+{
+    {eRoomTileConstruction_Complete, "complete"},
+    {eRoomTileConstruction_Quad, "quad"},
+    {eRoomTileConstruction_3_by_3, "3_by_3"},
+    {eRoomTileConstruction_3_by_3_Rotated, "3_by_3_rotated"},
+    {eRoomTileConstruction_Normal, "normal"},
+    {eRoomTileConstruction_CenterPool, "center_pool"},
+    {eRoomTileConstruction_DoubleQuad, "double_quad"},
+    {eRoomTileConstruction_5_by_5_Rotated, "5_by_5_rotated"},
+    {eRoomTileConstruction_HeroGate, "hero_gate"},
+    {eRoomTileConstruction_HeroGateTile, "hero_gate_tile"},
+    {eRoomTileConstruction_HeroGate_2_by_2, "hero_gate_2_by_2"},
+    {eRoomTileConstruction_HeroGateFrontEnd, "hero_gate_front_end"},
+    {eRoomTileConstruction_HeroGate_3_by_1, "hero_gate_3_by_1"},
+};
+
+impl_enum_strings(eGameObjectMaterial)
+{
+    {eGameObjectMaterial_None, "none"},
+    {eGameObjectMaterial_Flesh, "flesh"},
+    {eGameObjectMaterial_Rock, "rock"},
+    {eGameObjectMaterial_Wood, "wood"},
+    {eGameObjectMaterial_Metal1, "metal1"},
+    {eGameObjectMaterial_Metal2, "metal2"},
+    {eGameObjectMaterial_Magic, "magic"},
+    {eGameObjectMaterial_Glass, "glass"},
 };
