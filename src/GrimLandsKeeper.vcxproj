@@ -181,6 +181,7 @@
     <ClInclude Include="AABBTree.h" />
     <ClInclude Include="AnimatingModel.h" />
     <ClInclude Include="CreatureDefs.h" />
+    <ClInclude Include="GameObjectsDefs.h" />
     <ClInclude Include="GameplayGamestate.h" />
     <ClInclude Include="GameWorld.h" />
     <ClInclude Include="MeshViewWindow.h" />
@@ -201,6 +202,7 @@
     <ClInclude Include="OrbitCameraControl.h" />
     <ClInclude Include="RenderMaterial.h" />
     <ClInclude Include="ResourceDefs.h" />
+    <ClInclude Include="RoomsDefs.h" />
     <ClInclude Include="ScenarioDefs.h" />
     <ClInclude Include="SceneCamera.h" />
     <ClInclude Include="CommonTypes.h" />

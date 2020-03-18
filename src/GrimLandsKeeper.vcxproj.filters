@@ -360,6 +360,12 @@
     <ClInclude Include="CreatureDefs.h">
       <Filter>Game\World</Filter>
     </ClInclude>
+    <ClInclude Include="RoomsDefs.h">
+      <Filter>Game\World</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObjectsDefs.h">
+      <Filter>Game\World</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

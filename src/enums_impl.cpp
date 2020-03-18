@@ -296,3 +296,25 @@ impl_enum_strings(eGameObjectMaterial)
     {eGameObjectMaterial_Magic, "magic"},
     {eGameObjectMaterial_Glass, "glass"},
 };
+
+impl_enum_strings(eTileFace)
+{
+    {eTileFace_SideN, "side_n"},
+    {eTileFace_SideE, "side_e"},
+    {eTileFace_SideS, "side_s"},
+    {eTileFace_SideW, "side_w"},
+    {eTileFace_Floor, "floor"},
+    {eTileFace_Ceiling, "ceiling"},
+};
+
+impl_enum_strings(eDirection)
+{
+    {eDirection_N,  "N"},
+    {eDirection_NE, "NE"},
+    {eDirection_E,  "E"},
+    {eDirection_SE, "SE"},
+    {eDirection_S,  "S"},
+    {eDirection_SW, "SW"},
+    {eDirection_W,  "W"},
+    {eDirection_NW, "NW"},
+};

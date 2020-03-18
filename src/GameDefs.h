@@ -1,5 +1,13 @@
 #pragma once
 
+#include "RenderMaterial.h"
+#include "VertexFormat.h"
+
+#define DUNGEON_CELL_HALF_SIZE  0.5f
+#define DUNGEON_CELL_SIZE       1.0f
+#define TERRAIN_FLOOR_LEVEL     1.0f
+#define TERRAIN_BLOCK_HEIGHT    1.0f
+
 using TerrainTypeID = unsigned int; // for sake of flexibility, do not rely on specific id
 const TerrainTypeID TerrainType_Null = 0; // invalid identifier
 
@@ -11,6 +19,14 @@ const GameObjectClassID GameObjectClassID_Null = 0; // invalid identifier
 
 using CreatureClassID = unsigned int;
 const CreatureClassID CreatureClassID_Null = 0; // invalid identifier
+
+// forwards
+class GenericRoom;
+class GameMap;
+class GameMapTile;
+
+// Array of map tiles
+using MapTilesArray = std::vector<GameMapTile*>;
 
 // possible player identifiers
 enum ePlayerID
@@ -91,3 +107,130 @@ enum eGameObjectMaterial
 };
 
 decl_enum_strings(eGameObjectMaterial);
+
+// block face identifier
+enum eTileFace 
+{
+    eTileFace_SideN, // wall facing North, only specified for solid tiles
+    eTileFace_SideE, // wall facing East,  only specified for solid tiles
+    eTileFace_SideS, // wall facing South, only specified for solid tiles
+    eTileFace_SideW, // wall facing Worth, only specified for solid tiles
+    eTileFace_Floor, // bottom, does not specified for solid tiles
+    eTileFace_Ceiling, // only specified for solid tiles or bridges
+    eTileFace_COUNT
+};
+
+decl_enum_strings(eTileFace);
+
+// direction
+
+//
+//   NW   N   NE
+//      \ | /
+//  W <--- ---> E
+//      / | \ 
+//   SW   S   SE
+//
+
+enum eDirection 
+{
+    eDirection_N,    // North
+    eDirection_NE,
+    eDirection_E,    // East
+    eDirection_SE,
+    eDirection_S,    // South
+    eDirection_SW,
+    eDirection_W,    // West
+    eDirection_NW,
+    eDirection_COUNT
+};
+
+decl_enum_strings(eDirection);
+
+static_assert(eDirection_COUNT == 8, "NUM_TERRAIN_DIRECTIONS");
+
+// get opposite direction
+// @param direction: Source direction
+inline eDirection GetOppositeDirection(eDirection direction) 
+{
+    switch (direction)
+    {
+        case eDirection_N : return eDirection_S;
+        case eDirection_NE: return eDirection_SW;
+        case eDirection_E : return eDirection_W;
+        case eDirection_SE: return eDirection_NW;
+        case eDirection_S : return eDirection_N;
+        case eDirection_SW: return eDirection_NE;
+        case eDirection_W : return eDirection_E;
+        case eDirection_NW: return eDirection_SE;
+    }
+    debug_assert(false);
+    return direction;
+}
+
+// get next direction clockwise
+inline eDirection GetNextDirectionCW(eDirection direction)
+{
+    switch (direction)
+    {
+        case eDirection_N : return eDirection_NE;
+        case eDirection_NE: return eDirection_E;
+        case eDirection_E : return eDirection_SE;
+        case eDirection_SE: return eDirection_S;
+        case eDirection_S : return eDirection_SW;
+        case eDirection_SW: return eDirection_W;
+        case eDirection_W : return eDirection_NW;
+        case eDirection_NW: return eDirection_N;
+    }
+    debug_assert(false);
+    return direction;
+}
+
+// get next direction counterclockwise
+inline eDirection GetNextDirectionCCW(eDirection direction)
+{
+    switch (direction)
+    {
+        case eDirection_N : return eDirection_NW;
+        case eDirection_NE: return eDirection_N;
+        case eDirection_E : return eDirection_NE;
+        case eDirection_SE: return eDirection_E;
+        case eDirection_S : return eDirection_SE;
+        case eDirection_SW: return eDirection_S;
+        case eDirection_W : return eDirection_SW;
+        case eDirection_NW: return eDirection_W;
+    }
+    debug_assert(false);
+    return direction;
+}
+
+// test whether direction is one of NESW
+inline bool IsStraightDirection(eDirection direction) 
+{
+    return direction == eDirection_N || direction == eDirection_E || direction == eDirection_S || direction == eDirection_W;
+}
+
+// test whether direction is one of NE,SE,SW,NW
+inline bool IsDiagonalDirection(eDirection direction)
+{
+    return direction == eDirection_NE || direction == eDirection_SE || direction == eDirection_SW || direction == eDirection_NW;
+}
+
+// terrain block geometry
+struct TerrainTileMesh
+{
+public:
+    RenderMaterial mMaterial;
+
+    std::vector<glm::ivec3> mTriangles;
+    std::vector<Vertex3D_Terrain> mVertices;
+};
+
+// block face data
+struct TileFaceData 
+{
+public:
+    std::vector<TerrainTileMesh> mMeshArray;
+
+    bool mInvalidated = false; // face geometry is dirty and must be rebuilt
+};
