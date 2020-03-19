@@ -548,11 +548,11 @@ public:
     TerrainTypeID mPlayerColouredPathTerrainType;
     TerrainTypeID mPlayerColouredWallTerrainType;
     TerrainTypeID mFogOfWarTerrainType;
-    std::vector<PlayerDefinition> mPlayerDefs; // first entry in definition list is dummy
-    std::vector<TerrainDefinition> mTerrainDefs; // first entry in definition list is dummy
-    std::vector<RoomDefinition> mRoomDefs; // first entry in definition list is dummy
-    std::vector<GameObjectDefinition> mObjectDefs; // first entry in definition list is dummy
+    std::vector<PlayerDefinition> mPlayerDefs; // first entry is dummy
+    std::vector<TerrainDefinition> mTerrainDefs; // first entry is dummy
+    std::vector<RoomDefinition> mRoomDefs; // first entry is dummy
+    std::vector<GameObjectDefinition> mObjectDefs; // first entry is dummy
     std::vector<RoomTypeID> mRoomByTerrainType; // map room types to terrain types
     std::vector<MapTileDefinition> mMapTiles; // tiles matrix
-    std::vector<CreatureDefinition> mCreatureDefs;
+    std::vector<CreatureDefinition> mCreatureDefs; // first entry is dummy
 };

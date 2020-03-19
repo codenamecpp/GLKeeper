@@ -204,6 +204,30 @@ inline eDirection GetNextDirectionCCW(eDirection direction)
     return direction;
 }
 
+// get vector for direction
+inline Point2D GetDirectionVector(eDirection direction)
+{
+    Point2D point_vector (0, 0);
+    if (direction == eDirection_N || direction == eDirection_NE || direction == eDirection_NW)
+    {
+        point_vector.y = -1;
+    }
+    if (direction == eDirection_S || direction == eDirection_SE || direction == eDirection_SW)
+    {
+        point_vector.y = 1;
+    }
+    if (direction == eDirection_E || direction == eDirection_NE || direction == eDirection_SE)
+    {
+        point_vector.x = 1;
+    }
+    if (direction == eDirection_W || direction == eDirection_SW || direction == eDirection_NW)
+    {
+        point_vector.x = -1;
+    }
+    debug_assert(point_vector.x || point_vector.y);
+    return point_vector; 
+}
+
 // test whether direction is one of NESW
 inline bool IsStraightDirection(eDirection direction) 
 {
