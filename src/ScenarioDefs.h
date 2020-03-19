@@ -267,7 +267,7 @@ struct RoomDefinition
 {
 public:
     RoomDefinition()
-        : mRoomType(RoomTypeID_Null)
+        : mRoomType(RoomType_Null)
         , mPlaceableOnWater()
         , mPlaceableOnLava()
         , mPlaceableOnLand()
@@ -340,7 +340,7 @@ struct GameObjectDefinition
 {
 public:
     GameObjectDefinition() 
-        : mObjectClass(GameObjectClassID_Null)
+        : mObjectClass(GameObjectClass_Null)
         , mDieOverTime()
         , mDieOverTimeIfNotInRoom()
         , mTypeSpecial()
@@ -439,8 +439,8 @@ class CreatureDefinition
 {
 public:
     CreatureDefinition()
-        : mCreatureClass(CreatureClassID_Null)
-        , mCloneCreatureId(CreatureClassID_Null)
+        : mCreatureClass(CreatureClass_Null)
+        , mCloneCreatureId(CreatureClass_Null)
     {
     }
 

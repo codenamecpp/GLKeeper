@@ -12,21 +12,21 @@ using TerrainTypeID = unsigned int; // for sake of flexibility, do not rely on s
 const TerrainTypeID TerrainType_Null = 0; // invalid identifier
 
 using RoomTypeID = unsigned int; // for sake of flexibility, do not rely on specific id
-const RoomTypeID RoomTypeID_Null = 0; // invalid identifier
+const RoomTypeID RoomType_Null = 0; // invalid identifier
 
 using GameObjectClassID = unsigned int; // for sake of flexibility, do not rely on specific id
-const GameObjectClassID GameObjectClassID_Null = 0; // invalid identifier
+const GameObjectClassID GameObjectClass_Null = 0; // invalid identifier
 
 using CreatureClassID = unsigned int;
-const CreatureClassID CreatureClassID_Null = 0; // invalid identifier
+const CreatureClassID CreatureClass_Null = 0; // invalid identifier
 
 // forwards
 class GenericRoom;
-class GameMap;
+class GameMapData;
 class GameMapTile;
 
 // Array of map tiles
-using MapTilesArray = std::vector<GameMapTile*>;
+using GameMapTiles = std::vector<GameMapTile*>;
 
 // possible player identifiers
 enum ePlayerID

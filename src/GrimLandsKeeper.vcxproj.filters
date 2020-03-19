@@ -366,6 +366,12 @@
     <ClInclude Include="GameObjectsDefs.h">
       <Filter>Game\World</Filter>
     </ClInclude>
+    <ClInclude Include="GameMapTile.h">
+      <Filter>Game\World</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMapData.h">
+      <Filter>Game\World</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -536,6 +542,12 @@
       <Filter>Game\GameStates</Filter>
     </ClCompile>
     <ClCompile Include="GameWorld.cpp">
+      <Filter>Game\World</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMapTile.cpp">
+      <Filter>Game\World</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMapData.cpp">
       <Filter>Game\World</Filter>
     </ClCompile>
   </ItemGroup>

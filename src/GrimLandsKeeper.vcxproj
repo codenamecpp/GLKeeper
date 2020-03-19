@@ -181,6 +181,8 @@
     <ClInclude Include="AABBTree.h" />
     <ClInclude Include="AnimatingModel.h" />
     <ClInclude Include="CreatureDefs.h" />
+    <ClInclude Include="GameMapData.h" />
+    <ClInclude Include="GameMapTile.h" />
     <ClInclude Include="GameObjectsDefs.h" />
     <ClInclude Include="GameplayGamestate.h" />
     <ClInclude Include="GameWorld.h" />
@@ -279,6 +281,8 @@
     <ClCompile Include="ConsoleVariable.cpp" />
     <ClCompile Include="ConsoleWindow.cpp" />
     <ClCompile Include="DebugGuiWindow.cpp" />
+    <ClCompile Include="GameMapData.cpp" />
+    <ClCompile Include="GameMapTile.cpp" />
     <ClCompile Include="GameplayGamestate.cpp" />
     <ClCompile Include="GameWorld.cpp" />
     <ClCompile Include="MeshViewWindow.cpp" />
