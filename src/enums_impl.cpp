@@ -264,6 +264,7 @@ impl_enum_strings(eComputerAI)
 
 impl_enum_strings(eBridgeTerrain)
 {
+    {eBridgeTerrain_Null, "null"},
     {eBridgeTerrain_Water, "water"},
     {eBridgeTerrain_Lava, "lava"},
 };

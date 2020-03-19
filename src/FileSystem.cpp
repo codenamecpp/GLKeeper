@@ -76,6 +76,7 @@ bool FileSystem::SetupDungeonKeeperGamePaths()
 {
     mDungeonKeeperGameDataPath.clear();
     mDungeonKeeperGameRootPath.clear();
+    mDungeonKeeperGameMapsPath.clear();
     mDungeonKeeperGameTextureCacheDirPath.clear();
 
     if (gSystem.mStartupParams.mDungeonKeeperGamePath.empty())
@@ -112,6 +113,15 @@ bool FileSystem::SetupDungeonKeeperGamePaths()
     }
 
     mDungeonKeeperGameTextureCacheDirPath = textureCachePath.generic_string();
+
+    fs::path mapsPath = dataPath / "editor/maps";
+    if (!fs::is_directory(mapsPath))
+    {
+        gConsole.LogMessage(eLogMessage_Warning, "Game maps directory is invalid");
+        return false;
+    }
+
+    mDungeonKeeperGameMapsPath = mapsPath.generic_string();
     return true;
 }
 
@@ -182,41 +192,33 @@ void FileSystem::UnmountDungeonKeeperGameArchives()
 
 BinaryInputStream* FileSystem::OpenDataFile(const std::string& fileName)
 {
-    // 1 engine data path 
-    fs::path fullFilePath = fs::path {mDataPath} / fs::path {fileName};
-    if (fs::exists(fullFilePath))
+    const std::string SearchPaths[] =
     {
-        if (fs::is_regular_file(fullFilePath))
-        {
-            FileInputStream* inputStream = new FileInputStream;
-            if (inputStream->OpenFileStream(fullFilePath.generic_string()))
-                return inputStream;
+        mDataPath,                  // 1 engine data path 
+        mDungeonKeeperGameDataPath, // 2 game data path
+        mDungeonKeeperGameMapsPath  // 3 maps path
+    };
 
-            debug_assert(false);
-            delete inputStream;
+    for (const std::string& currentSearchPath: SearchPaths)
+    {
+        fs::path fullFilePath = fs::path {currentSearchPath} / fs::path {fileName};
+        if (fs::exists(fullFilePath))
+        {
+            if (fs::is_regular_file(fullFilePath))
+            {
+                FileInputStream* inputStream = new FileInputStream;
+                if (inputStream->OpenFileStream(fullFilePath.generic_string()))
+                    return inputStream;
+
+                debug_assert(false);
+                delete inputStream;
+            }
+            gConsole.LogMessage(eLogMessage_Warning, "Fail to open file '%s'", fileName.c_str());
+            return nullptr;
         }
-        gConsole.LogMessage(eLogMessage_Warning, "Fail to open file '%s'", fileName.c_str());
-        return nullptr;
     }
 
-    // 2 game data path
-    fullFilePath = fs::path {mDungeonKeeperGameDataPath} / fs::path {fileName};
-    if (fs::exists(fullFilePath))
-    {
-        if (fs::is_regular_file(fullFilePath))
-        {
-            FileInputStream* inputStream = new FileInputStream;
-            if (inputStream->OpenFileStream(fullFilePath.generic_string()))
-                return inputStream;
-
-            debug_assert(false);
-            delete inputStream;
-        }
-        gConsole.LogMessage(eLogMessage_Warning, "Fail to open file '%s'", fileName.c_str());
-        return nullptr;
-    }
-
-    // 3 wads
+    // 4 wads
     for (FileSystemArchive* currArchive: mResourceArchives)
     {
         if (!currArchive->ContainsResource(fileName))

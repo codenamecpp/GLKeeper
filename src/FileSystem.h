@@ -13,6 +13,7 @@ public:
     std::string mExecutablePath;
     std::string mDataPath;
     std::string mDungeonKeeperGameDataPath;
+    std::string mDungeonKeeperGameMapsPath;
     std::string mDungeonKeeperGameRootPath;
     std::string mDungeonKeeperGameTextureCacheDirPath;
     std::vector<FileSystemArchive*> mResourceArchives;

@@ -140,6 +140,7 @@ public:
 // terrain under the bridge
 enum eBridgeTerrain 
 {
+    eBridgeTerrain_Null,
     eBridgeTerrain_Water,
     eBridgeTerrain_Lava,
     eBridgeTerrain_COUNT
@@ -153,7 +154,7 @@ struct MapTileDefinition
 public:
     TerrainTypeID mTerrainType = TerrainType_Null;
     ePlayerID mOwnerIdentifier; // owner
-    eBridgeTerrain mTerrainUnderTheBridge;
+    eBridgeTerrain mTerrainUnderTheBridge = eBridgeTerrain_Null;
 };
 
 // terrain Type Definition

@@ -26,4 +26,15 @@ namespace cxx
         }
     }
 
+    // replace or add file extension (including dot symbol)
+    inline void path_set_extension(std::string& input_string, const std::string& file_extension)
+    {
+        auto dot_character_pos = input_string.find_last_of('.');
+        if (dot_character_pos != std::string::npos)
+        {
+            input_string.erase(dot_character_pos, input_string.length() - dot_character_pos);
+        }
+        input_string.append(file_extension);
+    }
+
 } // namespace cxx

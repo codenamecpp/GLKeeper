@@ -66,7 +66,7 @@ enum eComputerAI
     eComputerAI_Guardian,
     eComputerAI_ThickSkinned,
     eComputerAI_Paranoid,
-    ePlayerAIType_COUNT
+    eComputerAI_COUNT
 };
 
 decl_enum_strings(eComputerAI);
