@@ -3,6 +3,21 @@
 #include "GameDefs.h"
 #include "GameMapTile.h"
 
+// flood fill flags
+struct MapFloodFillFlags
+{
+public:
+    MapFloodFillFlags()
+        : mSameOwner(true) // default
+        , mSameBaseTerrain()
+    {
+    }
+public:
+    bool mSameOwner : 1; // match player id
+    bool mSameBaseTerrain : 1; // ignore room terrain type
+};
+
+// game map data
 class GameMapData final
 {
 public:
@@ -49,6 +64,17 @@ public:
     // @param tileLocation: Tile location
     // @param coord3d: Output world coordinate
     bool GetTileCenterCoord3d(const Point2D& tileLocation, glm::vec3& coord3d) const;
+
+    // flood fill adjacent tiles in 4 directions
+    // @param outputTiles: Result tile array including initial tile
+    // @param origin: Initial tile
+    // @param scanArea: Scanning bounds
+    // @param floodFillFlags: Flags
+    void FloodFill4(GameMapTiles& outputTiles, GameMapTile* origin, MapFloodFillFlags flags);
+    void FloodFill4(GameMapTiles& outputTiles, GameMapTile* origin, const Rect2D& scanArea, MapFloodFillFlags flags);
+
+private:
+    void ClearFloodFillCounter();
 
 private:
     std::vector<GameMapTile> mTilesArray;

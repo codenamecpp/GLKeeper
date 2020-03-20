@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "GameMapData.h"
 #include "randomizer.h"
+#include <stack>
 
 void GameMapData::Setup(const Size2D& mapDimensions, unsigned int randomSeed)
 {
@@ -97,4 +98,95 @@ bool GameMapData::IsWithinMap(const Point2D& tileLocation, eDirection direction)
     return (nextTilePosition.x > -1) && (nextTilePosition.y > -1) && 
         (nextTilePosition.x < mDimensions.x) && 
         (nextTilePosition.y < mDimensions.y); 
+}
+
+void GameMapData::FloodFill4(GameMapTiles& outputTiles, GameMapTile* origin, MapFloodFillFlags flags)
+{
+    Rect2D scanArea(0, 0, mDimensions.x, mDimensions.y);
+    FloodFill4(outputTiles, origin, scanArea, flags);
+}
+
+void GameMapData::FloodFill4(GameMapTiles& outputTiles, GameMapTile* origin, const Rect2D& scanArea, MapFloodFillFlags flags)
+{
+    // check conditions
+    if (origin == nullptr || scanArea.mSizeX < 1 || scanArea.mSizeY < 1)
+    {
+        debug_assert(false);
+        return;
+    }
+
+    outputTiles.clear();
+    outputTiles.reserve(25);
+
+    if (++mFloodFillCounter == 0)
+    {
+        ++mFloodFillCounter;
+        ClearFloodFillCounter();
+    }
+
+    // explore tiles
+    std::stack<GameMapTile*> explorationList;
+    explorationList.push(origin); 
+
+    while (!explorationList.empty())
+    {
+        GameMapTile* currentTile = explorationList.top();
+        explorationList.pop();
+
+        // already explored
+        if (currentTile->mFloodFillCounter == mFloodFillCounter)
+            continue;
+
+        // move tile to cleselist
+        currentTile->mFloodFillCounter = mFloodFillCounter;
+        GameMapTile* tilesToExplore[] = 
+        {
+            GetNeighbourTile(currentTile, eDirection_E),
+            GetNeighbourTile(currentTile, eDirection_N),
+            GetNeighbourTile(currentTile, eDirection_W),
+            GetNeighbourTile(currentTile, eDirection_S)
+        };
+
+        for (GameMapTile* tile: tilesToExplore)
+        {
+            if (!tile || tile->mFloodFillCounter == mFloodFillCounter) 
+            {
+                continue;
+            }
+
+            // bounds
+            if (tile->mTileLocation.x < scanArea.mX) continue;
+            if (tile->mTileLocation.y < scanArea.mY) continue;
+            if (tile->mTileLocation.x >= scanArea.mX + scanArea.mSizeX) continue;
+            if (tile->mTileLocation.y >= scanArea.mY + scanArea.mSizeY) continue;
+
+            bool acceptableTile = flags.mSameBaseTerrain ? 
+               (origin->GetBaseTerrain() == tile->GetBaseTerrain()) :
+               (origin->GetTerrain() == tile->GetTerrain());
+
+            if (acceptableTile && flags.mSameOwner)
+            {
+                TerrainDefinition* terrainDefinition = flags.mSameBaseTerrain ? tile->GetBaseTerrain() : tile->GetTerrain();
+                if (terrainDefinition->mIsOwnable)
+                {
+                    acceptableTile = tile->mOwnerId == origin->mOwnerId;
+                }
+            }
+
+            if (acceptableTile)
+            {
+                explorationList.push(tile);
+            }
+        }
+
+        outputTiles.push_back(currentTile);
+    }
+}
+
+void GameMapData::ClearFloodFillCounter()
+{
+    for (GameMapTile& currTile: mTilesArray)
+    {
+        currTile.mFloodFillCounter = 0;
+    }
 }

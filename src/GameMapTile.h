@@ -27,16 +27,17 @@ public:
     // reset mesh geometries for specific tile face
     // @param faceid: Face index
     void ClearTileMesh(eTileFace faceid);
-
-    // reset mesh geometries for all tile faces
     void ClearTileMesh();
+
+    // get current terrain type for tile
+    inline TerrainDefinition* GetTerrain() const { return mRoomTerrain ? mRoomTerrain : mBaseTerrain; }
+    inline TerrainDefinition* GetBaseTerrain() const { return mBaseTerrain; }
 
 public:
     Point2D mTileLocation; // logical tile location 2D
 
     TerrainDefinition* mBaseTerrain = nullptr; // used to determine base terrain type, cannot be null
     TerrainDefinition* mRoomTerrain = nullptr; // overrides base terrain with room specific terrain, optional
-    TerrainDefinition* mFogOfWarTerrain = nullptr; // overrides base and room terrain types when tile is hidden, optional
 
     ePlayerID mOwnerId = ePlayerID_Null;
 
