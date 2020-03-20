@@ -341,7 +341,7 @@ struct GameObjectDefinition
 {
 public:
     GameObjectDefinition() 
-        : mObjectClass(GameObjectClass_Null)
+        : mObjectClass(GameObjectType_Null)
         , mDieOverTime()
         , mDieOverTimeIfNotInRoom()
         , mTypeSpecial()
@@ -378,7 +378,7 @@ public:
     }
 
 public:
-    GameObjectClassID mObjectClass;
+    GameObjectTypeID mObjectClass;
     std::string mObjectName; 
     ArtResource mResourceMesh; 
     ArtResource mResourceGuiIcon;
@@ -433,6 +433,10 @@ struct ScenarioVariables
 {
 public:
     // todo
+
+    inline void Clear()
+    {
+    }
 };
 
 // defines creature properties
@@ -440,13 +444,13 @@ class CreatureDefinition
 {
 public:
     CreatureDefinition()
-        : mCreatureClass(CreatureClass_Null)
-        , mCloneCreatureId(CreatureClass_Null)
+        : mCreatureClass(CreatureType_Null)
+        , mCloneCreatureId(CreatureType_Null)
     {
     }
 
 public:
-    CreatureClassID mCreatureClass;
+    CreatureTypeID mCreatureClass;
     std::string mCreatureName;
 	ArtResource mAnimationResources[eCreatureAnimation_COUNT];
     ArtResource mIcon1Resource;
@@ -480,7 +484,7 @@ public:
     float mHungerRate;
     int mTimeSleep;
     int mTimeAwake;
-    CreatureClassID mCloneCreatureId;
+    CreatureTypeID mCloneCreatureId;
     glm::vec3 mAnimationOffset;
     glm::vec3 mAnimationOffsets[7];
     eCreatureJobClass mCreatureJobClass;
@@ -528,11 +532,39 @@ public:
         : mLevelDimensionX()
         , mLevelDimensionY()
         , mLavaTerrainType(TerrainType_Null)
-        , mWaterTerrainType()
-        , mPlayerColouredPathTerrainType()
-        , mPlayerColouredWallTerrainType()
-        , mFogOfWarTerrainType()
+        , mWaterTerrainType(TerrainType_Null)
+        , mPlayerColouredPathTerrainType(TerrainType_Null)
+        , mPlayerColouredWallTerrainType(TerrainType_Null)
+        , mFogOfWarTerrainType(TerrainType_Null)
     {
+    }
+
+    inline void Clear()
+    {
+        mLevelName.clear();
+        mLevelDescription.clear();
+        mLevelAuthor.clear();
+        mLevelEmail.clear();
+        mLevelInformation.clear();
+
+        mLevelDimensionX = 0;
+        mLevelDimensionY = 0;
+
+        mVariables.Clear();
+
+        mLavaTerrainType                = TerrainType_Null;
+        mWaterTerrainType               = TerrainType_Null;
+        mPlayerColouredPathTerrainType  = TerrainType_Null;
+        mPlayerColouredWallTerrainType  = TerrainType_Null;
+        mFogOfWarTerrainType            = TerrainType_Null;
+
+        mPlayerDefs.clear();
+        mTerrainDefs.clear();
+        mRoomDefs.clear();
+        mGameObjectDefs.clear();
+        mRoomByTerrainType.clear();
+        mMapTiles.clear();
+        mCreatureDefs.clear();
     }
 
 public:
@@ -552,7 +584,7 @@ public:
     std::vector<PlayerDefinition> mPlayerDefs; // first entry is dummy
     std::vector<TerrainDefinition> mTerrainDefs; // first entry is dummy
     std::vector<RoomDefinition> mRoomDefs; // first entry is dummy
-    std::vector<GameObjectDefinition> mObjectDefs; // first entry is dummy
+    std::vector<GameObjectDefinition> mGameObjectDefs; // first entry is dummy
     std::vector<RoomTypeID> mRoomByTerrainType; // map room types to terrain types
     std::vector<MapTileDefinition> mMapTiles; // tiles matrix
     std::vector<CreatureDefinition> mCreatureDefs; // first entry is dummy

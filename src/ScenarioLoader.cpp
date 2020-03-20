@@ -721,16 +721,16 @@ bool ScenarioLoader::ReadObjectDefinition(BinaryInputStream* fileStream, GameObj
 
 bool ScenarioLoader::ReadObjectsData(BinaryInputStream* fileStream, int numElements)
 {
-    mScenarioData.mObjectDefs.resize(numElements + 1);
-    mScenarioData.mObjectDefs[0] = {}; // dummy element
+    mScenarioData.mGameObjectDefs.resize(numElements + 1);
+    mScenarioData.mGameObjectDefs[0] = {}; // dummy element
 
     // read definitions
     for (int iobject = 1; iobject < numElements + 1; ++iobject)
     {
-        if (!ReadObjectDefinition(fileStream, mScenarioData.mObjectDefs[iobject]))
+        if (!ReadObjectDefinition(fileStream, mScenarioData.mGameObjectDefs[iobject]))
             return false;
 
-        bool correctId = (mScenarioData.mObjectDefs[iobject].mObjectClass == iobject);
+        bool correctId = (mScenarioData.mGameObjectDefs[iobject].mObjectClass == iobject);
         debug_assert(correctId);
     }
     return true;
@@ -1584,6 +1584,8 @@ void ScenarioLoader::FixTerrainResources()
 
 bool ScenarioLoader::LoadScenarioData(const std::string& scenario)
 {
+    mScenarioData.Clear();
+
     std::string scenarioName = scenario;
     cxx::path_remove_extension(scenarioName);
 

@@ -14,11 +14,11 @@ const TerrainTypeID TerrainType_Null = 0; // invalid identifier
 using RoomTypeID = unsigned int; // for sake of flexibility, do not rely on specific id
 const RoomTypeID RoomType_Null = 0; // invalid identifier
 
-using GameObjectClassID = unsigned int; // for sake of flexibility, do not rely on specific id
-const GameObjectClassID GameObjectClass_Null = 0; // invalid identifier
+using GameObjectTypeID = unsigned int; // for sake of flexibility, do not rely on specific id
+const GameObjectTypeID GameObjectType_Null = 0; // invalid identifier
 
-using CreatureClassID = unsigned int;
-const CreatureClassID CreatureClass_Null = 0; // invalid identifier
+using CreatureTypeID = unsigned int;
+const CreatureTypeID CreatureType_Null = 0; // invalid identifier
 
 // forwards
 class GenericRoom;
