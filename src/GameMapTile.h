@@ -3,6 +3,9 @@
 #include "GameDefs.h"
 #include "ScenarioDefs.h"
 
+// forwards
+struct RoomWallSection;
+
 // frequently used tile rotations
 // 0: -90 degrees
 // 1: +90 degrees
@@ -18,8 +21,31 @@ extern const glm::mat3 g_TileRotations[5];
 // 3: BOTTOM-LEFT (SW)
 extern const glm::vec3 g_SubTileTranslations[4];
 
+// terrain block geometry
+struct TileFaceMesh
+{
+public:
+    RenderMaterial mMaterial;
+
+    std::vector<glm::ivec3> mTriangles;
+    std::vector<Vertex3D_Terrain> mVertices;
+};
+
+// block face data
+struct TileFaceData 
+{
+public:
+    std::vector<TileFaceMesh> mMeshArray;
+
+    // specified if tile face is part of the room
+    // only defined for sides N, E, S, W 
+    RoomWallSection* mWallSectionData = nullptr;                                               
+
+    bool mInvalidated = false; // face geometry is dirty and must be rebuilt
+};
+
 // gamemap block data
-class GameMapTile final
+class GameMapTile
 {
 public:
     GameMapTile();
@@ -43,6 +69,7 @@ public:
 
     GenericRoom* mRoomInstance = nullptr; // room built on tile
     TileFaceData mFaces[eTileFace_COUNT];
+    GameMapTile* mNeighbours[eDirection_COUNT];
 
     unsigned int mRandomValue = 0; // effects on visuals only
     unsigned int mFloodFillCounter = 0; // increments on each flood fill operation

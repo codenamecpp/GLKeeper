@@ -257,6 +257,7 @@
     <ClInclude Include="System.h" />
     <ClInclude Include="SystemSettings.h" />
     <ClInclude Include="TerrainMesh.h" />
+    <ClInclude Include="TerrainMeshBuilder.h" />
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="Texture2DAnimation.h" />
     <ClInclude Include="Texture2D_Image.h" />
@@ -324,9 +325,11 @@
     <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="SceneRenderList.cpp" />
     <ClCompile Include="stb_image.cpp" />
+    <ClCompile Include="string_utils.cpp" />
     <ClCompile Include="System.cpp" />
     <ClCompile Include="SystemSettings.cpp" />
     <ClCompile Include="TerrainMesh.cpp" />
+    <ClCompile Include="TerrainMeshBuilder.cpp" />
     <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="Texture2DAnimation.cpp" />
     <ClCompile Include="Texture2D_Image.cpp" />

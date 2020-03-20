@@ -8,22 +8,26 @@
 #define TERRAIN_FLOOR_LEVEL     1.0f
 #define TERRAIN_BLOCK_HEIGHT    1.0f
 
-using TerrainTypeID = unsigned int; // for sake of flexibility, do not rely on specific id
-const TerrainTypeID TerrainType_Null = 0; // invalid identifier
-
-using RoomTypeID = unsigned int; // for sake of flexibility, do not rely on specific id
-const RoomTypeID RoomType_Null = 0; // invalid identifier
-
-using GameObjectTypeID = unsigned int; // for sake of flexibility, do not rely on specific id
-const GameObjectTypeID GameObjectType_Null = 0; // invalid identifier
-
-using CreatureTypeID = unsigned int;
-const CreatureTypeID CreatureType_Null = 0; // invalid identifier
-
 // forwards
 class GenericRoom;
 class GameMapData;
 class GameMapTile;
+
+// terrain type identifier
+using TerrainTypeID = unsigned int; // for sake of flexibility, do not rely on specific id
+const TerrainTypeID TerrainType_Null = 0; // invalid identifier
+
+// room type identifier
+using RoomTypeID = unsigned int; // for sake of flexibility, do not rely on specific id
+const RoomTypeID RoomType_Null = 0; // invalid identifier
+
+// game object type identifier
+using GameObjectTypeID = unsigned int; // for sake of flexibility, do not rely on specific id
+const GameObjectTypeID GameObjectType_Null = 0; // invalid identifier
+
+// create type identifier
+using CreatureTypeID = unsigned int;
+const CreatureTypeID CreatureType_Null = 0; // invalid identifier
 
 // Array of map tiles
 using GameMapTiles = std::vector<GameMapTile*>;
@@ -239,22 +243,3 @@ inline bool IsDiagonalDirection(eDirection direction)
 {
     return direction == eDirection_NE || direction == eDirection_SE || direction == eDirection_SW || direction == eDirection_NW;
 }
-
-// terrain block geometry
-struct TerrainTileMesh
-{
-public:
-    RenderMaterial mMaterial;
-
-    std::vector<glm::ivec3> mTriangles;
-    std::vector<Vertex3D_Terrain> mVertices;
-};
-
-// block face data
-struct TileFaceData 
-{
-public:
-    std::vector<TerrainTileMesh> mMeshArray;
-
-    bool mInvalidated = false; // face geometry is dirty and must be rebuilt
-};

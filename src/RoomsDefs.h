@@ -24,3 +24,10 @@
 #define ROOM_NAME_HERO_STONE_BRIDGE "Hero Stone Bridge"
 #define ROOM_NAME_HERO_GATE_3X1 "Hero Gate [ 3x1 ]"
 #define ROOM_NAME_HERO_PORTAL "Hero Portal"
+
+// wall section which belongs to room
+struct RoomWallSection
+{
+public:
+
+};

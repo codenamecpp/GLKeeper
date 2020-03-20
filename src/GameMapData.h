@@ -18,7 +18,7 @@ public:
 };
 
 // game map data
-class GameMapData final
+class GameMapData
 {
 public:
     // readonly
@@ -33,20 +33,10 @@ public:
     // @param coordx, coordz: World coordinates
     GameMapTile* GetTileFromCoord3d(const glm::vec3& coord);
 
-    // get neighbour tile for direction
-    // @param mapTile: Tile
-    // @param direction: Neighbour tile direction
-    GameMapTile* GetNeighbourTile(const GameMapTile* mapTile, eDirection direction);
-
     // get map tile by logical position
     // @param tileLocation: Tile logical position
     GameMapTile* GetMapTile(const Point2D& tileLocation);
     GameMapTile* GetMapTile(const Point2D& tileLocation, eDirection direction);
-
-    // test whether tile has neighbour at specified direction
-    // @param mapTile: Tile
-    // @param direction: Neighbour tile direction
-    bool IsTileHasNeighbour(const GameMapTile* mapTile, eDirection direction) const;
 
     // test whether tile position is within map
     // @param tileLocation: Tile logical position

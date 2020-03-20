@@ -2,6 +2,7 @@
 
 #include "ScenarioDefs.h"
 #include "GameMapData.h"
+#include "TerrainMeshBuilder.h"
 
 // game world state
 class GameWorld: public cxx::noncopyable
@@ -10,6 +11,7 @@ public:
     // readonly
     ScenarioData mScenarioData;
     GameMapData mMapData;
+    TerrainMeshBuilder mTerrainMeshBuilder;
 
 public:
     

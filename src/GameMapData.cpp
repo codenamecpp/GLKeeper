@@ -24,6 +24,15 @@ void GameMapData::Setup(const Size2D& mapDimensions, unsigned int randomSeed)
         currentTile.mRandomValue = randomize.generate_int();
         currentTile.mTileLocation.x = tilex;
         currentTile.mTileLocation.y = tiley;
+        // setup neighbours
+        currentTile.mNeighbours[eDirection_NW] = GetMapTile(currentTile.mTileLocation, eDirection_NW);
+        currentTile.mNeighbours[eDirection_NE] = GetMapTile(currentTile.mTileLocation, eDirection_NE);
+        currentTile.mNeighbours[eDirection_N]  = GetMapTile(currentTile.mTileLocation, eDirection_N);
+        currentTile.mNeighbours[eDirection_W]  = GetMapTile(currentTile.mTileLocation, eDirection_W);
+        currentTile.mNeighbours[eDirection_E]  = GetMapTile(currentTile.mTileLocation, eDirection_E);
+        currentTile.mNeighbours[eDirection_SW] = GetMapTile(currentTile.mTileLocation, eDirection_SW);
+        currentTile.mNeighbours[eDirection_SE] = GetMapTile(currentTile.mTileLocation, eDirection_SE);
+        currentTile.mNeighbours[eDirection_S]  = GetMapTile(currentTile.mTileLocation, eDirection_S);
     }
 
     for (GameMapTile& currTile: mTilesArray)
@@ -49,13 +58,6 @@ GameMapTile* GameMapData::GetTileFromCoord3d(const glm::vec3& coord)
     return GetMapTile(tileLocation);
 }
 
-GameMapTile* GameMapData::GetNeighbourTile(const GameMapTile* mapTile, eDirection direction)
-{
-    debug_assert(mapTile);
-
-    return GetMapTile(mapTile->mTileLocation, direction);
-}
-
 GameMapTile* GameMapData::GetMapTile(const Point2D& tileLocation)
 {
     if (IsWithinMap(tileLocation))
@@ -69,13 +71,6 @@ GameMapTile* GameMapData::GetMapTile(const Point2D& tileLocation, eDirection dir
     Point2D directionVector = GetDirectionVector(direction);
 
     return GetMapTile(tileLocation + directionVector);
-}
-
-bool GameMapData::IsTileHasNeighbour(const GameMapTile* mapTile, eDirection direction) const
-{
-    debug_assert(mapTile);
-
-    return IsWithinMap(mapTile->mTileLocation, direction);
 }
 
 bool GameMapData::GetTileCenterCoord3d(const Point2D& tileLocation, glm::vec3& coord3d) const
@@ -141,10 +136,10 @@ void GameMapData::FloodFill4(GameMapTiles& outputTiles, GameMapTile* origin, con
         currentTile->mFloodFillCounter = mFloodFillCounter;
         GameMapTile* tilesToExplore[] = 
         {
-            GetNeighbourTile(currentTile, eDirection_E),
-            GetNeighbourTile(currentTile, eDirection_N),
-            GetNeighbourTile(currentTile, eDirection_W),
-            GetNeighbourTile(currentTile, eDirection_S)
+            currentTile->mNeighbours[eDirection_E],
+            currentTile->mNeighbours[eDirection_N],
+            currentTile->mNeighbours[eDirection_W],
+            currentTile->mNeighbours[eDirection_S],
         };
 
         for (GameMapTile* tile: tilesToExplore)

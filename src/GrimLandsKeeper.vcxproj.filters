@@ -375,6 +375,9 @@
     <ClInclude Include="ScenarioLoader.h">
       <Filter>Game</Filter>
     </ClInclude>
+    <ClInclude Include="TerrainMeshBuilder.h">
+      <Filter>Game\World</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -555,6 +558,12 @@
     </ClCompile>
     <ClCompile Include="ScenarioLoader.cpp">
       <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainMeshBuilder.cpp">
+      <Filter>Game\World</Filter>
+    </ClCompile>
+    <ClCompile Include="string_utils.cpp">
+      <Filter>Lib</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
