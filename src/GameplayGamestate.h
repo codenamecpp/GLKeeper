@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GenericGamestate.h"
+#include "OrbitCameraControl.h"
 
 // in-game gamestate
 class GameplayGamestate: public GenericGamestate
@@ -25,5 +26,5 @@ public:
     void HandleInputEvent(KeyCharEvent& inputEvent) override;
 
 private:
-
+    OrbitCameraControl mOrbitCameraControl;
 };

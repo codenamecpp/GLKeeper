@@ -1,5 +1,6 @@
 #pragma once
 
+#include "GameDefs.h"
 #include "SceneDefs.h"
 
 // dungeon terrain manager
@@ -11,10 +12,15 @@ public:
     bool Initialize();
     void Deinit();
 
+    // rebuild terrain mesh for invalidated tiles
+    void UpdateTerrainMesh();
+
 private:
     void CreateTerrainMeshList();
     void DestroyTerrainMeshList();
+    void BuildFullTerrainMesh();
 
 private:
     std::vector<TerrainMesh*> mTerrainMeshArray;
+    TilesArray mDirtyTilesArray;
 };

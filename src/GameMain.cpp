@@ -5,6 +5,7 @@
 #include "GenericGamestate.h"
 #include "ConsoleWindow.h"
 #include "System.h"
+#include "GameWorld.h"
 
 GameMain gGameMain;
 
@@ -19,13 +20,19 @@ bool GameMain::Initialize()
     }
 
     // set initial gamestate
-    SwitchToGameState(&mMeshViewGamestate);
+    //SwitchToGameState(&mMeshViewGamestate);
+
+    gGameWorld.InitializeWorld("temp");
+
+    SwitchToGameState(&mGameplayGamestate);
 
     return true;
 }
 
 void GameMain::Deinit()
 {
+    gGameWorld.Deinit();
+
     SwitchToGameState(nullptr);
 
     gRenderScene.Deinit();

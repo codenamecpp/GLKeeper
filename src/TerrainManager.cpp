@@ -19,6 +19,7 @@ bool TerrainManager::Initialize()
     }
 
     CreateTerrainMeshList();
+    BuildFullTerrainMesh();
 
     return true;
 }
@@ -26,6 +27,8 @@ bool TerrainManager::Initialize()
 void TerrainManager::Deinit()
 {
     DestroyTerrainMeshList();
+
+    mDirtyTilesArray.clear();
 }
 
 void TerrainManager::CreateTerrainMeshList()
@@ -36,7 +39,16 @@ void TerrainManager::CreateTerrainMeshList()
     int mapsizey = gGameWorld.mMapData.mDimensions.y;
 
     int numMeshesPerWidth = mapsizex / TerrainMeshSizeTiles;
+    if ((mapsizex % TerrainMeshSizeTiles) > 0)
+    {
+        ++numMeshesPerWidth;
+    }
+
     int numMeshesPerHeight = mapsizey / TerrainMeshSizeTiles;
+    if ((mapsizey % TerrainMeshSizeTiles) > 0)
+    {
+        ++numMeshesPerHeight;
+    }
 
     for (int imeshy = 0; imeshy < numMeshesPerHeight; ++imeshy)
     for (int imeshx = 0; imeshx < numMeshesPerWidth; ++imeshx)
@@ -70,4 +82,87 @@ void TerrainManager::DestroyTerrainMeshList()
         gRenderScene.DestroyObject(currTerrainMesh);
     }
     mTerrainMeshArray.clear();
+}
+
+void TerrainManager::UpdateTerrainMesh()
+{
+    if (mDirtyTilesArray.empty())
+        return;
+
+    std::set<GenericRoom*> invalidateRooms;
+
+    // build terrain tiles and collect invalidated rooms
+    for (MapTile* currentTile: mDirtyTilesArray)
+    {
+        if (currentTile->mRoomInstance)
+        {
+            invalidateRooms.insert(currentTile->mRoomInstance);
+        }
+
+        // traverse each invalidated tile face
+        for (TileFaceData& currTileFace: currentTile->mFaces)
+        {
+            // rooms should rebuild their walls
+            //if (GenericRoom* invalidateRoom = currTileFace.mWallSectionData)
+            //{
+            //    invalidateRooms.insert(invalidateRoom);
+            //}
+            // todo
+
+        }
+        // force rebuild mesh
+        gGameWorld.mDungeonBuilder.BuildTileMesh(currentTile);
+    }
+
+    // ask rooms rebuild themselves
+    for (GenericRoom* currentRoom: invalidateRooms)
+    {
+        //currentRoom->RefreshGeometries(false); // todo
+    }
+
+    // todo
+    // refresh heightfield last
+    //for (GameMapTile* currentTile: mInvalidateTilesList)
+    //{
+    //    gWorldState.mTerrainHeightField.UpdateHeights(currentTile);
+    //    // reset invalidation flag
+    //    for (TileFaceData& tileface: currentTile->mFaces)
+    //    {
+    //        tileface.mInvalidated = false;
+    //    }
+    //}
+
+    // update terrain meshes
+    for (TerrainMesh* currTerrainMesh: mTerrainMeshArray)
+    {
+        currTerrainMesh->UpdateMesh();
+    }
+
+    mDirtyTilesArray.clear();
+}
+
+void TerrainManager::BuildFullTerrainMesh()
+{
+    mDirtyTilesArray.clear();
+
+    int dimsx = gGameWorld.mMapData.mDimensions.x;
+    int dimsy = gGameWorld.mMapData.mDimensions.y;
+
+    // build terrain tiles and collect invalidated rooms
+    for (int tiley = 0; tiley < dimsy; ++tiley)
+    for (int tilex = 0; tilex < dimsx; ++tilex)
+    {
+        Point2D currTilePosition (tilex, tiley);
+
+        MapTile* currentTile = gGameWorld.mMapData.GetMapTile(currTilePosition);
+        debug_assert(currentTile);
+
+        gGameWorld.mDungeonBuilder.BuildTileMesh(currentTile);
+    }
+
+    // update terrain meshes
+    for (TerrainMesh* currTerrainMesh: mTerrainMeshArray)
+    {
+        currTerrainMesh->UpdateMesh();
+    }
 }

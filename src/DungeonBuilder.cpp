@@ -209,7 +209,7 @@ void DungeonBuilder::ConstructTerrainWall(MapTile* tile, eTileFace faceid)
     // test side wall is required
     if (ShouldBuildSideWall(tile, faceid))
     {
-        ModelAsset* asset = gModelsManager.FindModelAsset(terrain->mResourceSide.mResourceName);
+        ModelAsset* asset = gModelsManager.LoadModelAsset(terrain->mResourceSide.mResourceName);
         debug_assert(asset);
         ExtendTileMesh(tile, faceid, asset, rotation);
     }
@@ -248,7 +248,7 @@ void DungeonBuilder::ConstructTerrainFloor(MapTile* tile)
     // construct terrain normal
     else
     {
-        ModelAsset* asset = gModelsManager.FindModelAsset(cellResource->mResourceName);
+        ModelAsset* asset = gModelsManager.LoadModelAsset(cellResource->mResourceName);
         debug_assert(asset);
         ExtendTileMesh(tile, eTileFace_Floor, asset);
     }
@@ -323,11 +323,11 @@ void DungeonBuilder::ConstructTerrainQuad(MapTile* tile, ArtResource* artResourc
     };
 
     // pieces
-    ModelAsset* piece0 = gModelsManager.FindModelAsset(meshName + "0");
-    ModelAsset* piece1 = gModelsManager.FindModelAsset(meshName + "1");
-    ModelAsset* piece2 = gModelsManager.FindModelAsset(meshName + "2");
-    ModelAsset* piece3 = gModelsManager.FindModelAsset(meshName + "3");
-    ModelAsset* piece4 = gModelsManager.FindModelAsset(meshName + "4");
+    ModelAsset* piece0 = gModelsManager.LoadModelAsset(meshName + "0");
+    ModelAsset* piece1 = gModelsManager.LoadModelAsset(meshName + "1");
+    ModelAsset* piece2 = gModelsManager.LoadModelAsset(meshName + "2");
+    ModelAsset* piece3 = gModelsManager.LoadModelAsset(meshName + "3");
+    ModelAsset* piece4 = gModelsManager.LoadModelAsset(meshName + "4");
     ModelAsset* pieces[8] = 
     {
         piece1, piece4, piece1, piece4, // 1, 4, 0, 4
@@ -376,10 +376,10 @@ void DungeonBuilder::ConstructTerrainWaterBed(MapTile* tile, ArtResource* artRes
     const unsigned char cornersBits = bits & 0xF0U;
     const unsigned char sidesBits = bits & 0x0FU;
 
-    ModelAsset* piece0 = gModelsManager.FindModelAsset(artResource->mResourceName + "0");
-    ModelAsset* piece1 = gModelsManager.FindModelAsset(artResource->mResourceName + "1");
-    ModelAsset* piece2 = gModelsManager.FindModelAsset(artResource->mResourceName + "2");
-    ModelAsset* piece3 = gModelsManager.FindModelAsset(artResource->mResourceName + "3");
+    ModelAsset* piece0 = gModelsManager.LoadModelAsset(artResource->mResourceName + "0");
+    ModelAsset* piece1 = gModelsManager.LoadModelAsset(artResource->mResourceName + "1");
+    ModelAsset* piece2 = gModelsManager.LoadModelAsset(artResource->mResourceName + "2");
+    ModelAsset* piece3 = gModelsManager.LoadModelAsset(artResource->mResourceName + "3");
 
     // simplest one
     if (bits == 0)
@@ -490,10 +490,10 @@ void DungeonBuilder::ConstructTerrainWaterBed(MapTile* tile, ArtResource* artRes
         (NeighbourHasSameBaseTerrain(tile, eDirection_W) ? 0x01 : 0)
     };
 
-    ModelAsset* piece4 = gModelsManager.FindModelAsset(artResource->mResourceName + "4");
-    ModelAsset* piece5 = gModelsManager.FindModelAsset(artResource->mResourceName + "5");
-    ModelAsset* piece6 = gModelsManager.FindModelAsset(artResource->mResourceName + "6");
-    ModelAsset* piece7 = gModelsManager.FindModelAsset(artResource->mResourceName + "7");
+    ModelAsset* piece4 = gModelsManager.LoadModelAsset(artResource->mResourceName + "4");
+    ModelAsset* piece5 = gModelsManager.LoadModelAsset(artResource->mResourceName + "5");
+    ModelAsset* piece6 = gModelsManager.LoadModelAsset(artResource->mResourceName + "6");
+    ModelAsset* piece7 = gModelsManager.LoadModelAsset(artResource->mResourceName + "7");
     ModelAsset* geoIndices[8] = {
         piece5, piece4, piece5, piece4, 
         piece4, piece6, piece4, piece7

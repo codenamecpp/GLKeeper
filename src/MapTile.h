@@ -39,9 +39,7 @@ public:
 
     // specified if tile face is part of the room
     // only defined for sides N, E, S, W 
-    RoomWallSection* mWallSectionData = nullptr;                                               
-
-    bool mInvalidated = false; // face geometry is dirty and must be rebuilt
+    RoomWallSection* mWallSectionData = nullptr;
 };
 
 // gamemap block data
