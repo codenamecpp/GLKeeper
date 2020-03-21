@@ -34,6 +34,20 @@ public:
             mEnvMappingTexture != other.mEnvMappingTexture; 
     }
 
+    inline bool operator < (const RenderMaterial& other) const
+    {
+        if (mDiffuseTexture != other.mDiffuseTexture)
+            return mDiffuseTexture < other.mDiffuseTexture;
+
+        if (mEnvMappingTexture != other.mEnvMappingTexture)
+            return mEnvMappingTexture < other.mEnvMappingTexture;
+
+        if (mRenderStates != other.mRenderStates)
+            return mRenderStates < other.mRenderStates;
+
+        return false;
+    }
+
 public:
     Texture2D* mDiffuseTexture = nullptr;
     Texture2D* mEnvMappingTexture = nullptr;

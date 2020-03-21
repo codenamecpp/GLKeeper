@@ -1,12 +1,12 @@
 #include "pch.h"
-#include "TerrainMeshBuilder.h"
+#include "DungeonBuilder.h"
 #include "MapTile.h"
 #include "ModelAsset.h"
 #include "TexturesManager.h"
 #include "ModelAssetsManager.h"
 #include "GameWorld.h"
 
-void TerrainMeshBuilder::ExtendTileMesh(MapTile* tile, eTileFace faceid, ModelAsset* asset, const glm::mat3* rot, const glm::vec3* trans)
+void DungeonBuilder::ExtendTileMesh(MapTile* tile, eTileFace faceid, ModelAsset* asset, const glm::mat3* rot, const glm::vec3* trans)
 {
     debug_assert(tile);
     debug_assert(asset);
@@ -136,7 +136,7 @@ void TerrainMeshBuilder::ExtendTileMesh(MapTile* tile, eTileFace faceid, ModelAs
     }
 }
 
-void TerrainMeshBuilder::BuildTileMesh(MapTile* tile)
+void DungeonBuilder::BuildTileMesh(MapTile* tile)
 {
     debug_assert(tile);
     tile->ClearTileMesh();
@@ -152,7 +152,7 @@ void TerrainMeshBuilder::BuildTileMesh(MapTile* tile)
     // todo: ceiling
 }
 
-void TerrainMeshBuilder::BuildTileMesh(MapTile* tile, eTileFace faceid)
+void DungeonBuilder::BuildTileMesh(MapTile* tile, eTileFace faceid)
 {
     tile->ClearTileMesh(faceid);
 
@@ -174,7 +174,7 @@ void TerrainMeshBuilder::BuildTileMesh(MapTile* tile, eTileFace faceid)
     // todo: ceiling
 }
 
-void TerrainMeshBuilder::ConstructTerrainWalls(MapTile* tile)
+void DungeonBuilder::ConstructTerrainWalls(MapTile* tile)
 {
     for (eTileFace faceid: {eTileFace_SideN, eTileFace_SideE, eTileFace_SideS, eTileFace_SideW})
     {
@@ -182,7 +182,7 @@ void TerrainMeshBuilder::ConstructTerrainWalls(MapTile* tile)
     }
 }
 
-void TerrainMeshBuilder::ConstructTerrainWall(MapTile* tile, eTileFace faceid)
+void DungeonBuilder::ConstructTerrainWall(MapTile* tile, eTileFace faceid)
 {
     const glm::mat3* rotation = nullptr;
     switch (faceid)
@@ -215,7 +215,7 @@ void TerrainMeshBuilder::ConstructTerrainWall(MapTile* tile, eTileFace faceid)
     }
 }
 
-void TerrainMeshBuilder::ConstructTerrainFloor(MapTile* tile)
+void DungeonBuilder::ConstructTerrainFloor(MapTile* tile)
 {
     TerrainDefinition* terrainDef = tile->GetTerrain();
 
@@ -254,7 +254,7 @@ void TerrainMeshBuilder::ConstructTerrainFloor(MapTile* tile)
     }
 }
 
-void TerrainMeshBuilder::ConstructTerrainQuad(MapTile* tile, ArtResource* artResource)
+void DungeonBuilder::ConstructTerrainQuad(MapTile* tile, ArtResource* artResource)
 {
     std::string meshName = artResource->mResourceName;
 
@@ -340,7 +340,7 @@ void TerrainMeshBuilder::ConstructTerrainQuad(MapTile* tile, ArtResource* artRes
     }
 }
 
-void TerrainMeshBuilder::ConstructTerrainWaterBed(MapTile* tile, ArtResource* artResource)
+void DungeonBuilder::ConstructTerrainWaterBed(MapTile* tile, ArtResource* artResource)
 {
     const glm::mat3* rotations[] =
     {
@@ -514,7 +514,7 @@ void TerrainMeshBuilder::ConstructTerrainWaterBed(MapTile* tile, ArtResource* ar
     }
 }
 
-bool TerrainMeshBuilder::ShouldBuildSideWall(MapTile* tile, eTileFace faceid) const
+bool DungeonBuilder::ShouldBuildSideWall(MapTile* tile, eTileFace faceid) const
 {
     return false;// todo
     //if (const GameMapTile* neighbour = mapTile->mNeighbours[direction])
@@ -529,7 +529,7 @@ bool TerrainMeshBuilder::ShouldBuildSideWall(MapTile* tile, eTileFace faceid) co
     return true;
 }
 
-bool TerrainMeshBuilder::NeighbourTileSolid(MapTile* tile, eDirection direction) const
+bool DungeonBuilder::NeighbourTileSolid(MapTile* tile, eDirection direction) const
 {
     if (MapTile* neighbourTile = tile->mNeighbours[direction])
     {
@@ -539,7 +539,7 @@ bool TerrainMeshBuilder::NeighbourTileSolid(MapTile* tile, eDirection direction)
     return false;
 }
 
-bool TerrainMeshBuilder::NeighbourHasSameTerrain(MapTile* tile, eDirection direction) const
+bool DungeonBuilder::NeighbourHasSameTerrain(MapTile* tile, eDirection direction) const
 {
     if (MapTile* neighbourTile = tile->mNeighbours[direction])
     {
@@ -548,7 +548,7 @@ bool TerrainMeshBuilder::NeighbourHasSameTerrain(MapTile* tile, eDirection direc
     return false;
 }
 
-bool TerrainMeshBuilder::NeighbourHasSameBaseTerrain(MapTile* tile, eDirection direction) const
+bool DungeonBuilder::NeighbourHasSameBaseTerrain(MapTile* tile, eDirection direction) const
 {
     if (MapTile* neighbourTile = tile->mNeighbours[direction])
     {

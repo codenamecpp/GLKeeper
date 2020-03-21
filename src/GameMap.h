@@ -18,7 +18,7 @@ public:
 };
 
 // game map data
-class MapData
+class GameMap
 {
 public:
     // readonly

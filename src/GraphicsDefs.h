@@ -443,7 +443,7 @@ enum ePolygonFillMode : unsigned char
 decl_enum_strings(ePolygonFillMode);
 
 // defines render states
-struct RenderStates
+union RenderStates
 {
 public:
     RenderStates()
@@ -452,9 +452,12 @@ public:
         , mIsDepthTestEnabled(true)
         , mIsFaceCullingEnabled(true)
         , mIsAlphaBlendEnabled() // is disabled by default, do not draw dungeon geometry with it
+        , mPolygonFillMode(ePolygonFillMode_Solid)
+        , mBlendingMode(eBlendingMode_Alpha)
+        , mCullingMode(eCullingMode_Back)
+        , mDepthFunc(eDepthTestFunc_LessEqual)
     {
     }
-
     // get default render states for ui drawing
     static RenderStates GetForUI()
     {
@@ -465,32 +468,33 @@ public:
         states.mIsAlphaBlendEnabled = true;
         return states;
     }
+    // comparsion operators
+    inline bool operator == (const RenderStates& renderStates) const { return mSortKey == renderStates.mSortKey; }
+    inline bool operator != (const RenderStates& renderStates) const { return mSortKey != renderStates.mSortKey; }
+    inline bool operator < (const RenderStates& renderStates) const { return mSortKey < renderStates.mSortKey; }
 
 public:
-    // polygon fill mode state
-    ePolygonFillMode mPolygonFillMode = ePolygonFillMode_Solid;
 
-    // blend mode state
-    eBlendingMode mBlendingMode = eBlendingMode_Alpha;
+    struct
+    {
+        // render state parameters
+        ePolygonFillMode mPolygonFillMode;
+        eBlendingMode mBlendingMode; 
+        eCullingMode mCullingMode;
+        eDepthTestFunc mDepthFunc;
 
-    // cull mode state
-    eCullingMode mCullingMode = eCullingMode_Back;
+        // render state flags
+        bool mIsAlphaBlendEnabled : 1;
+        bool mIsColorWriteEnabled : 1;
+        bool mIsDepthWriteEnabled : 1;
+        bool mIsDepthTestEnabled : 1;
+        bool mIsFaceCullingEnabled : 1;
+    };
 
-    // depth func state
-    eDepthTestFunc mDepthFunc = eDepthTestFunc_LessEqual;
-
-    // state flags
-    bool mIsAlphaBlendEnabled : 1;
-    bool mIsColorWriteEnabled : 1;
-    bool mIsDepthWriteEnabled : 1;
-    bool mIsDepthTestEnabled : 1;
-    bool mIsFaceCullingEnabled : 1;
+    std::uint64_t mSortKey;
 };
 
 const unsigned int Sizeof_RenderStates = sizeof(RenderStates);
-
-inline bool operator == (const RenderStates& a, const RenderStates& b) { return ::memcmp(&a, &b, Sizeof_RenderStates) == 0; }
-inline bool operator != (const RenderStates& a, const RenderStates& b) { return ::memcmp(&a, &b, Sizeof_RenderStates) != 0; }
 
 //////////////////////////////////////////////////////////////////////////
 

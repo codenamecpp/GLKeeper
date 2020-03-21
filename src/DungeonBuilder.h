@@ -3,8 +3,8 @@
 #include "GameDefs.h"
 #include "ScenarioDefs.h"
 
-// helper class for terrain mesh construction
-class TerrainMeshBuilder
+// helper class for map mesh construction
+class DungeonBuilder
 {
 public:
     // rebuild terrain mesh for specific tile

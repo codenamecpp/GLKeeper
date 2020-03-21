@@ -1,9 +1,9 @@
 #include "pch.h"
-#include "MapData.h"
+#include "GameMap.h"
 #include "randomizer.h"
 #include <stack>
 
-void MapData::Setup(const Size2D& mapDimensions, unsigned int randomSeed)
+void GameMap::Setup(const Size2D& mapDimensions, unsigned int randomSeed)
 {
     Clear();
 
@@ -41,7 +41,7 @@ void MapData::Setup(const Size2D& mapDimensions, unsigned int randomSeed)
     }
 }
 
-void MapData::Clear()
+void GameMap::Clear()
 {
     mFloodFillCounter = 0;
     mDimensions.x = 0;
@@ -49,7 +49,7 @@ void MapData::Clear()
     mTilesArray.clear();
 }
 
-MapTile* MapData::GetTileFromCoord3d(const glm::vec3& coord)
+MapTile* GameMap::GetTileFromCoord3d(const glm::vec3& coord)
 {
     Point2D tileLocation {
         static_cast<int>((coord.x + DUNGEON_CELL_HALF_SIZE) / DUNGEON_CELL_SIZE),
@@ -58,7 +58,7 @@ MapTile* MapData::GetTileFromCoord3d(const glm::vec3& coord)
     return GetMapTile(tileLocation);
 }
 
-MapTile* MapData::GetMapTile(const Point2D& tileLocation)
+MapTile* GameMap::GetMapTile(const Point2D& tileLocation)
 {
     if (IsWithinMap(tileLocation))
         return &mTilesArray[tileLocation.y * mDimensions.x + tileLocation.x];
@@ -66,14 +66,14 @@ MapTile* MapData::GetMapTile(const Point2D& tileLocation)
     return nullptr;
 }
 
-MapTile* MapData::GetMapTile(const Point2D& tileLocation, eDirection direction)
+MapTile* GameMap::GetMapTile(const Point2D& tileLocation, eDirection direction)
 {
     Point2D directionVector = GetDirectionVector(direction);
 
     return GetMapTile(tileLocation + directionVector);
 }
 
-bool MapData::GetTileCenterCoord3d(const Point2D& tileLocation, glm::vec3& coord3d) const
+bool GameMap::GetTileCenterCoord3d(const Point2D& tileLocation, glm::vec3& coord3d) const
 {
     bool isWithin = IsWithinMap(tileLocation);
     if (isWithin)
@@ -85,7 +85,7 @@ bool MapData::GetTileCenterCoord3d(const Point2D& tileLocation, glm::vec3& coord
     return isWithin;
 }
 
-bool MapData::IsWithinMap(const Point2D& tileLocation, eDirection direction) const
+bool GameMap::IsWithinMap(const Point2D& tileLocation, eDirection direction) const
 {
     Point2D directionVector = GetDirectionVector(direction);
 
@@ -95,13 +95,13 @@ bool MapData::IsWithinMap(const Point2D& tileLocation, eDirection direction) con
         (nextTilePosition.y < mDimensions.y); 
 }
 
-void MapData::FloodFill4(TilesArray& outputTiles, MapTile* origin, MapFloodFillFlags flags)
+void GameMap::FloodFill4(TilesArray& outputTiles, MapTile* origin, MapFloodFillFlags flags)
 {
     Rect2D scanArea(0, 0, mDimensions.x, mDimensions.y);
     FloodFill4(outputTiles, origin, scanArea, flags);
 }
 
-void MapData::FloodFill4(TilesArray& outputTiles, MapTile* origin, const Rect2D& scanArea, MapFloodFillFlags flags)
+void GameMap::FloodFill4(TilesArray& outputTiles, MapTile* origin, const Rect2D& scanArea, MapFloodFillFlags flags)
 {
     // check conditions
     if (origin == nullptr || scanArea.mSizeX < 1 || scanArea.mSizeY < 1)
@@ -178,7 +178,7 @@ void MapData::FloodFill4(TilesArray& outputTiles, MapTile* origin, const Rect2D&
     }
 }
 
-void MapData::ClearFloodFillCounter()
+void GameMap::ClearFloodFillCounter()
 {
     for (MapTile& currTile: mTilesArray)
     {

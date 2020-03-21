@@ -10,7 +10,7 @@
 
 // forwards
 class GenericRoom;
-class MapData;
+class GameMap;
 class MapTile;
 
 // terrain type identifier

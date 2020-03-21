@@ -1,8 +1,9 @@
 #pragma once
 
 #include "ScenarioDefs.h"
-#include "MapData.h"
-#include "TerrainMeshBuilder.h"
+#include "GameMap.h"
+#include "DungeonBuilder.h"
+#include "TerrainManager.h"
 
 // game world state
 class GameWorld: public cxx::noncopyable
@@ -10,8 +11,9 @@ class GameWorld: public cxx::noncopyable
 public:
     // readonly
     ScenarioData mScenarioData;
-    MapData mMapData;
-    TerrainMeshBuilder mTerrainMeshBuilder;
+    GameMap mMapData;
+    DungeonBuilder mDungeonBuilder;
+    TerrainManager mTerrainManager;
 
 public:
     

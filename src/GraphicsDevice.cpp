@@ -392,7 +392,7 @@ void GraphicsDevice::InternalSetRenderStates(const RenderStates& renderStates, b
     }
 
     // depth testing
-    if (forceState || mCurrentStates.mIsDepthTestEnabled != renderStates.mIsDepthTestEnabled)
+    if (forceState || (mCurrentStates.mIsDepthTestEnabled != renderStates.mIsDepthTestEnabled))
     {
         if (renderStates.mIsDepthTestEnabled)
         {
@@ -426,13 +426,13 @@ void GraphicsDevice::InternalSetRenderStates(const RenderStates& renderStates, b
         glCheckError();
     }
 
-    if (forceState || mCurrentStates.mIsDepthWriteEnabled != renderStates.mIsDepthWriteEnabled)
+    if (forceState || (mCurrentStates.mIsDepthWriteEnabled != renderStates.mIsDepthWriteEnabled))
     {
         ::glDepthMask(renderStates.mIsDepthWriteEnabled ? GL_TRUE : GL_FALSE);
         glCheckError();
     }
 
-    if (forceState || mCurrentStates.mIsColorWriteEnabled != renderStates.mIsColorWriteEnabled)
+    if (forceState || (mCurrentStates.mIsColorWriteEnabled != renderStates.mIsColorWriteEnabled))
     {
         const GLboolean isEnabled = renderStates.mIsColorWriteEnabled ? GL_TRUE : GL_FALSE;
         ::glColorMask(isEnabled, isEnabled, isEnabled, isEnabled);
@@ -440,7 +440,7 @@ void GraphicsDevice::InternalSetRenderStates(const RenderStates& renderStates, b
     }
 
     // blending
-    if (forceState || mCurrentStates.mIsAlphaBlendEnabled != renderStates.mIsAlphaBlendEnabled)
+    if (forceState || (mCurrentStates.mIsAlphaBlendEnabled != renderStates.mIsAlphaBlendEnabled))
     {
         if (renderStates.mIsAlphaBlendEnabled)
         {
@@ -490,7 +490,7 @@ void GraphicsDevice::InternalSetRenderStates(const RenderStates& renderStates, b
     }
 
     // culling
-    if (forceState || mCurrentStates.mIsFaceCullingEnabled != renderStates.mIsFaceCullingEnabled)
+    if (forceState || (mCurrentStates.mIsFaceCullingEnabled != renderStates.mIsFaceCullingEnabled))
     {
         if (renderStates.mIsFaceCullingEnabled)
         {

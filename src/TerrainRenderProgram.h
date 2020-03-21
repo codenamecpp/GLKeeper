@@ -34,7 +34,7 @@ private:
 
         // configure input layout
         mGpuProgram->BindAttribute(eVertexAttribute_Position0, "in_pos");
-        mGpuProgram->BindAttribute(eVertexAttribute_Normal0, "in_normal");
+        //mGpuProgram->BindAttribute(eVertexAttribute_Normal0, "in_normal");
         mGpuProgram->BindAttribute(eVertexAttribute_Texcoord0, "in_texcoord");
         mGpuProgram->BindAttribute(eVertexAttribute_TerrainTilePosition, "in_tile_coord");
     }

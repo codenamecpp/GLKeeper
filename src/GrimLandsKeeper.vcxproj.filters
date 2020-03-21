@@ -369,12 +369,6 @@
     <ClInclude Include="ScenarioLoader.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="TerrainMeshBuilder.h">
-      <Filter>Game\World</Filter>
-    </ClInclude>
-    <ClInclude Include="MapData.h">
-      <Filter>Game\World</Filter>
-    </ClInclude>
     <ClInclude Include="MapTile.h">
       <Filter>Game\World</Filter>
     </ClInclude>
@@ -383,6 +377,15 @@
     </ClInclude>
     <ClInclude Include="TerrainRenderer.h">
       <Filter>Game\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainManager.h">
+      <Filter>Game\World</Filter>
+    </ClInclude>
+    <ClInclude Include="DungeonBuilder.h">
+      <Filter>Game\World</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMap.h">
+      <Filter>Game\World</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -559,20 +562,23 @@
     <ClCompile Include="ScenarioLoader.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="TerrainMeshBuilder.cpp">
-      <Filter>Game\World</Filter>
-    </ClCompile>
     <ClCompile Include="string_utils.cpp">
       <Filter>Lib</Filter>
-    </ClCompile>
-    <ClCompile Include="MapData.cpp">
-      <Filter>Game\World</Filter>
     </ClCompile>
     <ClCompile Include="MapTile.cpp">
       <Filter>Game\World</Filter>
     </ClCompile>
     <ClCompile Include="TerrainRenderer.cpp">
       <Filter>Game\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainManager.cpp">
+      <Filter>Game\World</Filter>
+    </ClCompile>
+    <ClCompile Include="DungeonBuilder.cpp">
+      <Filter>Game\World</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMap.cpp">
+      <Filter>Game\World</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

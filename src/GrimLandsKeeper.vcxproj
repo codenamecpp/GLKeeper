@@ -181,7 +181,7 @@
     <ClInclude Include="AABBTree.h" />
     <ClInclude Include="AnimatingModel.h" />
     <ClInclude Include="CreatureDefs.h" />
-    <ClInclude Include="MapData.h" />
+    <ClInclude Include="GameMap.h" />
     <ClInclude Include="MapTile.h" />
     <ClInclude Include="GameObjectsDefs.h" />
     <ClInclude Include="GameplayGamestate.h" />
@@ -256,8 +256,9 @@
     <ClInclude Include="string_utils.h" />
     <ClInclude Include="System.h" />
     <ClInclude Include="SystemSettings.h" />
+    <ClInclude Include="TerrainManager.h" />
     <ClInclude Include="TerrainMesh.h" />
-    <ClInclude Include="TerrainMeshBuilder.h" />
+    <ClInclude Include="DungeonBuilder.h" />
     <ClInclude Include="TerrainRenderer.h" />
     <ClInclude Include="TerrainRenderProgram.h" />
     <ClInclude Include="Texture2D.h" />
@@ -285,7 +286,7 @@
     <ClCompile Include="ConsoleVariable.cpp" />
     <ClCompile Include="ConsoleWindow.cpp" />
     <ClCompile Include="DebugGuiWindow.cpp" />
-    <ClCompile Include="MapData.cpp" />
+    <ClCompile Include="GameMap.cpp" />
     <ClCompile Include="MapTile.cpp" />
     <ClCompile Include="GameplayGamestate.cpp" />
     <ClCompile Include="GameWorld.cpp" />
@@ -330,8 +331,9 @@
     <ClCompile Include="string_utils.cpp" />
     <ClCompile Include="System.cpp" />
     <ClCompile Include="SystemSettings.cpp" />
+    <ClCompile Include="TerrainManager.cpp" />
     <ClCompile Include="TerrainMesh.cpp" />
-    <ClCompile Include="TerrainMeshBuilder.cpp" />
+    <ClCompile Include="DungeonBuilder.cpp" />
     <ClCompile Include="TerrainRenderer.cpp" />
     <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="Texture2DAnimation.cpp" />

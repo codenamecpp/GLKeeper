@@ -11,7 +11,7 @@ uniform sampler2D colorsTex;
 
 // attributes
 in vec3 in_pos;
-in vec3 in_normal;
+//in vec3 in_normal;
 in vec2 in_texcoord;
 in ivec2 in_tile_coord;
 
