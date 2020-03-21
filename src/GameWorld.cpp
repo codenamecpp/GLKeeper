@@ -36,7 +36,7 @@ void GameWorld::SetupMapData(unsigned int seed)
     for (int tiley = 0; tiley < mScenarioData.mLevelDimensionY; ++tiley)
     for (int tilex = 0; tilex < mScenarioData.mLevelDimensionX; ++tilex)
     {
-        GameMapTile* currentTile = mMapData.GetMapTile(Point2D(tilex, tiley));
+        MapTile* currentTile = mMapData.GetMapTile(Point2D(tilex, tiley));
         debug_assert(currentTile);
 
         TerrainTypeID tileTerrainType = mScenarioData.mMapTiles[currentTileIndex].mTerrainType;

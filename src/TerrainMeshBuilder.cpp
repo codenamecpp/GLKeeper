@@ -1,26 +1,26 @@
 #include "pch.h"
 #include "TerrainMeshBuilder.h"
-#include "GameMapTile.h"
+#include "MapTile.h"
 #include "ModelAsset.h"
 #include "TexturesManager.h"
 #include "ModelAssetsManager.h"
 #include "GameWorld.h"
 
-void TerrainMeshBuilder::ExtendTileMesh(GameMapTile* mapTile, eTileFace faceid, ModelAsset* asset, const glm::mat3* rot, const glm::vec3* trans)
+void TerrainMeshBuilder::ExtendTileMesh(MapTile* tile, eTileFace faceid, ModelAsset* asset, const glm::mat3* rot, const glm::vec3* trans)
 {
-    debug_assert(mapTile);
+    debug_assert(tile);
     debug_assert(asset);
     debug_assert(faceid < eTileFace_COUNT);
 
     // destination geometry
-    TileFaceData& tileFace = mapTile->mFaces[faceid];
+    TileFaceData& tileFace = tile->mFaces[faceid];
     const glm::vec3 tileTranslation = 
     {
-        mapTile->mTileLocation.x + (trans ? trans->x : 0.0f), trans ? trans->y : 0.0f,
-        mapTile->mTileLocation.y + (trans ? trans->z : 0.0f)
+        tile->mTileLocation.x + (trans ? trans->x : 0.0f), trans ? trans->y : 0.0f,
+        tile->mTileLocation.y + (trans ? trans->z : 0.0f)
     };
 
-    TerrainDefinition* terrainDefinition = mapTile->GetTerrain();
+    TerrainDefinition* terrainDefinition = tile->GetTerrain();
 
     // append submeshes
     for (const ModelAsset::SubMesh& pieceSprite: asset->mMeshArray)
@@ -61,7 +61,7 @@ void TerrainMeshBuilder::ExtendTileMesh(GameMapTile* mapTile, eTileFace faceid, 
                         if (terrainDefinition->mHasRandomTexture)
                         {
                             // select random texture including original
-                            textureIndex = mapTile->mRandomValue % NumVariations;
+                            textureIndex = tile->mRandomValue % NumVariations;
                             break;
                         }
                     }
@@ -79,7 +79,7 @@ void TerrainMeshBuilder::ExtendTileMesh(GameMapTile* mapTile, eTileFace faceid, 
         // add terrain mesh piece
         tileFace.mMeshArray.emplace_back();
 
-        TileFaceMesh& destMeshGroup = tileFace.mMeshArray.back();
+        TileMesh& destMeshGroup = tileFace.mMeshArray.back();
         destMeshGroup.mMaterial.mDiffuseTexture = gTexturesManager.GetTexture2D(sourceMaterial.mTextures[textureIndex]);
         if (sourceMaterial.mEnvMappingTexture.length())
         {
@@ -109,8 +109,8 @@ void TerrainMeshBuilder::ExtendTileMesh(GameMapTile* mapTile, eTileFace faceid, 
                     sourceNormals[ivertex].y, 
                     sourceNormals[ivertex].z});
 
-                vertex.mTileX = mapTile->mTileLocation.x;
-                vertex.mTileY = mapTile->mTileLocation.y;
+                vertex.mTileX = tile->mTileLocation.x;
+                vertex.mTileY = tile->mTileLocation.y;
                 vertex.mPosition = transformed + tileTranslation;
                 vertex.mNormal = transformedNormal;
                 vertex.mTexcoord = sourceTexcoord[ivertex];
@@ -122,8 +122,8 @@ void TerrainMeshBuilder::ExtendTileMesh(GameMapTile* mapTile, eTileFace faceid, 
             unsigned int ivertex = 0;
             for (Vertex3D_Terrain& vertex : destMeshGroup.mVertices)
             {
-                vertex.mTileX = mapTile->mTileLocation.x;
-                vertex.mTileY = mapTile->mTileLocation.y;
+                vertex.mTileX = tile->mTileLocation.x;
+                vertex.mTileY = tile->mTileLocation.y;
                 vertex.mPosition = tileTranslation + sourcePositions[ivertex];
                 vertex.mNormal = sourceNormals[ivertex];
                 vertex.mTexcoord = sourceTexcoord[ivertex];
@@ -136,53 +136,53 @@ void TerrainMeshBuilder::ExtendTileMesh(GameMapTile* mapTile, eTileFace faceid, 
     }
 }
 
-void TerrainMeshBuilder::BuildTileMesh(GameMapTile* mapTile)
+void TerrainMeshBuilder::BuildTileMesh(MapTile* tile)
 {
-    debug_assert(mapTile);
-    mapTile->ClearTileMesh();
+    debug_assert(tile);
+    tile->ClearTileMesh();
 
-    ConstructTerrainFloor(mapTile);
+    ConstructTerrainFloor(tile);
 
-    TerrainDefinition* terrainDef = mapTile->GetTerrain();
+    TerrainDefinition* terrainDef = tile->GetTerrain();
     if (terrainDef->mIsSolid)
     {
-        ConstructTerrainWalls(mapTile);
+        ConstructTerrainWalls(tile);
     }
 
     // todo: ceiling
 }
 
-void TerrainMeshBuilder::BuildTileMesh(GameMapTile* mapTile, eTileFace faceid)
+void TerrainMeshBuilder::BuildTileMesh(MapTile* tile, eTileFace faceid)
 {
-    mapTile->ClearTileMesh(faceid);
+    tile->ClearTileMesh(faceid);
 
     if (faceid == eTileFace_Floor)
     {
-        ConstructTerrainFloor(mapTile);
+        ConstructTerrainFloor(tile);
     }
 
     // construct wall
     if (faceid == eTileFace_SideE || faceid == eTileFace_SideN || faceid == eTileFace_SideS || faceid == eTileFace_SideW)
     {
-        TerrainDefinition* terrainDef = mapTile->GetTerrain();
+        TerrainDefinition* terrainDef = tile->GetTerrain();
         if (terrainDef->mIsSolid)
         {
-            ConstructTerrainWall(mapTile, faceid);
+            ConstructTerrainWall(tile, faceid);
         }
     }
 
     // todo: ceiling
 }
 
-void TerrainMeshBuilder::ConstructTerrainWalls(GameMapTile* mapTile)
+void TerrainMeshBuilder::ConstructTerrainWalls(MapTile* tile)
 {
-    for (eTileFace tileSide: {eTileFace_SideN, eTileFace_SideE, eTileFace_SideS, eTileFace_SideW})
+    for (eTileFace faceid: {eTileFace_SideN, eTileFace_SideE, eTileFace_SideS, eTileFace_SideW})
     {
-        ConstructTerrainWall(mapTile, tileSide);
+        ConstructTerrainWall(tile, faceid);
     }
 }
 
-void TerrainMeshBuilder::ConstructTerrainWall(GameMapTile* mapTile, eTileFace faceid)
+void TerrainMeshBuilder::ConstructTerrainWall(MapTile* tile, eTileFace faceid)
 {
     const glm::mat3* rotation = nullptr;
     switch (faceid)
@@ -204,28 +204,28 @@ void TerrainMeshBuilder::ConstructTerrainWall(GameMapTile* mapTile, eTileFace fa
         return;
     }
 
-    TerrainDefinition* terrain = mapTile->GetTerrain();
+    TerrainDefinition* terrain = tile->GetTerrain();
     debug_assert(terrain->mIsSolid);
     // test side wall is required
-    if (ShouldBuildSideWall(mapTile, faceid))
+    if (ShouldBuildSideWall(tile, faceid))
     {
         ModelAsset* asset = gModelsManager.FindModelAsset(terrain->mResourceSide.mResourceName);
         debug_assert(asset);
-        ExtendTileMesh(mapTile, faceid, asset, rotation);
+        ExtendTileMesh(tile, faceid, asset, rotation);
     }
 }
 
-void TerrainMeshBuilder::ConstructTerrainFloor(GameMapTile* mapTile)
+void TerrainMeshBuilder::ConstructTerrainFloor(MapTile* tile)
 {
-    TerrainDefinition* terrainDef = mapTile->GetTerrain();
+    TerrainDefinition* terrainDef = tile->GetTerrain();
 
     // if terrain is bridge we building only water bed
     if (gGameWorld.IsRoomTypeTerrain(terrainDef))
     {
-        TerrainDefinition* baseTerrainDef = mapTile->GetBaseTerrain();
+        TerrainDefinition* baseTerrainDef = tile->GetBaseTerrain();
         if (baseTerrainDef->mIsWater || baseTerrainDef->mIsLava)
         {
-            ConstructTerrainWaterBed(mapTile, mapTile->GetBaseTerrain()->GetCellResource());
+            ConstructTerrainWaterBed(tile, tile->GetBaseTerrain()->GetCellResource());
         }
         // dont build room floor geometry here
         return;
@@ -238,31 +238,31 @@ void TerrainMeshBuilder::ConstructTerrainFloor(GameMapTile* mapTile)
     // water bed
     if (terrainDef->mConstructionTypeWater)
     {
-        ConstructTerrainWaterBed(mapTile, cellResource);
+        ConstructTerrainWaterBed(tile, cellResource);
     }
     // construct terrain quad
     else if (terrainDef->mConstructionTypeQuad)
     {
-        ConstructTerrainQuad(mapTile, cellResource);
+        ConstructTerrainQuad(tile, cellResource);
     }
     // construct terrain normal
     else
     {
         ModelAsset* asset = gModelsManager.FindModelAsset(cellResource->mResourceName);
         debug_assert(asset);
-        ExtendTileMesh(mapTile, eTileFace_Floor, asset);
+        ExtendTileMesh(tile, eTileFace_Floor, asset);
     }
 }
 
-void TerrainMeshBuilder::ConstructTerrainQuad(GameMapTile* mapTile, ArtResource* artResource)
+void TerrainMeshBuilder::ConstructTerrainQuad(MapTile* tile, ArtResource* artResource)
 {
     std::string meshName = artResource->mResourceName;
 
     // coloured to player color
-    TerrainDefinition* tileTerrainDef = mapTile->GetTerrain();
+    TerrainDefinition* tileTerrainDef = tile->GetTerrain();
     if (tileTerrainDef->mPlayerColouredPath || tileTerrainDef->mPlayerColouredWall) 
     {
-        const char* suffix = cxx::va("%d_", (mapTile->mOwnerId == ePlayerID_Null) ? 0 : mapTile->mOwnerId - 1);
+        const char* suffix = cxx::va("%d_", (tile->mOwnerId == ePlayerID_Null) ? 0 : tile->mOwnerId - 1);
         meshName.append(suffix);
     }
 
@@ -271,47 +271,47 @@ void TerrainMeshBuilder::ConstructTerrainQuad(GameMapTile* mapTile, ArtResource*
     {
         //SubtTopLeft
         subTiles[0] = 
-            (NeighbourTileSolid(mapTile, eDirection_W) ? 0x04 : 0) | 
-            (NeighbourTileSolid(mapTile, eDirection_NW) ? 0x02 : 0) | 
-            (NeighbourTileSolid(mapTile, eDirection_N) ? 0x01 : 0);
+            (NeighbourTileSolid(tile, eDirection_W) ? 0x04 : 0) | 
+            (NeighbourTileSolid(tile, eDirection_NW) ? 0x02 : 0) | 
+            (NeighbourTileSolid(tile, eDirection_N) ? 0x01 : 0);
         //SubtTopRight
         subTiles[1] = 
-            (NeighbourTileSolid(mapTile, eDirection_N) ? 0x04 : 0) | 
-            (NeighbourTileSolid(mapTile, eDirection_NE) ? 0x02 : 0) | 
-            (NeighbourTileSolid(mapTile, eDirection_E) ? 0x01 : 0);
+            (NeighbourTileSolid(tile, eDirection_N) ? 0x04 : 0) | 
+            (NeighbourTileSolid(tile, eDirection_NE) ? 0x02 : 0) | 
+            (NeighbourTileSolid(tile, eDirection_E) ? 0x01 : 0);
         //SubtBottomRight
         subTiles[2] = 
-            (NeighbourTileSolid(mapTile, eDirection_E) ? 0x04 : 0) | 
-            (NeighbourTileSolid(mapTile, eDirection_SE) ? 0x02 : 0) | 
-            (NeighbourTileSolid(mapTile, eDirection_S) ? 0x01 : 0);
+            (NeighbourTileSolid(tile, eDirection_E) ? 0x04 : 0) | 
+            (NeighbourTileSolid(tile, eDirection_SE) ? 0x02 : 0) | 
+            (NeighbourTileSolid(tile, eDirection_S) ? 0x01 : 0);
         //SubtBottomLeft
         subTiles[3] = 
-            (NeighbourTileSolid(mapTile, eDirection_S) ? 0x04 : 0) | 
-            (NeighbourTileSolid(mapTile, eDirection_SW) ? 0x02 : 0) | 
-            (NeighbourTileSolid(mapTile, eDirection_W) ? 0x01 : 0);
+            (NeighbourTileSolid(tile, eDirection_S) ? 0x04 : 0) | 
+            (NeighbourTileSolid(tile, eDirection_SW) ? 0x02 : 0) | 
+            (NeighbourTileSolid(tile, eDirection_W) ? 0x01 : 0);
     }
     else
     {
         //SubtTopLeft
         subTiles[0] = 
-            (NeighbourHasSameTerrain(mapTile, eDirection_W) ? 0x04 : 0) | 
-            (NeighbourHasSameTerrain(mapTile, eDirection_NW) ? 0x02 : 0) | 
-            (NeighbourHasSameTerrain(mapTile, eDirection_N) ? 0x01 : 0);
+            (NeighbourHasSameTerrain(tile, eDirection_W) ? 0x04 : 0) | 
+            (NeighbourHasSameTerrain(tile, eDirection_NW) ? 0x02 : 0) | 
+            (NeighbourHasSameTerrain(tile, eDirection_N) ? 0x01 : 0);
         //SubtTopRight
         subTiles[1] = 
-            (NeighbourHasSameTerrain(mapTile, eDirection_N) ? 0x04 : 0) | 
-            (NeighbourHasSameTerrain(mapTile, eDirection_NE) ? 0x02 : 0) | 
-            (NeighbourHasSameTerrain(mapTile, eDirection_E) ? 0x01 : 0);
+            (NeighbourHasSameTerrain(tile, eDirection_N) ? 0x04 : 0) | 
+            (NeighbourHasSameTerrain(tile, eDirection_NE) ? 0x02 : 0) | 
+            (NeighbourHasSameTerrain(tile, eDirection_E) ? 0x01 : 0);
         //SubtBottomRight
         subTiles[2] = 
-            (NeighbourHasSameTerrain(mapTile, eDirection_E) ? 0x04 : 0) | 
-            (NeighbourHasSameTerrain(mapTile, eDirection_SE) ? 0x02 : 0) | 
-            (NeighbourHasSameTerrain(mapTile, eDirection_S) ? 0x01 : 0);
+            (NeighbourHasSameTerrain(tile, eDirection_E) ? 0x04 : 0) | 
+            (NeighbourHasSameTerrain(tile, eDirection_SE) ? 0x02 : 0) | 
+            (NeighbourHasSameTerrain(tile, eDirection_S) ? 0x01 : 0);
         //SubtBottomLeft
         subTiles[3] = 
-            (NeighbourHasSameTerrain(mapTile, eDirection_S) ? 0x04 : 0) | 
-            (NeighbourHasSameTerrain(mapTile, eDirection_SW) ? 0x02 : 0) | 
-            (NeighbourHasSameTerrain(mapTile, eDirection_W) ? 0x01 : 0);
+            (NeighbourHasSameTerrain(tile, eDirection_S) ? 0x04 : 0) | 
+            (NeighbourHasSameTerrain(tile, eDirection_SW) ? 0x02 : 0) | 
+            (NeighbourHasSameTerrain(tile, eDirection_W) ? 0x01 : 0);
     }
 
     const glm::mat3* rotations[] =
@@ -336,11 +336,11 @@ void TerrainMeshBuilder::ConstructTerrainQuad(GameMapTile* mapTile, ArtResource*
     
     for (int isubtile = 0; isubtile < 4; ++isubtile)
     {
-        ExtendTileMesh(mapTile, eTileFace_Floor, pieces[subTiles[isubtile]], rotations[isubtile], &g_SubTileTranslations[isubtile]);
+        ExtendTileMesh(tile, eTileFace_Floor, pieces[subTiles[isubtile]], rotations[isubtile], &g_SubTileTranslations[isubtile]);
     }
 }
 
-void TerrainMeshBuilder::ConstructTerrainWaterBed(GameMapTile* mapTile, ArtResource* artResource)
+void TerrainMeshBuilder::ConstructTerrainWaterBed(MapTile* tile, ArtResource* artResource)
 {
     const glm::mat3* rotations[] =
     {
@@ -363,15 +363,15 @@ void TerrainMeshBuilder::ConstructTerrainWaterBed(GameMapTile* mapTile, ArtResou
 
     const unsigned char bits =
     // sides
-        (!NeighbourHasSameBaseTerrain(mapTile, eDirection_N) ? sDirsBits[eDirection_N] : 0U) | // top
-        (!NeighbourHasSameBaseTerrain(mapTile, eDirection_E) ? sDirsBits[eDirection_E] : 0U) | // right
-        (!NeighbourHasSameBaseTerrain(mapTile, eDirection_S) ? sDirsBits[eDirection_S] : 0U) | // bottom
-        (!NeighbourHasSameBaseTerrain(mapTile, eDirection_W) ? sDirsBits[eDirection_W] : 0U) | // left
+        (!NeighbourHasSameBaseTerrain(tile, eDirection_N) ? sDirsBits[eDirection_N] : 0U) | // top
+        (!NeighbourHasSameBaseTerrain(tile, eDirection_E) ? sDirsBits[eDirection_E] : 0U) | // right
+        (!NeighbourHasSameBaseTerrain(tile, eDirection_S) ? sDirsBits[eDirection_S] : 0U) | // bottom
+        (!NeighbourHasSameBaseTerrain(tile, eDirection_W) ? sDirsBits[eDirection_W] : 0U) | // left
     // corners
-        (!NeighbourHasSameBaseTerrain(mapTile, eDirection_NE) ? sDirsBits[eDirection_NE] : 0U) | // top-right
-        (!NeighbourHasSameBaseTerrain(mapTile, eDirection_SE) ? sDirsBits[eDirection_SE] : 0U) | // bottom-right
-        (!NeighbourHasSameBaseTerrain(mapTile, eDirection_SW) ? sDirsBits[eDirection_SW] : 0U) | // bottom-left
-        (!NeighbourHasSameBaseTerrain(mapTile, eDirection_NW) ? sDirsBits[eDirection_NW] : 0U); // top-left
+        (!NeighbourHasSameBaseTerrain(tile, eDirection_NE) ? sDirsBits[eDirection_NE] : 0U) | // top-right
+        (!NeighbourHasSameBaseTerrain(tile, eDirection_SE) ? sDirsBits[eDirection_SE] : 0U) | // bottom-right
+        (!NeighbourHasSameBaseTerrain(tile, eDirection_SW) ? sDirsBits[eDirection_SW] : 0U) | // bottom-left
+        (!NeighbourHasSameBaseTerrain(tile, eDirection_NW) ? sDirsBits[eDirection_NW] : 0U); // top-left
 
     const unsigned char cornersBits = bits & 0xF0U;
     const unsigned char sidesBits = bits & 0x0FU;
@@ -384,7 +384,7 @@ void TerrainMeshBuilder::ConstructTerrainWaterBed(GameMapTile* mapTile, ArtResou
     // simplest one
     if (bits == 0)
     {
-        ExtendTileMesh(mapTile, eTileFace_Floor, piece3);
+        ExtendTileMesh(tile, eTileFace_Floor, piece3);
         return;
     }
 
@@ -404,7 +404,7 @@ void TerrainMeshBuilder::ConstructTerrainWaterBed(GameMapTile* mapTile, ArtResou
         {
             if (bits == pentry.first)
             {
-                ExtendTileMesh(mapTile, eTileFace_Floor, piece2, pentry.second);
+                ExtendTileMesh(tile, eTileFace_Floor, piece2, pentry.second);
                 break;
             }
         }
@@ -434,7 +434,7 @@ void TerrainMeshBuilder::ConstructTerrainWaterBed(GameMapTile* mapTile, ArtResou
         {
             if (sidesBits == pentry.first)
             {
-                ExtendTileMesh(mapTile, eTileFace_Floor, piece0, pentry.second);
+                ExtendTileMesh(tile, eTileFace_Floor, piece0, pentry.second);
                 break;
             }
         }
@@ -464,7 +464,7 @@ void TerrainMeshBuilder::ConstructTerrainWaterBed(GameMapTile* mapTile, ArtResou
         {
             if (sidesBits == pentry.first)
             {
-                ExtendTileMesh(mapTile, eTileFace_Floor, piece1, pentry.second);
+                ExtendTileMesh(tile, eTileFace_Floor, piece1, pentry.second);
                 break;
             }
         }
@@ -473,21 +473,21 @@ void TerrainMeshBuilder::ConstructTerrainWaterBed(GameMapTile* mapTile, ArtResou
 
     int subTiles[] = {
     //SubtTopLeft
-        (NeighbourHasSameBaseTerrain(mapTile, eDirection_W) ? 0x04 : 0) | 
-        (NeighbourHasSameBaseTerrain(mapTile, eDirection_NW) ? 0x02 : 0) | 
-        (NeighbourHasSameBaseTerrain(mapTile, eDirection_N) ? 0x01 : 0),
+        (NeighbourHasSameBaseTerrain(tile, eDirection_W) ? 0x04 : 0) | 
+        (NeighbourHasSameBaseTerrain(tile, eDirection_NW) ? 0x02 : 0) | 
+        (NeighbourHasSameBaseTerrain(tile, eDirection_N) ? 0x01 : 0),
     //SubtTopRight
-        (NeighbourHasSameBaseTerrain(mapTile, eDirection_N) ? 0x04 : 0) | 
-        (NeighbourHasSameBaseTerrain(mapTile, eDirection_NE) ? 0x02 : 0) | 
-        (NeighbourHasSameBaseTerrain(mapTile, eDirection_E) ? 0x01 : 0),
+        (NeighbourHasSameBaseTerrain(tile, eDirection_N) ? 0x04 : 0) | 
+        (NeighbourHasSameBaseTerrain(tile, eDirection_NE) ? 0x02 : 0) | 
+        (NeighbourHasSameBaseTerrain(tile, eDirection_E) ? 0x01 : 0),
     //SubtBottomRight
-        (NeighbourHasSameBaseTerrain(mapTile, eDirection_E) ? 0x04 : 0) | 
-        (NeighbourHasSameBaseTerrain(mapTile, eDirection_SE) ? 0x02 : 0) | 
-        (NeighbourHasSameBaseTerrain(mapTile, eDirection_S) ? 0x01 : 0),
+        (NeighbourHasSameBaseTerrain(tile, eDirection_E) ? 0x04 : 0) | 
+        (NeighbourHasSameBaseTerrain(tile, eDirection_SE) ? 0x02 : 0) | 
+        (NeighbourHasSameBaseTerrain(tile, eDirection_S) ? 0x01 : 0),
     //SubtBottomLeft
-        (NeighbourHasSameBaseTerrain(mapTile, eDirection_S) ? 0x04 : 0) | 
-        (NeighbourHasSameBaseTerrain(mapTile, eDirection_SW) ? 0x02 : 0) | 
-        (NeighbourHasSameBaseTerrain(mapTile, eDirection_W) ? 0x01 : 0)
+        (NeighbourHasSameBaseTerrain(tile, eDirection_S) ? 0x04 : 0) | 
+        (NeighbourHasSameBaseTerrain(tile, eDirection_SW) ? 0x02 : 0) | 
+        (NeighbourHasSameBaseTerrain(tile, eDirection_W) ? 0x01 : 0)
     };
 
     ModelAsset* piece4 = gModelsManager.FindModelAsset(artResource->mResourceName + "4");
@@ -509,12 +509,12 @@ void TerrainMeshBuilder::ConstructTerrainWaterBed(GameMapTile* mapTile, ArtResou
     
     for (int isubtile = 0; isubtile < 4; ++isubtile)
     {
-        ExtendTileMesh(mapTile, eTileFace_Floor, geoIndices[subTiles[isubtile]], 
+        ExtendTileMesh(tile, eTileFace_Floor, geoIndices[subTiles[isubtile]], 
             subtileRotations[isubtile][subTiles[isubtile]], &g_SubTileTranslations[isubtile]);
     }
 }
 
-bool TerrainMeshBuilder::ShouldBuildSideWall(GameMapTile* mapTile, eTileFace faceid) const
+bool TerrainMeshBuilder::ShouldBuildSideWall(MapTile* tile, eTileFace faceid) const
 {
     return false;// todo
     //if (const GameMapTile* neighbour = mapTile->mNeighbours[direction])
@@ -529,9 +529,9 @@ bool TerrainMeshBuilder::ShouldBuildSideWall(GameMapTile* mapTile, eTileFace fac
     return true;
 }
 
-bool TerrainMeshBuilder::NeighbourTileSolid(GameMapTile* mapTile, eDirection direction) const
+bool TerrainMeshBuilder::NeighbourTileSolid(MapTile* tile, eDirection direction) const
 {
-    if (GameMapTile* neighbourTile = mapTile->mNeighbours[direction])
+    if (MapTile* neighbourTile = tile->mNeighbours[direction])
     {
         TerrainDefinition* neighbourTerrainDef = neighbourTile->GetTerrain();
         return neighbourTerrainDef->mIsSolid;
@@ -539,20 +539,20 @@ bool TerrainMeshBuilder::NeighbourTileSolid(GameMapTile* mapTile, eDirection dir
     return false;
 }
 
-bool TerrainMeshBuilder::NeighbourHasSameTerrain(GameMapTile* mapTile, eDirection direction) const
+bool TerrainMeshBuilder::NeighbourHasSameTerrain(MapTile* tile, eDirection direction) const
 {
-    if (GameMapTile* neighbourTile = mapTile->mNeighbours[direction])
+    if (MapTile* neighbourTile = tile->mNeighbours[direction])
     {
-        return mapTile->GetTerrain() == neighbourTile->GetTerrain();
+        return tile->GetTerrain() == neighbourTile->GetTerrain();
     }
     return false;
 }
 
-bool TerrainMeshBuilder::NeighbourHasSameBaseTerrain(GameMapTile* mapTile, eDirection direction) const
+bool TerrainMeshBuilder::NeighbourHasSameBaseTerrain(MapTile* tile, eDirection direction) const
 {
-    if (GameMapTile* neighbourTile = mapTile->mNeighbours[direction])
+    if (MapTile* neighbourTile = tile->mNeighbours[direction])
     {
-        return mapTile->GetBaseTerrain() == neighbourTile->GetBaseTerrain();
+        return tile->GetBaseTerrain() == neighbourTile->GetBaseTerrain();
     }
     return false;
 }

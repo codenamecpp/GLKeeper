@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "GameMapTile.h"
+#include "MapTile.h"
 
 // Rotations Y
 const glm::mat3 g_TileRotations[5] = 
@@ -20,7 +20,7 @@ const glm::vec3 g_SubTileTranslations[4] =
     {-DUNGEON_CELL_HALF_SIZE * 0.5f, 0.0f,  DUNGEON_CELL_HALF_SIZE * 0.5f}, // BOTTOM-LEFT (SW)
 };
 
-GameMapTile::GameMapTile()
+MapTile::MapTile()
     : mIsTagged()
     , mIsRoomInnerTile()
     , mIsRoomEntrance()
@@ -28,7 +28,7 @@ GameMapTile::GameMapTile()
 {
 }
 
-void GameMapTile::ClearTileMesh()
+void MapTile::ClearTileMesh()
 {
     for (TileFaceData& currFace: mFaces)
     {
@@ -36,7 +36,7 @@ void GameMapTile::ClearTileMesh()
     }
 }
 
-void GameMapTile::ClearTileMesh(eTileFace meshFace)
+void MapTile::ClearTileMesh(eTileFace meshFace)
 {
     debug_assert(meshFace < eTileFace_COUNT);
     if (meshFace < eTileFace_COUNT)

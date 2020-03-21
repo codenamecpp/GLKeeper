@@ -14,11 +14,6 @@ public:
     bool Initialize();
     void Deinit();
 
-    void RenderFrameBegin();
-    void RenderFrameEnd();
-    void RenderPassBegin(eRenderPass renderPass);
-    void RenderPassEnd(eRenderPass renderPass);
-
     // render animating model for current render pass
     // @param renderContext: Current render context
     // @param animatingModel: Model instance

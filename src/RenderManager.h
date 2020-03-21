@@ -5,6 +5,7 @@
 #include "DebugRenderer.h"
 #include "ModelsRenderer.h"
 #include "SceneRenderList.h"
+#include "TerrainRenderer.h"
 
 // master render system, it is intended to manage rendering pipeline of the game
 class RenderManager: public cxx::noncopyable
@@ -12,6 +13,7 @@ class RenderManager: public cxx::noncopyable
 public:
     // readonly
     ModelsRenderer mModelsRenderer;
+    TerrainRenderer mTerrainRenderer;
 
     RenderProgram* mActiveRenderProgram = nullptr;
 

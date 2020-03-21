@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ScenarioDefs.h"
-#include "GameMapData.h"
+#include "MapData.h"
 #include "TerrainMeshBuilder.h"
 
 // game world state
@@ -10,7 +10,7 @@ class GameWorld: public cxx::noncopyable
 public:
     // readonly
     ScenarioData mScenarioData;
-    GameMapData mMapData;
+    MapData mMapData;
     TerrainMeshBuilder mTerrainMeshBuilder;
 
 public:

@@ -366,17 +366,23 @@
     <ClInclude Include="GameObjectsDefs.h">
       <Filter>Game\World</Filter>
     </ClInclude>
-    <ClInclude Include="GameMapTile.h">
-      <Filter>Game\World</Filter>
-    </ClInclude>
-    <ClInclude Include="GameMapData.h">
-      <Filter>Game\World</Filter>
-    </ClInclude>
     <ClInclude Include="ScenarioLoader.h">
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="TerrainMeshBuilder.h">
       <Filter>Game\World</Filter>
+    </ClInclude>
+    <ClInclude Include="MapData.h">
+      <Filter>Game\World</Filter>
+    </ClInclude>
+    <ClInclude Include="MapTile.h">
+      <Filter>Game\World</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainRenderProgram.h">
+      <Filter>Game\Render\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainRenderer.h">
+      <Filter>Game\Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -550,12 +556,6 @@
     <ClCompile Include="GameWorld.cpp">
       <Filter>Game\World</Filter>
     </ClCompile>
-    <ClCompile Include="GameMapTile.cpp">
-      <Filter>Game\World</Filter>
-    </ClCompile>
-    <ClCompile Include="GameMapData.cpp">
-      <Filter>Game\World</Filter>
-    </ClCompile>
     <ClCompile Include="ScenarioLoader.cpp">
       <Filter>Game</Filter>
     </ClCompile>
@@ -564,6 +564,15 @@
     </ClCompile>
     <ClCompile Include="string_utils.cpp">
       <Filter>Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="MapData.cpp">
+      <Filter>Game\World</Filter>
+    </ClCompile>
+    <ClCompile Include="MapTile.cpp">
+      <Filter>Game\World</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainRenderer.cpp">
+      <Filter>Game\Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -594,6 +603,9 @@
       <Filter>Data\Shaders</Filter>
     </None>
     <None Include="..\data\shaders\anim_blend_frames.glsl">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\data\shaders\terrain.glsl">
       <Filter>Data\Shaders</Filter>
     </None>
   </ItemGroup>

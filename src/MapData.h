@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GameDefs.h"
-#include "GameMapTile.h"
+#include "MapTile.h"
 
 // flood fill flags
 struct MapFloodFillFlags
@@ -18,7 +18,7 @@ public:
 };
 
 // game map data
-class GameMapData
+class MapData
 {
 public:
     // readonly
@@ -31,12 +31,12 @@ public:
 
     // get map tile by world position
     // @param coordx, coordz: World coordinates
-    GameMapTile* GetTileFromCoord3d(const glm::vec3& coord);
+    MapTile* GetTileFromCoord3d(const glm::vec3& coord);
 
     // get map tile by logical position
     // @param tileLocation: Tile logical position
-    GameMapTile* GetMapTile(const Point2D& tileLocation);
-    GameMapTile* GetMapTile(const Point2D& tileLocation, eDirection direction);
+    MapTile* GetMapTile(const Point2D& tileLocation);
+    MapTile* GetMapTile(const Point2D& tileLocation, eDirection direction);
 
     // test whether tile position is within map
     // @param tileLocation: Tile logical position
@@ -60,14 +60,14 @@ public:
     // @param origin: Initial tile
     // @param scanArea: Scanning bounds
     // @param floodFillFlags: Flags
-    void FloodFill4(GameMapTiles& outputTiles, GameMapTile* origin, MapFloodFillFlags flags);
-    void FloodFill4(GameMapTiles& outputTiles, GameMapTile* origin, const Rect2D& scanArea, MapFloodFillFlags flags);
+    void FloodFill4(TilesArray& outputTiles, MapTile* origin, MapFloodFillFlags flags);
+    void FloodFill4(TilesArray& outputTiles, MapTile* origin, const Rect2D& scanArea, MapFloodFillFlags flags);
 
 private:
     void ClearFloodFillCounter();
 
 private:
-    std::vector<GameMapTile> mTilesArray;
+    std::vector<MapTile> mTilesArray;
 
     unsigned int mMapRandomSeed = 0;
     unsigned int mFloodFillCounter = 0; // increments on each flood fill operation

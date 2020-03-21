@@ -21,8 +21,8 @@ extern const glm::mat3 g_TileRotations[5];
 // 3: BOTTOM-LEFT (SW)
 extern const glm::vec3 g_SubTileTranslations[4];
 
-// terrain block geometry
-struct TileFaceMesh
+// tile face geometry
+struct TileMesh
 {
 public:
     RenderMaterial mMaterial;
@@ -31,11 +31,11 @@ public:
     std::vector<Vertex3D_Terrain> mVertices;
 };
 
-// block face data
+// tile face data
 struct TileFaceData 
 {
 public:
-    std::vector<TileFaceMesh> mMeshArray;
+    std::vector<TileMesh> mMeshArray;
 
     // specified if tile face is part of the room
     // only defined for sides N, E, S, W 
@@ -45,10 +45,10 @@ public:
 };
 
 // gamemap block data
-class GameMapTile
+class MapTile
 {
 public:
-    GameMapTile();
+    MapTile();
 
     // reset mesh geometries for specific tile face
     // @param faceid: Face index
@@ -69,7 +69,7 @@ public:
 
     GenericRoom* mRoomInstance = nullptr; // room built on tile
     TileFaceData mFaces[eTileFace_COUNT];
-    GameMapTile* mNeighbours[eDirection_COUNT];
+    MapTile* mNeighbours[eDirection_COUNT];
 
     unsigned int mRandomValue = 0; // effects on visuals only
     unsigned int mFloodFillCounter = 0; // increments on each flood fill operation

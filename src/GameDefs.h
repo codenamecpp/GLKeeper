@@ -10,8 +10,8 @@
 
 // forwards
 class GenericRoom;
-class GameMapData;
-class GameMapTile;
+class MapData;
+class MapTile;
 
 // terrain type identifier
 using TerrainTypeID = unsigned int; // for sake of flexibility, do not rely on specific id
@@ -29,8 +29,8 @@ const GameObjectTypeID GameObjectType_Null = 0; // invalid identifier
 using CreatureTypeID = unsigned int;
 const CreatureTypeID CreatureType_Null = 0; // invalid identifier
 
-// Array of map tiles
-using GameMapTiles = std::vector<GameMapTile*>;
+// array of map tiles
+using TilesArray = std::vector<MapTile*>;
 
 // possible player identifiers
 enum ePlayerID

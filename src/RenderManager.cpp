@@ -21,7 +21,7 @@ RenderManager gRenderManager;
 
 bool RenderManager::Initialize()
 {
-    if (!mGuiRenderProgram.LoadProgram() || !mModelsRenderer.Initialize())
+    if (!mGuiRenderProgram.LoadProgram() || !mModelsRenderer.Initialize() || !mTerrainRenderer.Initialize())
     {
         gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize render manager");
 
@@ -46,6 +46,7 @@ void RenderManager::Deinit()
     gConsole.UnregisterVariable(&gCvarRender_DebugDrawEnabled);
 
     mModelsRenderer.Deinit();
+    mTerrainRenderer.Deinit();
     mDebugRenderer.Deinit();
     mGuiRenderProgram.FreeProgram();
     mSceneRenderList.Clear();
@@ -138,6 +139,10 @@ void RenderManager::DrawScene()
         {
             mModelsRenderer.RenderModel(renderContext, element.mAnimatingModel);
         }
+        if (element.mTerrainMesh)
+        {
+            mTerrainRenderer.RenderTerrainMesh(renderContext, element.mTerrainMesh);
+        }
     }
 
     // translucent pass
@@ -152,6 +157,10 @@ void RenderManager::DrawScene()
         if (element.mAnimatingModel)
         {
             mModelsRenderer.RenderModel(renderContext, element.mAnimatingModel);
+        }
+        if (element.mTerrainMesh)
+        {
+            mTerrainRenderer.RenderTerrainMesh(renderContext, element.mTerrainMesh);
         }
     }
 

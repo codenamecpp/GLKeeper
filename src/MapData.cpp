@@ -1,9 +1,9 @@
 #include "pch.h"
-#include "GameMapData.h"
+#include "MapData.h"
 #include "randomizer.h"
 #include <stack>
 
-void GameMapData::Setup(const Size2D& mapDimensions, unsigned int randomSeed)
+void MapData::Setup(const Size2D& mapDimensions, unsigned int randomSeed)
 {
     Clear();
 
@@ -20,7 +20,7 @@ void GameMapData::Setup(const Size2D& mapDimensions, unsigned int randomSeed)
     {
         const int tileIndex = (tiley * mDimensions.x) + tilex;
             
-        GameMapTile& currentTile = mTilesArray[tileIndex];
+        MapTile& currentTile = mTilesArray[tileIndex];
         currentTile.mRandomValue = randomize.generate_int();
         currentTile.mTileLocation.x = tilex;
         currentTile.mTileLocation.y = tiley;
@@ -35,13 +35,13 @@ void GameMapData::Setup(const Size2D& mapDimensions, unsigned int randomSeed)
         currentTile.mNeighbours[eDirection_S]  = GetMapTile(currentTile.mTileLocation, eDirection_S);
     }
 
-    for (GameMapTile& currTile: mTilesArray)
+    for (MapTile& currTile: mTilesArray)
     {
         currTile.mRandomValue = randomize.generate_int();
     }
 }
 
-void GameMapData::Clear()
+void MapData::Clear()
 {
     mFloodFillCounter = 0;
     mDimensions.x = 0;
@@ -49,7 +49,7 @@ void GameMapData::Clear()
     mTilesArray.clear();
 }
 
-GameMapTile* GameMapData::GetTileFromCoord3d(const glm::vec3& coord)
+MapTile* MapData::GetTileFromCoord3d(const glm::vec3& coord)
 {
     Point2D tileLocation {
         static_cast<int>((coord.x + DUNGEON_CELL_HALF_SIZE) / DUNGEON_CELL_SIZE),
@@ -58,7 +58,7 @@ GameMapTile* GameMapData::GetTileFromCoord3d(const glm::vec3& coord)
     return GetMapTile(tileLocation);
 }
 
-GameMapTile* GameMapData::GetMapTile(const Point2D& tileLocation)
+MapTile* MapData::GetMapTile(const Point2D& tileLocation)
 {
     if (IsWithinMap(tileLocation))
         return &mTilesArray[tileLocation.y * mDimensions.x + tileLocation.x];
@@ -66,14 +66,14 @@ GameMapTile* GameMapData::GetMapTile(const Point2D& tileLocation)
     return nullptr;
 }
 
-GameMapTile* GameMapData::GetMapTile(const Point2D& tileLocation, eDirection direction)
+MapTile* MapData::GetMapTile(const Point2D& tileLocation, eDirection direction)
 {
     Point2D directionVector = GetDirectionVector(direction);
 
     return GetMapTile(tileLocation + directionVector);
 }
 
-bool GameMapData::GetTileCenterCoord3d(const Point2D& tileLocation, glm::vec3& coord3d) const
+bool MapData::GetTileCenterCoord3d(const Point2D& tileLocation, glm::vec3& coord3d) const
 {
     bool isWithin = IsWithinMap(tileLocation);
     if (isWithin)
@@ -85,7 +85,7 @@ bool GameMapData::GetTileCenterCoord3d(const Point2D& tileLocation, glm::vec3& c
     return isWithin;
 }
 
-bool GameMapData::IsWithinMap(const Point2D& tileLocation, eDirection direction) const
+bool MapData::IsWithinMap(const Point2D& tileLocation, eDirection direction) const
 {
     Point2D directionVector = GetDirectionVector(direction);
 
@@ -95,13 +95,13 @@ bool GameMapData::IsWithinMap(const Point2D& tileLocation, eDirection direction)
         (nextTilePosition.y < mDimensions.y); 
 }
 
-void GameMapData::FloodFill4(GameMapTiles& outputTiles, GameMapTile* origin, MapFloodFillFlags flags)
+void MapData::FloodFill4(TilesArray& outputTiles, MapTile* origin, MapFloodFillFlags flags)
 {
     Rect2D scanArea(0, 0, mDimensions.x, mDimensions.y);
     FloodFill4(outputTiles, origin, scanArea, flags);
 }
 
-void GameMapData::FloodFill4(GameMapTiles& outputTiles, GameMapTile* origin, const Rect2D& scanArea, MapFloodFillFlags flags)
+void MapData::FloodFill4(TilesArray& outputTiles, MapTile* origin, const Rect2D& scanArea, MapFloodFillFlags flags)
 {
     // check conditions
     if (origin == nullptr || scanArea.mSizeX < 1 || scanArea.mSizeY < 1)
@@ -120,12 +120,12 @@ void GameMapData::FloodFill4(GameMapTiles& outputTiles, GameMapTile* origin, con
     }
 
     // explore tiles
-    std::stack<GameMapTile*> explorationList;
+    std::stack<MapTile*> explorationList;
     explorationList.push(origin); 
 
     while (!explorationList.empty())
     {
-        GameMapTile* currentTile = explorationList.top();
+        MapTile* currentTile = explorationList.top();
         explorationList.pop();
 
         // already explored
@@ -134,7 +134,7 @@ void GameMapData::FloodFill4(GameMapTiles& outputTiles, GameMapTile* origin, con
 
         // move tile to cleselist
         currentTile->mFloodFillCounter = mFloodFillCounter;
-        GameMapTile* tilesToExplore[] = 
+        MapTile* tilesToExplore[] = 
         {
             currentTile->mNeighbours[eDirection_E],
             currentTile->mNeighbours[eDirection_N],
@@ -142,7 +142,7 @@ void GameMapData::FloodFill4(GameMapTiles& outputTiles, GameMapTile* origin, con
             currentTile->mNeighbours[eDirection_S],
         };
 
-        for (GameMapTile* tile: tilesToExplore)
+        for (MapTile* tile: tilesToExplore)
         {
             if (!tile || tile->mFloodFillCounter == mFloodFillCounter) 
             {
@@ -178,9 +178,9 @@ void GameMapData::FloodFill4(GameMapTiles& outputTiles, GameMapTile* origin, con
     }
 }
 
-void GameMapData::ClearFloodFillCounter()
+void MapData::ClearFloodFillCounter()
 {
-    for (GameMapTile& currTile: mTilesArray)
+    for (MapTile& currTile: mTilesArray)
     {
         currTile.mFloodFillCounter = 0;
     }

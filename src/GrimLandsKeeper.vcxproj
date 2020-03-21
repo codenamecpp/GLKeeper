@@ -181,8 +181,8 @@
     <ClInclude Include="AABBTree.h" />
     <ClInclude Include="AnimatingModel.h" />
     <ClInclude Include="CreatureDefs.h" />
-    <ClInclude Include="GameMapData.h" />
-    <ClInclude Include="GameMapTile.h" />
+    <ClInclude Include="MapData.h" />
+    <ClInclude Include="MapTile.h" />
     <ClInclude Include="GameObjectsDefs.h" />
     <ClInclude Include="GameplayGamestate.h" />
     <ClInclude Include="GameWorld.h" />
@@ -258,6 +258,8 @@
     <ClInclude Include="SystemSettings.h" />
     <ClInclude Include="TerrainMesh.h" />
     <ClInclude Include="TerrainMeshBuilder.h" />
+    <ClInclude Include="TerrainRenderer.h" />
+    <ClInclude Include="TerrainRenderProgram.h" />
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="Texture2DAnimation.h" />
     <ClInclude Include="Texture2D_Image.h" />
@@ -283,8 +285,8 @@
     <ClCompile Include="ConsoleVariable.cpp" />
     <ClCompile Include="ConsoleWindow.cpp" />
     <ClCompile Include="DebugGuiWindow.cpp" />
-    <ClCompile Include="GameMapData.cpp" />
-    <ClCompile Include="GameMapTile.cpp" />
+    <ClCompile Include="MapData.cpp" />
+    <ClCompile Include="MapTile.cpp" />
     <ClCompile Include="GameplayGamestate.cpp" />
     <ClCompile Include="GameWorld.cpp" />
     <ClCompile Include="MeshViewWindow.cpp" />
@@ -330,6 +332,7 @@
     <ClCompile Include="SystemSettings.cpp" />
     <ClCompile Include="TerrainMesh.cpp" />
     <ClCompile Include="TerrainMeshBuilder.cpp" />
+    <ClCompile Include="TerrainRenderer.cpp" />
     <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="Texture2DAnimation.cpp" />
     <ClCompile Include="Texture2D_Image.cpp" />
@@ -359,6 +362,7 @@
     <None Include="..\data\shaders\anim_blend_frames.glsl" />
     <None Include="..\data\shaders\debug.glsl" />
     <None Include="..\data\shaders\gui.glsl" />
+    <None Include="..\data\shaders\terrain.glsl" />
     <None Include="AABBTree.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
