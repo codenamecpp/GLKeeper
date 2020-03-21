@@ -35,7 +35,7 @@ public:
 // model instance on render scene
 class AnimatingModel: public SceneObject
 {
-    friend class ModelsRenderer;
+    friend class AnimatingModelsRenderer;
 
 public:
     // readonly

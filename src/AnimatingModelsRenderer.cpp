@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "ModelsRenderer.h"
+#include "AnimatingModelsRenderer.h"
 #include "ModelAsset.h"
 #include "GraphicsDevice.h"
 #include "GpuBuffer.h"
@@ -7,9 +7,7 @@
 #include "RenderScene.h"
 #include "VertexFormat.h"
 #include "ConsoleVariable.h"
-#include "Console.h"
-
-CvarBoolean gCvarRender_EnableAnimBlendFrames("r_animBlendFrames", true, "Smooth animations", ConsoleVar_Renderer);
+#include "cvars.h"
 
 // internal info
 class ModelsRenderData: public cxx::noncopyable
@@ -39,7 +37,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 
-bool ModelsRenderer::Initialize()
+bool AnimatingModelsRenderer::Initialize()
 {
     if (!mMorphAnimRenderProgram.LoadProgram())
     {
@@ -47,12 +45,10 @@ bool ModelsRenderer::Initialize()
         return false;
     }
 
-    gConsole.RegisterVariable(&gCvarRender_EnableAnimBlendFrames);
-
     return true;
 }
 
-void ModelsRenderer::Deinit()
+void AnimatingModelsRenderer::Deinit()
 {
     mMorphAnimRenderProgram.FreeProgram();
     for (auto& curr_iterator : mModelsCache)
@@ -60,12 +56,10 @@ void ModelsRenderer::Deinit()
         DestroyRenderData(curr_iterator.second);
     }
 
-    gConsole.UnregisterVariable(&gCvarRender_EnableAnimBlendFrames);
-
     mModelsCache.clear();
 }
 
-void ModelsRenderer::RenderModel(SceneRenderContext& renderContext, AnimatingModel* animatingModel)
+void AnimatingModelsRenderer::RenderModel(SceneRenderContext& renderContext, AnimatingModel* animatingModel)
 {
     ModelAsset* modelAsset = animatingModel->mModelAsset;
     if (animatingModel == nullptr || modelAsset== nullptr)
@@ -134,7 +128,7 @@ void ModelsRenderer::RenderModel(SceneRenderContext& renderContext, AnimatingMod
     }
 }
 
-ModelsRenderData* ModelsRenderer::GetRenderData(ModelAsset* modelAsset)
+ModelsRenderData* AnimatingModelsRenderer::GetRenderData(ModelAsset* modelAsset)
 {
     if (modelAsset == nullptr || !modelAsset->IsModelLoaded())
     {
@@ -154,7 +148,7 @@ ModelsRenderData* ModelsRenderer::GetRenderData(ModelAsset* modelAsset)
     return renderdata;
 }
 
-void ModelsRenderer::InvalidateRenderData(ModelAsset* modelAsset)
+void AnimatingModelsRenderer::InvalidateRenderData(ModelAsset* modelAsset)
 {
     if (modelAsset == nullptr || !modelAsset->IsModelLoaded())
     {
@@ -170,7 +164,7 @@ void ModelsRenderer::InvalidateRenderData(ModelAsset* modelAsset)
     InitRenderData(cache_iterator->second, modelAsset);
 }
 
-void ModelsRenderer::DestroyRenderData(ModelsRenderData* renderdata)
+void AnimatingModelsRenderer::DestroyRenderData(ModelsRenderData* renderdata)
 {
     debug_assert(renderdata);
     if (renderdata->mVerticesBuffer)
@@ -184,7 +178,7 @@ void ModelsRenderer::DestroyRenderData(ModelsRenderData* renderdata)
     SafeDelete(renderdata);
 }
 
-void ModelsRenderer::InitRenderData(ModelsRenderData* renderdata, ModelAsset* modelAsset)
+void AnimatingModelsRenderer::InitRenderData(ModelsRenderData* renderdata, ModelAsset* modelAsset)
 {
     debug_assert(renderdata);
     debug_assert(modelAsset);

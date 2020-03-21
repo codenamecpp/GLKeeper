@@ -5,24 +5,33 @@
 
 GameWorld gGameWorld;
 
-bool GameWorld::InitializeFromScenario(const std::string& scenarioName)
+bool GameWorld::InitializeWorld(const std::string& scenarioName)
 {
     ScenarioLoader scenarioLoader (mScenarioData);
     if (!scenarioLoader.LoadScenarioData(scenarioName))
     {
         Deinit();
 
-        gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize game world");
+        gConsole.LogMessage(eLogMessage_Warning, "Cannot load scenario data");
         return false;
     }
 
     SetupMapData(0xDEADBEEF);
+
+    if (!mTerrainManager.Initialize())
+    {
+        Deinit();
+
+        gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize terrain manager");
+        return false;
+    }
 
     return true;
 }
 
 void GameWorld::Deinit()
 {
+    mTerrainManager.Deinit();
     mScenarioData.Clear();
     mMapData.Clear();
 }

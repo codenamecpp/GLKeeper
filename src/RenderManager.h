@@ -3,22 +3,21 @@
 #include "GraphicsDefs.h"
 #include "GuiRenderProgram.h"
 #include "DebugRenderer.h"
-#include "ModelsRenderer.h"
+#include "AnimatingModelsRenderer.h"
 #include "SceneRenderList.h"
-#include "TerrainRenderer.h"
+#include "TerrainMeshRenderer.h"
 
 // master render system, it is intended to manage rendering pipeline of the game
 class RenderManager: public cxx::noncopyable
 {
 public:
     // readonly
-    ModelsRenderer mModelsRenderer;
-    TerrainRenderer mTerrainRenderer;
+    AnimatingModelsRenderer mAnimatingModelsRenderer;
+    TerrainMeshRenderer mTerrainMeshRenderer;
 
     RenderProgram* mActiveRenderProgram = nullptr;
 
 public:
-
     // setup rendering system internal resources
     // @returns false on error
     bool Initialize();

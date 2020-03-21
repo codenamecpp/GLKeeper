@@ -200,7 +200,7 @@
     <ClInclude Include="ModelAsset.h" />
     <ClInclude Include="MeshViewGamestate.h" />
     <ClInclude Include="ModelAssetsManager.h" />
-    <ClInclude Include="ModelsRenderer.h" />
+    <ClInclude Include="AnimatingModelsRenderer.h" />
     <ClInclude Include="OrbitCameraControl.h" />
     <ClInclude Include="RenderMaterial.h" />
     <ClInclude Include="ResourceDefs.h" />
@@ -259,7 +259,7 @@
     <ClInclude Include="TerrainManager.h" />
     <ClInclude Include="TerrainMesh.h" />
     <ClInclude Include="DungeonBuilder.h" />
-    <ClInclude Include="TerrainRenderer.h" />
+    <ClInclude Include="TerrainMeshRenderer.h" />
     <ClInclude Include="TerrainRenderProgram.h" />
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="Texture2DAnimation.h" />
@@ -312,7 +312,7 @@
     <ClCompile Include="MeshViewGamestate.cpp" />
     <ClCompile Include="micropather.cpp" />
     <ClCompile Include="ModelAssetsManager.cpp" />
-    <ClCompile Include="ModelsRenderer.cpp" />
+    <ClCompile Include="AnimatingModelsRenderer.cpp" />
     <ClCompile Include="OrbitCameraControl.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -334,7 +334,7 @@
     <ClCompile Include="TerrainManager.cpp" />
     <ClCompile Include="TerrainMesh.cpp" />
     <ClCompile Include="DungeonBuilder.cpp" />
-    <ClCompile Include="TerrainRenderer.cpp" />
+    <ClCompile Include="TerrainMeshRenderer.cpp" />
     <ClCompile Include="Texture2D.cpp" />
     <ClCompile Include="Texture2DAnimation.cpp" />
     <ClCompile Include="Texture2D_Image.cpp" />

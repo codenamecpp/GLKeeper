@@ -149,6 +149,8 @@ AnimatingModel* RenderScene::CreateAnimatingModel()
 TerrainMesh* RenderScene::CreateTerrainMesh(const Rect2D& mapTerrainArea)
 {
     TerrainMesh* sceneEntity = new TerrainMesh;
+    sceneEntity->SetTerrainArea(mapTerrainArea);
+    sceneEntity->InvalidateMesh();
     return sceneEntity;
 }
 

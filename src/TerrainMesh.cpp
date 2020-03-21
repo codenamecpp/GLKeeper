@@ -75,6 +75,18 @@ void TerrainMesh::SetTerrainArea(const Rect2D& mapArea)
     mMapTerrainRect = mapArea;
 
     InvalidateMesh();
+
+    cxx::aabbox sectorBox;
+    // min
+    sectorBox.mMin.x = ((mMapTerrainRect.mX * DUNGEON_CELL_SIZE) * (mMapTerrainRect.mSizeX * DUNGEON_CELL_SIZE)) - DUNGEON_CELL_HALF_SIZE;
+    sectorBox.mMin.y = 0.0f;
+    sectorBox.mMin.z = ((mMapTerrainRect.mY * DUNGEON_CELL_SIZE) * (mMapTerrainRect.mSizeY * DUNGEON_CELL_SIZE)) - DUNGEON_CELL_HALF_SIZE;
+    // max
+    sectorBox.mMax.x = sectorBox.mMin.x + (mMapTerrainRect.mSizeX * DUNGEON_CELL_SIZE);
+    sectorBox.mMax.y = 3.0f;
+    sectorBox.mMax.z = sectorBox.mMin.z + (mMapTerrainRect.mSizeY * DUNGEON_CELL_SIZE);
+
+    SetLocalBoundingBox(sectorBox);
 }
 
 void TerrainMesh::InvalidateMesh()

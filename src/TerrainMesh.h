@@ -7,7 +7,7 @@
 // terrain mesh instance
 class TerrainMesh: public SceneObject
 {
-    friend class TerrainRenderer;
+    friend class TerrainMeshRenderer;
 
 public:
     // readonly

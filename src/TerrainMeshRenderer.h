@@ -6,7 +6,7 @@
 #include "SceneDefs.h"
 
 // terrain visualization manager
-class TerrainRenderer: public cxx::noncopyable
+class TerrainMeshRenderer: public cxx::noncopyable
 {
 public:
 

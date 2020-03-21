@@ -6,7 +6,7 @@
 #include "SceneDefs.h"
 
 // models visualization manager
-class ModelsRenderer: public cxx::noncopyable
+class AnimatingModelsRenderer: public cxx::noncopyable
 {
 public:
 

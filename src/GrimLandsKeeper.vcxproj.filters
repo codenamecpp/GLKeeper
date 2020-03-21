@@ -309,9 +309,6 @@
       <Filter>Game\Render</Filter>
     </ClInclude>
     <ClInclude Include="cvars.h" />
-    <ClInclude Include="ModelsRenderer.h">
-      <Filter>Game\Render</Filter>
-    </ClInclude>
     <ClInclude Include="ModelAsset.h">
       <Filter>Application\Resources</Filter>
     </ClInclude>
@@ -375,9 +372,6 @@
     <ClInclude Include="TerrainRenderProgram.h">
       <Filter>Game\Render\Shaders</Filter>
     </ClInclude>
-    <ClInclude Include="TerrainRenderer.h">
-      <Filter>Game\Render</Filter>
-    </ClInclude>
     <ClInclude Include="TerrainManager.h">
       <Filter>Game\World</Filter>
     </ClInclude>
@@ -386,6 +380,12 @@
     </ClInclude>
     <ClInclude Include="GameMap.h">
       <Filter>Game\World</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainMeshRenderer.h">
+      <Filter>Game\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatingModelsRenderer.h">
+      <Filter>Game\Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -520,9 +520,6 @@
     <ClCompile Include="RenderMaterial.cpp">
       <Filter>Game\Render</Filter>
     </ClCompile>
-    <ClCompile Include="ModelsRenderer.cpp">
-      <Filter>Game\Render</Filter>
-    </ClCompile>
     <ClCompile Include="ModelAsset.cpp">
       <Filter>Application\Resources</Filter>
     </ClCompile>
@@ -568,9 +565,6 @@
     <ClCompile Include="MapTile.cpp">
       <Filter>Game\World</Filter>
     </ClCompile>
-    <ClCompile Include="TerrainRenderer.cpp">
-      <Filter>Game\Render</Filter>
-    </ClCompile>
     <ClCompile Include="TerrainManager.cpp">
       <Filter>Game\World</Filter>
     </ClCompile>
@@ -579,6 +573,12 @@
     </ClCompile>
     <ClCompile Include="GameMap.cpp">
       <Filter>Game\World</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainMeshRenderer.cpp">
+      <Filter>Game\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatingModelsRenderer.cpp">
+      <Filter>Game\Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

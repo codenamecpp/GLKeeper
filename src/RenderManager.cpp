@@ -12,6 +12,7 @@
 
 // cvars
 CvarBoolean gCvarRender_DebugDrawEnabled ("r_debugDraw", true, "Enable debug draw", ConsoleVar_Debug | ConsoleVar_Renderer);
+CvarBoolean gCvarRender_EnableAnimBlendFrames("r_animBlendFrames", true, "Smooth animations", ConsoleVar_Renderer);
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -21,7 +22,7 @@ RenderManager gRenderManager;
 
 bool RenderManager::Initialize()
 {
-    if (!mGuiRenderProgram.LoadProgram() || !mModelsRenderer.Initialize() || !mTerrainRenderer.Initialize())
+    if (!mGuiRenderProgram.LoadProgram() || !mAnimatingModelsRenderer.Initialize() || !mTerrainMeshRenderer.Initialize())
     {
         gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize render manager");
 
@@ -37,6 +38,7 @@ bool RenderManager::Initialize()
     gGraphicsDevice.SetClearColor(Color32_GrimGray);
 
     gConsole.RegisterVariable(&gCvarRender_DebugDrawEnabled);
+    gConsole.RegisterVariable(&gCvarRender_EnableAnimBlendFrames);
 
     return true;
 }
@@ -44,9 +46,10 @@ bool RenderManager::Initialize()
 void RenderManager::Deinit()
 {
     gConsole.UnregisterVariable(&gCvarRender_DebugDrawEnabled);
+    gConsole.UnregisterVariable(&gCvarRender_EnableAnimBlendFrames);
 
-    mModelsRenderer.Deinit();
-    mTerrainRenderer.Deinit();
+    mAnimatingModelsRenderer.Deinit();
+    mTerrainMeshRenderer.Deinit();
     mDebugRenderer.Deinit();
     mGuiRenderProgram.FreeProgram();
     mSceneRenderList.Clear();
@@ -137,11 +140,11 @@ void RenderManager::DrawScene()
         const auto& element = mSceneRenderList.mOpaqueElements[i];
         if (element.mAnimatingModel)
         {
-            mModelsRenderer.RenderModel(renderContext, element.mAnimatingModel);
+            mAnimatingModelsRenderer.RenderModel(renderContext, element.mAnimatingModel);
         }
         if (element.mTerrainMesh)
         {
-            mTerrainRenderer.RenderTerrainMesh(renderContext, element.mTerrainMesh);
+            mTerrainMeshRenderer.RenderTerrainMesh(renderContext, element.mTerrainMesh);
         }
     }
 
@@ -156,11 +159,11 @@ void RenderManager::DrawScene()
         const auto& element = mSceneRenderList.mTranslucentElements[i];
         if (element.mAnimatingModel)
         {
-            mModelsRenderer.RenderModel(renderContext, element.mAnimatingModel);
+            mAnimatingModelsRenderer.RenderModel(renderContext, element.mAnimatingModel);
         }
         if (element.mTerrainMesh)
         {
-            mTerrainRenderer.RenderTerrainMesh(renderContext, element.mTerrainMesh);
+            mTerrainMeshRenderer.RenderTerrainMesh(renderContext, element.mTerrainMesh);
         }
     }
 

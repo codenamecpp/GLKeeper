@@ -19,7 +19,7 @@ public:
     
     // load world data, level map, setup players, build rooms etc
     // @param scenarioName: Scenario name
-    bool InitializeFromScenario(const std::string& scenarioName);
+    bool InitializeWorld(const std::string& scenarioName);
     void Deinit();
 
     // get terrain definition by type name or type identifier
