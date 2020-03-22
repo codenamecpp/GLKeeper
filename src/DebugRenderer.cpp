@@ -268,9 +268,9 @@ void DebugRenderer::DrawAabb(const cxx::aabbox& aabox, unsigned int color, bool 
 
 void DebugRenderer::DrawAxes(const glm::mat4& transform_matrix, const glm::vec3& center_point, float axis_length, bool depth_test)
 {
-    glm::vec4 x_axis_vector = transform_matrix * glm::vec4(SceneAxis_X(), 0.0f);
-    glm::vec4 y_axis_vector = transform_matrix * glm::vec4(SceneAxis_Y(), 0.0f);
-    glm::vec4 z_axis_vector = transform_matrix * glm::vec4(SceneAxis_Z(), 0.0f);
+    glm::vec4 x_axis_vector = transform_matrix * glm::vec4(SceneAxisX, 0.0f);
+    glm::vec4 y_axis_vector = transform_matrix * glm::vec4(SceneAxisY, 0.0f);
+    glm::vec4 z_axis_vector = transform_matrix * glm::vec4(SceneAxisZ, 0.0f);
 
     DrawLine(center_point, center_point + glm::vec3(x_axis_vector) * axis_length, Color32_Red, depth_test);
     DrawLine(center_point, center_point + glm::vec3(y_axis_vector) * axis_length, Color32_Green, depth_test);

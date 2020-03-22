@@ -10,9 +10,9 @@ SceneObject::SceneObject()
     , mTransformation(1.0f)
     , mScaling(1.0f)
     , mPosition()
-    , mDirectionRight(SceneAxis_X())
-    , mDirectionUpward(SceneAxis_Y())
-    , mDirectionForward(SceneAxis_Z())
+    , mDirectionRight(SceneAxisX)
+    , mDirectionUpward(SceneAxisY)
+    , mDirectionForward(SceneAxisZ)
 {
 }
 
@@ -86,7 +86,7 @@ void SceneObject::SetOrientation(const glm::vec3& directionRight, const glm::vec
 
 void SceneObject::OrientTowards(const glm::vec3& point)
 {
-    OrientTowards(point, SceneAxis_Y());
+    OrientTowards(point, SceneAxisY);
 }
 
 void SceneObject::Rotate(const glm::vec3& rotationAxis, float rotationAngle)
@@ -122,9 +122,9 @@ void SceneObject::ResetTransformation()
     mTransformation = glm::mat4{1.0f};
     mScaling = 1.0f;
     mPosition = glm::vec3{0.0f};
-    mDirectionRight = SceneAxis_X();
-    mDirectionUpward = SceneAxis_Y();
-    mDirectionForward = SceneAxis_Z();
+    mDirectionRight = SceneAxisX;
+    mDirectionUpward = SceneAxisY;
+    mDirectionForward = SceneAxisZ;
 
     InvalidateTransform();
 }
@@ -157,7 +157,7 @@ void SceneObject::InvalidateBounds()
 
 void SceneObject::ResetOrientation()
 {
-    SetOrientation(SceneAxis_X(), SceneAxis_Z(), SceneAxis_Y());
+    SetOrientation(SceneAxisX, SceneAxisZ, SceneAxisY);
 }
 
 bool SceneObject::IsAttachedToScene() const

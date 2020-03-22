@@ -83,9 +83,9 @@ void SceneCamera::SetIdentity()
     mViewMatrix = glm::mat4(1.0f);
 
     // set default axes
-    mForwardVector = -SceneAxis_Z(); // look along negative axis
-    mUpVector = SceneAxis_Y();
-    mRightVector = SceneAxis_X();
+    mForwardVector = -SceneAxisZ; // look along negative axis
+    mUpVector = SceneAxisY;
+    mRightVector = SceneAxisX;
 
     // reset position to origin
     mPosition = glm::vec3(0.0f);
@@ -96,9 +96,9 @@ void SceneCamera::SetIdentity()
 
 void SceneCamera::ResetOrientation()
 {
-    mForwardVector = -SceneAxis_Z(); // look along negative axis
-    mUpVector = SceneAxis_Y();
-    mRightVector = SceneAxis_X();
+    mForwardVector = -SceneAxisZ; // look along negative axis
+    mUpVector = SceneAxisY;
+    mRightVector = SceneAxisX;
 
     mViewMatrixDirty = true;
 }
@@ -115,18 +115,18 @@ void SceneCamera::FocusAt(const glm::vec3& focusPoint)
         // forward vector is pointing +Y axis
         if (mForwardVector.y > 0)
         {
-            mUpVector = -SceneAxis_Z();
+            mUpVector = -SceneAxisZ;
         }
         // forward vector is pointing -Y axis
         else
         {
-            mUpVector = SceneAxis_Z();
+            mUpVector = SceneAxisZ;
         }
     }
     // in general, up vector is straight up
     else
     {
-        mUpVector = SceneAxis_Y();
+        mUpVector = SceneAxisY;
     }
 
     mRightVector = glm::normalize(glm::cross(mUpVector, mForwardVector));
@@ -149,8 +149,8 @@ void SceneCamera::SetRotationAngles(const glm::vec3& rotationAngles)
         glm::radians(rotationAngles.x), 
         glm::radians(rotationAngles.z));
 
-    const glm::vec3 rotatedUp = glm::vec3(rotationMatrix * glm::vec4(SceneAxis_Y(), 0.0f));
-    mForwardVector = glm::vec3(rotationMatrix * glm::vec4(-SceneAxis_Z(), 0.0f));
+    const glm::vec3 rotatedUp = glm::vec3(rotationMatrix * glm::vec4(SceneAxisY, 0.0f));
+    mForwardVector = glm::vec3(rotationMatrix * glm::vec4(-SceneAxisZ, 0.0f));
     mRightVector = glm::normalize(glm::cross(rotatedUp, mForwardVector)); 
     mUpVector = glm::normalize(glm::cross(mForwardVector, mRightVector));
 

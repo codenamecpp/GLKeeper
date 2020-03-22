@@ -122,7 +122,7 @@ void GodModeCameraControl::HandleUpdateFrame(float dtseconds)
 
     if ((mMovingN || mMovingS) && !mMovingAltMode)
     {
-        const glm::vec3 vmove = glm::normalize(glm::cross(mSceneCamera->mRightVector, SceneAxis_Y()));
+        const glm::vec3 vmove = glm::normalize(glm::cross(mSceneCamera->mRightVector, SceneAxisY));
         if (mMovingN)
         {
             moveDirection += (vmove * CAM_DEFAULT_MOTION_SPEED * dtseconds);

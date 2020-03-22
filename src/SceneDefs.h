@@ -19,22 +19,10 @@ enum eSceneCameraMode
 decl_enum_strings(eSceneCameraMode);
 
 // get scene global space right direction vector
-inline const glm::vec3& SceneAxis_X()
-{
-    static const glm::vec3 axis_X {1.0f, 0.0f, 0.0f};
-    return axis_X;
-}
+const glm::vec3 SceneAxisX (1.0f, 0.0f, 0.0f);
 
 // get scene global space up direction vector
-inline const glm::vec3& SceneAxis_Y()
-{
-    static const glm::vec3 axis_Y {0.0f, 1.0f, 0.0f};
-    return axis_Y;
-}
+const glm::vec3 SceneAxisY (0.0f, 1.0f, 0.0f);
 
 // get scene global space forward direction vector
-inline const glm::vec3& SceneAxis_Z()
-{
-    static const glm::vec3 axis_Z {0.0f, 0.0f, 1.0f};
-    return axis_Z;
-}
+const glm::vec3 SceneAxisZ (0.0f, 0.0f, 1.0f);
