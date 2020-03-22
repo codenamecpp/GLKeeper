@@ -90,7 +90,6 @@ void SceneCamera::SetIdentity()
     // reset position to origin
     mPosition = glm::vec3(0.0f);
 
-    // force dirty flags
     mProjMatrixDirty = true;
     mViewMatrixDirty = true;
 }
@@ -101,7 +100,6 @@ void SceneCamera::ResetOrientation()
     mUpVector = SceneAxis_Y();
     mRightVector = SceneAxis_X();
 
-    // force dirty flags
     mViewMatrixDirty = true;
 }
 
@@ -131,10 +129,9 @@ void SceneCamera::FocusAt(const glm::vec3& focusPoint)
         mUpVector = SceneAxis_Y();
     }
 
-    mRightVector = glm::normalize(glm::cross(mForwardVector, mUpVector));
-    mUpVector = glm::cross(mRightVector, mForwardVector);
+    mRightVector = glm::normalize(glm::cross(mUpVector, mForwardVector));
+    mUpVector = glm::cross(mForwardVector, mRightVector);
 
-    // force dirty flags
     mViewMatrixDirty = true;
 }
 
@@ -142,7 +139,6 @@ void SceneCamera::SetPosition(const glm::vec3& position)
 {
     mPosition = position;
 
-    // force dirty flags
     mViewMatrixDirty = true;
 }
 
@@ -158,7 +154,6 @@ void SceneCamera::SetRotationAngles(const glm::vec3& rotationAngles)
     mRightVector = glm::normalize(glm::cross(rotatedUp, mForwardVector)); 
     mUpVector = glm::normalize(glm::cross(mForwardVector, mRightVector));
 
-    // force dirty flags
     mViewMatrixDirty = true;
 }
 
@@ -166,7 +161,6 @@ void SceneCamera::Translate(const glm::vec3& direction)
 {
     mPosition += direction;
 
-    // force dirty flags
     mViewMatrixDirty = true;
 }
 
@@ -196,6 +190,5 @@ void SceneCamera::SetOrientation(const glm::vec3& dirForward, const glm::vec3& d
     mUpVector = dirUp;
     mRightVector = dirRight;
 
-    // force dirty flags
     mViewMatrixDirty = true;
 }

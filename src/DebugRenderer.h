@@ -36,6 +36,9 @@ public:
     void DrawAabb(const cxx::aabbox& aabox, unsigned int color, bool depth_test);
 
     // push transformation axes to debug draw queue
+    //  blue    - z axis
+    //  green   - y axis
+    //  red     - x axis
     // @param depth_test: Enable or disable depth test for lines
     void DrawAxes(const glm::mat4& transform_matrix, const glm::vec3& center_point, float axis_length, bool depth_test);
 

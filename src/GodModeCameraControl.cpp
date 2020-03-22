@@ -4,16 +4,19 @@
 #include "RenderScene.h"
 
 #define CAM_DEFAULT_PITCH_ANGLE    -53.0f
+#define CAM_DEFAULT_YAW_ANGLE      -90.0f
 #define CAM_DEFAULT_MOTION_SPEED    10.0f
-#define CAM_DEFAULT_ROTATION_SPEED  90.0f
+#define CAM_DEFAULT_ROTATION_SPEED  80.0f
 #define CAM_DEFAULT_DISTANCE        8.0f
 #define CAM_DEFAULT_NEAR            0.01f
 #define CAM_DEFAULT_FAR             200.0f
 #define CAM_DEFAULT_FOVY            60.0f
+#define CAM_MAX_DISTANCE            100.0f
+#define CAM_MIN_DISTANCE            0.5f
 
 GodModeCameraControl::GodModeCameraControl()
     : mFocusPoint()
-    , mDegYaw()
+    , mDegYaw(CAM_DEFAULT_YAW_ANGLE)
     , mDegPitch(CAM_DEFAULT_PITCH_ANGLE)
     , mDistance(CAM_DEFAULT_DISTANCE)
     , mIncreasingFov()
@@ -109,11 +112,11 @@ void GodModeCameraControl::HandleUpdateFrame(float dtseconds)
     {
         if (mMovingE)
         {
-            moveDirection += (mSceneCamera->mRightVector * CAM_DEFAULT_MOTION_SPEED * dtseconds);
+            moveDirection += (-mSceneCamera->mRightVector * CAM_DEFAULT_MOTION_SPEED * dtseconds);
         }
         if (mMovingW)
         {
-            moveDirection += (-mSceneCamera->mRightVector * CAM_DEFAULT_MOTION_SPEED * dtseconds);
+            moveDirection += (mSceneCamera->mRightVector * CAM_DEFAULT_MOTION_SPEED * dtseconds);
         }
     }
 
@@ -122,11 +125,11 @@ void GodModeCameraControl::HandleUpdateFrame(float dtseconds)
         const glm::vec3 vmove = glm::normalize(glm::cross(mSceneCamera->mRightVector, SceneAxis_Y()));
         if (mMovingN)
         {
-            moveDirection += (-vmove * CAM_DEFAULT_MOTION_SPEED * dtseconds);
+            moveDirection += (vmove * CAM_DEFAULT_MOTION_SPEED * dtseconds);
         }
         if (mMovingS)
         {
-            moveDirection += (vmove * CAM_DEFAULT_MOTION_SPEED * dtseconds);
+            moveDirection += (-vmove * CAM_DEFAULT_MOTION_SPEED * dtseconds);
         }
     }
 
@@ -135,7 +138,7 @@ void GodModeCameraControl::HandleUpdateFrame(float dtseconds)
         mDegYaw = cxx::normalize_angle_180(mDegYaw + (CAM_DEFAULT_ROTATION_SPEED * dtseconds) * (rotatingCCW ? -1.0f : 1.0f));
     }
 
-    mDistance += elevation;
+    mDistance = glm::clamp(mDistance + elevation, CAM_MIN_DISTANCE, CAM_MAX_DISTANCE);
     mFocusPoint += moveDirection;
 
     SetupCameraView();
