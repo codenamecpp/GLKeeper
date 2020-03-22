@@ -5,12 +5,14 @@
 #include "RenderDefs.h"
 #include "MeshViewGamestate.h"
 #include "GameplayGamestate.h"
+#include "FpsWindow.h"
 
 // game core
 class GameMain: public cxx::noncopyable
 {
     // all gamestates can access private members
     friend class MeshViewGamestate;
+    friend class GameplayGamestate;
 
 public:
     // readonly
@@ -46,6 +48,8 @@ private:
 private:
     MeshViewGamestate mMeshViewGamestate;
     GameplayGamestate mGameplayGamestate;
+
+    FpsWindow mFpsWindow;
 };
 
 extern GameMain gGameMain;

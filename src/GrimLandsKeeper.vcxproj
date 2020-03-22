@@ -181,6 +181,7 @@
     <ClInclude Include="AABBTree.h" />
     <ClInclude Include="AnimatingModel.h" />
     <ClInclude Include="CreatureDefs.h" />
+    <ClInclude Include="FpsWindow.h" />
     <ClInclude Include="GameMap.h" />
     <ClInclude Include="GodModeCameraControl.h" />
     <ClInclude Include="MapTile.h" />
@@ -287,6 +288,7 @@
     <ClCompile Include="ConsoleVariable.cpp" />
     <ClCompile Include="ConsoleWindow.cpp" />
     <ClCompile Include="DebugGuiWindow.cpp" />
+    <ClCompile Include="FpsWindow.cpp" />
     <ClCompile Include="GameMap.cpp" />
     <ClCompile Include="GodModeCameraControl.cpp" />
     <ClCompile Include="MapTile.cpp" />

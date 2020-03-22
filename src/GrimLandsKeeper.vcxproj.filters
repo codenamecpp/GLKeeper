@@ -390,6 +390,9 @@
     <ClInclude Include="GodModeCameraControl.h">
       <Filter>Game\Scene\CameraControl</Filter>
     </ClInclude>
+    <ClInclude Include="FpsWindow.h">
+      <Filter>Application\DebugUI\Windows</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -585,6 +588,9 @@
     </ClCompile>
     <ClCompile Include="GodModeCameraControl.cpp">
       <Filter>Game\Scene\CameraControl</Filter>
+    </ClCompile>
+    <ClCompile Include="FpsWindow.cpp">
+      <Filter>Application\DebugUI\Windows</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

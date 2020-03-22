@@ -6,6 +6,7 @@
 #include "ConsoleWindow.h"
 #include "System.h"
 #include "GameWorld.h"
+#include "DebugGuiManager.h"
 
 GameMain gGameMain;
 
@@ -18,6 +19,9 @@ bool GameMain::Initialize()
         Deinit();
         return false;
     }
+
+    gDebugGuiManager.AttachWindow(&mFpsWindow);
+    mFpsWindow.SetWindowShown(false);
 
     // set initial gamestate
     //SwitchToGameState(&mMeshViewGamestate);
@@ -35,6 +39,7 @@ void GameMain::Deinit()
 
     SwitchToGameState(nullptr);
 
+    gDebugGuiManager.DetachWindow(&mFpsWindow);
     gRenderScene.Deinit();
 }
 
