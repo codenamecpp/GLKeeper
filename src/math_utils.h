@@ -1,5 +1,9 @@
 #pragma once
 
+#ifndef FLT_EPSILON
+    #define FLT_EPSILON 0.0000001f
+#endif
+
 namespace cxx
 {
 
@@ -295,13 +299,11 @@ namespace cxx
     // Moller-Trumbore algorithm 
     inline bool intersects(const ray3d& ray3d, const glm::vec3& vertex0, const glm::vec3& vertex1, const glm::vec3& vertex2, glm::vec3& outPoint)
     {
-        const float EPSILON = 0.0000001f;
-
         glm::vec3 edge1 = vertex1 - vertex0;
         glm::vec3 edge2 = vertex2 - vertex0;
         glm::vec3 pvec = glm::cross(ray3d.mDirection, edge2);
         float det = glm::dot(edge1, pvec);
-        if (det > -EPSILON && det < EPSILON)
+        if (det > -FLT_EPSILON && det < FLT_EPSILON)
             return false;    // This ray is parallel to this triangle
 
         float inv_det = 1.0f / det;
@@ -318,7 +320,7 @@ namespace cxx
 
         // At this stage we can compute t to find out where the intersection point is on the line
         float t = inv_det * glm::dot(edge2, qvec);
-        if (t > EPSILON) // ray intersection
+        if (t > FLT_EPSILON) // ray intersection
         {
             outPoint = ray3d.mOrigin + ray3d.mDirection * t;
             return true;

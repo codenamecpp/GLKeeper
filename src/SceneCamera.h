@@ -9,9 +9,9 @@ class SceneCamera
 public:
     // readonly
     glm::vec3 mPosition;
-    glm::vec3 mFrontDirection;
-    glm::vec3 mUpDirection;
-    glm::vec3 mRightDirection;
+    glm::vec3 mForwardVector;
+    glm::vec3 mUpVector;
+    glm::vec3 mRightVector;
 
     // make sure to ComputeMatricesAndFrustum before reading those
     cxx::frustum_t mFrustum;
@@ -53,9 +53,8 @@ public:
     void SetOrientation(const glm::vec3& dirForward, const glm::vec3& dirRight, const glm::vec3& dirUp);
 
     // setup camera orientation, look at specified point
-    // @param point: Point world
-    // @param upward: Up vector, should be normalized
-    void FocusAt(const glm::vec3& point, const glm::vec3& upward);
+    // @param focusPoint: Focus target point
+    void FocusAt(const glm::vec3& focusPoint);
 
     // set camera position
     // @param position: Camera new position

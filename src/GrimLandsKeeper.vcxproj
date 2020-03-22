@@ -182,6 +182,7 @@
     <ClInclude Include="AnimatingModel.h" />
     <ClInclude Include="CreatureDefs.h" />
     <ClInclude Include="GameMap.h" />
+    <ClInclude Include="GodModeCameraControl.h" />
     <ClInclude Include="MapTile.h" />
     <ClInclude Include="GameObjectsDefs.h" />
     <ClInclude Include="GameplayGamestate.h" />
@@ -287,6 +288,7 @@
     <ClCompile Include="ConsoleWindow.cpp" />
     <ClCompile Include="DebugGuiWindow.cpp" />
     <ClCompile Include="GameMap.cpp" />
+    <ClCompile Include="GodModeCameraControl.cpp" />
     <ClCompile Include="MapTile.cpp" />
     <ClCompile Include="GameplayGamestate.cpp" />
     <ClCompile Include="GameWorld.cpp" />

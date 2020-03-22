@@ -153,6 +153,36 @@ decl_enum_strings(eDirection);
 
 static_assert(eDirection_COUNT == 8, "NUM_TERRAIN_DIRECTIONS");
 
+// get world direction of block face
+// @param faceid: Block face identifier
+inline eDirection TileFaceToDirection(eTileFace faceid)
+{
+    switch (faceid)
+    {
+        case eTileFace_SideN: return eDirection_N;
+        case eTileFace_SideE: return eDirection_E;
+        case eTileFace_SideS: return eDirection_S;
+        case eTileFace_SideW: return eDirection_W;
+    }
+    debug_assert(false);
+    return eDirection_N;
+}
+
+// get block face in direction
+// @param direction: Source direction
+inline eTileFace DirectionToTileFace(eDirection direction)
+{
+    switch (direction)
+    {
+        case eDirection_N: return eTileFace_SideN;
+        case eDirection_E: return eTileFace_SideE;
+        case eDirection_S: return eTileFace_SideS;
+        case eDirection_W: return eTileFace_SideW;
+    }
+    debug_assert(false);
+    return eTileFace_SideN;
+}
+
 // get opposite direction
 // @param direction: Source direction
 inline eDirection GetOppositeDirection(eDirection direction) 

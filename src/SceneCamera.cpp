@@ -62,7 +62,7 @@ void SceneCamera::ComputeMatrices()
 
     if (mViewMatrixDirty)
     {
-        mViewMatrix = glm::lookAt(mPosition, mPosition + mFrontDirection, mUpDirection);
+        mViewMatrix = glm::lookAt(mPosition, mPosition + mForwardVector, mUpVector);
         mViewMatrixDirty = false;
     }
 
@@ -83,9 +83,9 @@ void SceneCamera::SetIdentity()
     mViewMatrix = glm::mat4(1.0f);
 
     // set default axes
-    mFrontDirection = -SceneAxis_Z(); // look along negative axis
-    mUpDirection = SceneAxis_X();
-    mRightDirection = SceneAxis_Y();
+    mForwardVector = -SceneAxis_Z(); // look along negative axis
+    mUpVector = SceneAxis_Y();
+    mRightVector = SceneAxis_X();
 
     // reset position to origin
     mPosition = glm::vec3(0.0f);
@@ -97,22 +97,42 @@ void SceneCamera::SetIdentity()
 
 void SceneCamera::ResetOrientation()
 {
-    mFrontDirection = -SceneAxis_Z(); // look along negative axis
-    mUpDirection = SceneAxis_X();
-    mRightDirection = SceneAxis_Y();
+    mForwardVector = -SceneAxis_Z(); // look along negative axis
+    mUpVector = SceneAxis_Y();
+    mRightVector = SceneAxis_X();
 
     // force dirty flags
     mViewMatrixDirty = true;
 }
 
-void SceneCamera::FocusAt(const glm::vec3& point, const glm::vec3& upward)
+void SceneCamera::FocusAt(const glm::vec3& focusPoint)
 {
-    if (point == mPosition)
-        return;
+    mForwardVector = glm::normalize(focusPoint - mPosition);
 
-    mFrontDirection = glm::normalize(point - mPosition);
-    mRightDirection = glm::normalize(glm::cross(upward, mFrontDirection));
-    mUpDirection = glm::normalize(glm::cross(mFrontDirection, mRightDirection));
+    // compute temporal up vector based on the forward vector
+    // watch out when look up/down at 90 degree
+    // for example, forward vector is on the Y axis
+    if(fabs(mForwardVector.x) < FLT_EPSILON && fabs(mForwardVector.z) < FLT_EPSILON)
+    {
+        // forward vector is pointing +Y axis
+        if (mForwardVector.y > 0)
+        {
+            mUpVector = -SceneAxis_Z();
+        }
+        // forward vector is pointing -Y axis
+        else
+        {
+            mUpVector = SceneAxis_Z();
+        }
+    }
+    // in general, up vector is straight up
+    else
+    {
+        mUpVector = SceneAxis_Y();
+    }
+
+    mRightVector = glm::normalize(glm::cross(mForwardVector, mUpVector));
+    mUpVector = glm::cross(mRightVector, mForwardVector);
 
     // force dirty flags
     mViewMatrixDirty = true;
@@ -134,9 +154,9 @@ void SceneCamera::SetRotationAngles(const glm::vec3& rotationAngles)
         glm::radians(rotationAngles.z));
 
     const glm::vec3 rotatedUp = glm::vec3(rotationMatrix * glm::vec4(SceneAxis_Y(), 0.0f));
-    mFrontDirection = glm::vec3(rotationMatrix * glm::vec4(-SceneAxis_Z(), 0.0f));
-    mRightDirection = glm::normalize(glm::cross(rotatedUp, mFrontDirection)); 
-    mUpDirection = glm::normalize(glm::cross(mFrontDirection, mRightDirection));
+    mForwardVector = glm::vec3(rotationMatrix * glm::vec4(-SceneAxis_Z(), 0.0f));
+    mRightVector = glm::normalize(glm::cross(rotatedUp, mForwardVector)); 
+    mUpVector = glm::normalize(glm::cross(mForwardVector, mRightVector));
 
     // force dirty flags
     mViewMatrixDirty = true;
@@ -172,9 +192,9 @@ bool SceneCamera::CastRayFromScreenPoint(const glm::ivec2& screenCoordinate, con
 
 void SceneCamera::SetOrientation(const glm::vec3& dirForward, const glm::vec3& dirRight, const glm::vec3& dirUp)
 {
-    mFrontDirection = dirForward;
-    mUpDirection = dirUp;
-    mRightDirection = dirRight;
+    mForwardVector = dirForward;
+    mUpVector = dirUp;
+    mRightVector = dirRight;
 
     // force dirty flags
     mViewMatrixDirty = true;

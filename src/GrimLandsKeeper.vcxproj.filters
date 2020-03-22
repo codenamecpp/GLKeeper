@@ -387,6 +387,9 @@
     <ClInclude Include="AnimatingModelsRenderer.h">
       <Filter>Game\Render</Filter>
     </ClInclude>
+    <ClInclude Include="GodModeCameraControl.h">
+      <Filter>Game\Scene\CameraControl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -579,6 +582,9 @@
     </ClCompile>
     <ClCompile Include="AnimatingModelsRenderer.cpp">
       <Filter>Game\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="GodModeCameraControl.cpp">
+      <Filter>Game\Scene\CameraControl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

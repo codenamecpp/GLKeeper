@@ -31,7 +31,7 @@ public:
     void HandleInputEvent(KeyCharEvent& inputEvent) override;
 
 private:
-    void UpdateOrientation();
+    void SetupCameraView();
 
 private:
     int mPrevMousePositionX;

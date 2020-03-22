@@ -516,16 +516,17 @@ void DungeonBuilder::ConstructTerrainWaterBed(MapTile* tile, ArtResource* artRes
 
 bool DungeonBuilder::ShouldBuildSideWall(MapTile* tile, eTileFace faceid) const
 {
-    return false;// todo
-    //if (const GameMapTile* neighbour = mapTile->mNeighbours[direction])
-    //{
-    //    if (neighbour->IsTerrainSolid())
-    //        return false;
+    eDirection direction = TileFaceToDirection(faceid);
+    if (MapTile* neighbour = tile->mNeighbours[direction])
+    {
+        TerrainDefinition* terrainDef = neighbour->GetTerrain();
+        if (terrainDef->mIsSolid)
+            return false;
 
-    //    // wall mesh will be overriden by room
-    //    if (TileWallExtendsRoom(mapTile, direction))
-    //        return false;
-    //}
+        // wall mesh will be overriden by room
+        //if (TileWallExtendsRoom(mapTile, direction))
+        //    return false;
+    }
     return true;
 }
 

@@ -32,7 +32,7 @@ void OrbitCameraControl::ResetOrientation()
     mDistance = mDefaultDistance;
     mFocusPoint = glm::vec3(0.0f, 0.0f, 0.0f);
 
-    UpdateOrientation();
+    SetupCameraView();
 }
 
 void OrbitCameraControl::HandleUpdateFrame(float deltaTime)
@@ -93,7 +93,7 @@ void OrbitCameraControl::HandleInputEvent(MouseMovedInputEvent& inputEvent)
     {
         if (deltaX)
         {
-            mFocusPoint += mSceneCamera->mRightDirection * (deltaX * -0.01f);
+            mFocusPoint += mSceneCamera->mRightVector * (deltaX * -0.01f);
         }
         if (deltaY)
         {
@@ -103,7 +103,7 @@ void OrbitCameraControl::HandleInputEvent(MouseMovedInputEvent& inputEvent)
 
     if (deltaX || deltaY)
     {
-        UpdateOrientation();
+        SetupCameraView();
     }
 }
 
@@ -120,7 +120,7 @@ void OrbitCameraControl::HandleInputEvent(MouseScrollInputEvent& inputEvent)
 
     if (inputEvent.mScrollY)
     {
-        UpdateOrientation();
+        SetupCameraView();
     }
 }
 
@@ -132,7 +132,7 @@ void OrbitCameraControl::HandleInputEvent(KeyCharEvent& inputEvent)
 {
 }
 
-void OrbitCameraControl::UpdateOrientation()
+void OrbitCameraControl::SetupCameraView()
 {
     debug_assert(mSceneCamera);
     mSceneCamera->ResetOrientation();
@@ -145,5 +145,5 @@ void OrbitCameraControl::UpdateOrientation()
     campos += mFocusPoint;
 
     mSceneCamera->SetPosition(campos);
-    mSceneCamera->FocusAt(mFocusPoint, SceneAxis_Y());
+    mSceneCamera->FocusAt(mFocusPoint);
 }
