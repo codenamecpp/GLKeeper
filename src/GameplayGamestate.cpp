@@ -3,6 +3,7 @@
 #include "RenderScene.h"
 #include "System.h"
 #include "GameMain.h"
+#include "RenderManager.h"
 
 void GameplayGamestate::HandleGamestateEnter()
 {
@@ -37,7 +38,12 @@ void GameplayGamestate::HandleInputEvent(MouseScrollInputEvent& inputEvent)
 }
 
 void GameplayGamestate::HandleInputEvent(KeyInputEvent& inputEvent)
-{
+{   
+    if (inputEvent.HasPressed(eKeycode_F3))
+    {
+        gRenderManager.ReloadRenderPrograms();
+        inputEvent.SetConsumed(true);
+    }
 }
 
 void GameplayGamestate::HandleInputEvent(KeyCharEvent& inputEvent)

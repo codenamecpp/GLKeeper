@@ -8,34 +8,41 @@ class DungeonBuilder
 {
 public:
     // rebuild terrain mesh for specific tile
-    // @param tile: Map tile
+    // @param mapTile: Map tile
     // @param faceid: Tile face identifier
-    void BuildTileMesh(MapTile* tile);
-    void BuildTileMesh(MapTile* tile, eTileFace faceid);
+    void BuildTerrainMesh(MapTile* mapTile);
+    void BuildTerrainMesh(MapTile* mapTile, eTileFace faceid);
 
     // append geometry to specific tile face mesh
-    // @param tile: Map tile
+    // @param mapTile: Map tile
     // @param faceid: Tile face identifier
     // @param asset: Geometry asset
     // @param rot: Optional rotation matrix
     // @param trans: Optional translation matrix
-    void ExtendTileMesh(MapTile* tile, eTileFace faceid, ModelAsset* asset, const glm::mat3* rot = 0, const glm::vec3* trans = 0);
+    void ExtendTileMesh(MapTile* mapTile, eTileFace faceid, ModelAsset* asset, const glm::mat3* rot = 0, const glm::vec3* trans = 0);
+
+    // helpers
+    bool NeighbourTileSolid(MapTile* mapTile, eDirection direction) const;
+    bool NeighbourHasSameTerrain(MapTile* mapTile, eDirection direction) const;
+    bool NeighbourHasSameBaseTerrain(MapTile* mapTile, eDirection direction) const;
+
+    // Test whether
+    // - Tile is Solid and Allows room walls
+    // - Terrain type of neighbour tile is Room and it has Walls
+    // So geometry for this wall should be managed by room
+    bool NeighbourRoomHandlesWalls(MapTile* mapTile, eDirection direction) const;
+    bool RoomHandlesWalls(MapTile* mapTile) const;
 
 private:
     // construction
-    void ConstructTerrainWalls(MapTile* tile);
-    void ConstructTerrainWall(MapTile* tile, eTileFace faceid);
-    void ConstructTerrainFloor(MapTile* tile);
-    void ConstructTerrainQuad(MapTile* tile, ArtResource* artResource);
-    void ConstructTerrainWaterBed(MapTile* tile, ArtResource* artResource);
+    void ConstructTerrainWalls(MapTile* mapTile);
+    void ConstructTerrainWall(MapTile* mapTile, eTileFace faceid);
+    void ConstructTerrainFloor(MapTile* mapTile);
+    void ConstructTerrainQuad(MapTile* mapTile, ArtResource* artResource);
+    void ConstructTerrainWaterBed(MapTile* mapTile, ArtResource* artResource);
 
     // test whether side wall should be constructed
     // @param dungeonMapTile: Target map tile
     // @param direction: Wall side
-    bool ShouldBuildSideWall(MapTile* tile, eTileFace faceid) const;
-
-    // helpers
-    bool NeighbourTileSolid(MapTile* tile, eDirection direction) const;
-    bool NeighbourHasSameTerrain(MapTile* tile, eDirection direction) const;
-    bool NeighbourHasSameBaseTerrain(MapTile* tile, eDirection direction) const;
+    bool ShouldBuildSideWall(MapTile* mapTile, eTileFace faceid) const;
 };

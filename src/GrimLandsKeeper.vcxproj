@@ -271,6 +271,8 @@
     <ClInclude Include="version.h" />
     <ClInclude Include="VertexFormat.h" />
     <ClInclude Include="WaterLavaMesh.h" />
+    <ClInclude Include="WaterLavaRenderer.h" />
+    <ClInclude Include="WaterLavaRenderProgram.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3rd_party\cJSON.cpp" />
@@ -345,6 +347,7 @@
     <ClCompile Include="TexturesManager.cpp" />
     <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="WaterLavaMesh.cpp" />
+    <ClCompile Include="WaterLavaRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Box2D\Box2D.vcxproj">
@@ -369,6 +372,7 @@
     <None Include="..\data\shaders\debug.glsl" />
     <None Include="..\data\shaders\gui.glsl" />
     <None Include="..\data\shaders\terrain.glsl" />
+    <None Include="..\data\shaders\water_lava.glsl" />
     <None Include="AABBTree.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -393,6 +393,12 @@
     <ClInclude Include="FpsWindow.h">
       <Filter>Application\DebugUI\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="WaterLavaRenderer.h">
+      <Filter>Game\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="WaterLavaRenderProgram.h">
+      <Filter>Game\Render\Shaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -592,6 +598,9 @@
     <ClCompile Include="FpsWindow.cpp">
       <Filter>Application\DebugUI\Windows</Filter>
     </ClCompile>
+    <ClCompile Include="WaterLavaRenderer.cpp">
+      <Filter>Game\Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\docs\creatures_anims.txt">
@@ -624,6 +633,9 @@
       <Filter>Data\Shaders</Filter>
     </None>
     <None Include="..\data\shaders\terrain.glsl">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\data\shaders\water_lava.glsl">
       <Filter>Data\Shaders</Filter>
     </None>
   </ItemGroup>

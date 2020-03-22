@@ -21,7 +21,12 @@ bool RenderProgram::LoadProgram()
     if (IsProgramLoaded())
         return true;
 
-    return ReloadProgram();
+    bool isSuccess = ReloadProgram();
+    if (isSuccess)
+    {
+        gRenderManager.HandleRenderProgramLoad(this);
+    }
+    return isSuccess;
 }
 
 void RenderProgram::FreeProgram()
@@ -31,6 +36,8 @@ void RenderProgram::FreeProgram()
         DeactivateProgram();
         gGraphicsDevice.DestroyProgram(mGpuProgram);
         OnProgramFree();
+
+        gRenderManager.HandleRenderProgramFree(this);
         mGpuProgram = nullptr;
     }
 }

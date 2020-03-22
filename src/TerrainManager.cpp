@@ -111,7 +111,7 @@ void TerrainManager::UpdateTerrainMesh()
 
         }
         // force rebuild mesh
-        gGameWorld.mDungeonBuilder.BuildTileMesh(currentTile);
+        gGameWorld.mDungeonBuilder.BuildTerrainMesh(currentTile);
     }
 
     // ask rooms rebuild themselves
@@ -157,7 +157,7 @@ void TerrainManager::BuildFullTerrainMesh()
         MapTile* currentTile = gGameWorld.mMapData.GetMapTile(currTilePosition);
         debug_assert(currentTile);
 
-        gGameWorld.mDungeonBuilder.BuildTileMesh(currentTile);
+        gGameWorld.mDungeonBuilder.BuildTerrainMesh(currentTile);
     }
 
     // update terrain meshes

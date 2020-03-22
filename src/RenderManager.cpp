@@ -53,6 +53,8 @@ void RenderManager::Deinit()
     mDebugRenderer.Deinit();
     mGuiRenderProgram.FreeProgram();
     mSceneRenderList.Clear();
+
+    mLoadedRenderProgramsList.clear();
 }
 
 void RenderManager::RenderFrame()
@@ -87,6 +89,12 @@ void RenderManager::UpdateFrame()
 
 void RenderManager::ReloadRenderPrograms()
 {
+    std::vector<RenderProgram*> programs = mLoadedRenderProgramsList;
+
+    for (RenderProgram* currProgram: programs)
+    {
+        currProgram->ReloadProgram();    
+    }
 }
 
 void RenderManager::Enter2D()
@@ -168,4 +176,34 @@ void RenderManager::DrawScene()
     }
 
     mSceneRenderList.Clear();
+}
+
+void RenderManager::HandleRenderProgramLoad(RenderProgram* renderProgram)
+{
+    debug_assert(renderProgram);
+
+    auto program_iter = std::find(mLoadedRenderProgramsList.begin(), mLoadedRenderProgramsList.end(), renderProgram);
+    if (program_iter == mLoadedRenderProgramsList.end())
+    {
+        mLoadedRenderProgramsList.push_back(renderProgram);
+    }
+    else
+    {
+        debug_assert(false);
+    }
+}
+
+void RenderManager::HandleRenderProgramFree(RenderProgram* renderProgram)
+{
+    debug_assert(renderProgram);
+
+    auto program_iter = std::find(mLoadedRenderProgramsList.begin(), mLoadedRenderProgramsList.end(), renderProgram);
+    if (program_iter != mLoadedRenderProgramsList.end())
+    {
+        mLoadedRenderProgramsList.erase(program_iter);
+    }
+    else
+    {
+        debug_assert(false);
+    }
 }

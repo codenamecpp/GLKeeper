@@ -10,12 +10,12 @@
 // master render system, it is intended to manage rendering pipeline of the game
 class RenderManager: public cxx::noncopyable
 {
+    friend RenderProgram;
+
 public:
     // readonly
     AnimatingModelsRenderer mAnimatingModelsRenderer;
     TerrainMeshRenderer mTerrainMeshRenderer;
-
-    RenderProgram* mActiveRenderProgram = nullptr;
 
 public:
     // setup rendering system internal resources
@@ -39,6 +39,9 @@ private:
 
     void DrawScene();
 
+    void HandleRenderProgramLoad(RenderProgram* renderProgram);
+    void HandleRenderProgramFree(RenderProgram* renderProgram);
+
 private:
     GuiRenderProgram mGuiRenderProgram;
     DebugRenderer mDebugRenderer;
@@ -46,6 +49,9 @@ private:
     glm::mat4 mTransformationMatrix2D;
 
     SceneRenderList mSceneRenderList;
+
+    RenderProgram* mActiveRenderProgram = nullptr;
+    std::vector<RenderProgram*> mLoadedRenderProgramsList;
 };
 
 extern RenderManager gRenderManager;
