@@ -84,24 +84,28 @@ public:
     struct ListElementStruct
     {
     public:
+        // set animating model
         inline void Set(AnimatingModel* animatingModel)
         {
             Clear();
             mAnimatingModel = animatingModel;
             mObject = (SceneObject*) animatingModel;
         }
+        // set terrain mesh
         inline void Set(TerrainMesh* terrainMesh)
         {
             Clear();
             mTerrainMesh = terrainMesh;
             mObject = (SceneObject*) terrainMesh;
         }
+        // set water lava mesh
         inline void Set(WaterLavaMesh* waterLavaMesh)
         {
             Clear();
             mWaterLavaMesh = waterLavaMesh;
             mObject = (SceneObject*) waterLavaMesh;
         }
+        // set null
         inline void Clear()
         {
             mAnimatingModel = nullptr;

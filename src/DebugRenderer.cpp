@@ -56,8 +56,7 @@ bool DebugRenderer::Initialize()
 {
     if (!mDebugDrawRenderProgram.LoadProgram())
     {
-        Deinit();
-        return false;
+        debug_assert(false);
     }
 
     mDebugLinesCount = 0;

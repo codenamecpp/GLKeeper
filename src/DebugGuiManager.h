@@ -16,6 +16,8 @@ public:
     bool Initialize();
     void Deinit();
 
+    bool IsInitialized() const;
+
     // render 
     void RenderFrame();
 
@@ -41,8 +43,9 @@ private:
     void SetupStyle(ImGuiIO& imguiIO);
 
 private:
-    GpuBuffer* mVertsBuffer = nullptr;
-    GpuBuffer* mTrisBuffer = nullptr;
+    // render data
+    GpuBuffer* mVerticesBuffer = nullptr;
+    GpuBuffer* mIndicesBuffer = nullptr;
 
     std::list<DebugGuiWindow*> mAllWindowsList;
 };

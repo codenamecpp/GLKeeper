@@ -5,7 +5,7 @@
 #include "WaterLavaRenderProgram.h"
 
 // water and lava visualization manager
-class WaterLavaRenderer: public cxx::noncopyable
+class WaterLavaMeshRenderer: public cxx::noncopyable
 {
 public:
 
@@ -16,7 +16,7 @@ public:
     // render water lava mesh for current render pass
     // @param renderContext: Current render context
     // @param terrainMesh: Mesh instance
-    void RenderWaterLava(SceneRenderContext& renderContext, WaterLavaMesh* waterLavaMesh);
+    void RenderWaterLavaMesh(SceneRenderContext& renderContext, WaterLavaMesh* waterLavaMesh);
 
 private:
     WaterLavaRenderProgram mWaterLavaRenderProgram;

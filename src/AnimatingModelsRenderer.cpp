@@ -41,8 +41,7 @@ bool AnimatingModelsRenderer::Initialize()
 {
     if (!mMorphAnimRenderProgram.LoadProgram())
     {
-        Deinit();
-        return false;
+        debug_assert(false);
     }
 
     return true;

@@ -8,8 +8,7 @@ bool TerrainMeshRenderer::Initialize()
 {
     if (!mTerrainRenderProgram.LoadProgram())
     {
-        Deinit();
-        return false;
+        debug_assert(false);
     }
     return true;
 }

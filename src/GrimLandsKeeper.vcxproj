@@ -271,7 +271,7 @@
     <ClInclude Include="version.h" />
     <ClInclude Include="VertexFormat.h" />
     <ClInclude Include="WaterLavaMesh.h" />
-    <ClInclude Include="WaterLavaRenderer.h" />
+    <ClInclude Include="WaterLavaMeshRenderer.h" />
     <ClInclude Include="WaterLavaRenderProgram.h" />
   </ItemGroup>
   <ItemGroup>
@@ -347,7 +347,7 @@
     <ClCompile Include="TexturesManager.cpp" />
     <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="WaterLavaMesh.cpp" />
-    <ClCompile Include="WaterLavaRenderer.cpp" />
+    <ClCompile Include="WaterLavaMeshRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Box2D\Box2D.vcxproj">

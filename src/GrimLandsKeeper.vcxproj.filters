@@ -56,9 +56,6 @@
     <Filter Include="Third_Party\micropather">
       <UniqueIdentifier>{587d3ed4-1e6f-4f29-a0f0-70825ca6bc5e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Application\IO">
-      <UniqueIdentifier>{6c249930-f16e-4aa9-ba23-2f2a82c2812d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\Scene\BVH">
       <UniqueIdentifier>{19bc7d6f-74f7-491e-aa51-f41bd63083b6}</UniqueIdentifier>
     </Filter>
@@ -83,6 +80,9 @@
     <Filter Include="Game\World">
       <UniqueIdentifier>{407424f7-127b-475d-ba67-a7cf395d1fd5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Application\FileIO">
+      <UniqueIdentifier>{6c249930-f16e-4aa9-ba23-2f2a82c2812d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -101,7 +101,7 @@
       <Filter>Lib</Filter>
     </ClInclude>
     <ClInclude Include="FileSystem.h">
-      <Filter>Application\IO</Filter>
+      <Filter>Application\FileIO</Filter>
     </ClInclude>
     <ClInclude Include="string_utils.h">
       <Filter>Lib</Filter>
@@ -141,13 +141,13 @@
       <Filter>Application</Filter>
     </ClInclude>
     <ClInclude Include="FileSystemArchive.h">
-      <Filter>Application\IO</Filter>
+      <Filter>Application\FileIO</Filter>
     </ClInclude>
     <ClInclude Include="file_utils.h">
       <Filter>Lib</Filter>
     </ClInclude>
     <ClInclude Include="BinaryInputStream.h">
-      <Filter>Application\IO</Filter>
+      <Filter>Application\FileIO</Filter>
     </ClInclude>
     <ClInclude Include="randomizer.h">
       <Filter>Lib</Filter>
@@ -240,7 +240,7 @@
       <Filter>Application\DebugUI</Filter>
     </ClInclude>
     <ClInclude Include="BinaryOutputStream.h">
-      <Filter>Application\IO</Filter>
+      <Filter>Application\FileIO</Filter>
     </ClInclude>
     <ClInclude Include="GameDefs.h">
       <Filter>Game</Filter>
@@ -249,7 +249,7 @@
       <Filter>Third_Party\micropather</Filter>
     </ClInclude>
     <ClInclude Include="EngineTexturesProvider.h">
-      <Filter>Application\IO</Filter>
+      <Filter>Application\FileIO</Filter>
     </ClInclude>
     <ClInclude Include="TexturesManager.h">
       <Filter>Application\Resources</Filter>
@@ -393,11 +393,11 @@
     <ClInclude Include="FpsWindow.h">
       <Filter>Application\DebugUI\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="WaterLavaRenderer.h">
-      <Filter>Game\Render</Filter>
-    </ClInclude>
     <ClInclude Include="WaterLavaRenderProgram.h">
       <Filter>Game\Render\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="WaterLavaMeshRenderer.h">
+      <Filter>Game\Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -407,7 +407,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="enums_impl.cpp" />
     <ClCompile Include="FileSystem.cpp">
-      <Filter>Application\IO</Filter>
+      <Filter>Application\FileIO</Filter>
     </ClCompile>
     <ClCompile Include="CommonTypes.cpp">
       <Filter>Application</Filter>
@@ -428,10 +428,10 @@
       <Filter>Application</Filter>
     </ClCompile>
     <ClCompile Include="FileSystemArchive.cpp">
-      <Filter>Application\IO</Filter>
+      <Filter>Application\FileIO</Filter>
     </ClCompile>
     <ClCompile Include="BinaryInputStream.cpp">
-      <Filter>Application\IO</Filter>
+      <Filter>Application\FileIO</Filter>
     </ClCompile>
     <ClCompile Include="3rd_party\cJSON.cpp">
       <Filter>Third_Party\cjson</Filter>
@@ -488,13 +488,13 @@
       <Filter>Application\DebugUI</Filter>
     </ClCompile>
     <ClCompile Include="BinaryOutputStream.cpp">
-      <Filter>Application\IO</Filter>
+      <Filter>Application\FileIO</Filter>
     </ClCompile>
     <ClCompile Include="micropather.cpp">
       <Filter>Third_Party\micropather</Filter>
     </ClCompile>
     <ClCompile Include="EngineTexturesProvider.cpp">
-      <Filter>Application\IO</Filter>
+      <Filter>Application\FileIO</Filter>
     </ClCompile>
     <ClCompile Include="TexturesManager.cpp">
       <Filter>Application\Resources</Filter>
@@ -598,7 +598,7 @@
     <ClCompile Include="FpsWindow.cpp">
       <Filter>Application\DebugUI\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="WaterLavaRenderer.cpp">
+    <ClCompile Include="WaterLavaMeshRenderer.cpp">
       <Filter>Game\Render</Filter>
     </ClCompile>
   </ItemGroup>

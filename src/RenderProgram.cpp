@@ -33,11 +33,15 @@ void RenderProgram::FreeProgram()
 {
     if (IsProgramLoaded())
     {
+        gRenderManager.HandleRenderProgramFree(this);
+    }
+
+    if (mGpuProgram)
+    {
         DeactivateProgram();
         gGraphicsDevice.DestroyProgram(mGpuProgram);
         OnProgramFree();
 
-        gRenderManager.HandleRenderProgramFree(this);
         mGpuProgram = nullptr;
     }
 }
@@ -66,11 +70,11 @@ bool RenderProgram::ReloadProgram()
     if (isCompiled)
     {
         OnProgramLoad();
-        gConsole.LogMessage(eLogMessage_Info, "Render program loaded %s", mProgramName.c_str());
+        gConsole.LogMessage(eLogMessage_Debug, "Render program loaded %s", mProgramName.c_str());
     }
     else
     {
-        gConsole.LogMessage(eLogMessage_Info, "Cannot load render program %s", mProgramName.c_str());
+        gConsole.LogMessage(eLogMessage_Warning, "Cannot load render program %s", mProgramName.c_str());
     }
     return isCompiled;
 }
@@ -88,7 +92,6 @@ bool RenderProgram::IsProgramActive() const
 void RenderProgram::ActivateProgram()
 {
     bool isInited = IsProgramLoaded();
-    debug_assert(isInited);
     if (!isInited || mGpuProgram->IsProgramBound()) // program should be not active
         return;
 
@@ -107,7 +110,6 @@ void RenderProgram::ActivateProgram()
 void RenderProgram::DeactivateProgram()
 {
     bool isInited = IsProgramLoaded();
-    debug_assert(isInited);
     if (!isInited || !mGpuProgram->IsProgramBound()) // program should be active
         return;
 

@@ -3,12 +3,12 @@
 #ifdef VERTEX_SHADER
 
 // constants
-uniform mat4 view_projection_matrix
+uniform mat4 view_projection_matrix;
 uniform vec4 wave_params; // x - wave_time, y - wave_width, z - wave_height, w - water_line
 
 // attributes
 in vec2 in_texcoord;
-in vec3 in_position;
+in vec3 in_pos;
 
 // pass to fragment shader
 out vec2 Texcoord;
@@ -19,7 +19,7 @@ void main()
 	Texcoord = in_texcoord;
 
     // transformed position
-    vec4 position = vec4(in_position, 1.0f);
+    vec4 position = vec4(in_pos, 1.0f);
 
     // base waterline
     position.y += wave_params.w;

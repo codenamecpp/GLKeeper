@@ -6,6 +6,7 @@
 #include "AnimatingModelsRenderer.h"
 #include "SceneRenderList.h"
 #include "TerrainMeshRenderer.h"
+#include "WaterLavaMeshRenderer.h"
 
 // master render system, it is intended to manage rendering pipeline of the game
 class RenderManager: public cxx::noncopyable
@@ -16,6 +17,7 @@ public:
     // readonly
     AnimatingModelsRenderer mAnimatingModelsRenderer;
     TerrainMeshRenderer mTerrainMeshRenderer;
+    WaterLavaMeshRenderer mWaterLavaMeshRenderer;
 
 public:
     // setup rendering system internal resources

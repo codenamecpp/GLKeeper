@@ -3,11 +3,36 @@
 #include "SceneRenderList.h"
 
 WaterLavaMesh::WaterLavaMesh()
+    : mVertexCount()
+    , mTriangleCount()
+    , mMeshDirty()
+    , mWaveTime()
 {
 }
 
 WaterLavaMesh::~WaterLavaMesh()
 {
+    DestroyRenderData();
+}
+
+void WaterLavaMesh::SetWaterLavaTiles(const TilesArray& tilesArray)
+{
+    mWaterLavaTiles = tilesArray;
+    mMeshDirty = true;
+}
+
+void WaterLavaMesh::SetSurfaceParams(float translucency, float waveWidth, float waveHeight, float waveFreq, float waterlineHeight)
+{
+    mTranslucency = translucency;
+    mWaveWidth = waveWidth;
+    mWaveHeight = waveHeight;
+    mWaveFreq = waveFreq;
+    mWaterlineHeight = waterlineHeight;
+}
+
+void WaterLavaMesh::UpdateMesh()
+{
+
 }
 
 void WaterLavaMesh::UpdateFrame(float deltaTime)
@@ -25,4 +50,14 @@ void WaterLavaMesh::RegisterForRendering(SceneRenderList& renderList)
     {
         renderList.RegisterObject(eRenderPass_Opaque, this);
     }
+}
+
+void WaterLavaMesh::PrepareRenderData()
+{
+
+}
+
+void WaterLavaMesh::DestroyRenderData()
+{
+
 }

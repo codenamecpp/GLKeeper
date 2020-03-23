@@ -1,10 +1,13 @@
 #pragma once
 
+#include "GameDefs.h"
 #include "SceneObject.h"
 
 // water or lava mesh instance
 class WaterLavaMesh: public SceneObject
 {
+    friend class WaterLavaMeshRenderer;
+
 public:
     // readonly
     float mTranslucency = 1.0f;
@@ -14,9 +17,21 @@ public:
     float mWaveTime;
     float mWaterlineHeight = 1.0;
 
+    TilesArray mWaterLavaTiles;
+
 public:
     WaterLavaMesh();
     ~WaterLavaMesh();
+
+    // set water or lava surface tiles
+    // @param tilesArray: List of map tiles
+    void SetWaterLavaTiles(const TilesArray& tilesArray);
+
+    // setup water or lava surface parameters
+    void SetSurfaceParams(float translucency, float waveWidth, float waveHeight, float waveFreq, float waterlineHeight);
+
+    // rebuild water lava mesh and upload data to video memory
+    void UpdateMesh();
 
     // process scene update frame
     // @param deltaTime: Time since last update
@@ -27,4 +42,18 @@ public:
     void RegisterForRendering(SceneRenderList& renderList) override;
 
 private:
+    void PrepareRenderData();
+    void DestroyRenderData();
+
+private:
+    // render data
+    RenderMaterial mMaterial;
+
+    GpuBuffer* mVerticesBuffer = nullptr;
+    GpuBuffer* mIndicesBuffer = nullptr;
+
+    int mVertexCount;
+    int mTriangleCount;
+
+    bool mMeshDirty; // dirty flag indicates that geometry is invalid and must be reuploaded
 };

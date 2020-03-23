@@ -22,7 +22,8 @@ RenderManager gRenderManager;
 
 bool RenderManager::Initialize()
 {
-    if (!mGuiRenderProgram.LoadProgram() || !mAnimatingModelsRenderer.Initialize() || !mTerrainMeshRenderer.Initialize())
+    if (!mGuiRenderProgram.LoadProgram() || !mAnimatingModelsRenderer.Initialize() || 
+        !mTerrainMeshRenderer.Initialize() || !mWaterLavaMeshRenderer.Initialize())
     {
         gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize render manager");
 
@@ -48,6 +49,7 @@ void RenderManager::Deinit()
     gConsole.UnregisterVariable(&gCvarRender_DebugDrawEnabled);
     gConsole.UnregisterVariable(&gCvarRender_EnableAnimBlendFrames);
 
+    mWaterLavaMeshRenderer.Deinit();
     mAnimatingModelsRenderer.Deinit();
     mTerrainMeshRenderer.Deinit();
     mDebugRenderer.Deinit();
@@ -154,6 +156,10 @@ void RenderManager::DrawScene()
         {
             mTerrainMeshRenderer.RenderTerrainMesh(renderContext, element.mTerrainMesh);
         }
+        if (element.mWaterLavaMesh)
+        {
+            mWaterLavaMeshRenderer.RenderWaterLavaMesh(renderContext, element.mWaterLavaMesh);
+        }
     }
 
     // translucent pass
@@ -172,6 +178,10 @@ void RenderManager::DrawScene()
         if (element.mTerrainMesh)
         {
             mTerrainMeshRenderer.RenderTerrainMesh(renderContext, element.mTerrainMesh);
+        }
+        if (element.mWaterLavaMesh)
+        {
+            mWaterLavaMeshRenderer.RenderWaterLavaMesh(renderContext, element.mWaterLavaMesh);
         }
     }
 
