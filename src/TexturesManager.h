@@ -41,11 +41,6 @@ public:
     // @param textureName: Texture name
     Texture2D* LoadTexture2D(const std::string& textureName);
 
-    // find or create texture2d animation
-    // @param animationName: Animation name
-    Texture2DAnimation* FindTexture2DAnimation(const std::string& animationName) const;
-    Texture2DAnimation* GetTexture2DAnimation(const std::string& animationName);
-
 private:
     void InitDefaultTextures();
     void FreeDefaultTextures();

@@ -54,30 +54,6 @@ Texture2D* TexturesManager::GetTexture2D(const std::string& textureName)
     return newTexture;
 }
 
-Texture2DAnimation* TexturesManager::FindTexture2DAnimation(const std::string& animationName) const
-{
-    auto anim_iterator = mTexture2DAnimations.find(animationName);
-    if (anim_iterator != mTexture2DAnimations.end())
-    {
-        return anim_iterator->second;
-    }
-
-    return nullptr;
-}
-
-Texture2DAnimation* TexturesManager::GetTexture2DAnimation(const std::string& animationName)
-{
-    auto anim_iterator = mTexture2DAnimations.find(animationName);
-    if (anim_iterator != mTexture2DAnimations.end())
-    {
-        return anim_iterator->second;
-    }
-    // add to cache
-    Texture2DAnimation* newAnimation = new Texture2DAnimation { animationName };
-    mTexture2DAnimations[animationName] = newAnimation;
-    return newAnimation;
-}
-
 Texture2D* TexturesManager::LoadTexture2D(const std::string& textureName)
 {
     Texture2D* texture2D = GetTexture2D(textureName);
