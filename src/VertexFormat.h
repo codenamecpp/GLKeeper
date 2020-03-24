@@ -140,6 +140,7 @@ public:
 // terrain vertex definition
 struct Vertex3D_Terrain_Format: public VertexFormat
 {
+public:
     Vertex3D_Terrain_Format()
     {
         Setup();
@@ -164,10 +165,35 @@ struct Vertex3D_Terrain_Format: public VertexFormat
 
 //////////////////////////////////////////////////////////////////////////
 
+struct Vertex3D_WaterLava_Format: public VertexFormat
+{
+    Vertex3D_WaterLava_Format()
+    {
+        Setup();
+    }
+    // get definition instance
+    static const Vertex3D_WaterLava_Format& Get() 
+    { 
+        static const Vertex3D_WaterLava_Format sDefinition; 
+        return sDefinition; 
+    }
+    using TVertexType = Vertex3D_WaterLava;
+    // initialize definition
+    inline void Setup()
+    {
+        this->mDataStride = Sizeof_Vertex3D_WaterLava;
+        this->SetAttribute(eVertexAttribute_Position0, eVertexAttributeFormat_3F, offsetof(TVertexType, mPosition));
+        this->SetAttribute(eVertexAttribute_Texcoord0, eVertexAttributeFormat_2F, offsetof(TVertexType, mTexcoord));
+    }
+};
+
+//////////////////////////////////////////////////////////////////////////
+
 // morph/keyframe animation vertex definition
 // no color data stored!
 struct Vertex3D_Anim_Format: public VertexFormat
 {
+public:
     // does not declare TVertexType due to specific attributes layout
 
     Vertex3D_Anim_Format()

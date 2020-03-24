@@ -78,6 +78,16 @@ public:
 
 const unsigned int Sizeof_Vertex3D_Terrain = sizeof(Vertex3D_Terrain);
 
+// render vertex 3d water lava mesh
+struct Vertex3D_WaterLava
+{
+public:
+    glm::vec3 mPosition; // 12 bytes
+    glm::vec2 mTexcoord; // 8 bytes
+};
+
+const unsigned int Sizeof_Vertex3D_WaterLava = sizeof(Vertex3D_WaterLava);
+
 //////////////////////////////////////////////////////////////////////////
 
 enum eTextureFilterMode

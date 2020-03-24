@@ -214,6 +214,12 @@ void TerrainManager::CreateWaterLavaMeshList()
         gRenderScene.AttachObject(waterMeshObject);
         mWaterLavaMeshArray.push_back(waterMeshObject);
     }
+
+    // force build mesh
+    for (WaterLavaMesh* currMesh: mWaterLavaMeshArray)
+    {
+        currMesh->UpdateMesh();
+    }
 }
 
 void TerrainManager::DestroyWaterLavaMeshList()
