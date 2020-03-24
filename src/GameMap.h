@@ -50,11 +50,6 @@ public:
     // test whether next tile position is within map
     bool IsWithinMap(const Point2D& tileLocation, eDirection direction) const;
 
-    // get tile center world coordinate
-    // @param tileLocation: Tile location
-    // @param coord3d: Output world coordinate
-    bool GetTileCenterCoord3d(const Point2D& tileLocation, glm::vec3& coord3d) const;
-
     // flood fill adjacent tiles in 4 directions
     // @param outputTiles: Result tile array including initial tile
     // @param origin: Initial tile

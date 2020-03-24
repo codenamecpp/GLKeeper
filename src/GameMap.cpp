@@ -73,18 +73,6 @@ MapTile* GameMap::GetMapTile(const Point2D& tileLocation, eDirection direction)
     return GetMapTile(tileLocation + directionVector);
 }
 
-bool GameMap::GetTileCenterCoord3d(const Point2D& tileLocation, glm::vec3& coord3d) const
-{
-    bool isWithin = IsWithinMap(tileLocation);
-    if (isWithin)
-    {
-        coord3d.x = tileLocation.x * DUNGEON_CELL_SIZE;
-        coord3d.y = 1.0f;
-        coord3d.z = tileLocation.y * DUNGEON_CELL_SIZE;
-    }
-    return isWithin;
-}
-
 bool GameMap::IsWithinMap(const Point2D& tileLocation, eDirection direction) const
 {
     Point2D directionVector = GetDirectionVector(direction);

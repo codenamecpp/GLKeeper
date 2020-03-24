@@ -273,3 +273,27 @@ inline bool IsDiagonalDirection(eDirection direction)
 {
     return direction == eDirection_NE || direction == eDirection_SE || direction == eDirection_SW || direction == eDirection_NW;
 }
+
+// compute game map block bounding box
+// @param blockLocation: Logical position
+// @param outputBounds: Output bounds
+inline void GetMapBlockBounds(const Point2D& blockLocation, cxx::aabbox& outputBounds)
+{
+    outputBounds.reset();
+    // min
+    outputBounds.mMin.x = (blockLocation.x * DUNGEON_CELL_SIZE) - DUNGEON_CELL_HALF_SIZE;
+    outputBounds.mMin.y = 0.0f;
+    outputBounds.mMin.z = (blockLocation.y * DUNGEON_CELL_SIZE) - DUNGEON_CELL_HALF_SIZE;
+    // max
+    outputBounds.mMax.x = outputBounds.mMin.x + DUNGEON_CELL_SIZE;
+    outputBounds.mMax.y = 3.0f;
+    outputBounds.mMax.z = outputBounds.mMin.z + DUNGEON_CELL_SIZE;
+}
+
+// compute game map block center in world coordinates
+inline void GetMapBlockCenter(const Point2D& blockLocation, glm::vec3& outputCoord)
+{
+    outputCoord.x = blockLocation.x * DUNGEON_CELL_SIZE;
+    outputCoord.y = 1.0f;
+    outputCoord.z = blockLocation.y * DUNGEON_CELL_SIZE;
+}

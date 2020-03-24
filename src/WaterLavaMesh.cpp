@@ -24,6 +24,18 @@ WaterLavaMesh::~WaterLavaMesh()
 void WaterLavaMesh::SetWaterLavaTiles(const TilesArray& tilesArray)
 {
     mWaterLavaTiles = tilesArray;
+
+    // setup bounds
+    cxx::aabbox bounds;
+    for (MapTile* currentTile: tilesArray)
+    {
+        cxx::aabbox currentTileBounds;
+        GetMapBlockBounds(currentTile->mTileLocation, currentTileBounds);
+
+        bounds.extend(currentTileBounds);
+    }
+    SetLocalBoundingBox(bounds);
+
     mMeshDirty = true;
 }
 
