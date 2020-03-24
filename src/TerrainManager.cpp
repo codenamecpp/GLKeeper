@@ -4,6 +4,7 @@
 #include "Console.h"
 #include "RenderScene.h"
 #include "TerrainMesh.h"
+#include "WaterLavaMesh.h"
 
 const int TerrainMeshSizeTiles = 8; // 8x8 tiles per terrain mesh
 
@@ -20,12 +21,15 @@ bool TerrainManager::Initialize()
 
     CreateTerrainMeshList();
     BuildFullTerrainMesh();
+    
+    CreateWaterLavaMeshList();
 
     return true;
 }
 
 void TerrainManager::Deinit()
 {
+    DestroyWaterLavaMeshList();
     DestroyTerrainMeshList();
 
     mDirtyTilesArray.clear();
@@ -165,4 +169,59 @@ void TerrainManager::BuildFullTerrainMesh()
     {
         currTerrainMesh->UpdateMesh();
     }
+}
+
+void TerrainManager::CreateWaterLavaMeshList()
+{
+    TilesArray lavaTiles;
+    TilesArray waterTiles;
+
+    lavaTiles.reserve(128);
+    waterTiles.reserve(128);
+
+    // find water and lava tiles
+    for (int tiley = 0; tiley < gGameWorld.mMapData.mDimensions.y; ++tiley)
+    for (int tilex = 0; tilex < gGameWorld.mMapData.mDimensions.x; ++tilex)
+    {
+        Point2D currTilePosition (tilex, tiley);
+
+        MapTile* currMapTile = gGameWorld.mMapData.GetMapTile(currTilePosition);
+
+        // collect lava tile
+        if (currMapTile->mBaseTerrain->mIsLava)
+        {
+            lavaTiles.push_back(currMapTile);
+        }
+
+        // collect water tile
+        if (currMapTile->mBaseTerrain->mIsWater)
+        {
+            waterTiles.push_back(currMapTile);
+        }
+    }
+
+    // create water and lava surfaces
+    if (lavaTiles.size())
+    {
+        WaterLavaMesh* lavaMeshObject = gRenderScene.CreateLavaMesh(lavaTiles);
+        gRenderScene.AttachObject(lavaMeshObject);
+        mWaterLavaMeshArray.push_back(lavaMeshObject);
+    }
+
+    if (waterTiles.size())
+    {
+        WaterLavaMesh* waterMeshObject = gRenderScene.CreateWaterMesh(lavaTiles);
+        gRenderScene.AttachObject(waterMeshObject);
+        mWaterLavaMeshArray.push_back(waterMeshObject);
+    }
+}
+
+void TerrainManager::DestroyWaterLavaMeshList()
+{
+    for (WaterLavaMesh* currWaterLavaMesh: mWaterLavaMeshArray)
+    {
+        gRenderScene.DetachObject(currWaterLavaMesh);
+        gRenderScene.DestroyObject(currWaterLavaMesh);
+    }
+    mWaterLavaMeshArray.clear();
 }

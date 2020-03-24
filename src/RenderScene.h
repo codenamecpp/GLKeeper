@@ -5,6 +5,7 @@
 #include "AABBTree.h"
 #include "InputsDefs.h"
 #include "ResourceDefs.h"
+#include "GameDefs.h"
 
 class RenderScene: public cxx::noncopyable
 {
@@ -50,7 +51,10 @@ public:
     TerrainMesh* CreateTerrainMesh(const Rect2D& mapTerrainArea);
     TerrainMesh* CreateTerrainMesh();
 
-    WaterLavaMesh* CreateWaterLavaMesh();
+    // create water or lava mesh object
+    // @param meshTiles: Array of map tiles
+    WaterLavaMesh* CreateWaterMesh(const TilesArray& meshTiles);
+    WaterLavaMesh* CreateLavaMesh(const TilesArray& meshTiles);
 
     // attach entity to scene - attached entity will be rendered and updated, 
     // it is recommended to set transformation and bounding volume before attach

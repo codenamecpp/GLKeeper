@@ -162,9 +162,19 @@ TerrainMesh* RenderScene::CreateTerrainMesh()
     return sceneEntity;
 }
 
-WaterLavaMesh* RenderScene::CreateWaterLavaMesh()
+WaterLavaMesh* RenderScene::CreateWaterMesh(const TilesArray& meshTiles)
 {
     WaterLavaMesh* sceneEntity = new WaterLavaMesh;
+    sceneEntity->SetWaterLavaTiles(meshTiles);
+    sceneEntity->SetSurfaceParams(DEFAULT_WATER_TRANSLUCENCY, DEFAULT_WATER_WAVE_WIDTH, DEFAULT_WATER_WAVE_HEIGHT, DEFAULT_WATER_WAVE_FREQ, DEFAULT_WATER_LEVEL);
+    return sceneEntity;
+}
+
+WaterLavaMesh* RenderScene::CreateLavaMesh(const TilesArray& meshTiles)
+{
+    WaterLavaMesh* sceneEntity = new WaterLavaMesh;
+    sceneEntity->SetWaterLavaTiles(meshTiles);
+    sceneEntity->SetSurfaceParams(DEFAULT_LAVA_TRANSLUCENCY, DEFAULT_LAVA_WAVE_WIDTH, DEFAULT_LAVA_WAVE_HEIGHT, DEFAULT_LAVA_WAVE_FREQ, DEFAULT_LAVA_LEVEL);
     return sceneEntity;
 }
 

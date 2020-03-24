@@ -1,5 +1,19 @@
 #pragma once
 
+// Default water surface parameters
+#define DEFAULT_WATER_LEVEL         0.92f
+#define DEFAULT_WATER_TRANSLUCENCY  0.65f
+#define DEFAULT_WATER_WAVE_WIDTH    0.0f
+#define DEFAULT_WATER_WAVE_HEIGHT   0.0f
+#define DEFAULT_WATER_WAVE_FREQ     2.4f
+
+// Default lava surface parameters
+#define DEFAULT_LAVA_LEVEL          0.82f
+#define DEFAULT_LAVA_TRANSLUCENCY   1.0f
+#define DEFAULT_LAVA_WAVE_WIDTH     0.76f
+#define DEFAULT_LAVA_WAVE_HEIGHT    0.15f
+#define DEFAULT_LAVA_WAVE_FREQ      2.5f
+
 // forwards
 class SceneObject;
 class SceneCamera;

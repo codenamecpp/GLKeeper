@@ -20,7 +20,12 @@ private:
     void DestroyTerrainMeshList();
     void BuildFullTerrainMesh();
 
+    void CreateWaterLavaMeshList();
+    void DestroyWaterLavaMeshList();
+
 private:
+    std::vector<WaterLavaMesh*> mWaterLavaMeshArray;
     std::vector<TerrainMesh*> mTerrainMeshArray;
+
     TilesArray mDirtyTilesArray;
 };
