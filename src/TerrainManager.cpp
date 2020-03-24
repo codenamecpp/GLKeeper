@@ -210,7 +210,7 @@ void TerrainManager::CreateWaterLavaMeshList()
 
     if (waterTiles.size())
     {
-        WaterLavaMesh* waterMeshObject = gRenderScene.CreateWaterMesh(lavaTiles);
+        WaterLavaMesh* waterMeshObject = gRenderScene.CreateWaterMesh(waterTiles);
         gRenderScene.AttachObject(waterMeshObject);
         mWaterLavaMeshArray.push_back(waterMeshObject);
     }

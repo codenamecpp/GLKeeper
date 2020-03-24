@@ -9,9 +9,14 @@ class Texture2DAnimation;
 class TexturesManager: public cxx::noncopyable
 {
 public:
+    // placeholders
     Texture2D* mWhiteTexture = nullptr;
     Texture2D* mBlackTexture = nullptr;
     Texture2D* mMissingTexture = nullptr;
+
+    // standard game textures
+    Texture2D* mLavaTexture = nullptr;
+    Texture2D* mWaterTexture = nullptr;
 
 public:
 
@@ -42,8 +47,8 @@ public:
     Texture2D* LoadTexture2D(const std::string& textureName);
 
 private:
-    void InitDefaultTextures();
-    void FreeDefaultTextures();
+    void InitStandardTextures();
+    void FreeStandardTextures();
     void FreeTextures();
 
 private:

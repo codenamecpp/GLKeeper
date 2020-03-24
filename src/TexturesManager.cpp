@@ -9,14 +9,14 @@ TexturesManager gTexturesManager;
 
 bool TexturesManager::Initialize()
 {
-    InitDefaultTextures();
+    InitStandardTextures();
 
     return true;
 }
 
 void TexturesManager::Deinit()
 {
-    FreeDefaultTextures();
+    FreeStandardTextures();
     FreeTextures();
 }
 
@@ -92,7 +92,7 @@ void TexturesManager::PurgeLoadedTextures()
     }
 }
 
-void TexturesManager::InitDefaultTextures()
+void TexturesManager::InitStandardTextures()
 {
     Texture2D_Image textureData;
     Size2D colorTextureDims { 1, 1 };
@@ -131,13 +131,28 @@ void TexturesManager::InitDefaultTextures()
     {
         debug_assert(false);
     }
+
+    textureSamplerState.mFilterMode = eTextureFilterMode_Trilinear;
+
+    // init standard game textures
+    mLavaTexture = GetTexture2D("Lava0");
+    mLavaTexture->SetPersistent(true);
+    mLavaTexture->SetSamplerState(textureSamplerState);
+
+    mWaterTexture = GetTexture2D("Water0"); // todo: animate
+    mWaterTexture->SetPersistent(true);
+    mLavaTexture->SetSamplerState(textureSamplerState);
 }
 
-void TexturesManager::FreeDefaultTextures()
+void TexturesManager::FreeStandardTextures()
 {
     SafeDelete(mWhiteTexture);
     SafeDelete(mBlackTexture);
     SafeDelete(mMissingTexture);
+
+    // do not delete those
+    mLavaTexture = nullptr;
+    mWaterTexture = nullptr;
 }
 
 void TexturesManager::FreeTextures()

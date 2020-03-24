@@ -30,6 +30,10 @@ public:
     // setup water or lava surface parameters
     void SetSurfaceParams(float translucency, float waveWidth, float waveHeight, float waveFreq, float waterlineHeight);
 
+    // setup water or lava surface texture
+    // @param diffuseTexture: Texture 2d
+    void SetSurfaceTexture(Texture2D* diffuseTexture);
+
     // rebuild water lava mesh and upload data to video memory
     void UpdateMesh();
 

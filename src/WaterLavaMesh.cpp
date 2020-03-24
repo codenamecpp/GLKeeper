@@ -34,6 +34,21 @@ void WaterLavaMesh::SetSurfaceParams(float translucency, float waveWidth, float 
     mWaveHeight = waveHeight;
     mWaveFreq = waveFreq;
     mWaterlineHeight = waterlineHeight;
+
+    if (translucency < 1.0f)
+    {
+        mMaterial.mRenderStates.mIsAlphaBlendEnabled = true;
+        mMaterial.mRenderStates.mBlendingMode = eBlendingMode_Alpha;
+    }
+    else
+    {
+        mMaterial.mRenderStates.mIsAlphaBlendEnabled = false;
+    }
+}
+
+void WaterLavaMesh::SetSurfaceTexture(Texture2D* diffuseTexture)
+{
+    mMaterial.mDiffuseTexture = diffuseTexture;
 }
 
 void WaterLavaMesh::UpdateMesh()
@@ -48,7 +63,7 @@ void WaterLavaMesh::UpdateMesh()
 
 void WaterLavaMesh::UpdateFrame(float deltaTime)
 {
-    // todo
+    mWaveTime += mWaveFreq * deltaTime;
 }
 
 void WaterLavaMesh::RegisterForRendering(SceneRenderList& renderList)
@@ -74,15 +89,11 @@ void WaterLavaMesh::PrepareRenderData()
     const int NumVerticesPerTile = 9;
     const int NumTrianglesPerTile = 8;
 
-    int actualVBufferLength = mWaterLavaTiles.size() * NumVerticesPerTile * Sizeof_Vertex3D_WaterLava;
-    int actualIBufferLength = mWaterLavaTiles.size() * NumTrianglesPerTile * sizeof(glm::ivec3);
+    mVertexCount = mWaterLavaTiles.size() * NumVerticesPerTile;
+    mTriangleCount = mWaterLavaTiles.size() * NumTrianglesPerTile;
 
-    if (actualVBufferLength == 0 || actualIBufferLength == 0)
-    {
-        debug_assert(false);
-        return;
-    }
-
+    int actualVBufferLength = mVertexCount * Sizeof_Vertex3D_WaterLava;
+    int actualIBufferLength = mTriangleCount * sizeof(glm::ivec3);
     if (actualVBufferLength > MaxWaterLavaMeshBufferSize || actualIBufferLength > MaxWaterLavaMeshBufferSize)
     {
         debug_assert(false);

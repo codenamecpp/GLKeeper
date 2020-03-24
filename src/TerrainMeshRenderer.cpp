@@ -36,8 +36,6 @@ void TerrainMeshRenderer::RenderTerrainMesh(SceneRenderContext& renderContext, T
 
     for (TerrainMesh::MeshBatch& currBatch: terrainMesh->mBatchArray)
     {
-        currBatch.mMaterial.ActivateMaterial();
-
         // filter out submeshes depending on current render pass
         if (renderContext.mCurrentPass == eRenderPass_Translucent && !currBatch.mMaterial.IsTransparent())
             continue;
