@@ -5,6 +5,7 @@
 #include "Texture2D_Image.h"
 #include "EngineTexturesProvider.h"
 #include "Console.h"
+#include "Texture2DAnimation.h"
 
 Texture2D::Texture2D(const std::string& textureName)
     : mTextureName(textureName)
@@ -19,6 +20,8 @@ Texture2D::~Texture2D()
 
 void Texture2D::DestroyTextureObject()
 {
+    mTextureAnimation = nullptr;
+
     if (mGpuTextureObject)
     {
         gGraphicsDevice.DestroyTexture(mGpuTextureObject);
@@ -34,6 +37,12 @@ void Texture2D::DestroyTextureObject()
 
 void Texture2D::SetSamplerState(const TextureSamplerState& samplerState)
 {
+    if (mTextureAnimation)
+    {
+        mTextureAnimation->SetFramesSamplerState(samplerState);
+        return;
+    }
+
     mSamplerState = samplerState;
     if (mGpuTextureObject)
     {
@@ -43,6 +52,11 @@ void Texture2D::SetSamplerState(const TextureSamplerState& samplerState)
 
 bool Texture2D::ActivateTexture(eTextureUnit textureUnit)
 {
+    if (mTextureAnimation)
+    {
+        return mTextureAnimation->ActivateFrameTexture(textureUnit);
+    }
+
     if (!LoadTexture()) // try to load
     {
         debug_assert(false);
@@ -56,6 +70,11 @@ bool Texture2D::ActivateTexture(eTextureUnit textureUnit)
 
 bool Texture2D::LoadTexture()
 {
+    if (mTextureAnimation)
+    {
+        return mTextureAnimation->LoadFrameTextures();
+    }
+
     if (IsTextureLoaded())
         return true;
 
@@ -122,6 +141,11 @@ bool Texture2D::LoadTexture()
 
 void Texture2D::FreeTexture()
 {
+    if (mTextureAnimation)
+    {
+        return; // ignore
+    }
+
     if (IsTextureLoaded())
     {
         DestroyTextureObject();
@@ -144,6 +168,11 @@ bool Texture2D::CreateTexture(const Texture2D_Image& imageData)
     {
         debug_assert(false);
         return false;
+    }
+
+    if (mTextureAnimation)
+    {
+        mTextureAnimation = nullptr;
     }
 
     if (mGpuTextureObject == nullptr)
@@ -195,6 +224,11 @@ bool Texture2D::CreateTexture(const Texture2D_Desc& sourceDesc, const void* text
         return false;
     }
 
+    if (mTextureAnimation)
+    {
+        mTextureAnimation = nullptr;
+    }
+
     if (mGpuTextureObject == nullptr)
     {
         mGpuTextureObject = gGraphicsDevice.CreateTexture2D();
@@ -232,13 +266,30 @@ bool Texture2D::CreateTexture(const Texture2D_Desc& sourceDesc, const void* text
     return true;
 }
 
+void Texture2D::SetTextureAnimation(Texture2DAnimation* animation)
+{ 
+    DestroyTextureObject();
+
+    mTextureAnimation = animation;
+}
+
 bool Texture2D::IsTextureLoaded() const
 {
+    if (mTextureAnimation)
+    {
+        return true;
+    }
+
     return mGpuTextureObject != nullptr;
 }
 
 bool Texture2D::IsTextureActivate(eTextureUnit textureUnit) const
 {
+    if (mTextureAnimation)
+    {
+        return mTextureAnimation->IsFrameTextureActivate(textureUnit);
+    }
+
     if (mGpuTextureObject)
     {
         return mGpuTextureObject->IsTextureBound(textureUnit);
@@ -249,6 +300,11 @@ bool Texture2D::IsTextureActivate(eTextureUnit textureUnit) const
 
 bool Texture2D::IsTextureActivate() const
 {
+    if (mTextureAnimation)
+    {
+        return mTextureAnimation->IsFrameTextureActivate();
+    }
+
     if (mGpuTextureObject)
     {
         return mGpuTextureObject->IsTextureBound();
@@ -260,4 +316,9 @@ bool Texture2D::IsTextureActivate() const
 void Texture2D::SetPersistent(bool isPersistent)
 {
     mPersistent = isPersistent;
+}
+
+bool Texture2D::IsAnimatingTexture() const
+{
+    return mTextureAnimation != nullptr;
 }

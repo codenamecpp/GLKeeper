@@ -55,4 +55,14 @@ namespace cxx
         }
     }
 
+    template<typename TContainer, typename TElement>
+    inline bool contains(TContainer& container, const TElement& element)
+    {
+        auto find_iterator = std::find(container.begin(), container.end(), element);
+        if (find_iterator == container.end())
+            return false;
+
+        return true;
+    }
+
 } // namespace cxx

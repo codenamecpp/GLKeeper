@@ -1,9 +1,7 @@
 #pragma once
 
 #include "ResourceDefs.h"
-
-// forwards
-class Texture2DAnimation;
+#include "Texture2DAnimation.h"
 
 // textures manager class
 class TexturesManager: public cxx::noncopyable
@@ -46,17 +44,25 @@ public:
     // @param textureName: Texture name
     Texture2D* LoadTexture2D(const std::string& textureName);
 
+    // add or remove texture animation to manager, it will receive updates
+    void RegisterTextureAnimation(Texture2DAnimation* textureAnimation);
+    void UnregisterTextureAnimation(Texture2DAnimation* textureAnimation);
+
 private:
     void InitStandardTextures();
     void FreeStandardTextures();
     void FreeTextures();
 
+    void InitWaterLavaTextureAnimation();
+
 private:
     using Textures2DMap = std::map<std::string, Texture2D*, cxx::icase_less>;
     Textures2DMap mTextures2DMap;
 
-    using Textures2DAnimsMap = std::map<std::string, Texture2DAnimation*, cxx::icase_less>;
-    Textures2DAnimsMap mTexture2DAnimations;
+    std::vector<Texture2DAnimation*> mTextureAnimationsList;
+
+    Texture2DAnimation mWaterTextureAnimation;
+    Texture2DAnimation mLavaTextureAnimation;
 };
 
 extern TexturesManager gTexturesManager;

@@ -8,20 +8,37 @@ class Texture2DAnimation: public cxx::noncopyable
 {
 public:
     // readonly
-    std::string mAnimationName;
+    std::vector<Texture2D*> mTextureFrames;
 
 public:
-    Texture2DAnimation(const std::string& animationName);
+    Texture2DAnimation();
 
     // advance animation
     // @param deltaTime: Time passed since last update, seconds
-    void UpdateAnimation(float deltaTime);
+    void AdvanceAnimation(float deltaTime);
 
     // reset animation state
-    void RewindAnimation();
+    void RewindToStart();
+
+    void SetAnimationSpeed(float framesPerSecond);
+    void SetAnimationTimeScale(float timeScale);
+
+    bool LoadFrameTextures();
+    void FreeFrameTextures();
+    void SetFramesSamplerState(const TextureSamplerState& samplerState);
+
+    bool ActivateFrameTexture(eTextureUnit textureUnit);
+    bool IsFrameTextureActivate(eTextureUnit textureUnit) const;
+    bool IsFrameTextureActivate() const; 
+
+    void Clear();
+    void AddAnimationFrame(Texture2D* texture);
 
 private:
-    std::vector<Texture2D*> mTextureFrames;
+    Texture2D* GetCurrentFrameTexture() const;
+
+private:
     float mFramesPerSecond;
     float mTimeAccumulator;
+    float mTimeScale;
 };

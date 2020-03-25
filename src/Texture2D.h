@@ -3,6 +3,9 @@
 #include "GraphicsDefs.h"
 #include "Texture2D_Image.h"
 
+// forwards
+class Texture2DAnimation;
+
 // texture 2d resource
 class Texture2D: public cxx::noncopyable
 {
@@ -10,6 +13,8 @@ public:
     // readonly
     std::string mTextureName;
     Texture2D_Desc mTextureDesc;
+
+    Texture2DAnimation* mTextureAnimation = nullptr;
 
 public:
     Texture2D(const std::string& textureName);
@@ -25,6 +30,9 @@ public:
     // @returns false on error
     bool CreateTexture(const Texture2D_Image& sourceImage);
     bool CreateTexture(const Texture2D_Desc& sourceDesc, const void* textureData);
+
+    // create texture animation
+    void SetTextureAnimation(Texture2DAnimation* animation);
 
     // set texture filtering and repeating modes
     // @param samplerState: Sampler state params
@@ -46,6 +54,7 @@ public:
 
     bool IsLoadedFromFile() const { return mLoadedFromFile; }
     bool IsPersistent() const { return mPersistent; }
+    bool IsAnimatingTexture() const;
 
 private:
     // internals

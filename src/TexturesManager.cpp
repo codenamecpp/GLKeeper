@@ -5,6 +5,16 @@
 #include "Texture2DAnimation.h"
 #include "TimeManager.h"
 
+//////////////////////////////////////////////////////////////////////////
+
+static const float WaterAnimationSpeed = 9.2f;
+static const int WaterAnimationFramesCount = 32;
+
+static const float LavaAnimationSpeed = 1.0f;
+static const int LavaAnimationFramesCount = 1;
+
+//////////////////////////////////////////////////////////////////////////
+
 TexturesManager gTexturesManager;
 
 bool TexturesManager::Initialize()
@@ -18,15 +28,18 @@ void TexturesManager::Deinit()
 {
     FreeStandardTextures();
     FreeTextures();
+
+    mTextureAnimationsList.clear();
 }
 
 void TexturesManager::UpdateFrame()
 {
     float deltaTime = (float) gTimeManager.GetRealtimeFrameDelta();
 
-    for (auto& curr: mTexture2DAnimations)
+    // process registered texture animations
+    for (Texture2DAnimation* currAnimation: mTextureAnimationsList)
     {
-        curr.second->UpdateAnimation(deltaTime);
+        currAnimation->AdvanceAnimation(deltaTime);
     }
 }
 
@@ -132,16 +145,18 @@ void TexturesManager::InitStandardTextures()
         debug_assert(false);
     }
 
-    textureSamplerState.mFilterMode = eTextureFilterMode_Trilinear;
+    InitWaterLavaTextureAnimation();
 
-    // init standard game textures
-    mLavaTexture = GetTexture2D("Lava0");
+    mLavaTexture = new Texture2D { "Lava" };
     mLavaTexture->SetPersistent(true);
-    mLavaTexture->SetSamplerState(textureSamplerState);
+    mLavaTexture->SetTextureAnimation(&mLavaTextureAnimation);
 
-    mWaterTexture = GetTexture2D("Water0"); // todo: animate
+    mWaterTexture = new Texture2D { "Water" };
     mWaterTexture->SetPersistent(true);
-    mLavaTexture->SetSamplerState(textureSamplerState);
+    mWaterTexture->SetTextureAnimation(&mWaterTextureAnimation);
+
+    RegisterTextureAnimation(&mLavaTextureAnimation);
+    RegisterTextureAnimation(&mWaterTextureAnimation);
 }
 
 void TexturesManager::FreeStandardTextures()
@@ -149,10 +164,8 @@ void TexturesManager::FreeStandardTextures()
     SafeDelete(mWhiteTexture);
     SafeDelete(mBlackTexture);
     SafeDelete(mMissingTexture);
-
-    // do not delete those
-    mLavaTexture = nullptr;
-    mWaterTexture = nullptr;
+    SafeDelete(mWaterTexture);
+    SafeDelete(mLavaTexture);
 }
 
 void TexturesManager::FreeTextures()
@@ -162,11 +175,53 @@ void TexturesManager::FreeTextures()
         delete curr.second;
     }
 
-    for (auto& curr: mTexture2DAnimations)
+    mTextures2DMap.clear();
+    mWaterTextureAnimation.Clear();
+}
+
+void TexturesManager::InitWaterLavaTextureAnimation()
+{
+    // init water animation
+    mWaterTextureAnimation.Clear();
+    mWaterTextureAnimation.SetAnimationSpeed(WaterAnimationSpeed);
+
+    for (int iTexture = 0; iTexture < WaterAnimationFramesCount; ++iTexture)
     {
-        delete curr.second;
+        std::string textureName = cxx::va("Water%d", iTexture);
+
+        Texture2D* animationFrame = GetTexture2D(textureName);
+        mWaterTextureAnimation.AddAnimationFrame(animationFrame);
     }
 
-    mTexture2DAnimations.clear();
-    mTextures2DMap.clear();
+    TextureSamplerState textureSamplerState { eTextureFilterMode_Trilinear, eTextureRepeatMode_Repeat };
+    mWaterTextureAnimation.SetFramesSamplerState(textureSamplerState);
+
+    // init lava animation
+    mLavaTextureAnimation.Clear();
+    mLavaTextureAnimation.SetAnimationSpeed(LavaAnimationSpeed);
+
+    for (int iTexture = 0; iTexture < LavaAnimationFramesCount; ++iTexture)
+    {
+        std::string textureName = cxx::va("Lava%d", iTexture);
+
+        Texture2D* animationFrame = GetTexture2D(textureName);
+        mLavaTextureAnimation.AddAnimationFrame(animationFrame);
+    }
+    mLavaTextureAnimation.SetFramesSamplerState(textureSamplerState);
+}
+
+void TexturesManager::RegisterTextureAnimation(Texture2DAnimation* textureAnimation)
+{
+    if (!cxx::contains(mTextureAnimationsList, textureAnimation))
+    {
+        mTextureAnimationsList.push_back(textureAnimation);
+        return;
+    }
+
+    debug_assert(false);
+}
+
+void TexturesManager::UnregisterTextureAnimation(Texture2DAnimation* textureAnimation)
+{
+    cxx::erase_elements(mTextureAnimationsList, textureAnimation);
 }
