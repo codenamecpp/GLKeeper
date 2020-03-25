@@ -553,9 +553,6 @@
     <ClCompile Include="WaterLavaMesh.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="SceneRenderList.cpp">
-      <Filter>Game\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="MeshViewWindow.cpp">
       <Filter>Application\DebugUI\Windows</Filter>
     </ClCompile>

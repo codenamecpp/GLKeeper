@@ -200,19 +200,54 @@ void TerrainManager::CreateWaterLavaMeshList()
         }
     }
 
-    // create water and lava surfaces
-    if (lavaTiles.size())
+    MapFloodFillFlags floodfillFlags;
+    floodfillFlags.mSameBaseTerrain = true;
+    floodfillFlags.mSameOwner = false;
+
+    TilesArray tempTilesArray;
+
+    // create lava surfaces
+    while (!lavaTiles.empty())
     {
-        WaterLavaMesh* lavaMeshObject = gRenderScene.CreateLavaMesh(lavaTiles);
+        MapTile* originTile = lavaTiles.back();
+        lavaTiles.pop_back();
+
+        tempTilesArray.clear();
+        gGameWorld.mMapData.FloodFill4(tempTilesArray, originTile, floodfillFlags);
+        if (tempTilesArray.empty())
+        {
+            debug_assert(false);
+            continue;
+        }
+
+        WaterLavaMesh* lavaMeshObject = gRenderScene.CreateLavaMesh(tempTilesArray);
         gRenderScene.AttachObject(lavaMeshObject);
         mWaterLavaMeshArray.push_back(lavaMeshObject);
+
+        // remove used tiles
+        cxx::erase_elements(lavaTiles, tempTilesArray);
     }
 
-    if (waterTiles.size())
+    // create water surfaces
+    while (!waterTiles.empty())
     {
-        WaterLavaMesh* waterMeshObject = gRenderScene.CreateWaterMesh(waterTiles);
+        MapTile* originTile = waterTiles.back();
+        waterTiles.pop_back();
+
+        tempTilesArray.clear();
+        gGameWorld.mMapData.FloodFill4(tempTilesArray, originTile, floodfillFlags);
+        if (tempTilesArray.empty())
+        {
+            debug_assert(false);
+            continue;
+        }
+
+        WaterLavaMesh* waterMeshObject = gRenderScene.CreateWaterMesh(tempTilesArray);
         gRenderScene.AttachObject(waterMeshObject);
         mWaterLavaMeshArray.push_back(waterMeshObject);
+
+        // remove used tiles
+        cxx::erase_elements(waterTiles, tempTilesArray);
     }
 
     // force build mesh

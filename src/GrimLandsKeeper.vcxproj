@@ -332,7 +332,6 @@
     <ClCompile Include="ScenarioLoader.cpp" />
     <ClCompile Include="SceneCamera.cpp" />
     <ClCompile Include="SceneObject.cpp" />
-    <ClCompile Include="SceneRenderList.cpp" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="string_utils.cpp" />
     <ClCompile Include="System.cpp" />
