@@ -9,6 +9,7 @@ class Texture2DAnimation: public cxx::noncopyable
 public:
     // readonly
     std::vector<Texture2D*> mTextureFrames;
+    Texture2D* mAnimatingTexture = nullptr;
 
 public:
     Texture2DAnimation();
@@ -27,15 +28,17 @@ public:
     void FreeFrameTextures();
     void SetFramesSamplerState(const TextureSamplerState& samplerState);
 
-    bool ActivateFrameTexture(eTextureUnit textureUnit);
-    bool IsFrameTextureActivate(eTextureUnit textureUnit) const;
-    bool IsFrameTextureActivate() const; 
-
     void Clear();
     void AddAnimationFrame(Texture2D* texture);
 
+    void SetAnimatingTexture(Texture2D* animatingTexture);
+
+    bool IsInitialized() const;
+
 private:
-    Texture2D* GetCurrentFrameTexture() const;
+    void UpdateAnimatingTextureFrame(int frame);
+    void UpdateAnimatingTextureFrame();
+    int GetCurrentFrameIndex() const;
 
 private:
     float mFramesPerSecond;

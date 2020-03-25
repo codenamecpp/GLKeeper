@@ -53,7 +53,7 @@ private:
     void FreeStandardTextures();
     void FreeTextures();
 
-    void InitWaterLavaTextureAnimation();
+    void InitWaterLavaTextureAnimations();
 
 private:
     using Textures2DMap = std::map<std::string, Texture2D*, cxx::icase_less>;

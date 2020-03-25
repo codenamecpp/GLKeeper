@@ -11,12 +11,20 @@ Texture2DAnimation::Texture2DAnimation()
 
 void Texture2DAnimation::AdvanceAnimation(float deltaTime)
 {
-    deltaTime = mTimeScale * deltaTime;
+    if (IsInitialized())
+    {
+        deltaTime = mTimeScale * deltaTime;
 
-    if (deltaTime < 0.0001f) // threshold
-        return;
+        if (deltaTime < 0.0001f) // threshold
+            return;
 
-    mTimeAccumulator += deltaTime;
+        mTimeAccumulator += deltaTime;
+        UpdateAnimatingTextureFrame();
+    }
+    else
+    {
+        debug_assert(false);
+    }
 }
 
 void Texture2DAnimation::RewindToStart()
@@ -67,39 +75,6 @@ void Texture2DAnimation::SetFramesSamplerState(const TextureSamplerState& sample
     }
 }
 
-bool Texture2DAnimation::ActivateFrameTexture(eTextureUnit textureUnit)
-{
-    Texture2D* currentFrame = GetCurrentFrameTexture();
-    if (currentFrame == nullptr)
-    {
-        debug_assert(false);
-        return false;
-    }
-    return currentFrame->ActivateTexture(textureUnit);
-}
-
-bool Texture2DAnimation::IsFrameTextureActivate(eTextureUnit textureUnit) const
-{
-    Texture2D* currentFrame = GetCurrentFrameTexture();
-    if (currentFrame == nullptr)
-    {
-        debug_assert(false);
-        return false;
-    }
-    return currentFrame->IsTextureActivate(textureUnit);
-}
-
-bool Texture2DAnimation::IsFrameTextureActivate() const
-{
-    Texture2D* currentFrame = GetCurrentFrameTexture();
-    if (currentFrame == nullptr)
-    {
-        debug_assert(false);
-        return false;
-    }
-    return currentFrame->IsTextureActivate();
-}
-
 void Texture2DAnimation::Clear()
 {
     mTextureFrames.clear();
@@ -107,17 +82,57 @@ void Texture2DAnimation::Clear()
     mFramesPerSecond = 0.0f;
     mTimeAccumulator = 0.0f;
     mTimeScale = 1.0f;
+    mAnimatingTexture = nullptr;
 }
 
 void Texture2DAnimation::AddAnimationFrame(Texture2D* texture)
 {
+    bool isInitialFrame = mTextureFrames.empty();
+
     mTextureFrames.push_back(texture);
+
+    if (isInitialFrame)
+    {
+        UpdateAnimatingTextureFrame(0);
+    }
 }
 
-Texture2D* Texture2DAnimation::GetCurrentFrameTexture() const
+void Texture2DAnimation::SetAnimatingTexture(Texture2D* animatingTexture)
+{
+    mAnimatingTexture = animatingTexture;
+
+    if (mTextureFrames.size())
+    {
+        UpdateAnimatingTextureFrame(0);
+    }
+}
+
+bool Texture2DAnimation::IsInitialized() const
+{
+    return mAnimatingTexture && mTextureFrames.size();
+}
+
+void Texture2DAnimation::UpdateAnimatingTextureFrame(int frame)
+{
+    if (mAnimatingTexture)
+    {
+        mAnimatingTexture->SetProxyTexture(mTextureFrames[frame]);
+    }
+}
+
+void Texture2DAnimation::UpdateAnimatingTextureFrame()
+{
+    int animationFrame = GetCurrentFrameIndex();
+    UpdateAnimatingTextureFrame(animationFrame);
+}
+
+int Texture2DAnimation::GetCurrentFrameIndex() const
 {
     if (mTextureFrames.empty())
-        return nullptr;
+    {
+        debug_assert(false);
+        return 0;
+    }
 
     const int NumAnimationFrames = mTextureFrames.size();
 
@@ -129,5 +144,5 @@ Texture2D* Texture2DAnimation::GetCurrentFrameTexture() const
 
     int currentFrame = (int)(animProgress * NumAnimationFrames);
     debug_assert(currentFrame < NumAnimationFrames);
-    return mTextureFrames[currentFrame];
+    return currentFrame;
 }

@@ -145,18 +145,13 @@ void TexturesManager::InitStandardTextures()
         debug_assert(false);
     }
 
-    InitWaterLavaTextureAnimation();
-
     mLavaTexture = new Texture2D { "Lava" };
     mLavaTexture->SetPersistent(true);
-    mLavaTexture->SetTextureAnimation(&mLavaTextureAnimation);
 
     mWaterTexture = new Texture2D { "Water" };
     mWaterTexture->SetPersistent(true);
-    mWaterTexture->SetTextureAnimation(&mWaterTextureAnimation);
 
-    RegisterTextureAnimation(&mLavaTextureAnimation);
-    RegisterTextureAnimation(&mWaterTextureAnimation);
+    InitWaterLavaTextureAnimations();
 }
 
 void TexturesManager::FreeStandardTextures()
@@ -179,11 +174,12 @@ void TexturesManager::FreeTextures()
     mWaterTextureAnimation.Clear();
 }
 
-void TexturesManager::InitWaterLavaTextureAnimation()
+void TexturesManager::InitWaterLavaTextureAnimations()
 {
     // init water animation
     mWaterTextureAnimation.Clear();
     mWaterTextureAnimation.SetAnimationSpeed(WaterAnimationSpeed);
+    mWaterTextureAnimation.SetAnimatingTexture(mWaterTexture);
 
     for (int iTexture = 0; iTexture < WaterAnimationFramesCount; ++iTexture)
     {
@@ -195,10 +191,12 @@ void TexturesManager::InitWaterLavaTextureAnimation()
 
     TextureSamplerState textureSamplerState { eTextureFilterMode_Trilinear, eTextureRepeatMode_Repeat };
     mWaterTextureAnimation.SetFramesSamplerState(textureSamplerState);
+    RegisterTextureAnimation(&mWaterTextureAnimation);
 
     // init lava animation
     mLavaTextureAnimation.Clear();
     mLavaTextureAnimation.SetAnimationSpeed(LavaAnimationSpeed);
+    mLavaTextureAnimation.SetAnimatingTexture(mLavaTexture);
 
     for (int iTexture = 0; iTexture < LavaAnimationFramesCount; ++iTexture)
     {
@@ -208,6 +206,8 @@ void TexturesManager::InitWaterLavaTextureAnimation()
         mLavaTextureAnimation.AddAnimationFrame(animationFrame);
     }
     mLavaTextureAnimation.SetFramesSamplerState(textureSamplerState);
+    RegisterTextureAnimation(&mLavaTextureAnimation);
+
 }
 
 void TexturesManager::RegisterTextureAnimation(Texture2DAnimation* textureAnimation)

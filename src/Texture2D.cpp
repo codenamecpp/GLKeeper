@@ -20,7 +20,7 @@ Texture2D::~Texture2D()
 
 void Texture2D::DestroyTextureObject()
 {
-    mTextureAnimation = nullptr;
+    mProxyTexture = nullptr;
 
     if (mGpuTextureObject)
     {
@@ -37,9 +37,8 @@ void Texture2D::DestroyTextureObject()
 
 void Texture2D::SetSamplerState(const TextureSamplerState& samplerState)
 {
-    if (mTextureAnimation)
+    if (mProxyTexture) // ignore
     {
-        mTextureAnimation->SetFramesSamplerState(samplerState);
         return;
     }
 
@@ -52,9 +51,9 @@ void Texture2D::SetSamplerState(const TextureSamplerState& samplerState)
 
 bool Texture2D::ActivateTexture(eTextureUnit textureUnit)
 {
-    if (mTextureAnimation)
+    if (mProxyTexture)
     {
-        return mTextureAnimation->ActivateFrameTexture(textureUnit);
+        return mProxyTexture->ActivateTexture(textureUnit);
     }
 
     if (!LoadTexture()) // try to load
@@ -70,9 +69,9 @@ bool Texture2D::ActivateTexture(eTextureUnit textureUnit)
 
 bool Texture2D::LoadTexture()
 {
-    if (mTextureAnimation)
+    if (mProxyTexture)
     {
-        return mTextureAnimation->LoadFrameTextures();
+        return mProxyTexture->LoadTexture();
     }
 
     if (IsTextureLoaded())
@@ -141,7 +140,7 @@ bool Texture2D::LoadTexture()
 
 void Texture2D::FreeTexture()
 {
-    if (mTextureAnimation)
+    if (mProxyTexture)
     {
         return; // ignore
     }
@@ -170,9 +169,9 @@ bool Texture2D::CreateTexture(const Texture2D_Image& imageData)
         return false;
     }
 
-    if (mTextureAnimation)
+    if (mProxyTexture)
     {
-        mTextureAnimation = nullptr;
+        mProxyTexture = nullptr;
     }
 
     if (mGpuTextureObject == nullptr)
@@ -224,9 +223,9 @@ bool Texture2D::CreateTexture(const Texture2D_Desc& sourceDesc, const void* text
         return false;
     }
 
-    if (mTextureAnimation)
+    if (mProxyTexture)
     {
-        mTextureAnimation = nullptr;
+        mProxyTexture = nullptr;
     }
 
     if (mGpuTextureObject == nullptr)
@@ -266,18 +265,22 @@ bool Texture2D::CreateTexture(const Texture2D_Desc& sourceDesc, const void* text
     return true;
 }
 
-void Texture2D::SetTextureAnimation(Texture2DAnimation* animation)
-{ 
+void Texture2D::SetProxyTexture(Texture2D* texture)
+{
     DestroyTextureObject();
 
-    mTextureAnimation = animation;
+    mProxyTexture = texture;
+    if (texture && texture->mProxyTexture)
+    {
+        mProxyTexture = texture->mProxyTexture; 
+    }
 }
 
 bool Texture2D::IsTextureLoaded() const
 {
-    if (mTextureAnimation)
+    if (mProxyTexture)
     {
-        return true;
+        return mProxyTexture->IsTextureLoaded();
     }
 
     return mGpuTextureObject != nullptr;
@@ -285,9 +288,9 @@ bool Texture2D::IsTextureLoaded() const
 
 bool Texture2D::IsTextureActivate(eTextureUnit textureUnit) const
 {
-    if (mTextureAnimation)
+    if (mProxyTexture)
     {
-        return mTextureAnimation->IsFrameTextureActivate(textureUnit);
+        return mProxyTexture->IsTextureActivate(textureUnit);
     }
 
     if (mGpuTextureObject)
@@ -300,9 +303,9 @@ bool Texture2D::IsTextureActivate(eTextureUnit textureUnit) const
 
 bool Texture2D::IsTextureActivate() const
 {
-    if (mTextureAnimation)
+    if (mProxyTexture)
     {
-        return mTextureAnimation->IsFrameTextureActivate();
+        return mProxyTexture->IsTextureActivate();
     }
 
     if (mGpuTextureObject)
@@ -318,7 +321,7 @@ void Texture2D::SetPersistent(bool isPersistent)
     mPersistent = isPersistent;
 }
 
-bool Texture2D::IsAnimatingTexture() const
+bool Texture2D::HasProxyTexture() const
 {
-    return mTextureAnimation != nullptr;
+    return mProxyTexture != nullptr;
 }
