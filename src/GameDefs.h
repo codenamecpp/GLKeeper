@@ -9,25 +9,32 @@
 #define TERRAIN_BLOCK_HEIGHT    1.0f
 
 // forwards
-class GenericRoom;
 class GameMap;
 class MapTile;
 
 // terrain type identifier
-using TerrainTypeID = unsigned int; // for sake of flexibility, do not rely on specific id
-const TerrainTypeID TerrainType_Null = 0; // invalid identifier
+enum TerrainTypeID: unsigned int // for sake of flexibility, do not rely on specific id
+{
+    TerrainType_Null = 0 // invalid identifier
+};
 
 // room type identifier
-using RoomTypeID = unsigned int; // for sake of flexibility, do not rely on specific id
-const RoomTypeID RoomType_Null = 0; // invalid identifier
+enum RoomTypeID: unsigned int // for sake of flexibility, do not rely on specific id
+{
+    RoomType_Null = 0 // invalid identifier
+};
 
 // game object type identifier
-using GameObjectTypeID = unsigned int; // for sake of flexibility, do not rely on specific id
-const GameObjectTypeID GameObjectType_Null = 0; // invalid identifier
+enum GameObjectTypeID: unsigned int // for sake of flexibility, do not rely on specific id
+{
+    GameObjectType_Null = 0 // invalid identifier
+};
 
 // create type identifier
-using CreatureTypeID = unsigned int;
-const CreatureTypeID CreatureType_Null = 0; // invalid identifier
+enum CreatureTypeID: unsigned int
+{
+    CreatureType_Null = 0 // invalid identifier
+};
 
 // array of map tiles
 using TilesArray = std::vector<MapTile*>;

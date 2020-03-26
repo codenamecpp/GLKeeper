@@ -408,6 +408,9 @@
     <ClInclude Include="RoomsManager.h">
       <Filter>Game\World\Rooms</Filter>
     </ClInclude>
+    <ClInclude Include="RoomWallSection.h">
+      <Filter>Game\World\Rooms</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -611,6 +614,9 @@
       <Filter>Game\World\Rooms</Filter>
     </ClCompile>
     <ClCompile Include="RoomsManager.cpp">
+      <Filter>Game\World\Rooms</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomWallSection.cpp">
       <Filter>Game\World\Rooms</Filter>
     </ClCompile>
   </ItemGroup>

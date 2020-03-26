@@ -47,6 +47,12 @@ void GameWorld::Deinit()
     mMapData.Clear();
 }
 
+void GameWorld::UpdateFrame()
+{
+    gRoomsManager.UpdateFrame();
+    gTerrainManager.UpdateTerrainMesh();
+}
+
 void GameWorld::SetupMapData(unsigned int seed)
 {
     Size2D mapDimensions (mScenarioData.mLevelDimensionX, mScenarioData.mLevelDimensionY);

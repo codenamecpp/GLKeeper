@@ -25,9 +25,12 @@
 #define ROOM_NAME_HERO_GATE_3X1 "Hero Gate [ 3x1 ]"
 #define ROOM_NAME_HERO_PORTAL "Hero Portal"
 
-// wall section which belongs to room
-struct RoomWallSection
-{
-public:
+// forwards
+class GenericRoom;
+class RoomWallSection;
 
-};
+// weak pointer to room instance
+using RoomHandle = cxx::handle<GenericRoom>;
+
+// room instance unique identifier
+using RoomInstanceID = unsigned long long;

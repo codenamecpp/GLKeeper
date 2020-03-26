@@ -2,9 +2,7 @@
 
 #include "GameDefs.h"
 #include "ScenarioDefs.h"
-
-// forwards
-struct RoomWallSection;
+#include "RoomsDefs.h"
 
 // frequently used tile rotations
 // 0: -90 degrees
@@ -39,7 +37,7 @@ public:
 
     // specified if tile face is part of the room
     // only defined for sides N, E, S, W 
-    RoomWallSection* mWallSectionData = nullptr;
+    RoomWallSection* mRoomWallSection = nullptr;
 };
 
 // gamemap block data

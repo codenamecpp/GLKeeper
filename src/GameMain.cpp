@@ -51,6 +51,8 @@ void GameMain::UpdateFrame()
     {
         mCurrentGamestate->HandleUpdateFrame();
     }
+
+    gGameWorld.UpdateFrame();
 }
 
 void GameMain::DebugRenderFrame(DebugRenderer& renderer)

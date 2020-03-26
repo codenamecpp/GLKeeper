@@ -65,4 +65,13 @@ namespace cxx
         return true;
     }
 
+    template<typename TContainer, typename TElement>
+    inline void push_back_if_unique(TContainer& container, const TElement& element)
+    {
+        if (contains(container, element))
+            return;
+
+        container.push_back(element);
+    }
+
 } // namespace cxx

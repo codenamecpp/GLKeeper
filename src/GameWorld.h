@@ -20,6 +20,9 @@ public:
     bool InitializeWorld(const std::string& scenarioName);
     void Deinit();
 
+    // process single frame logic
+    void UpdateFrame();
+
     // get terrain definition by type name or type identifier
     // @param typeName: Type name
     // @param typeID: Type identifier
