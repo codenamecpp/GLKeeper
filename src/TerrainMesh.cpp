@@ -60,6 +60,7 @@ TerrainMesh::TerrainMesh()
     , mIndicesBuffer()
     , mMeshDirty()
 {
+    mDebugColor = Color32_Brown;
 }
 
 TerrainMesh::~TerrainMesh()

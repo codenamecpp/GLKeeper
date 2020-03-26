@@ -13,6 +13,7 @@ SceneObject::SceneObject()
     , mDirectionRight(SceneAxisX)
     , mDirectionUpward(SceneAxisY)
     , mDirectionForward(SceneAxisZ)
+    , mDebugColor(Color32_Green)
 {
 }
 

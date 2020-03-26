@@ -8,6 +8,10 @@
 
 const int TerrainMeshSizeTiles = 8; // 8x8 tiles per terrain mesh
 
+//////////////////////////////////////////////////////////////////////////
+
+TerrainManager gTerrainManager;
+
 bool TerrainManager::Initialize()
 {
     int mapsizex = gGameWorld.mMapData.mDimensions.x;

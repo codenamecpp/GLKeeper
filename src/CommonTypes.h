@@ -64,6 +64,7 @@ extern const Color32 Color32_Green;
 extern const Color32 Color32_DarkGreen;
 extern const Color32 Color32_Orange;
 extern const Color32 Color32_Blue;
+extern const Color32 Color32_Brown;
 extern const Color32 Color32_SkyBlue;
 extern const Color32 Color32_DarkBlue;
 extern const Color32 Color32_White;

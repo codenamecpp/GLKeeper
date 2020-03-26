@@ -183,6 +183,7 @@
     <ClInclude Include="CreatureDefs.h" />
     <ClInclude Include="FpsWindow.h" />
     <ClInclude Include="GameMap.h" />
+    <ClInclude Include="GenericRoom.h" />
     <ClInclude Include="GodModeCameraControl.h" />
     <ClInclude Include="MapTile.h" />
     <ClInclude Include="GameObjectsDefs.h" />
@@ -207,6 +208,7 @@
     <ClInclude Include="RenderMaterial.h" />
     <ClInclude Include="ResourceDefs.h" />
     <ClInclude Include="RoomsDefs.h" />
+    <ClInclude Include="RoomsManager.h" />
     <ClInclude Include="ScenarioDefs.h" />
     <ClInclude Include="ScenarioLoader.h" />
     <ClInclude Include="SceneCamera.h" />
@@ -292,6 +294,7 @@
     <ClCompile Include="DebugGuiWindow.cpp" />
     <ClCompile Include="FpsWindow.cpp" />
     <ClCompile Include="GameMap.cpp" />
+    <ClCompile Include="GenericRoom.cpp" />
     <ClCompile Include="GodModeCameraControl.cpp" />
     <ClCompile Include="MapTile.cpp" />
     <ClCompile Include="GameplayGamestate.cpp" />
@@ -329,6 +332,7 @@
     <ClCompile Include="RenderManager.cpp" />
     <ClCompile Include="RenderMaterial.cpp" />
     <ClCompile Include="RenderProgram.cpp" />
+    <ClCompile Include="RoomsManager.cpp" />
     <ClCompile Include="ScenarioLoader.cpp" />
     <ClCompile Include="SceneCamera.cpp" />
     <ClCompile Include="SceneObject.cpp" />

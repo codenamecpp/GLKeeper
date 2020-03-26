@@ -14,6 +14,7 @@ WaterLavaMesh::WaterLavaMesh()
     , mMeshDirty()
     , mWaveTime()
 {
+    mDebugColor = Color32_Blue;
 }
 
 WaterLavaMesh::~WaterLavaMesh()

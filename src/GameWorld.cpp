@@ -2,6 +2,8 @@
 #include "GameWorld.h"
 #include "ScenarioLoader.h"
 #include "Console.h"
+#include "TerrainManager.h"
+#include "RoomsManager.h"
 
 GameWorld gGameWorld;
 
@@ -18,11 +20,19 @@ bool GameWorld::InitializeWorld(const std::string& scenarioName)
 
     SetupMapData(0xDEADBEEF);
 
-    if (!mTerrainManager.Initialize())
+    if (!gTerrainManager.Initialize())
     {
         Deinit();
 
         gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize terrain manager");
+        return false;
+    }
+
+    if (!gRoomsManager.Initialize())
+    {
+        Deinit();
+        
+        gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize rooms manager");
         return false;
     }
 
@@ -31,7 +41,8 @@ bool GameWorld::InitializeWorld(const std::string& scenarioName)
 
 void GameWorld::Deinit()
 {
-    mTerrainManager.Deinit();
+    gRoomsManager.Deinit();
+    gTerrainManager.Deinit();
     mScenarioData.Clear();
     mMapData.Clear();
 }

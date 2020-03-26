@@ -29,3 +29,5 @@ private:
 
     TilesArray mDirtyTilesArray;
 };
+
+extern TerrainManager gTerrainManager;

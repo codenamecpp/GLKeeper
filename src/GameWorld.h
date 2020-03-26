@@ -3,7 +3,6 @@
 #include "ScenarioDefs.h"
 #include "GameMap.h"
 #include "DungeonBuilder.h"
-#include "TerrainManager.h"
 
 // game world state
 class GameWorld: public cxx::noncopyable
@@ -13,7 +12,6 @@ public:
     ScenarioData mScenarioData;
     GameMap mMapData;
     DungeonBuilder mDungeonBuilder;
-    TerrainManager mTerrainManager;
 
 public:
     

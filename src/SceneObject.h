@@ -20,6 +20,8 @@ public:
     cxx::aabbox mBoundsTransformed; // world space
     cxx::aabbox mBounds; // untransformed, used for culling and mouse tests
 
+    Color32 mDebugColor; // color used for debug draw
+
     float mDistanceToCameraSquared; // this value gets updated during scene rendition
 
 public:

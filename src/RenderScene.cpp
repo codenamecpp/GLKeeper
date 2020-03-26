@@ -74,7 +74,6 @@ void RenderScene::DebugRenderFrame(DebugRenderer& renderer)
     Size2D cellCount (12, 12);
     glm::vec2 cellSize (1.0f, 1.0f);
     renderer.DrawGrid(cellCount, cellSize, Color32_Gray, true);
-
     renderer.DrawAxes(glm::mat4(1.0f), glm::vec3(0.0f), 2.0f, false);
     mAABBTree.DebugRender(renderer);
 }

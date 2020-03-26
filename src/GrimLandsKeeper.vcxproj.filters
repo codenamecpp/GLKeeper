@@ -83,6 +83,9 @@
     <Filter Include="Application\FileIO">
       <UniqueIdentifier>{6c249930-f16e-4aa9-ba23-2f2a82c2812d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\World\Rooms">
+      <UniqueIdentifier>{070a4973-7fbe-49b1-acd7-2ba43980fe1f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -357,9 +360,6 @@
     <ClInclude Include="CreatureDefs.h">
       <Filter>Game\World</Filter>
     </ClInclude>
-    <ClInclude Include="RoomsDefs.h">
-      <Filter>Game\World</Filter>
-    </ClInclude>
     <ClInclude Include="GameObjectsDefs.h">
       <Filter>Game\World</Filter>
     </ClInclude>
@@ -398,6 +398,15 @@
     </ClInclude>
     <ClInclude Include="WaterLavaMeshRenderer.h">
       <Filter>Game\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomsDefs.h">
+      <Filter>Game\World\Rooms</Filter>
+    </ClInclude>
+    <ClInclude Include="GenericRoom.h">
+      <Filter>Game\World\Rooms</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomsManager.h">
+      <Filter>Game\World\Rooms</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -597,6 +606,12 @@
     </ClCompile>
     <ClCompile Include="WaterLavaMeshRenderer.cpp">
       <Filter>Game\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="GenericRoom.cpp">
+      <Filter>Game\World\Rooms</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomsManager.cpp">
+      <Filter>Game\World\Rooms</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
