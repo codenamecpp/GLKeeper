@@ -51,6 +51,10 @@ public:
     void ClearTileMesh(eTileFace faceid);
     void ClearTileMesh();
 
+    // mark tile mesh invalidated
+    void InvalidateTileMesh();
+    void InvalidateNeighbourTilesMesh();
+
     // get current terrain type for tile
     inline TerrainDefinition* GetTerrain() const { return mRoomTerrain ? mRoomTerrain : mBaseTerrain; }
     inline TerrainDefinition* GetBaseTerrain() const { return mBaseTerrain; }
@@ -73,4 +77,6 @@ public:
     bool mIsTagged;
     bool mIsRoomInnerTile; // tile is center of 3x3 square of room, flag is valid only if tile is a part of room
     bool mIsRoomEntrance; // flag is valid only if tile is a part of room
+
+    bool mIsMeshInvalidated; // tile mesh is dirty and should be regenerated
 };

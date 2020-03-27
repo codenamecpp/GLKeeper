@@ -5,6 +5,8 @@
 #include "RenderScene.h"
 #include "TerrainMesh.h"
 #include "WaterLavaMesh.h"
+#include "RoomsManager.h"
+#include "GenericRoom.h"
 
 const int TerrainMeshSizeTiles = 8; // 8x8 tiles per terrain mesh
 
@@ -23,9 +25,7 @@ bool TerrainManager::Initialize()
         return false;
     }
 
-    CreateTerrainMeshList();
-    BuildFullTerrainMesh();
-    
+    CreateTerrainMeshList();    
     CreateWaterLavaMeshList();
 
     return true;
@@ -36,7 +36,7 @@ void TerrainManager::Deinit()
     DestroyWaterLavaMeshList();
     DestroyTerrainMeshList();
 
-    mDirtyTilesArray.clear();
+    mInvalidatedTiles.clear();
 }
 
 void TerrainManager::CreateTerrainMeshList()
@@ -94,13 +94,13 @@ void TerrainManager::DestroyTerrainMeshList()
 
 void TerrainManager::UpdateTerrainMesh()
 {
-    if (mDirtyTilesArray.empty())
+    if (mInvalidatedTiles.empty())
         return;
 
     std::set<GenericRoom*> invalidateRooms;
 
     // build terrain tiles and collect invalidated rooms
-    for (MapTile* currentTile: mDirtyTilesArray)
+    for (MapTile* currentTile: mInvalidatedTiles)
     {
         if (currentTile->mRoom)
         {
@@ -140,23 +140,40 @@ void TerrainManager::UpdateTerrainMesh()
     //    }
     //}
 
-    // update terrain meshes
+    // reset invalidated flag
+    for (MapTile* currentTile: mInvalidatedTiles)
+    {
+        currentTile->mIsMeshInvalidated = false;
+    }
+
+    // update terrain mesh objects
     for (TerrainMesh* currTerrainMesh: mTerrainMeshArray)
     {
         currTerrainMesh->UpdateMesh();
     }
 
-    mDirtyTilesArray.clear();
+    mInvalidatedTiles.clear();
+}
+
+void TerrainManager::HandleTileMeshInvalidated(MapTile* mapTile)
+{
+    if (mapTile == nullptr)
+    {
+        debug_assert(false);
+        return;
+    }
+
+    cxx::push_back_if_unique(mInvalidatedTiles, mapTile);
 }
 
 void TerrainManager::BuildFullTerrainMesh()
 {
-    mDirtyTilesArray.clear();
+    mInvalidatedTiles.clear();
 
     int dimsx = gGameWorld.mMapData.mDimensions.x;
     int dimsy = gGameWorld.mMapData.mDimensions.y;
 
-    // build terrain tiles and collect invalidated rooms
+    // build terrain tiles
     for (int tiley = 0; tiley < dimsy; ++tiley)
     for (int tilex = 0; tilex < dimsx; ++tilex)
     {
@@ -166,9 +183,16 @@ void TerrainManager::BuildFullTerrainMesh()
         debug_assert(currentTile);
 
         gGameWorld.mDungeonBuilder.BuildTerrainMesh(currentTile);
+        currentTile->mIsMeshInvalidated = false;
     }
 
-    // update terrain meshes
+    // ask rooms to build its tiles
+    for (GenericRoom* currentRoom: gRoomsManager.mRoomsList)
+    {
+        currentRoom->BuildTilesMesh();
+    }
+
+    // update terrain mesh objects
     for (TerrainMesh* currTerrainMesh: mTerrainMeshArray)
     {
         currTerrainMesh->UpdateMesh();

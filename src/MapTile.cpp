@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "MapTile.h"
+#include "TerrainManager.h"
 
 // Rotations Y
 const glm::mat3 g_TileRotations[5] = 
@@ -25,6 +26,7 @@ MapTile::MapTile()
     , mIsRoomInnerTile()
     , mIsRoomEntrance()
     , mTileLocation()
+    , mIsMeshInvalidated()
 {
 }
 
@@ -42,5 +44,22 @@ void MapTile::ClearTileMesh(eTileFace meshFace)
     if (meshFace < eTileFace_COUNT)
     {
         mFaces[meshFace].mMeshArray.clear();
+    }
+}
+
+void MapTile::InvalidateTileMesh()
+{
+    if (mIsMeshInvalidated)
+        return;
+
+    mIsMeshInvalidated = true;
+    gTerrainManager.HandleTileMeshInvalidated(this);
+}
+
+void MapTile::InvalidateNeighbourTilesMesh()
+{
+    for (MapTile* currentTile: mNeighbours)
+    {
+        currentTile->InvalidateTileMesh();
     }
 }

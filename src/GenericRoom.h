@@ -17,7 +17,7 @@ public:
     RoomDefinition* mDefinition; // cannot be null
     RoomInstanceID mInstanceID; // instance unique identifier
     TilesArray mRoomTiles;
-    Rect2D mLocationArea; // approximate size in tiles
+    Rect2D mOccupationArea; // approximate size in tiles
     ePlayerID mOwnerIdentifier;
 
 public:
@@ -34,19 +34,33 @@ public:
     // expand room with new tiles
     void EnlargeRoom(const TilesArray& mapTiles);
 
+    // force construct geometries of all room tiles and wall sections
+    void BuildTilesMesh();
+
+    // construct geometries of all invalidated room tiles and wall sections
+    void UpdateTilesMesh();
+
 protected:
-    // tile mesh construction
-    void ConstructTile_DoubleQuad(DungeonBuilder& builder, const TilesArray& mapTiles);
-    void ConstructTile_5x5Rotated(DungeonBuilder& builder, const TilesArray& mapTiles);
-    void ConstructTile_3x3(DungeonBuilder& builder, const TilesArray& mapTiles);
-    void ConstructTile_Quad(DungeonBuilder& builder, const TilesArray& mapTiles);
-    void ConstructTile_Normal(DungeonBuilder& builder, const TilesArray& mapTiles);
-    void ConstructTile_HeroGateFrontEnd(DungeonBuilder& builder, const TilesArray& mapTiles);
-    void ConstructTile_HeroGate3x1(DungeonBuilder& builder, const TilesArray& mapTiles);
+    void IncludeTiles(const TilesArray& mapTiles);
+
+    void ReevaluateOccupationArea();
+    void ReevaluateInnerSquares();
+
+protected:
+    // construct floor tiles mesh
+    void ConstructFloorTiles(DungeonBuilder& builder, const TilesArray& mapTiles);
+
+    // tile mesh construction procs
+    void ConstructTiles_DoubleQuad      (DungeonBuilder& builder, const TilesArray& mapTiles);
+    void ConstructTiles_5x5Rotated      (DungeonBuilder& builder, const TilesArray& mapTiles);
+    void ConstructTiles_3x3             (DungeonBuilder& builder, const TilesArray& mapTiles);
+    void ConstructTiles_Quad            (DungeonBuilder& builder, const TilesArray& mapTiles);
+    void ConstructTiles_Normal          (DungeonBuilder& builder, const TilesArray& mapTiles);
+    void ConstructTiles_HeroGateFrontEnd(DungeonBuilder& builder, const TilesArray& mapTiles);
+    void ConstructTiles_HeroGate3x1     (DungeonBuilder& builder, const TilesArray& mapTiles);
 
 protected:
 
 
     TilesArray mInnerTiles;
-
 };

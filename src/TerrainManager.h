@@ -12,14 +12,19 @@ public:
     bool Initialize();
     void Deinit();
 
-    // rebuild terrain mesh for invalidated tiles
+    // rebuild only invalidated tiles terrain mesh
     void UpdateTerrainMesh();
+
+    // force rebuild all terrain mesh
+    void BuildFullTerrainMesh();
+
+    // tile mesh is invalidated and will be regenerated
+    void HandleTileMeshInvalidated(MapTile* mapTile);
 
 private:
     void CreateTerrainMeshList();
     void DestroyTerrainMeshList();
-    void BuildFullTerrainMesh();
-
+    
     void CreateWaterLavaMeshList();
     void DestroyWaterLavaMeshList();
 
@@ -27,7 +32,7 @@ private:
     std::vector<WaterLavaMesh*> mWaterLavaMeshArray;
     std::vector<TerrainMesh*> mTerrainMeshArray;
 
-    TilesArray mDirtyTilesArray;
+    TilesArray mInvalidatedTiles;
 };
 
 extern TerrainManager gTerrainManager;

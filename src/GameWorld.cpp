@@ -37,6 +37,8 @@ bool GameWorld::InitializeWorld(const std::string& scenarioName)
     }
 
     ConstructStartupRooms();
+
+    gTerrainManager.BuildFullTerrainMesh();
     return true;
 }
 
