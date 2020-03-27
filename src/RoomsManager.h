@@ -29,10 +29,17 @@ public:
     GenericRoom* GetRoomInstance(RoomDefinition* definition, ePlayerID owner) const;
     GenericRoom* GetRoomInstance(RoomTypeID typeIdentifier, ePlayerID owner) const;
 
+    // create new room instance
+    GenericRoom* CreateRoomInstance(RoomDefinition* definition, ePlayerID owner);
+    GenericRoom* CreateRoomInstance(RoomDefinition* definition, ePlayerID owner, const TilesArray& roomTiles);
+
 private:
     void DestroyRoomsList();
 
+    RoomInstanceID GenerateNewRoomInstanceID();
+
 private:
+    RoomInstanceID mRoomIDsCounter = 0;
 };
 
 extern RoomsManager gRoomsManager;

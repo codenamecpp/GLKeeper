@@ -63,7 +63,7 @@ public:
 
     ePlayerID mOwnerId = ePlayerID_Null;
 
-    GenericRoom* mRoomInstance = nullptr; // room built on tile
+    GenericRoom* mRoom = nullptr; // room built on tile
     TileFaceData mFaces[eTileFace_COUNT];
     MapTile* mNeighbours[eDirection_COUNT];
 

@@ -160,6 +160,29 @@ decl_enum_strings(eDirection);
 
 static_assert(eDirection_COUNT == 8, "NUM_TERRAIN_DIRECTIONS");
 
+namespace
+{
+    // directions in clockwise order
+    static const eDirection gDirectionsCW[] 
+    {
+        eDirection_N, eDirection_NE, eDirection_E, eDirection_SE,
+        eDirection_S, eDirection_SW, eDirection_W, eDirection_NW,
+    };
+
+    // directions in counter clockwise order
+    static const eDirection gDirectionsCCW[] 
+    {
+        eDirection_NW, eDirection_W, eDirection_SW, eDirection_S,
+        eDirection_SE, eDirection_E, eDirection_NE, eDirection_N,
+    };
+
+    // straight directions in clockwise order
+    static const eDirection gStraightDirections[] 
+    {
+        eDirection_N, eDirection_E, eDirection_S, eDirection_W
+    };
+}
+
 // get world direction of block face
 // @param faceid: Block face identifier
 inline eDirection TileFaceToDirection(eTileFace faceid)

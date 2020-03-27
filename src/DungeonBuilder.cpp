@@ -587,3 +587,17 @@ bool DungeonBuilder::RoomHandlesWalls(MapTile* mapTile) const
     } 
     return false;
 }
+
+bool DungeonBuilder::NeighbourHasSameRoom(MapTile* mapTile, eDirection direction) const
+{
+    if (mapTile == nullptr || mapTile->mRoom == nullptr)
+    {
+        debug_assert(false);
+        return false;
+    }
+    if (MapTile* neighbourTile = mapTile->mNeighbours[direction])
+    {
+        return mapTile->mRoom == neighbourTile->mRoom;
+    }
+    return false;
+}

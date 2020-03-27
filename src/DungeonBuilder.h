@@ -8,8 +8,6 @@ class DungeonBuilder
 {
 public:
     // rebuild terrain mesh for specific tile
-    // @param mapTile: Map tile
-    // @param faceid: Tile face identifier
     void BuildTerrainMesh(MapTile* mapTile);
     void BuildTerrainMesh(MapTile* mapTile, eTileFace faceid);
 
@@ -26,12 +24,15 @@ public:
     bool NeighbourHasSameTerrain(MapTile* mapTile, eDirection direction) const;
     bool NeighbourHasSameBaseTerrain(MapTile* mapTile, eDirection direction) const;
 
-    // Test whether
+    // test whether
     // - Tile is Solid and Allows room walls
     // - Terrain type of neighbour tile is Room and it has Walls
     // So geometry for this wall should be managed by room
     bool NeighbourRoomHandlesWalls(MapTile* mapTile, eDirection direction) const;
     bool RoomHandlesWalls(MapTile* mapTile) const;
+
+    // test whether neighbour tile has same room instance constructed on it
+    bool NeighbourHasSameRoom(MapTile* mapTile, eDirection direction) const;
 
 private:
     // construction

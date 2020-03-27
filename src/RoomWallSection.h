@@ -19,9 +19,9 @@ public:
     void Setup(GenericRoom* room, eDirection direction);
     void Setup(GenericRoom* room, eTileFace faceid);
 
-    void ExcludeTile(MapTile* mapTile);
-    void IncludeTile(MapTile* mapTile);
-    void ExcludeTiles();
+    void DetachTiles();
+    void DetachTile(MapTile* mapTile);
+    void AttachTile(MapTile* mapTile);
 
     bool ContainsTile(MapTile* mapTile) const;
     bool ContainsTiles() const;

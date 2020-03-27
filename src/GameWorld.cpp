@@ -36,6 +36,7 @@ bool GameWorld::InitializeWorld(const std::string& scenarioName)
         return false;
     }
 
+    ConstructStartupRooms();
     return true;
 }
 
@@ -102,6 +103,54 @@ void GameWorld::SetupMapData(unsigned int seed)
 
         ++currentTileIndex;
     }
+}
+
+void GameWorld::ConstructStartupRooms()
+{
+    // create rooms
+    for (int tiley = 0; tiley < mMapData.mDimensions.y; ++tiley)
+    for (int tilex = 0; tilex < mMapData.mDimensions.x; ++tilex)
+    {
+        const Point2D currTileLocation (tilex, tiley);
+
+        MapTile* currTile = mMapData.GetMapTile(currTileLocation);
+        if (currTile->mRoom)
+        {
+            // room is already constructed on this tile
+            continue;
+        }
+
+        TerrainDefinition* terrainDef = currTile->GetTerrain();
+        if (IsRoomTypeTerrain(terrainDef))
+        {
+            ConstructStartupRoom(currTile);
+        }
+    }
+}
+
+void GameWorld::ConstructStartupRoom(MapTile* initialTile)
+{
+    debug_assert(initialTile);
+
+    TerrainDefinition* terrainDef = initialTile->GetTerrain();
+    // query room definition
+    RoomDefinition* roomDefinition = GetRoomDefinitionByTerrain(terrainDef);
+    if (roomDefinition == nullptr)
+    {
+        debug_assert(false);
+        return;
+    }
+
+    TilesArray floodTiles;
+
+    MapFloodFillFlags floodFillFlags;
+    floodFillFlags.mSameBaseTerrain = false;
+    floodFillFlags.mSameOwner = true;
+    mMapData.FloodFill4(floodTiles, initialTile,floodFillFlags);
+
+    // create room instance
+    GenericRoom* roomInstance = gRoomsManager.CreateRoomInstance(roomDefinition, initialTile->mOwnerId, floodTiles);
+    debug_assert(roomInstance);
 }
 
 TerrainDefinition* GameWorld::GetLavaTerrain()

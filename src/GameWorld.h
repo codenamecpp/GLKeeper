@@ -64,7 +64,8 @@ public:
 
 private:
     void SetupMapData(unsigned int seed);
-
+    void ConstructStartupRooms();
+    void ConstructStartupRoom(MapTile* initialTile);
 };
 
 extern GameWorld gGameWorld;

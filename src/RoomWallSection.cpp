@@ -20,7 +20,7 @@ void RoomWallSection::Setup(GenericRoom* room, eTileFace faceid)
     mFaceId = faceid;
 }
 
-void RoomWallSection::ExcludeTile(MapTile* mapTile)
+void RoomWallSection::DetachTile(MapTile* mapTile)
 {
     if (mapTile == nullptr)
     {
@@ -37,7 +37,7 @@ void RoomWallSection::ExcludeTile(MapTile* mapTile)
     cxx::erase_elements(mWallTiles, mapTile);
 }
 
-void RoomWallSection::IncludeTile(MapTile* mapTile)
+void RoomWallSection::AttachTile(MapTile* mapTile)
 {
     if (mapTile == nullptr)
     {
@@ -53,7 +53,7 @@ void RoomWallSection::IncludeTile(MapTile* mapTile)
     cxx::push_back_if_unique(mWallTiles, mapTile);
 }
 
-void RoomWallSection::ExcludeTiles()
+void RoomWallSection::DetachTiles()
 {
     for (MapTile* currentTile: mWallTiles)
     {

@@ -6,6 +6,7 @@ RoomsManager gRoomsManager;
 
 bool RoomsManager::Initialize()
 {
+    mRoomIDsCounter = 0;
     return true;
 }
 
@@ -56,7 +57,7 @@ GenericRoom* RoomsManager::GetRoomInstance(RoomDefinition* definition, ePlayerID
     {
         return GetRoomInstance(definition->mRoomType, owner);
     }
-    return nullptr;  
+    return nullptr;
 }
 
 GenericRoom* RoomsManager::GetRoomInstance(RoomTypeID typeIdentifier, ePlayerID owner) const
@@ -79,4 +80,38 @@ void RoomsManager::DestroyRoomsList()
         SafeDelete(currentRoom);
     }
     mRoomsList.clear();
+}
+
+RoomInstanceID RoomsManager::GenerateNewRoomInstanceID()
+{
+    return ++mRoomIDsCounter; // todo
+}
+
+GenericRoom* RoomsManager::CreateRoomInstance(RoomDefinition* definition, ePlayerID owner)
+{
+    debug_assert(definition);
+    if (definition == nullptr)
+        return nullptr;
+
+    RoomInstanceID uid = GenerateNewRoomInstanceID();
+
+    GenericRoom* genericRoom = new GenericRoom(definition, owner, uid);
+    mRoomsList.push_back(genericRoom);
+    return genericRoom;
+}
+
+GenericRoom* RoomsManager::CreateRoomInstance(RoomDefinition* definition, ePlayerID owner, const TilesArray& roomTiles)
+{
+    debug_assert(definition);
+    if (definition == nullptr)
+        return nullptr;
+
+    RoomInstanceID uid = GenerateNewRoomInstanceID();
+
+    GenericRoom* genericRoom = new GenericRoom(definition, owner, uid);
+    mRoomsList.push_back(genericRoom);
+
+    // setup room
+    genericRoom->EnlargeRoom(roomTiles);
+    return genericRoom;
 }
