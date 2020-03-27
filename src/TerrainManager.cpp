@@ -166,6 +166,15 @@ void TerrainManager::HandleTileMeshInvalidated(MapTile* mapTile)
     cxx::push_back_if_unique(mInvalidatedTiles, mapTile);
 }
 
+void TerrainManager::ClearInvalidated()
+{
+    for (MapTile* currTile: mInvalidatedTiles)
+    {
+        currTile->mIsMeshInvalidated = false;
+    }
+    mInvalidatedTiles.clear();
+}
+
 void TerrainManager::BuildFullTerrainMesh()
 {
     mInvalidatedTiles.clear();
@@ -183,7 +192,6 @@ void TerrainManager::BuildFullTerrainMesh()
         debug_assert(currentTile);
 
         gGameWorld.mDungeonBuilder.BuildTerrainMesh(currentTile);
-        currentTile->mIsMeshInvalidated = false;
     }
 
     // ask rooms to build its tiles
@@ -191,6 +199,8 @@ void TerrainManager::BuildFullTerrainMesh()
     {
         currentRoom->BuildTilesMesh();
     }
+
+    ClearInvalidated();
 
     // update terrain mesh objects
     for (TerrainMesh* currTerrainMesh: mTerrainMeshArray)

@@ -21,6 +21,9 @@ public:
     // tile mesh is invalidated and will be regenerated
     void HandleTileMeshInvalidated(MapTile* mapTile);
 
+    // reset invalidated flag for all queued tiles
+    void ClearInvalidated();
+
 private:
     void CreateTerrainMeshList();
     void DestroyTerrainMeshList();
