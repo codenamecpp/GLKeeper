@@ -103,6 +103,7 @@
     <LinkIncremental>true</LinkIncremental>
     <IntDir>$(SolutionDir)..\obj\$(ProjectName)_$(Configuration)\</IntDir>
     <OutDir>$(SolutionDir)..\lib\$(ProjectName)_$(Configuration)\</OutDir>
+    <TargetName>$(ProjectName)_d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>

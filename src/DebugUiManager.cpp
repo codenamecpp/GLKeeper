@@ -81,6 +81,9 @@ bool DebugUiManager::Initialize()
 
 void DebugUiManager::Deinit()
 {
+    if (!IsInitialized())
+        return;
+
     ImGuiIO& io = ImGui::GetIO();
 
     // destroy font texture
