@@ -2,12 +2,6 @@
 #include "DebugUiManager.h"
 #include "DebugUiWindow.h"
 
-cxx::intrusive_list<DebugUiWindow> gAllWindowsList;
-
-DebugUiWindow::DebugUiWindow()
-{
-}
-
 DebugUiWindow::~DebugUiWindow()
 {
 }

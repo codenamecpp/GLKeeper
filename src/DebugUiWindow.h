@@ -8,11 +8,11 @@ struct ImGuiIO;
 // debug gui window base class
 class DebugUiWindow: public cxx::noncopyable
 {
-    friend class DebugUiManager;
+public:
+    // readonly
+    bool mWindowShown = false;
 
 public:
-    // @param windowName: Window name, must be unique, cannot change once specified
-    DebugUiWindow();
     virtual ~DebugUiWindow();
 
     // process window logic
@@ -23,10 +23,4 @@ public:
     // @param isShown: Flag
     void SetWindowShown(bool isShown);
     void ToggleWindowShown();
-
-    // test whether window is shown
-    inline bool IsWindowShown() const { return mWindowShown; }
-
-protected:
-    bool mWindowShown = false;
 };
