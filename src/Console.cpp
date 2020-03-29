@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Console.h"
 #include "ConsoleWindow.h"
-#include "DebugGuiManager.h"
+#include "DebugUiManager.h"
 #include "ConsoleVariable.h"
 
 #define SEND_LOG_TO_STDOUT
@@ -10,13 +10,13 @@ Console gConsole;
 
 bool Console::Initialize()
 {
-    gDebugGuiManager.AttachWindow(&gConsoleWindow);
+    gDebugUiManager.AttachWindow(&gConsoleWindow);
     return true;
 }
 
 void Console::Deinit()
 {
-    gDebugGuiManager.DetachWindow(&gConsoleWindow);
+    gDebugUiManager.DetachWindow(&gConsoleWindow);
 
     Clear();
 

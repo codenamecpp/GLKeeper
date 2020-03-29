@@ -236,12 +236,6 @@
     <ClInclude Include="GuiRenderProgram.h">
       <Filter>Game\Render\Shaders</Filter>
     </ClInclude>
-    <ClInclude Include="DebugGuiManager.h">
-      <Filter>Application\DebugUI</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugGuiWindow.h">
-      <Filter>Application\DebugUI</Filter>
-    </ClInclude>
     <ClInclude Include="BinaryOutputStream.h">
       <Filter>Application\FileIO</Filter>
     </ClInclude>
@@ -411,6 +405,12 @@
     <ClInclude Include="WallSection.h">
       <Filter>Game\World\Rooms</Filter>
     </ClInclude>
+    <ClInclude Include="DebugUiWindow.h">
+      <Filter>Application\DebugUI</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugUiManager.h">
+      <Filter>Application\DebugUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -492,12 +492,6 @@
     </ClCompile>
     <ClCompile Include="RenderProgram.cpp">
       <Filter>Game\Render</Filter>
-    </ClCompile>
-    <ClCompile Include="DebugGuiManager.cpp">
-      <Filter>Application\DebugUI</Filter>
-    </ClCompile>
-    <ClCompile Include="DebugGuiWindow.cpp">
-      <Filter>Application\DebugUI</Filter>
     </ClCompile>
     <ClCompile Include="BinaryOutputStream.cpp">
       <Filter>Application\FileIO</Filter>
@@ -618,6 +612,12 @@
     </ClCompile>
     <ClCompile Include="WallSection.cpp">
       <Filter>Game\World\Rooms</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugUiWindow.cpp">
+      <Filter>Application\DebugUI</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugUiManager.cpp">
+      <Filter>Application\DebugUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

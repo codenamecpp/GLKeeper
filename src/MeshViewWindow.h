@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DebugGuiWindow.h"
+#include "DebugUiWindow.h"
 #include "SceneDefs.h"
 
 class MeshViewGamestate;
@@ -9,7 +9,7 @@ class MeshViewGamestate;
 struct ImGuiTextFilter;
 
 // mesh view ui
-class MeshViewWindow: public DebugGuiWindow
+class MeshViewWindow: public DebugUiWindow
 {
 public:
     MeshViewWindow();
@@ -20,7 +20,6 @@ public:
 private:
     // override DebugGuiWindow
     void DoUI(ImGuiIO& imguiContext) override;
-    void DoInit(ImGuiIO& imguiContext) override;
 
     void UpdateFilteredElementsList();
     void LoadModelsList();

@@ -7,7 +7,7 @@
 #include "EngineTexturesProvider.h"
 #include "RenderManager.h"
 #include "TimeManager.h"
-#include "DebugGuiManager.h"
+#include "DebugUiManager.h"
 #include "ConsoleWindow.h"
 #include "TexturesManager.h"
 #include "GameMain.h"
@@ -78,7 +78,7 @@ void System::Initialize(int argc, char *argv[])
         Terminate();
     }
 
-    if (!gDebugGuiManager.Initialize())
+    if (!gDebugUiManager.Initialize())
     {
         gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize debug gui system");
         // ignore failure
@@ -119,7 +119,7 @@ void System::Deinit()
     gGameMain.Deinit();
     gModelsManager.Deinit();
     gTexturesManager.Deinit();
-    gDebugGuiManager.Deinit();
+    gDebugUiManager.Deinit();
     gRenderManager.Deinit();
     gTimeManager.Deinit();
     gGraphicsDevice.Deinit();
@@ -155,7 +155,7 @@ void System::Execute()
         // update frame
         gTexturesManager.UpdateFrame();
         gGameMain.UpdateFrame();
-        gDebugGuiManager.UpdateFrame();
+        gDebugUiManager.UpdateFrame();
 
         // render frame
         gRenderManager.RenderFrame();

@@ -2,7 +2,7 @@
 #include "RenderManager.h"
 #include "GraphicsDevice.h"
 #include "Console.h"
-#include "DebugGuiManager.h"
+#include "DebugUiManager.h"
 #include "GameMain.h"
 #include "ConsoleVariable.h"
 #include "RenderScene.h"
@@ -85,7 +85,7 @@ void RenderManager::RenderFrame()
     RenderStates prevRenderStates = gGraphicsDevice.mCurrentStates;
 
     Enter2D();
-    gDebugGuiManager.RenderFrame();
+    gDebugUiManager.RenderFrame();
     Leave2D();
 
     gGraphicsDevice.SetRenderStates(prevRenderStates);

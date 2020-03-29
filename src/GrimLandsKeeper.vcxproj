@@ -221,7 +221,7 @@
     <ClInclude Include="GameDefs.h" />
     <ClInclude Include="GenericGamestate.h" />
     <ClInclude Include="GuiRenderProgram.h" />
-    <ClInclude Include="DebugGuiManager.h" />
+    <ClInclude Include="DebugUiManager.h" />
     <ClInclude Include="EngineTexturesProvider.h" />
     <ClInclude Include="enum_utils.h" />
     <ClInclude Include="FileSystem.h" />
@@ -236,7 +236,7 @@
     <ClInclude Include="GraphicsDevice.h" />
     <ClInclude Include="GraphicsDeviceContext.h" />
     <ClInclude Include="handle.h" />
-    <ClInclude Include="DebugGuiWindow.h" />
+    <ClInclude Include="DebugUiWindow.h" />
     <ClInclude Include="InputsDefs.h" />
     <ClInclude Include="InputsManager.h" />
     <ClInclude Include="intrusive_list.h" />
@@ -292,7 +292,7 @@
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="ConsoleVariable.cpp" />
     <ClCompile Include="ConsoleWindow.cpp" />
-    <ClCompile Include="DebugGuiWindow.cpp" />
+    <ClCompile Include="DebugUiWindow.cpp" />
     <ClCompile Include="FpsWindow.cpp" />
     <ClCompile Include="GameMap.cpp" />
     <ClCompile Include="GenericRoom.cpp" />
@@ -313,7 +313,7 @@
     <ClCompile Include="GpuTexture2D.cpp" />
     <ClCompile Include="GpuTextureArray2D.cpp" />
     <ClCompile Include="GraphicsDevice.cpp" />
-    <ClCompile Include="DebugGuiManager.cpp" />
+    <ClCompile Include="DebugUiManager.cpp" />
     <ClCompile Include="InputsManager.cpp" />
     <ClCompile Include="json_document.cpp" />
     <ClCompile Include="GameMain.cpp" />

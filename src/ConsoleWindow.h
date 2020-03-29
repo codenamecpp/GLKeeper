@@ -1,12 +1,12 @@
 #pragma once
 
-#include "DebugGuiWindow.h"
+#include "DebugUiWindow.h"
 
 // forwards
 struct ImGuiInputTextCallbackData;
 
 // debug console window
-class ConsoleWindow: public DebugGuiWindow
+class ConsoleWindow: public DebugUiWindow
 {
 public:
     bool mAutoScroll = true;
@@ -18,7 +18,6 @@ public:
 private:
     // override DebugGuiWindow
     void DoUI(ImGuiIO& imguiContext) override;
-    void DoInit(ImGuiIO& imguiContext) override;
 
     // internals
     int TextEditCallback(ImGuiInputTextCallbackData* data);

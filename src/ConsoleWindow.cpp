@@ -7,18 +7,30 @@
 ConsoleWindow gConsoleWindow;
 
 ConsoleWindow::ConsoleWindow()
-    : DebugGuiWindow("dbgconsole")
 {
-    mNoNavigation = true;
 }
 
 void ConsoleWindow::DoUI(ImGuiIO& imguiContext)
 {
+    ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoNav;
+
+    const ImVec2 distance { 10.0f, 10.0f };
+    const ImVec2 initialSize { 700.0f, 420.0f };
+    const ImVec2 initialPos { distance.x, distance.y };
+
+    ImGui::SetNextWindowSize(initialSize, ImGuiCond_Once);
+    ImGui::SetNextWindowPos(initialPos, ImGuiCond_Once);
+
+    if (!ImGui::Begin("Console", &mWindowShown, windowFlags))
+    {
+        ImGui::End();
+        return;
+    }
+
     ImGui::Separator();
 
     const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
     ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false, ImGuiWindowFlags_HorizontalScrollbar);
-
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4,1)); // Tighten spacing
 
     for (unsigned int i = 0; i < gConsole.mLogLines.size(); i++)
@@ -83,17 +95,8 @@ void ConsoleWindow::DoUI(ImGuiIO& imguiContext)
     {
         ImGui::SetKeyboardFocusHere(-1); // Auto focus previous widget
     }
-}
 
-void ConsoleWindow::DoInit(ImGuiIO& imguiContext)
-{
-    const ImVec2 distance { 10.0f, 10.0f };
-
-    const ImVec2 initialSize { 700.0f, 420.0f };
-    ImGui::SetWindowSize(mWindowName.c_str(), initialSize, ImGuiCond_Once);
-
-    const ImVec2 initialPos { distance.x, distance.y };
-    ImGui::SetWindowPos(mWindowName.c_str(), initialPos, ImGuiCond_Once);
+    ImGui::End();
 }
 
 int ConsoleWindow::TextEditCallback(ImGuiInputTextCallbackData* data)

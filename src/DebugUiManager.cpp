@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "DebugGuiManager.h"
+#include "DebugUiManager.h"
 #include "imgui.h"
 #include "GraphicsDevice.h"
 #include "FileSystem.h"
@@ -7,17 +7,16 @@
 #include "InputsManager.h"
 #include "TimeManager.h"
 #include "GpuBuffer.h"
-#include "DebugGuiWindow.h"
+#include "DebugUiWindow.h"
 #include "Texture2D.h"
-#include "imgui_internal.h"
 
-DebugGuiManager gDebugGuiManager;
+DebugUiManager gDebugUiManager;
 
 // imgui specific data size constants
 const unsigned int Sizeof_ImGuiVertex = sizeof(ImDrawVert);
 const unsigned int Sizeof_ImGuiIndex = sizeof(ImDrawIdx);
 
-bool DebugGuiManager::Initialize()
+bool DebugUiManager::Initialize()
 {
     // initialize imgui context
     IMGUI_CHECKVERSION();
@@ -80,7 +79,7 @@ bool DebugGuiManager::Initialize()
     return true;
 }
 
-void DebugGuiManager::Deinit()
+void DebugUiManager::Deinit()
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -107,12 +106,12 @@ void DebugGuiManager::Deinit()
     }
 }
 
-bool DebugGuiManager::IsInitialized() const
+bool DebugUiManager::IsInitialized() const
 {
     return ImGui::GetCurrentContext() != nullptr;
 }
 
-void DebugGuiManager::RenderFrame()
+void DebugUiManager::RenderFrame()
 {
     ImDrawData* imGuiDrawData = ImGui::GetDrawData();
 
@@ -183,7 +182,7 @@ void DebugGuiManager::RenderFrame()
     }
 }
 
-void DebugGuiManager::UpdateFrame()
+void DebugUiManager::UpdateFrame()
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -203,43 +202,18 @@ void DebugGuiManager::UpdateFrame()
         ImGui::ShowDemoWindow();
     }
 
-    ImGuiContext* imGuiContext = ImGui::GetCurrentContext();
-
-    for (DebugGuiWindow* currWindow: mAllWindowsList)
+    for (DebugUiWindow* currWindow: mAllWindowsList)
     {
         if (!currWindow->mWindowShown)
             continue;
 
-        ImGuiWindowFlags windowFlags = 
-            (currWindow->mWindowNoTitleBar ? ImGuiWindowFlags_NoTitleBar : 0) |
-            (currWindow->mWindowNoResize ? ImGuiWindowFlags_NoResize : 0) |
-            (currWindow->mWindowNoMove ? ImGuiWindowFlags_NoMove : 0) |
-            (currWindow->mWindowNoCollapse ? ImGuiWindowFlags_NoCollapse : 0) |
-            (currWindow->mAlwaysAutoResize ? ImGuiWindowFlags_AlwaysAutoResize : 0) |
-            (currWindow->mWindowNoBackground ? ImGuiWindowFlags_NoBackground : 0) |
-            (currWindow->mWindowNoMouseInput ? ImGuiWindowFlags_NoMouseInputs : 0) |
-            (currWindow->mNoFocusOnAppearing ? ImGuiWindowFlags_NoFocusOnAppearing : 0) |
-            (currWindow->mNoNavigation ? ImGuiWindowFlags_NoNav : 0);
-
-        ImGui::SetNextWindowBgAlpha(currWindow->mBackgroundAlpha);
-
-        bool* p_open = currWindow->mWindowNoCloseButton ? nullptr : &currWindow->mWindowShown;
-        if (ImGui::Begin(currWindow->mWindowName.c_str(), p_open, windowFlags))
-        {
-            if (imGuiContext->CurrentWindow->SetWindowSizeAllowFlags & ImGuiCond_Once)
-            {
-                currWindow->DoInit(io);
-            }
-
-            currWindow->DoUI(io);
-        }
-        ImGui::End();
+        currWindow->DoUI(io);
     }
 
     ImGui::Render();
 }
 
-void DebugGuiManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
+void DebugUiManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -249,7 +223,7 @@ void DebugGuiManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
     }
 }
 
-void DebugGuiManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
+void DebugUiManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -259,7 +233,7 @@ void DebugGuiManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
     }
 }
 
-void DebugGuiManager::HandleInputEvent(MouseScrollInputEvent& inputEvent)
+void DebugUiManager::HandleInputEvent(MouseScrollInputEvent& inputEvent)
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -272,7 +246,7 @@ void DebugGuiManager::HandleInputEvent(MouseScrollInputEvent& inputEvent)
     }
 }
 
-void DebugGuiManager::HandleInputEvent(KeyInputEvent& inputEvent)
+void DebugUiManager::HandleInputEvent(KeyInputEvent& inputEvent)
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -287,7 +261,7 @@ void DebugGuiManager::HandleInputEvent(KeyInputEvent& inputEvent)
     }
 }
 
-void DebugGuiManager::HandleInputEvent(KeyCharEvent& inputEvent)
+void DebugUiManager::HandleInputEvent(KeyCharEvent& inputEvent)
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -299,7 +273,7 @@ void DebugGuiManager::HandleInputEvent(KeyCharEvent& inputEvent)
     }
 }
 
-bool DebugGuiManager::AddFontFromExternalFile(ImGuiIO& imguiIO, const char* fontFile, float fontSize)
+bool DebugUiManager::AddFontFromExternalFile(ImGuiIO& imguiIO, const char* fontFile, float fontSize)
 {
     bool isSuccess = false;
 
@@ -326,7 +300,7 @@ bool DebugGuiManager::AddFontFromExternalFile(ImGuiIO& imguiIO, const char* font
     return isSuccess;
 }
 
-void DebugGuiManager::SetupStyle(ImGuiIO& imguiIO)
+void DebugUiManager::SetupStyle(ImGuiIO& imguiIO)
 {
     //ImGui::StyleColorsDark();
     ImGuiStyle & style = ImGui::GetStyle();
@@ -415,7 +389,7 @@ void DebugGuiManager::SetupStyle(ImGuiIO& imguiIO)
 #endif
 }
 
-void DebugGuiManager::AttachWindow(DebugGuiWindow* debugWindow)
+void DebugUiManager::AttachWindow(DebugUiWindow* debugWindow)
 {
     debug_assert(debugWindow);
     auto found_iterator = std::find(mAllWindowsList.begin(), mAllWindowsList.end(), debugWindow);
@@ -425,7 +399,7 @@ void DebugGuiManager::AttachWindow(DebugGuiWindow* debugWindow)
     }
 }
 
-void DebugGuiManager::DetachWindow(DebugGuiWindow* debugWindow)
+void DebugUiManager::DetachWindow(DebugUiWindow* debugWindow)
 {
     debug_assert(debugWindow);
     auto found_iterator = std::find(mAllWindowsList.begin(), mAllWindowsList.end(), debugWindow);

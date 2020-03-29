@@ -342,6 +342,10 @@ void GenericRoom::ConstructWalls(DungeonBuilder& builder, bool forceConstructAll
             if (!currTile->mIsMeshInvalidated && !forceConstructAll)
                 continue;
 
+#ifdef _DEBUG
+            TileFaceData& face = currTile->mFaces[currSection->mFaceId];
+            debug_assert(face.mWallSection == currSection);
+#endif
             // corners
             if (currSection->IsOuterTile(currTile))
             {  
@@ -382,7 +386,7 @@ void GenericRoom::ConstructWalls(DungeonBuilder& builder, bool forceConstructAll
                 builder.ExtendTileMesh(currTile, currSection->mFaceId, piece, mRotation, &mTranslation);
             }
         }
-    } // for wall section
+    }
 }
 
 void GenericRoom::ConstructFloorTiles(DungeonBuilder& builder, const TilesArray& mapTiles)

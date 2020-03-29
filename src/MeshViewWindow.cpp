@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "MeshViewWindow.h"
-#include "DebugGuiManager.h"
+#include "DebugUiManager.h"
 #include "FileSystem.h"
 #include "Console.h"
 #include "FileSystemArchive.h"
@@ -11,13 +11,8 @@
 #include "MeshViewGamestate.h"
 #include "cvars.h"
 
-MeshViewWindow::MeshViewWindow(): DebugGuiWindow("Models view")
+MeshViewWindow::MeshViewWindow()
 {
-    mWindowNoCloseButton = true;
-    mWindowNoMove = true;
-    mWindowNoResize = true;
-    mBackgroundAlpha = 0.5f;
-
     mModelsListFilter = new ImGuiTextFilter;
 }
 
@@ -53,6 +48,22 @@ void MeshViewWindow::LoadModelsList()
 
 void MeshViewWindow::DoUI(ImGuiIO& imguiContext)
 {
+    ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+
+    const ImVec2 distance { 10.0f, 10.0f };
+    const ImVec2 initialSize { 400.0f, imguiContext.DisplaySize.y - distance.y * 2.0f };
+    const ImVec2 initialPos { imguiContext.DisplaySize.x - initialSize.x - distance.x, distance.y };
+
+    ImGui::SetNextWindowBgAlpha(0.5f);
+    ImGui::SetNextWindowSize(initialSize, ImGuiCond_Once);
+    ImGui::SetNextWindowPos(initialPos, ImGuiCond_Once);
+
+    if (!ImGui::Begin("Models view", nullptr, windowFlags))
+    {
+        ImGui::End();
+        return;
+    }
+ 
     ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
     if (ImGui::BeginTabBar("Tabs", tab_bar_flags))
     {
@@ -201,17 +212,8 @@ void MeshViewWindow::DoUI(ImGuiIO& imguiContext)
 
         ImGui::EndTabBar();
     }
-}
 
-void MeshViewWindow::DoInit(ImGuiIO& imguiContext)
-{
-    const ImVec2 distance { 10.0f, 10.0f };
-
-    const ImVec2 initialSize { 400.0f, imguiContext.DisplaySize.y - distance.y * 2.0f };
-    ImGui::SetWindowSize(mWindowName.c_str(), initialSize, ImGuiCond_Once);
-
-    const ImVec2 initialPos { imguiContext.DisplaySize.x - initialSize.x - distance.x, distance.y };
-    ImGui::SetWindowPos(mWindowName.c_str(), initialPos, ImGuiCond_Once);
+    ImGui::End();
 }
 
 void MeshViewWindow::UpdateFilteredElementsList()

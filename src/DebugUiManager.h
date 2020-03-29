@@ -2,13 +2,13 @@
 
 #include "InputsDefs.h"
 #include "GraphicsDefs.h"
-#include "DebugGuiWindow.h"
+#include "DebugUiWindow.h"
 
 // forwards
 struct ImGuiIO;
 
 // immediate mode gui manager
-class DebugGuiManager: public cxx::noncopyable
+class DebugUiManager: public cxx::noncopyable
 {
 public:
 
@@ -34,8 +34,8 @@ public:
 
     // add or remove debug window to global debug windows list
     // @param debugWindow: Window
-    void AttachWindow(DebugGuiWindow* debugWindow);
-    void DetachWindow(DebugGuiWindow* debugWindow);
+    void AttachWindow(DebugUiWindow* debugWindow);
+    void DetachWindow(DebugUiWindow* debugWindow);
 
 private:
 
@@ -47,7 +47,7 @@ private:
     GpuBuffer* mVerticesBuffer = nullptr;
     GpuBuffer* mIndicesBuffer = nullptr;
 
-    std::list<DebugGuiWindow*> mAllWindowsList;
+    std::list<DebugUiWindow*> mAllWindowsList;
 };
 
-extern DebugGuiManager gDebugGuiManager;
+extern DebugUiManager gDebugUiManager;
