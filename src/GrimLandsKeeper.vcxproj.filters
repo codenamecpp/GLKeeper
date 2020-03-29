@@ -411,6 +411,9 @@
     <ClInclude Include="DebugUiManager.h">
       <Filter>Application\DebugUI</Filter>
     </ClInclude>
+    <ClInclude Include="TempleRoom.h">
+      <Filter>Game\World\Rooms</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -618,6 +621,9 @@
     </ClCompile>
     <ClCompile Include="DebugUiManager.cpp">
       <Filter>Application\DebugUI</Filter>
+    </ClCompile>
+    <ClCompile Include="TempleRoom.cpp">
+      <Filter>Game\World\Rooms</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

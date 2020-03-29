@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "RoomsManager.h"
 #include "GenericRoom.h"
+#include "TempleRoom.h"
 
 RoomsManager gRoomsManager;
 
@@ -95,8 +96,7 @@ GenericRoom* RoomsManager::CreateRoomInstance(RoomDefinition* definition, ePlaye
 
     RoomInstanceID uid = GenerateNewRoomInstanceID();
 
-    GenericRoom* genericRoom = new GenericRoom(definition, owner, uid);
-    mRoomsList.push_back(genericRoom);
+    GenericRoom* genericRoom = CreateRoomInstance(definition, owner, uid);
     return genericRoom;
 }
 
@@ -108,10 +108,27 @@ GenericRoom* RoomsManager::CreateRoomInstance(RoomDefinition* definition, ePlaye
 
     RoomInstanceID uid = GenerateNewRoomInstanceID();
 
-    GenericRoom* genericRoom = new GenericRoom(definition, owner, uid);
-    mRoomsList.push_back(genericRoom);
+    GenericRoom* genericRoom = CreateRoomInstance(definition, owner, uid);
 
     // setup room
     genericRoom->EnlargeRoom(roomTiles);
+    return genericRoom;
+}
+
+GenericRoom* RoomsManager::CreateRoomInstance(RoomDefinition* definition, ePlayerID owner, RoomInstanceID uid)
+{
+    GenericRoom* genericRoom = nullptr;
+
+    if (genericRoom == nullptr && definition->mRoomName == ROOM_NAME_TEMPLE)
+    {
+        genericRoom = new TempleRoom(definition, owner, uid);
+    }
+
+    if (genericRoom == nullptr) // create generic room
+    {
+        genericRoom = new GenericRoom(definition, owner, uid);
+    }
+
+    mRoomsList.push_back(genericRoom);
     return genericRoom;
 }

@@ -37,6 +37,7 @@ private:
     void DestroyRoomsList();
 
     RoomInstanceID GenerateNewRoomInstanceID();
+    GenericRoom* CreateRoomInstance(RoomDefinition* definition, ePlayerID owner, RoomInstanceID uid);
 
 private:
     RoomInstanceID mRoomIDsCounter = 0;

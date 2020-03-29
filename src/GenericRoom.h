@@ -51,6 +51,12 @@ protected:
     void ScanWallSection(MapTile* mapTile, WallSection* section) const;
     void FinalizeWallSection(WallSection* section);
 
+    // overridables
+
+    // each time room gets modified it must be reconfigured
+    // for example, tiles added or removed, wall sections updated
+    virtual void OnReconfigure() {}
+
 protected:
     // walls construction
     void ConstructWalls(DungeonBuilder& builder, bool forceConstructAll);

@@ -35,10 +35,14 @@ void GenericRoom::UpdateFrame()
 
 void GenericRoom::ReleaseTiles(const TilesArray& mapTiles)
 {
+
+    OnReconfigure();
 }
 
 void GenericRoom::ReleaseTiles()
 {
+
+    OnReconfigure();
 }
 
 void GenericRoom::EnlargeRoom(const TilesArray& mapTiles)
@@ -48,6 +52,8 @@ void GenericRoom::EnlargeRoom(const TilesArray& mapTiles)
     ReevaluateOccupationArea();
     ReevaluateInnerSquares();
     ReevaluateWallSections();
+
+    OnReconfigure();
 }
 
 void GenericRoom::BuildTilesMesh()

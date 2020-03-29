@@ -74,4 +74,18 @@ namespace cxx
         container.push_back(element);
     }
 
+    template<typename TContainer>
+    inline bool collections_equals(const TContainer& lhs, const TContainer& rhs)
+    {
+        if (lhs.size() != rhs.size())
+            return false;
+
+        for (const auto& currElement: lhs)
+        {
+            if (!contains(rhs, currElement))
+                return false;
+        }
+        return true;
+    }
+
 } // namespace cxx

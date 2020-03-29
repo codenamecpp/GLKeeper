@@ -81,6 +81,7 @@ void WaterLavaMesh::UpdateFrame(float deltaTime)
 
 void WaterLavaMesh::RegisterForRendering(SceneRenderList& renderList)
 {
+    UpdateMesh();
     if (mTranslucency < 1.0f)
     {
         renderList.RegisterObject(eRenderPass_Translucent, this);
