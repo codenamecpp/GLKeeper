@@ -58,7 +58,7 @@ void GenericRoom::BuildTilesMesh()
 
 void GenericRoom::UpdateTilesMesh()
 {
-    
+    ConstructWalls(gGameWorld.mDungeonBuilder, false);
 }
 
 void GenericRoom::IncludeTiles(const TilesArray& mapTiles)
@@ -353,39 +353,33 @@ void GenericRoom::ConstructWalls(DungeonBuilder& builder, bool forceConstructAll
                 switch (currSection->mFaceDirection)
                 {
                     case eDirection_N :
-                            translationL += glm::vec3(-DUNGEON_CELL_HALF_SIZE * 0.5f, 0.0f, 0.0f);
-                            translationR += glm::vec3(DUNGEON_CELL_HALF_SIZE * 0.5f, 0.0f, 0.0f);
-                        break;
+                        translationL += glm::vec3(-DUNGEON_CELL_HALF_SIZE * 0.5f, 0.0f, 0.0f);
+                        translationR += glm::vec3(DUNGEON_CELL_HALF_SIZE * 0.5f, 0.0f, 0.0f);
+                    break;
                     case eDirection_E : 
-                            translationL += glm::vec3(0.0f, 0.0f, -DUNGEON_CELL_HALF_SIZE * 0.5f);
-                            translationR += glm::vec3(0.0f, 0.0f, DUNGEON_CELL_HALF_SIZE * 0.5f);
-                        break;
+                        translationL += glm::vec3(0.0f, 0.0f, -DUNGEON_CELL_HALF_SIZE * 0.5f);
+                        translationR += glm::vec3(0.0f, 0.0f, DUNGEON_CELL_HALF_SIZE * 0.5f);
+                    break;
                     case eDirection_S : 
-                            translationL += glm::vec3(DUNGEON_CELL_HALF_SIZE * 0.5f, 0.0f, 0.0f);
-                            translationR += glm::vec3(-DUNGEON_CELL_HALF_SIZE * 0.5f, 0.0f, 0.0f);
-                        break;
+                        translationL += glm::vec3(DUNGEON_CELL_HALF_SIZE * 0.5f, 0.0f, 0.0f);
+                        translationR += glm::vec3(-DUNGEON_CELL_HALF_SIZE * 0.5f, 0.0f, 0.0f);
+                    break;
                     case eDirection_W : 
-                            translationL += glm::vec3(0.0f, 0.0f, DUNGEON_CELL_HALF_SIZE * 0.5f);
-                            translationR += glm::vec3(0.0f, 0.0f, -DUNGEON_CELL_HALF_SIZE * 0.5f);
-                        break;
+                        translationL += glm::vec3(0.0f, 0.0f, DUNGEON_CELL_HALF_SIZE * 0.5f);
+                        translationR += glm::vec3(0.0f, 0.0f, -DUNGEON_CELL_HALF_SIZE * 0.5f);
+                    break;
                 }
 
                 ModelAsset* pieceL = currSection->IsHeadTile(currTile) ? wall1 : wall2;
-                ModelAsset* pieceR = currSection->IsTailTile(currTile) ? wall0 : wall2;
-
-                // todo: get rid of this magic
-                if (currSection->mFaceDirection == eDirection_S || currSection->mFaceDirection == eDirection_W)
-                {
-                    pieceL = currSection->IsTailTile(currTile) ? wall1 : wall2;
-                    pieceR = currSection->IsHeadTile(currTile) ? wall0 : wall2;
-                }
-
                 builder.ExtendTileMesh(currTile, currSection->mFaceId, pieceL, mRotation, &translationL);
+
+                ModelAsset* pieceR = currSection->IsTailTile(currTile) ? wall0 : wall2;
                 builder.ExtendTileMesh(currTile, currSection->mFaceId, pieceR, mRotation, &translationR);
             }
             else // inner wall
             {
-                builder.ExtendTileMesh(currTile, currSection->mFaceId, currSection->IsEvenTile(currTile) ? wall3 : wall4, mRotation, &mTranslation);
+                ModelAsset* piece = currSection->IsEvenTile(currTile) ? wall3 : wall4;
+                builder.ExtendTileMesh(currTile, currSection->mFaceId, piece, mRotation, &mTranslation);
             }
         }
     } // for wall section

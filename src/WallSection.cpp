@@ -89,17 +89,39 @@ bool WallSection::IsOuterTile(MapTile* mapTile) const
 
 bool WallSection::IsHeadTile(MapTile* mapTile) const
 {
-    if (mMapTiles.size())
-        return mapTile == mMapTiles.front();
+    if (mMapTiles.empty())
+    {
+        debug_assert(false);
+        return false;
+    }
 
+    if (mFaceDirection == eDirection_S || mFaceDirection == eDirection_W)
+    {
+        return mapTile == mMapTiles.back();
+    }
+    else
+    {
+        return mapTile == mMapTiles.front();
+    }
     return false;
 }
 
 bool WallSection::IsTailTile(MapTile* mapTile) const
 {
-    if (mMapTiles.size())
-        return mapTile == mMapTiles.back();
+    if (mMapTiles.empty())
+    {
+        debug_assert(false);
+        return false;
+    }
 
+    if (mFaceDirection == eDirection_S || mFaceDirection == eDirection_W)
+    {
+        return mapTile == mMapTiles.front();
+    }
+    else
+    {
+        return mapTile == mMapTiles.back();
+    }
     return false;
 }
 
