@@ -408,7 +408,7 @@
     <ClInclude Include="RoomsManager.h">
       <Filter>Game\World\Rooms</Filter>
     </ClInclude>
-    <ClInclude Include="RoomWallSection.h">
+    <ClInclude Include="WallSection.h">
       <Filter>Game\World\Rooms</Filter>
     </ClInclude>
   </ItemGroup>
@@ -616,7 +616,7 @@
     <ClCompile Include="RoomsManager.cpp">
       <Filter>Game\World\Rooms</Filter>
     </ClCompile>
-    <ClCompile Include="RoomWallSection.cpp">
+    <ClCompile Include="WallSection.cpp">
       <Filter>Game\World\Rooms</Filter>
     </ClCompile>
   </ItemGroup>

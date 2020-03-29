@@ -4,24 +4,17 @@
 #include "RoomsDefs.h"
 
 // wall section which belongs to room
-class RoomWallSection
+class WallSection
 {
 public:
-    // readonly
-    GenericRoom* mRoom = nullptr;
+    WallSection(GenericRoom* room, eDirection direction);
+    WallSection(GenericRoom* room, eTileFace faceid);
 
-    eDirection mFaceDirection;
-    eTileFace mFaceId;
-
-    TilesArray mWallTiles;
-
-public:
-    void Setup(GenericRoom* room, eDirection direction);
-    void Setup(GenericRoom* room, eTileFace faceid);
-
-    void DetachTiles();
-    void DetachTile(MapTile* mapTile);
-    void AttachTile(MapTile* mapTile);
+    // add tile to wall section or remove tile
+    void InsertTileHead(MapTile* mapTile);
+    void InsertTileTail(MapTile* mapTile);
+    void RemoveTile(MapTile* mapTile);
+    void RemoveTiles();
 
     bool ContainsTile(MapTile* mapTile) const;
     bool ContainsTiles() const;
@@ -40,6 +33,11 @@ public:
     bool IsHeadTile(MapTile* mapTile) const;
     bool IsTailTile(MapTile* mapTile) const;
 
-    MapTile* GetTailTile() const;
-    MapTile* GetHeadTile() const;
+    bool IsEvenTile(MapTile* mapTile) const;
+
+public:
+    GenericRoom* mRoom = nullptr;
+    eDirection mFaceDirection;
+    eTileFace mFaceId;
+    TilesArray mMapTiles;
 };

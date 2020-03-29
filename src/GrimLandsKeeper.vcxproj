@@ -209,7 +209,7 @@
     <ClInclude Include="ResourceDefs.h" />
     <ClInclude Include="RoomsDefs.h" />
     <ClInclude Include="RoomsManager.h" />
-    <ClInclude Include="RoomWallSection.h" />
+    <ClInclude Include="WallSection.h" />
     <ClInclude Include="ScenarioDefs.h" />
     <ClInclude Include="ScenarioLoader.h" />
     <ClInclude Include="SceneCamera.h" />
@@ -334,7 +334,7 @@
     <ClCompile Include="RenderMaterial.cpp" />
     <ClCompile Include="RenderProgram.cpp" />
     <ClCompile Include="RoomsManager.cpp" />
-    <ClCompile Include="RoomWallSection.cpp" />
+    <ClCompile Include="WallSection.cpp" />
     <ClCompile Include="ScenarioLoader.cpp" />
     <ClCompile Include="SceneCamera.cpp" />
     <ClCompile Include="SceneObject.cpp" />

@@ -23,6 +23,10 @@ namespace cxx
         return value;
     }
 
+    // test is number even or odd
+    inline bool is_even(unsigned int value) { return (value % 2) == 0; }
+    inline bool is_odd(unsigned int value)  { return (value % 2)  > 0; }
+
     // normalize angle
     inline float normalize_angle_180(float angleDegrees)
     {

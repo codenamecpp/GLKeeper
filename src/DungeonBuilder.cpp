@@ -43,7 +43,7 @@ void DungeonBuilder::ExtendTileMesh(MapTile* mapTile, eTileFace faceid, ModelAss
                     {
                         if (terrainDefinition->mIsDecay)
                         {
-                            if (tileFace.mRoomWallSection == nullptr) // wall not specified
+                            if (tileFace.mWallSection == nullptr) // wall not specified
                             {
                                 textureIndex = NumVariations - 1;
                             }

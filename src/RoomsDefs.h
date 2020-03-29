@@ -27,7 +27,7 @@
 
 // forwards
 class GenericRoom;
-class RoomWallSection;
+class WallSection;
 
 // weak pointer to room instance
 using RoomHandle = cxx::handle<GenericRoom>;

@@ -37,7 +37,7 @@ public:
 
     // specified if tile face is part of the room
     // only defined for sides N, E, S, W 
-    RoomWallSection* mRoomWallSection = nullptr;
+    WallSection* mWallSection = nullptr;
 };
 
 // gamemap block data

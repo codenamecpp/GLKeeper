@@ -4,6 +4,16 @@
 #include "ModelAssetsManager.h"
 #include "DungeonBuilder.h"
 #include "GameWorld.h"
+#include "WallSection.h"
+
+//////////////////////////////////////////////////////////////////////////
+
+// wallsection object pool for fast memory allocations
+
+using WallSectionObjectPool = cxx::object_pool<WallSection>;
+static WallSectionObjectPool gWallSectionsPool;
+
+//////////////////////////////////////////////////////////////////////////
 
 GenericRoom::GenericRoom(RoomDefinition* definition, ePlayerID owner, RoomInstanceID uid)
     : mDefinition(definition)
@@ -15,6 +25,7 @@ GenericRoom::GenericRoom(RoomDefinition* definition, ePlayerID owner, RoomInstan
 
 GenericRoom::~GenericRoom()
 {
+    ReleaseWallSections();
 }
 
 void GenericRoom::UpdateFrame()
@@ -33,14 +44,16 @@ void GenericRoom::ReleaseTiles()
 void GenericRoom::EnlargeRoom(const TilesArray& mapTiles)
 {
     IncludeTiles(mapTiles);
-    // update bounds and inner squares
+
     ReevaluateOccupationArea();
     ReevaluateInnerSquares();
+    ReevaluateWallSections();
 }
 
 void GenericRoom::BuildTilesMesh()
 {
     ConstructFloorTiles(gGameWorld.mDungeonBuilder, mRoomTiles);
+    ConstructWalls(gGameWorld.mDungeonBuilder, true);
 }
 
 void GenericRoom::UpdateTilesMesh()
@@ -60,10 +73,10 @@ void GenericRoom::IncludeTiles(const TilesArray& mapTiles)
         currTile->mRoom = this;
 #ifdef _DEBUG
         // check no room walls
-        if (MapTile* neighTile = currTile->mNeighbours[eDirection_N]) { debug_assert(neighTile->mFaces[eTileFace_SideS].mRoomWallSection == nullptr); }
-        if (MapTile* neighTile = currTile->mNeighbours[eDirection_E]) { debug_assert(neighTile->mFaces[eTileFace_SideW].mRoomWallSection == nullptr); }
-        if (MapTile* neighTile = currTile->mNeighbours[eDirection_S]) { debug_assert(neighTile->mFaces[eTileFace_SideN].mRoomWallSection == nullptr); }
-        if (MapTile* neighTile = currTile->mNeighbours[eDirection_W]) { debug_assert(neighTile->mFaces[eTileFace_SideE].mRoomWallSection == nullptr); }
+        if (MapTile* neighTile = currTile->mNeighbours[eDirection_N]) { debug_assert(neighTile->mFaces[eTileFace_SideS].mWallSection == nullptr); }
+        if (MapTile* neighTile = currTile->mNeighbours[eDirection_E]) { debug_assert(neighTile->mFaces[eTileFace_SideW].mWallSection == nullptr); }
+        if (MapTile* neighTile = currTile->mNeighbours[eDirection_S]) { debug_assert(neighTile->mFaces[eTileFace_SideN].mWallSection == nullptr); }
+        if (MapTile* neighTile = currTile->mNeighbours[eDirection_W]) { debug_assert(neighTile->mFaces[eTileFace_SideE].mWallSection == nullptr); }
 #endif
         // invalidate tiles
         currTile->InvalidateTileMesh();
@@ -134,6 +147,248 @@ void GenericRoom::ReevaluateInnerSquares()
             mInnerTiles.push_back(currTile);
         }
     }
+}
+
+void GenericRoom::ReevaluateWallSections()
+{
+    if (!mDefinition->mHasWalls) // room does not handle walls
+        return;
+
+    // todo: optimize walls reevaluation
+    ReleaseWallSections();
+
+    // scan wall sections
+    for (MapTile* roomTile: mRoomTiles)
+    {
+        if (roomTile->mIsRoomInnerTile) // keep looking edge tiles
+            continue;
+
+        for (eDirection outOfRoomDirection: gStraightDirections)
+        {
+            MapTile* neighbourTile = roomTile->mNeighbours[outOfRoomDirection];
+            if (neighbourTile == nullptr)
+            {
+                debug_assert(false); // something is wrong here - rooms cannot be built on map boundaries
+                continue;
+            }
+
+            TerrainDefinition* neighbourTerrain = neighbourTile->GetTerrain();
+            if (!neighbourTerrain->mIsSolid || !neighbourTerrain->mAllowRoomWalls)
+                continue;
+
+            eDirection inwardsDirection = GetOppositeDirection(outOfRoomDirection);
+
+            // get adjacent face
+            eTileFace adjacentFaceId = DirectionToTileFace(inwardsDirection);
+
+            TileFaceData& face = neighbourTile->mFaces[adjacentFaceId];
+            if (face.mWallSection) // already processed
+            {
+                debug_assert(face.mWallSection->mRoom == this);
+                continue;
+            }
+
+            // create wall section
+            WallSection* wallSection = gWallSectionsPool.create(this, adjacentFaceId);
+            ScanWallSection(neighbourTile, wallSection);
+            FinalizeWallSection(wallSection);
+        }
+    } // for
+}
+
+void GenericRoom::ScanWallSection(MapTile* mapTile, WallSection* section) const
+{
+    debug_assert(mapTile);
+    debug_assert(section);
+
+    // explore directions
+    eDirection scanDirectionHead = eDirection_COUNT;
+    eDirection scanDirectionTail = eDirection_COUNT;
+    switch (section->mFaceDirection)
+    {
+        case eDirection_N: 
+        case eDirection_S: 
+            scanDirectionHead = eDirection_W;
+            scanDirectionTail = eDirection_E;
+        break;
+        case eDirection_E: 
+        case eDirection_W: 
+            scanDirectionHead = eDirection_N;
+            scanDirectionTail = eDirection_S;
+        break;
+    }
+
+    // insert initial tile
+    section->InsertTileHead(mapTile);
+
+    auto ScanLine = [this](MapTile* startTile, eDirection scanDirection, WallSection* section, bool isHead)
+    {
+        for (MapTile* currTile = startTile->mNeighbours[scanDirection]; currTile; currTile = currTile->mNeighbours[scanDirection])
+        {
+            TerrainDefinition* currTerrain = currTile->GetTerrain();
+            if (!currTerrain->mIsSolid || !currTerrain->mAllowRoomWalls)
+                break;
+
+            MapTile* neighbourTile = currTile->mNeighbours[section->mFaceDirection];
+            if (neighbourTile == nullptr || neighbourTile->mRoom != this)
+                break;
+
+            TileFaceData& face = currTile->mFaces[section->mFaceId];
+            if (face.mWallSection)
+                break;
+
+            if (isHead)
+            {
+                section->InsertTileHead(currTile);
+            }
+            else
+            {
+                section->InsertTileTail(currTile);
+            }
+        }
+    };
+
+    // inspect head
+    ScanLine(mapTile, scanDirectionHead, section, true);
+
+    // inspect tail
+    ScanLine(mapTile, scanDirectionTail, section, false);
+}
+
+void GenericRoom::FinalizeWallSection(WallSection* section)
+{
+    debug_assert(section);
+    mWallSections.push_back(section);
+
+    for (MapTile* currTile: section->mMapTiles)
+    {
+        TileFaceData& face = currTile->mFaces[section->mFaceId];
+        debug_assert(face.mWallSection == nullptr);
+        face.mWallSection = section;
+
+        currTile->InvalidateTileMesh();
+    }
+}
+
+void GenericRoom::ReleaseWallSections()
+{
+    for (WallSection* currentSection: mWallSections)
+    {
+        // update tiles face
+        for (MapTile* currentTile: currentSection->mMapTiles)
+        {
+            TileFaceData& face = currentTile->mFaces[currentSection->mFaceId];
+            if (face.mWallSection == currentSection)
+            {
+                face.mWallSection = nullptr;
+                currentTile->InvalidateTileMesh();
+            }
+            else
+            {
+                debug_assert(false);
+            }
+        }
+        gWallSectionsPool.destroy(currentSection);
+    }
+    mWallSections.clear();
+}
+
+void GenericRoom::ConstructWalls(DungeonBuilder& builder, bool forceConstructAll)
+{
+    if (!mDefinition->mHasWalls)
+        return;
+
+    const std::string& meshName = mDefinition->mCompleteResource.mResourceName;
+  
+    static const glm::vec3 sTranslationN { 0.0f,                0.0f,   -DUNGEON_CELL_SIZE };
+    static const glm::vec3 sTranslationE { DUNGEON_CELL_SIZE,   0.0f,   0.0f };
+    static const glm::vec3 sTranslationS { 0.0f,                0.0f,   DUNGEON_CELL_SIZE };
+    static const glm::vec3 sTranslationW { -DUNGEON_CELL_SIZE,  0.0f,   0.0f };
+  
+    // get required geometry
+    ModelAsset* wall0 = gModelsManager.LoadModelAsset(meshName + "4");
+    ModelAsset* wall1 = gModelsManager.LoadModelAsset(meshName + "5");
+    ModelAsset* wall2 = gModelsManager.LoadModelAsset(meshName + "6");
+    ModelAsset* wall3 = gModelsManager.LoadModelAsset(meshName + "7");
+    ModelAsset* wall4 = gModelsManager.LoadModelAsset(meshName + "8");
+  
+    // traverse room wall sections
+    glm::vec3 mTranslation {};
+    for (WallSection* currSection : mWallSections)
+    {
+        const glm::mat3* mRotation = nullptr;
+  
+        switch (currSection->mFaceDirection)
+        {
+            case eDirection_N : 
+                    mTranslation = sTranslationN;
+                    mRotation = &g_TileRotations[2];
+                break;
+            case eDirection_E : 
+                    mTranslation = sTranslationE;
+                    mRotation = &g_TileRotations[1];
+                break;
+            case eDirection_S : 
+                    mTranslation = sTranslationS;
+                break;
+            case eDirection_W : 
+                    mTranslation = sTranslationW;
+                    mRotation = &g_TileRotations[0];
+                break;
+        }
+
+        for (MapTile* currTile: currSection->mMapTiles)
+        {
+            if (!currTile->mIsMeshInvalidated && !forceConstructAll)
+                continue;
+
+            // corners
+            if (currSection->IsOuterTile(currTile))
+            {  
+                // translate pieces
+                // half-pieces have tiny negative offset
+                glm::vec3 translationL = mTranslation - (mTranslation * (DUNGEON_CELL_HALF_SIZE * 0.5f)); 
+                glm::vec3 translationR = mTranslation - (mTranslation * (DUNGEON_CELL_HALF_SIZE * 0.5f));
+  
+                switch (currSection->mFaceDirection)
+                {
+                    case eDirection_N :
+                            translationL += glm::vec3(-DUNGEON_CELL_HALF_SIZE * 0.5f, 0.0f, 0.0f);
+                            translationR += glm::vec3(DUNGEON_CELL_HALF_SIZE * 0.5f, 0.0f, 0.0f);
+                        break;
+                    case eDirection_E : 
+                            translationL += glm::vec3(0.0f, 0.0f, -DUNGEON_CELL_HALF_SIZE * 0.5f);
+                            translationR += glm::vec3(0.0f, 0.0f, DUNGEON_CELL_HALF_SIZE * 0.5f);
+                        break;
+                    case eDirection_S : 
+                            translationL += glm::vec3(DUNGEON_CELL_HALF_SIZE * 0.5f, 0.0f, 0.0f);
+                            translationR += glm::vec3(-DUNGEON_CELL_HALF_SIZE * 0.5f, 0.0f, 0.0f);
+                        break;
+                    case eDirection_W : 
+                            translationL += glm::vec3(0.0f, 0.0f, DUNGEON_CELL_HALF_SIZE * 0.5f);
+                            translationR += glm::vec3(0.0f, 0.0f, -DUNGEON_CELL_HALF_SIZE * 0.5f);
+                        break;
+                }
+
+                ModelAsset* pieceL = currSection->IsHeadTile(currTile) ? wall1 : wall2;
+                ModelAsset* pieceR = currSection->IsTailTile(currTile) ? wall0 : wall2;
+
+                // todo: get rid of this magic
+                if (currSection->mFaceDirection == eDirection_S || currSection->mFaceDirection == eDirection_W)
+                {
+                    pieceL = currSection->IsTailTile(currTile) ? wall1 : wall2;
+                    pieceR = currSection->IsHeadTile(currTile) ? wall0 : wall2;
+                }
+
+                builder.ExtendTileMesh(currTile, currSection->mFaceId, pieceL, mRotation, &translationL);
+                builder.ExtendTileMesh(currTile, currSection->mFaceId, pieceR, mRotation, &translationR);
+            }
+            else // inner wall
+            {
+                builder.ExtendTileMesh(currTile, currSection->mFaceId, currSection->IsEvenTile(currTile) ? wall3 : wall4, mRotation, &mTranslation);
+            }
+        }
+    } // for wall section
 }
 
 void GenericRoom::ConstructFloorTiles(DungeonBuilder& builder, const TilesArray& mapTiles)

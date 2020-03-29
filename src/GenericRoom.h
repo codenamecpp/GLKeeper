@@ -45,8 +45,16 @@ protected:
 
     void ReevaluateOccupationArea();
     void ReevaluateInnerSquares();
+    void ReevaluateWallSections();
+    
+    void ReleaseWallSections();
+    void ScanWallSection(MapTile* mapTile, WallSection* section) const;
+    void FinalizeWallSection(WallSection* section);
 
 protected:
+    // walls construction
+    void ConstructWalls(DungeonBuilder& builder, bool forceConstructAll);
+
     // construct floor tiles mesh
     void ConstructFloorTiles(DungeonBuilder& builder, const TilesArray& mapTiles);
 
@@ -60,7 +68,6 @@ protected:
     void ConstructTiles_HeroGate3x1     (DungeonBuilder& builder, const TilesArray& mapTiles);
 
 protected:
-
-
+    std::vector<WallSection*> mWallSections;
     TilesArray mInnerTiles;
 };
