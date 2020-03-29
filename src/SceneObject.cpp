@@ -3,9 +3,7 @@
 #include "RenderScene.h"
 
 SceneObject::SceneObject()
-    : mListNodeTransformed(this)
-    , mListNodeOnScene(this)
-    , mTransformDirty()
+    : mTransformDirty()
     , mBoundingBoxDirty()
     , mTransformation(1.0f)
     , mScaling(1.0f)
@@ -14,6 +12,7 @@ SceneObject::SceneObject()
     , mDirectionUpward(SceneAxisY)
     , mDirectionForward(SceneAxisZ)
     , mDebugColor(Color32_Green)
+    , mIsAttachedToScene()
 {
 }
 
@@ -156,6 +155,11 @@ void SceneObject::InvalidateBounds()
     }
 }
 
+void SceneObject::SetAttachedToScene(bool isAttached)
+{
+    mIsAttachedToScene = isAttached;
+}
+
 void SceneObject::ResetOrientation()
 {
     SetOrientation(SceneAxisX, SceneAxisZ, SceneAxisY);
@@ -163,6 +167,6 @@ void SceneObject::ResetOrientation()
 
 bool SceneObject::IsAttachedToScene() const
 {
-    return mListNodeOnScene.is_linked();
+    return mIsAttachedToScene;
 }
 

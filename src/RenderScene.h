@@ -82,8 +82,8 @@ private:
     AABBTree mAABBTree;
     SceneCameraControl* mCameraControl = nullptr;
     // entities lists
-    cxx::intrusive_list<SceneObject> mTransformObjects;
-    cxx::intrusive_list<SceneObject> mSceneObjects;
+    std::vector<SceneObject*> mTransformObjects;
+    std::vector<SceneObject*> mSceneObjects;
 };
 
 extern RenderScene gRenderScene;

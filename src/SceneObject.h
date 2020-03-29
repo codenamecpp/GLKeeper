@@ -87,11 +87,10 @@ private:
     void InvalidateTransform(); 
     void InvalidateBounds();    
 
-private:
-    // scene data
-    cxx::intrusive_node<SceneObject> mListNodeTransformed;
-    cxx::intrusive_node<SceneObject> mListNodeOnScene;
+    void SetAttachedToScene(bool isAttached);
 
+private:
+    bool mIsAttachedToScene;
     // dirty flags
     bool mTransformDirty;
     bool mBoundingBoxDirty;

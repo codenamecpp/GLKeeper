@@ -183,47 +183,42 @@ WaterLavaMesh* RenderScene::CreateLavaMesh(const TilesArray& meshTiles)
 void RenderScene::HandleTransformChange(SceneObject* sceneEntity)
 {
     debug_assert(sceneEntity);
-    if (!mTransformObjects.contains(&sceneEntity->mListNodeTransformed))
-    {
-        mTransformObjects.insert(&sceneEntity->mListNodeTransformed); // queue for update
-    }
+    cxx::push_back_if_unique(mTransformObjects, sceneEntity); // queue for update
 }
 
 void RenderScene::AttachObject(SceneObject* sceneEntity)
 {
     debug_assert(sceneEntity);
     // already attached to scene
-    if (mSceneObjects.contains(&sceneEntity->mListNodeOnScene))
+    if (sceneEntity->IsAttachedToScene())
     {
         debug_assert(false);
         return;
     }
-    else
-    {
-        mSceneObjects.insert(&sceneEntity->mListNodeOnScene);
-    }
 
+    sceneEntity->SetAttachedToScene(true);
+    mSceneObjects.push_back(sceneEntity);
+
+    // refresh aabbtree node
     mAABBTree.InsertObject(sceneEntity);
 }
 
 void RenderScene::DetachObject(SceneObject* sceneEntity)
 {
     debug_assert(sceneEntity);
-
-    if (mSceneObjects.contains(&sceneEntity->mListNodeOnScene))
+    if (sceneEntity->IsAttachedToScene())
     {
-        mSceneObjects.remove(&sceneEntity->mListNodeOnScene);
+        sceneEntity->SetAttachedToScene(false);
+
+        cxx::erase_elements(mSceneObjects, sceneEntity);
+        cxx::erase_elements(mTransformObjects, sceneEntity);
     }
     else
     {
         return; // already detached
     }
 
-    if (mTransformObjects.contains(&sceneEntity->mListNodeTransformed))
-    {
-        mTransformObjects.remove(&sceneEntity->mListNodeTransformed);
-    }
-
+    // refresh aabbtree node
     mAABBTree.RemoveObject(sceneEntity);
 }
 
@@ -232,7 +227,7 @@ void RenderScene::DestroyObject(SceneObject* sceneEntity)
     debug_assert(sceneEntity);
 
     DetachObject(sceneEntity);
-    delete sceneEntity;
+    SafeDelete(sceneEntity);
 }
 
 void RenderScene::SetCameraControl(SceneCameraControl* cameraController)
@@ -255,32 +250,24 @@ void RenderScene::SetCameraControl(SceneCameraControl* cameraController)
 
 void RenderScene::BuildAABBTree()
 {
-    while (mTransformObjects.has_elements())
+    while (!mTransformObjects.empty())
     {
-        cxx::intrusive_node<SceneObject>* entityNode = mTransformObjects.get_head_node();
-        mTransformObjects.remove(entityNode);
+        SceneObject* sceneObject = mTransformObjects.back();
+        mTransformObjects.pop_back();
 
         // refresh aabbtree node
-        SceneObject* sceneEntity = entityNode->get_element();
-        mAABBTree.UpdateObject(sceneEntity);
+        mAABBTree.UpdateObject(sceneObject);
     }
 }
 
 void RenderScene::DestroySceneObjects()
 {
-    while (mTransformObjects.has_elements())
+    while (!mSceneObjects.empty())
     {
-        cxx::intrusive_node<SceneObject>* entityNode = mTransformObjects.get_head_node();
-
-        SceneObject* currentEntity = entityNode->get_element();
-        DestroyObject(currentEntity);
+        SceneObject* sceneObject = mSceneObjects.back();
+        DestroyObject(sceneObject);
     }
 
-    while (mSceneObjects.has_elements())
-    {
-        cxx::intrusive_node<SceneObject>* entityNode = mSceneObjects.get_head_node();
-
-        SceneObject* currentEntity = entityNode->get_element();
-        DestroyObject(currentEntity);
-    }
+    debug_assert(mTransformObjects.empty());
+    mTransformObjects.clear();
 }
