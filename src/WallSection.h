@@ -7,8 +7,11 @@
 class WallSection
 {
 public:
-    WallSection(GenericRoom* room, eDirection direction);
-    WallSection(GenericRoom* room, eTileFace faceid);
+    WallSection(GenericRoom* room);
+
+    // set wall section params but don't remove added tiles
+    void Setup(eDirection faceDirection);
+    void Setup(eTileFace faceId);
 
     // add tile to wall section or remove tile
     void InsertTileHead(MapTile* mapTile);

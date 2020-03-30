@@ -185,7 +185,7 @@ namespace
 
 // get world direction of block face
 // @param faceid: Block face identifier
-inline eDirection TileFaceToDirection(eTileFace faceid)
+inline eDirection FaceIdToDirection(eTileFace faceid)
 {
     switch (faceid)
     {
@@ -200,7 +200,7 @@ inline eDirection TileFaceToDirection(eTileFace faceid)
 
 // get block face in direction
 // @param direction: Source direction
-inline eTileFace DirectionToTileFace(eDirection direction)
+inline eTileFace DirectionToFaceId(eDirection direction)
 {
     switch (direction)
     {

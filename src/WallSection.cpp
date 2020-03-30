@@ -2,18 +2,23 @@
 #include "WallSection.h"
 #include "MapTile.h"
 
-WallSection::WallSection(GenericRoom* room, eDirection direction)
+WallSection::WallSection(GenericRoom* room)
     : mRoom(room)
-    , mFaceDirection(direction)
+    , mFaceDirection(eDirection_N)
+    , mFaceId(eTileFace_SideN)
 {
-    mFaceId = DirectionToTileFace(direction);
 }
 
-WallSection::WallSection(GenericRoom* room, eTileFace faceid)
-    : mRoom(room)
-    , mFaceId(faceid)
+void WallSection::Setup(eDirection faceDirection)
 {
-    mFaceDirection = TileFaceToDirection(faceid);
+    mFaceDirection = faceDirection;
+    mFaceId = DirectionToFaceId(faceDirection);
+}
+
+void WallSection::Setup(eTileFace faceId)
+{
+    mFaceDirection = FaceIdToDirection(faceId);
+    mFaceId = faceId;
 }
 
 void WallSection::RemoveTile(MapTile* mapTile)

@@ -185,7 +185,7 @@ void GenericRoom::ReevaluateWallSections()
             eDirection inwardsDirection = GetOppositeDirection(outOfRoomDirection);
 
             // get adjacent face
-            eTileFace adjacentFaceId = DirectionToTileFace(inwardsDirection);
+            eTileFace adjacentFaceId = DirectionToFaceId(inwardsDirection);
 
             TileFaceData& face = neighbourTile->mFaces[adjacentFaceId];
             if (face.mWallSection) // already processed
@@ -195,16 +195,33 @@ void GenericRoom::ReevaluateWallSections()
             }
 
             // create wall section
-            WallSection* wallSection = gWallSectionsPool.create(this, adjacentFaceId);
-            ScanWallSection(neighbourTile, wallSection);
+            WallSection* wallSection = gWallSectionsPool.create(this);
+
+            ScanWallSection(neighbourTile, adjacentFaceId, wallSection);
             FinalizeWallSection(wallSection);
         }
     } // for
 }
 
-void GenericRoom::ScanWallSection(MapTile* mapTile, WallSection* section) const
+void GenericRoom::ScanWallSection(MapTile* mapTile, eDirection faceDirection, WallSection* section)
 {
-    debug_assert(mapTile);
+    section->Setup(faceDirection);
+    section->RemoveTiles();
+
+    ScanWallSectionImpl(mapTile, section);
+}
+
+void GenericRoom::ScanWallSection(MapTile* mapTile, eTileFace faceId, WallSection* section)
+{
+    section->Setup(faceId);
+    section->RemoveTiles();
+
+    ScanWallSectionImpl(mapTile, section);
+}
+
+void GenericRoom::ScanWallSectionImpl(MapTile* originTile, WallSection* section)
+{
+    debug_assert(originTile);
     debug_assert(section);
 
     // explore directions
@@ -224,24 +241,24 @@ void GenericRoom::ScanWallSection(MapTile* mapTile, WallSection* section) const
         break;
     }
 
-    // insert initial tile
-    section->InsertTileHead(mapTile);
+    // push initial tile
+    section->InsertTileHead(originTile);
 
-    auto ScanLine = [this](MapTile* startTile, eDirection scanDirection, WallSection* section, bool isHead)
+    auto ScanLine = [originTile, section](eDirection scanDirection, bool isHead)
     {
-        for (MapTile* currTile = startTile->mNeighbours[scanDirection]; currTile; currTile = currTile->mNeighbours[scanDirection])
+        for (MapTile* currTile = originTile->mNeighbours[scanDirection]; 
+            currTile; currTile = currTile->mNeighbours[scanDirection])
         {
             TerrainDefinition* currTerrain = currTile->GetTerrain();
+            
             if (!currTerrain->mIsSolid || !currTerrain->mAllowRoomWalls)
-                break;
+                return;
 
             MapTile* neighbourTile = currTile->mNeighbours[section->mFaceDirection];
-            if (neighbourTile == nullptr || neighbourTile->mRoom != this)
-                break;
+            debug_assert(neighbourTile);
 
-            TileFaceData& face = currTile->mFaces[section->mFaceId];
-            if (face.mWallSection)
-                break;
+            if (neighbourTile->mRoom != section->mRoom)
+                return;
 
             if (isHead)
             {
@@ -254,11 +271,8 @@ void GenericRoom::ScanWallSection(MapTile* mapTile, WallSection* section) const
         }
     };
 
-    // inspect head
-    ScanLine(mapTile, scanDirectionHead, section, true);
-
-    // inspect tail
-    ScanLine(mapTile, scanDirectionTail, section, false);
+    ScanLine(scanDirectionHead, true);
+    ScanLine(scanDirectionTail, false);
 }
 
 void GenericRoom::FinalizeWallSection(WallSection* section)

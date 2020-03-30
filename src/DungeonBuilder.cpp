@@ -516,7 +516,7 @@ void DungeonBuilder::ConstructTerrainWaterBed(MapTile* mapTile, ArtResource* art
 
 bool DungeonBuilder::ShouldBuildSideWall(MapTile* mapTile, eTileFace faceid) const
 {
-    eDirection direction = TileFaceToDirection(faceid);
+    eDirection direction = FaceIdToDirection(faceid);
     if (MapTile* neighbour = mapTile->mNeighbours[direction])
     {
         TerrainDefinition* neighbourTerrainDef = neighbour->GetTerrain();

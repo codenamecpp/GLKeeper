@@ -48,7 +48,11 @@ protected:
     void ReevaluateWallSections();
     
     void ReleaseWallSections();
-    void ScanWallSection(MapTile* mapTile, WallSection* section) const;
+
+    static void ScanWallSection(MapTile* mapTile, eTileFace faceId, WallSection* section);
+    static void ScanWallSection(MapTile* mapTile, eDirection faceDirection, WallSection* section);
+    static void ScanWallSectionImpl(MapTile* mapTile, WallSection* section);
+
     void FinalizeWallSection(WallSection* section);
 
     // overridables
