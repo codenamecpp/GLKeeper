@@ -11,7 +11,6 @@
 class SceneObject: public cxx::noncopyable
 {
 public:
-    SceneObjectComponent* mComponents[eSceneObjectComponent_Count];
     Color32 mDebugColor; // color used for debug draw
 
     float mDistanceToCameraSquared; // this value gets updated during scene rendition
@@ -26,7 +25,7 @@ public:
 
     // add or remove object component, object takes ownership on pointer
     // @param component: Component instance
-    void AddComponent(SceneObjectComponent* component);
+    bool AddComponent(SceneObjectComponent* component);
     void DeleteComponent(SceneObjectComponent* component);
     void DeleteComponent(eSceneObjectComponent componentId);
 
@@ -35,6 +34,7 @@ public:
     void DeleteRenderableComponents();
 
     // test whether object has specific component
+    // @param componentId: Component type identifier
     bool HasComponent(eSceneObjectComponent componentId) const;
 
     // get attached animating model component
@@ -75,5 +75,6 @@ private:
     }
 
 private:
+    SceneObjectComponent* mComponents[eSceneObjectComponent_Count];
     bool mIsAttachedToScene;
 };

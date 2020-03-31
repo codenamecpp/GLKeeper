@@ -38,22 +38,23 @@ bool SceneObject::IsAttachedToScene() const
     return mIsAttachedToScene;
 }
 
-void SceneObject::AddComponent(SceneObjectComponent* component)
+bool SceneObject::AddComponent(SceneObjectComponent* component)
 {
     if (component == nullptr)
     {
         debug_assert(false);
-        return;
+        return false;
     }
 
     eSceneObjectComponent componentid = component->mComponentType;
     if (HasComponent(componentid))
     {
-        // destroy previous component of this type
-        DeleteComponent(componentid);
+        debug_assert(false);
+        return false;
     }
 
     mComponents[componentid] = component;
+    return true;
 }
 
 void SceneObject::DeleteComponent(SceneObjectComponent* component)

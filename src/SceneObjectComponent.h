@@ -1,17 +1,6 @@
 #pragma once
 
-class SceneObject;
-class SceneRenderContext;
-
-enum eSceneObjectComponent
-{
-    eSceneObjectComponent_Transform,
-    eSceneObjectComponent_TerrainMesh,
-    eSceneObjectComponent_WaterLavaMesh,
-    eSceneObjectComponent_AnimatingModel,
-
-    eSceneObjectComponent_Count,
-};
+#include "SceneDefs.h"
 
 // generic scene object component
 class SceneObjectComponent: public cxx::noncopyable
