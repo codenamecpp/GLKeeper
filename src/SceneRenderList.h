@@ -10,7 +10,7 @@ class SceneRenderList
 public:
     SceneRenderList() = default;
 
-    static const int MaxElements = 16383;
+    static const int MaxElements = 8192;
 
     template<typename TSceneObject>
     inline void RegisterObject(eRenderPass renderPass, TSceneObject* sceneObject)
