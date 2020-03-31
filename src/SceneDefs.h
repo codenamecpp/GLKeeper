@@ -19,9 +19,10 @@ class SceneObject;
 class SceneCamera;
 class RenderScene;
 class SceneCameraControl;
-class AnimatingModel;
-class TerrainMesh;
-class WaterLavaMesh;
+class AnimatingModelComponent;
+class TerrainMeshComponent;
+class WaterLavaMeshComponent;
+class SceneObjectTransform;
 class SceneRenderList;
 
 enum eSceneCameraMode
@@ -40,3 +41,5 @@ const glm::vec3 SceneAxisY (0.0f, 1.0f, 0.0f);
 
 // get scene global space forward direction vector
 const glm::vec3 SceneAxisZ (0.0f, 0.0f, 1.0f);
+
+const glm::mat4 SceneIdentyMatrix (1.0f);

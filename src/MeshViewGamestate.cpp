@@ -5,7 +5,7 @@
 #include "System.h"
 #include "SceneObject.h"
 #include "ModelAssetsManager.h"
-#include "AnimatingModel.h"
+#include "AnimatingModelComponent.h"
 #include "TimeManager.h"
 #include "DebugUiManager.h"
 
@@ -36,7 +36,11 @@ void MeshViewGamestate::HandleGamestateEnter()
     if (mModelObject)
     {
         gRenderScene.AttachObject(mModelObject);
-        mModelObject->StartAnimation(24.0f, true);
+
+        AnimatingModelComponent* component = mModelObject->GetAnimatingModelComponent();
+        debug_assert(component);
+
+        component->StartAnimation(24.0f, true);
     }
 
     gDebugUiManager.AttachWindow(&mMeshViewWindow);

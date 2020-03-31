@@ -16,8 +16,8 @@ public:
 
     // render terrain mesh for current render pass
     // @param renderContext: Current render context
-    // @param terrainMesh: Mesh instance
-    void RenderTerrainMesh(SceneRenderContext& renderContext, TerrainMesh* terrainMesh);
+    // @param component: Renderable component
+    void Render(SceneRenderContext& renderContext, TerrainMeshComponent* component);
 
 private:
     TerrainRenderProgram mTerrainRenderProgram;

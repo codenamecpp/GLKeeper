@@ -22,8 +22,7 @@ public:
     void UpdateFrame();
 
     // collect all visible scene objects
-    // @param renderList: Set of renderable entities
-    void CollectObjectsForRendering(SceneRenderList& renderList);
+    void CollectObjectsForRendering();
 
     // process debug draw
     void DebugRenderFrame(DebugRenderer& renderer);
@@ -44,17 +43,17 @@ public:
     SceneObject* CreateDummyObject();
 
     // create animating model object
-    AnimatingModel* CreateAnimatingModel(ModelAsset* modelAsset, const glm::vec3& position, const glm::vec3& direction);
-    AnimatingModel* CreateAnimatingModel();
+    SceneObject* CreateAnimatingModel(ModelAsset* modelAsset, const glm::vec3& position, const glm::vec3& direction);
+    SceneObject* CreateAnimatingModel();
 
     // create terrain mesh object
-    TerrainMesh* CreateTerrainMesh(const Rect2D& mapTerrainArea);
-    TerrainMesh* CreateTerrainMesh();
+    SceneObject* CreateTerrainMesh(const Rect2D& mapTerrainArea);
+    SceneObject* CreateTerrainMesh();
 
     // create water or lava mesh object
     // @param meshTiles: Array of map tiles
-    WaterLavaMesh* CreateWaterMesh(const TilesArray& meshTiles);
-    WaterLavaMesh* CreateLavaMesh(const TilesArray& meshTiles);
+    SceneObject* CreateWaterMesh(const TilesArray& meshTiles);
+    SceneObject* CreateLavaMesh(const TilesArray& meshTiles);
 
     // attach entity to scene - attached entity will be rendered and updated, 
     // it is recommended to set transformation and bounding volume before attach

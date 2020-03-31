@@ -6,11 +6,9 @@
 #include "CameraControl.h"
 #include "TimeManager.h"
 #include "DebugRenderer.h"
-#include "AnimatingModel.h"
 #include "SceneRenderList.h"
-#include "TerrainMesh.h"
-#include "WaterLavaMesh.h"
 #include "TexturesManager.h"
+#include "RenderManager.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -56,13 +54,16 @@ void RenderScene::UpdateFrame()
     BuildAABBTree();
 }
 
-void RenderScene::CollectObjectsForRendering(SceneRenderList& renderList)
+void RenderScene::CollectObjectsForRendering()
 {
     mCamera.ComputeMatrices();
-    mAABBTree.QueryObjects(mCamera.mFrustum, [&renderList, this](SceneObject* sceneObject)
+    mAABBTree.QueryObjects(mCamera.mFrustum, [this](SceneObject* sceneObject)
     {
-        sceneObject->RegisterForRendering(renderList);
-        sceneObject->mDistanceToCameraSquared = glm::length2(sceneObject->mPosition - mCamera.mPosition);
+        gRenderManager.RegisterSceneObjectForRendering(sceneObject);
+
+        SceneObjectTransform* transformComponent = sceneObject->GetTransformComponent();
+        // update distance to camera
+        sceneObject->mDistanceToCameraSquared = glm::length2(transformComponent->mPosition - mCamera.mPosition);
     });
 }
 
@@ -120,11 +121,16 @@ void RenderScene::HandleInputEvent(KeyCharEvent& inputEvent)
 
 SceneObject* RenderScene::CreateDummyObject(const glm::vec3& position, const glm::vec3& direction, float scaling)
 {
-    SceneObject* sceneEntity = new SceneObject;
-    sceneEntity->SetPosition(position);
-    // todo : direction
-    sceneEntity->SetScaling(scaling);
-    return sceneEntity;
+    SceneObject* sceneObject = new SceneObject;
+
+    SceneObjectTransform* transformComponent = new SceneObjectTransform(sceneObject);
+    sceneObject->AddComponent(transformComponent);
+
+    transformComponent->SetPosition(position);
+    transformComponent->SetScaling(scaling);
+    // todo direction
+
+    return sceneObject;
 }
 
 SceneObject* RenderScene::CreateDummyObject()
@@ -133,51 +139,87 @@ SceneObject* RenderScene::CreateDummyObject()
     return sceneEntity;
 }
 
-AnimatingModel* RenderScene::CreateAnimatingModel(ModelAsset* modelAsset, const glm::vec3& position, const glm::vec3& direction)
+SceneObject* RenderScene::CreateAnimatingModel(ModelAsset* modelAsset, const glm::vec3& position, const glm::vec3& direction)
 {
-    AnimatingModel* sceneEntity = new AnimatingModel;
-    sceneEntity->SetPosition(position);
-    // todo : direction
-    sceneEntity->SetModelAsset(modelAsset);
-    return sceneEntity;
+    SceneObject* sceneObject = CreateAnimatingModel();
+    if (sceneObject)
+    {
+        sceneObject->GetTransformComponent()->SetPosition(position);
+        // todo : direction
+
+        sceneObject->GetAnimatingModelComponent()->SetModelAsset(modelAsset);
+    }
+    return sceneObject;
 }
 
-AnimatingModel* RenderScene::CreateAnimatingModel()
+SceneObject* RenderScene::CreateAnimatingModel()
 {
-    AnimatingModel* sceneEntity = new AnimatingModel;
-    return sceneEntity;
+    SceneObject* sceneObject = new SceneObject;
+
+    SceneObjectTransform* transformComponent = new SceneObjectTransform(sceneObject);
+    sceneObject->AddComponent(transformComponent);
+
+    AnimatingModelComponent* modelComponent = new AnimatingModelComponent(sceneObject);
+    sceneObject->AddComponent(modelComponent);
+
+    return sceneObject;
 }
 
-TerrainMesh* RenderScene::CreateTerrainMesh(const Rect2D& mapTerrainArea)
+SceneObject* RenderScene::CreateTerrainMesh(const Rect2D& mapTerrainArea)
 {
-    TerrainMesh* sceneEntity = new TerrainMesh;
-    sceneEntity->SetTerrainArea(mapTerrainArea);
-    sceneEntity->InvalidateMesh();
-    return sceneEntity;
+    SceneObject* sceneObject = CreateTerrainMesh();
+
+    sceneObject->GetTerrainMeshComponent()->SetTerrainArea(mapTerrainArea);
+    sceneObject->GetTerrainMeshComponent()->InvalidateMesh();
+
+    return sceneObject;
 }
 
-TerrainMesh* RenderScene::CreateTerrainMesh()
+SceneObject* RenderScene::CreateTerrainMesh()
 {
-    TerrainMesh* sceneEntity = new TerrainMesh;
-    return sceneEntity;
+    SceneObject* sceneObject = new SceneObject;
+
+    SceneObjectTransform* transformComponent = new SceneObjectTransform(sceneObject);
+    sceneObject->AddComponent(transformComponent);
+
+    TerrainMeshComponent* meshComponent = new TerrainMeshComponent(sceneObject);
+    sceneObject->AddComponent(meshComponent);
+
+    return sceneObject;
 }
 
-WaterLavaMesh* RenderScene::CreateWaterMesh(const TilesArray& meshTiles)
+SceneObject* RenderScene::CreateWaterMesh(const TilesArray& meshTiles)
 {
-    WaterLavaMesh* sceneEntity = new WaterLavaMesh;
-    sceneEntity->SetWaterLavaTiles(meshTiles);
-    sceneEntity->SetSurfaceParams(DEFAULT_WATER_TRANSLUCENCY, DEFAULT_WATER_WAVE_WIDTH, DEFAULT_WATER_WAVE_HEIGHT, DEFAULT_WATER_WAVE_FREQ, DEFAULT_WATER_LEVEL);
-    sceneEntity->SetSurfaceTexture(gTexturesManager.mWaterTexture);
-    return sceneEntity;
+    SceneObject* sceneObject = new SceneObject;
+
+    SceneObjectTransform* transformComponent = new SceneObjectTransform(sceneObject);
+    sceneObject->AddComponent(transformComponent);
+
+    WaterLavaMeshComponent* meshComponent = new WaterLavaMeshComponent(sceneObject);
+    sceneObject->AddComponent(meshComponent);
+
+    meshComponent->SetWaterLavaTiles(meshTiles);
+    meshComponent->SetSurfaceParams(DEFAULT_WATER_TRANSLUCENCY, DEFAULT_WATER_WAVE_WIDTH, DEFAULT_WATER_WAVE_HEIGHT, DEFAULT_WATER_WAVE_FREQ, DEFAULT_WATER_LEVEL);
+    meshComponent->SetSurfaceTexture(gTexturesManager.mWaterTexture);
+
+    return sceneObject;
 }
 
-WaterLavaMesh* RenderScene::CreateLavaMesh(const TilesArray& meshTiles)
+SceneObject* RenderScene::CreateLavaMesh(const TilesArray& meshTiles)
 {
-    WaterLavaMesh* sceneEntity = new WaterLavaMesh;
-    sceneEntity->SetWaterLavaTiles(meshTiles);
-    sceneEntity->SetSurfaceParams(DEFAULT_LAVA_TRANSLUCENCY, DEFAULT_LAVA_WAVE_WIDTH, DEFAULT_LAVA_WAVE_HEIGHT, DEFAULT_LAVA_WAVE_FREQ, DEFAULT_LAVA_LEVEL);
-    sceneEntity->SetSurfaceTexture(gTexturesManager.mLavaTexture);
-    return sceneEntity;
+    SceneObject* sceneObject = new SceneObject;
+
+    SceneObjectTransform* transformComponent = new SceneObjectTransform(sceneObject);
+    sceneObject->AddComponent(transformComponent);
+
+    WaterLavaMeshComponent* meshComponent = new WaterLavaMeshComponent(sceneObject);
+    sceneObject->AddComponent(meshComponent);
+
+    meshComponent->SetWaterLavaTiles(meshTiles);
+    meshComponent->SetSurfaceParams(DEFAULT_LAVA_TRANSLUCENCY, DEFAULT_LAVA_WAVE_WIDTH, DEFAULT_LAVA_WAVE_HEIGHT, DEFAULT_LAVA_WAVE_FREQ, DEFAULT_LAVA_LEVEL);
+    meshComponent->SetSurfaceTexture(gTexturesManager.mLavaTexture);
+
+    return sceneObject;
 }
 
 void RenderScene::HandleTransformChange(SceneObject* sceneEntity)

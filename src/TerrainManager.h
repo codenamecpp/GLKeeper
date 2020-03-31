@@ -32,8 +32,8 @@ private:
     void DestroyWaterLavaMeshList();
 
 private:
-    std::vector<WaterLavaMesh*> mWaterLavaMeshArray;
-    std::vector<TerrainMesh*> mTerrainMeshArray;
+    std::vector<SceneObject*> mWaterLavaMeshArray;
+    std::vector<SceneObject*> mTerrainMeshArray;
 
     TilesArray mInvalidatedTiles;
 };

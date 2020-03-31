@@ -25,6 +25,10 @@ public:
     bool Initialize();
     void Deinit();
 
+    // register scene object for rendering on current render frame
+    // @param sceneObject: Object
+    void RegisterSceneObjectForRendering(SceneObject* sceneObject);
+
     // render game frame routine
     void RenderFrame();
 

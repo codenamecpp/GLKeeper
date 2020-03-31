@@ -16,8 +16,8 @@ public:
 
     // render animating model for current render pass
     // @param renderContext: Current render context
-    // @param animatingModel: Model instance
-    void RenderModel(SceneRenderContext& renderContext, AnimatingModel* animatingModel);
+    // @param component: Renderable component
+    void Render(SceneRenderContext& renderContext, AnimatingModelComponent* component);
 
     // recreate renderdata for specific model asset
     // @param modelAsset: Model data

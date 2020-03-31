@@ -1,18 +1,38 @@
 #include "pch.h"
-#include "AnimatingModel.h"
+#include "AnimatingModelComponent.h"
 #include "ModelAsset.h"
 #include "TexturesManager.h"
-#include "SceneRenderList.h"
+#include "SceneObjectComponent.h"
+#include "SceneObject.h"
+#include "SceneObjectTransform.h"
+#include "RenderManager.h"
 
-AnimatingModel::AnimatingModel()
+AnimatingModelComponent::AnimatingModelComponent(SceneObject* sceneObject)
+    : SceneObjectComponent(eSceneObjectComponent_AnimatingModel, sceneObject)
+{
+    debug_assert(sceneObject);
+    sceneObject->mDebugColor = Color32_Green;
+}
+
+AnimatingModelComponent::~AnimatingModelComponent()
 {
 }
 
-AnimatingModel::~AnimatingModel()
+void AnimatingModelComponent::UpdateFrame(float deltaTime)
 {
+    if (!IsAnimationActive() || IsAnimationPaused())
+        return;
+
+    AdvanceAnimation(deltaTime);
 }
 
-void AnimatingModel::SetModelAsset(ModelAsset* modelAsset)
+void AnimatingModelComponent::RenderFrame(SceneRenderContext& renderContext)
+{
+    AnimatingModelsRenderer& renderer = gRenderManager.mAnimatingModelsRenderer;
+    renderer.Render(renderContext, this);
+}
+
+void AnimatingModelComponent::SetModelAsset(ModelAsset* modelAsset)
 {
     if (modelAsset == nullptr || !modelAsset->IsModelLoaded())
     {
@@ -78,7 +98,7 @@ void AnimatingModel::SetModelAsset(ModelAsset* modelAsset)
     SetAnimationState();
 }
 
-void AnimatingModel::SetModelAssetNull()
+void AnimatingModelComponent::SetModelAssetNull()
 {
     mModelAsset = nullptr;
     // reset current renderdata
@@ -93,46 +113,7 @@ void AnimatingModel::SetModelAssetNull()
     SetAnimationState();
 }
 
-void AnimatingModel::UpdateFrame(float deltaTime)
-{
-    if (IsAnimationPaused())
-        return;
-
-    AdvanceAnimation(deltaTime);
-}
-
-void AnimatingModel::RegisterForRendering(SceneRenderList& renderList)
-{
-    if (mModelAsset == nullptr)
-        return;
-    
-    bool hasOpaqueParts = false;
-    bool hasTranslucentParts = false;
-
-    for (const RenderMaterial& currentMaterial: mSubmeshMaterials)
-    {
-        if (currentMaterial.IsTransparent())
-        {
-            hasTranslucentParts = true;
-        }
-        else
-        {
-            hasOpaqueParts = true;
-        }
-    }
-
-    if (hasOpaqueParts)
-    {
-        renderList.RegisterObject(eRenderPass_Opaque, this);
-    }
-
-    if (hasTranslucentParts)
-    {
-        renderList.RegisterObject(eRenderPass_Translucent, this);
-    }
-}
-
-bool AnimatingModel::StartAnimation(float animationSpeed, bool loop)
+bool AnimatingModelComponent::StartAnimation(float animationSpeed, bool loop)
 {
     if (IsStatic())
     {
@@ -153,7 +134,7 @@ bool AnimatingModel::StartAnimation(float animationSpeed, bool loop)
     return true;
 }
 
-void AnimatingModel::ClearAnimation()
+void AnimatingModelComponent::ClearAnimation()
 {
     mAnimState.mFrame0 = mAnimState.mStartFrame;
     mAnimState.mFrame1 = mAnimState.mStartFrame + 1;
@@ -170,23 +151,26 @@ void AnimatingModel::ClearAnimation()
     mAnimState.mIsAnimationLoop = false;
     mAnimState.mIsAnimationPaused = false;
 
-    SetLocalBoundingBox(mModelAsset->mFramesBounds[mAnimState.mFrame0]);
+    SetLocalBounds();
 }
 
-void AnimatingModel::RewindToStart()
+void AnimatingModelComponent::RewindToStart()
 {
     debug_assert(false); // todo
 }
 
-void AnimatingModel::RewingToEnd()
+void AnimatingModelComponent::RewingToEnd()
 {
     debug_assert(false); // todo
 }
 
-void AnimatingModel::AdvanceAnimation(float deltaTime)
+void AnimatingModelComponent::AdvanceAnimation(float deltaTime)
 {
     if (!IsAnimationActive())
+    {
+        debug_assert(false);
         return;
+    }
 
     debug_assert(mModelAsset);
     if (deltaTime < 0.0001f) // threshold
@@ -225,11 +209,11 @@ void AnimatingModel::AdvanceAnimation(float deltaTime)
 
     if (prevFrame != mAnimState.mFrame0)
     {
-        SetLocalBoundingBox(mModelAsset->mFramesBounds[mAnimState.mFrame0]);
+        SetLocalBounds();
     }
 }
 
-void AnimatingModel::SetAnimationPaused(bool isPaused)
+void AnimatingModelComponent::SetAnimationPaused(bool isPaused)
 {
     if (IsAnimationActive())
     {
@@ -237,37 +221,37 @@ void AnimatingModel::SetAnimationPaused(bool isPaused)
     }
 }
 
-bool AnimatingModel::IsAnimationLoop() const
+bool AnimatingModelComponent::IsAnimationLoop() const
 {
     return mAnimState.mIsAnimationLoop;
 }
 
-bool AnimatingModel::IsAnimationActive() const
+bool AnimatingModelComponent::IsAnimationActive() const
 {
     return mAnimState.mIsAnimationActive;
 }
 
-bool AnimatingModel::IsAnimationFinish() const
+bool AnimatingModelComponent::IsAnimationFinish() const
 {
     return !mAnimState.mIsAnimationActive && mAnimState.mCyclesCount > 0;
 }
 
-bool AnimatingModel::IsAnimationPaused() const
+bool AnimatingModelComponent::IsAnimationPaused() const
 {
     return mAnimState.mIsAnimationPaused;
 }
 
-bool AnimatingModel::IsStatic() const
+bool AnimatingModelComponent::IsStatic() const
 {
     return mAnimState.mStartFrame == mAnimState.mFinalFrame;
 }
 
-void AnimatingModel::SetPreferredLOD(int lod)
+void AnimatingModelComponent::SetPreferredLOD(int lod)
 {
     mPreferredLOD = lod;
 }
 
-void AnimatingModel::SetAnimationState()
+void AnimatingModelComponent::SetAnimationState()
 {   
     mAnimState = BlendFramesAnimState ();
 
@@ -279,6 +263,10 @@ void AnimatingModel::SetAnimationState()
     mAnimState.mStartFrame = 0;
     mAnimState.mFinalFrame = mModelAsset->mFramesCount - 1;
 
-    // setup bounding box
-    SetLocalBoundingBox(mModelAsset->mFramesBounds[mAnimState.mFrame0]);
+    SetLocalBounds();
+}
+
+void AnimatingModelComponent::SetLocalBounds()
+{
+    mSceneObject->GetTransformComponent()->SetLocalBoundingBox(mModelAsset->mFramesBounds[mAnimState.mFrame0]);
 }

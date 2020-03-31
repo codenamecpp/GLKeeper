@@ -1,8 +1,9 @@
 #include "pch.h"
 #include "TerrainMeshRenderer.h"
-#include "TerrainMesh.h"
 #include "RenderScene.h"
 #include "GraphicsDevice.h"
+#include "TerrainMeshComponent.h"
+#include "cvars.h"
 
 bool TerrainMeshRenderer::Initialize()
 {
@@ -18,23 +19,28 @@ void TerrainMeshRenderer::Deinit()
     mTerrainRenderProgram.FreeProgram();
 }
 
-void TerrainMeshRenderer::RenderTerrainMesh(SceneRenderContext& renderContext, TerrainMesh* terrainMesh)
+void TerrainMeshRenderer::Render(SceneRenderContext& renderContext, TerrainMeshComponent* component)
 {
-    if (terrainMesh == nullptr || terrainMesh->mBatchArray.empty())
+    if (!gCVarRender_DrawTerrain.mValue)
+        return;
+
+    if (component == nullptr || component->mBatchArray.empty())
     {
         debug_assert(false);
         return;
     }
 
+    static glm::mat4 identyMatrix {1.0f};
+
     mTerrainRenderProgram.SetViewProjectionMatrix(gRenderScene.mCamera.mViewProjectionMatrix);
-    mTerrainRenderProgram.SetModelMatrix(terrainMesh->mTransformation);
+    mTerrainRenderProgram.SetModelMatrix(SceneIdentyMatrix);
     mTerrainRenderProgram.ActivateProgram();
 
     // bind indices
-    gGraphicsDevice.BindIndexBuffer(terrainMesh->mIndicesBuffer);
-    gGraphicsDevice.BindVertexBuffer(terrainMesh->mVerticesBuffer, Vertex3D_Terrain_Format::Get());
+    gGraphicsDevice.BindIndexBuffer(component->mIndicesBuffer);
+    gGraphicsDevice.BindVertexBuffer(component->mVerticesBuffer, Vertex3D_Terrain_Format::Get());
 
-    for (TerrainMesh::MeshBatch& currBatch: terrainMesh->mBatchArray)
+    for (TerrainMeshComponent::MeshBatch& currBatch: component->mBatchArray)
     {
         // filter out submeshes depending on current render pass
         if (renderContext.mCurrentPass == eRenderPass_Translucent && !currBatch.mMaterial.IsTransparent())

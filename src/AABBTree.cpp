@@ -309,13 +309,14 @@ void AABBTree::Cleanup()
 void AABBTree::InsertObject(SceneObject* entity)
 {
     debug_assert(entity);
-    entity->ComputeTransformation();
+    SceneObjectTransform* transformComponent = entity->GetTransformComponent();
+    transformComponent->ComputeTransformation();
 
     TreeNodeIndex nodeIndex = NULL_TREE_NODE;
     AllocateTreeNode(&nodeIndex);
     
     TreeNode& treeNode = mTreeNodes[nodeIndex];
-    treeNode.mBoundingBox = entity->mBoundsTransformed;
+    treeNode.mBoundingBox = transformComponent->mBoundsTransformed;
     treeNode.mSceneEntity = entity;
 
     InsertLeaf(nodeIndex);
@@ -335,9 +336,9 @@ void AABBTree::RemoveObject(SceneObject* entity)
 void AABBTree::UpdateObject(SceneObject* entity)
 {
     debug_assert(entity);
-    entity->ComputeTransformation();
-    const cxx::aabbox& boundingBox = entity->mBoundsTransformed;
+    SceneObjectTransform* transformComponent = entity->GetTransformComponent();
+    transformComponent->ComputeTransformation();
 
     TreeNodeIndex nodeIndex = mEntitiesMap[entity];
-    UpdateLeaf(nodeIndex, boundingBox);
+    UpdateLeaf(nodeIndex, transformComponent->mBoundsTransformed);
 }

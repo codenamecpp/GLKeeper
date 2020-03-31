@@ -3,10 +3,9 @@
 #include "GameWorld.h"
 #include "Console.h"
 #include "RenderScene.h"
-#include "TerrainMesh.h"
-#include "WaterLavaMesh.h"
 #include "RoomsManager.h"
 #include "GenericRoom.h"
+#include "SceneObject.h"
 
 const int TerrainMeshSizeTiles = 8; // 8x8 tiles per terrain mesh
 
@@ -75,7 +74,7 @@ void TerrainManager::CreateTerrainMeshList()
             rcmap.mSizeY = mapsizey - rcmap.mY;
         }
 
-        TerrainMesh* currTerrainMesh = gRenderScene.CreateTerrainMesh(rcmap);
+        SceneObject* currTerrainMesh = gRenderScene.CreateTerrainMesh(rcmap);
         gRenderScene.AttachObject(currTerrainMesh);
 
         mTerrainMeshArray.push_back(currTerrainMesh);
@@ -84,7 +83,7 @@ void TerrainManager::CreateTerrainMeshList()
 
 void TerrainManager::DestroyTerrainMeshList()
 {
-    for (TerrainMesh* currTerrainMesh: mTerrainMeshArray)
+    for (SceneObject* currTerrainMesh: mTerrainMeshArray)
     {
         gRenderScene.DetachObject(currTerrainMesh);
         gRenderScene.DestroyObject(currTerrainMesh);
@@ -147,9 +146,12 @@ void TerrainManager::UpdateTerrainMesh()
     }
 
     // update terrain mesh objects
-    for (TerrainMesh* currTerrainMesh: mTerrainMeshArray)
+    for (SceneObject* currTerrainMesh: mTerrainMeshArray)
     {
-        currTerrainMesh->UpdateMesh();
+        TerrainMeshComponent* meshComponent = currTerrainMesh->GetTerrainMeshComponent();
+        debug_assert(meshComponent);
+
+        meshComponent->UpdateMesh();
     }
 
     mInvalidatedTiles.clear();
@@ -203,9 +205,12 @@ void TerrainManager::BuildFullTerrainMesh()
     ClearInvalidated();
 
     // update terrain mesh objects
-    for (TerrainMesh* currTerrainMesh: mTerrainMeshArray)
+    for (SceneObject* currTerrainMesh: mTerrainMeshArray)
     {
-        currTerrainMesh->UpdateMesh();
+        TerrainMeshComponent* meshComponent = currTerrainMesh->GetTerrainMeshComponent();
+        debug_assert(meshComponent);
+
+        meshComponent->UpdateMesh();
     }
 }
 
@@ -258,7 +263,7 @@ void TerrainManager::CreateWaterLavaMeshList()
             continue;
         }
 
-        WaterLavaMesh* lavaMeshObject = gRenderScene.CreateLavaMesh(tempTilesArray);
+        SceneObject* lavaMeshObject = gRenderScene.CreateLavaMesh(tempTilesArray);
         gRenderScene.AttachObject(lavaMeshObject);
         mWaterLavaMeshArray.push_back(lavaMeshObject);
 
@@ -280,7 +285,7 @@ void TerrainManager::CreateWaterLavaMeshList()
             continue;
         }
 
-        WaterLavaMesh* waterMeshObject = gRenderScene.CreateWaterMesh(tempTilesArray);
+        SceneObject* waterMeshObject = gRenderScene.CreateWaterMesh(tempTilesArray);
         gRenderScene.AttachObject(waterMeshObject);
         mWaterLavaMeshArray.push_back(waterMeshObject);
 
@@ -289,15 +294,18 @@ void TerrainManager::CreateWaterLavaMeshList()
     }
 
     // force build mesh
-    for (WaterLavaMesh* currMesh: mWaterLavaMeshArray)
+    for (SceneObject* currMesh: mWaterLavaMeshArray)
     {
-        currMesh->UpdateMesh();
+        WaterLavaMeshComponent* meshComponent = currMesh->GetWaterLavaMeshComponent();
+        debug_assert(meshComponent);
+
+        meshComponent->UpdateMesh();
     }
 }
 
 void TerrainManager::DestroyWaterLavaMeshList()
 {
-    for (WaterLavaMesh* currWaterLavaMesh: mWaterLavaMeshArray)
+    for (SceneObject* currWaterLavaMesh: mWaterLavaMeshArray)
     {
         gRenderScene.DetachObject(currWaterLavaMesh);
         gRenderScene.DestroyObject(currWaterLavaMesh);

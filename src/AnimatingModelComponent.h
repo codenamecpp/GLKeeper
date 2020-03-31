@@ -1,11 +1,8 @@
 #pragma once
 
-#include "SceneDefs.h"
-#include "ResourceDefs.h"
-#include "SceneObject.h"
+#include "SceneObjectComponent.h"
 #include "RenderDefs.h"
-
-//////////////////////////////////////////////////////////////////////////
+#include "ResourceDefs.h"
 
 // model animation state
 struct BlendFramesAnimState
@@ -30,13 +27,9 @@ public:
     bool mIsAnimationPaused = false;
 };
 
-//////////////////////////////////////////////////////////////////////////
-
-// model instance on render scene
-class AnimatingModel: public SceneObject
+// animating model component of scene object
+class AnimatingModelComponent: public SceneObjectComponent
 {
-    friend class AnimatingModelsRenderer;
-
 public:
     // readonly
     ModelAsset* mModelAsset = nullptr;
@@ -47,22 +40,23 @@ public:
 
     int mPreferredLOD = 0;
 
-public:
-    AnimatingModel();
-    ~AnimatingModel();
+    ModelsRenderData* mRenderData = nullptr;
 
-    // change model asset, setup bounds and materials
-    // @param modelAsset: Source model data
-    void SetModelAsset(ModelAsset* modelAsset);
-    void SetModelAssetNull();
+public:
+    AnimatingModelComponent(SceneObject* sceneObject);
+    ~AnimatingModelComponent();
 
     // process scene update frame
     // @param deltaTime: Time since last update
     void UpdateFrame(float deltaTime) override;
 
-    // request entity to register itself in render lists
-    // @param renderList: Render lists
-    void RegisterForRendering(SceneRenderList& renderList) override;
+    // process render frame
+    void RenderFrame(SceneRenderContext& renderContext) override;
+
+    // change model asset, setup bounds and materials
+    // @param modelAsset: Source model data
+    void SetModelAsset(ModelAsset* modelAsset);
+    void SetModelAssetNull();
 
     // model animation control
     bool StartAnimation(float animationSpeed, bool loop);
@@ -77,12 +71,10 @@ public:
     bool IsAnimationFinish() const;
     bool IsAnimationPaused() const;
     bool IsStatic() const;
-   
+
     void SetPreferredLOD(int lod);
 
 private:
     void SetAnimationState();
-
-private:
-    ModelsRenderData* mRenderData = nullptr;
+    void SetLocalBounds();
 };

@@ -15,8 +15,8 @@ public:
 
     // render water lava mesh for current render pass
     // @param renderContext: Current render context
-    // @param terrainMesh: Mesh instance
-    void RenderWaterLavaMesh(SceneRenderContext& renderContext, WaterLavaMesh* waterLavaMesh);
+    // @param component: Render component
+    void Render(SceneRenderContext& renderContext, WaterLavaMeshComponent* component);
 
 private:
     WaterLavaRenderProgram mWaterLavaRenderProgram;

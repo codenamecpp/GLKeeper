@@ -31,6 +31,6 @@ public:
 
 private:
     OrbitCameraControl mOrbitCameraControl;
-    AnimatingModel* mModelObject = nullptr;
+    SceneObject* mModelObject = nullptr;
     MeshViewWindow mMeshViewWindow;
 };

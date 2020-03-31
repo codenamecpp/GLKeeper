@@ -1,8 +1,9 @@
 #include "pch.h"
 #include "TempleRoom.h"
 #include "RenderScene.h"
-#include "WaterLavaMesh.h"
+#include "WaterLavaMeshComponent.h"
 #include "MapTile.h"
+#include "SceneObject.h"
 
 #define TEMPLE_WATER_POOL_TRANSLUCENCY  0.90f
 #define TEMPLE_WATER_POOL_WAVE_WIDTH    4.0f
@@ -46,17 +47,24 @@ void TempleRoom::OnReconfigure()
     if (mTempleWaterPool == nullptr)
     {
         mTempleWaterPool = gRenderScene.CreateWaterMesh(waterTiles);
+
         // setup surface
-        mTempleWaterPool->SetSurfaceParams(TEMPLE_WATER_POOL_TRANSLUCENCY, TEMPLE_WATER_POOL_WAVE_WIDTH, 
+        WaterLavaMeshComponent* meshComponent = mTempleWaterPool->GetWaterLavaMeshComponent();
+        debug_assert(meshComponent);
+
+        meshComponent->SetSurfaceParams(TEMPLE_WATER_POOL_TRANSLUCENCY, TEMPLE_WATER_POOL_WAVE_WIDTH, 
             TEMPLE_WATER_POOL_WAVE_HEIGHT, TEMPLE_WATER_POOL_WAVE_FREQ, TEMPLE_WATER_POOL_WATERLINE);
         gRenderScene.AttachObject(mTempleWaterPool);
 
         return;
     }
 
-    if (!cxx::collections_equals(waterTiles, mTempleWaterPool->mWaterLavaTiles))
+    WaterLavaMeshComponent* meshComponent = mTempleWaterPool->GetWaterLavaMeshComponent();
+    debug_assert(meshComponent);
+
+    if (!cxx::collections_equals(waterTiles, meshComponent->mWaterLavaTiles))
     {
-        mTempleWaterPool->SetWaterLavaTiles(waterTiles);
+        meshComponent->SetWaterLavaTiles(waterTiles);
     }
 }
 

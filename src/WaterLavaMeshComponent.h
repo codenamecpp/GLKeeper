@@ -1,12 +1,14 @@
 #pragma once
 
 #include "GameDefs.h"
-#include "SceneObject.h"
+#include "SceneObjectComponent.h"
+#include "RenderMaterial.h"
 
-// water or lava mesh instance
-class WaterLavaMesh: public SceneObject
+// water lava mesh component of scene object
+class WaterLavaMeshComponent: public SceneObjectComponent
 {
     friend class WaterLavaMeshRenderer;
+    friend class RenderManager;
 
 public:
     // readonly
@@ -20,8 +22,15 @@ public:
     TilesArray mWaterLavaTiles;
 
 public:
-    WaterLavaMesh();
-    ~WaterLavaMesh();
+    WaterLavaMeshComponent(SceneObject* sceneObject);
+    ~WaterLavaMeshComponent();
+
+    // process scene update frame
+    // @param deltaTime: Time since last update
+    void UpdateFrame(float deltaTime) override;
+
+    // process render frame
+    void RenderFrame(SceneRenderContext& renderContext) override;
 
     // set water or lava surface tiles
     // @param tilesArray: List of map tiles
@@ -36,14 +45,6 @@ public:
 
     // rebuild water lava mesh and upload data to video memory
     void UpdateMesh();
-
-    // process scene update frame
-    // @param deltaTime: Time since last update
-    void UpdateFrame(float deltaTime) override;
-
-    // request entity to register itself in render lists
-    // @param renderList: Render lists
-    void RegisterForRendering(SceneRenderList& renderList) override;
 
 private:
     void PrepareRenderData();

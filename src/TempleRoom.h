@@ -18,5 +18,5 @@ private:
     void ScanWaterPoolTiles(TilesArray& poolTiles);
 
 private:
-    WaterLavaMesh* mTempleWaterPool = nullptr;
+    SceneObject* mTempleWaterPool = nullptr;
 };
