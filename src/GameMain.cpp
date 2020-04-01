@@ -34,9 +34,9 @@ bool GameMain::Initialize()
     gGameWorld.LoadScenario("temp");
 
     // set initial gamestate
-    SwitchToGameState(&mMeshViewGamestate);
+    //SwitchToGameState(&mMeshViewGamestate);
 
-    //SwitchToGameState(&mGameplayGamestate);
+    SwitchToGameState(&mGameplayGamestate);
 
     return true;
 }

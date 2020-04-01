@@ -38,6 +38,8 @@ public:
     // test whether object has specific component
     // @param componentId: Component type identifier
     bool HasComponent(eGameObjectComponent componentId) const;
+    bool HasUpdatableComponents() const;
+    bool HasRenderableComponents() const;
 
     // get attached animating model component
     // @returns null if object does not have component

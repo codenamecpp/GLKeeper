@@ -93,10 +93,10 @@ void GameObject::DeleteRenderableComponents()
 {
     for (int icurr = 0; icurr < eGameObjectComponent_Count; ++icurr)
     {
-        if (icurr == eGameObjectComponent_Transform)
-            continue;
-
-        SafeDelete(mComponents[icurr]);
+        if (mComponents[icurr] && mComponents[icurr]->IsRenderableComponent())
+        {
+            SafeDelete(mComponents[icurr]);
+        }
     }
 }
 
@@ -112,3 +112,22 @@ bool GameObject::HasComponent(eGameObjectComponent componentId) const
     return false;
 }
 
+bool GameObject::HasUpdatableComponents() const
+{
+    for (GameObjectComponent* currComponent: mComponents)
+    {
+        if (currComponent && currComponent->IsUpdatableComponent())
+            return true;
+    }
+    return false;
+}
+
+bool GameObject::HasRenderableComponents() const
+{
+    for (GameObjectComponent* currComponent: mComponents)
+    {
+        if (currComponent && currComponent->IsRenderableComponent())
+            return true;
+    }
+    return false;
+}
