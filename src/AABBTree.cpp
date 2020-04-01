@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "AABBTree.h"
 #include "DebugRenderer.h"
-#include "SceneObject.h"
+#include "GameObject.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AABBTree implementation borrowed from here
@@ -271,7 +271,7 @@ void AABBTree::DebugRenderNode(DebugRenderer& renderer, TreeNode& treeNode)
 {
     if (treeNode.IsLeafNode())
     {
-        renderer.DrawAabb(treeNode.mBoundingBox, treeNode.mSceneEntity->mDebugColor, true);
+        renderer.DrawAabb(treeNode.mBoundingBox, treeNode.mGameObject->mDebugColor, true);
         return;
     }
     if (treeNode.mLeftNodeIndex != NULL_TREE_NODE)
@@ -306,10 +306,10 @@ void AABBTree::Cleanup()
     mTreeNodes[mCapacity - 1].mNextNodeIndex = NULL_TREE_NODE;
 }
 
-void AABBTree::InsertObject(SceneObject* entity)
+void AABBTree::InsertObject(GameObject* entity)
 {
     debug_assert(entity);
-    SceneObjectTransform* transformComponent = entity->GetTransformComponent();
+    GameObjectTransform* transformComponent = entity->GetTransformComponent();
     transformComponent->ComputeTransformation();
 
     TreeNodeIndex nodeIndex = NULL_TREE_NODE;
@@ -317,13 +317,13 @@ void AABBTree::InsertObject(SceneObject* entity)
     
     TreeNode& treeNode = mTreeNodes[nodeIndex];
     treeNode.mBoundingBox = transformComponent->mBoundsTransformed;
-    treeNode.mSceneEntity = entity;
+    treeNode.mGameObject = entity;
 
     InsertLeaf(nodeIndex);
     mEntitiesMap[entity] = nodeIndex;
 }
 
-void AABBTree::RemoveObject(SceneObject* entity)
+void AABBTree::RemoveObject(GameObject* entity)
 {
     debug_assert(entity);
     TreeNodeIndex nodeIndex = mEntitiesMap[entity];
@@ -333,10 +333,10 @@ void AABBTree::RemoveObject(SceneObject* entity)
     DeallocateTreeNode(nodeIndex);
 }
 
-void AABBTree::UpdateObject(SceneObject* entity)
+void AABBTree::UpdateObject(GameObject* entity)
 {
     debug_assert(entity);
-    SceneObjectTransform* transformComponent = entity->GetTransformComponent();
+    GameObjectTransform* transformComponent = entity->GetTransformComponent();
     transformComponent->ComputeTransformation();
 
     TreeNodeIndex nodeIndex = mEntitiesMap[entity];

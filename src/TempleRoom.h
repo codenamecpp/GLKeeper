@@ -17,6 +17,8 @@ private:
     // get room tiles for water pool
     void ScanWaterPoolTiles(TilesArray& poolTiles);
 
+    void DestroyWaterPool();
+
 private:
-    SceneObject* mTempleWaterPool = nullptr;
+    GameObject* mTempleWaterPool = nullptr;
 };

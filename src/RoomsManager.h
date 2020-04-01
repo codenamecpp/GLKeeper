@@ -15,6 +15,9 @@ public:
     bool Initialize();
     void Deinit();
 
+    void EnterWorld();
+    void ClearWorld();
+
     // process single frame logic
     void UpdateFrame();
 

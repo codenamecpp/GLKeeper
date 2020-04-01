@@ -1,11 +1,11 @@
 #include "pch.h"
-#include "TerrainMeshComponent.h"
-#include "SceneObject.h"
+#include "TerrainMesh.h"
+#include "GameObject.h"
 #include "GraphicsDevice.h"
 #include "MapTile.h"
 #include "GameWorld.h"
 #include "GpuBuffer.h"
-#include "SceneObjectTransform.h"
+#include "GameObjectTransform.h"
 #include "TerrainMeshRenderer.h"
 #include "RenderManager.h"
 
@@ -59,26 +59,26 @@ inline void SplitMeshPieces(const TMeshPiecesContainer& meshPieces, PieceBucketC
 //////////////////////////////////////////////////////////////////////////
 
 
-TerrainMeshComponent::TerrainMeshComponent(SceneObject* sceneObject) 
-    : SceneObjectComponent(eSceneObjectComponent_TerrainMesh, sceneObject)
+TerrainMesh::TerrainMesh(GameObject* gameObject) 
+    : GameObjectComponent(eGameObjectComponent_TerrainMesh, gameObject)
     , mMeshDirty()
 {
-    debug_assert(sceneObject);
-    sceneObject->mDebugColor = Color32_Brown;
+    debug_assert(mGameObject);
+    mGameObject->mDebugColor = Color32_Brown;
 }
 
-TerrainMeshComponent::~TerrainMeshComponent()
+TerrainMesh::~TerrainMesh()
 {
     DestroyRenderData();
 }
 
-void TerrainMeshComponent::RenderFrame(SceneRenderContext& renderContext)
+void TerrainMesh::RenderFrame(SceneRenderContext& renderContext)
 {
     TerrainMeshRenderer& renderer = gRenderManager.mTerrainMeshRenderer;
     renderer.Render(renderContext, this);
 }
 
-void TerrainMeshComponent::SetTerrainArea(const Rect2D& mapArea)
+void TerrainMesh::SetTerrainArea(const Rect2D& mapArea)
 {
     if (mMapTerrainRect == mapArea)
         return;
@@ -97,15 +97,15 @@ void TerrainMeshComponent::SetTerrainArea(const Rect2D& mapArea)
     sectorBox.mMax.y = 3.0f;
     sectorBox.mMax.z = sectorBox.mMin.z + (mMapTerrainRect.mSizeY * DUNGEON_CELL_SIZE);
 
-    mSceneObject->GetTransformComponent()->SetLocalBoundingBox(sectorBox);
+    mGameObject->GetTransformComponent()->SetLocalBoundingBox(sectorBox);
 }
 
-void TerrainMeshComponent::InvalidateMesh()
+void TerrainMesh::InvalidateMesh()
 {
     mMeshDirty = true;
 }
 
-void TerrainMeshComponent::UpdateMesh()
+void TerrainMesh::UpdateMesh()
 {
     if (!mMeshDirty)
         return;
@@ -115,12 +115,12 @@ void TerrainMeshComponent::UpdateMesh()
     mMeshDirty = false;
 }
 
-bool TerrainMeshComponent::IsMeshInvalidated() const
+bool TerrainMesh::IsMeshInvalidated() const
 {
     return mMeshDirty;
 }
 
-void TerrainMeshComponent::DestroyRenderData()
+void TerrainMesh::DestroyRenderData()
 {
     mBatchArray.clear();
 
@@ -139,7 +139,7 @@ void TerrainMeshComponent::DestroyRenderData()
     mMeshDirty = false;
 }
 
-void TerrainMeshComponent::PrepareRenderData()
+void TerrainMesh::PrepareRenderData()
 {
     if (mMapTerrainRect.mSizeX < 1 || mMapTerrainRect.mSizeY < 1)
     {

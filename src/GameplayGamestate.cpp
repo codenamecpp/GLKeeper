@@ -4,6 +4,7 @@
 #include "System.h"
 #include "GameMain.h"
 #include "RenderManager.h"
+#include "GameWorld.h"
 
 void GameplayGamestate::HandleGamestateEnter()
 {
@@ -12,10 +13,13 @@ void GameplayGamestate::HandleGamestateEnter()
     mGodModeCameraControl.SetFocusPoint(glm::vec3(0.0f));
 
     gGameMain.mFpsWindow.SetWindowShown(true);
+
+    gGameWorld.EnterWorld();
 }
 
 void GameplayGamestate::HandleGamestateLeave()
 {
+    gGameWorld.ClearWorld();
     gRenderScene.SetCameraControl(nullptr);
 
     gGameMain.mFpsWindow.SetWindowShown(false);

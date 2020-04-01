@@ -1,32 +1,32 @@
 #include "pch.h"
-#include "WaterLavaMeshComponent.h"
-#include "SceneObject.h"
+#include "WaterLavaMesh.h"
 #include "GraphicsDevice.h"
 #include "GpuBuffer.h"
 #include "MapTile.h"
-#include "SceneObjectTransform.h"
+#include "GameObjectTransform.h"
 #include "WaterLavaMeshRenderer.h"
 #include "RenderManager.h"
+#include "GameObject.h"
 
 const int MaxWaterLavaMeshBufferSize = 1024 * 1024 * 2;
 
-WaterLavaMeshComponent::WaterLavaMeshComponent(SceneObject* sceneObject)
-    : SceneObjectComponent(eSceneObjectComponent_WaterLavaMesh, sceneObject)
+WaterLavaMesh::WaterLavaMesh(GameObject* gameObject)
+    : GameObjectComponent(eGameObjectComponent_WaterLavaMesh, gameObject)
     , mVertexCount()
     , mTriangleCount()
     , mMeshDirty()
     , mWaveTime()
 {
-    debug_assert(sceneObject);
-    sceneObject->mDebugColor = Color32_Cyan;
+    debug_assert(mGameObject);
+    mGameObject->mDebugColor = Color32_Cyan;
 }
 
-WaterLavaMeshComponent::~WaterLavaMeshComponent()
+WaterLavaMesh::~WaterLavaMesh()
 {
     DestroyRenderData();
 }
 
-void WaterLavaMeshComponent::SetWaterLavaTiles(const TilesArray& tilesArray)
+void WaterLavaMesh::SetWaterLavaTiles(const TilesArray& tilesArray)
 {
     mWaterLavaTiles = tilesArray;
 
@@ -39,12 +39,12 @@ void WaterLavaMeshComponent::SetWaterLavaTiles(const TilesArray& tilesArray)
 
         bounds.extend(currentTileBounds);
     }
-    mSceneObject->GetTransformComponent()->SetLocalBoundingBox(bounds);
+    mGameObject->GetTransformComponent()->SetLocalBoundingBox(bounds);
 
     mMeshDirty = true;
 }
 
-void WaterLavaMeshComponent::SetSurfaceParams(float translucency, float waveWidth, float waveHeight, float waveFreq, float waterlineHeight)
+void WaterLavaMesh::SetSurfaceParams(float translucency, float waveWidth, float waveHeight, float waveFreq, float waterlineHeight)
 {
     mTranslucency = translucency;
     mWaveWidth = waveWidth;
@@ -63,12 +63,12 @@ void WaterLavaMeshComponent::SetSurfaceParams(float translucency, float waveWidt
     }
 }
 
-void WaterLavaMeshComponent::SetSurfaceTexture(Texture2D* diffuseTexture)
+void WaterLavaMesh::SetSurfaceTexture(Texture2D* diffuseTexture)
 {
     mMaterial.mDiffuseTexture = diffuseTexture;
 }
 
-void WaterLavaMeshComponent::UpdateMesh()
+void WaterLavaMesh::UpdateMesh()
 {
     if (!mMeshDirty)
         return;
@@ -78,18 +78,18 @@ void WaterLavaMeshComponent::UpdateMesh()
     mMeshDirty = false;
 }
 
-void WaterLavaMeshComponent::UpdateFrame(float deltaTime)
+void WaterLavaMesh::UpdateFrame(float deltaTime)
 {
     mWaveTime += mWaveFreq * deltaTime;
 }
 
-void WaterLavaMeshComponent::RenderFrame(SceneRenderContext& renderContext)
+void WaterLavaMesh::RenderFrame(SceneRenderContext& renderContext)
 {
     WaterLavaMeshRenderer& renderer = gRenderManager.mWaterLavaMeshRenderer;
     renderer.Render(renderContext, this);
 }
 
-void WaterLavaMeshComponent::PrepareRenderData()
+void WaterLavaMesh::PrepareRenderData()
 {
     if (mWaterLavaTiles.empty())
     {
@@ -226,7 +226,7 @@ void WaterLavaMeshComponent::PrepareRenderData()
     }
 }
 
-void WaterLavaMeshComponent::DestroyRenderData()
+void WaterLavaMesh::DestroyRenderData()
 {
     if (mVerticesBuffer)
     {

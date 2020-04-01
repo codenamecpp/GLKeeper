@@ -1,10 +1,10 @@
 #pragma once
 
-#include "SceneObjectComponent.h"
+#include "GameObjectComponent.h"
 #include "RenderMaterial.h"
 
-// terrain mesh component of scene object
-class TerrainMeshComponent: public SceneObjectComponent
+// terrain mesh component of game object
+class TerrainMesh: public GameObjectComponent
 {
     friend class TerrainMeshRenderer;
     friend class RenderManager;
@@ -14,8 +14,8 @@ public:
     Rect2D mMapTerrainRect;
 
 public:
-    TerrainMeshComponent(SceneObject* sceneObject);
-    ~TerrainMeshComponent();
+    TerrainMesh(GameObject* gameObject);
+    ~TerrainMesh();
 
     // process render frame
     void RenderFrame(SceneRenderContext& renderContext) override;

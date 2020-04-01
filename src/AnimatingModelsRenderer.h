@@ -4,6 +4,7 @@
 #include "RenderDefs.h"
 #include "MorphAnimRenderProgram.h"
 #include "SceneDefs.h"
+#include "GameDefs.h"
 
 // models visualization manager
 class AnimatingModelsRenderer: public cxx::noncopyable
@@ -17,7 +18,7 @@ public:
     // render animating model for current render pass
     // @param renderContext: Current render context
     // @param component: Renderable component
-    void Render(SceneRenderContext& renderContext, AnimatingModelComponent* component);
+    void Render(SceneRenderContext& renderContext, AnimatingModel* component);
 
     // recreate renderdata for specific model asset
     // @param modelAsset: Model data

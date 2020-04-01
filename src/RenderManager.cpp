@@ -6,7 +6,7 @@
 #include "GameMain.h"
 #include "ConsoleVariable.h"
 #include "RenderScene.h"
-#include "SceneObject.h"
+#include "GameObject.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -68,11 +68,11 @@ void RenderManager::Deinit()
     mLoadedRenderProgramsList.clear();
 }
 
-void RenderManager::RegisterSceneObjectForRendering(SceneObject* sceneObject)
+void RenderManager::RegisterSceneObjectForRendering(GameObject* gameObject)
 {
-    debug_assert(sceneObject);
+    debug_assert(gameObject);
 
-    if (AnimatingModelComponent* component = sceneObject->GetAnimatingModelComponent())
+    if (AnimatingModel* component = gameObject->GetAnimatingModelComponent())
     {
         bool hasOpaqueParts = false;
         bool hasTranslucentParts = false;
@@ -100,7 +100,7 @@ void RenderManager::RegisterSceneObjectForRendering(SceneObject* sceneObject)
         }
     }
 
-    if (TerrainMeshComponent* component = sceneObject->GetTerrainMeshComponent())
+    if (TerrainMesh* component = gameObject->GetTerrainMeshComponent())
     {
         bool hasOpaqueParts = false;
         bool hasTranslucentParts = false;
@@ -128,7 +128,7 @@ void RenderManager::RegisterSceneObjectForRendering(SceneObject* sceneObject)
         }
     }
 
-    if (WaterLavaMeshComponent* component = sceneObject->GetWaterLavaMeshComponent())
+    if (WaterLavaMesh* component = gameObject->GetWaterLavaMeshComponent())
     {
         bool hasOpaqueParts = false;
         bool hasTranslucentParts = false;
@@ -242,7 +242,7 @@ void RenderManager::DrawScene()
         const auto& currentList = mSceneRenderList.mComponentsForRenderPass[currRenderPass];
         for (int icurrentComponent = 0; icurrentComponent < currentList.mElementsCount; ++icurrentComponent)
         {
-            SceneObjectComponent* currentComponent = currentList.mElements[icurrentComponent];
+            GameObjectComponent* currentComponent = currentList.mElements[icurrentComponent];
             if (currentComponent->IsRenderableComponent())
             {
                 currentComponent->RenderFrame(renderContext);

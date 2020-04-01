@@ -86,8 +86,11 @@
     <Filter Include="Game\World\Rooms">
       <UniqueIdentifier>{070a4973-7fbe-49b1-acd7-2ba43980fe1f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Scene\Components">
-      <UniqueIdentifier>{59ccd168-acb3-4217-b570-95a84cfe6c0b}</UniqueIdentifier>
+    <Filter Include="Game\GameObject">
+      <UniqueIdentifier>{594601b6-4a03-416c-b1e3-5ad2709c6c4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\GameObject\Components">
+      <UniqueIdentifier>{5b78e975-7e29-42a9-a52f-30b8a952e05d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -327,9 +330,6 @@
     <ClInclude Include="SceneRenderList.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="SceneObject.h">
-      <Filter>Game\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="MeshViewWindow.h">
       <Filter>Application\DebugUI\Windows</Filter>
     </ClInclude>
@@ -408,20 +408,26 @@
     <ClInclude Include="TempleRoom.h">
       <Filter>Game\World\Rooms</Filter>
     </ClInclude>
-    <ClInclude Include="SceneObjectComponent.h">
-      <Filter>Game\Scene\Components</Filter>
+    <ClInclude Include="GameObject.h">
+      <Filter>Game\GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="SceneObjectTransform.h">
-      <Filter>Game\Scene\Components</Filter>
+    <ClInclude Include="GameObjectComponent.h">
+      <Filter>Game\GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="AnimatingModelComponent.h">
-      <Filter>Game\Scene\Components</Filter>
+    <ClInclude Include="GameObjectTransform.h">
+      <Filter>Game\GameObject\Components</Filter>
     </ClInclude>
-    <ClInclude Include="TerrainMeshComponent.h">
-      <Filter>Game\Scene\Components</Filter>
+    <ClInclude Include="AnimatingModel.h">
+      <Filter>Game\GameObject\Components</Filter>
     </ClInclude>
-    <ClInclude Include="WaterLavaMeshComponent.h">
-      <Filter>Game\Scene\Components</Filter>
+    <ClInclude Include="TerrainMesh.h">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="WaterLavaMesh.h">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObjectsManager.h">
+      <Filter>Game\GameObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -559,9 +565,6 @@
     <ClCompile Include="RenderScene.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="SceneObject.cpp">
-      <Filter>Game\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="MeshViewWindow.cpp">
       <Filter>Application\DebugUI\Windows</Filter>
     </ClCompile>
@@ -625,20 +628,26 @@
     <ClCompile Include="TempleRoom.cpp">
       <Filter>Game\World\Rooms</Filter>
     </ClCompile>
-    <ClCompile Include="SceneObjectTransform.cpp">
-      <Filter>Game\Scene\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimatingModelComponent.cpp">
-      <Filter>Game\Scene\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="TerrainMeshComponent.cpp">
-      <Filter>Game\Scene\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="WaterLavaMeshComponent.cpp">
-      <Filter>Game\Scene\Components</Filter>
-    </ClCompile>
     <ClCompile Include="SceneRenderList.cpp">
       <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Game\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObjectTransform.cpp">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatingModel.cpp">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainMesh.cpp">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="WaterLavaMesh.cpp">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObjectsManager.cpp">
+      <Filter>Game\GameObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

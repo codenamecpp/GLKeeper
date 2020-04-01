@@ -10,9 +10,9 @@ inline void AABBTree::QueryObjectsRecursive(const TreeNode* node, const cxx::fru
     // found leaf node
     if (node->IsLeafNode())
     {
-        if (node->mSceneEntity)
+        if (node->mGameObject)
         {
-            callback(node->mSceneEntity);
+            callback(node->mGameObject);
             maxObjects--;
         }
         return;

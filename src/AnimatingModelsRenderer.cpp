@@ -3,13 +3,13 @@
 #include "ModelAsset.h"
 #include "GraphicsDevice.h"
 #include "GpuBuffer.h"
-#include "SceneObjectComponent.h"
-#include "AnimatingModelComponent.h"
+#include "GameObjectComponent.h"
+#include "AnimatingModel.h"
 #include "RenderScene.h"
 #include "VertexFormat.h"
 #include "ConsoleVariable.h"
 #include "cvars.h"
-#include "SceneObject.h"
+#include "GameObject.h"
 
 // internal info
 class ModelsRenderData: public cxx::noncopyable
@@ -60,7 +60,7 @@ void AnimatingModelsRenderer::Deinit()
     mModelsCache.clear();
 }
 
-void AnimatingModelsRenderer::Render(SceneRenderContext& renderContext, AnimatingModelComponent* component)
+void AnimatingModelsRenderer::Render(SceneRenderContext& renderContext, AnimatingModel* component)
 {
     if (!gCVarRender_DrawModels.mValue)
         return;
@@ -82,7 +82,7 @@ void AnimatingModelsRenderer::Render(SceneRenderContext& renderContext, Animatin
         }
     }
 
-    SceneObjectTransform* transformComponent = component->mSceneObject->GetTransformComponent();
+    GameObjectTransform* transformComponent = component->mGameObject->GetTransformComponent();
 
     ModelsRenderData* renderData = component->mRenderData;
 

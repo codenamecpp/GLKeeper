@@ -1,11 +1,11 @@
 #pragma once
 
 #include "GameDefs.h"
-#include "SceneObjectComponent.h"
+#include "GameObjectComponent.h"
 #include "RenderMaterial.h"
 
-// water lava mesh component of scene object
-class WaterLavaMeshComponent: public SceneObjectComponent
+// water lava mesh component of game object
+class WaterLavaMesh: public GameObjectComponent
 {
     friend class WaterLavaMeshRenderer;
     friend class RenderManager;
@@ -22,10 +22,10 @@ public:
     TilesArray mWaterLavaTiles;
 
 public:
-    WaterLavaMeshComponent(SceneObject* sceneObject);
-    ~WaterLavaMeshComponent();
+    WaterLavaMesh(GameObject* gameObject);
+    ~WaterLavaMesh();
 
-    // process scene update frame
+    // process game object update frame
     // @param deltaTime: Time since last update
     void UpdateFrame(float deltaTime) override;
 

@@ -218,12 +218,12 @@ impl_enum_strings(eSceneCameraMode)
     {eSceneCameraMode_Orthographic, "orthographic"},
 };
 
-impl_enum_strings(eSceneObjectComponent)
+impl_enum_strings(eGameObjectComponent)
 {
-    {eSceneObjectComponent_Transform, "transform"},
-    {eSceneObjectComponent_TerrainMesh, "terrain_mesh"},
-    {eSceneObjectComponent_WaterLavaMesh, "water_lava_mesh"},
-    {eSceneObjectComponent_AnimatingModel, "animating_model"},
+    {eGameObjectComponent_Transform, "transform"},
+    {eGameObjectComponent_TerrainMesh, "terrain_mesh"},
+    {eGameObjectComponent_WaterLavaMesh, "water_lava_mesh"},
+    {eGameObjectComponent_AnimatingModel, "animating_model"},
 };
 
 impl_enum_strings(ePlayerID)

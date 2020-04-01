@@ -7,12 +7,21 @@ RoomsManager gRoomsManager;
 
 bool RoomsManager::Initialize()
 {
-    mRoomIDsCounter = 0;
     return true;
 }
 
 void RoomsManager::Deinit()
 {   
+
+}
+
+void RoomsManager::EnterWorld()
+{
+    mRoomIDsCounter = 0;
+}
+
+void RoomsManager::ClearWorld()
+{
     DestroyRoomsList();
 }
 

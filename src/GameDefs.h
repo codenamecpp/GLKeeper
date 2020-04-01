@@ -11,6 +11,12 @@
 // forwards
 class GameMap;
 class MapTile;
+class GameObject;
+class GameObjectComponent;
+class AnimatingModel;
+class TerrainMesh;
+class WaterLavaMesh;
+class GameObjectTransform;
 
 // terrain type identifier
 enum TerrainTypeID: unsigned int // for sake of flexibility, do not rely on specific id
@@ -35,6 +41,25 @@ enum CreatureTypeID: unsigned int
 {
     CreatureType_Null = 0 // invalid identifier
 };
+
+// weak pointer to game object instance
+using GameObjectHandle = cxx::handle<GameObject>;
+
+// game object instance unique identifier
+using GameObjectInstanceID = unsigned long long;
+
+// scene object component type
+enum eGameObjectComponent
+{
+    eGameObjectComponent_Transform,
+    eGameObjectComponent_TerrainMesh,
+    eGameObjectComponent_WaterLavaMesh,
+    eGameObjectComponent_AnimatingModel,
+
+    eGameObjectComponent_Count,
+};
+
+decl_enum_strings(eGameObjectComponent);
 
 // array of map tiles
 using TilesArray = std::vector<MapTile*>;

@@ -15,14 +15,9 @@
 #define DEFAULT_LAVA_WAVE_FREQ      2.5f
 
 // forwards
-class SceneObject;
 class SceneCamera;
 class RenderScene;
 class SceneCameraControl;
-class AnimatingModelComponent;
-class TerrainMeshComponent;
-class WaterLavaMeshComponent;
-class SceneObjectTransform;
 class SceneRenderList;
 class SceneRenderContext;
 
@@ -34,19 +29,6 @@ enum eSceneCameraMode
 };
 
 decl_enum_strings(eSceneCameraMode);
-
-// scene object component type
-enum eSceneObjectComponent
-{
-    eSceneObjectComponent_Transform,
-    eSceneObjectComponent_TerrainMesh,
-    eSceneObjectComponent_WaterLavaMesh,
-    eSceneObjectComponent_AnimatingModel,
-
-    eSceneObjectComponent_Count,
-};
-
-decl_enum_strings(eSceneObjectComponent);
 
 // get scene global space right direction vector
 const glm::vec3 SceneAxisX (1.0f, 0.0f, 0.0f);

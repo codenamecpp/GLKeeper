@@ -12,6 +12,9 @@ public:
     bool Initialize();
     void Deinit();
 
+    void EnterWorld();
+    void ClearWorld();
+
     // rebuild only invalidated tiles terrain mesh
     void UpdateTerrainMesh();
 
@@ -31,9 +34,13 @@ private:
     void CreateWaterLavaMeshList();
     void DestroyWaterLavaMeshList();
 
+    GameObject* CreateObjectTerrain(const Rect2D& mapArea);
+    GameObject* CreateObjectLava(const TilesArray& tilesArray);
+    GameObject* CreateObjectWater(const TilesArray& tilesArray);
+
 private:
-    std::vector<SceneObject*> mWaterLavaMeshArray;
-    std::vector<SceneObject*> mTerrainMeshArray;
+    std::vector<GameObject*> mWaterLavaMeshArray;
+    std::vector<GameObject*> mTerrainMeshArray;
 
     TilesArray mInvalidatedTiles;
 };

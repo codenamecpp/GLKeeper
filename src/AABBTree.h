@@ -6,7 +6,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 class DebugRenderer;
-class SceneObject;
+class GameObject;
 
 //////////////////////////////////////////////////////////////////////////
 // Bounding Volume Hierarchy Tree
@@ -26,15 +26,15 @@ public:
 
     // Add spatial object to tree
     // @param entity: Object
-    void InsertObject(SceneObject* entity);
+    void InsertObject(GameObject* entity);
 
     // Remove spatial object from tree
     // @param entity: Object
-    void RemoveObject(SceneObject* entity);
+    void RemoveObject(GameObject* entity);
 
     // Update spatial object location in tree
     // @param entity: Object
-    void UpdateObject(SceneObject* entity);
+    void UpdateObject(GameObject* entity);
 
     // Get all objects within bounding volume
     // @param aabbox: Bounding box
@@ -95,7 +95,7 @@ private:
     {
     public:
         TreeNode()
-            : mSceneEntity()
+            : mGameObject()
             , mParentNodeIndex(NULL_TREE_NODE)
             , mLeftNodeIndex(NULL_TREE_NODE)
             , mRightNodeIndex(NULL_TREE_NODE)
@@ -107,7 +107,7 @@ private:
 
     public:
         cxx::aabbox mBoundingBox; // world space aabb
-        SceneObject* mSceneEntity;
+        GameObject* mGameObject;
         TreeNodeIndex mParentNodeIndex;
         TreeNodeIndex mLeftNodeIndex;
         TreeNodeIndex mRightNodeIndex;
@@ -115,7 +115,7 @@ private:
     };
     //////////////////////////////////////////////////////////////////////////
 
-    std::unordered_map<SceneObject*, TreeNodeIndex> mEntitiesMap;
+    std::unordered_map<GameObject*, TreeNodeIndex> mEntitiesMap;
     std::vector<TreeNode> mTreeNodes;
     TreeNodeIndex mRootNodeIndex;
     TreeNodeIndex mNextFreeNodeIndex;

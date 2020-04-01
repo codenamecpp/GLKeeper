@@ -1,15 +1,15 @@
 #include "pch.h"
-#include "SceneObject.h"
-#include "RenderScene.h"
+#include "GameObject.h"
 
-SceneObject::SceneObject()
+GameObject::GameObject(GameObjectInstanceID instanceID)
     : mDebugColor(Color32_Green)
     , mIsAttachedToScene()
     , mComponents()
+    , mInstanceID(instanceID)
 {
 }
 
-SceneObject::~SceneObject()
+GameObject::~GameObject()
 {
     // entity must be detached from scene before destroy
     debug_assert(IsAttachedToScene() == false);
@@ -17,9 +17,9 @@ SceneObject::~SceneObject()
     DeleteAllComponents();
 }
 
-void SceneObject::UpdateFrame(float deltaTime)
+void GameObject::UpdateFrame(float deltaTime)
 {
-    for (SceneObjectComponent* currComponent: mComponents)
+    for (GameObjectComponent* currComponent: mComponents)
     {
         if (currComponent && currComponent->IsUpdatableComponent())
         {
@@ -28,17 +28,17 @@ void SceneObject::UpdateFrame(float deltaTime)
     }
 }
 
-void SceneObject::SetAttachedToScene(bool isAttached)
+void GameObject::SetAttachedToScene(bool isAttached)
 {
     mIsAttachedToScene = isAttached;
 }
 
-bool SceneObject::IsAttachedToScene() const
+bool GameObject::IsAttachedToScene() const
 {
     return mIsAttachedToScene;
 }
 
-bool SceneObject::AddComponent(SceneObjectComponent* component)
+bool GameObject::AddComponent(GameObjectComponent* component)
 {
     if (component == nullptr)
     {
@@ -46,7 +46,7 @@ bool SceneObject::AddComponent(SceneObjectComponent* component)
         return false;
     }
 
-    eSceneObjectComponent componentid = component->mComponentType;
+    eGameObjectComponent componentid = component->mComponentType;
     if (HasComponent(componentid))
     {
         debug_assert(false);
@@ -57,52 +57,52 @@ bool SceneObject::AddComponent(SceneObjectComponent* component)
     return true;
 }
 
-void SceneObject::DeleteComponent(SceneObjectComponent* component)
+void GameObject::DeleteComponent(GameObjectComponent* component)
 {
     if (component == nullptr)
     {
         debug_assert(false);
         return;
     }
-    eSceneObjectComponent componentid = component->mComponentType;
+    eGameObjectComponent componentid = component->mComponentType;
     if (mComponents[componentid])
     {
         DeleteComponent(componentid);
     }
 }
 
-void SceneObject::DeleteComponent(eSceneObjectComponent componentId)
+void GameObject::DeleteComponent(eGameObjectComponent componentId)
 {
-    debug_assert(componentId < eSceneObjectComponent_Count);
-    
+    debug_assert(componentId < eGameObjectComponent_Count);
+
     if (mComponents[componentId])
     {
         SafeDelete(mComponents[componentId]);
     }
 }
 
-void SceneObject::DeleteAllComponents()
+void GameObject::DeleteAllComponents()
 {
-    for (int icurr = 0; icurr < eSceneObjectComponent_Count; ++icurr)
+    for (int icurr = 0; icurr < eGameObjectComponent_Count; ++icurr)
     {
         SafeDelete(mComponents[icurr]);
     }
 }
 
-void SceneObject::DeleteRenderableComponents()
+void GameObject::DeleteRenderableComponents()
 {
-    for (int icurr = 0; icurr < eSceneObjectComponent_Count; ++icurr)
+    for (int icurr = 0; icurr < eGameObjectComponent_Count; ++icurr)
     {
-        if (icurr == eSceneObjectComponent_Transform)
+        if (icurr == eGameObjectComponent_Transform)
             continue;
 
         SafeDelete(mComponents[icurr]);
     }
 }
 
-bool SceneObject::HasComponent(eSceneObjectComponent componentId) const
+bool GameObject::HasComponent(eGameObjectComponent componentId) const
 {
-    debug_assert(componentId < eSceneObjectComponent_Count);
+    debug_assert(componentId < eGameObjectComponent_Count);
 
     if (mComponents[componentId])
     {

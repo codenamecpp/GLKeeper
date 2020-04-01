@@ -3,11 +3,12 @@
 #include "GameMain.h"
 #include "RenderScene.h"
 #include "System.h"
-#include "SceneObject.h"
+#include "GameObject.h"
 #include "ModelAssetsManager.h"
-#include "AnimatingModelComponent.h"
+#include "AnimatingModel.h"
 #include "TimeManager.h"
 #include "DebugUiManager.h"
+#include "GameObjectsManager.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -32,16 +33,15 @@ void MeshViewGamestate::HandleGamestateEnter()
 
     ModelAsset* modelAsset = gModelsManager.LoadModelAsset("vampire-pray");
 
-    mModelObject = gRenderScene.CreateAnimatingModel(modelAsset, glm::vec3(0.0f), glm::vec3(0.0f));
-    if (mModelObject)
-    {
-        gRenderScene.AttachObject(mModelObject);
+    mModelObject = gGameObjectsManager.CreateGameObject();
+    debug_assert(mModelObject);
 
-        AnimatingModelComponent* component = mModelObject->GetAnimatingModelComponent();
-        debug_assert(component);
+    AnimatingModel* animComponent = new AnimatingModel(mModelObject);
+    mModelObject->AddComponent(animComponent);
 
-        component->StartAnimation(24.0f, true);
-    }
+    animComponent->SetModelAsset(modelAsset);
+    animComponent->StartAnimation(24.0f, true);
+    gRenderScene.AttachObject(mModelObject);
 
     gDebugUiManager.AttachWindow(&mMeshViewWindow);
     mMeshViewWindow.SetWindowShown(true);
@@ -53,7 +53,8 @@ void MeshViewGamestate::HandleGamestateLeave()
     gRenderScene.SetCameraControl(nullptr);
     if (mModelObject)
     {
-        gRenderScene.DestroyObject(mModelObject);
+        gRenderScene.DetachObject(mModelObject);
+        gGameObjectsManager.DestroyGameObject(mModelObject);
         mModelObject = nullptr;
     }
 

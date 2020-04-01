@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SceneObjectComponent.h"
+#include "GameObjectComponent.h"
 #include "RenderDefs.h"
 #include "ResourceDefs.h"
 
@@ -27,8 +27,8 @@ public:
     bool mIsAnimationPaused = false;
 };
 
-// animating model component of scene object
-class AnimatingModelComponent: public SceneObjectComponent
+// animating model component of game object
+class AnimatingModel: public GameObjectComponent
 {
 public:
     // readonly
@@ -43,10 +43,10 @@ public:
     ModelsRenderData* mRenderData = nullptr;
 
 public:
-    AnimatingModelComponent(SceneObject* sceneObject);
-    ~AnimatingModelComponent();
+    AnimatingModel(GameObject* gameObject);
+    ~AnimatingModel();
 
-    // process scene update frame
+    // process component update frame
     // @param deltaTime: Time since last update
     void UpdateFrame(float deltaTime) override;
 

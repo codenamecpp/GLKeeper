@@ -1,18 +1,16 @@
 #pragma once
 
-#include "SceneObjectComponent.h"
+#include "GameObjectComponent.h"
 
-// transformation component of scene object
-class SceneObjectTransform: public SceneObjectComponent
+// transformation component of game object
+class GameObjectTransform: public GameObjectComponent
 {
-    friend class RenderScene;
-
 public:
     // readonly
     glm::vec3 mDirectionRight; // direction vector along x axis, should be normalized
     glm::vec3 mDirectionUpward; // direction vector along y axis, should be normalized
     glm::vec3 mDirectionForward; // direction vector along z axis, should be normalized
-    glm::vec3 mPosition; // position is scene, global
+    glm::vec3 mPosition; // position within world
     float mScaling; // uniform scaling
     glm::mat4 mTransformation; // should be manually updated so make sure to do ComputeTransformation
 
@@ -21,7 +19,7 @@ public:
     cxx::aabbox mBounds; // untransformed, used for culling and mouse tests
 
 public:
-    SceneObjectTransform(SceneObject* sceneObject);
+    GameObjectTransform(GameObject* gameObject);
 
     // set entity orienation vectors, expecting all normalized
     // @param directionRight: Vector X
@@ -36,17 +34,17 @@ public:
     void OrientTowards(const glm::vec3& point);
     void OrientTowards(const glm::vec3& point, const glm::vec3& upward);
 
-    // reset entity orientation on scene to defaults
+    // reset orientation to defaults
     void ResetOrientation();
 
     // Reset Position, Scale and Rotation to identity
     void ResetTransformation();
 
-    // set entity position on the scene
+    // set position
     // @param position: Position
     void SetPosition(const glm::vec3& position);
 
-    // set entity uniform scale
+    // set uniform scale
     // @param scaling: Scaling factor
     void SetScaling(float scaling);
 
@@ -55,7 +53,7 @@ public:
     // @param rotationAngle: Angle specified in radians
     void Rotate(const glm::vec3& rotationAxis, float rotationAngle);
 
-    // move entity on scene
+    // translate position
     // @param translation: Translation
     void Translate(const glm::vec3& translation);
 

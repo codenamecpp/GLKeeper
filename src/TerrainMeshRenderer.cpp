@@ -2,7 +2,7 @@
 #include "TerrainMeshRenderer.h"
 #include "RenderScene.h"
 #include "GraphicsDevice.h"
-#include "TerrainMeshComponent.h"
+#include "TerrainMesh.h"
 #include "cvars.h"
 
 bool TerrainMeshRenderer::Initialize()
@@ -19,7 +19,7 @@ void TerrainMeshRenderer::Deinit()
     mTerrainRenderProgram.FreeProgram();
 }
 
-void TerrainMeshRenderer::Render(SceneRenderContext& renderContext, TerrainMeshComponent* component)
+void TerrainMeshRenderer::Render(SceneRenderContext& renderContext, TerrainMesh* component)
 {
     if (!gCVarRender_DrawTerrain.mValue)
         return;
@@ -40,7 +40,7 @@ void TerrainMeshRenderer::Render(SceneRenderContext& renderContext, TerrainMeshC
     gGraphicsDevice.BindIndexBuffer(component->mIndicesBuffer);
     gGraphicsDevice.BindVertexBuffer(component->mVerticesBuffer, Vertex3D_Terrain_Format::Get());
 
-    for (TerrainMeshComponent::MeshBatch& currBatch: component->mBatchArray)
+    for (TerrainMesh::MeshBatch& currBatch: component->mBatchArray)
     {
         // filter out submeshes depending on current render pass
         if (renderContext.mCurrentPass == eRenderPass_Translucent && !currBatch.mMaterial.IsTransparent())
