@@ -5,7 +5,7 @@
 #include "System.h"
 #include "GameObject.h"
 #include "ModelAssetsManager.h"
-#include "AnimatingModel.h"
+#include "AnimModelComponent.h"
 #include "TimeManager.h"
 #include "DebugUiManager.h"
 #include "GameObjectsManager.h"
@@ -36,7 +36,7 @@ void MeshViewGamestate::HandleGamestateEnter()
     mModelObject = gGameObjectsManager.CreateGameObject();
     debug_assert(mModelObject);
 
-    AnimatingModel* animComponent = new AnimatingModel(mModelObject);
+    AnimModelComponent* animComponent = new AnimModelComponent(mModelObject);
     mModelObject->AddComponent(animComponent);
 
     animComponent->SetModelAsset(modelAsset);

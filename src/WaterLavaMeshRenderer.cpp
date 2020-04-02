@@ -2,7 +2,7 @@
 #include "WaterLavaMeshRenderer.h"
 #include "RenderScene.h"
 #include "GraphicsDevice.h"
-#include "WaterLavaMesh.h"
+#include "WaterLavaMeshComponent.h"
 #include "Cvars.h"
 
 bool WaterLavaMeshRenderer::Initialize()
@@ -19,7 +19,7 @@ void WaterLavaMeshRenderer::Deinit()
     mWaterLavaRenderProgram.FreeProgram();
 }
 
-void WaterLavaMeshRenderer::Render(SceneRenderContext& renderContext, WaterLavaMesh* component)
+void WaterLavaMeshRenderer::Render(SceneRenderContext& renderContext, WaterLavaMeshComponent* component)
 {
     if (!gCVarRender_DrawWaterAndLava.mValue)
         return;

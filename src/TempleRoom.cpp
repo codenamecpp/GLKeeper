@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "TempleRoom.h"
 #include "RenderScene.h"
-#include "WaterLavaMesh.h"
+#include "WaterLavaMeshComponent.h"
 #include "MapTile.h"
 #include "GameObject.h"
 #include "GameObjectsManager.h"
@@ -20,7 +20,11 @@ TempleRoom::TempleRoom(RoomDefinition* definition, ePlayerID owner, RoomInstance
 
 TempleRoom::~TempleRoom()
 {
-    DestroyWaterPool();
+    if (mWaterPoolObject)
+    {
+        gRenderScene.DetachObject(mWaterPoolObject);
+        gGameObjectsManager.DestroyGameObject(mWaterPoolObject);
+    }
 }
 
 void TempleRoom::OnReconfigure()
@@ -30,33 +34,46 @@ void TempleRoom::OnReconfigure()
 
     if (waterTiles.empty())
     {
-        DestroyWaterPool();
+        if (mWaterPoolObject)
+        {
+            gRenderScene.DetachObject(mWaterPoolObject);
+
+            WaterLavaMeshComponent* component = mWaterPoolObject->GetWaterLavaMeshComponent();
+            debug_assert(component);
+
+            component->ClearMesh();
+        }
         return;
     }
 
     // create new water pool mesh
-    if (mTempleWaterPool == nullptr)
+    if (mWaterPoolObject == nullptr)
     {
-        mTempleWaterPool = gGameObjectsManager.CreateGameObject();
+        mWaterPoolObject = gGameObjectsManager.CreateGameObject();
 
-        WaterLavaMesh* meshComponent = new WaterLavaMesh(mTempleWaterPool);
-        mTempleWaterPool->AddComponent(meshComponent);
+        WaterLavaMeshComponent* meshComponent = new WaterLavaMeshComponent(mWaterPoolObject);
+        mWaterPoolObject->AddComponent(meshComponent);
 
         meshComponent->SetWaterLavaTiles(waterTiles);
         meshComponent->SetSurfaceTexture(gTexturesManager.mWaterTexture);
         meshComponent->SetSurfaceParams(TEMPLE_WATER_POOL_TRANSLUCENCY, TEMPLE_WATER_POOL_WAVE_WIDTH, 
             TEMPLE_WATER_POOL_WAVE_HEIGHT, TEMPLE_WATER_POOL_WAVE_FREQ, TEMPLE_WATER_POOL_WATERLINE);
-        gRenderScene.AttachObject(mTempleWaterPool);
+        gRenderScene.AttachObject(mWaterPoolObject);
 
         return;
     }
 
-    WaterLavaMesh* meshComponent = mTempleWaterPool->GetWaterLavaMeshComponent();
+    WaterLavaMeshComponent* meshComponent = mWaterPoolObject->GetWaterLavaMeshComponent();
     debug_assert(meshComponent);
 
     if (!cxx::collections_equals(waterTiles, meshComponent->mWaterLavaTiles))
     {
         meshComponent->SetWaterLavaTiles(waterTiles);
+    }
+
+    if (!mWaterPoolObject->IsAttachedToScene())
+    {
+        gRenderScene.AttachObject(mWaterPoolObject);
     }
 }
 
@@ -80,15 +97,5 @@ void TempleRoom::ScanWaterPoolTiles(TilesArray& poolTiles)
             }
         }
         #undef IS_INNER
-    }
-}
-
-void TempleRoom::DestroyWaterPool()
-{
-    if (mTempleWaterPool)
-    {
-        gRenderScene.DetachObject(mTempleWaterPool);
-        gGameObjectsManager.DestroyGameObject(mTempleWaterPool);
-        mTempleWaterPool = nullptr;
     }
 }

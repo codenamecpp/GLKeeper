@@ -1,10 +1,10 @@
 #include "pch.h"
-#include "GameObjectTransform.h"
+#include "TransformComponent.h"
 #include "GameObject.h"
 #include "SceneDefs.h"
 #include "RenderScene.h"
 
-GameObjectTransform::GameObjectTransform(GameObject* gameObject)
+TransformComponent::TransformComponent(GameObject* gameObject)
     : GameObjectComponent(eGameObjectComponent_Transform, gameObject)
     , mTransformDirty()
     , mBoundingBoxDirty()
@@ -17,7 +17,7 @@ GameObjectTransform::GameObjectTransform(GameObject* gameObject)
 {
 }
 
-void GameObjectTransform::ComputeTransformation()
+void TransformComponent::ComputeTransformation()
 {
     // refresh transformations matrix
     if (mTransformDirty)
@@ -44,28 +44,28 @@ void GameObjectTransform::ComputeTransformation()
     }
 }
 
-void GameObjectTransform::SetLocalBoundingBox(const cxx::aabbox& aabox)
+void TransformComponent::SetLocalBoundingBox(const cxx::aabbox& aabox)
 {
     mBounds = aabox;
 
     InvalidateBounds();
 }
 
-void GameObjectTransform::SetPosition(const glm::vec3& position)
+void TransformComponent::SetPosition(const glm::vec3& position)
 {
     mPosition = position;
 
     InvalidateTransform();
 }
 
-void GameObjectTransform::SetScaling(float scaling)
+void TransformComponent::SetScaling(float scaling)
 {
     mScaling = scaling;
 
     InvalidateTransform();
 }
 
-void GameObjectTransform::SetOrientation(const glm::vec3& directionRight, const glm::vec3& directionForward, const glm::vec3& directionUpward)
+void TransformComponent::SetOrientation(const glm::vec3& directionRight, const glm::vec3& directionForward, const glm::vec3& directionUpward)
 {
     mDirectionForward = directionForward;
     mDirectionRight = directionRight;
@@ -74,17 +74,17 @@ void GameObjectTransform::SetOrientation(const glm::vec3& directionRight, const 
     InvalidateTransform();
 }
 
-void GameObjectTransform::SetOrientation(const glm::vec3& directionRight, const glm::vec3& directionForward)
+void TransformComponent::SetOrientation(const glm::vec3& directionRight, const glm::vec3& directionForward)
 {
     debug_assert(!"not yet implemented"); // todo
 }
 
-void GameObjectTransform::OrientTowards(const glm::vec3& point)
+void TransformComponent::OrientTowards(const glm::vec3& point)
 {
     OrientTowards(point, SceneAxisY);
 }
 
-void GameObjectTransform::Rotate(const glm::vec3& rotationAxis, float rotationAngle)
+void TransformComponent::Rotate(const glm::vec3& rotationAxis, float rotationAngle)
 {
     glm::mat3 rotationMatrix = glm::mat3(glm::rotate(rotationAngle, rotationAxis)); 
 
@@ -95,14 +95,14 @@ void GameObjectTransform::Rotate(const glm::vec3& rotationAxis, float rotationAn
     InvalidateTransform();
 }
 
-void GameObjectTransform::Translate(const glm::vec3& translation)
+void TransformComponent::Translate(const glm::vec3& translation)
 {
     mPosition += translation;
 
     InvalidateTransform();
 }
 
-void GameObjectTransform::OrientTowards(const glm::vec3& point, const glm::vec3& upward)
+void TransformComponent::OrientTowards(const glm::vec3& point, const glm::vec3& upward)
 {
     glm::vec3 zaxis = glm::normalize(point - mPosition);
     glm::vec3 xaxis = glm::normalize(glm::cross(upward, zaxis));
@@ -112,7 +112,7 @@ void GameObjectTransform::OrientTowards(const glm::vec3& point, const glm::vec3&
     SetOrientation(xaxis, zaxis, yaxis);
 }
 
-void GameObjectTransform::ResetTransformation()
+void TransformComponent::ResetTransformation()
 {
     mTransformation = glm::mat4{1.0f};
     mScaling = 1.0f;
@@ -124,7 +124,7 @@ void GameObjectTransform::ResetTransformation()
     InvalidateTransform();
 }
 
-void GameObjectTransform::InvalidateTransform()
+void TransformComponent::InvalidateTransform()
 {
     if (mTransformDirty)
         return;
@@ -138,7 +138,7 @@ void GameObjectTransform::InvalidateTransform()
     }
 }
 
-void GameObjectTransform::InvalidateBounds()
+void TransformComponent::InvalidateBounds()
 {
     if (mBoundingBoxDirty)
         return;
@@ -150,7 +150,7 @@ void GameObjectTransform::InvalidateBounds()
     }
 }
 
-void GameObjectTransform::ResetOrientation()
+void TransformComponent::ResetOrientation()
 {
     SetOrientation(SceneAxisX, SceneAxisZ, SceneAxisY);
 }

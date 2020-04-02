@@ -1,11 +1,11 @@
 #include "pch.h"
-#include "TerrainMesh.h"
+#include "TerrainMeshComponent.h"
 #include "GameObject.h"
 #include "GraphicsDevice.h"
 #include "MapTile.h"
 #include "GameWorld.h"
 #include "GpuBuffer.h"
-#include "GameObjectTransform.h"
+#include "TransformComponent.h"
 #include "TerrainMeshRenderer.h"
 #include "RenderManager.h"
 
@@ -59,7 +59,7 @@ inline void SplitMeshPieces(const TMeshPiecesContainer& meshPieces, PieceBucketC
 //////////////////////////////////////////////////////////////////////////
 
 
-TerrainMesh::TerrainMesh(GameObject* gameObject) 
+TerrainMeshComponent::TerrainMeshComponent(GameObject* gameObject) 
     : GameObjectComponent(eGameObjectComponent_TerrainMesh, gameObject)
     , mMeshDirty()
 {
@@ -67,18 +67,18 @@ TerrainMesh::TerrainMesh(GameObject* gameObject)
     mGameObject->mDebugColor = Color32_Brown;
 }
 
-TerrainMesh::~TerrainMesh()
+TerrainMeshComponent::~TerrainMeshComponent()
 {
     DestroyRenderData();
 }
 
-void TerrainMesh::RenderFrame(SceneRenderContext& renderContext)
+void TerrainMeshComponent::RenderFrame(SceneRenderContext& renderContext)
 {
     TerrainMeshRenderer& renderer = gRenderManager.mTerrainMeshRenderer;
     renderer.Render(renderContext, this);
 }
 
-void TerrainMesh::SetTerrainArea(const Rect2D& mapArea)
+void TerrainMeshComponent::SetTerrainArea(const Rect2D& mapArea)
 {
     if (mMapTerrainRect == mapArea)
         return;
@@ -100,12 +100,12 @@ void TerrainMesh::SetTerrainArea(const Rect2D& mapArea)
     mGameObject->GetTransformComponent()->SetLocalBoundingBox(sectorBox);
 }
 
-void TerrainMesh::InvalidateMesh()
+void TerrainMeshComponent::InvalidateMesh()
 {
     mMeshDirty = true;
 }
 
-void TerrainMesh::UpdateMesh()
+void TerrainMeshComponent::UpdateMesh()
 {
     if (!mMeshDirty)
         return;
@@ -115,12 +115,12 @@ void TerrainMesh::UpdateMesh()
     mMeshDirty = false;
 }
 
-bool TerrainMesh::IsMeshInvalidated() const
+bool TerrainMeshComponent::IsMeshInvalidated() const
 {
     return mMeshDirty;
 }
 
-void TerrainMesh::DestroyRenderData()
+void TerrainMeshComponent::DestroyRenderData()
 {
     mBatchArray.clear();
 
@@ -139,7 +139,7 @@ void TerrainMesh::DestroyRenderData()
     mMeshDirty = false;
 }
 
-void TerrainMesh::PrepareRenderData()
+void TerrainMeshComponent::PrepareRenderData()
 {
     if (mMapTerrainRect.mSizeX < 1 || mMapTerrainRect.mSizeY < 1)
     {

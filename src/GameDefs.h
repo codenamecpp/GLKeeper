@@ -13,10 +13,10 @@ class GameMap;
 class MapTile;
 class GameObject;
 class GameObjectComponent;
-class AnimatingModel;
-class TerrainMesh;
-class WaterLavaMesh;
-class GameObjectTransform;
+class AnimModelComponent;
+class TerrainMeshComponent;
+class WaterLavaMeshComponent;
+class TransformComponent;
 
 // terrain type identifier
 enum TerrainTypeID: unsigned int // for sake of flexibility, do not rely on specific id

@@ -28,7 +28,7 @@ public:
 };
 
 // animating model component of game object
-class AnimatingModel: public GameObjectComponent
+class AnimModelComponent: public GameObjectComponent
 {
 public:
     // readonly
@@ -43,8 +43,8 @@ public:
     ModelsRenderData* mRenderData = nullptr;
 
 public:
-    AnimatingModel(GameObject* gameObject);
-    ~AnimatingModel();
+    AnimModelComponent(GameObject* gameObject);
+    ~AnimModelComponent();
 
     // process component update frame
     // @param deltaTime: Time since last update

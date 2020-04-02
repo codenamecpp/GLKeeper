@@ -9,7 +9,7 @@
 #include "ModelAssetsManager.h"
 #include "MeshViewGamestate.h"
 #include "cvars.h"
-#include "AnimatingModel.h"
+#include "AnimModelComponent.h"
 #include "GameObject.h"
 
 MeshViewWindow::MeshViewWindow()
@@ -68,7 +68,7 @@ void MeshViewWindow::DoUI(ImGuiIO& imguiContext)
     ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
     if (ImGui::BeginTabBar("Tabs", tab_bar_flags))
     {
-        AnimatingModel* animModel = nullptr;
+        AnimModelComponent* animModel = nullptr;
         ModelAsset* modelAsset = nullptr;
         if (mMeshViewGamestate && mMeshViewGamestate->mModelObject)
         {
@@ -252,7 +252,7 @@ void MeshViewWindow::ChangeModelAsset(const char* assetName)
             return;
         }
 
-        AnimatingModel* component = mMeshViewGamestate->mModelObject->GetAnimatingModelComponent();
+        AnimModelComponent* component = mMeshViewGamestate->mModelObject->GetAnimatingModelComponent();
         debug_assert(component);
 
         component->SetModelAsset(modelAsset);

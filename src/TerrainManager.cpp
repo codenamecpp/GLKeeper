@@ -157,7 +157,7 @@ void TerrainManager::UpdateTerrainMesh()
     // update terrain mesh objects
     for (GameObject* currTerrainMesh: mTerrainMeshArray)
     {
-        TerrainMesh* meshComponent = currTerrainMesh->GetTerrainMeshComponent();
+        TerrainMeshComponent* meshComponent = currTerrainMesh->GetTerrainMeshComponent();
         debug_assert(meshComponent);
 
         meshComponent->UpdateMesh();
@@ -216,7 +216,7 @@ void TerrainManager::BuildFullTerrainMesh()
     // update terrain mesh objects
     for (GameObject* currTerrainMesh: mTerrainMeshArray)
     {
-        TerrainMesh* meshComponent = currTerrainMesh->GetTerrainMeshComponent();
+        TerrainMeshComponent* meshComponent = currTerrainMesh->GetTerrainMeshComponent();
         debug_assert(meshComponent);
 
         meshComponent->UpdateMesh();
@@ -303,7 +303,7 @@ void TerrainManager::CreateWaterLavaMeshList()
     // force build mesh
     for (GameObject* currMesh: mWaterLavaMeshArray)
     {
-        WaterLavaMesh* meshComponent = currMesh->GetWaterLavaMeshComponent();
+        WaterLavaMeshComponent* meshComponent = currMesh->GetWaterLavaMeshComponent();
         debug_assert(meshComponent);
 
         meshComponent->UpdateMesh();
@@ -326,7 +326,7 @@ GameObject* TerrainManager::CreateObjectTerrain(const Rect2D& mapArea)
     debug_assert(gameObject);
     mTerrainMeshArray.push_back(gameObject);
 
-    TerrainMesh* meshComponent = new TerrainMesh(gameObject);
+    TerrainMeshComponent* meshComponent = new TerrainMeshComponent(gameObject);
     gameObject->AddComponent(meshComponent);
 
     meshComponent->SetTerrainArea(mapArea);
@@ -340,7 +340,7 @@ GameObject* TerrainManager::CreateObjectLava(const TilesArray& tilesArray)
     debug_assert(gameObject);
     mWaterLavaMeshArray.push_back(gameObject);
 
-    WaterLavaMesh* meshComponent = new WaterLavaMesh(gameObject);
+    WaterLavaMeshComponent* meshComponent = new WaterLavaMeshComponent(gameObject);
     gameObject->AddComponent(meshComponent);
 
     meshComponent->SetWaterLavaTiles(tilesArray);
@@ -356,7 +356,7 @@ GameObject* TerrainManager::CreateObjectWater(const TilesArray& tilesArray)
     debug_assert(gameObject);
     mWaterLavaMeshArray.push_back(gameObject);
 
-    WaterLavaMesh* meshComponent = new WaterLavaMesh(gameObject);
+    WaterLavaMeshComponent* meshComponent = new WaterLavaMeshComponent(gameObject);
     gameObject->AddComponent(meshComponent);
 
     meshComponent->SetWaterLavaTiles(tilesArray);

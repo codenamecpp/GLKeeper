@@ -2,10 +2,10 @@
 
 #include "GameDefs.h"
 #include "GameObjectComponent.h"
-#include "AnimatingModel.h"
-#include "GameObjectTransform.h"
-#include "TerrainMesh.h"
-#include "WaterLavaMesh.h"
+#include "AnimModelComponent.h"
+#include "TransformComponent.h"
+#include "TerrainMeshComponent.h"
+#include "WaterLavaMeshComponent.h"
 
 class GameObject: public cxx::noncopyable
 {
@@ -43,27 +43,27 @@ public:
 
     // get attached animating model component
     // @returns null if object does not have component
-    inline AnimatingModel* GetAnimatingModelComponent() const
+    inline AnimModelComponent* GetAnimatingModelComponent() const
     {
-        return GetComponent<AnimatingModel>(eGameObjectComponent_AnimatingModel);
+        return GetComponent<AnimModelComponent>(eGameObjectComponent_AnimatingModel);
     }
     // get attached transform and bounds component
     // @returns null if object does not have component
-    inline GameObjectTransform* GetTransformComponent() const
+    inline TransformComponent* GetTransformComponent() const
     {
-        return GetComponent<GameObjectTransform>(eGameObjectComponent_Transform);
+        return GetComponent<TransformComponent>(eGameObjectComponent_Transform);
     }
     // get attached terrain mesh component
     // @returns null if object does not have component
-    inline TerrainMesh* GetTerrainMeshComponent() const
+    inline TerrainMeshComponent* GetTerrainMeshComponent() const
     {
-        return GetComponent<TerrainMesh>(eGameObjectComponent_TerrainMesh);
+        return GetComponent<TerrainMeshComponent>(eGameObjectComponent_TerrainMesh);
     }
     // get attached water or lava mesh component
     // @returns null if object does not have component
-    inline WaterLavaMesh* GetWaterLavaMeshComponent() const
+    inline WaterLavaMeshComponent* GetWaterLavaMeshComponent() const
     {
-        return GetComponent<WaterLavaMesh>(eGameObjectComponent_WaterLavaMesh);
+        return GetComponent<WaterLavaMeshComponent>(eGameObjectComponent_WaterLavaMesh);
     }
 
     // test whether game object is currently attached to scene and therefore may be rendered

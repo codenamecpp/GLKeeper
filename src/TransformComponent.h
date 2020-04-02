@@ -3,7 +3,7 @@
 #include "GameObjectComponent.h"
 
 // transformation component of game object
-class GameObjectTransform: public GameObjectComponent
+class TransformComponent: public GameObjectComponent
 {
 public:
     // readonly
@@ -19,7 +19,7 @@ public:
     cxx::aabbox mBounds; // untransformed, used for culling and mouse tests
 
 public:
-    GameObjectTransform(GameObject* gameObject);
+    TransformComponent(GameObject* gameObject);
 
     // set entity orienation vectors, expecting all normalized
     // @param directionRight: Vector X

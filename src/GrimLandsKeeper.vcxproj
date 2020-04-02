@@ -192,7 +192,7 @@
     <ClInclude Include="GameplayGamestate.h" />
     <ClInclude Include="GameWorld.h" />
     <ClInclude Include="MeshViewWindow.h" />
-    <ClInclude Include="AnimatingModel.h" />
+    <ClInclude Include="AnimModelComponent.h" />
     <ClInclude Include="MorphAnimRenderProgram.h" />
     <ClInclude Include="BinaryInputStream.h" />
     <ClInclude Include="BinaryOutputStream.h" />
@@ -212,9 +212,9 @@
     <ClInclude Include="ResourceDefs.h" />
     <ClInclude Include="RoomsDefs.h" />
     <ClInclude Include="RoomsManager.h" />
-    <ClInclude Include="GameObjectTransform.h" />
+    <ClInclude Include="TransformComponent.h" />
     <ClInclude Include="TempleRoom.h" />
-    <ClInclude Include="TerrainMesh.h" />
+    <ClInclude Include="TerrainMeshComponent.h" />
     <ClInclude Include="WallSection.h" />
     <ClInclude Include="ScenarioDefs.h" />
     <ClInclude Include="ScenarioLoader.h" />
@@ -277,7 +277,7 @@
     <ClInclude Include="TimeManager.h" />
     <ClInclude Include="version.h" />
     <ClInclude Include="VertexFormat.h" />
-    <ClInclude Include="WaterLavaMesh.h" />
+    <ClInclude Include="WaterLavaMeshComponent.h" />
     <ClInclude Include="WaterLavaMeshRenderer.h" />
     <ClInclude Include="WaterLavaRenderProgram.h" />
   </ItemGroup>
@@ -289,7 +289,7 @@
     <ClCompile Include="3rd_party\imgui_widgets.cpp" />
     <ClCompile Include="3rd_party\stb_rect_pack.cpp" />
     <ClCompile Include="AABBTree.cpp" />
-    <ClCompile Include="AnimatingModel.cpp" />
+    <ClCompile Include="AnimModelComponent.cpp" />
     <ClCompile Include="BinaryInputStream.cpp" />
     <ClCompile Include="BinaryOutputStream.cpp" />
     <ClCompile Include="CommonTypes.cpp" />
@@ -340,10 +340,10 @@
     <ClCompile Include="RenderMaterial.cpp" />
     <ClCompile Include="RenderProgram.cpp" />
     <ClCompile Include="RoomsManager.cpp" />
-    <ClCompile Include="GameObjectTransform.cpp" />
+    <ClCompile Include="TransformComponent.cpp" />
     <ClCompile Include="SceneRenderList.cpp" />
     <ClCompile Include="TempleRoom.cpp" />
-    <ClCompile Include="TerrainMesh.cpp" />
+    <ClCompile Include="TerrainMeshComponent.cpp" />
     <ClCompile Include="WallSection.cpp" />
     <ClCompile Include="ScenarioLoader.cpp" />
     <ClCompile Include="SceneCamera.cpp" />
@@ -359,7 +359,7 @@
     <ClCompile Include="Texture2D_Image.cpp" />
     <ClCompile Include="TexturesManager.cpp" />
     <ClCompile Include="TimeManager.cpp" />
-    <ClCompile Include="WaterLavaMesh.cpp" />
+    <ClCompile Include="WaterLavaMeshComponent.cpp" />
     <ClCompile Include="WaterLavaMeshRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>

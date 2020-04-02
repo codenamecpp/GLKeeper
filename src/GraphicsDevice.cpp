@@ -464,7 +464,7 @@ void GraphicsDevice::InternalSetRenderStates(const RenderStates& renderStates, b
                 srcFactor = GL_SRC_ALPHA;
                 dstFactor = GL_ONE_MINUS_SRC_ALPHA;
             break;
-            case eBlendingMode_Additive:
+            case eBlendingMode_AlphaAdditive:
                 srcFactor = GL_SRC_ALPHA;
                 dstFactor = GL_ONE;
             break;

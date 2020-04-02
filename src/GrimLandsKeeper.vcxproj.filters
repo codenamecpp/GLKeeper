@@ -414,20 +414,20 @@
     <ClInclude Include="GameObjectComponent.h">
       <Filter>Game\GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="GameObjectTransform.h">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimatingModel.h">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="TerrainMesh.h">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="WaterLavaMesh.h">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClInclude>
     <ClInclude Include="GameObjectsManager.h">
       <Filter>Game\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="TransformComponent.h">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimModelComponent.h">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainMeshComponent.h">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="WaterLavaMeshComponent.h">
+      <Filter>Game\GameObject\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -634,20 +634,20 @@
     <ClCompile Include="GameObject.cpp">
       <Filter>Game\GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="GameObjectTransform.cpp">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimatingModel.cpp">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="TerrainMesh.cpp">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="WaterLavaMesh.cpp">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClCompile>
     <ClCompile Include="GameObjectsManager.cpp">
       <Filter>Game\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="TransformComponent.cpp">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimModelComponent.cpp">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainMeshComponent.cpp">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="WaterLavaMeshComponent.cpp">
+      <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

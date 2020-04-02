@@ -4,7 +4,7 @@
 #include "RenderMaterial.h"
 
 // terrain mesh component of game object
-class TerrainMesh: public GameObjectComponent
+class TerrainMeshComponent: public GameObjectComponent
 {
     friend class TerrainMeshRenderer;
     friend class RenderManager;
@@ -14,8 +14,8 @@ public:
     Rect2D mMapTerrainRect;
 
 public:
-    TerrainMesh(GameObject* gameObject);
-    ~TerrainMesh();
+    TerrainMeshComponent(GameObject* gameObject);
+    ~TerrainMeshComponent();
 
     // process render frame
     void RenderFrame(SceneRenderContext& renderContext) override;

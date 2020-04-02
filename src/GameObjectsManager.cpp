@@ -87,7 +87,7 @@ GameObject* GameObjectsManager::CreateGameObject(const glm::vec3& position, cons
     GameObject* gameObject = CreateGameObject();
     debug_assert(gameObject);
 
-    GameObjectTransform* transformComponent = gameObject->GetTransformComponent();
+    TransformComponent* transformComponent = gameObject->GetTransformComponent();
     debug_assert(transformComponent);
 
     transformComponent->SetPosition(position);
@@ -103,7 +103,7 @@ GameObject* GameObjectsManager::CreateGameObject()
     GameObject* gameObject = new GameObject(instanceID);
     mObjectsList.push_back(gameObject);
 
-    GameObjectTransform* transformComponent = new GameObjectTransform(gameObject);
+    TransformComponent* transformComponent = new TransformComponent(gameObject);
     gameObject->AddComponent(transformComponent);
 
     return gameObject;

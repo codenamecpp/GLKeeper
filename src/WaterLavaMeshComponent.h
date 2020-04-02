@@ -5,7 +5,7 @@
 #include "RenderMaterial.h"
 
 // water lava mesh component of game object
-class WaterLavaMesh: public GameObjectComponent
+class WaterLavaMeshComponent: public GameObjectComponent
 {
     friend class WaterLavaMeshRenderer;
     friend class RenderManager;
@@ -22,8 +22,8 @@ public:
     TilesArray mWaterLavaTiles;
 
 public:
-    WaterLavaMesh(GameObject* gameObject);
-    ~WaterLavaMesh();
+    WaterLavaMeshComponent(GameObject* gameObject);
+    ~WaterLavaMeshComponent();
 
     // process game object update frame
     // @param deltaTime: Time since last update
@@ -45,6 +45,8 @@ public:
 
     // rebuild water lava mesh and upload data to video memory
     void UpdateMesh();
+
+    void ClearMesh();
 
 private:
     void PrepareRenderData();

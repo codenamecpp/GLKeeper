@@ -309,7 +309,7 @@ void AABBTree::Cleanup()
 void AABBTree::InsertObject(GameObject* entity)
 {
     debug_assert(entity);
-    GameObjectTransform* transformComponent = entity->GetTransformComponent();
+    TransformComponent* transformComponent = entity->GetTransformComponent();
     transformComponent->ComputeTransformation();
 
     TreeNodeIndex nodeIndex = NULL_TREE_NODE;
@@ -336,7 +336,7 @@ void AABBTree::RemoveObject(GameObject* entity)
 void AABBTree::UpdateObject(GameObject* entity)
 {
     debug_assert(entity);
-    GameObjectTransform* transformComponent = entity->GetTransformComponent();
+    TransformComponent* transformComponent = entity->GetTransformComponent();
     transformComponent->ComputeTransformation();
 
     TreeNodeIndex nodeIndex = mEntitiesMap[entity];
