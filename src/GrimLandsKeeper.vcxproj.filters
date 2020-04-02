@@ -308,9 +308,6 @@
     <ClInclude Include="GenericGamestate.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="RenderMaterial.h">
-      <Filter>Game\Render</Filter>
-    </ClInclude>
     <ClInclude Include="cvars.h" />
     <ClInclude Include="ModelAsset.h">
       <Filter>Application\Resources</Filter>
@@ -428,6 +425,9 @@
     </ClInclude>
     <ClInclude Include="WaterLavaMeshComponent.h">
       <Filter>Game\GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshMaterial.h">
+      <Filter>Game\Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -553,9 +553,6 @@
     <ClCompile Include="MeshViewGamestate.cpp">
       <Filter>Game\GameStates</Filter>
     </ClCompile>
-    <ClCompile Include="RenderMaterial.cpp">
-      <Filter>Game\Render</Filter>
-    </ClCompile>
     <ClCompile Include="ModelAsset.cpp">
       <Filter>Application\Resources</Filter>
     </ClCompile>
@@ -648,6 +645,9 @@
     </ClCompile>
     <ClCompile Include="WaterLavaMeshComponent.cpp">
       <Filter>Game\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshMaterial.cpp">
+      <Filter>Game\Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

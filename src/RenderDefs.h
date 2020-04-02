@@ -4,7 +4,7 @@
 class DebugRenderer;
 class RenderManager;
 class RenderProgram;
-class RenderMaterial;
+class MeshMaterial;
 
 class ModelsRenderData;
 

@@ -77,7 +77,7 @@ void RenderManager::RegisterSceneObjectForRendering(GameObject* gameObject)
         bool hasOpaqueParts = false;
         bool hasTranslucentParts = false;
 
-        for (const RenderMaterial& currMaterial: component->mSubmeshMaterials)
+        for (const MeshMaterial& currMaterial: component->mSubmeshMaterials)
         {
             if (currMaterial.IsTransparent())
             {

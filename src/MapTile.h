@@ -19,7 +19,7 @@ extern const glm::vec3 g_SubTileTranslations[4];
 struct TileMesh
 {
 public:
-    RenderMaterial mMaterial;
+    MeshMaterial mMaterial;
 
     std::vector<glm::ivec3> mTriangles;
     std::vector<Vertex3D_Terrain> mVertices;

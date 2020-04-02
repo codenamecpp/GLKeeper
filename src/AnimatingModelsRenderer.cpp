@@ -113,7 +113,7 @@ void AnimatingModelsRenderer::Render(SceneRenderContext& renderContext, AnimMode
         if (selectLOD >= (int)currentSubMesh.mLODsArray.size())
             continue;
 
-        RenderMaterial& renderMaterial = component->mSubmeshMaterials[currentSubMesh.mMaterialIndex];
+        MeshMaterial& renderMaterial = component->mSubmeshMaterials[currentSubMesh.mMaterialIndex];
         // filter out submeshes depending on current render pass
         if (renderContext.mCurrentPass == eRenderPass_Translucent && !renderMaterial.IsTransparent())
             continue;

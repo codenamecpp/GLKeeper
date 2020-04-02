@@ -32,7 +32,7 @@ public:
     // readonly
     ModelAsset* mModelAsset = nullptr;
 
-    std::vector<RenderMaterial> mSubmeshMaterials;
+    std::vector<MeshMaterial> mSubmeshMaterials;
     std::vector<std::vector<Texture2D*>> mSubmeshTextures; // additional textures
     BlendFramesAnimState mAnimState;
 

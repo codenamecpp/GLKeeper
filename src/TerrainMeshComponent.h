@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GameObjectComponent.h"
-#include "RenderMaterial.h"
 
 // terrain mesh component of game object
 class TerrainMeshComponent: public GameObjectComponent
@@ -38,7 +37,7 @@ private:
     struct MeshBatch
     {
     public:
-        RenderMaterial mMaterial;
+        MeshMaterial mMaterial;
 
         int mVertexStart;
         int mVertexCount;

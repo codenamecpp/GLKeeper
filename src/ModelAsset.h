@@ -1,7 +1,5 @@
 #pragma once
 
-#include "RenderMaterial.h"
-
 // forwards
 class BinaryInputStream;
 

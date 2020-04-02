@@ -60,7 +60,7 @@ void AnimModelComponent::SetModelAsset(ModelAsset* modelAsset)
     int iCurrentMaterial = 0;
     for (const ModelAsset::SubMeshMaterial& currentSourceMaterial: modelAsset->mMaterialsArray)
     {
-        RenderMaterial material;
+        MeshMaterial material;
         if (currentSourceMaterial.mTextures.empty())
         {
             debug_assert(false);

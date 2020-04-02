@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GameObjectComponent.h"
-#include "RenderMaterial.h"
 
 // water lava mesh component of game object
 class WaterLavaMeshComponent: public GameObjectComponent
@@ -53,7 +52,7 @@ private:
 
 private:
     // render data
-    RenderMaterial mMaterial;
+    MeshMaterial mMaterial;
 
     GpuBuffer* mVerticesBuffer = nullptr;
     GpuBuffer* mIndicesBuffer = nullptr;

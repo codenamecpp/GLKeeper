@@ -80,4 +80,4 @@
 #include "GameObjectsDefs.h"
 #include "ConsoleDefs.h"
 
-#include "RenderMaterial.h"
+#include "MeshMaterial.h"

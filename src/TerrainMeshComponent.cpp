@@ -23,7 +23,7 @@ public:
     int mTriangleCount = 0;
 };
 
-typedef std::map<RenderMaterial, PieceBucket> PieceBucketMap;
+typedef std::map<MeshMaterial, PieceBucket> PieceBucketMap;
 struct PieceBucketContainer
 {
 public:
