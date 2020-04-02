@@ -1,7 +1,5 @@
 #pragma once
 
-#include "GraphicsDefs.h"
-
 // defines hardware buffer texture object
 class GpuBufferTexture: public cxx::noncopyable
 {

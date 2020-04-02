@@ -1,9 +1,5 @@
 #pragma once
 
-#include "GameDefs.h"
-#include "CreatureDefs.h"
-#include "CommonTypes.h"
-
 // scenario art resource type
 enum eArtResource 
 {

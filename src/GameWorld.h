@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ScenarioDefs.h"
 #include "GameMap.h"
 #include "DungeonBuilder.h"
 

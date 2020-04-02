@@ -1,8 +1,5 @@
 #pragma once
 
-#include "GameDefs.h"
-#include "SceneDefs.h"
-
 // dungeon terrain manager
 class TerrainManager: public cxx::noncopyable
 {

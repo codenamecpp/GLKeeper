@@ -1,7 +1,5 @@
 #pragma once
 
-#include "GraphicsDefs.h"
-
 // defines hardware vertices/indices buffer object
 class GpuBuffer: public cxx::noncopyable
 {

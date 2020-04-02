@@ -1,7 +1,5 @@
 #pragma once
 
-#include "GameDefs.h"
-
 class GameObjectsManager: public cxx::noncopyable
 {
 public:

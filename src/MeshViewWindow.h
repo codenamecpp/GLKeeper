@@ -1,7 +1,6 @@
 #pragma once
 
 #include "DebugUiWindow.h"
-#include "SceneDefs.h"
 
 class MeshViewGamestate;
 

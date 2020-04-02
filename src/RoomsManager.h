@@ -1,8 +1,5 @@
 #pragma once
 
-#include "RoomsDefs.h"
-#include "ScenarioDefs.h"
-
 class RoomsManager: public cxx::noncopyable
 {
 public:

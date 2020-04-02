@@ -1,8 +1,5 @@
 #pragma once
 
-#include "GameDefs.h"
-#include "ScenarioDefs.h"
-
 // helper class for map mesh construction
 class DungeonBuilder
 {

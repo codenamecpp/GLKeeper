@@ -1,6 +1,5 @@
 #pragma once
 
-#include "GameDefs.h"
 #include "GameObjectComponent.h"
 #include "RenderMaterial.h"
 

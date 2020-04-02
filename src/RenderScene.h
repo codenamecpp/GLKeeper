@@ -1,11 +1,7 @@
 #pragma once
 
-#include "SceneDefs.h"
 #include "SceneCamera.h"
 #include "AABBTree.h"
-#include "InputsDefs.h"
-#include "ResourceDefs.h"
-#include "GameDefs.h"
 
 class RenderScene: public cxx::noncopyable
 {

@@ -1,9 +1,5 @@
 #pragma once
 
-#include "GameDefs.h"
-#include "ScenarioDefs.h"
-#include "RoomsDefs.h"
-
 // frequently used tile rotations
 // 0: -90 degrees
 // 1: +90 degrees

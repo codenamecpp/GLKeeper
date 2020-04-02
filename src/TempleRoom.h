@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GenericRoom.h"
-#include "SceneDefs.h"
 
 // temple room logic
 class TempleRoom: public GenericRoom

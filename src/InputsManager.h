@@ -1,7 +1,5 @@
 #pragma once
 
-#include "InputsDefs.h"
-
 // inputs manager class
 class InputsManager: public cxx::noncopyable
 {

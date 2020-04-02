@@ -1,8 +1,5 @@
 #pragma once
 
-#include "GraphicsDefs.h"
-#include "ResourceDefs.h"
-
 // various render properties of drawable object
 class RenderMaterial
 {

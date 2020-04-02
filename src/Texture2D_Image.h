@@ -1,7 +1,5 @@
 #pragma once
 
-#include "GraphicsDefs.h"
-
 // contains texture2d image data and properties
 class Texture2D_Image
 {

@@ -2,9 +2,7 @@
 
 #include "GenericGamestate.h"
 #include "OrbitCameraControl.h"
-#include "SceneDefs.h"
 #include "MeshViewWindow.h"
-#include "GameDefs.h"
 
 // mesh browser utility gamestate
 class MeshViewGamestate: public GenericGamestate

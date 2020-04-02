@@ -1,7 +1,5 @@
 #pragma once
 
-#include "SceneDefs.h"
-#include "RenderDefs.h"
 #include "GameObjectComponent.h"
 
 // list for collecting scene entities which will be rendered on current frame

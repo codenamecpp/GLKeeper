@@ -1,10 +1,6 @@
 #pragma once
 
-#include "ResourceDefs.h"
-#include "RenderDefs.h"
 #include "TerrainRenderProgram.h"
-#include "SceneDefs.h"
-#include "GameDefs.h"
 
 // terrain visualization manager
 class TerrainMeshRenderer: public cxx::noncopyable

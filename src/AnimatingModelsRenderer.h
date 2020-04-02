@@ -1,10 +1,6 @@
 #pragma once
 
-#include "ResourceDefs.h"
-#include "RenderDefs.h"
 #include "MorphAnimRenderProgram.h"
-#include "SceneDefs.h"
-#include "GameDefs.h"
 
 // models visualization manager
 class AnimatingModelsRenderer: public cxx::noncopyable

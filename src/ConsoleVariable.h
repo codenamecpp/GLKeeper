@@ -1,7 +1,5 @@
 #pragma once
 
-#include "ConsoleDefs.h"
-
 // console variable base class, not intended for direct usage
 class CVarBase
 {

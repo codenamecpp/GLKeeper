@@ -1,10 +1,4 @@
 #include "pch.h"
-#include "CommonTypes.h"
-#include "GraphicsDefs.h"
-#include "InputsDefs.h"
-#include "RenderDefs.h"
-#include "SceneDefs.h"
-#include "ScenarioDefs.h"
 
 impl_enum_strings(eLogMessage)
 {

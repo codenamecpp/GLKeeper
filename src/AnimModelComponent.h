@@ -1,8 +1,6 @@
 #pragma once
 
 #include "GameObjectComponent.h"
-#include "RenderDefs.h"
-#include "ResourceDefs.h"
 
 // model animation state
 struct BlendFramesAnimState

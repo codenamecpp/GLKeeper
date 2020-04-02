@@ -1,6 +1,5 @@
 #pragma once
 
-#include "GameDefs.h"
 #include "MapTile.h"
 
 // flood fill flags

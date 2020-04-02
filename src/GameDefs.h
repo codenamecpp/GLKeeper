@@ -1,8 +1,5 @@
 #pragma once
 
-#include "RenderMaterial.h"
-#include "VertexFormat.h"
-
 #define DUNGEON_CELL_HALF_SIZE  0.5f
 #define DUNGEON_CELL_SIZE       1.0f
 #define TERRAIN_FLOOR_LEVEL     1.0f

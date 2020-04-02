@@ -1,7 +1,5 @@
 #pragma once
 
-#include "CommonTypes.h"
-
 // binary data output stream interface
 class BinaryOutputStream: public cxx::noncopyable
 {

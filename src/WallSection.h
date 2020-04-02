@@ -1,8 +1,5 @@
 #pragma once
 
-#include "GameDefs.h"
-#include "RoomsDefs.h"
-
 // wall section which belongs to room
 class WallSection
 {

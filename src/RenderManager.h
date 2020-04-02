@@ -1,6 +1,5 @@
 #pragma once
 
-#include "GraphicsDefs.h"
 #include "GuiRenderProgram.h"
 #include "DebugRenderer.h"
 #include "AnimatingModelsRenderer.h"

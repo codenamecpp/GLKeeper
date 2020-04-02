@@ -1,7 +1,5 @@
 #pragma once
 
-#include "GraphicsDefs.h"
-
 // forwards
 class DebugRenderer;
 class RenderManager;

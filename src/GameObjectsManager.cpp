@@ -26,7 +26,7 @@ void GameObjectsManager::ClearWorld()
 
 void GameObjectsManager::UpdateFrame()
 {
-    float deltaTime = gTimeManager.GetRealtimeFrameDelta();
+    float deltaTime = (float) gTimeManager.GetRealtimeFrameDelta();
 
     bool doCleanup = false;
 

@@ -1,8 +1,5 @@
 #pragma once
 
-#include "GameDefs.h"
-#include "RenderDefs.h"
-
 class GameObjectComponent: public cxx::noncopyable
 {
 public:

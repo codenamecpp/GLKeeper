@@ -1,7 +1,5 @@
 #pragma once
 
-#include "ResourceDefs.h"
-
 // models manager class
 class ModelAssetsManager: public cxx::noncopyable
 {

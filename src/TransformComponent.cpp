@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "TransformComponent.h"
 #include "GameObject.h"
-#include "SceneDefs.h"
 #include "RenderScene.h"
 
 TransformComponent::TransformComponent(GameObject* gameObject)

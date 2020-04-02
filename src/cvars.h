@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ConsoleDefs.h"
 #include "ConsoleVariable.h"
 
 // scene cvars

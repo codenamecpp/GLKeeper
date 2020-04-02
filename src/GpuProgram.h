@@ -1,7 +1,5 @@
 #pragma once
 
-#include "GraphicsDefs.h"
-
 // defines hardware render program object
 class GpuProgram: public cxx::noncopyable
 {
