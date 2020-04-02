@@ -3,7 +3,7 @@
 #include "GameObject.h"
 #include "ConsoleVariable.h"
 #include "Console.h"
-#include "CameraControl.h"
+#include "CameraController.h"
 #include "TimeManager.h"
 #include "DebugRenderer.h"
 #include "SceneRenderList.h"
@@ -29,7 +29,7 @@ bool RenderScene::Initialize()
 
 void RenderScene::Deinit()
 {
-    mCameraControl = nullptr;
+    mCameraController = nullptr;
 
     gConsole.UnregisterVariable(&gCvarScene_DebugDrawAabb);
 
@@ -41,9 +41,9 @@ void RenderScene::UpdateFrame()
 {
     float deltaTime = (float) gTimeManager.GetRealtimeFrameDelta();
 
-    if (mCameraControl)
+    if (mCameraController)
     {
-        mCameraControl->HandleUpdateFrame(deltaTime);
+        mCameraController->HandleUpdateFrame(deltaTime);
     }
 
     BuildAABBTree();
@@ -76,41 +76,41 @@ void RenderScene::DebugRenderFrame(DebugRenderer& renderer)
 
 void RenderScene::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
-    if (mCameraControl)
+    if (mCameraController)
     {
-        mCameraControl->HandleInputEvent(inputEvent);
+        mCameraController->HandleInputEvent(inputEvent);
     }
 }
 
 void RenderScene::HandleInputEvent(MouseMovedInputEvent& inputEvent)
 {
-    if (mCameraControl)
+    if (mCameraController)
     {
-        mCameraControl->HandleInputEvent(inputEvent);
+        mCameraController->HandleInputEvent(inputEvent);
     }
 }
 
 void RenderScene::HandleInputEvent(MouseScrollInputEvent& inputEvent)
 {
-    if (mCameraControl)
+    if (mCameraController)
     {
-        mCameraControl->HandleInputEvent(inputEvent);
+        mCameraController->HandleInputEvent(inputEvent);
     }
 }
 
 void RenderScene::HandleInputEvent(KeyInputEvent& inputEvent)
 {
-    if (mCameraControl)
+    if (mCameraController)
     {
-        mCameraControl->HandleInputEvent(inputEvent);
+        mCameraController->HandleInputEvent(inputEvent);
     }
 }
 
 void RenderScene::HandleInputEvent(KeyCharEvent& inputEvent)
 {
-    if (mCameraControl)
+    if (mCameraController)
     {
-        mCameraControl->HandleInputEvent(inputEvent);
+        mCameraController->HandleInputEvent(inputEvent);
     }
 }
 
@@ -168,21 +168,21 @@ void RenderScene::DetachObjects()
     mTransformObjects.clear();
 }
 
-void RenderScene::SetCameraControl(SceneCameraControl* cameraController)
+void RenderScene::SetCameraController(CameraController* cameraController)
 {
-    if (mCameraControl == cameraController)
+    if (mCameraController == cameraController)
         return;
 
-    if (mCameraControl)
+    if (mCameraController)
     {
-        mCameraControl->HandleSceneDetach();
-        mCameraControl->mSceneCamera = nullptr;
+        mCameraController->HandleSceneDetach();
+        mCameraController->mSceneCamera = nullptr;
     }
-    mCameraControl = cameraController;
-    if (mCameraControl)
+    mCameraController = cameraController;
+    if (mCameraController)
     {
-        mCameraControl->mSceneCamera = &mCamera;
-        mCameraControl->HandleSceneAttach();
+        mCameraController->mSceneCamera = &mCamera;
+        mCameraController->HandleSceneAttach();
     }
 }
 

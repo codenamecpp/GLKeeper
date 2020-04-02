@@ -1,11 +1,11 @@
 #pragma once
 
-#include "CameraControl.h"
+#include "CameraController.h"
 
-class OrbitCameraControl: public SceneCameraControl
+class OrbitCameraController: public CameraController
 {
 public:
-    OrbitCameraControl();
+    OrbitCameraController();
 
     // set camera control default params
     void SetParams(float defaultYawDegrees, float defaultPitchDegrees, float defaultDistance);

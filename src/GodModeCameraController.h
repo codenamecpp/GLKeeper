@@ -1,11 +1,11 @@
 #pragma once
 
-#include "CameraControl.h"
+#include "CameraController.h"
 
-class GodModeCameraControl: public SceneCameraControl
+class GodModeCameraController: public CameraController
 {
 public:
-    GodModeCameraControl();
+    GodModeCameraController();
 
     // set 3rd person camera params
     // @param yawDegrees, pitchDegrees: Yaw and pitch specified in degrees

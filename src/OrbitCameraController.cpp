@@ -1,9 +1,9 @@
 #include "pch.h"
-#include "OrbitCameraControl.h"
+#include "OrbitCameraController.h"
 #include "InputsManager.h"
 #include "SceneCamera.h"
 
-OrbitCameraControl::OrbitCameraControl()
+OrbitCameraController::OrbitCameraController()
     : mPrevMousePositionX()
     , mPrevMousePositionY()
     , mFocusPoint()
@@ -16,14 +16,14 @@ OrbitCameraControl::OrbitCameraControl()
 {
 }
 
-void OrbitCameraControl::SetParams(float defaultYawDegrees, float defaultPitchDegrees, float defaultDistance)
+void OrbitCameraController::SetParams(float defaultYawDegrees, float defaultPitchDegrees, float defaultDistance)
 {
     mDefaultDistance = defaultDistance;
     mDefaultPitch = defaultPitchDegrees;
     mDefaultYaw = defaultYawDegrees;
 }
 
-void OrbitCameraControl::ResetOrientation()
+void OrbitCameraController::ResetOrientation()
 {
     mPrevMousePositionX = gInputsManager.mCursorPositionX;
     mPrevMousePositionY = gInputsManager.mCursorPositionY;
@@ -35,19 +35,19 @@ void OrbitCameraControl::ResetOrientation()
     SetupCameraView();
 }
 
-void OrbitCameraControl::HandleUpdateFrame(float deltaTime)
+void OrbitCameraController::HandleUpdateFrame(float deltaTime)
 {
 }
 
-void OrbitCameraControl::HandleSceneAttach()
+void OrbitCameraController::HandleSceneAttach()
 {
 }
 
-void OrbitCameraControl::HandleSceneDetach()
+void OrbitCameraController::HandleSceneDetach()
 {
 }
 
-void OrbitCameraControl::HandleInputEvent(MouseButtonInputEvent& inputEvent)
+void OrbitCameraController::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
     if (inputEvent.HasPressed(eMouseButton_Left) || inputEvent.HasPressed(eMouseButton_Right))
     {
@@ -56,7 +56,7 @@ void OrbitCameraControl::HandleInputEvent(MouseButtonInputEvent& inputEvent)
     }
 }
 
-void OrbitCameraControl::HandleInputEvent(MouseMovedInputEvent& inputEvent)
+void OrbitCameraController::HandleInputEvent(MouseMovedInputEvent& inputEvent)
 {
     debug_assert(mSceneCamera);
 
@@ -107,7 +107,7 @@ void OrbitCameraControl::HandleInputEvent(MouseMovedInputEvent& inputEvent)
     }
 }
 
-void OrbitCameraControl::HandleInputEvent(MouseScrollInputEvent& inputEvent)
+void OrbitCameraController::HandleInputEvent(MouseScrollInputEvent& inputEvent)
 {
     const float speedUp = 0.15f;
 
@@ -124,15 +124,15 @@ void OrbitCameraControl::HandleInputEvent(MouseScrollInputEvent& inputEvent)
     }
 }
 
-void OrbitCameraControl::HandleInputEvent(KeyInputEvent& inputEvent)
+void OrbitCameraController::HandleInputEvent(KeyInputEvent& inputEvent)
 {
 }
 
-void OrbitCameraControl::HandleInputEvent(KeyCharEvent& inputEvent)
+void OrbitCameraController::HandleInputEvent(KeyCharEvent& inputEvent)
 {
 }
 
-void OrbitCameraControl::SetupCameraView()
+void OrbitCameraController::SetupCameraView()
 {
     debug_assert(mSceneCamera);
     mSceneCamera->ResetOrientation();

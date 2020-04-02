@@ -23,13 +23,13 @@
 
 void MeshViewGamestate::HandleGamestateEnter()
 {
-    mOrbitCameraControl.SetParams(MESH_VIEW_CAMERA_YAW_DEG, MESH_VIEW_CAMERA_PITCH_DEG, MESH_VIEW_CAMERA_DISTANCE);
+    mOrbitCameraController.SetParams(MESH_VIEW_CAMERA_YAW_DEG, MESH_VIEW_CAMERA_PITCH_DEG, MESH_VIEW_CAMERA_DISTANCE);
 
     // setup scene camera
     gRenderScene.mCamera.SetPerspective(gSystem.mSettings.mScreenAspectRatio, MESH_VIEW_CAMERA_FOVY, MESH_VIEW_CAMERA_NEAR, MESH_VIEW_CAMERA_FAR);
 
-    gRenderScene.SetCameraControl(&mOrbitCameraControl);
-    mOrbitCameraControl.ResetOrientation();
+    gRenderScene.SetCameraController(&mOrbitCameraController);
+    mOrbitCameraController.ResetOrientation();
 
     ModelAsset* modelAsset = gModelsManager.LoadModelAsset("vampire-pray");
 
@@ -50,7 +50,7 @@ void MeshViewGamestate::HandleGamestateEnter()
 
 void MeshViewGamestate::HandleGamestateLeave()
 {
-    gRenderScene.SetCameraControl(nullptr);
+    gRenderScene.SetCameraController(nullptr);
     if (mModelObject)
     {
         gRenderScene.DetachObject(mModelObject);

@@ -40,7 +40,7 @@ public:
 
     // set active scene camera controller
     // @param cameraController: Contoller or null to clear current
-    void SetCameraControl(SceneCameraControl* cameraController);
+    void SetCameraController(CameraController* cameraController);
 
     // callback from scene entities
     // Transformation or local bounds of object gets changed
@@ -51,7 +51,7 @@ private:
 
 private:
     AABBTree mAABBTree;
-    SceneCameraControl* mCameraControl = nullptr;
+    CameraController* mCameraController = nullptr;
     // entities lists
     std::vector<GameObject*> mTransformObjects;
     std::vector<GameObject*> mSceneObjects;

@@ -1,10 +1,10 @@
 #pragma once
 
 // scene camera controller base class
-class SceneCameraControl
+class CameraController
 {
 public:
-    virtual ~SceneCameraControl()
+    virtual ~CameraController()
     {
     }
 

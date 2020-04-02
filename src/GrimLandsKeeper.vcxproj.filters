@@ -59,9 +59,6 @@
     <Filter Include="Game\Scene\BVH">
       <UniqueIdentifier>{19bc7d6f-74f7-491e-aa51-f41bd63083b6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Scene\CameraControl">
-      <UniqueIdentifier>{23269d5d-8ec3-4467-95fb-43902adf5c8d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\GameStates">
       <UniqueIdentifier>{3cbb3161-b8b6-449a-ae6c-515a998262af}</UniqueIdentifier>
     </Filter>
@@ -91,6 +88,9 @@
     </Filter>
     <Filter Include="Game\GameObject\Components">
       <UniqueIdentifier>{5b78e975-7e29-42a9-a52f-30b8a952e05d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Scene\CameraControllers">
+      <UniqueIdentifier>{23269d5d-8ec3-4467-95fb-43902adf5c8d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -296,12 +296,6 @@
     <ClInclude Include="DebugDrawRenderProgram.h">
       <Filter>Game\Render\Shaders</Filter>
     </ClInclude>
-    <ClInclude Include="CameraControl.h">
-      <Filter>Game\Scene\CameraControl</Filter>
-    </ClInclude>
-    <ClInclude Include="OrbitCameraControl.h">
-      <Filter>Game\Scene\CameraControl</Filter>
-    </ClInclude>
     <ClInclude Include="MeshViewGamestate.h">
       <Filter>Game\GameStates</Filter>
     </ClInclude>
@@ -372,9 +366,6 @@
     <ClInclude Include="AnimatingModelsRenderer.h">
       <Filter>Game\Render</Filter>
     </ClInclude>
-    <ClInclude Include="GodModeCameraControl.h">
-      <Filter>Game\Scene\CameraControl</Filter>
-    </ClInclude>
     <ClInclude Include="FpsWindow.h">
       <Filter>Application\DebugUI\Windows</Filter>
     </ClInclude>
@@ -428,6 +419,15 @@
     </ClInclude>
     <ClInclude Include="MeshMaterial.h">
       <Filter>Game\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="OrbitCameraController.h">
+      <Filter>Game\Scene\CameraControllers</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraController.h">
+      <Filter>Game\Scene\CameraControllers</Filter>
+    </ClInclude>
+    <ClInclude Include="GodModeCameraController.h">
+      <Filter>Game\Scene\CameraControllers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -547,9 +547,6 @@
     <ClCompile Include="GameMain.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="OrbitCameraControl.cpp">
-      <Filter>Game\Scene\CameraControl</Filter>
-    </ClCompile>
     <ClCompile Include="MeshViewGamestate.cpp">
       <Filter>Game\GameStates</Filter>
     </ClCompile>
@@ -598,9 +595,6 @@
     <ClCompile Include="AnimatingModelsRenderer.cpp">
       <Filter>Game\Render</Filter>
     </ClCompile>
-    <ClCompile Include="GodModeCameraControl.cpp">
-      <Filter>Game\Scene\CameraControl</Filter>
-    </ClCompile>
     <ClCompile Include="FpsWindow.cpp">
       <Filter>Application\DebugUI\Windows</Filter>
     </ClCompile>
@@ -648,6 +642,12 @@
     </ClCompile>
     <ClCompile Include="MeshMaterial.cpp">
       <Filter>Game\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="OrbitCameraController.cpp">
+      <Filter>Game\Scene\CameraControllers</Filter>
+    </ClCompile>
+    <ClCompile Include="GodModeCameraController.cpp">
+      <Filter>Game\Scene\CameraControllers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

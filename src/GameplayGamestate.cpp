@@ -8,7 +8,7 @@
 
 void GameplayGamestate::HandleGamestateEnter()
 {
-    gRenderScene.SetCameraControl(&mGodModeCameraControl);
+    gRenderScene.SetCameraController(&mGodModeCameraControl);
 
     mGodModeCameraControl.SetFocusPoint(glm::vec3(0.0f));
 
@@ -20,7 +20,7 @@ void GameplayGamestate::HandleGamestateEnter()
 void GameplayGamestate::HandleGamestateLeave()
 {
     gGameWorld.ClearWorld();
-    gRenderScene.SetCameraControl(nullptr);
+    gRenderScene.SetCameraController(nullptr);
 
     gGameMain.mFpsWindow.SetWindowShown(false);
 }

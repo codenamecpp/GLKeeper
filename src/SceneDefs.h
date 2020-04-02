@@ -17,7 +17,7 @@
 // forwards
 class SceneCamera;
 class RenderScene;
-class SceneCameraControl;
+class CameraController;
 class SceneRenderList;
 class SceneRenderContext;
 

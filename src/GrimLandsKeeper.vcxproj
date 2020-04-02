@@ -186,7 +186,7 @@
     <ClInclude Include="GameObjectComponent.h" />
     <ClInclude Include="GameObjectsManager.h" />
     <ClInclude Include="GenericRoom.h" />
-    <ClInclude Include="GodModeCameraControl.h" />
+    <ClInclude Include="GodModeCameraController.h" />
     <ClInclude Include="MapTile.h" />
     <ClInclude Include="GameObjectsDefs.h" />
     <ClInclude Include="GameplayGamestate.h" />
@@ -196,7 +196,7 @@
     <ClInclude Include="MorphAnimRenderProgram.h" />
     <ClInclude Include="BinaryInputStream.h" />
     <ClInclude Include="BinaryOutputStream.h" />
-    <ClInclude Include="CameraControl.h" />
+    <ClInclude Include="CameraController.h" />
     <ClInclude Include="ConsoleDefs.h" />
     <ClInclude Include="ConsoleVariable.h" />
     <ClInclude Include="ConsoleVariable.inl" />
@@ -207,7 +207,7 @@
     <ClInclude Include="MeshViewGamestate.h" />
     <ClInclude Include="ModelAssetsManager.h" />
     <ClInclude Include="AnimatingModelsRenderer.h" />
-    <ClInclude Include="OrbitCameraControl.h" />
+    <ClInclude Include="OrbitCameraController.h" />
     <ClInclude Include="MeshMaterial.h" />
     <ClInclude Include="ResourceDefs.h" />
     <ClInclude Include="RoomsDefs.h" />
@@ -302,7 +302,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameObjectsManager.cpp" />
     <ClCompile Include="GenericRoom.cpp" />
-    <ClCompile Include="GodModeCameraControl.cpp" />
+    <ClCompile Include="GodModeCameraController.cpp" />
     <ClCompile Include="MapTile.cpp" />
     <ClCompile Include="GameplayGamestate.cpp" />
     <ClCompile Include="GameWorld.cpp" />
@@ -329,7 +329,7 @@
     <ClCompile Include="micropather.cpp" />
     <ClCompile Include="ModelAssetsManager.cpp" />
     <ClCompile Include="AnimatingModelsRenderer.cpp" />
-    <ClCompile Include="OrbitCameraControl.cpp" />
+    <ClCompile Include="OrbitCameraController.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
