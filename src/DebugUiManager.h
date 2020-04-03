@@ -1,7 +1,5 @@
 #pragma once
 
-#include "InputsDefs.h"
-#include "GraphicsDefs.h"
 #include "DebugUiWindow.h"
 
 // forwards

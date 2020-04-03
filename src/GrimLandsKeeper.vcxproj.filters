@@ -59,9 +59,6 @@
     <Filter Include="Game\Scene\BVH">
       <UniqueIdentifier>{19bc7d6f-74f7-491e-aa51-f41bd63083b6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Scene\CameraControl">
-      <UniqueIdentifier>{23269d5d-8ec3-4467-95fb-43902adf5c8d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\GameStates">
       <UniqueIdentifier>{3cbb3161-b8b6-449a-ae6c-515a998262af}</UniqueIdentifier>
     </Filter>
@@ -85,6 +82,15 @@
     </Filter>
     <Filter Include="Game\World\Rooms">
       <UniqueIdentifier>{070a4973-7fbe-49b1-acd7-2ba43980fe1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\GameObject">
+      <UniqueIdentifier>{594601b6-4a03-416c-b1e3-5ad2709c6c4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\GameObject\Components">
+      <UniqueIdentifier>{5b78e975-7e29-42a9-a52f-30b8a952e05d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Scene\CameraControllers">
+      <UniqueIdentifier>{23269d5d-8ec3-4467-95fb-43902adf5c8d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -290,20 +296,11 @@
     <ClInclude Include="DebugDrawRenderProgram.h">
       <Filter>Game\Render\Shaders</Filter>
     </ClInclude>
-    <ClInclude Include="CameraControl.h">
-      <Filter>Game\Scene\CameraControl</Filter>
-    </ClInclude>
-    <ClInclude Include="OrbitCameraControl.h">
-      <Filter>Game\Scene\CameraControl</Filter>
-    </ClInclude>
     <ClInclude Include="MeshViewGamestate.h">
       <Filter>Game\GameStates</Filter>
     </ClInclude>
     <ClInclude Include="GenericGamestate.h">
       <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderMaterial.h">
-      <Filter>Game\Render</Filter>
     </ClInclude>
     <ClInclude Include="cvars.h" />
     <ClInclude Include="ModelAsset.h">
@@ -315,9 +312,6 @@
     <ClInclude Include="RenderScene.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="AnimatingModel.h">
-      <Filter>Game\Scene</Filter>
-    </ClInclude>
     <ClInclude Include="ResourceDefs.h">
       <Filter>Application\Resources</Filter>
     </ClInclude>
@@ -325,15 +319,6 @@
       <Filter>Game\Render\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="SceneRenderList.h">
-      <Filter>Game\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneObject.h">
-      <Filter>Game\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="TerrainMesh.h">
-      <Filter>Game\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="WaterLavaMesh.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
     <ClInclude Include="MeshViewWindow.h">
@@ -381,9 +366,6 @@
     <ClInclude Include="AnimatingModelsRenderer.h">
       <Filter>Game\Render</Filter>
     </ClInclude>
-    <ClInclude Include="GodModeCameraControl.h">
-      <Filter>Game\Scene\CameraControl</Filter>
-    </ClInclude>
     <ClInclude Include="FpsWindow.h">
       <Filter>Application\DebugUI\Windows</Filter>
     </ClInclude>
@@ -413,6 +395,42 @@
     </ClInclude>
     <ClInclude Include="TempleRoom.h">
       <Filter>Game\World\Rooms</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Game\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObjectComponent.h">
+      <Filter>Game\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObjectsManager.h">
+      <Filter>Game\GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="TransformComponent.h">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimModelComponent.h">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainMeshComponent.h">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="WaterLavaMeshComponent.h">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshMaterial.h">
+      <Filter>Game\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="OrbitCameraController.h">
+      <Filter>Game\Scene\CameraControllers</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraController.h">
+      <Filter>Game\Scene\CameraControllers</Filter>
+    </ClInclude>
+    <ClInclude Include="GodModeCameraController.h">
+      <Filter>Game\Scene\CameraControllers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObjectComponentsFactory.h">
+      <Filter>Game\GameObject\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -532,14 +550,8 @@
     <ClCompile Include="GameMain.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="OrbitCameraControl.cpp">
-      <Filter>Game\Scene\CameraControl</Filter>
-    </ClCompile>
     <ClCompile Include="MeshViewGamestate.cpp">
       <Filter>Game\GameStates</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderMaterial.cpp">
-      <Filter>Game\Render</Filter>
     </ClCompile>
     <ClCompile Include="ModelAsset.cpp">
       <Filter>Application\Resources</Filter>
@@ -548,18 +560,6 @@
       <Filter>Application\Resources</Filter>
     </ClCompile>
     <ClCompile Include="RenderScene.cpp">
-      <Filter>Game\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimatingModel.cpp">
-      <Filter>Game\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneObject.cpp">
-      <Filter>Game\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="TerrainMesh.cpp">
-      <Filter>Game\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="WaterLavaMesh.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
     <ClCompile Include="MeshViewWindow.cpp">
@@ -598,9 +598,6 @@
     <ClCompile Include="AnimatingModelsRenderer.cpp">
       <Filter>Game\Render</Filter>
     </ClCompile>
-    <ClCompile Include="GodModeCameraControl.cpp">
-      <Filter>Game\Scene\CameraControl</Filter>
-    </ClCompile>
     <ClCompile Include="FpsWindow.cpp">
       <Filter>Application\DebugUI\Windows</Filter>
     </ClCompile>
@@ -624,6 +621,39 @@
     </ClCompile>
     <ClCompile Include="TempleRoom.cpp">
       <Filter>Game\World\Rooms</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneRenderList.cpp">
+      <Filter>Game\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Game\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObjectsManager.cpp">
+      <Filter>Game\GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="TransformComponent.cpp">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimModelComponent.cpp">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainMeshComponent.cpp">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="WaterLavaMeshComponent.cpp">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshMaterial.cpp">
+      <Filter>Game\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="OrbitCameraController.cpp">
+      <Filter>Game\Scene\CameraControllers</Filter>
+    </ClCompile>
+    <ClCompile Include="GodModeCameraController.cpp">
+      <Filter>Game\Scene\CameraControllers</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObjectComponentsFactory.cpp">
+      <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

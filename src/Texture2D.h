@@ -1,6 +1,5 @@
 #pragma once
 
-#include "GraphicsDefs.h"
 #include "Texture2D_Image.h"
 
 // texture 2d resource

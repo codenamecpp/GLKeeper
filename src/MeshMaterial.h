@@ -1,13 +1,10 @@
 #pragma once
 
-#include "GraphicsDefs.h"
-#include "ResourceDefs.h"
-
 // various render properties of drawable object
-class RenderMaterial
+class MeshMaterial
 {
 public:
-    RenderMaterial();
+    MeshMaterial();
 
     // activate or deactivate render material
     void ActivateMaterial();
@@ -22,19 +19,19 @@ public:
     }
 
     // operators
-    inline bool operator == (const RenderMaterial& other) const
+    inline bool operator == (const MeshMaterial& other) const
     {
         return mRenderStates == other.mRenderStates && mDiffuseTexture == other.mDiffuseTexture && 
             mEnvMappingTexture == other.mEnvMappingTexture; 
     }
 
-    inline bool operator != (const RenderMaterial& other) const
+    inline bool operator != (const MeshMaterial& other) const
     {
         return mRenderStates != other.mRenderStates || mDiffuseTexture != other.mDiffuseTexture || 
             mEnvMappingTexture != other.mEnvMappingTexture; 
     }
 
-    inline bool operator < (const RenderMaterial& other) const
+    inline bool operator < (const MeshMaterial& other) const
     {
         if (mDiffuseTexture != other.mDiffuseTexture)
             return mDiffuseTexture < other.mDiffuseTexture;

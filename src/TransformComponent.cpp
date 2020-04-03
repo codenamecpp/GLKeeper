@@ -1,9 +1,11 @@
 #include "pch.h"
-#include "SceneObject.h"
+#include "TransformComponent.h"
+#include "GameObject.h"
 #include "RenderScene.h"
 
-SceneObject::SceneObject()
-    : mTransformDirty()
+TransformComponent::TransformComponent(GameObject* gameObject)
+    : GameObjectComponent(eGameObjectComponent_Transform, gameObject)
+    , mTransformDirty()
     , mBoundingBoxDirty()
     , mTransformation(1.0f)
     , mScaling(1.0f)
@@ -11,18 +13,10 @@ SceneObject::SceneObject()
     , mDirectionRight(SceneAxisX)
     , mDirectionUpward(SceneAxisY)
     , mDirectionForward(SceneAxisZ)
-    , mDebugColor(Color32_Green)
-    , mIsAttachedToScene()
 {
 }
 
-SceneObject::~SceneObject()
-{
-    // entity must be detached from scene before destroy
-    debug_assert(IsAttachedToScene() == false);
-}
-
-void SceneObject::ComputeTransformation()
+void TransformComponent::ComputeTransformation()
 {
     // refresh transformations matrix
     if (mTransformDirty)
@@ -49,28 +43,28 @@ void SceneObject::ComputeTransformation()
     }
 }
 
-void SceneObject::SetLocalBoundingBox(const cxx::aabbox& aabox)
+void TransformComponent::SetLocalBoundingBox(const cxx::aabbox& aabox)
 {
     mBounds = aabox;
 
     InvalidateBounds();
 }
 
-void SceneObject::SetPosition(const glm::vec3& position)
+void TransformComponent::SetPosition(const glm::vec3& position)
 {
     mPosition = position;
 
     InvalidateTransform();
 }
 
-void SceneObject::SetScaling(float scaling)
+void TransformComponent::SetScaling(float scaling)
 {
     mScaling = scaling;
 
     InvalidateTransform();
 }
 
-void SceneObject::SetOrientation(const glm::vec3& directionRight, const glm::vec3& directionForward, const glm::vec3& directionUpward)
+void TransformComponent::SetOrientation(const glm::vec3& directionRight, const glm::vec3& directionForward, const glm::vec3& directionUpward)
 {
     mDirectionForward = directionForward;
     mDirectionRight = directionRight;
@@ -79,17 +73,17 @@ void SceneObject::SetOrientation(const glm::vec3& directionRight, const glm::vec
     InvalidateTransform();
 }
 
-void SceneObject::SetOrientation(const glm::vec3& directionRight, const glm::vec3& directionForward)
+void TransformComponent::SetOrientation(const glm::vec3& directionRight, const glm::vec3& directionForward)
 {
     debug_assert(!"not yet implemented"); // todo
 }
 
-void SceneObject::OrientTowards(const glm::vec3& point)
+void TransformComponent::OrientTowards(const glm::vec3& point)
 {
     OrientTowards(point, SceneAxisY);
 }
 
-void SceneObject::Rotate(const glm::vec3& rotationAxis, float rotationAngle)
+void TransformComponent::Rotate(const glm::vec3& rotationAxis, float rotationAngle)
 {
     glm::mat3 rotationMatrix = glm::mat3(glm::rotate(rotationAngle, rotationAxis)); 
 
@@ -100,14 +94,14 @@ void SceneObject::Rotate(const glm::vec3& rotationAxis, float rotationAngle)
     InvalidateTransform();
 }
 
-void SceneObject::Translate(const glm::vec3& translation)
+void TransformComponent::Translate(const glm::vec3& translation)
 {
     mPosition += translation;
 
     InvalidateTransform();
 }
 
-void SceneObject::OrientTowards(const glm::vec3& point, const glm::vec3& upward)
+void TransformComponent::OrientTowards(const glm::vec3& point, const glm::vec3& upward)
 {
     glm::vec3 zaxis = glm::normalize(point - mPosition);
     glm::vec3 xaxis = glm::normalize(glm::cross(upward, zaxis));
@@ -117,7 +111,7 @@ void SceneObject::OrientTowards(const glm::vec3& point, const glm::vec3& upward)
     SetOrientation(xaxis, zaxis, yaxis);
 }
 
-void SceneObject::ResetTransformation()
+void TransformComponent::ResetTransformation()
 {
     mTransformation = glm::mat4{1.0f};
     mScaling = 1.0f;
@@ -129,7 +123,7 @@ void SceneObject::ResetTransformation()
     InvalidateTransform();
 }
 
-void SceneObject::InvalidateTransform()
+void TransformComponent::InvalidateTransform()
 {
     if (mTransformDirty)
         return;
@@ -137,36 +131,25 @@ void SceneObject::InvalidateTransform()
     mTransformDirty = true;
     mBoundingBoxDirty = true; // force refresh world space bounds 
 
-    if (IsAttachedToScene())
+    if (mGameObject->IsAttachedToScene())
     {
-        gRenderScene.HandleTransformChange(this);
+        gRenderScene.HandleTransformChange(mGameObject);
     }
 }
 
-void SceneObject::InvalidateBounds()
+void TransformComponent::InvalidateBounds()
 {
     if (mBoundingBoxDirty)
         return;
 
     mBoundingBoxDirty = true;
-    if (IsAttachedToScene())
+    if (mGameObject->IsAttachedToScene())
     {
-        gRenderScene.HandleTransformChange(this);
+        gRenderScene.HandleTransformChange(mGameObject);
     }
 }
 
-void SceneObject::SetAttachedToScene(bool isAttached)
-{
-    mIsAttachedToScene = isAttached;
-}
-
-void SceneObject::ResetOrientation()
+void TransformComponent::ResetOrientation()
 {
     SetOrientation(SceneAxisX, SceneAxisZ, SceneAxisY);
 }
-
-bool SceneObject::IsAttachedToScene() const
-{
-    return mIsAttachedToScene;
-}
-

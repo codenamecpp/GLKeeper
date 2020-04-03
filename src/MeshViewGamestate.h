@@ -1,8 +1,7 @@
 #pragma once
 
 #include "GenericGamestate.h"
-#include "OrbitCameraControl.h"
-#include "SceneDefs.h"
+#include "OrbitCameraController.h"
 #include "MeshViewWindow.h"
 
 // mesh browser utility gamestate
@@ -30,7 +29,7 @@ public:
     void HandleInputEvent(KeyCharEvent& inputEvent) override;
 
 private:
-    OrbitCameraControl mOrbitCameraControl;
-    AnimatingModel* mModelObject = nullptr;
+    OrbitCameraController mOrbitCameraController;
+    GameObject* mModelObject = nullptr;
     MeshViewWindow mMeshViewWindow;
 };

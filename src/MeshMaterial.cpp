@@ -1,13 +1,13 @@
 #include "pch.h"
-#include "RenderMaterial.h"
+#include "MeshMaterial.h"
 #include "GraphicsDevice.h"
 #include "Texture2D.h"
 
-RenderMaterial::RenderMaterial()
+MeshMaterial::MeshMaterial()
 {
 }
 
-void RenderMaterial::Clear()
+void MeshMaterial::Clear()
 {
     mRenderStates = RenderStates();
 
@@ -16,7 +16,7 @@ void RenderMaterial::Clear()
     mEnvMappingTexture = nullptr;
 }
 
-void RenderMaterial::ActivateMaterial()
+void MeshMaterial::ActivateMaterial()
 {
     gGraphicsDevice.SetRenderStates(mRenderStates);
 
@@ -29,7 +29,7 @@ void RenderMaterial::ActivateMaterial()
     }
 }
 
-void RenderMaterial::PreloadTextures()
+void MeshMaterial::PreloadTextures()
 {
     if (mDiffuseTexture)
     {

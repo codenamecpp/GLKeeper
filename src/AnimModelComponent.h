@@ -1,11 +1,6 @@
 #pragma once
 
-#include "SceneDefs.h"
-#include "ResourceDefs.h"
-#include "SceneObject.h"
-#include "RenderDefs.h"
-
-//////////////////////////////////////////////////////////////////////////
+#include "GameObjectComponent.h"
 
 // model animation state
 struct BlendFramesAnimState
@@ -30,39 +25,36 @@ public:
     bool mIsAnimationPaused = false;
 };
 
-//////////////////////////////////////////////////////////////////////////
-
-// model instance on render scene
-class AnimatingModel: public SceneObject
+// animating model component of game object
+class AnimModelComponent: public GameObjectComponent
 {
-    friend class AnimatingModelsRenderer;
-
 public:
     // readonly
     ModelAsset* mModelAsset = nullptr;
 
-    std::vector<RenderMaterial> mSubmeshMaterials;
+    std::vector<MeshMaterial> mSubmeshMaterials;
     std::vector<std::vector<Texture2D*>> mSubmeshTextures; // additional textures
     BlendFramesAnimState mAnimState;
 
     int mPreferredLOD = 0;
 
+    ModelsRenderData* mRenderData = nullptr;
+
 public:
-    AnimatingModel();
-    ~AnimatingModel();
+    AnimModelComponent(GameObject* gameObject);
+    ~AnimModelComponent();
+
+    // process component update frame
+    // @param deltaTime: Time since last update
+    void UpdateFrame(float deltaTime) override;
+
+    // process render frame
+    void RenderFrame(SceneRenderContext& renderContext) override;
 
     // change model asset, setup bounds and materials
     // @param modelAsset: Source model data
     void SetModelAsset(ModelAsset* modelAsset);
     void SetModelAssetNull();
-
-    // process scene update frame
-    // @param deltaTime: Time since last update
-    void UpdateFrame(float deltaTime) override;
-
-    // request entity to register itself in render lists
-    // @param renderList: Render lists
-    void RegisterForRendering(SceneRenderList& renderList) override;
 
     // model animation control
     bool StartAnimation(float animationSpeed, bool loop);
@@ -77,12 +69,10 @@ public:
     bool IsAnimationFinish() const;
     bool IsAnimationPaused() const;
     bool IsStatic() const;
-   
+
     void SetPreferredLOD(int lod);
 
 private:
     void SetAnimationState();
-
-private:
-    ModelsRenderData* mRenderData = nullptr;
+    void SetLocalBounds();
 };

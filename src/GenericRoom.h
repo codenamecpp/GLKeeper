@@ -1,9 +1,5 @@
 #pragma once
 
-#include "ScenarioDefs.h"
-#include "GameDefs.h"
-#include "RoomsDefs.h"
-
 // forwards
 class DungeonBuilder;
 

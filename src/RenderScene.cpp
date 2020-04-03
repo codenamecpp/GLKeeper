@@ -1,16 +1,14 @@
 #include "pch.h"
 #include "RenderScene.h"
-#include "SceneObject.h"
+#include "GameObject.h"
 #include "ConsoleVariable.h"
 #include "Console.h"
-#include "CameraControl.h"
+#include "CameraController.h"
 #include "TimeManager.h"
 #include "DebugRenderer.h"
-#include "AnimatingModel.h"
 #include "SceneRenderList.h"
-#include "TerrainMesh.h"
-#include "WaterLavaMesh.h"
 #include "TexturesManager.h"
+#include "RenderManager.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -31,11 +29,11 @@ bool RenderScene::Initialize()
 
 void RenderScene::Deinit()
 {
-    mCameraControl = nullptr;
+    mCameraController = nullptr;
 
     gConsole.UnregisterVariable(&gCvarScene_DebugDrawAabb);
 
-    DestroySceneObjects();
+    DetachObjects();
     mAABBTree.Cleanup();
 }
 
@@ -43,26 +41,24 @@ void RenderScene::UpdateFrame()
 {
     float deltaTime = (float) gTimeManager.GetRealtimeFrameDelta();
 
-    for (SceneObject* currObject: mSceneObjects)
+    if (mCameraController)
     {
-        currObject->UpdateFrame(deltaTime);
-    }
-
-    if (mCameraControl)
-    {
-        mCameraControl->HandleUpdateFrame(deltaTime);
+        mCameraController->HandleUpdateFrame(deltaTime);
     }
 
     BuildAABBTree();
 }
 
-void RenderScene::CollectObjectsForRendering(SceneRenderList& renderList)
+void RenderScene::CollectObjectsForRendering()
 {
     mCamera.ComputeMatrices();
-    mAABBTree.QueryObjects(mCamera.mFrustum, [&renderList, this](SceneObject* sceneObject)
+    mAABBTree.QueryObjects(mCamera.mFrustum, [this](GameObject* sceneObject)
     {
-        sceneObject->RegisterForRendering(renderList);
-        sceneObject->mDistanceToCameraSquared = glm::length2(sceneObject->mPosition - mCamera.mPosition);
+        gRenderManager.RegisterSceneObjectForRendering(sceneObject);
+
+        TransformComponent* transformComponent = sceneObject->GetTransformComponent();
+        // update distance to camera
+        sceneObject->mDistanceToCameraSquared = glm::length2(transformComponent->mPosition - mCamera.mPosition);
     });
 }
 
@@ -80,113 +76,51 @@ void RenderScene::DebugRenderFrame(DebugRenderer& renderer)
 
 void RenderScene::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
-    if (mCameraControl)
+    if (mCameraController)
     {
-        mCameraControl->HandleInputEvent(inputEvent);
+        mCameraController->HandleInputEvent(inputEvent);
     }
 }
 
 void RenderScene::HandleInputEvent(MouseMovedInputEvent& inputEvent)
 {
-    if (mCameraControl)
+    if (mCameraController)
     {
-        mCameraControl->HandleInputEvent(inputEvent);
+        mCameraController->HandleInputEvent(inputEvent);
     }
 }
 
 void RenderScene::HandleInputEvent(MouseScrollInputEvent& inputEvent)
 {
-    if (mCameraControl)
+    if (mCameraController)
     {
-        mCameraControl->HandleInputEvent(inputEvent);
+        mCameraController->HandleInputEvent(inputEvent);
     }
 }
 
 void RenderScene::HandleInputEvent(KeyInputEvent& inputEvent)
 {
-    if (mCameraControl)
+    if (mCameraController)
     {
-        mCameraControl->HandleInputEvent(inputEvent);
+        mCameraController->HandleInputEvent(inputEvent);
     }
 }
 
 void RenderScene::HandleInputEvent(KeyCharEvent& inputEvent)
 {
-    if (mCameraControl)
+    if (mCameraController)
     {
-        mCameraControl->HandleInputEvent(inputEvent);
+        mCameraController->HandleInputEvent(inputEvent);
     }
 }
 
-SceneObject* RenderScene::CreateDummyObject(const glm::vec3& position, const glm::vec3& direction, float scaling)
-{
-    SceneObject* sceneEntity = new SceneObject;
-    sceneEntity->SetPosition(position);
-    // todo : direction
-    sceneEntity->SetScaling(scaling);
-    return sceneEntity;
-}
-
-SceneObject* RenderScene::CreateDummyObject()
-{
-    SceneObject* sceneEntity = new SceneObject;
-    return sceneEntity;
-}
-
-AnimatingModel* RenderScene::CreateAnimatingModel(ModelAsset* modelAsset, const glm::vec3& position, const glm::vec3& direction)
-{
-    AnimatingModel* sceneEntity = new AnimatingModel;
-    sceneEntity->SetPosition(position);
-    // todo : direction
-    sceneEntity->SetModelAsset(modelAsset);
-    return sceneEntity;
-}
-
-AnimatingModel* RenderScene::CreateAnimatingModel()
-{
-    AnimatingModel* sceneEntity = new AnimatingModel;
-    return sceneEntity;
-}
-
-TerrainMesh* RenderScene::CreateTerrainMesh(const Rect2D& mapTerrainArea)
-{
-    TerrainMesh* sceneEntity = new TerrainMesh;
-    sceneEntity->SetTerrainArea(mapTerrainArea);
-    sceneEntity->InvalidateMesh();
-    return sceneEntity;
-}
-
-TerrainMesh* RenderScene::CreateTerrainMesh()
-{
-    TerrainMesh* sceneEntity = new TerrainMesh;
-    return sceneEntity;
-}
-
-WaterLavaMesh* RenderScene::CreateWaterMesh(const TilesArray& meshTiles)
-{
-    WaterLavaMesh* sceneEntity = new WaterLavaMesh;
-    sceneEntity->SetWaterLavaTiles(meshTiles);
-    sceneEntity->SetSurfaceParams(DEFAULT_WATER_TRANSLUCENCY, DEFAULT_WATER_WAVE_WIDTH, DEFAULT_WATER_WAVE_HEIGHT, DEFAULT_WATER_WAVE_FREQ, DEFAULT_WATER_LEVEL);
-    sceneEntity->SetSurfaceTexture(gTexturesManager.mWaterTexture);
-    return sceneEntity;
-}
-
-WaterLavaMesh* RenderScene::CreateLavaMesh(const TilesArray& meshTiles)
-{
-    WaterLavaMesh* sceneEntity = new WaterLavaMesh;
-    sceneEntity->SetWaterLavaTiles(meshTiles);
-    sceneEntity->SetSurfaceParams(DEFAULT_LAVA_TRANSLUCENCY, DEFAULT_LAVA_WAVE_WIDTH, DEFAULT_LAVA_WAVE_HEIGHT, DEFAULT_LAVA_WAVE_FREQ, DEFAULT_LAVA_LEVEL);
-    sceneEntity->SetSurfaceTexture(gTexturesManager.mLavaTexture);
-    return sceneEntity;
-}
-
-void RenderScene::HandleTransformChange(SceneObject* sceneEntity)
+void RenderScene::HandleTransformChange(GameObject* sceneEntity)
 {
     debug_assert(sceneEntity);
     cxx::push_back_if_unique(mTransformObjects, sceneEntity); // queue for update
 }
 
-void RenderScene::AttachObject(SceneObject* sceneEntity)
+void RenderScene::AttachObject(GameObject* sceneEntity)
 {
     debug_assert(sceneEntity);
     // already attached to scene
@@ -203,7 +137,7 @@ void RenderScene::AttachObject(SceneObject* sceneEntity)
     mAABBTree.InsertObject(sceneEntity);
 }
 
-void RenderScene::DetachObject(SceneObject* sceneEntity)
+void RenderScene::DetachObject(GameObject* sceneEntity)
 {
     debug_assert(sceneEntity);
     if (sceneEntity->IsAttachedToScene())
@@ -222,29 +156,33 @@ void RenderScene::DetachObject(SceneObject* sceneEntity)
     mAABBTree.RemoveObject(sceneEntity);
 }
 
-void RenderScene::DestroyObject(SceneObject* sceneEntity)
+void RenderScene::DetachObjects()
 {
-    debug_assert(sceneEntity);
+    while (mSceneObjects.size())
+    {
+        GameObject* gameObject = mSceneObjects.back();
+        DetachObject(gameObject);
+    }
 
-    DetachObject(sceneEntity);
-    SafeDelete(sceneEntity);
+    debug_assert(mTransformObjects.empty());
+    mTransformObjects.clear();
 }
 
-void RenderScene::SetCameraControl(SceneCameraControl* cameraController)
+void RenderScene::SetCameraController(CameraController* cameraController)
 {
-    if (mCameraControl == cameraController)
+    if (mCameraController == cameraController)
         return;
 
-    if (mCameraControl)
+    if (mCameraController)
     {
-        mCameraControl->HandleSceneDetach();
-        mCameraControl->mSceneCamera = nullptr;
+        mCameraController->HandleSceneDetach();
+        mCameraController->mSceneCamera = nullptr;
     }
-    mCameraControl = cameraController;
-    if (mCameraControl)
+    mCameraController = cameraController;
+    if (mCameraController)
     {
-        mCameraControl->mSceneCamera = &mCamera;
-        mCameraControl->HandleSceneAttach();
+        mCameraController->mSceneCamera = &mCamera;
+        mCameraController->HandleSceneAttach();
     }
 }
 
@@ -252,22 +190,10 @@ void RenderScene::BuildAABBTree()
 {
     while (!mTransformObjects.empty())
     {
-        SceneObject* sceneObject = mTransformObjects.back();
+        GameObject* sceneObject = mTransformObjects.back();
         mTransformObjects.pop_back();
 
         // refresh aabbtree node
         mAABBTree.UpdateObject(sceneObject);
     }
-}
-
-void RenderScene::DestroySceneObjects()
-{
-    while (!mSceneObjects.empty())
-    {
-        SceneObject* sceneObject = mSceneObjects.back();
-        DestroyObject(sceneObject);
-    }
-
-    debug_assert(mTransformObjects.empty());
-    mTransformObjects.clear();
 }

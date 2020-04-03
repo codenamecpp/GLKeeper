@@ -4,21 +4,19 @@
 #include "Console.h"
 #include "TerrainManager.h"
 #include "RoomsManager.h"
+#include "GameObjectsManager.h"
 
 GameWorld gGameWorld;
 
-bool GameWorld::InitializeWorld(const std::string& scenarioName)
+bool GameWorld::Initialize()
 {
-    ScenarioLoader scenarioLoader (mScenarioData);
-    if (!scenarioLoader.LoadScenarioData(scenarioName))
+    if (!gGameObjectsManager.Initialize())
     {
         Deinit();
 
-        gConsole.LogMessage(eLogMessage_Warning, "Cannot load scenario data");
+        gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize game objects manager");
         return false;
     }
-
-    SetupMapData(0xDEADBEEF);
 
     if (!gTerrainManager.Initialize())
     {
@@ -36,9 +34,6 @@ bool GameWorld::InitializeWorld(const std::string& scenarioName)
         return false;
     }
 
-    ConstructStartupRooms();
-
-    gTerrainManager.BuildFullTerrainMesh();
     return true;
 }
 
@@ -46,6 +41,38 @@ void GameWorld::Deinit()
 {
     gRoomsManager.Deinit();
     gTerrainManager.Deinit();
+    gGameObjectsManager.Deinit();
+}
+
+bool GameWorld::LoadScenario(const std::string& scenarioName)
+{
+    ScenarioLoader scenarioLoader (mScenarioData);
+    if (!scenarioLoader.LoadScenarioData(scenarioName))
+    {
+        gConsole.LogMessage(eLogMessage_Warning, "Cannot load scenario data");
+        return false;
+    }
+    return true;
+}
+
+void GameWorld::EnterWorld()
+{
+    SetupMapData(0xDEADBEEF);
+
+    gGameObjectsManager.EnterWorld();
+    gTerrainManager.EnterWorld();
+
+    ConstructStartupRooms();
+    gRoomsManager.EnterWorld();
+
+    gTerrainManager.BuildFullTerrainMesh();
+}
+
+void GameWorld::ClearWorld()
+{
+    gTerrainManager.ClearWorld();
+    gRoomsManager.ClearWorld();
+    gGameObjectsManager.ClearWorld();
     mScenarioData.Clear();
     mMapData.Clear();
 }
@@ -54,6 +81,7 @@ void GameWorld::UpdateFrame()
 {
     gRoomsManager.UpdateFrame();
     gTerrainManager.UpdateTerrainMesh();
+    gGameObjectsManager.UpdateFrame();
 }
 
 void GameWorld::SetupMapData(unsigned int seed)

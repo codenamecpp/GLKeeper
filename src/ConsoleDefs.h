@@ -1,7 +1,5 @@
 #pragma once
 
-#include "CommonTypes.h"
-
 // forwards
 class CVarBase;
 

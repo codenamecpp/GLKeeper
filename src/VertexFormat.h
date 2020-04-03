@@ -1,7 +1,5 @@
 #pragma once
 
-#include "GraphicsDefs.h"
-
 // defines vertex attributes streams
 struct VertexFormat
 {

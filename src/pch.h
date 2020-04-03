@@ -64,3 +64,20 @@
 #include "json_document.h"
 #include "common_utils.h"
 #include "handle.h"
+
+// game
+
+#include "CommonTypes.h"
+#include "GraphicsDefs.h"
+#include "GameDefs.h"
+#include "CreatureDefs.h"
+#include "ScenarioDefs.h"
+#include "RoomsDefs.h"
+#include "InputsDefs.h"
+#include "RenderDefs.h"
+#include "SceneDefs.h"
+#include "ResourceDefs.h"
+#include "GameObjectsDefs.h"
+#include "ConsoleDefs.h"
+
+#include "MeshMaterial.h"

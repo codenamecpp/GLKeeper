@@ -1,9 +1,6 @@
 #pragma once
 
-#include "ResourceDefs.h"
-#include "RenderDefs.h"
 #include "MorphAnimRenderProgram.h"
-#include "SceneDefs.h"
 
 // models visualization manager
 class AnimatingModelsRenderer: public cxx::noncopyable
@@ -16,8 +13,8 @@ public:
 
     // render animating model for current render pass
     // @param renderContext: Current render context
-    // @param animatingModel: Model instance
-    void RenderModel(SceneRenderContext& renderContext, AnimatingModel* animatingModel);
+    // @param component: Renderable component
+    void Render(SceneRenderContext& renderContext, AnimModelComponent* component);
 
     // recreate renderdata for specific model asset
     // @param modelAsset: Model data

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GenericGamestate.h"
-#include "GodModeCameraControl.h"
+#include "GodModeCameraController.h"
 
 // in-game gamestate
 class GameplayGamestate: public GenericGamestate
@@ -26,5 +26,5 @@ public:
     void HandleInputEvent(KeyCharEvent& inputEvent) override;
 
 private:
-    GodModeCameraControl mGodModeCameraControl;
+    GodModeCameraController mGodModeCameraControl;
 };

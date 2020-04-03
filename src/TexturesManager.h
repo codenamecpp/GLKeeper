@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ResourceDefs.h"
 #include "Texture2DAnimation.h"
 
 // textures manager class

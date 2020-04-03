@@ -1,7 +1,5 @@
 #pragma once
 
-#include "CommonTypes.h"
-
 #define SYSTEM_SETTINGS_FILE "config/system_settings.json"
 
 // system settings from file

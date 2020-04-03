@@ -1,6 +1,5 @@
 #pragma once
 
-#include "GraphicsDefs.h"
 #include "GuiRenderProgram.h"
 #include "DebugRenderer.h"
 #include "AnimatingModelsRenderer.h"
@@ -24,6 +23,10 @@ public:
     // @returns false on error
     bool Initialize();
     void Deinit();
+
+    // register game object for rendering on current render frame
+    // @param gameObject: Object
+    void RegisterSceneObjectForRendering(GameObject* gameObject);
 
     // render game frame routine
     void RenderFrame();

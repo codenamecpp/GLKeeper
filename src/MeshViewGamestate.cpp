@@ -3,11 +3,13 @@
 #include "GameMain.h"
 #include "RenderScene.h"
 #include "System.h"
-#include "SceneObject.h"
+#include "GameObject.h"
 #include "ModelAssetsManager.h"
-#include "AnimatingModel.h"
+#include "AnimModelComponent.h"
 #include "TimeManager.h"
 #include "DebugUiManager.h"
+#include "GameObjectsManager.h"
+#include "GameObjectComponentsFactory.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -22,22 +24,25 @@
 
 void MeshViewGamestate::HandleGamestateEnter()
 {
-    mOrbitCameraControl.SetParams(MESH_VIEW_CAMERA_YAW_DEG, MESH_VIEW_CAMERA_PITCH_DEG, MESH_VIEW_CAMERA_DISTANCE);
+    mOrbitCameraController.SetParams(MESH_VIEW_CAMERA_YAW_DEG, MESH_VIEW_CAMERA_PITCH_DEG, MESH_VIEW_CAMERA_DISTANCE);
 
     // setup scene camera
     gRenderScene.mCamera.SetPerspective(gSystem.mSettings.mScreenAspectRatio, MESH_VIEW_CAMERA_FOVY, MESH_VIEW_CAMERA_NEAR, MESH_VIEW_CAMERA_FAR);
 
-    gRenderScene.SetCameraControl(&mOrbitCameraControl);
-    mOrbitCameraControl.ResetOrientation();
+    gRenderScene.SetCameraController(&mOrbitCameraController);
+    mOrbitCameraController.ResetOrientation();
 
     ModelAsset* modelAsset = gModelsManager.LoadModelAsset("vampire-pray");
 
-    mModelObject = gRenderScene.CreateAnimatingModel(modelAsset, glm::vec3(0.0f), glm::vec3(0.0f));
-    if (mModelObject)
-    {
-        gRenderScene.AttachObject(mModelObject);
-        mModelObject->StartAnimation(24.0f, true);
-    }
+    mModelObject = gGameObjectsManager.CreateGameObject();
+    debug_assert(mModelObject);
+
+    AnimModelComponent* animComponent = gComponentsFactory.CreateAnimModelComponent(mModelObject);
+    mModelObject->AddComponent(animComponent);
+
+    animComponent->SetModelAsset(modelAsset);
+    animComponent->StartAnimation(24.0f, true);
+    gRenderScene.AttachObject(mModelObject);
 
     gDebugUiManager.AttachWindow(&mMeshViewWindow);
     mMeshViewWindow.SetWindowShown(true);
@@ -46,10 +51,11 @@ void MeshViewGamestate::HandleGamestateEnter()
 
 void MeshViewGamestate::HandleGamestateLeave()
 {
-    gRenderScene.SetCameraControl(nullptr);
+    gRenderScene.SetCameraController(nullptr);
     if (mModelObject)
     {
-        gRenderScene.DestroyObject(mModelObject);
+        gRenderScene.DetachObject(mModelObject);
+        gGameObjectsManager.DestroyGameObject(mModelObject);
         mModelObject = nullptr;
     }
 

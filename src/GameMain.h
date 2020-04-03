@@ -1,8 +1,5 @@
 #pragma once
 
-#include "GameDefs.h"
-#include "InputsDefs.h"
-#include "RenderDefs.h"
 #include "MeshViewGamestate.h"
 #include "GameplayGamestate.h"
 #include "FpsWindow.h"

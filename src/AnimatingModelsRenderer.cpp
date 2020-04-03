@@ -3,11 +3,13 @@
 #include "ModelAsset.h"
 #include "GraphicsDevice.h"
 #include "GpuBuffer.h"
-#include "AnimatingModel.h"
+#include "GameObjectComponent.h"
+#include "AnimModelComponent.h"
 #include "RenderScene.h"
 #include "VertexFormat.h"
 #include "ConsoleVariable.h"
 #include "cvars.h"
+#include "GameObject.h"
 
 // internal info
 class ModelsRenderData: public cxx::noncopyable
@@ -58,30 +60,36 @@ void AnimatingModelsRenderer::Deinit()
     mModelsCache.clear();
 }
 
-void AnimatingModelsRenderer::RenderModel(SceneRenderContext& renderContext, AnimatingModel* animatingModel)
+void AnimatingModelsRenderer::Render(SceneRenderContext& renderContext, AnimModelComponent* component)
 {
-    ModelAsset* modelAsset = animatingModel->mModelAsset;
-    if (animatingModel == nullptr || modelAsset== nullptr)
+    if (!gCVarRender_DrawModels.mValue)
+        return;
+
+    if (component == nullptr || component->mModelAsset == nullptr)
     {
         debug_assert(false);
         return;
-    }
 
-    if (animatingModel->mRenderData == nullptr)
+    }
+    ModelAsset* modelAsset = component->mModelAsset;
+    if (component->mRenderData == nullptr)
     {
-        animatingModel->mRenderData = GetRenderData(modelAsset);
-        if (animatingModel->mRenderData == nullptr)
+        component->mRenderData = GetRenderData(modelAsset);
+        if (component->mRenderData == nullptr)
         {
             debug_assert(false);
             return;
         }
     }
-    ModelsRenderData* renderData = animatingModel->mRenderData;
+
+    TransformComponent* transformComponent = component->mGameObject->GetTransformComponent();
+
+    ModelsRenderData* renderData = component->mRenderData;
 
     mMorphAnimRenderProgram.SetViewProjectionMatrix(gRenderScene.mCamera.mViewProjectionMatrix);
-    mMorphAnimRenderProgram.SetModelMatrix(animatingModel->mTransformation);
+    mMorphAnimRenderProgram.SetModelMatrix(transformComponent->mTransformation);
 
-    float mixFrames = animatingModel->mAnimState.mMixFrames;
+    float mixFrames = component->mAnimState.mMixFrames;
     if (!gCvarRender_EnableAnimBlendFrames.mValue)
     {
         mixFrames = 0.0f;
@@ -93,7 +101,7 @@ void AnimatingModelsRenderer::RenderModel(SceneRenderContext& renderContext, Ani
     gGraphicsDevice.BindIndexBuffer(renderData->mIndicesBuffer);
 
     // select level of details to render
-    int selectLOD = animatingModel->mPreferredLOD;
+    int selectLOD = component->mPreferredLOD;
 
     Vertex3D_Anim_Format vertexDefs;
 
@@ -105,7 +113,7 @@ void AnimatingModelsRenderer::RenderModel(SceneRenderContext& renderContext, Ani
         if (selectLOD >= (int)currentSubMesh.mLODsArray.size())
             continue;
 
-        RenderMaterial& renderMaterial = animatingModel->mSubmeshMaterials[currentSubMesh.mMaterialIndex];
+        MeshMaterial& renderMaterial = component->mSubmeshMaterials[currentSubMesh.mMaterialIndex];
         // filter out submeshes depending on current render pass
         if (renderContext.mCurrentPass == eRenderPass_Translucent && !renderMaterial.IsTransparent())
             continue;
@@ -115,8 +123,8 @@ void AnimatingModelsRenderer::RenderModel(SceneRenderContext& renderContext, Ani
 
         renderMaterial.ActivateMaterial();
 
-        int frame0 = animatingModel->mAnimState.mFrame0;
-        int frame1 = animatingModel->mAnimState.mFrame1;
+        int frame0 = component->mAnimState.mFrame0;
+        int frame1 = component->mAnimState.mFrame1;
 
         // prepare vertex streams definition
         vertexDefs.Setup(renderData->mSubsets[icurrSubset].mVerticesDataOffset, currentSubMesh.mFrameVerticesCount, modelAsset->mFramesCount, frame0, frame1);

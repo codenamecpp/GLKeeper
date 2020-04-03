@@ -7,9 +7,10 @@
 #include "imgui.h"
 #include "ModelAsset.h"
 #include "ModelAssetsManager.h"
-#include "AnimatingModel.h"
 #include "MeshViewGamestate.h"
 #include "cvars.h"
+#include "AnimModelComponent.h"
+#include "GameObject.h"
 
 MeshViewWindow::MeshViewWindow()
 {
@@ -67,8 +68,16 @@ void MeshViewWindow::DoUI(ImGuiIO& imguiContext)
     ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
     if (ImGui::BeginTabBar("Tabs", tab_bar_flags))
     {
-        AnimatingModel* animModel = mMeshViewGamestate ? mMeshViewGamestate->mModelObject : nullptr;
-        ModelAsset* modelAsset = animModel->mModelAsset;
+        AnimModelComponent* animModel = nullptr;
+        ModelAsset* modelAsset = nullptr;
+        if (mMeshViewGamestate && mMeshViewGamestate->mModelObject)
+        {
+            animModel = mMeshViewGamestate->mModelObject->GetAnimatingModelComponent();
+            if (animModel)
+            {
+                modelAsset = animModel->mModelAsset;
+            }
+        }
 
         // curr model info
         if (animModel && modelAsset && ImGui::BeginTabItem("Model info"))
@@ -243,7 +252,10 @@ void MeshViewWindow::ChangeModelAsset(const char* assetName)
             return;
         }
 
-        mMeshViewGamestate->mModelObject->SetModelAsset(modelAsset);
-        mMeshViewGamestate->mModelObject->StartAnimation(24.0f, true);
+        AnimModelComponent* component = mMeshViewGamestate->mModelObject->GetAnimatingModelComponent();
+        debug_assert(component);
+
+        component->SetModelAsset(modelAsset);
+        component->StartAnimation(24.0f, true);
     }
 }

@@ -1,8 +1,5 @@
 #pragma once
 
-#include "RoomsDefs.h"
-#include "ScenarioDefs.h"
-
 class RoomsManager: public cxx::noncopyable
 {
 public:
@@ -14,6 +11,9 @@ public:
     // setup rooms manager internal resources
     bool Initialize();
     void Deinit();
+
+    void EnterWorld();
+    void ClearWorld();
 
     // process single frame logic
     void UpdateFrame();

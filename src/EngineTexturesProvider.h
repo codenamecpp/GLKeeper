@@ -1,8 +1,5 @@
 #pragma once
 
-#include "CommonTypes.h"
-#include "GraphicsDefs.h"
-
 // dungeon keeper engine textures provider
 class EngineTexturesProvider: public cxx::noncopyable
 {

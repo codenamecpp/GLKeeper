@@ -1,7 +1,5 @@
 #pragma once
 
-#include "GraphicsDefs.h"
-
 // shader program
 class RenderProgram: public cxx::noncopyable
 {

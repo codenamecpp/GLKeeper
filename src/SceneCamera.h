@@ -1,8 +1,5 @@
 #pragma once
 
-#include "SceneDefs.h"
-#include "CommonTypes.h"
-
 // defines camera in 3d space
 class SceneCamera
 {

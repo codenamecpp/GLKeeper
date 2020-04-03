@@ -1,6 +1,5 @@
 #pragma once
 
-#include "GraphicsDefs.h"
 #include "Console.h"
 
 // opengl

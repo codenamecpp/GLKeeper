@@ -1,7 +1,5 @@
 #pragma once
 
-#include "GraphicsDefs.h"
-#include "CommonTypes.h"
 #include "GraphicsDeviceContext.h"
 #include "VertexFormat.h"
 

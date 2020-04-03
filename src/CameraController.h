@@ -1,14 +1,10 @@
 #pragma once
 
-#include "InputsDefs.h"
-
-class SceneCamera;
-
 // scene camera controller base class
-class SceneCameraControl
+class CameraController
 {
 public:
-    virtual ~SceneCameraControl()
+    virtual ~CameraController()
     {
     }
 

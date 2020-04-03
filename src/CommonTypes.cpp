@@ -1,5 +1,4 @@
 #include "pch.h"
-#include "CommonTypes.h"
 
 const Color32 Color32_Red (0xFF,0x00,0x00,0xFF);
 const Color32 Color32_Green (0x00,0xFF,0x00,0xFF);

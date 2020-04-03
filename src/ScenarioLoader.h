@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ScenarioDefs.h"
 #include "BinaryInputStream.h"
 
 // scenario data loader

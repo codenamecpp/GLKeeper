@@ -23,10 +23,18 @@ bool GameMain::Initialize()
     gDebugUiManager.AttachWindow(&mFpsWindow);
     mFpsWindow.SetWindowShown(false);
 
+    if (!gGameWorld.Initialize())
+    {
+        gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize game world");
+
+        Deinit();
+        return false;
+    }
+
+    gGameWorld.LoadScenario("temp");
+
     // set initial gamestate
     //SwitchToGameState(&mMeshViewGamestate);
-
-    gGameWorld.InitializeWorld("temp");
 
     SwitchToGameState(&mGameplayGamestate);
 

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "GraphicsDefs.h"
-
 // represents current low level graphics device state which is does not intended for direct usage
 class GraphicsDeviceContext
 {

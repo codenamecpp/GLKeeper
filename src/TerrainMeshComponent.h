@@ -1,31 +1,29 @@
 #pragma once
 
-#include "SceneObject.h"
-#include "RenderMaterial.h"
-#include "GraphicsDefs.h"
+#include "GameObjectComponent.h"
 
-// terrain mesh instance
-class TerrainMesh: public SceneObject
+// terrain mesh component of game object
+class TerrainMeshComponent: public GameObjectComponent
 {
     friend class TerrainMeshRenderer;
+    friend class RenderManager;
 
 public:
     // readonly
     Rect2D mMapTerrainRect;
 
 public:
-    TerrainMesh();
-    ~TerrainMesh();
+    TerrainMeshComponent(GameObject* gameObject);
+    ~TerrainMeshComponent();
+
+    // process render frame
+    void RenderFrame(SceneRenderContext& renderContext) override;
 
     void SetTerrainArea(const Rect2D& mapArea);
     void InvalidateMesh();
 
     // rebuild terrain mesh and upload data to video memory
     void UpdateMesh();
-
-    // request entity to register itself in render lists
-    // @param renderList: Render lists
-    void RegisterForRendering(SceneRenderList& renderList) override;
 
     // test whether mesh data is invalid
     bool IsMeshInvalidated() const;
@@ -39,8 +37,8 @@ private:
     struct MeshBatch
     {
     public:
-        RenderMaterial mMaterial;
-        
+        MeshMaterial mMaterial;
+
         int mVertexStart;
         int mVertexCount;
 

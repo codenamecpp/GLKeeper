@@ -4,19 +4,23 @@
 #include "System.h"
 #include "GameMain.h"
 #include "RenderManager.h"
+#include "GameWorld.h"
 
 void GameplayGamestate::HandleGamestateEnter()
 {
-    gRenderScene.SetCameraControl(&mGodModeCameraControl);
+    gRenderScene.SetCameraController(&mGodModeCameraControl);
 
     mGodModeCameraControl.SetFocusPoint(glm::vec3(0.0f));
 
     gGameMain.mFpsWindow.SetWindowShown(true);
+
+    gGameWorld.EnterWorld();
 }
 
 void GameplayGamestate::HandleGamestateLeave()
 {
-    gRenderScene.SetCameraControl(nullptr);
+    gGameWorld.ClearWorld();
+    gRenderScene.SetCameraController(nullptr);
 
     gGameMain.mFpsWindow.SetWindowShown(false);
 }

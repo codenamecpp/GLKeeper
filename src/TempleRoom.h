@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GenericRoom.h"
-#include "SceneDefs.h"
 
 // temple room logic
 class TempleRoom: public GenericRoom
@@ -18,5 +17,5 @@ private:
     void ScanWaterPoolTiles(TilesArray& poolTiles);
 
 private:
-    WaterLavaMesh* mTempleWaterPool = nullptr;
+    GameObject* mWaterPoolObject = nullptr;
 };

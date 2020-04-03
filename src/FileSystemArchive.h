@@ -1,7 +1,5 @@
 #pragma once
 
-#include "CommonTypes.h"
-
 // game wad archive
 class FileSystemArchive: public cxx::noncopyable
 {

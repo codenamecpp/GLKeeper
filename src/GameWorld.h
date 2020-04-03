@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ScenarioDefs.h"
 #include "GameMap.h"
 #include "DungeonBuilder.h"
 
@@ -14,11 +13,15 @@ public:
     DungeonBuilder mDungeonBuilder;
 
 public:
-    
+
+    bool Initialize();
+    void Deinit();
+
     // load world data, level map, setup players, build rooms etc
     // @param scenarioName: Scenario name
-    bool InitializeWorld(const std::string& scenarioName);
-    void Deinit();
+    bool LoadScenario(const std::string& scenarioName);
+    void EnterWorld();
+    void ClearWorld();
 
     // process single frame logic
     void UpdateFrame();

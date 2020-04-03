@@ -15,15 +15,13 @@
 #define DEFAULT_LAVA_WAVE_FREQ      2.5f
 
 // forwards
-class SceneObject;
 class SceneCamera;
 class RenderScene;
-class SceneCameraControl;
-class AnimatingModel;
-class TerrainMesh;
-class WaterLavaMesh;
+class CameraController;
 class SceneRenderList;
+class SceneRenderContext;
 
+// camera mode
 enum eSceneCameraMode
 {
     eSceneCameraMode_Perspective,
@@ -40,3 +38,5 @@ const glm::vec3 SceneAxisY (0.0f, 1.0f, 0.0f);
 
 // get scene global space forward direction vector
 const glm::vec3 SceneAxisZ (0.0f, 0.0f, 1.0f);
+
+const glm::mat4 SceneIdentyMatrix (1.0f);

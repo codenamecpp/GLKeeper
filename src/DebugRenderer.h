@@ -1,6 +1,5 @@
 #pragma once
 
-#include "GraphicsDefs.h"
 #include "DebugDrawRenderProgram.h"
 
 // debug geometry visualization manager

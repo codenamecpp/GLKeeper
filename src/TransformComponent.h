@@ -1,40 +1,25 @@
 #pragma once
 
-#include "SceneDefs.h"
-#include "RenderDefs.h"
+#include "GameObjectComponent.h"
 
-class SceneObject: public cxx::noncopyable
+// transformation component of game object
+class TransformComponent: public GameObjectComponent
 {
-    friend class RenderScene;
-
 public:
     // readonly
     glm::vec3 mDirectionRight; // direction vector along x axis, should be normalized
     glm::vec3 mDirectionUpward; // direction vector along y axis, should be normalized
     glm::vec3 mDirectionForward; // direction vector along z axis, should be normalized
-    glm::vec3 mPosition; // position is scene, global
+    glm::vec3 mPosition; // position within world
     float mScaling; // uniform scaling
     glm::mat4 mTransformation; // should be manually updated so make sure to do ComputeTransformation
 
-    // transformed bounds should be manually updated so make sure to ComputeTransformation
+                               // transformed bounds should be manually updated so make sure to ComputeTransformation
     cxx::aabbox mBoundsTransformed; // world space
     cxx::aabbox mBounds; // untransformed, used for culling and mouse tests
 
-    Color32 mDebugColor; // color used for debug draw
-
-    float mDistanceToCameraSquared; // this value gets updated during scene rendition
-
 public:
-    SceneObject();
-    virtual ~SceneObject();
-
-    // process scene update frame
-    // @param deltaTime: Time since last update
-    virtual void UpdateFrame(float deltaTime) {}
-
-    // request entity to register itself in render lists
-    // @param renderList: Render lists
-    virtual void RegisterForRendering(SceneRenderList& renderList) {}
+    TransformComponent(GameObject* gameObject);
 
     // set entity orienation vectors, expecting all normalized
     // @param directionRight: Vector X
@@ -49,17 +34,17 @@ public:
     void OrientTowards(const glm::vec3& point);
     void OrientTowards(const glm::vec3& point, const glm::vec3& upward);
 
-    // reset entity orientation on scene to defaults
+    // reset orientation to defaults
     void ResetOrientation();
 
     // Reset Position, Scale and Rotation to identity
     void ResetTransformation();
 
-    // set entity position on the scene
+    // set position
     // @param position: Position
     void SetPosition(const glm::vec3& position);
 
-    // set entity uniform scale
+    // set uniform scale
     // @param scaling: Scaling factor
     void SetScaling(float scaling);
 
@@ -68,7 +53,7 @@ public:
     // @param rotationAngle: Angle specified in radians
     void Rotate(const glm::vec3& rotationAxis, float rotationAngle);
 
-    // move entity on scene
+    // translate position
     // @param translation: Translation
     void Translate(const glm::vec3& translation);
 
@@ -79,18 +64,11 @@ public:
     // @param aabox: Bounds
     void SetLocalBoundingBox(const cxx::aabbox& aabox);
 
-    // test whether scene entity is currently attached to scene and therefore may be rendered
-    bool IsAttachedToScene() const;
-
-private:
     // process entity transform or bounds changed
     void InvalidateTransform(); 
-    void InvalidateBounds();    
-
-    void SetAttachedToScene(bool isAttached);
+    void InvalidateBounds();
 
 private:
-    bool mIsAttachedToScene;
     // dirty flags
     bool mTransformDirty;
     bool mBoundingBoxDirty;

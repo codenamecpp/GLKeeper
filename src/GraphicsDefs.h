@@ -1,7 +1,5 @@
 #pragma once
 
-#include "CommonTypes.h"
-
 // forwards
 class GraphicsDevice;
 class GpuBuffer;
@@ -414,7 +412,7 @@ const BufferAccessBits BufferAccess_UnsynchronizedWrite = BufferAccess_Unsynchro
 enum eBlendingMode : unsigned char
 {
     eBlendingMode_Alpha,
-    eBlendingMode_Additive,
+    eBlendingMode_AlphaAdditive,
     eBlendingMode_Multiply,
     eBlendingMode_Premultiplied,
     eBlendingMode_Screen

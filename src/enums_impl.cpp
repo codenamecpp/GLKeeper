@@ -1,10 +1,4 @@
 #include "pch.h"
-#include "CommonTypes.h"
-#include "GraphicsDefs.h"
-#include "InputsDefs.h"
-#include "RenderDefs.h"
-#include "SceneDefs.h"
-#include "ScenarioDefs.h"
 
 impl_enum_strings(eLogMessage)
 {
@@ -114,7 +108,7 @@ impl_enum_strings(eBufferUsage)
 impl_enum_strings(eBlendingMode)
 {
     {eBlendingMode_Alpha, "alpha"},
-    {eBlendingMode_Additive, "additive"},
+    {eBlendingMode_AlphaAdditive, "alpha_additive"},
     {eBlendingMode_Multiply, "multiply"},
     {eBlendingMode_Premultiplied, "premultiplied"},
     {eBlendingMode_Screen, "screen"},
@@ -216,6 +210,14 @@ impl_enum_strings(eSceneCameraMode)
 {
     {eSceneCameraMode_Perspective, "perspective"},
     {eSceneCameraMode_Orthographic, "orthographic"},
+};
+
+impl_enum_strings(eGameObjectComponent)
+{
+    {eGameObjectComponent_Transform, "transform"},
+    {eGameObjectComponent_TerrainMesh, "terrain_mesh"},
+    {eGameObjectComponent_WaterLavaMesh, "water_lava_mesh"},
+    {eGameObjectComponent_AnimatingModel, "animating_model"},
 };
 
 impl_enum_strings(ePlayerID)

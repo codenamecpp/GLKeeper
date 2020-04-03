@@ -1,7 +1,5 @@
 #pragma once
 
-#include "GraphicsDefs.h"
-
 // defines hardware 2d texture object
 class GpuTexture2D: public cxx::noncopyable
 {

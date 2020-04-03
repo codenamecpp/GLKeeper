@@ -6,7 +6,7 @@
 #include "GameMain.h"
 #include "ConsoleVariable.h"
 #include "RenderScene.h"
-#include "SceneObject.h"
+#include "GameObject.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -66,6 +66,92 @@ void RenderManager::Deinit()
     mSceneRenderList.Clear();
 
     mLoadedRenderProgramsList.clear();
+}
+
+void RenderManager::RegisterSceneObjectForRendering(GameObject* gameObject)
+{
+    debug_assert(gameObject);
+
+    if (AnimModelComponent* component = gameObject->GetAnimatingModelComponent())
+    {
+        bool hasOpaqueParts = false;
+        bool hasTranslucentParts = false;
+
+        for (const MeshMaterial& currMaterial: component->mSubmeshMaterials)
+        {
+            if (currMaterial.IsTransparent())
+            {
+                hasTranslucentParts = true;
+            }
+            else
+            {
+                hasOpaqueParts = true;
+            }
+        }
+
+        if (hasTranslucentParts)
+        {
+            mSceneRenderList.RegisterRenderableComponent(eRenderPass_Translucent, component);
+        }
+
+        if (hasOpaqueParts)
+        {
+            mSceneRenderList.RegisterRenderableComponent(eRenderPass_Opaque, component);
+        }
+    }
+
+    if (TerrainMeshComponent* component = gameObject->GetTerrainMeshComponent())
+    {
+        bool hasOpaqueParts = false;
+        bool hasTranslucentParts = false;
+
+        for (const auto& currBatch: component->mBatchArray)
+        {
+            if (currBatch.mMaterial.IsTransparent())
+            {
+                hasTranslucentParts = true;
+            }
+            else
+            {
+                hasOpaqueParts = true;
+            }
+        }
+
+        if (hasTranslucentParts)
+        {
+            mSceneRenderList.RegisterRenderableComponent(eRenderPass_Translucent, component);
+        }
+
+        if (hasOpaqueParts)
+        {
+            mSceneRenderList.RegisterRenderableComponent(eRenderPass_Opaque, component);
+        }
+    }
+
+    if (WaterLavaMeshComponent* component = gameObject->GetWaterLavaMeshComponent())
+    {
+        bool hasOpaqueParts = false;
+        bool hasTranslucentParts = false;
+
+        if (component->mMaterial.IsTransparent())
+        {
+            hasTranslucentParts = true;
+        }
+        else
+        {
+            hasOpaqueParts = true;
+        }
+
+        if (hasTranslucentParts)
+        {
+            mSceneRenderList.RegisterRenderableComponent(eRenderPass_Translucent, component);
+        }
+
+        if (hasOpaqueParts)
+        {
+            mSceneRenderList.RegisterRenderableComponent(eRenderPass_Opaque, component);
+        }
+    }
 }
 
 void RenderManager::RenderFrame()
@@ -146,51 +232,21 @@ void RenderManager::DrawScene()
 {
     SceneRenderContext renderContext;
 
-    gRenderScene.CollectObjectsForRendering(mSceneRenderList);
+    gRenderScene.CollectObjectsForRendering();
 
-    // sort by renderable type
-    mSceneRenderList.SortOpaquesByObjectType();
+    mSceneRenderList.SortOpaqueComponents();
+    mSceneRenderList.SortTranslucentComponents();
 
-    // opaque pass
-    renderContext.mCurrentPass = eRenderPass_Opaque;
-    
-    for (int i = 0; i < mSceneRenderList.mOpaqueElementsCount; ++i)
+    for (eRenderPass currRenderPass : {eRenderPass_Opaque, eRenderPass_Translucent})
     {
-        const auto& element = mSceneRenderList.mOpaqueElements[i];
-        if (element.mAnimatingModel && gCVarRender_DrawModels.mValue)
+        const auto& currentList = mSceneRenderList.mComponentsForRenderPass[currRenderPass];
+        for (int icurrentComponent = 0; icurrentComponent < currentList.mElementsCount; ++icurrentComponent)
         {
-            mAnimatingModelsRenderer.RenderModel(renderContext, element.mAnimatingModel);
-        }
-        if (element.mTerrainMesh && gCVarRender_DrawTerrain.mValue)
-        {
-            mTerrainMeshRenderer.RenderTerrainMesh(renderContext, element.mTerrainMesh);
-        }
-        if (element.mWaterLavaMesh && gCVarRender_DrawWaterAndLava.mValue)
-        {
-            mWaterLavaMeshRenderer.RenderWaterLavaMesh(renderContext, element.mWaterLavaMesh);
-        }
-    }
-
-    // translucent pass
-    renderContext.mCurrentPass = eRenderPass_Translucent;
-
-    // sort by camera distance, from far to near
-    mSceneRenderList.SortTranslucentsByDistanceToCamera();
-
-    for (int i = 0; i < mSceneRenderList.mTranslucentElementsCount; ++i)
-    {
-        const auto& element = mSceneRenderList.mTranslucentElements[i];
-        if (element.mAnimatingModel && gCVarRender_DrawModels.mValue)
-        {
-            mAnimatingModelsRenderer.RenderModel(renderContext, element.mAnimatingModel);
-        }
-        if (element.mTerrainMesh && gCVarRender_DrawTerrain.mValue)
-        {
-            mTerrainMeshRenderer.RenderTerrainMesh(renderContext, element.mTerrainMesh);
-        }
-        if (element.mWaterLavaMesh && gCVarRender_DrawWaterAndLava.mValue)
-        {
-            mWaterLavaMeshRenderer.RenderWaterLavaMesh(renderContext, element.mWaterLavaMesh);
+            GameObjectComponent* currentComponent = currentList.mElements[icurrentComponent];
+            if (currentComponent->IsRenderableComponent())
+            {
+                currentComponent->RenderFrame(renderContext);
+            }
         }
     }
 

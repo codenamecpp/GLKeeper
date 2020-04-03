@@ -1,7 +1,5 @@
 #pragma once
 
-#include "InputsDefs.h"
-
 // game state controller interface
 class GenericGamestate: public cxx::noncopyable
 {
