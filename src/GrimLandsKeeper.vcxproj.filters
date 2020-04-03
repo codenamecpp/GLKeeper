@@ -366,9 +366,6 @@
     <ClInclude Include="AnimatingModelsRenderer.h">
       <Filter>Game\Render</Filter>
     </ClInclude>
-    <ClInclude Include="FpsWindow.h">
-      <Filter>Application\DebugUI\Windows</Filter>
-    </ClInclude>
     <ClInclude Include="WaterLavaRenderProgram.h">
       <Filter>Game\Render\Shaders</Filter>
     </ClInclude>
@@ -386,12 +383,6 @@
     </ClInclude>
     <ClInclude Include="WallSection.h">
       <Filter>Game\World\Rooms</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugUiWindow.h">
-      <Filter>Application\DebugUI</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugUiManager.h">
-      <Filter>Application\DebugUI</Filter>
     </ClInclude>
     <ClInclude Include="TempleRoom.h">
       <Filter>Game\World\Rooms</Filter>
@@ -431,6 +422,18 @@
     </ClInclude>
     <ClInclude Include="GameObjectComponentsFactory.h">
       <Filter>Game\GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="NullGamestate.h">
+      <Filter>Game\GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="StatisticsWindow.h">
+      <Filter>Application\DebugUI\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugUIManager.h">
+      <Filter>Application\DebugUI</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugUIWindow.h">
+      <Filter>Application\DebugUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -598,9 +601,6 @@
     <ClCompile Include="AnimatingModelsRenderer.cpp">
       <Filter>Game\Render</Filter>
     </ClCompile>
-    <ClCompile Include="FpsWindow.cpp">
-      <Filter>Application\DebugUI\Windows</Filter>
-    </ClCompile>
     <ClCompile Include="WaterLavaMeshRenderer.cpp">
       <Filter>Game\Render</Filter>
     </ClCompile>
@@ -612,12 +612,6 @@
     </ClCompile>
     <ClCompile Include="WallSection.cpp">
       <Filter>Game\World\Rooms</Filter>
-    </ClCompile>
-    <ClCompile Include="DebugUiWindow.cpp">
-      <Filter>Application\DebugUI</Filter>
-    </ClCompile>
-    <ClCompile Include="DebugUiManager.cpp">
-      <Filter>Application\DebugUI</Filter>
     </ClCompile>
     <ClCompile Include="TempleRoom.cpp">
       <Filter>Game\World\Rooms</Filter>
@@ -654,6 +648,18 @@
     </ClCompile>
     <ClCompile Include="GameObjectComponentsFactory.cpp">
       <Filter>Game\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="NullGamestate.cpp">
+      <Filter>Game\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="StatisticsWindow.cpp">
+      <Filter>Application\DebugUI\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugUIManager.cpp">
+      <Filter>Application\DebugUI</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugUIWindow.cpp">
+      <Filter>Application\DebugUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

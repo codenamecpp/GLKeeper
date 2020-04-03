@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "InputsManager.h"
-#include "DebugUiManager.h"
+#include "DebugUIManager.h"
 #include "GameMain.h"
 
 InputsManager gInputsManager;
@@ -20,9 +20,9 @@ void InputsManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
     mMouseButtons[inputEvent.mButton] = inputEvent.mPressed;
 
-    if (gDebugUiManager.IsInitialized())
+    if (gDebugUIManager.IsInitialized())
     {
-        gDebugUiManager.HandleInputEvent(inputEvent);
+        gDebugUIManager.HandleInputEvent(inputEvent);
     }
 
     if (!inputEvent.mConsumed)
@@ -36,9 +36,9 @@ void InputsManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
     mCursorPositionX = inputEvent.mCursorPositionX;
     mCursorPositionY = inputEvent.mCursorPositionY;
 
-    if (gDebugUiManager.IsInitialized())
+    if (gDebugUIManager.IsInitialized())
     {
-        gDebugUiManager.HandleInputEvent(inputEvent);
+        gDebugUIManager.HandleInputEvent(inputEvent);
     }
 
     if (!inputEvent.mConsumed)
@@ -49,9 +49,9 @@ void InputsManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
 
 void InputsManager::HandleInputEvent(MouseScrollInputEvent& inputEvent)
 {
-    if (gDebugUiManager.IsInitialized())
+    if (gDebugUIManager.IsInitialized())
     {
-        gDebugUiManager.HandleInputEvent(inputEvent);
+        gDebugUIManager.HandleInputEvent(inputEvent);
     }
 
     if (!inputEvent.mConsumed)
@@ -64,9 +64,9 @@ void InputsManager::HandleInputEvent(KeyInputEvent& inputEvent)
 {
     mKeyboardKeys[inputEvent.mKeycode] = inputEvent.mPressed;
 
-    if (gDebugUiManager.IsInitialized())
+    if (gDebugUIManager.IsInitialized())
     {
-        gDebugUiManager.HandleInputEvent(inputEvent);
+        gDebugUIManager.HandleInputEvent(inputEvent);
     }
 
     if (!inputEvent.mConsumed)
@@ -77,9 +77,9 @@ void InputsManager::HandleInputEvent(KeyInputEvent& inputEvent)
 
 void InputsManager::HandleInputEvent(KeyCharEvent& inputEvent)
 {
-    if (gDebugUiManager.IsInitialized())
+    if (gDebugUIManager.IsInitialized())
     {
-        gDebugUiManager.HandleInputEvent(inputEvent);
+        gDebugUIManager.HandleInputEvent(inputEvent);
     }
 
     if (!inputEvent.mConsumed)

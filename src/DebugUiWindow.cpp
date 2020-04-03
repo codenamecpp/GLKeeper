@@ -1,17 +1,17 @@
 #include "pch.h"
-#include "DebugUiManager.h"
-#include "DebugUiWindow.h"
+#include "DebugUIManager.h"
+#include "DebugUIWindow.h"
 
-DebugUiWindow::~DebugUiWindow()
+DebugUIWindow::~DebugUIWindow()
 {
 }
 
-void DebugUiWindow::SetWindowShown(bool isShown)
+void DebugUIWindow::SetWindowShown(bool isShown)
 {
     mWindowShown = isShown;
 }
 
-void DebugUiWindow::ToggleWindowShown()
+void DebugUIWindow::ToggleWindowShown()
 {
     SetWindowShown(!mWindowShown);
 }

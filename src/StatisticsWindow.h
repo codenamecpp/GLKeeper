@@ -1,12 +1,12 @@
 #pragma once
 
-#include "DebugUiWindow.h"
+#include "DebugUIWindow.h"
 
 // debug statistics window
-class FpsWindow: public DebugUiWindow
+class StatisticsWindow: public DebugUIWindow
 {
 public:
-    FpsWindow();
+    StatisticsWindow();
 
 private:
     // overrides DebugGuiWindow

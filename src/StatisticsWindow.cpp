@@ -1,12 +1,12 @@
 #include "pch.h"
 #include "imgui.h"
-#include "FpsWindow.h"
+#include "StatisticsWindow.h"
 
-FpsWindow::FpsWindow()
+StatisticsWindow::StatisticsWindow()
 {
 }
 
-void FpsWindow::DoUI(ImGuiIO& imguiContext)
+void StatisticsWindow::DoUI(ImGuiIO& imguiContext)
 {
     ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | 
         ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;

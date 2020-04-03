@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "MeshViewWindow.h"
-#include "DebugUiManager.h"
+#include "DebugUIManager.h"
 #include "FileSystem.h"
 #include "Console.h"
 #include "FileSystemArchive.h"

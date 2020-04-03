@@ -7,7 +7,7 @@
 #include "ModelAssetsManager.h"
 #include "AnimModelComponent.h"
 #include "TimeManager.h"
-#include "DebugUiManager.h"
+#include "DebugUIManager.h"
 #include "GameObjectsManager.h"
 #include "GameObjectComponentsFactory.h"
 
@@ -44,7 +44,7 @@ void MeshViewGamestate::HandleGamestateEnter()
     animComponent->StartAnimation(24.0f, true);
     gRenderScene.AttachObject(mModelObject);
 
-    gDebugUiManager.AttachWindow(&mMeshViewWindow);
+    gDebugUIManager.AttachWindow(&mMeshViewWindow);
     mMeshViewWindow.SetWindowShown(true);
     mMeshViewWindow.Setup(this);
 }
@@ -59,7 +59,7 @@ void MeshViewGamestate::HandleGamestateLeave()
         mModelObject = nullptr;
     }
 
-    gDebugUiManager.DetachWindow(&mMeshViewWindow);
+    gDebugUIManager.DetachWindow(&mMeshViewWindow);
 }
 
 void MeshViewGamestate::HandleUpdateFrame()

@@ -2,7 +2,8 @@
 
 #include "MeshViewGamestate.h"
 #include "GameplayGamestate.h"
-#include "FpsWindow.h"
+#include "NullGamestate.h"
+#include "StatisticsWindow.h"
 
 // game core
 class GameMain: public cxx::noncopyable
@@ -38,6 +39,7 @@ public:
     // determine current game state
     bool IsMeshViewGamestate() const;
     bool IsGameplayGamestate() const;
+    bool IsNullGamestate() const;
 
 private:
     void SwitchToGameState(GenericGamestate* gamestate);
@@ -45,8 +47,9 @@ private:
 private:
     MeshViewGamestate mMeshViewGamestate;
     GameplayGamestate mGameplayGamestate;
+    NullGamestate mNullGamestate;
 
-    FpsWindow mFpsWindow;
+    StatisticsWindow mFpsWindow;
 };
 
 extern GameMain gGameMain;

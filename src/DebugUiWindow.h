@@ -4,14 +4,14 @@
 struct ImGuiIO;
 
 // debug gui window base class
-class DebugUiWindow: public cxx::noncopyable
+class DebugUIWindow: public cxx::noncopyable
 {
 public:
     // readonly
     bool mWindowShown = false;
 
 public:
-    virtual ~DebugUiWindow();
+    virtual ~DebugUIWindow();
 
     // process window logic
     // @param imguiContext: Internal imgui context

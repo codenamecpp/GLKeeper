@@ -1,12 +1,12 @@
 #pragma once
 
-#include "DebugUiWindow.h"
+#include "DebugUIWindow.h"
 
 // forwards
 struct ImGuiInputTextCallbackData;
 
 // debug console window
-class ConsoleWindow: public DebugUiWindow
+class ConsoleWindow: public DebugUIWindow
 {
 public:
     bool mAutoScroll = true;

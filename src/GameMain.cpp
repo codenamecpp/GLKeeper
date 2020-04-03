@@ -6,7 +6,7 @@
 #include "ConsoleWindow.h"
 #include "System.h"
 #include "GameWorld.h"
-#include "DebugUiManager.h"
+#include "DebugUIManager.h"
 
 GameMain gGameMain;
 
@@ -20,7 +20,7 @@ bool GameMain::Initialize()
         return false;
     }
 
-    gDebugUiManager.AttachWindow(&mFpsWindow);
+    gDebugUIManager.AttachWindow(&mFpsWindow);
     mFpsWindow.SetWindowShown(false);
 
     if (!gGameWorld.Initialize())
@@ -31,12 +31,14 @@ bool GameMain::Initialize()
         return false;
     }
 
-    gGameWorld.LoadScenario("temp");
+    //gGameWorld.LoadScenario("temp");
 
     // set initial gamestate
     //SwitchToGameState(&mMeshViewGamestate);
 
-    SwitchToGameState(&mGameplayGamestate);
+    //SwitchToGameState(&mGameplayGamestate);
+
+    SwitchToGameState(&mNullGamestate);
 
     return true;
 }
@@ -47,7 +49,7 @@ void GameMain::Deinit()
 
     SwitchToGameState(nullptr);
 
-    gDebugUiManager.DetachWindow(&mFpsWindow);
+    gDebugUIManager.DetachWindow(&mFpsWindow);
     gRenderScene.Deinit();
 }
 
@@ -139,6 +141,11 @@ bool GameMain::IsMeshViewGamestate() const
 bool GameMain::IsGameplayGamestate() const
 {
     return mCurrentGamestate == &mGameplayGamestate;
+}
+
+bool GameMain::IsNullGamestate() const
+{
+    return mCurrentGamestate == &mNullGamestate;
 }
 
 void GameMain::SwitchToGameState(GenericGamestate* gamestate)

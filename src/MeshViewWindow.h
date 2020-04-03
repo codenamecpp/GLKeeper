@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DebugUiWindow.h"
+#include "DebugUIWindow.h"
 
 class MeshViewGamestate;
 
@@ -8,7 +8,7 @@ class MeshViewGamestate;
 struct ImGuiTextFilter;
 
 // mesh view ui
-class MeshViewWindow: public DebugUiWindow
+class MeshViewWindow: public DebugUIWindow
 {
 public:
     MeshViewWindow();

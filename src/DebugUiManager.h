@@ -1,12 +1,12 @@
 #pragma once
 
-#include "DebugUiWindow.h"
+#include "DebugUIWindow.h"
 
 // forwards
 struct ImGuiIO;
 
 // immediate mode gui manager
-class DebugUiManager: public cxx::noncopyable
+class DebugUIManager: public cxx::noncopyable
 {
 public:
 
@@ -32,8 +32,8 @@ public:
 
     // add or remove debug window to global debug windows list
     // @param debugWindow: Window
-    void AttachWindow(DebugUiWindow* debugWindow);
-    void DetachWindow(DebugUiWindow* debugWindow);
+    void AttachWindow(DebugUIWindow* debugWindow);
+    void DetachWindow(DebugUIWindow* debugWindow);
 
 private:
 
@@ -45,7 +45,7 @@ private:
     GpuBuffer* mVerticesBuffer = nullptr;
     GpuBuffer* mIndicesBuffer = nullptr;
 
-    std::list<DebugUiWindow*> mAllWindowsList;
+    std::list<DebugUIWindow*> mAllWindowsList;
 };
 
-extern DebugUiManager gDebugUiManager;
+extern DebugUIManager gDebugUIManager;
