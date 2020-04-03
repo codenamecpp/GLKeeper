@@ -447,6 +447,9 @@
     <ClInclude Include="GuiManager.h">
       <Filter>Game\GUI</Filter>
     </ClInclude>
+    <ClInclude Include="GuiWidget.h">
+      <Filter>Game\GUI\WidgetsLibrary</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -678,6 +681,9 @@
     </ClCompile>
     <ClCompile Include="GuiManager.cpp">
       <Filter>Game\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiWidget.cpp">
+      <Filter>Game\GUI\WidgetsLibrary</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
