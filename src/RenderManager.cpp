@@ -7,7 +7,7 @@
 #include "ConsoleVariable.h"
 #include "RenderScene.h"
 #include "GameObject.h"
-#include "UIManager.h"
+#include "GuiManager.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -27,7 +27,7 @@ RenderManager gRenderManager;
 bool RenderManager::Initialize()
 {
     if (!mAnimatingModelsRenderer.Initialize() ||  !mTerrainMeshRenderer.Initialize() || 
-        !mWaterLavaMeshRenderer.Initialize() || !mUIRenderer.Initialize())
+        !mWaterLavaMeshRenderer.Initialize() || !mGuiRenderer.Initialize())
     {
         gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize render manager");
 
@@ -59,7 +59,7 @@ void RenderManager::Deinit()
     gConsole.UnregisterVariable(&gCVarRender_DrawWaterAndLava);
     gConsole.UnregisterVariable(&gCVarRender_DrawModels);
 
-    mUIRenderer.Deinit();
+    mGuiRenderer.Deinit();
     mWaterLavaMeshRenderer.Deinit();
     mAnimatingModelsRenderer.Deinit();
     mTerrainMeshRenderer.Deinit();
@@ -173,14 +173,14 @@ void RenderManager::RenderFrame()
     RenderStates prevRenderStates = gGraphicsDevice.mCurrentStates;
 
     // draw debug ui
-    mUIRenderer.RenderFrameBegin();
+    mGuiRenderer.RenderFrameBegin();
     gDebugUIManager.RenderFrame();
-    mUIRenderer.RenderFrameEnd();
+    mGuiRenderer.RenderFrameEnd();
 
     // draw game ui
-    mUIRenderer.RenderFrameBegin();
-    gUIManager.RenderFrame(mUIRenderer);
-    mUIRenderer.RenderFrameEnd();
+    mGuiRenderer.RenderFrameBegin();
+    gGuiManager.RenderFrame(mGuiRenderer);
+    mGuiRenderer.RenderFrameEnd();
 
     // finish draw
     gGraphicsDevice.SetRenderStates(prevRenderStates);

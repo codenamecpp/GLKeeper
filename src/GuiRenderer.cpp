@@ -1,12 +1,12 @@
 #include "pch.h"
-#include "UIRenderer.h"
+#include "GuiRenderer.h"
 #include "Console.h"
 #include "GraphicsDevice.h"
 #include "GraphicsDefs.h"
 
-bool UIRenderer::Initialize()
+bool GuiRenderer::Initialize()
 {
-    if (!mUIRenderProgram.LoadProgram())
+    if (!mGuiRenderProgram.LoadProgram())
     {
         gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize ui render manager");
 
@@ -16,12 +16,12 @@ bool UIRenderer::Initialize()
     return true;
 }
 
-void UIRenderer::Deinit()
+void GuiRenderer::Deinit()
 {
-    mUIRenderProgram.FreeProgram();
+    mGuiRenderProgram.FreeProgram();
 }
 
-void UIRenderer::RenderFrameBegin()
+void GuiRenderer::RenderFrameBegin()
 {
     RenderStates guiRenderStates = RenderStates::GetForUI();
     gGraphicsDevice.SetRenderStates(guiRenderStates);
@@ -36,15 +36,15 @@ void UIRenderer::RenderFrameBegin()
         (screenRect.mX + screenRect.mSizeX) * 1.0f, 
         (screenRect.mY + screenRect.mSizeY) * 1.0f, screenRect.mY * 1.0f);
 
-    mUIRenderProgram.ActivateProgram();
-    mUIRenderProgram.SetViewProjectionMatrix(mTransformationMatrix2D);
+    mGuiRenderProgram.ActivateProgram();
+    mGuiRenderProgram.SetViewProjectionMatrix(mTransformationMatrix2D);
     // set scissor box
     gGraphicsDevice.SetScissorRect(screenRect);
 }
 
-void UIRenderer::RenderFrameEnd()
+void GuiRenderer::RenderFrameEnd()
 {
-    mUIRenderProgram.DeactivateProgram();
+    mGuiRenderProgram.DeactivateProgram();
 
     // restore scissor box
     Rect2D screenRect;

@@ -79,6 +79,6 @@
 #include "ResourceDefs.h"
 #include "GameObjectsDefs.h"
 #include "ConsoleDefs.h"
-#include "UIDefs.h"
+#include "GuiDefs.h"
 
 #include "MeshMaterial.h"

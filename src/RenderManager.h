@@ -5,7 +5,7 @@
 #include "SceneRenderList.h"
 #include "TerrainMeshRenderer.h"
 #include "WaterLavaMeshRenderer.h"
-#include "UIRenderer.h"
+#include "GuiRenderer.h"
 
 // master render system, it is intended to manage rendering pipeline of the game
 class RenderManager: public cxx::noncopyable
@@ -45,7 +45,7 @@ private:
 
 private:
     DebugRenderer mDebugRenderer;
-    UIRenderer mUIRenderer;
+    GuiRenderer mGuiRenderer;
     SceneRenderList mSceneRenderList;
     RenderProgram* mActiveRenderProgram = nullptr;
     std::vector<RenderProgram*> mLoadedRenderProgramsList;

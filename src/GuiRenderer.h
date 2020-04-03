@@ -1,12 +1,11 @@
 #pragma once
 
-#include "UIRenderProgram.h"
+#include "GuiRenderProgram.h"
 
-class UIRenderer: public cxx::noncopyable
+class GuiRenderer: public cxx::noncopyable
 {
 public:
-
-    // setup ui renderer internal resources
+    // setup gui renderer internal resources
     // @returns false on error
     bool Initialize();
     void Deinit();
@@ -15,6 +14,7 @@ public:
     void RenderFrameEnd();
 
 private:
-    UIRenderProgram mUIRenderProgram;
+    GuiRenderProgram mGuiRenderProgram;
+
     glm::mat4 mTransformationMatrix2D;
 };

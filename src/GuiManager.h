@@ -1,15 +1,15 @@
 #pragma once
 
-class UIManager: public cxx::noncopyable
+class GuiManager: public cxx::noncopyable
 {
 public:
 
-    // setup ui manager internal resources
+    // setup gui manager internal resources
     bool Initialize();
     void Deinit();
 
     // render
-    void RenderFrame(UIRenderer& renderContext);
+    void RenderFrame(GuiRenderer& renderContext);
 
     // process single frame logic
     void UpdateFrame();
@@ -23,4 +23,4 @@ public:
     void HandleInputEvent(KeyCharEvent& inputEvent);
 };
 
-extern UIManager gUIManager;
+extern GuiManager gGuiManager;

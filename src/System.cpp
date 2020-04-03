@@ -12,7 +12,7 @@
 #include "TexturesManager.h"
 #include "GameMain.h"
 #include "ModelAssetsManager.h"
-#include "UIManager.h"
+#include "GuiManager.h"
 
 #include "GLFW/glfw3.h"
 
@@ -97,7 +97,7 @@ void System::Initialize(int argc, char *argv[])
         Terminate();
     }
 
-    if (!gUIManager.Initialize())
+    if (!gGuiManager.Initialize())
     {
         gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize ui manager");
         Terminate();
@@ -124,7 +124,7 @@ void System::Deinit()
     gConsole.LogMessage(eLogMessage_Info, "System shutdown");
 
     gGameMain.Deinit();
-    gUIManager.Deinit();
+    gGuiManager.Deinit();
     gModelsManager.Deinit();
     gTexturesManager.Deinit();
     gDebugUIManager.Deinit();
@@ -164,7 +164,7 @@ void System::Execute()
         gTexturesManager.UpdateFrame();
         gGameMain.UpdateFrame();
         gDebugUIManager.UpdateFrame();
-        gUIManager.UpdateFrame();
+        gGuiManager.UpdateFrame();
 
         // render frame
         gRenderManager.RenderFrame();
