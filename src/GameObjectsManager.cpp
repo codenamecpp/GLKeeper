@@ -2,6 +2,7 @@
 #include "GameObjectsManager.h"
 #include "GameObject.h"
 #include "TimeManager.h"
+#include "GameObjectComponentsFactory.h"
 
 GameObjectsManager gGameObjectsManager;
 
@@ -63,7 +64,7 @@ void GameObjectsManager::DestroyGameObject(GameObject* gameObject)
         }
     }
 
-    SafeDelete(gameObject);
+    mGameObjectsPool.destroy(gameObject);
 }
 
 GameObjectInstanceID GameObjectsManager::GenerateNewInstanceID()
@@ -76,7 +77,10 @@ void GameObjectsManager::DestroyObjectsList()
 {
     for (GameObject* currObject: mObjectsList)
     {
-        SafeDelete(currObject);
+        if (currObject)
+        {
+            mGameObjectsPool.destroy(currObject);
+        }
     }
 
     mObjectsList.clear();
@@ -100,10 +104,10 @@ GameObject* GameObjectsManager::CreateGameObject()
 {
     GameObjectInstanceID instanceID = GenerateNewInstanceID();
 
-    GameObject* gameObject = new GameObject(instanceID);
+    GameObject* gameObject = mGameObjectsPool.create(instanceID);
     mObjectsList.push_back(gameObject);
 
-    TransformComponent* transformComponent = new TransformComponent(gameObject);
+    TransformComponent* transformComponent = gComponentsFactory.CreateTransformComponent(gameObject);
     gameObject->AddComponent(transformComponent);
 
     return gameObject;

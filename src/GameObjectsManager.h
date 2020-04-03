@@ -31,6 +31,8 @@ private:
 
 private:
     GameObjectInstanceID mIDsCounter = 0;
+
+    cxx::object_pool<GameObject> mGameObjectsPool;
 };
 
 extern GameObjectsManager gGameObjectsManager;

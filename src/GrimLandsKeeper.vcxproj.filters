@@ -429,6 +429,9 @@
     <ClInclude Include="GodModeCameraController.h">
       <Filter>Game\Scene\CameraControllers</Filter>
     </ClInclude>
+    <ClInclude Include="GameObjectComponentsFactory.h">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -648,6 +651,9 @@
     </ClCompile>
     <ClCompile Include="GodModeCameraController.cpp">
       <Filter>Game\Scene\CameraControllers</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObjectComponentsFactory.cpp">
+      <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

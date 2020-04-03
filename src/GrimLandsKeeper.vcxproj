@@ -184,6 +184,7 @@
     <ClInclude Include="GameMap.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObjectComponent.h" />
+    <ClInclude Include="GameObjectComponentsFactory.h" />
     <ClInclude Include="GameObjectsManager.h" />
     <ClInclude Include="GenericRoom.h" />
     <ClInclude Include="GodModeCameraController.h" />
@@ -300,6 +301,7 @@
     <ClCompile Include="FpsWindow.cpp" />
     <ClCompile Include="GameMap.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="GameObjectComponentsFactory.cpp" />
     <ClCompile Include="GameObjectsManager.cpp" />
     <ClCompile Include="GenericRoom.cpp" />
     <ClCompile Include="GodModeCameraController.cpp" />

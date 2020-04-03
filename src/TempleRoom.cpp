@@ -6,6 +6,7 @@
 #include "GameObject.h"
 #include "GameObjectsManager.h"
 #include "TexturesManager.h"
+#include "GameObjectComponentsFactory.h"
 
 #define TEMPLE_WATER_POOL_TRANSLUCENCY  0.90f
 #define TEMPLE_WATER_POOL_WAVE_WIDTH    4.0f
@@ -51,7 +52,7 @@ void TempleRoom::OnReconfigure()
     {
         mWaterPoolObject = gGameObjectsManager.CreateGameObject();
 
-        WaterLavaMeshComponent* meshComponent = new WaterLavaMeshComponent(mWaterPoolObject);
+        WaterLavaMeshComponent* meshComponent = gComponentsFactory.CreateWaterLavaMeshComponent(mWaterPoolObject);
         mWaterPoolObject->AddComponent(meshComponent);
 
         meshComponent->SetWaterLavaTiles(waterTiles);

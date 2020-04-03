@@ -8,6 +8,7 @@
 #include "GameObject.h"
 #include "GameObjectsManager.h"
 #include "TexturesManager.h"
+#include "GameObjectComponentsFactory.h"
 
 const int TerrainMeshSizeTiles = 8; // 8x8 tiles per terrain mesh
 
@@ -326,7 +327,7 @@ GameObject* TerrainManager::CreateObjectTerrain(const Rect2D& mapArea)
     debug_assert(gameObject);
     mTerrainMeshArray.push_back(gameObject);
 
-    TerrainMeshComponent* meshComponent = new TerrainMeshComponent(gameObject);
+    TerrainMeshComponent* meshComponent = gComponentsFactory.CreateTerrainMeshComponent(gameObject);
     gameObject->AddComponent(meshComponent);
 
     meshComponent->SetTerrainArea(mapArea);
@@ -340,7 +341,7 @@ GameObject* TerrainManager::CreateObjectLava(const TilesArray& tilesArray)
     debug_assert(gameObject);
     mWaterLavaMeshArray.push_back(gameObject);
 
-    WaterLavaMeshComponent* meshComponent = new WaterLavaMeshComponent(gameObject);
+    WaterLavaMeshComponent* meshComponent = gComponentsFactory.CreateWaterLavaMeshComponent(gameObject);
     gameObject->AddComponent(meshComponent);
 
     meshComponent->SetWaterLavaTiles(tilesArray);
@@ -356,7 +357,7 @@ GameObject* TerrainManager::CreateObjectWater(const TilesArray& tilesArray)
     debug_assert(gameObject);
     mWaterLavaMeshArray.push_back(gameObject);
 
-    WaterLavaMeshComponent* meshComponent = new WaterLavaMeshComponent(gameObject);
+    WaterLavaMeshComponent* meshComponent = gComponentsFactory.CreateWaterLavaMeshComponent(gameObject);
     gameObject->AddComponent(meshComponent);
 
     meshComponent->SetWaterLavaTiles(tilesArray);

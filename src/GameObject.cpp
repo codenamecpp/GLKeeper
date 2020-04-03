@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "GameObject.h"
+#include "GameObjectComponentsFactory.h"
 
 GameObject::GameObject(GameObjectInstanceID instanceID)
     : mDebugColor(Color32_Green)
@@ -31,7 +32,7 @@ void GameObject::UpdateFrame(float deltaTime)
 void GameObject::SetAttachedToScene(bool isAttached)
 {
     mIsAttachedToScene = isAttached;
-}
+}   
 
 bool GameObject::IsAttachedToScene() const
 {
@@ -77,7 +78,7 @@ void GameObject::DeleteComponent(eGameObjectComponent componentId)
 
     if (mComponents[componentId])
     {
-        SafeDelete(mComponents[componentId]);
+        gComponentsFactory.DestroyComponent(mComponents[componentId]);
     }
 }
 
@@ -85,7 +86,10 @@ void GameObject::DeleteAllComponents()
 {
     for (int icurr = 0; icurr < eGameObjectComponent_Count; ++icurr)
     {
-        SafeDelete(mComponents[icurr]);
+        if (mComponents[icurr])
+        {
+            gComponentsFactory.DestroyComponent(mComponents[icurr]);
+        }
     }
 }
 
@@ -95,7 +99,7 @@ void GameObject::DeleteRenderableComponents()
     {
         if (mComponents[icurr] && mComponents[icurr]->IsRenderableComponent())
         {
-            SafeDelete(mComponents[icurr]);
+            gComponentsFactory.DestroyComponent(mComponents[icurr]);
         }
     }
 }

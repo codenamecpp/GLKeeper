@@ -8,13 +8,6 @@ public:
     GameObject* mGameObject;
 
 public:
-    GameObjectComponent(eGameObjectComponent componentType, GameObject* sceneObject)
-        : mComponentType(componentType)
-        , mGameObject(sceneObject)
-    {
-        debug_assert(mComponentType < eGameObjectComponent_Count);
-    }
-
     virtual ~GameObjectComponent()
     {
     }
@@ -59,5 +52,14 @@ public:
         }
         debug_assert(false);
         return false;
+    }
+
+protected:
+    // base component does not meant to be instantiated directly
+    GameObjectComponent(eGameObjectComponent componentType, GameObject* sceneObject)
+        : mComponentType(componentType)
+        , mGameObject(sceneObject)
+    {
+        debug_assert(mComponentType < eGameObjectComponent_Count);
     }
 };
