@@ -41,3 +41,29 @@ void MeshMaterial::PreloadTextures()
         mEnvMappingTexture->LoadTexture();
     }
 }
+
+bool MeshMaterial::operator == (const MeshMaterial& other) const
+{
+    return mRenderStates == other.mRenderStates && 
+        mDiffuseTexture == other.mDiffuseTexture && 
+        mEnvMappingTexture == other.mEnvMappingTexture; 
+}
+
+bool MeshMaterial::operator != (const MeshMaterial& other) const
+{
+    return !(*this == other);
+}
+
+bool MeshMaterial::operator < (const MeshMaterial& other) const
+{
+    if (mDiffuseTexture != other.mDiffuseTexture)
+        return mDiffuseTexture < other.mDiffuseTexture;
+
+    if (mEnvMappingTexture != other.mEnvMappingTexture)
+        return mEnvMappingTexture < other.mEnvMappingTexture;
+
+    if (mRenderStates != other.mRenderStates)
+        return mRenderStates < other.mRenderStates;
+
+    return false;
+}

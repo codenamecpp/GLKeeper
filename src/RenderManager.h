@@ -1,11 +1,11 @@
 #pragma once
 
-#include "GuiRenderProgram.h"
 #include "DebugRenderer.h"
 #include "AnimatingModelsRenderer.h"
 #include "SceneRenderList.h"
 #include "TerrainMeshRenderer.h"
 #include "WaterLavaMeshRenderer.h"
+#include "UIRenderer.h"
 
 // master render system, it is intended to manage rendering pipeline of the game
 class RenderManager: public cxx::noncopyable
@@ -38,23 +38,15 @@ public:
     void ReloadRenderPrograms();
 
 private:
-    // begin/end render gui geometry
-    void Enter2D();
-    void Leave2D();
-
     void DrawScene();
 
     void HandleRenderProgramLoad(RenderProgram* renderProgram);
     void HandleRenderProgramFree(RenderProgram* renderProgram);
 
 private:
-    GuiRenderProgram mGuiRenderProgram;
     DebugRenderer mDebugRenderer;
-
-    glm::mat4 mTransformationMatrix2D;
-
+    UIRenderer mUIRenderer;
     SceneRenderList mSceneRenderList;
-
     RenderProgram* mActiveRenderProgram = nullptr;
     std::vector<RenderProgram*> mLoadedRenderProgramsList;
 };

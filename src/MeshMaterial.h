@@ -18,36 +18,13 @@ public:
         return mRenderStates.mIsAlphaBlendEnabled;
     }
 
-    // operators
-    inline bool operator == (const MeshMaterial& other) const
-    {
-        return mRenderStates == other.mRenderStates && mDiffuseTexture == other.mDiffuseTexture && 
-            mEnvMappingTexture == other.mEnvMappingTexture; 
-    }
-
-    inline bool operator != (const MeshMaterial& other) const
-    {
-        return mRenderStates != other.mRenderStates || mDiffuseTexture != other.mDiffuseTexture || 
-            mEnvMappingTexture != other.mEnvMappingTexture; 
-    }
-
-    inline bool operator < (const MeshMaterial& other) const
-    {
-        if (mDiffuseTexture != other.mDiffuseTexture)
-            return mDiffuseTexture < other.mDiffuseTexture;
-
-        if (mEnvMappingTexture != other.mEnvMappingTexture)
-            return mEnvMappingTexture < other.mEnvMappingTexture;
-
-        if (mRenderStates != other.mRenderStates)
-            return mRenderStates < other.mRenderStates;
-
-        return false;
-    }
+    // comparsion operators
+    bool operator == (const MeshMaterial& other) const;
+    bool operator != (const MeshMaterial& other) const;
+    bool operator < (const MeshMaterial& other) const;
 
 public:
     Texture2D* mDiffuseTexture = nullptr;
     Texture2D* mEnvMappingTexture = nullptr;
-
     RenderStates mRenderStates;    
 };

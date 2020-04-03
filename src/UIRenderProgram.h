@@ -4,10 +4,10 @@
 #include "GpuProgram.h"
 
 // render program intended for gui draw
-class GuiRenderProgram: public RenderProgram
+class UIRenderProgram: public RenderProgram
 {
 public:
-    GuiRenderProgram(): RenderProgram("shaders/gui.glsl")
+    UIRenderProgram(): RenderProgram("shaders/gui.glsl")
     {
     }
 

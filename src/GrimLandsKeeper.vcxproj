@@ -217,6 +217,9 @@
     <ClInclude Include="TransformComponent.h" />
     <ClInclude Include="TempleRoom.h" />
     <ClInclude Include="TerrainMeshComponent.h" />
+    <ClInclude Include="UIDefs.h" />
+    <ClInclude Include="UIManager.h" />
+    <ClInclude Include="UIRenderer.h" />
     <ClInclude Include="WallSection.h" />
     <ClInclude Include="ScenarioDefs.h" />
     <ClInclude Include="ScenarioLoader.h" />
@@ -228,7 +231,7 @@
     <ClInclude Include="DebugRenderer.h" />
     <ClInclude Include="GameDefs.h" />
     <ClInclude Include="GenericGamestate.h" />
-    <ClInclude Include="GuiRenderProgram.h" />
+    <ClInclude Include="UIRenderProgram.h" />
     <ClInclude Include="DebugUIManager.h" />
     <ClInclude Include="EngineTexturesProvider.h" />
     <ClInclude Include="enum_utils.h" />
@@ -348,6 +351,8 @@
     <ClCompile Include="SceneRenderList.cpp" />
     <ClCompile Include="TempleRoom.cpp" />
     <ClCompile Include="TerrainMeshComponent.cpp" />
+    <ClCompile Include="UIManager.cpp" />
+    <ClCompile Include="UIRenderer.cpp" />
     <ClCompile Include="WallSection.cpp" />
     <ClCompile Include="ScenarioLoader.cpp" />
     <ClCompile Include="SceneCamera.cpp" />

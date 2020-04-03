@@ -239,9 +239,6 @@
     <ClInclude Include="RenderProgram.h">
       <Filter>Game\Render</Filter>
     </ClInclude>
-    <ClInclude Include="GuiRenderProgram.h">
-      <Filter>Game\Render\Shaders</Filter>
-    </ClInclude>
     <ClInclude Include="BinaryOutputStream.h">
       <Filter>Application\FileIO</Filter>
     </ClInclude>
@@ -434,6 +431,18 @@
     </ClInclude>
     <ClInclude Include="DebugUIWindow.h">
       <Filter>Application\DebugUI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIManager.h">
+      <Filter>Game\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="UIRenderer.h">
+      <Filter>Game\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="UIRenderProgram.h">
+      <Filter>Game\Render\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="UIDefs.h">
+      <Filter>Game\GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -660,6 +669,12 @@
     </ClCompile>
     <ClCompile Include="DebugUIWindow.cpp">
       <Filter>Application\DebugUI</Filter>
+    </ClCompile>
+    <ClCompile Include="UIManager.cpp">
+      <Filter>Game\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="UIRenderer.cpp">
+      <Filter>Game\Render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
