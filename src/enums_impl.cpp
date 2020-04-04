@@ -1,5 +1,7 @@
 #include "pch.h"
 
+#include "GuiDefs.h"
+
 impl_enum_strings(eLogMessage)
 {
     {eLogMessage_Debug, "debug"},
@@ -320,4 +322,27 @@ impl_enum_strings(eDirection)
     {eDirection_SW, "SW"},
     {eDirection_W,  "W"},
     {eDirection_NW, "NW"},
+};
+
+impl_enum_strings(eGuiVertAlignment)
+{
+    {eGuiVertAlignment_None, "none"},
+    {eGuiVertAlignment_Top, "top"},
+    {eGuiVertAlignment_Center, "center"},
+    {eGuiVertAlignment_Bottom, "bottom"},
+};
+
+impl_enum_strings(eGuiHorzAlignment)
+{
+    {eGuiHorzAlignment_None, "none"},
+    {eGuiHorzAlignment_Left, "left"},
+    {eGuiHorzAlignment_Center, "center"},
+    {eGuiHorzAlignment_Right, "right"},
+};
+
+impl_enum_strings(eGuiOrigin)
+{
+    {eGuiOrigin_LeftTopCorner, "left_top_corner"},
+    {eGuiOrigin_Center, "center"},
+    {eGuiOrigin_Custom, "custom"},
 };

@@ -92,15 +92,19 @@ static eKeycode GLFW_KeycodeToNative(int keycode)
 
 //////////////////////////////////////////////////////////////////////////
 
-bool GraphicsDevice::Initialize(const Size2D& screenDimensions, bool fullscreen, bool vsync)
+bool GraphicsDevice::Initialize()
 {
+    SystemSettings& settings = gSystem.mSettings;
+
     ::glfwSetErrorCallback([](int errorCode, const char * errorString)
     {
         gConsole.LogMessage(eLogMessage_Error, "GLFW error occurred: %s", errorString);
     });
 
+    mScreenResolution = settings.mScreenDimensions;
     gConsole.LogMessage(eLogMessage_Debug, "GraphicsDevice Initialization (%dx%d, Vsync: %s, Fullscreen: %s)",
-        screenDimensions.x, screenDimensions.y, vsync ? "enabled" : "disabled", fullscreen ? "yes" : "no");
+        mScreenResolution.x, mScreenResolution.y, 
+        settings.mEnableVSync ? "enabled" : "disabled", settings.mEnableVSync ? "yes" : "no");
 
     if (::glfwInit() == GL_FALSE)
     {
@@ -121,7 +125,7 @@ bool GraphicsDevice::Initialize(const Size2D& screenDimensions, bool fullscreen,
         );
 
     GLFWmonitor* graphicsMonitor = nullptr;
-    if (fullscreen)
+    if (settings.mFullscreen)
     {
         graphicsMonitor = ::glfwGetPrimaryMonitor();
         debug_assert(graphicsMonitor);
@@ -135,7 +139,14 @@ bool GraphicsDevice::Initialize(const Size2D& screenDimensions, bool fullscreen,
     ::glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, OPENGL_CONTEXT_MAJOR_VERSION);
     ::glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, OPENGL_CONTEXT_MINOR_VERSION);
     // setup window params
-    ::glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+    if (settings.mResizeableWindow)
+    {
+        ::glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+    }
+    else
+    {
+        ::glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+    }
     ::glfwWindowHint(GLFW_RED_BITS, 8);
     ::glfwWindowHint(GLFW_GREEN_BITS, 8);
     ::glfwWindowHint(GLFW_BLUE_BITS, 8);
@@ -143,7 +154,7 @@ bool GraphicsDevice::Initialize(const Size2D& screenDimensions, bool fullscreen,
     ::glfwWindowHint(GLFW_DEPTH_BITS, 24);
 
     // create window and set current context
-    GLFWwindow* graphicsWindow = ::glfwCreateWindow(screenDimensions.x, screenDimensions.y, GAME_TITLE, graphicsMonitor, nullptr);
+    GLFWwindow* graphicsWindow = ::glfwCreateWindow(mScreenResolution.x, mScreenResolution.y, GAME_TITLE, graphicsMonitor, nullptr);
     debug_assert(graphicsWindow);
     if (graphicsWindow == nullptr)
     {
@@ -191,6 +202,10 @@ bool GraphicsDevice::Initialize(const Size2D& screenDimensions, bool fullscreen,
             KeyInputEvent ev { keycodeNative, scancode, nativeMods, action == GLFW_PRESS };
             gInputsManager.HandleInputEvent(ev);
         }
+    });
+    ::glfwSetWindowSizeCallback(graphicsWindow, [](GLFWwindow*, int sizex, int sizey)
+    {
+        gGraphicsDevice.HandleScreenResolutionChanged(sizex, sizey);
     });
     ::glfwSetCharCallback(graphicsWindow, [](GLFWwindow*, unsigned int unicodechar)
     {
@@ -243,7 +258,7 @@ bool GraphicsDevice::Initialize(const Size2D& screenDimensions, bool fullscreen,
     glCheckError();
 
     // setup viewport
-    mViewportRect.Set(0, 0, screenDimensions.x, screenDimensions.y);
+    mViewportRect.Set(0, 0, mScreenResolution.x, mScreenResolution.y);
 
     ::glViewport(mViewportRect.mX, mViewportRect.mY, mViewportRect.mSizeX, mViewportRect.mSizeY);
     glCheckError();
@@ -265,8 +280,8 @@ bool GraphicsDevice::Initialize(const Size2D& screenDimensions, bool fullscreen,
     RenderStates defaultRenderStates;
     InternalSetRenderStates(defaultRenderStates, true);
 
-    EnableFullscreen(fullscreen);
-    EnableVSync(vsync);
+    EnableFullscreen(settings.mFullscreen);
+    EnableVSync(settings.mEnableVSync);
 
     return true;
 }
@@ -275,6 +290,9 @@ void GraphicsDevice::Deinit()
 {
     if (gGLFW_WindowHandle == nullptr)
         return;
+
+    mScreenResolution.x = 0;
+    mScreenResolution.y = 0;
 
     if (mDeviceContext.mMainVaoHandle)
     {
@@ -921,4 +939,36 @@ void GraphicsDevice::SetupVertexAttributes(const VertexFormat& streamDefinition)
             streamDefinition.mDataStride, BUFFER_OFFSET(attribute.mDataOffset + streamDefinition.mBaseOffset));
         glCheckError();
     }
+}
+
+void GraphicsDevice::HandleScreenResolutionChanged(int screenSizex, int screenSizey)
+{
+    if (mScreenResolution.x == screenSizex && mScreenResolution.y == screenSizey)
+        return;
+
+    mScreenResolution.x = screenSizex;
+    mScreenResolution.y = screenSizey;
+
+    // setup viewport
+    mViewportRect.Set(0, 0, mScreenResolution.x, mScreenResolution.y);
+
+    ::glViewport(mViewportRect.mX, mViewportRect.mY, mViewportRect.mSizeX, mViewportRect.mSizeY);
+    glCheckError();
+
+    // default value for scissor is a whole viewport
+    mScissorBox = mViewportRect;
+
+    ::glScissor(mScissorBox.mX, mScissorBox.mY, mScissorBox.mSizeX, mScissorBox.mSizeY);
+    glCheckError();
+
+    ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glCheckError();
+
+    // force clear screen
+    ::glfwSwapBuffers(gGLFW_WindowHandle);
+    glCheckError();
+
+    // notify system
+    gConsole.LogMessage(eLogMessage_Debug, "Screen resolution changed (%dx%d)", screenSizex, screenSizey);
+    gSystem.HandleScreenResolutionChanged();
 }

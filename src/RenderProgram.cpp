@@ -124,6 +124,11 @@ void RenderProgram::DeactivateProgram()
     OnProgramDeactivated();
 }
 
+void RenderProgram::HandleScreenResolutionChanged()
+{
+    // do nothing
+}
+
 void RenderProgram::OnProgramActivated()
 {
     // do nothing

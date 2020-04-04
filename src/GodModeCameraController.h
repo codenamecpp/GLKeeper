@@ -36,6 +36,8 @@ public:
     void HandleInputEvent(KeyInputEvent& inputEvent) override;
     void HandleInputEvent(KeyCharEvent& inputEvent) override;
 
+    void HandleScreenResolutionChanged();
+
 private:
     void SetupCameraView();
     void SetupCameraProjection();

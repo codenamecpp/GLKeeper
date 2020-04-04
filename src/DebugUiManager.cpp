@@ -411,3 +411,8 @@ void DebugUIManager::DetachWindow(DebugUIWindow* debugWindow)
         mAllWindowsList.erase(found_iterator);
     }
 }
+
+void DebugUIManager::HandleScreenResolutionChanged()
+{
+
+}

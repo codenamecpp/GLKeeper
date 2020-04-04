@@ -31,6 +31,8 @@ public:
     void ActivateProgram();
     void DeactivateProgram();
 
+    virtual void HandleScreenResolutionChanged();
+
 protected:
     // overridable
     virtual void OnProgramActivated();

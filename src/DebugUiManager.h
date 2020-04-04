@@ -35,6 +35,8 @@ public:
     void AttachWindow(DebugUIWindow* debugWindow);
     void DetachWindow(DebugUIWindow* debugWindow);
 
+    void HandleScreenResolutionChanged();
+
 private:
 
     bool AddFontFromExternalFile(ImGuiIO& imguiIO, const char* fontFile, float fontSize);

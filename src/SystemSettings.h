@@ -8,10 +8,8 @@ struct SystemSettings
 public:
     Size2D mScreenDimensions;
     bool mFullscreen = false; // enable fullscreen mode
+    bool mResizeableWindow = false; // enable resize in windowed mode
     bool mEnableVSync = false; // enable vertical synchronization
-
-    float mScreenAspectRatio = 1.0f;
-
 public:
     SystemSettings() = default;
 

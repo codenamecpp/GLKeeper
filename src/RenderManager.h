@@ -37,6 +37,8 @@ public:
     // force reload all render programs
     void ReloadRenderPrograms();
 
+    void HandleScreenResolutionChanged();
+
 private:
     void DrawScene();
 

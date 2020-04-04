@@ -202,6 +202,14 @@ void RenderManager::ReloadRenderPrograms()
     }
 }
 
+void RenderManager::HandleScreenResolutionChanged()
+{
+    for (RenderProgram* currRenderProgram: mLoadedRenderProgramsList)
+    {
+        currRenderProgram->HandleScreenResolutionChanged();
+    }
+}
+
 void RenderManager::DrawScene()
 {
     SceneRenderContext renderContext;

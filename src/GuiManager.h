@@ -35,6 +35,8 @@ public:
     // @param className: Widget class name
     GuiWidget* ConstructWidget(const std::string& className) const;
 
+    void HandleScreenResolutionChanged();
+
 private:
     void RegisterWidgetsClasses();
 

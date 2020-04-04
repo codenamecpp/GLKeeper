@@ -25,6 +25,8 @@ public:
     void HandleInputEvent(KeyInputEvent& inputEvent) override;
     void HandleInputEvent(KeyCharEvent& inputEvent) override;
 
+    void HandleScreenResolutionChanged() override;
+
 private:
     GodModeCameraController mGodModeCameraControl;
 };

@@ -47,6 +47,8 @@ public:
     void RegisterTextureAnimation(Texture2DAnimation* textureAnimation);
     void UnregisterTextureAnimation(Texture2DAnimation* textureAnimation);
 
+    void HandleScreenResolutionChanged();
+
 private:
     void InitStandardTextures();
     void FreeStandardTextures();

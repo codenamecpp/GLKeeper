@@ -225,3 +225,8 @@ void TexturesManager::UnregisterTextureAnimation(Texture2DAnimation* textureAnim
 {
     cxx::erase_elements(mTextureAnimationsList, textureAnimation);
 }
+
+void TexturesManager::HandleScreenResolutionChanged()
+{
+
+}

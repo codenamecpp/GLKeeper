@@ -28,6 +28,8 @@ public:
     void HandleInputEvent(KeyInputEvent& inputEvent) override;
     void HandleInputEvent(KeyCharEvent& inputEvent) override;
 
+    void HandleScreenResolutionChanged() override;
+
 private:
     OrbitCameraController mOrbitCameraController;
     GameObject* mModelObject = nullptr;

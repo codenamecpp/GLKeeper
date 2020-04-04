@@ -86,3 +86,8 @@ GuiWidget* GuiManager::ConstructWidget(const std::string& className) const
     debug_assert(false);
     return nullptr;
 }
+
+void GuiManager::HandleScreenResolutionChanged()
+{
+
+}

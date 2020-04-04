@@ -53,3 +53,8 @@ void GameplayGamestate::HandleInputEvent(KeyInputEvent& inputEvent)
 void GameplayGamestate::HandleInputEvent(KeyCharEvent& inputEvent)
 {
 }
+
+void GameplayGamestate::HandleScreenResolutionChanged()
+{
+    mGodModeCameraControl.HandleScreenResolutionChanged();
+}

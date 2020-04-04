@@ -45,4 +45,8 @@ public:
     virtual void HandleInputEvent(KeyCharEvent& inputEvent)
     {
     }
+
+    virtual void HandleScreenResolutionChanged()
+    {
+    }
 };

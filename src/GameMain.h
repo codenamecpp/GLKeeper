@@ -41,6 +41,8 @@ public:
     bool IsGameplayGamestate() const;
     bool IsNullGamestate() const;
 
+    void HandleScreenResolutionChanged();
+
 private:
     void SwitchToGameState(GenericGamestate* gamestate);
 

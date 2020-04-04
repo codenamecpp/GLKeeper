@@ -12,13 +12,13 @@ public:
     Rect2D mScissorBox;
     GraphicsDeviceCaps mCaps;
 
+    // current screen params
+    Size2D mScreenResolution;
+
 public:
 
     // initialize graphics system, setup resolution and vsync mode
-    // @param screenDimensions: Screen dimensions
-    // @param fullscreen: Fullscreen or windowed mode
-    // @param vsync: Vertical synchronization enabled or disabled
-    bool Initialize(const Size2D& screenDimensions, bool fullscreen, bool vsync);
+    bool Initialize();
 
     // shutdown graphics system, any render operations will be ignored after this
     void Deinit();
@@ -140,11 +140,19 @@ public:
     // clear color and depth of current framebuffer
     void ClearScreen();
 
+    // get screen resolution aspect ratio
+    float GetScreenResolutionAspect() const
+    {
+        return mScreenResolution.y > 0 ? (1.0f * mScreenResolution.x / mScreenResolution.y) : 1.0f;
+    }
+
 private:
     void InternalSetRenderStates(const RenderStates& renderStates, bool forceState);
     bool InitOpenGLExtensions();
     void QueryGraphicsDeviceCaps();
     void ActivateTextureUnit(eTextureUnit textureUnit);
+
+    void HandleScreenResolutionChanged(int screenSizex, int screenSizey);
 
     void SetupVertexAttributes(const VertexFormat& streamDefinition);
 

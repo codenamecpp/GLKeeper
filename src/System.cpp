@@ -65,7 +65,7 @@ void System::Initialize(int argc, char *argv[])
         Terminate();
     }
 
-    if (!gGraphicsDevice.Initialize(mSettings.mScreenDimensions, mSettings.mFullscreen, mSettings.mEnableVSync))
+    if (!gGraphicsDevice.Initialize())
     {
         gConsole.LogMessage(eLogMessage_Error, "Cannot initialize graphics device");
         Terminate();
@@ -188,6 +188,15 @@ double System::GetSysTime() const
 {
     double currentTime = ::glfwGetTime();
     return currentTime - mStartSystemTime;
+}
+
+void System::HandleScreenResolutionChanged()
+{
+    gTexturesManager.HandleScreenResolutionChanged();
+    gGameMain.HandleScreenResolutionChanged();
+    gDebugUIManager.HandleScreenResolutionChanged();
+    gGuiManager.HandleScreenResolutionChanged();
+    gRenderManager.HandleScreenResolutionChanged();
 }
 
 void System::SaveSettings()

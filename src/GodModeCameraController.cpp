@@ -2,6 +2,7 @@
 #include "GodModeCameraController.h"
 #include "System.h"
 #include "RenderScene.h"
+#include "GraphicsDevice.h"
 
 #define CAM_DEFAULT_PITCH_ANGLE    -53.0f
 #define CAM_DEFAULT_YAW_ANGLE      -90.0f
@@ -216,6 +217,11 @@ void GodModeCameraController::HandleInputEvent(KeyCharEvent& inputEvent)
 {
 }
 
+void GodModeCameraController::HandleScreenResolutionChanged()
+{
+    SetupCameraProjection();
+}
+
 void GodModeCameraController::SetupCameraView()
 {
     if (mSceneCamera == nullptr)
@@ -239,6 +245,5 @@ void GodModeCameraController::SetupCameraProjection()
     if (mSceneCamera == nullptr)
         return;
 
-    float screenAspectRatio = gSystem.mSettings.mScreenAspectRatio;
-    mSceneCamera->SetPerspective(screenAspectRatio, mFOVy, CAM_DEFAULT_NEAR, CAM_DEFAULT_FAR);
+    mSceneCamera->SetPerspective(gGraphicsDevice.GetScreenResolutionAspect(), mFOVy, CAM_DEFAULT_NEAR, CAM_DEFAULT_FAR);
 }

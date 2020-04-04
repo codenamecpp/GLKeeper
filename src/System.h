@@ -28,6 +28,9 @@ public:
     // get real time seconds since system started
     double GetSysTime() const;
 
+    // notify screen resolution has been changed
+    void HandleScreenResolutionChanged();
+
 private:
     // save/load settings to/from external file
     void SaveSettings();

@@ -12,8 +12,8 @@ void SystemSettings::SetDefaults()
     mScreenDimensions.x = DefaultScreenResolutionX;
     mScreenDimensions.y = DefaultScreenResolutionY; 
     mFullscreen = false;
+    mResizeableWindow = false;
     mEnableVSync = false;
-    mScreenAspectRatio = (mScreenDimensions.y > 0) ? ((mScreenDimensions.x * 1.0f) / (mScreenDimensions.y * 1.0f)) : 1.0f;
 }
 
 void SystemSettings::SetFromJsonDocument(const cxx::json_document& sourceDocument)
@@ -40,6 +40,11 @@ void SystemSettings::SetFromJsonDocument(const cxx::json_document& sourceDocumen
     {
         mEnableVSync = enable_vsync.get_value();
     }
+
+    if (cxx::json_node_boolean enable_resize = rootNode["resizeable_window"])
+    {
+        mResizeableWindow = enable_resize.get_value();
+    }
 }
 
 void SystemSettings::StoreToJsonDocument(cxx::json_document& sourceDocument)
@@ -50,6 +55,7 @@ void SystemSettings::StoreToJsonDocument(cxx::json_document& sourceDocument)
     sourceDocument.create_numeric_node(rootNode, "screen_size_w", mScreenDimensions.x);
     sourceDocument.create_numeric_node(rootNode, "screen_size_h", mScreenDimensions.y);
     sourceDocument.create_boolean_node(rootNode, "set_fullscreen", mFullscreen);
+    sourceDocument.create_boolean_node(rootNode, "resizeable_window", mResizeableWindow);
     sourceDocument.create_boolean_node(rootNode, "enable_vsync", mEnableVSync);
 }
 

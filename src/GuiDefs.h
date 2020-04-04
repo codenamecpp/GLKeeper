@@ -4,8 +4,51 @@
 class GuiRenderer;
 class GuiWidget;
 
-// Typedefs
-using GuiWidgetUserData = void*; // any data
+// alias
+using GuiUserData = void*; // widget custom data
+
+enum eGuiVertAlignment
+{
+    eGuiVertAlignment_None,
+    eGuiVertAlignment_Top,
+    eGuiVertAlignment_Center,
+    eGuiVertAlignment_Bottom,
+};
+decl_enum_strings(eGuiVertAlignment);
+
+enum eGuiHorzAlignment
+{
+    eGuiHorzAlignment_None,
+    eGuiHorzAlignment_Left,
+    eGuiHorzAlignment_Center,
+    eGuiHorzAlignment_Right,
+};
+decl_enum_strings(eGuiHorzAlignment);
+
+enum eGuiOrigin
+{
+    eGuiOrigin_LeftTopCorner,
+    eGuiOrigin_Center,
+    eGuiOrigin_Custom,
+};
+decl_enum_strings(eGuiOrigin);
+
+// gui widget anchors struct
+struct GuiAnchors
+{
+public:
+    GuiAnchors() = default;
+    GuiAnchors(bool anchorLeft, bool anchorTop, bool anchorRight, bool anchorBottom)
+        : mLeft(anchorLeft)
+        , mTop(anchorTop)
+        , mRight(anchorRight)
+        , mBottom(anchorBottom)
+    {
+    }
+public:
+    bool mLeft = true, mTop = true;
+    bool mRight = false, mBottom = false;
+};
 
 // creates widget instance of specific class
 class GuiWidgetFactoryInterface

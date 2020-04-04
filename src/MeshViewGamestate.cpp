@@ -10,6 +10,7 @@
 #include "DebugUIManager.h"
 #include "GameObjectsManager.h"
 #include "GameObjectComponentsFactory.h"
+#include "GraphicsDevice.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -27,7 +28,7 @@ void MeshViewGamestate::HandleGamestateEnter()
     mOrbitCameraController.SetParams(MESH_VIEW_CAMERA_YAW_DEG, MESH_VIEW_CAMERA_PITCH_DEG, MESH_VIEW_CAMERA_DISTANCE);
 
     // setup scene camera
-    gRenderScene.mCamera.SetPerspective(gSystem.mSettings.mScreenAspectRatio, MESH_VIEW_CAMERA_FOVY, MESH_VIEW_CAMERA_NEAR, MESH_VIEW_CAMERA_FAR);
+    gRenderScene.mCamera.SetPerspective(gGraphicsDevice.GetScreenResolutionAspect(), MESH_VIEW_CAMERA_FOVY, MESH_VIEW_CAMERA_NEAR, MESH_VIEW_CAMERA_FAR);
 
     gRenderScene.SetCameraController(&mOrbitCameraController);
     mOrbitCameraController.ResetOrientation();
@@ -84,4 +85,9 @@ void MeshViewGamestate::HandleInputEvent(KeyInputEvent& inputEvent)
 
 void MeshViewGamestate::HandleInputEvent(KeyCharEvent& inputEvent)
 {
+}
+
+void MeshViewGamestate::HandleScreenResolutionChanged()
+{
+    gRenderScene.mCamera.SetPerspective(gGraphicsDevice.GetScreenResolutionAspect(), MESH_VIEW_CAMERA_FOVY, MESH_VIEW_CAMERA_NEAR, MESH_VIEW_CAMERA_FAR);
 }

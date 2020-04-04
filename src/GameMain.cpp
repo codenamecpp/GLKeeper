@@ -31,14 +31,14 @@ bool GameMain::Initialize()
         return false;
     }
 
-    //gGameWorld.LoadScenario("temp");
+    gGameWorld.LoadScenario("temp");
 
     // set initial gamestate
     //SwitchToGameState(&mMeshViewGamestate);
 
-    //SwitchToGameState(&mGameplayGamestate);
+    SwitchToGameState(&mGameplayGamestate);
 
-    SwitchToGameState(&mNullGamestate);
+    //SwitchToGameState(&mNullGamestate);
 
     return true;
 }
@@ -146,6 +146,14 @@ bool GameMain::IsGameplayGamestate() const
 bool GameMain::IsNullGamestate() const
 {
     return mCurrentGamestate == &mNullGamestate;
+}
+
+void GameMain::HandleScreenResolutionChanged()
+{
+    if (mCurrentGamestate)
+    {
+        mCurrentGamestate->HandleScreenResolutionChanged();
+    }
 }
 
 void GameMain::SwitchToGameState(GenericGamestate* gamestate)
