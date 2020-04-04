@@ -949,25 +949,6 @@ void GraphicsDevice::HandleScreenResolutionChanged(int screenSizex, int screenSi
     mScreenResolution.x = screenSizex;
     mScreenResolution.y = screenSizey;
 
-    // setup viewport
-    mViewportRect.Set(0, 0, mScreenResolution.x, mScreenResolution.y);
-
-    ::glViewport(mViewportRect.mX, mViewportRect.mY, mViewportRect.mSizeX, mViewportRect.mSizeY);
-    glCheckError();
-
-    // default value for scissor is a whole viewport
-    mScissorBox = mViewportRect;
-
-    ::glScissor(mScissorBox.mX, mScissorBox.mY, mScissorBox.mSizeX, mScissorBox.mSizeY);
-    glCheckError();
-
-    ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glCheckError();
-
-    // force clear screen
-    ::glfwSwapBuffers(gGLFW_WindowHandle);
-    glCheckError();
-
     // notify system
     gConsole.LogMessage(eLogMessage_Debug, "Screen resolution changed (%dx%d)", screenSizex, screenSizey);
     gSystem.HandleScreenResolutionChanged();
