@@ -34,17 +34,17 @@ enum eGuiOriginMode
 };
 decl_enum_strings(eGuiOriginMode);
 
-enum eGuiStretchMode 
+enum eGuiSizeMode 
 {
-    eGuiStretchMode_Scale,
-    eGuiStretchMode_ProportionalScale,
-    eGuiStretchMode_Tile,
-    eGuiStretchMode_Keep,
-    eGuiStretchMode_KeepCentered,
-    eGuiStretchMode_TileVertical,
-    eGuiStretchMode_TileHorizontal,
+    eGuiSizeMode_Scale,
+    eGuiSizeMode_ProportionalScale,
+    eGuiSizeMode_Tile,
+    eGuiSizeMode_Keep,
+    eGuiSizeMode_KeepCentered,
+    eGuiSizeMode_TileVertical,
+    eGuiSizeMode_TileHorizontal,
 };
-decl_enum_strings(eGuiStretchMode);
+decl_enum_strings(eGuiSizeMode);
 
 // gui widget anchors struct
 struct GuiAnchorsStruct

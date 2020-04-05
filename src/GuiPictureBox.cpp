@@ -20,18 +20,18 @@ GuiPictureBox::GuiPictureBox(GuiWidgetClass* widgetClass)
 
 GuiPictureBox::GuiPictureBox(GuiPictureBox* copyWidget)
     : GuiWidget(copyWidget)
-    , mPictureStretch(copyWidget->mPictureStretch)
+    , mSizeMode(copyWidget->mSizeMode)
     , mTexture(copyWidget->mTexture)
     , mQuadsCache(copyWidget->mQuadsCache)
 {
 }
 
-void GuiPictureBox::SetStretchMode(eGuiStretchMode stretchMode)
+void GuiPictureBox::SetSizeMode(eGuiSizeMode sizeMode)
 {
-    if (mPictureStretch == stretchMode)
+    if (mSizeMode == sizeMode)
         return;
 
-    mPictureStretch = stretchMode;
+    mSizeMode = sizeMode;
     InvalidateCache();
 }
 
@@ -62,10 +62,6 @@ void GuiPictureBox::HandleRenderSelf(GuiRenderer& renderContext)
         if (mQuadsCache.empty()) // cannot generate quads
             return;
     }
-
-    Rect2D localRect;
-    GetLocalRect(localRect);
-    renderContext.FillRect(localRect, Color32_Yellow);
 
     renderContext.DrawQuads(mTexture, 
         mQuadsCache.data(), 
@@ -98,12 +94,12 @@ void GuiPictureBox::GenerateQuads()
     const Size2D& imageSize = mTexture->mTextureDesc.mImageDimensions;
     debug_assert(imageSize.x > 0 && imageSize.y > 0);
 
-    if (mPictureStretch == eGuiStretchMode_Scale || mPictureStretch == eGuiStretchMode_Keep || 
-        mPictureStretch == eGuiStretchMode_KeepCentered || mPictureStretch == eGuiStretchMode_ProportionalScale)
+    if (mSizeMode == eGuiSizeMode_Scale || mSizeMode == eGuiSizeMode_Keep || 
+        mSizeMode == eGuiSizeMode_KeepCentered || mSizeMode == eGuiSizeMode_ProportionalScale)
     {
-        switch (mPictureStretch)
+        switch (mSizeMode)
         {
-            case eGuiStretchMode_ProportionalScale:
+            case eGuiSizeMode_ProportionalScale:
             {
                 float scalex = (rcDestination.mSizeX * 1.0f) / (imageSize.x * 1.0f);
                 float scaley = (rcDestination.mSizeY * 1.0f) / (imageSize.y * 1.0f);
@@ -113,13 +109,13 @@ void GuiPictureBox::GenerateQuads()
                 rcDestination.mSizeY = (int)(imageSize.y * scaleValue);
             }
             break;
-            case eGuiStretchMode_Keep:
+            case eGuiSizeMode_Keep:
                 rcDestination.mSizeX = imageSize.x;
                 rcDestination.mSizeY = imageSize.y;
                 rcDestination.mX = 0;
                 rcDestination.mY = 0;
             break;
-            case eGuiStretchMode_KeepCentered:
+            case eGuiSizeMode_KeepCentered:
                 rcDestination.mSizeX = imageSize.x;
                 rcDestination.mSizeY = imageSize.y;
                 rcDestination.mX = (mSize.x / 2 - rcDestination.mSizeX / 2);
@@ -132,14 +128,14 @@ void GuiPictureBox::GenerateQuads()
         GuiQuadStruct& quad = mQuadsCache.back();
         quad.SetupVertices(mTexture, rcDestination, Color32_White);
     }
-    else if (mPictureStretch == eGuiStretchMode_TileHorizontal || mPictureStretch == eGuiStretchMode_TileVertical || mPictureStretch == eGuiStretchMode_Tile)
+    else if (mSizeMode == eGuiSizeMode_TileHorizontal || mSizeMode == eGuiSizeMode_TileVertical || mSizeMode == eGuiSizeMode_Tile)
     {
         float coef = 1.0f;
-        if (mPictureStretch == eGuiStretchMode_TileHorizontal)
+        if (mSizeMode == eGuiSizeMode_TileHorizontal)
         {
             coef = (mSize.y * 1.0f) / (imageSize.y * 1.0f);
         }
-        if (mPictureStretch == eGuiStretchMode_TileVertical)
+        if (mSizeMode == eGuiSizeMode_TileVertical)
         {
             coef = (mSize.x * 1.0f) / (imageSize.x * 1.0f);
         }
@@ -163,7 +159,7 @@ void GuiPictureBox::GenerateQuads()
         // allocate quads
         mQuadsCache.resize(NumTiles_X * NumTiles_Y);
 
-        if (mPictureStretch == eGuiStretchMode_Tile)
+        if (mSizeMode == eGuiSizeMode_Tile)
         {
             for (int currentY = 0; currentY < NumTiles_Y; ++currentY)
             for (int currentX = 0; currentX < NumTiles_X; ++currentX)
@@ -184,7 +180,7 @@ void GuiPictureBox::GenerateQuads()
                 mQuadsCache[currentY * NumTiles_X + currentX].SetupVertices(mTexture, rcSrc, rcDest, Color32_White);
             }
         }
-        else if (mPictureStretch == eGuiStretchMode_TileHorizontal)
+        else if (mSizeMode == eGuiSizeMode_TileHorizontal)
         {
             for (int currentTile = 0; currentTile < NumTiles_X; ++currentTile)
             {
@@ -201,7 +197,7 @@ void GuiPictureBox::GenerateQuads()
                 mQuadsCache[currentTile].SetupVertices(mTexture, rcSrc, rcDest, Color32_White);
             }
         }
-        else if (mPictureStretch == eGuiStretchMode_TileVertical)
+        else if (mSizeMode == eGuiSizeMode_TileVertical)
         {
             for (int currentTile = 0; currentTile < NumTiles_Y; ++currentTile)
             {

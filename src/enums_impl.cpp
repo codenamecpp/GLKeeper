@@ -346,13 +346,13 @@ impl_enum_strings(eGuiOriginMode)
     {eGuiOrigin_Fixed, "fixed"},
 };
 
-impl_enum_strings(eGuiStretchMode)
+impl_enum_strings(eGuiSizeMode)
 {
-    {eGuiStretchMode_Scale, "scale"},
-    {eGuiStretchMode_ProportionalScale, "proportional_scale"},
-    {eGuiStretchMode_Tile, "tile"},
-    {eGuiStretchMode_Keep, "keep"},
-    {eGuiStretchMode_KeepCentered, "keep_centered"},
-    {eGuiStretchMode_TileVertical, "tile_vert"},
-    {eGuiStretchMode_TileHorizontal, "tile_horz"},
+    {eGuiSizeMode_Scale, "scale"},
+    {eGuiSizeMode_ProportionalScale, "proportional_scale"},
+    {eGuiSizeMode_Tile, "tile"},
+    {eGuiSizeMode_Keep, "keep"},
+    {eGuiSizeMode_KeepCentered, "keep_centered"},
+    {eGuiSizeMode_TileVertical, "tile_vert"},
+    {eGuiSizeMode_TileHorizontal, "tile_horz"},
 };

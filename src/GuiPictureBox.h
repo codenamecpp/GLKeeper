@@ -9,11 +9,11 @@ public:
     GuiPictureBox();
     GuiPictureBox(GuiWidgetClass* widgetClass);
 
-    // set picture stretch mode
-    // @param stretchMode: New mode
-    void SetStretchMode(eGuiStretchMode stretchMode);
+    // setup size mode for current picture
+    // @param sizeMode: New mode
+    void SetSizeMode(eGuiSizeMode sizeMode);
 
-    // set picture texture
+    // setup texture
     // @param texture: New texture
     void SetTexture(Texture2D* texture);
 
@@ -32,7 +32,7 @@ protected:
 
 protected:
     Texture2D* mTexture = nullptr;
-    eGuiStretchMode mPictureStretch = eGuiStretchMode_KeepCentered;
+    eGuiSizeMode mSizeMode = eGuiSizeMode_KeepCentered;
 
     std::vector<GuiQuadStruct> mQuadsCache;
 };
