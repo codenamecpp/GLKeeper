@@ -32,10 +32,11 @@ public:
     void SetAlignment(eGuiHorzAlignment horzAlignment, eGuiVertAlignment vertAlignment);
 
     // setup widget anchors
-    void SetAnchors(const GuiAnchors& anchors);
+    void SetAnchors(const GuiAnchorsStruct& anchors);
 
     // set current origin mode
     void SetOriginMode(eGuiOriginMode originMode);
+    void SetCurrentOriginPositionToCenter();
 
     // set current origin position in local or screen space
     void SetOriginPosition(const Point2D& position);
@@ -131,7 +132,8 @@ protected:
     // overridable
     virtual void HandleRenderSelf(GuiRenderer& renderContext);
     virtual void HandleUpdateSelf(float deltaTime);
-
+    virtual void HandleSizeChanged(const Size2D& prevSize);
+    virtual void HandlePositionChanged(const Point2D& prevPosition);
     virtual GuiWidget* ConstructClone();
 
 protected:
@@ -148,7 +150,7 @@ protected:
     eGuiOriginMode mOriginMode = eGuiOrigin_Fixed;
     Point2D mOriginPoint; // local space
     glm::vec2 mOriginRelative; // relative to size [0-1]
-    GuiAnchors mAnchors;
+    GuiAnchorsStruct mAnchors;
 
     // current location and dimensions, local space
     Point2D mPosition;

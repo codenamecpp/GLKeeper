@@ -345,3 +345,14 @@ impl_enum_strings(eGuiOriginMode)
     {eGuiOrigin_Relative, "relative"},
     {eGuiOrigin_Fixed, "fixed"},
 };
+
+impl_enum_strings(eGuiStretchMode)
+{
+    {eGuiStretchMode_Scale, "scale"},
+    {eGuiStretchMode_ProportionalScale, "proportional_scale"},
+    {eGuiStretchMode_Tile, "tile"},
+    {eGuiStretchMode_Keep, "keep"},
+    {eGuiStretchMode_KeepCentered, "keep_centered"},
+    {eGuiStretchMode_TileVertical, "tile_vert"},
+    {eGuiStretchMode_TileHorizontal, "tile_horz"},
+};

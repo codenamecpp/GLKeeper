@@ -189,7 +189,7 @@ void GuiWidget::SetVertAlignment(eGuiVertAlignment vertAlignment)
     SetAlignment(mHorzAlignment, vertAlignment);
 }
 
-void GuiWidget::SetAnchors(const GuiAnchors& anchors)
+void GuiWidget::SetAnchors(const GuiAnchorsStruct& anchors)
 {
     if (mAnchors.mLeft == anchors.mLeft && mAnchors.mTop == anchors.mTop && 
         mAnchors.mRight == anchors.mRight && mAnchors.mBottom == anchors.mBottom)
@@ -212,6 +212,21 @@ void GuiWidget::SetOriginMode(eGuiOriginMode originMode)
         ComputeOriginPoint(mOriginPoint);
     }
     InvalidateTransform();
+}
+
+void GuiWidget::SetCurrentOriginPositionToCenter()
+{
+    if (mOriginMode == eGuiOrigin_Fixed)
+    {
+        Point2D localCenter (mSize.x / 2, mSize.y / 2);
+        SetOriginPosition(localCenter);
+    }
+
+    if (mOriginMode == eGuiOrigin_Relative)
+    {
+        glm::vec2 originValue (0.5f, 0.5f);
+        SetOriginRelativeValue(originValue);
+    }
 }
 
 void GuiWidget::SetOriginPosition(const Point2D& originPoint)
@@ -257,6 +272,8 @@ void GuiWidget::SetPosition(const Point2D& position)
     {
         currChild->ParentPositionChanged(prevPosition);
     }
+
+    HandlePositionChanged(prevPosition);
 }
 
 void GuiWidget::SetSize(const Size2D& size)
@@ -281,6 +298,8 @@ void GuiWidget::SetSize(const Size2D& size)
     {
         currChild->ParentSizeChanged(prevSize, mSize);
     }
+
+    HandleSizeChanged(prevSize);
 }
 
 Point2D GuiWidget::LocalToScreen(const Point2D& position) const
@@ -460,6 +479,16 @@ void GuiWidget::HandleRenderSelf(GuiRenderer& renderContext)
 }
 
 void GuiWidget::HandleUpdateSelf(float deltaTime)
+{
+    // do nothing
+}
+
+void GuiWidget::HandleSizeChanged(const Size2D& prevSize)
+{
+    // do nothing
+}
+
+void GuiWidget::HandlePositionChanged(const Point2D& prevPosition)
 {
     // do nothing
 }

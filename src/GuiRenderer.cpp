@@ -110,14 +110,6 @@ void GuiRenderer::FillRect(const Rect2D& rect, Color32 fillColor)
     vertices[5].mColor = fillColor;
     vertices[5].mPosition.x = vertices[2].mPosition.x;
     vertices[5].mPosition.y = vertices[0].mPosition.y;
-
-    if (mCurrentTransform)
-    {
-        for (int icurr = 0; icurr < 6; ++icurr)
-        {
-            vertices[icurr].mPosition = glm::vec2(*mCurrentTransform * glm::vec4(vertices[icurr].mPosition, 0.0f, 1.0f));
-        }
-    }
 }
 
 void GuiRenderer::DrawRect(const Rect2D& rect, Color32 lineColor)
@@ -125,10 +117,37 @@ void GuiRenderer::DrawRect(const Rect2D& rect, Color32 lineColor)
     // todo
 }
 
+void GuiRenderer::DrawQuads(Texture2D* texture, const GuiQuadStruct* quads, int quadsCount)
+{
+    if (quads == nullptr || quadsCount < 1)
+    {
+        debug_assert(false);
+        return;
+    }
+
+    SetCurrentBatchTexture(texture);
+
+    Vertex2D* vertices = nullptr;
+    ALLOCATE_VERTICES(6 * quadsCount, vertices);
+
+    // push all quad vertices to vertex cache
+    for (int iquad = 0; iquad < quadsCount; ++iquad)
+    {
+        vertices[iquad * 6 + 0] = quads[iquad].mPoints[0];
+        vertices[iquad * 6 + 1] = quads[iquad].mPoints[1];
+        vertices[iquad * 6 + 2] = quads[iquad].mPoints[2];
+        vertices[iquad * 6 + 3] = quads[iquad].mPoints[0];
+        vertices[iquad * 6 + 4] = quads[iquad].mPoints[2];
+        vertices[iquad * 6 + 5] = quads[iquad].mPoints[3];
+    }
+}
+
 void GuiRenderer::FlushPendingDrawCalls()
 {
     if (mBatchVertexCount < 1)
         return;
+
+    TransformCurrentBatchVertices();
 
     const int VertexBufferSize = mBatchVertexCount * Sizeof_Vertex2D;
     if (!mVertexBuffer->Setup(eBufferUsage_Stream, VertexBufferSize, nullptr))
@@ -168,5 +187,16 @@ void GuiRenderer::SetCurrentBatchTexture(Texture2D* newTexutre)
     if (mCurrentTexture)
     {
         mCurrentTexture->ActivateTexture(eTextureUnit_0);
+    }
+}
+
+void GuiRenderer::TransformCurrentBatchVertices()
+{
+    if (mCurrentTransform)
+    {
+        for (int icurr = 0; icurr < mBatchVertexCount; ++icurr)
+        {
+            mBatchVertices[icurr].mPosition = glm::vec2(*mCurrentTransform * glm::vec4(mBatchVertices[icurr].mPosition, 0.0f, 1.0f));
+        }
     }
 }

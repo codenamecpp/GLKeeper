@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GuiRenderProgram.h"
+#include "GuiDefs.h"
 
 class GuiRenderer: public cxx::noncopyable
 {
@@ -25,11 +26,22 @@ public:
     // draw without textures
     void FillRect(const Rect2D& rect, Color32 fillColor);
     void DrawRect(const Rect2D& rect, Color32 lineColor);
+    
+    // draw quads
+    // @param texture: Current texture
+    // @param quads: Quads buffer
+    // @param quadsCount: Number of quads in buffer
+    void DrawQuads(Texture2D* texture, const GuiQuadStruct* quads, int quadsCount);
+    void DrawQuad(Texture2D* texture, const GuiQuadStruct& quad)
+    {
+        DrawQuads(texture, &quad, 1);
+    }
 
 private:
     void FlushPendingDrawCalls();
 
     void SetCurrentBatchTexture(Texture2D* newTexutre);
+    void TransformCurrentBatchVertices();
 
 private:
     GuiRenderProgram mGuiRenderProgram;
