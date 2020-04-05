@@ -2,6 +2,7 @@
 #include "GuiManager.h"
 #include "GuiRenderer.h"
 #include "Console.h"
+#include "TimeManager.h"
 
 GuiManager gGuiManager;
 
@@ -14,15 +15,35 @@ bool GuiManager::Initialize()
 void GuiManager::Deinit()
 {
     mWidgetsClasses.clear();
+    mWidgets.clear();
+}
+
+void GuiManager::AttachWidget(GuiWidget* widget)
+{
+    cxx::push_back_if_unique(mWidgets, widget);
+}
+
+void GuiManager::DetachWidget(GuiWidget* widget)
+{
+    cxx::erase_elements(mWidgets, widget);
 }
 
 void GuiManager::RenderFrame(GuiRenderer& renderContext)
 {
-
+    for (GuiWidget* currWidget: mWidgets)
+    {
+        currWidget->RenderFrame(renderContext);
+    }
 }
 
 void GuiManager::UpdateFrame()
 {
+    float deltaTime = (float) gTimeManager.GetRealtimeFrameDelta();
+
+    for (GuiWidget* currWidget: mWidgets)
+    {
+        currWidget->UpdateFrame(deltaTime);
+    }
 }
 
 void GuiManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)

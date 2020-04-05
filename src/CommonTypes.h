@@ -14,7 +14,7 @@ public:
     {
     }
     // @param rgba: Source 32bits color
-    inline Color32& operator = (const Color32& rgba)
+    inline Color32& operator = (Color32 rgba)
     {
         mRGBA = rgba.mRGBA;
         return *this;
@@ -55,8 +55,8 @@ public:
 
 const unsigned int Sizeof_Color32 = sizeof(Color32);
 
-inline bool operator == (const Color32& lhs, const Color32& rhs) { return lhs.mRGBA == rhs.mRGBA; }
-inline bool operator != (const Color32& lhs, const Color32& rhs) { return lhs.mRGBA != rhs.mRGBA; }
+inline bool operator == (Color32 lhs, Color32 rhs) { return lhs.mRGBA == rhs.mRGBA; }
+inline bool operator != (Color32 lhs, Color32 rhs) { return lhs.mRGBA != rhs.mRGBA; }
 
 // standard colors
 extern const Color32 Color32_Red;

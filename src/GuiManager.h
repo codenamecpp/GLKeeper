@@ -37,12 +37,19 @@ public:
 
     void HandleScreenResolutionChanged();
 
+    // temporary
+    // todo: remove
+    void AttachWidget(GuiWidget* widget);
+    void DetachWidget(GuiWidget* widget);
+
 private:
     void RegisterWidgetsClasses();
 
 private:
     using GuiWidgetClassesMap = std::unordered_map<std::string, GuiWidgetClass*>;
     GuiWidgetClassesMap mWidgetsClasses;
+
+    std::vector<GuiWidget*> mWidgets; // temporary: todo: remove
 };
 
 extern GuiManager gGuiManager;

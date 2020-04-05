@@ -340,9 +340,8 @@ impl_enum_strings(eGuiHorzAlignment)
     {eGuiHorzAlignment_Right, "right"},
 };
 
-impl_enum_strings(eGuiOrigin)
+impl_enum_strings(eGuiOriginMode)
 {
-    {eGuiOrigin_LeftTopCorner, "left_top_corner"},
-    {eGuiOrigin_Center, "center"},
-    {eGuiOrigin_Custom, "custom"},
+    {eGuiOrigin_Relative, "relative"},
+    {eGuiOrigin_Fixed, "fixed"},
 };

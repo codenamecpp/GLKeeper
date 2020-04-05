@@ -25,13 +25,12 @@ enum eGuiHorzAlignment
 };
 decl_enum_strings(eGuiHorzAlignment);
 
-enum eGuiOrigin
+enum eGuiOriginMode
 {
-    eGuiOrigin_LeftTopCorner,
-    eGuiOrigin_Center,
-    eGuiOrigin_Custom,
+    eGuiOrigin_Relative,
+    eGuiOrigin_Fixed,
 };
-decl_enum_strings(eGuiOrigin);
+decl_enum_strings(eGuiOriginMode);
 
 // gui widget anchors struct
 struct GuiAnchors
