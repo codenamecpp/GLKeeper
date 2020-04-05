@@ -493,6 +493,30 @@ void GuiWidget::HandlePositionChanged(const Point2D& prevPosition)
     // do nothing
 }
 
+bool GuiWidget::HandleDragStart(const Point2D& screenPoint)
+{
+    // do nothing
+    return false;
+}
+
+void GuiWidget::HandleDragCancel()
+{
+    // do nothing
+    debug_assert(false);
+}
+
+void GuiWidget::HandleDragDrop(const Point2D& screenPoint)
+{
+    // do nothing
+    debug_assert(false);
+}
+
+void GuiWidget::HandleDrag(const Point2D& screenPoint)
+{
+    // do nothing
+    debug_assert(false);
+}
+
 GuiWidget* GuiWidget::ConstructClone()
 {
     GuiWidget* selfClone = new GuiWidget(this);

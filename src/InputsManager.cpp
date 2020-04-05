@@ -33,8 +33,8 @@ void InputsManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 
 void InputsManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
 {
-    mCursorPositionX = inputEvent.mCursorPositionX;
-    mCursorPositionY = inputEvent.mCursorPositionY;
+    mCursorPosition.x = inputEvent.mCursorPositionX;
+    mCursorPosition.y = inputEvent.mCursorPositionY;
 
     if (gDebugUIManager.IsInitialized())
     {
@@ -92,4 +92,9 @@ void InputsManager::Clear()
 {
     ::memset(mMouseButtons, 0, sizeof(mMouseButtons));
     ::memset(mKeyboardKeys, 0, sizeof(mKeyboardKeys));
+}
+
+void InputsManager::SetMousePosition(const Point2D& cursorPosition)
+{
+    mCursorPosition = cursorPosition;
 }

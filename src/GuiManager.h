@@ -5,6 +5,10 @@
 class GuiManager: public cxx::noncopyable
 {
 public:
+    // readonly
+    GuiWidget* mDraggedWidget = nullptr;
+
+public:
     // setup gui manager internal resources
     bool Initialize();
     void Deinit();
@@ -35,6 +39,11 @@ public:
     // @param className: Widget class name
     GuiWidget* ConstructWidget(const std::string& className) const;
 
+    // dragged widget control
+    void StartDrag(GuiWidget* widget);
+    void CancelDrag();
+
+    // process screen resolution changed event
     void HandleScreenResolutionChanged();
 
     // temporary
@@ -45,9 +54,14 @@ public:
 private:
     void RegisterWidgetsClasses();
 
+    void HandleMouseLButtonPressed(MouseButtonInputEvent& inputEvent);
+    void HandleMouseLButtonReleased(MouseButtonInputEvent& inputEvent);
+
 private:
     using GuiWidgetClassesMap = std::unordered_map<std::string, GuiWidgetClass*>;
     GuiWidgetClassesMap mWidgetsClasses;
+
+
 
     std::vector<GuiWidget*> mWidgets; // temporary: todo: remove
 };

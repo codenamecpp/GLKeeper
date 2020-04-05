@@ -4,6 +4,7 @@
 #include "Console.h"
 #include "TimeManager.h"
 #include "GuiPictureBox.h"
+#include "InputsManager.h"
 
 GuiManager gGuiManager;
 
@@ -49,10 +50,27 @@ void GuiManager::UpdateFrame()
 
 void GuiManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
+    if (inputEvent.mButton == eMouseButton_Left)
+    {
+        if (inputEvent.mPressed)
+        {
+            HandleMouseLButtonPressed(inputEvent);
+        }
+        else
+        {
+            HandleMouseLButtonReleased(inputEvent);
+        }
+    }
 }
 
 void GuiManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
 {
+    if (mDraggedWidget) // continue drag
+    {
+        mDraggedWidget->HandleDrag(gInputsManager.mCursorPosition);
+
+        inputEvent.SetConsumed();
+    }
 }
 
 void GuiManager::HandleInputEvent(MouseScrollInputEvent& inputEvent)
@@ -65,6 +83,20 @@ void GuiManager::HandleInputEvent(KeyInputEvent& inputEvent)
 
 void GuiManager::HandleInputEvent(KeyCharEvent& inputEvent)
 {
+}
+
+void GuiManager::HandleMouseLButtonPressed(MouseButtonInputEvent& inputEvent)
+{
+}
+
+void GuiManager::HandleMouseLButtonReleased(MouseButtonInputEvent& inputEvent)
+{
+    if (mDraggedWidget) // finish drag
+    {
+        mDraggedWidget->HandleDragDrop(gInputsManager.mCursorPosition);
+
+        inputEvent.SetConsumed();
+    }
 }
 
 bool GuiManager::RegisterWidgetClass(GuiWidgetClass* widgetsClass)
@@ -110,7 +142,30 @@ GuiWidget* GuiManager::ConstructWidget(const std::string& className) const
     return nullptr;
 }
 
+void GuiManager::StartDrag(GuiWidget* widget)
+{
+    debug_assert(widget);
+    if (widget == nullptr || mDraggedWidget == widget)
+        return;
+
+    CancelDrag();
+
+    mDraggedWidget = nullptr;
+    if (widget->HandleDragStart(gInputsManager.mCursorPosition))
+    {
+        mDraggedWidget = widget;
+    }
+}
+
+void GuiManager::CancelDrag()
+{
+    if (mDraggedWidget)
+    {
+        mDraggedWidget->HandleDragCancel();
+        mDraggedWidget = nullptr;
+    }
+}
+
 void GuiManager::HandleScreenResolutionChanged()
 {
-
 }

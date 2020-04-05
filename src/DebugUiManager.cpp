@@ -192,8 +192,8 @@ void DebugUIManager::UpdateFrame()
     io.DeltaTime = (float) gTimeManager.GetRealtimeFrameDelta(); // set the time elapsed since the previous frame (in seconds)
     io.DisplaySize.x = (float) gGraphicsDevice.mViewportRect.mSizeX;
     io.DisplaySize.y = (float) gGraphicsDevice.mViewportRect.mSizeY;
-    io.MousePos.x = gInputsManager.mCursorPositionX * 1.0f;
-    io.MousePos.y = gInputsManager.mCursorPositionY * 1.0f;
+    io.MousePos.x = gInputsManager.mCursorPosition.x * 1.0f;
+    io.MousePos.y = gInputsManager.mCursorPosition.y * 1.0f;
     io.MouseDown[0] = gInputsManager.GetMouseButtonL();  // set the mouse button states
     io.MouseDown[1] = gInputsManager.GetMouseButtonR();
     io.MouseDown[3] = gInputsManager.GetMouseButtonM();

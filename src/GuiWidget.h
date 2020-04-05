@@ -134,6 +134,12 @@ protected:
     virtual void HandleUpdateSelf(float deltaTime);
     virtual void HandleSizeChanged(const Size2D& prevSize);
     virtual void HandlePositionChanged(const Point2D& prevPosition);
+
+    virtual bool HandleDragStart(const Point2D& screenPoint);
+    virtual void HandleDragCancel();
+    virtual void HandleDragDrop(const Point2D& screenPoint);
+    virtual void HandleDrag(const Point2D& screenPoint);
+
     virtual GuiWidget* ConstructClone();
 
 protected:

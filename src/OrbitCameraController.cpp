@@ -4,8 +4,7 @@
 #include "SceneCamera.h"
 
 OrbitCameraController::OrbitCameraController()
-    : mPrevMousePositionX()
-    , mPrevMousePositionY()
+    : mPrevMousePosition()
     , mFocusPoint()
     , mDegYaw()
     , mDegPitch()
@@ -25,8 +24,7 @@ void OrbitCameraController::SetParams(float defaultYawDegrees, float defaultPitc
 
 void OrbitCameraController::ResetOrientation()
 {
-    mPrevMousePositionX = gInputsManager.mCursorPositionX;
-    mPrevMousePositionY = gInputsManager.mCursorPositionY;
+    mPrevMousePosition = gInputsManager.mCursorPosition;
     mDegYaw = mDefaultYaw;
     mDegPitch = mDefaultPitch;
     mDistance = mDefaultDistance;
@@ -51,8 +49,7 @@ void OrbitCameraController::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
     if (inputEvent.HasPressed(eMouseButton_Left) || inputEvent.HasPressed(eMouseButton_Right))
     {
-        mPrevMousePositionX = gInputsManager.mCursorPositionX;
-        mPrevMousePositionY = gInputsManager.mCursorPositionY;
+        mPrevMousePosition = gInputsManager.mCursorPosition;
     }
 }
 
@@ -66,11 +63,11 @@ void OrbitCameraController::HandleInputEvent(MouseMovedInputEvent& inputEvent)
     if (!orient && !moveorigin)
         return;
 
-    int deltaX = inputEvent.mCursorPositionX - mPrevMousePositionX;
-    int deltaY = inputEvent.mCursorPositionY - mPrevMousePositionY;
+    int deltaX = inputEvent.mCursorPositionX - mPrevMousePosition.x;
+    int deltaY = inputEvent.mCursorPositionY - mPrevMousePosition.y;
 
-    mPrevMousePositionX = inputEvent.mCursorPositionX;
-    mPrevMousePositionY = inputEvent.mCursorPositionY;
+    mPrevMousePosition.x = inputEvent.mCursorPositionX;
+    mPrevMousePosition.y = inputEvent.mCursorPositionY;
 
     const float speedUp = 0.75f;
     if (orient)
