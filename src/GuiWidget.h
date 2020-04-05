@@ -57,6 +57,10 @@ public:
     // set current size
     void SetSize(const Size2D& size);
 
+    // test whether screen space point is within widget rect
+    // @param screenPosition: Test point
+    bool IsScreenPointInsideRect(const Point2D& screenPosition) const;
+
     // get current position and size
     // @param outputRect: Output local rect
     void GetLocalRect(Rect2D& outputRect) const
@@ -67,14 +71,36 @@ public:
         outputRect.mSizeY = mSize.y;
     }
 
+    // attach or detach child widget
     bool AttachChild(GuiWidget* widget);
     bool DetachChild(GuiWidget* widget);
 
+    void DetachAndFreeChildren();
+
     // hierarchy inspection
-    GuiWidget* GetParent() const { return mParent; }
-    GuiWidget* GetChild() const { return mFirstChild; }
-    GuiWidget* NextSibling() const { return mNextSibling; }
-    GuiWidget* PrevSibling() const { return mPrevSibling; }
+    inline GuiWidget* GetParent() const { return mParent; }
+    inline GuiWidget* GetChild() const { return mFirstChild; }
+    inline GuiWidget* NextSibling() const { return mNextSibling; }
+    inline GuiWidget* PrevSibling() const { return mPrevSibling; }
+
+    // get current position in local or screen space
+    inline Point2D GetPosition() const { return mPosition; }
+    inline Point2D GetScreenPosition() const
+    {
+        Point2D screenPosition = LocalToScreen(mPosition);
+        return screenPosition;
+    }
+
+    // get current origin point in local or screen space
+    inline Point2D GetOriginPosition() const { return mOriginPoint; }
+    inline Point2D GetOriginScreenPosition() const
+    {
+        Point2D screenPosition = LocalToScreen(mOriginPoint);
+        return screenPosition;
+    }
+
+    // get current size
+    inline Size2D GetSize() const { return mSize; }
 
     // convert from local to screen space and vice versa
     // @param position: Point
@@ -85,7 +111,14 @@ public:
     void ComputeTransform();
     void InvalidateTransform();
 
+    // clone widget with or without its chindren
+    GuiWidget* Clone();
+    GuiWidget* CloseDeep();
+
 protected:
+    // copy properties
+    GuiWidget(GuiWidget* copyWidget);
+
     void ParentPositionChanged(const Point2D& prevPosition);
     void ParentSizeChanged(const Size2D& prevSize, const Size2D& currSize);
 
@@ -93,6 +126,13 @@ protected:
     int ComputeVertAlignmentPos() const;
 
     void ComputeOriginPoint(Point2D& outputPoint) const;
+
+protected:
+    // overridable
+    virtual void HandleRenderSelf(GuiRenderer& renderContext);
+    virtual void HandleUpdateSelf(float deltaTime);
+
+    virtual GuiWidget* ConstructClone();
 
 protected:
     GuiWidgetClass* mClass; // cannot be null

@@ -3,6 +3,7 @@
 #include "GuiRenderer.h"
 #include "Console.h"
 #include "TimeManager.h"
+#include "GuiPictureBox.h"
 
 GuiManager gGuiManager;
 
@@ -85,6 +86,7 @@ bool GuiManager::RegisterWidgetClass(GuiWidgetClass* widgetsClass)
 void GuiManager::RegisterWidgetsClasses()
 {
     RegisterWidgetClass(&gBaseWidgetClass);
+    RegisterWidgetClass(&gPictureBoxWidgetClass);
 }
 
 GuiWidgetClass* GuiManager::GetWidgetClass(const std::string& className) const

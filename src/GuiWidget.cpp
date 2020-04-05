@@ -22,13 +22,56 @@ GuiWidget::GuiWidget(GuiWidgetClass* widgetClass)
     , mPosition()
     , mSize()
     , mOriginRelative()
+    , mUserData()
+{
+    debug_assert(mClass);
+}
+
+GuiWidget::GuiWidget(GuiWidget* copyWidget)
+    : mClass(copyWidget->mClass)
+    , mName(copyWidget->mName)
+    , mUserData()
+    , mHorzAlignment(copyWidget->mHorzAlignment)
+    , mVertAlignment(copyWidget->mVertAlignment)
+    , mOriginMode(copyWidget->mOriginMode)
+    , mOriginPoint(copyWidget->mOriginPoint)
+    , mOriginRelative(copyWidget->mOriginRelative)
+    , mAnchors(copyWidget->mAnchors)
+    , mPosition(copyWidget->mPosition)
+    , mSize(copyWidget->mSize)
+    , mScale(copyWidget->mScale)
+    , mTransform(copyWidget->mTransform)
+    , mTransformInvalidated(copyWidget->mTransformInvalidated)
 {
     debug_assert(mClass);
 }
 
 GuiWidget::~GuiWidget()
 {
-    // todo: cleanup hier
+    if (mParent)
+    {
+        mParent->DetachChild(this);
+    }
+    DetachAndFreeChildren();
+}
+
+GuiWidget* GuiWidget::Clone()
+{
+    GuiWidget* selfClone = ConstructClone();
+    return selfClone;
+}
+
+GuiWidget* GuiWidget::CloseDeep()
+{
+    GuiWidget* selfClone = Clone();
+
+    for (GuiWidget* currChild = mFirstChild; currChild;
+        currChild = currChild->mNextSibling)
+    {
+        GuiWidget* childClone = currChild->CloseDeep();
+        selfClone->AttachChild(childClone);
+    }
+    return selfClone;
 }
 
 void GuiWidget::RenderFrame(GuiRenderer& renderContext)
@@ -36,17 +79,7 @@ void GuiWidget::RenderFrame(GuiRenderer& renderContext)
     ComputeTransform();
 
     renderContext.SetCurrentTransform(&mTransform);
-
-    Rect2D rc;
-    GetLocalRect(rc);
-    renderContext.FillRect(rc, Color32_Red);
-
-    rc.mX += 2;
-    rc.mY += 2;
-    rc.mSizeX -= 4;
-    rc.mSizeY -= 4;
-
-    renderContext.FillRect(rc, Color32_Gray);
+    HandleRenderSelf(renderContext);
 
     for (GuiWidget* currChild = mFirstChild; currChild; 
         currChild = currChild->mNextSibling)
@@ -57,6 +90,13 @@ void GuiWidget::RenderFrame(GuiRenderer& renderContext)
 
 void GuiWidget::UpdateFrame(float deltaTime)
 {
+    HandleUpdateSelf(deltaTime);
+
+    for (GuiWidget* currChild = mFirstChild; currChild; 
+        currChild = currChild->mNextSibling)
+    {
+        currChild->UpdateFrame(deltaTime);
+    }
 }
 
 bool GuiWidget::AttachChild(GuiWidget* widget)
@@ -119,6 +159,16 @@ bool GuiWidget::DetachChild(GuiWidget* widget)
     }
     widget->mParent = nullptr;
     return true;
+}
+
+void GuiWidget::DetachAndFreeChildren()
+{
+    while (mFirstChild)
+    {
+        GuiWidget* deleteWidget = mFirstChild;
+        DetachChild(deleteWidget);
+        SafeDelete(deleteWidget);
+    }
 }
 
 void GuiWidget::SetAlignment(eGuiHorzAlignment horzAlignment, eGuiVertAlignment vertAlignment)
@@ -252,6 +302,14 @@ Point2D GuiWidget::ScreenToLocal(const Point2D& position) const
     glm::vec4 screenSpacePosition(position, 0.0f, 1.0f);
     glm::vec4 localSpacePosition = inverseTransform * screenSpacePosition;
     return Point2D(localSpacePosition);
+}
+
+bool GuiWidget::IsScreenPointInsideRect(const Point2D& screenPosition) const
+{
+    Point2D localPoint = ScreenToLocal(screenPosition);
+    Rect2D localRect;
+    GetLocalRect(localRect);
+    return localRect.PointWithin(localPoint);
 }
 
 void GuiWidget::ComputeTransform()
@@ -394,4 +452,20 @@ void GuiWidget::ComputeOriginPoint(Point2D& outputPoint) const
         glm::vec2 originPoint ( mOriginRelative.x * mSize.x, mOriginRelative.y * mSize.y );
         outputPoint = originPoint;
     }
+}
+
+void GuiWidget::HandleRenderSelf(GuiRenderer& renderContext)
+{
+    // do nothing
+}
+
+void GuiWidget::HandleUpdateSelf(float deltaTime)
+{
+    // do nothing
+}
+
+GuiWidget* GuiWidget::ConstructClone()
+{
+    GuiWidget* selfClone = new GuiWidget(this);
+    return selfClone;
 }

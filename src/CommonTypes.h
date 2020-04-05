@@ -110,6 +110,12 @@ public:
         mSizeX = 0;
         mSizeY = 0;
     }
+    inline bool PointWithin(const Point2D& point) const
+    {
+        return point.x >= mX && point.y >= mY &&
+            point.x < (mX + mSizeX - 1) &&
+            point.y < (mY + mSizeY - 1);
+    }
 public:
     int mX, mY;
     int mSizeX, mSizeY;
