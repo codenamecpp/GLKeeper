@@ -90,17 +90,17 @@ void GuiPictureBox::GenerateQuads()
         mTexture->LoadTexture();
     }
 
+    Rect2D rcDestination;
+    GetLocalRect(rcDestination);
+    if (rcDestination.mSizeX < 1 || rcDestination.mSizeY < 1)
+        return;
+
     const Size2D& imageSize = mTexture->mTextureDesc.mImageDimensions;
+    debug_assert(imageSize.x > 0 && imageSize.y > 0);
 
     if (mPictureStretch == eGuiStretchMode_Scale || mPictureStretch == eGuiStretchMode_Keep || 
         mPictureStretch == eGuiStretchMode_KeepCentered || mPictureStretch == eGuiStretchMode_ProportionalScale)
     {
-        Rect2D rcDestination;
-        GetLocalRect(rcDestination);
-
-        if (rcDestination.mSizeX < 1 || rcDestination.mSizeY < 1)
-            return;
-
         switch (mPictureStretch)
         {
             case eGuiStretchMode_ProportionalScale:
@@ -134,11 +134,93 @@ void GuiPictureBox::GenerateQuads()
     }
     else if (mPictureStretch == eGuiStretchMode_TileHorizontal || mPictureStretch == eGuiStretchMode_TileVertical || mPictureStretch == eGuiStretchMode_Tile)
     {
-        // todo
+        float coef = 1.0f;
+        if (mPictureStretch == eGuiStretchMode_TileHorizontal)
+        {
+            coef = (mSize.y * 1.0f) / (imageSize.y * 1.0f);
+        }
+        if (mPictureStretch == eGuiStretchMode_TileVertical)
+        {
+            coef = (mSize.x * 1.0f) / (imageSize.x * 1.0f);
+        }
+
+        const int TileSize_X = (int) (imageSize.x * coef);
+        const int TileSize_Y = (int) (imageSize.y * coef);
+        const int ExtraTileSize_X = (mSize.x % TileSize_X);
+        const int ExtraTileSize_Y = (mSize.y % TileSize_Y);
+        const int NumFullTiles_X = (mSize.x / TileSize_X);
+        const int NumFullTiles_Y = (mSize.y / TileSize_Y);
+        const int ExtraTexturesPixels_X = (int) ((mSize.x % TileSize_X) / coef);
+        const int ExtraTexturesPixels_Y = (int) ((mSize.y % TileSize_Y) / coef);
+
+        // num full tiles plus partial tile
+        const int NumTiles_X = NumFullTiles_X + (ExtraTexturesPixels_X > 0 ? 1 : 0);
+        const int NumTiles_Y = NumFullTiles_Y + (ExtraTexturesPixels_Y > 0 ? 1 : 0);
+
+        if (NumFullTiles_X < 1 && NumFullTiles_Y < 1 && ExtraTexturesPixels_X < 1 && ExtraTexturesPixels_Y < 1)
+            return;
+
+        // allocate quads
+        mQuadsCache.resize(NumTiles_X * NumTiles_Y);
+
+        if (mPictureStretch == eGuiStretchMode_Tile)
+        {
+            for (int currentY = 0; currentY < NumTiles_Y; ++currentY)
+            for (int currentX = 0; currentX < NumTiles_X; ++currentX)
+            {
+                const int CurrentTilePixels_X = (currentX == NumFullTiles_X) ? ExtraTexturesPixels_X : imageSize.x;
+                const int CurrentTilePixels_Y = (currentY == NumFullTiles_Y) ? ExtraTexturesPixels_Y : imageSize.y;
+                const Rect2D rcSrc 
+                {
+                    0, 0, CurrentTilePixels_X, CurrentTilePixels_Y
+                };
+                const Rect2D rcDest 
+                {
+                    currentX * imageSize.x, 
+                    currentY * imageSize.y, 
+                    CurrentTilePixels_X, 
+                    CurrentTilePixels_Y
+                };
+                mQuadsCache[currentY * NumTiles_X + currentX].SetupVertices(mTexture, rcSrc, rcDest, Color32_White);
+            }
+        }
+        else if (mPictureStretch == eGuiStretchMode_TileHorizontal)
+        {
+            for (int currentTile = 0; currentTile < NumTiles_X; ++currentTile)
+            {
+                const bool isExtraTile = (currentTile == NumFullTiles_X);
+                const Rect2D rcSrc 
+                { 
+                    0, 0, (isExtraTile ? ExtraTexturesPixels_X : imageSize.x), imageSize.y 
+                };
+                const Rect2D rcDest 
+                {
+                    currentTile * TileSize_X, 0, 
+                    isExtraTile ? ExtraTileSize_X : TileSize_X, TileSize_Y
+                };
+                mQuadsCache[currentTile].SetupVertices(mTexture, rcSrc, rcDest, Color32_White);
+            }
+        }
+        else if (mPictureStretch == eGuiStretchMode_TileVertical)
+        {
+            for (int currentTile = 0; currentTile < NumTiles_Y; ++currentTile)
+            {
+                const bool isExtraTile = (currentTile == NumFullTiles_Y);
+                const Rect2D rcSrc 
+                { 
+                    0, 0, imageSize.x, (isExtraTile ? ExtraTexturesPixels_Y : imageSize.y) 
+                };
+                const Rect2D rcDest 
+                {
+                    0, currentTile * TileSize_Y, 
+                    TileSize_X, isExtraTile ? ExtraTileSize_Y : TileSize_Y
+                };
+                mQuadsCache[currentTile].SetupVertices(mTexture, rcSrc, rcDest, Color32_White);
+            }
+        } // if
     }
     else
     {
-        // todo
         debug_assert(false);
     }
 }
