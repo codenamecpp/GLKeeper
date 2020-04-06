@@ -110,6 +110,8 @@ void GuiRenderer::FillRect(const Rectangle& rect, Color32 fillColor)
     vertices[5].mColor = fillColor;
     vertices[5].mPosition.x = vertices[2].mPosition.x;
     vertices[5].mPosition.y = vertices[0].mPosition.y;
+
+    TransformVertices(vertices);
 }
 
 void GuiRenderer::DrawRect(const Rectangle& rect, Color32 lineColor)
@@ -140,14 +142,13 @@ void GuiRenderer::DrawQuads(Texture2D* texture, const GuiQuadStruct* quads, int 
         vertices[iquad * 6 + 4] = quads[iquad].mPoints[2];
         vertices[iquad * 6 + 5] = quads[iquad].mPoints[3];
     }
+    TransformVertices(vertices);
 }
 
 void GuiRenderer::FlushPendingDrawCalls()
 {
     if (mBatchVertexCount < 1)
         return;
-
-    TransformCurrentBatchVertices();
 
     const int VertexBufferSize = mBatchVertexCount * Sizeof_Vertex2D;
     if (!mVertexBuffer->Setup(eBufferUsage_Stream, VertexBufferSize, nullptr))
@@ -190,13 +191,14 @@ void GuiRenderer::SetCurrentBatchTexture(Texture2D* newTexutre)
     }
 }
 
-void GuiRenderer::TransformCurrentBatchVertices()
+void GuiRenderer::TransformVertices(Vertex2D* vertices)
 {
-    if (mCurrentTransform)
+    if (mCurrentTransform == nullptr || vertices == nullptr)
+        return;
+
+    Vertex2D* vertices_end = mBatchVertices + mBatchVertexCount;
+    for (; vertices != vertices_end; ++vertices)
     {
-        for (int icurr = 0; icurr < mBatchVertexCount; ++icurr)
-        {
-            mBatchVertices[icurr].mPosition = glm::vec2(*mCurrentTransform * glm::vec4(mBatchVertices[icurr].mPosition, 0.0f, 1.0f));
-        }
+        vertices->mPosition = glm::vec2(*mCurrentTransform * glm::vec4(vertices->mPosition, 0.0f, 1.0f));
     }
 }

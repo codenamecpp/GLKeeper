@@ -11,6 +11,8 @@ public:
     std::string mName; // user-defined identifier for widget
     GuiUserData mUserData; // user-defined data
 
+    Color32 mDebugColor = Color32_Gray;
+
 public:
     // construct widget
     GuiWidget(GuiWidgetClass* widgetClass);
@@ -25,38 +27,42 @@ public:
     // @param deltaTime: Time passed since previous update
     void UpdateFrame(float deltaTime);
 
-    // setup vertical and horizontal alignment
-    // alignment has precedence over anchors
-    void SetHorzAlignment(eGuiHorzAlignment horzAlignment);
-    void SetVertAlignment(eGuiVertAlignment vertAlignment);
-    void SetAlignment(eGuiHorzAlignment horzAlignment, eGuiVertAlignment vertAlignment);
-
-    // setup widget anchors
-    void SetAnchors(const GuiAnchorsStruct& anchors);
-
-    // set current origin mode
-    void SetOriginMode(eGuiOriginMode originMode);
-    void SetCurrentOriginPositionToCenter();
-
-    // set current origin position in local or screen space
-    void SetOriginPosition(const Point& position);
-    void SetOriginScreenPosition(const Point& position)
-    {
-        Point pos = ScreenToLocal(position);
-        SetOriginPosition(pos);
-    }
-    void SetOriginRelativeValue(const glm::vec2& value);
-
     // set current position in local or screen space
-    void SetPosition(const Point& position);
+    // @param position: Position absolute or relative [0-100] %
+    // @param xAddressingMode, yAddressingMode: Addressing modes for x and y
+    void SetPosition(const Point& position, 
+        eGuiAddressingMode xAddressingMode = eGuiAddressingMode_Absolute, 
+        eGuiAddressingMode yAddressingMode = eGuiAddressingMode_Absolute);
+
     void SetScreenPosition(const Point& position)
     {
         Point pos = ScreenToLocal(position);
-        SetPosition(pos);
+        SetPosition(pos, eGuiAddressingMode_Absolute, eGuiAddressingMode_Absolute);
     }
 
+    // set current origin position in local or screen space
+    // @param position: Position absolute or relative [0-100] %
+    // @param xAddressingMode, yAddressingMode: Addressing modes for x and y
+    void SetOrigin(const Point& position, 
+        eGuiAddressingMode xAddressingMode = eGuiAddressingMode_Absolute, 
+        eGuiAddressingMode yAddressingMode = eGuiAddressingMode_Absolute);
+
+    void SetOriginScreenPosition(const Point& position)
+    {
+        Point pos = ScreenToLocal(position);
+        SetOrigin(pos, eGuiAddressingMode_Absolute, eGuiAddressingMode_Absolute);
+    }
+    void SetOriginToCenter();
+
     // set current size
-    void SetSize(const Point& size);
+    // @param size: Size absolute or relative [0-100] %
+    // @param wAddressingMode, hAddressingMode: Addressing modes for w and h
+    void SetSize(const Point& size, 
+        eGuiAddressingMode wAddressingMode = eGuiAddressingMode_Absolute, 
+        eGuiAddressingMode hAddressingMode = eGuiAddressingMode_Absolute);
+
+    // setup widget anchors
+    void SetAnchors(const GuiAnchorsStruct& anchors);
 
     // test whether screen space point is within widget rect
     // @param screenPosition: Test point
@@ -68,8 +74,8 @@ public:
     {
         outputRect.x = 0;
         outputRect.y = 0;
-        outputRect.w = mSize.x;
-        outputRect.h = mSize.y;
+        outputRect.w = mCurrentSize.x;
+        outputRect.h = mCurrentSize.y;
     }
 
     // attach or detach child widget
@@ -85,23 +91,23 @@ public:
     inline GuiWidget* PrevSibling() const { return mPrevSibling; }
 
     // get current position in local or screen space
-    inline Point GetPosition() const { return mPosition; }
+    inline Point GetPosition() const { return mCurrentPosition; }
     inline Point GetScreenPosition() const
     {
-        Point screenPosition = LocalToScreen(mPosition);
+        Point screenPosition = LocalToScreen(mCurrentPosition);
         return screenPosition;
     }
 
     // get current origin point in local or screen space
-    inline Point GetOriginPosition() const { return mOriginPoint; }
+    inline Point GetOrigin() const { return mCurrentOrigin; }
     inline Point GetOriginScreenPosition() const
     {
-        Point screenPosition = LocalToScreen(mOriginPoint);
+        Point screenPosition = LocalToScreen(mCurrentOrigin);
         return screenPosition;
     }
 
     // get current size
-    inline Point GetSize() const { return mSize; }
+    inline Point GetSize() const { return mCurrentSize; }
 
     // convert from local to screen space and vice versa
     // @param position: Point
@@ -122,11 +128,12 @@ protected:
 
     void ParentPositionChanged(const Point& prevPosition);
     void ParentSizeChanged(const Point& prevSize, const Point& currSize);
+    void SelfPositionChanged(const Point& prevPosition);
+    void SelfSizeChanged(const Point& prevSize);
 
-    int ComputeHorzAlignmentPos() const;
-    int ComputeVertAlignmentPos() const;
-
-    void ComputeOriginPoint(Point& outputPoint) const;
+    void ComputeAbsoluteOrigin(Point& outputPoint) const;
+    void ComputeAbsolutePosition(Point& outputPoint) const;
+    void ComputeAbsoluteSize(Point& outputSize) const;
 
 protected:
     // overridable
@@ -151,16 +158,22 @@ protected:
     GuiWidget* mPrevSibling = nullptr;
 
     // layout params
-    eGuiHorzAlignment mHorzAlignment = eGuiHorzAlignment_None;
-    eGuiVertAlignment mVertAlignment = eGuiVertAlignment_None;
-    eGuiOriginMode mOriginMode = eGuiOrigin_Fixed;
-    Point mOriginPoint; // local space
-    glm::vec2 mOriginRelative; // relative to size [0-1]
+
+    GuiPositionComponent mOriginComponentX;
+    GuiPositionComponent mOriginComponentY;
+
+    GuiPositionComponent mPositionComponentX;
+    GuiPositionComponent mPositionComponentY;
+
+    GuiSizeComponent mSizeComponentW;
+    GuiSizeComponent mSizeComponentH;
+
     GuiAnchorsStruct mAnchors;
 
     // current location and dimensions, local space
-    Point mPosition;
-    Point mSize;
+    Point mCurrentPosition;
+    Point mCurrentSize;
+    Point mCurrentOrigin; // local space
 
     glm::vec2 mScale;
     glm::mat4 mTransform; // current transformations matrix, screen space

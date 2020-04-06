@@ -18,10 +18,9 @@ GuiWidget::GuiWidget(GuiWidgetClass* widgetClass)
     : mClass(widgetClass)
     , mScale(1.0f)
     , mTransform(1.0f)
-    , mOriginPoint()
-    , mPosition()
-    , mSize()
-    , mOriginRelative()
+    , mCurrentSize()
+    , mCurrentPosition()
+    , mCurrentOrigin()
     , mUserData()
 {
     debug_assert(mClass);
@@ -31,17 +30,19 @@ GuiWidget::GuiWidget(GuiWidget* copyWidget)
     : mClass(copyWidget->mClass)
     , mName(copyWidget->mName)
     , mUserData()
-    , mHorzAlignment(copyWidget->mHorzAlignment)
-    , mVertAlignment(copyWidget->mVertAlignment)
-    , mOriginMode(copyWidget->mOriginMode)
-    , mOriginPoint(copyWidget->mOriginPoint)
-    , mOriginRelative(copyWidget->mOriginRelative)
     , mAnchors(copyWidget->mAnchors)
-    , mPosition(copyWidget->mPosition)
-    , mSize(copyWidget->mSize)
     , mScale(copyWidget->mScale)
     , mTransform(copyWidget->mTransform)
     , mTransformInvalidated(copyWidget->mTransformInvalidated)
+    , mOriginComponentX(copyWidget->mOriginComponentX)
+    , mOriginComponentY(copyWidget->mOriginComponentY)
+    , mPositionComponentX(copyWidget->mPositionComponentX)
+    , mPositionComponentY(copyWidget->mPositionComponentY)
+    , mSizeComponentW(copyWidget->mSizeComponentW)
+    , mSizeComponentH(copyWidget->mSizeComponentH)
+    , mCurrentPosition(copyWidget->mCurrentPosition)
+    , mCurrentSize(copyWidget->mCurrentSize)
+    , mCurrentOrigin(copyWidget->mCurrentOrigin)
 {
     debug_assert(mClass);
 }
@@ -121,6 +122,7 @@ bool GuiWidget::AttachChild(GuiWidget* widget)
         tailWidget = tailWidget->mNextSibling)
     {
     }
+
     if (tailWidget == nullptr)
     {
         debug_assert(mFirstChild == nullptr);
@@ -131,9 +133,10 @@ bool GuiWidget::AttachChild(GuiWidget* widget)
         tailWidget->mNextSibling = widget;
         widget->mPrevSibling = tailWidget;
     }
+
     widget->mParent = this;
     widget->InvalidateTransform();
-    widget->SetPosition(widget->mPosition);
+    widget->ParentSizeChanged(mCurrentSize, mCurrentSize); // force update layout
 
     return true;
 }
@@ -171,24 +174,6 @@ void GuiWidget::DetachAndFreeChildren()
     }
 }
 
-void GuiWidget::SetAlignment(eGuiHorzAlignment horzAlignment, eGuiVertAlignment vertAlignment)
-{
-    mHorzAlignment = horzAlignment;
-    mVertAlignment = vertAlignment;
-
-    SetPosition(mPosition);
-}
-
-void GuiWidget::SetHorzAlignment(eGuiHorzAlignment horzAlignment)
-{
-    SetAlignment(horzAlignment, mVertAlignment);
-}
-
-void GuiWidget::SetVertAlignment(eGuiVertAlignment vertAlignment)
-{
-    SetAlignment(mHorzAlignment, vertAlignment);
-}
-
 void GuiWidget::SetAnchors(const GuiAnchorsStruct& anchors)
 {
     if (mAnchors.mLeft == anchors.mLeft && mAnchors.mTop == anchors.mTop && 
@@ -201,105 +186,88 @@ void GuiWidget::SetAnchors(const GuiAnchorsStruct& anchors)
     InvalidateTransform();
 }
 
-void GuiWidget::SetOriginMode(eGuiOriginMode originMode)
+void GuiWidget::SetOrigin(const Point& position, eGuiAddressingMode xAddressingMode, eGuiAddressingMode yAddressingMode)
 {
-    if (mOriginMode == originMode)
+    GuiPositionComponent componentx (xAddressingMode, position.x);
+    GuiPositionComponent componenty (yAddressingMode, position.y);
+
+    mOriginComponentX = componentx;
+    mOriginComponentY = componenty;
+
+    Point newOrigin;
+    ComputeAbsoluteOrigin(newOrigin);
+
+    if (newOrigin == mCurrentOrigin)
         return;
 
-    mOriginMode = originMode;
-    if (mOriginMode == eGuiOrigin_Relative)
-    {
-        ComputeOriginPoint(mOriginPoint);
-    }
+    mCurrentOrigin = newOrigin;
     InvalidateTransform();
 }
 
-void GuiWidget::SetCurrentOriginPositionToCenter()
+void GuiWidget::SetOriginToCenter()
 {
-    if (mOriginMode == eGuiOrigin_Fixed)
+    Point position = mCurrentOrigin;
+    if (mOriginComponentX.mAddressingMode == eGuiAddressingMode_Absolute)
     {
-        Point localCenter (mSize.x / 2, mSize.y / 2);
-        SetOriginPosition(localCenter);
+        position.x = mCurrentSize.x / 2;
+    }
+    else
+    {
+        position.x = 50;
     }
 
-    if (mOriginMode == eGuiOrigin_Relative)
+    if (mOriginComponentY.mAddressingMode == eGuiAddressingMode_Absolute)
     {
-        glm::vec2 originValue (0.5f, 0.5f);
-        SetOriginRelativeValue(originValue);
+        position.y = mCurrentSize.y / 2;
     }
+    else
+    {
+        position.y = 50;
+    }
+
+    SetOrigin(position, mOriginComponentX.mAddressingMode, mOriginComponentY.mAddressingMode);
 }
 
-void GuiWidget::SetOriginPosition(const Point& originPoint)
+void GuiWidget::SetPosition(const Point& position, eGuiAddressingMode xAddressingMode, eGuiAddressingMode yAddressingMode)
 {
-    if (mOriginMode != eGuiOrigin_Fixed || mOriginPoint == originPoint)
+    GuiPositionComponent componentx (xAddressingMode, position.x);
+    GuiPositionComponent componenty (yAddressingMode, position.y);
+
+    mPositionComponentX = componentx;
+    mPositionComponentY = componenty;
+
+    Point newPosition;
+    ComputeAbsolutePosition(newPosition);
+
+    if (newPosition == mCurrentPosition)
         return;
 
-    mOriginPoint = originPoint;
-    InvalidateTransform();
+    Point prevPosition = mCurrentPosition;
+    mCurrentPosition = newPosition;
+
+    SelfPositionChanged(prevPosition);
 }
 
-void GuiWidget::SetOriginRelativeValue(const glm::vec2& value)
+void GuiWidget::SetSize(const Point& size, eGuiAddressingMode wAddressingMode, eGuiAddressingMode hAddressingMode)
 {
-    if (mOriginMode != eGuiOrigin_Relative || mOriginRelative == value)
+    Point correctSize = glm::max(size, 0); // sanity check
+
+    GuiSizeComponent componentw (wAddressingMode, correctSize.x);
+    GuiSizeComponent componenth (hAddressingMode, correctSize.y);
+
+    mSizeComponentW = componentw;
+    mSizeComponentH = componenth;
+
+    Point newSize;
+    ComputeAbsoluteSize(newSize);
+
+    if (newSize == mCurrentSize)
         return;
 
-    mOriginRelative = value;
-    ComputeOriginPoint(mOriginPoint);
-    InvalidateTransform();
-}
+    Point prevSize = mCurrentSize;
+    mCurrentSize = newSize;
 
-void GuiWidget::SetPosition(const Point& position)
-{
-    Point newPosition = position;
-    if (mHorzAlignment != eGuiHorzAlignment_None)
-    {
-        newPosition.x = ComputeHorzAlignmentPos();
-    }
-    if (mVertAlignment != eGuiVertAlignment_None)
-    {
-        newPosition.y = ComputeVertAlignmentPos();
-    }
-
-    if (mPosition == newPosition)
-        return;
-
-    Point prevPosition = mPosition;
-    mPosition = newPosition;
-    InvalidateTransform();
-
-    for (GuiWidget* currChild = mFirstChild; currChild; 
-        currChild = currChild->mNextSibling)
-    {
-        currChild->ParentPositionChanged(prevPosition);
-    }
-
-    HandlePositionChanged(prevPosition);
-}
-
-void GuiWidget::SetSize(const Point& size)
-{
-    Point newSize = glm::max(size, 0);
-
-    if (mSize == newSize)
-        return;
-
-    Point prevSize = mSize;
-    mSize = newSize;
-
-    // update origin point
-    if (mOriginMode == eGuiOrigin_Relative)
-    {
-        ComputeOriginPoint(mOriginPoint);
-        InvalidateTransform();
-    }
-
-    for (GuiWidget* currChild = mFirstChild; currChild; 
-        currChild = currChild->mNextSibling)
-    {
-        currChild->ParentSizeChanged(prevSize, mSize);
-    }
-
-    HandleSizeChanged(prevSize);
+    SelfSizeChanged(prevSize);
 }
 
 Point GuiWidget::LocalToScreen(const Point& position) const
@@ -340,13 +308,13 @@ void GuiWidget::ComputeTransform()
     {
         mParent->ComputeTransform();
 
-        mTransform = glm::translate(-glm::vec3(mOriginPoint, 0.0f)) * glm::scale(glm::vec3(mScale, 0.0f)) * 
-            glm::translate(glm::vec3(mPosition, 0.0f)) * mParent->mTransform;
+        mTransform = glm::translate(-glm::vec3(mCurrentOrigin, 0.0f)) * glm::scale(glm::vec3(mScale, 0.0f)) * 
+            glm::translate(glm::vec3(mCurrentPosition, 0.0f)) * mParent->mTransform;
     }
     else
     {
-        mTransform = glm::translate(-glm::vec3(mOriginPoint, 0.0f)) * glm::scale(glm::vec3(mScale, 0.0f)) *
-            glm::translate(glm::vec3(mPosition, 0.0f));
+        mTransform = glm::translate(-glm::vec3(mCurrentOrigin, 0.0f)) * glm::scale(glm::vec3(mScale, 0.0f)) *
+            glm::translate(glm::vec3(mCurrentPosition, 0.0f));
     }
     mTransformInvalidated = false;
 }
@@ -374,102 +342,214 @@ void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
     int deltax = currSize.x - prevSize.x;
     int deltay = currSize.y - prevSize.y;
 
-    Point newPosition = mPosition;
-    Point newSize = mSize;
+    Point newPosition = mCurrentPosition;
+    Point newSize = mCurrentSize;
 
-    if (deltax)
+    if (mPositionComponentX.mAddressingMode == eGuiAddressingMode_Absolute) // test anchors
     {
-        if (mHorzAlignment == eGuiHorzAlignment_None) // test anchors
+        if (mAnchors.mLeft && mAnchors.mRight)
         {
-            if (mAnchors.mLeft && mAnchors.mRight)
+            if (mSizeComponentW.mAddressingMode == eGuiAddressingMode_Absolute)
             {
-                newSize.x = mSize.x + deltax / 2;
+                newSize.x = mCurrentSize.x + deltax / 2;
             }
-            else if (mAnchors.mRight)
+            else
             {
-                newPosition.x = mPosition.x + deltax;
+                // ignore
             }
-            else if (!mAnchors.mLeft)
-            {
-                newPosition.x = mPosition.x + deltax / 2;
-            }
+        }
+        else if (mAnchors.mRight)
+        {
+            newPosition.x = mCurrentPosition.x + deltax;
+        }
+        else if (!mAnchors.mLeft)
+        {
+            newPosition.x = mCurrentPosition.x + deltax / 2;
         }
     }
 
-    if (deltay)
+    if (mPositionComponentY.mAddressingMode == eGuiAddressingMode_Absolute) // test anchors
     {
-        if (mVertAlignment == eGuiVertAlignment_None) // test anchors
+        if (mAnchors.mTop && mAnchors.mBottom)
         {
-            if (mAnchors.mTop && mAnchors.mBottom)
+            if (mSizeComponentH.mAddressingMode == eGuiAddressingMode_Absolute)
             {
-                newSize.y = mSize.y + deltay / 2;
+                newSize.y = mCurrentSize.y + deltay / 2;
             }
-            else if (mAnchors.mBottom)
+            else
             {
-                newPosition.y = mPosition.y + deltay;
+                // ignore
             }
-            else if (!mAnchors.mTop)
-            {
-                newPosition.y = mPosition.y + deltay / 2;
-            }
+        }
+        else if (mAnchors.mBottom)
+        {
+            newPosition.y = mCurrentPosition.y + deltay;
+        }
+        else if (!mAnchors.mTop)
+        {
+            newPosition.y = mCurrentPosition.y + deltay / 2;
         }
     }
 
-    SetPosition(newPosition);
-    SetSize(newSize);
-}
-
-int GuiWidget::ComputeHorzAlignmentPos() const
-{
-    switch (mHorzAlignment)
+    // compute relative position
+    if (mPositionComponentX.mAddressingMode == eGuiAddressingMode_Relative ||
+        mPositionComponentY.mAddressingMode == eGuiAddressingMode_Relative)
     {
-        case eGuiHorzAlignment_Left: return 0;
-        case eGuiHorzAlignment_Center:
-            if (mParent)
-            {
-                return mParent->mSize.x / 2;
-            }
-        break;
-
-        case eGuiHorzAlignment_Right:
-            if (mParent)
-            {
-                return mParent->mSize.x;
-            }
-        break;
+        Point temporaryPoint;
+        ComputeAbsolutePosition(temporaryPoint);
+        if (mPositionComponentX.mAddressingMode == eGuiAddressingMode_Relative)
+        {
+            newPosition.x = temporaryPoint.x;
+        }
+        if (mPositionComponentY.mAddressingMode == eGuiAddressingMode_Relative)
+        {
+            newPosition.y = temporaryPoint.y;
+        }
     }
-    return mPosition.x;
-}
 
-int GuiWidget::ComputeVertAlignmentPos() const
-{
-    switch (mVertAlignment)
+    if (newPosition != mCurrentPosition)
     {
-        case eGuiVertAlignment_Top: return 0;
-        case eGuiVertAlignment_Center:
-            if (mParent)
-            {
-                return mParent->mSize.y / 2;
-            }
-        break;
-
-        case eGuiVertAlignment_Bottom:
-            if (mParent)
-            {
-                return mParent->mSize.y;
-            }
-        break;
+        Point prevPosition = mCurrentPosition;
+        mCurrentPosition = newPosition;
+        SelfPositionChanged(prevPosition);
     }
-    return mPosition.y;
+
+    // compute relative size
+    if (mSizeComponentW.mAddressingMode == eGuiAddressingMode_Relative ||
+        mSizeComponentH.mAddressingMode == eGuiAddressingMode_Relative)
+    {
+        Point temporarySize;
+        ComputeAbsoluteSize(temporarySize);
+        if (mSizeComponentW.mAddressingMode == eGuiAddressingMode_Relative)
+        {
+            newSize.x = temporarySize.x;
+        }
+        if (mSizeComponentH.mAddressingMode == eGuiAddressingMode_Relative)
+        {
+            newSize.y = temporarySize.y;
+        }
+    }
+
+    Point correctSize = glm::max(newSize, 0); // sanity check
+    if (correctSize != mCurrentSize)
+    {
+        Point prevSize = mCurrentSize;
+        mCurrentSize = correctSize;
+        SelfSizeChanged(prevSize);
+    }
 }
 
-void GuiWidget::ComputeOriginPoint(Point& outputPoint) const
+void GuiWidget::SelfPositionChanged(const Point& prevPosition)
 {
-    outputPoint = mOriginPoint;
-    if (mOriginMode == eGuiOrigin_Relative)
+    InvalidateTransform();
+
+    for (GuiWidget* currChild = mFirstChild; currChild; 
+        currChild = currChild->mNextSibling)
     {
-        glm::vec2 originPoint ( mOriginRelative.x * mSize.x, mOriginRelative.y * mSize.y );
-        outputPoint = originPoint;
+        currChild->ParentPositionChanged(prevPosition);
+    }
+
+    HandlePositionChanged(prevPosition);
+}
+
+void GuiWidget::SelfSizeChanged(const Point& prevSize)
+{
+    // update origin point
+    if (mOriginComponentX.mAddressingMode == eGuiAddressingMode_Relative || 
+        mOriginComponentY.mAddressingMode == eGuiAddressingMode_Relative)
+    {
+        ComputeAbsoluteOrigin(mCurrentOrigin);
+        InvalidateTransform();
+    }
+
+    for (GuiWidget* currChild = mFirstChild; currChild; 
+        currChild = currChild->mNextSibling)
+    {
+        currChild->ParentSizeChanged(prevSize, mCurrentSize);
+    }
+
+    HandleSizeChanged(prevSize);
+}
+
+void GuiWidget::ComputeAbsoluteOrigin(Point& outputPoint) const
+{
+    outputPoint.x = mOriginComponentX.mValue;
+    outputPoint.y = mOriginComponentY.mValue;
+
+    if (mOriginComponentX.mAddressingMode == eGuiAddressingMode_Relative)
+    {
+        float valuex = mCurrentSize.x * (outputPoint.x * 1.0f / 100.0f);
+        outputPoint.x = (int) valuex;
+    }
+
+    if (mOriginComponentY.mAddressingMode == eGuiAddressingMode_Relative)
+    {
+        float valuey = mCurrentSize.y * (outputPoint.y * 1.0f / 100.0f);
+        outputPoint.y = (int) valuey;
+    }
+}
+
+void GuiWidget::ComputeAbsolutePosition(Point& outputPoint) const
+{
+    outputPoint.x = mPositionComponentX.mValue;
+    outputPoint.y = mPositionComponentY.mValue;
+
+    if (mPositionComponentX.mAddressingMode == eGuiAddressingMode_Relative)
+    {
+        if (mParent)
+        {
+            float valuex = mParent->mCurrentSize.x * (outputPoint.x * 1.0f / 100.0f);
+            outputPoint.x = (int) valuex;
+        }
+        else
+        {
+            outputPoint.x = 0;
+        }
+    }
+
+    if (mPositionComponentY.mAddressingMode == eGuiAddressingMode_Relative)
+    {
+        if (mParent)
+        {
+            float valuey = mParent->mCurrentSize.y * (outputPoint.y * 1.0f / 100.0f);
+            outputPoint.y = (int) valuey;
+        }
+        else
+        {
+            outputPoint.y = 0;
+        }
+    }
+}
+
+void GuiWidget::ComputeAbsoluteSize(Point& outputSize) const
+{
+    outputSize.x = mSizeComponentW.mValue;
+    outputSize.y = mSizeComponentH.mValue;
+
+    if (mSizeComponentW.mAddressingMode == eGuiAddressingMode_Relative)
+    {
+        if (mParent)
+        {
+            float valuew = mParent->mCurrentSize.x * (outputSize.x * 1.0f / 100.0f);
+            outputSize.x = (int) valuew;
+        }
+        else
+        {
+            outputSize.x = 0;
+        }
+    }
+
+    if (mSizeComponentH.mAddressingMode == eGuiAddressingMode_Relative)
+    {
+        if (mParent)
+        {
+            float valueh = mParent->mCurrentSize.y * (outputSize.y * 1.0f / 100.0f);
+            outputSize.y = (int) valueh;
+        }
+        else
+        {
+            outputSize.y = 0;
+        }
     }
 }
 

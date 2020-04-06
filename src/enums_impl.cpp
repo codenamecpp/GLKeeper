@@ -332,20 +332,6 @@ impl_enum_strings(eGuiVertAlignment)
     {eGuiVertAlignment_Bottom, "bottom"},
 };
 
-impl_enum_strings(eGuiHorzAlignment)
-{
-    {eGuiHorzAlignment_None, "none"},
-    {eGuiHorzAlignment_Left, "left"},
-    {eGuiHorzAlignment_Center, "center"},
-    {eGuiHorzAlignment_Right, "right"},
-};
-
-impl_enum_strings(eGuiOriginMode)
-{
-    {eGuiOrigin_Relative, "relative"},
-    {eGuiOrigin_Fixed, "fixed"},
-};
-
 impl_enum_strings(eGuiSizeMode)
 {
     {eGuiSizeMode_Scale, "scale"},
@@ -355,4 +341,10 @@ impl_enum_strings(eGuiSizeMode)
     {eGuiSizeMode_KeepCentered, "keep_centered"},
     {eGuiSizeMode_TileVertical, "tile_vert"},
     {eGuiSizeMode_TileHorizontal, "tile_horz"},
+};
+
+impl_enum_strings(eGuiAddressingMode)
+{
+    {eGuiAddressingMode_Absolute, "absolute"},
+    {eGuiAddressingMode_Relative, "relative"},
 };

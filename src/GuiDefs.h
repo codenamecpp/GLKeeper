@@ -18,22 +18,6 @@ enum eGuiVertAlignment
 };
 decl_enum_strings(eGuiVertAlignment);
 
-enum eGuiHorzAlignment
-{
-    eGuiHorzAlignment_None,
-    eGuiHorzAlignment_Left,
-    eGuiHorzAlignment_Center,
-    eGuiHorzAlignment_Right,
-};
-decl_enum_strings(eGuiHorzAlignment);
-
-enum eGuiOriginMode
-{
-    eGuiOrigin_Relative,
-    eGuiOrigin_Fixed,
-};
-decl_enum_strings(eGuiOriginMode);
-
 enum eGuiSizeMode 
 {
     eGuiSizeMode_Scale,
@@ -45,6 +29,38 @@ enum eGuiSizeMode
     eGuiSizeMode_TileHorizontal,
 };
 decl_enum_strings(eGuiSizeMode);
+
+enum eGuiAddressingMode
+{
+    eGuiAddressingMode_Absolute,
+    eGuiAddressingMode_Relative,
+};
+decl_enum_strings(eGuiAddressingMode);
+
+// position along one of the axes
+struct GuiPositionComponent
+{
+public:
+    GuiPositionComponent() = default;
+    GuiPositionComponent(eGuiAddressingMode addressingMode, int value)
+        : mAddressingMode(addressingMode)
+        , mValue(value)
+    {
+    }
+    inline bool operator == (const GuiPositionComponent& other) const
+    {
+        return mAddressingMode == other.mAddressingMode && mValue == other.mValue;
+    }
+    inline bool operator != (const GuiPositionComponent& other) const
+    {
+        return mAddressingMode != other.mAddressingMode || mValue != other.mValue;
+    }
+public:
+    eGuiAddressingMode mAddressingMode = eGuiAddressingMode_Absolute;
+    int mValue = 0;
+};
+// alias
+using GuiSizeComponent = GuiPositionComponent;
 
 // gui widget anchors struct
 struct GuiAnchorsStruct

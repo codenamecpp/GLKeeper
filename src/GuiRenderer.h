@@ -41,7 +41,7 @@ private:
     void FlushPendingDrawCalls();
 
     void SetCurrentBatchTexture(Texture2D* newTexutre);
-    void TransformCurrentBatchVertices();
+    void TransformVertices(Vertex2D* vertices);
 
 private:
     GuiRenderProgram mGuiRenderProgram;

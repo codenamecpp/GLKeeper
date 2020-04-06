@@ -118,8 +118,8 @@ void GuiPictureBox::GenerateQuads()
             case eGuiSizeMode_KeepCentered:
                 rcDestination.w = imageSize.x;
                 rcDestination.h = imageSize.y;
-                rcDestination.x = (mSize.x / 2 - rcDestination.w / 2);
-                rcDestination.y = (mSize.y / 2 - rcDestination.h / 2);
+                rcDestination.x = (mCurrentSize.x / 2 - rcDestination.w / 2);
+                rcDestination.y = (mCurrentSize.y / 2 - rcDestination.h / 2);
             break;
         }
 
@@ -133,21 +133,21 @@ void GuiPictureBox::GenerateQuads()
         float coef = 1.0f;
         if (mSizeMode == eGuiSizeMode_TileHorizontal)
         {
-            coef = (mSize.y * 1.0f) / (imageSize.y * 1.0f);
+            coef = (mCurrentSize.y * 1.0f) / (imageSize.y * 1.0f);
         }
         if (mSizeMode == eGuiSizeMode_TileVertical)
         {
-            coef = (mSize.x * 1.0f) / (imageSize.x * 1.0f);
+            coef = (mCurrentSize.x * 1.0f) / (imageSize.x * 1.0f);
         }
 
         const int TileSize_X = (int) (imageSize.x * coef);
         const int TileSize_Y = (int) (imageSize.y * coef);
-        const int ExtraTileSize_X = (mSize.x % TileSize_X);
-        const int ExtraTileSize_Y = (mSize.y % TileSize_Y);
-        const int NumFullTiles_X = (mSize.x / TileSize_X);
-        const int NumFullTiles_Y = (mSize.y / TileSize_Y);
-        const int ExtraTexturesPixels_X = (int) ((mSize.x % TileSize_X) / coef);
-        const int ExtraTexturesPixels_Y = (int) ((mSize.y % TileSize_Y) / coef);
+        const int ExtraTileSize_X = (mCurrentSize.x % TileSize_X);
+        const int ExtraTileSize_Y = (mCurrentSize.y % TileSize_Y);
+        const int NumFullTiles_X = (mCurrentSize.x / TileSize_X);
+        const int NumFullTiles_Y = (mCurrentSize.y / TileSize_Y);
+        const int ExtraTexturesPixels_X = (int) ((mCurrentSize.x % TileSize_X) / coef);
+        const int ExtraTexturesPixels_Y = (int) ((mCurrentSize.y % TileSize_Y) / coef);
 
         // num full tiles plus partial tile
         const int NumTiles_X = NumFullTiles_X + (ExtraTexturesPixels_X > 0 ? 1 : 0);
