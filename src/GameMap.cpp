@@ -3,7 +3,7 @@
 #include "randomizer.h"
 #include <stack>
 
-void GameMap::Setup(const Size2D& mapDimensions, unsigned int randomSeed)
+void GameMap::Setup(const Point& mapDimensions, unsigned int randomSeed)
 {
     Clear();
 
@@ -51,14 +51,14 @@ void GameMap::Clear()
 
 MapTile* GameMap::GetTileFromCoord3d(const glm::vec3& coord)
 {
-    Point2D tileLocation {
+    Point tileLocation {
         static_cast<int>((coord.x + DUNGEON_CELL_HALF_SIZE) / DUNGEON_CELL_SIZE),
         static_cast<int>((coord.z + DUNGEON_CELL_HALF_SIZE) / DUNGEON_CELL_SIZE)
     };
     return GetMapTile(tileLocation);
 }
 
-MapTile* GameMap::GetMapTile(const Point2D& tileLocation)
+MapTile* GameMap::GetMapTile(const Point& tileLocation)
 {
     if (IsWithinMap(tileLocation))
         return &mTilesArray[tileLocation.y * mDimensions.x + tileLocation.x];
@@ -66,18 +66,18 @@ MapTile* GameMap::GetMapTile(const Point2D& tileLocation)
     return nullptr;
 }
 
-MapTile* GameMap::GetMapTile(const Point2D& tileLocation, eDirection direction)
+MapTile* GameMap::GetMapTile(const Point& tileLocation, eDirection direction)
 {
-    Point2D directionVector = GetDirectionVector(direction);
+    Point directionVector = GetDirectionVector(direction);
 
     return GetMapTile(tileLocation + directionVector);
 }
 
-bool GameMap::IsWithinMap(const Point2D& tileLocation, eDirection direction) const
+bool GameMap::IsWithinMap(const Point& tileLocation, eDirection direction) const
 {
-    Point2D directionVector = GetDirectionVector(direction);
+    Point directionVector = GetDirectionVector(direction);
 
-    Point2D nextTilePosition = tileLocation + directionVector;
+    Point nextTilePosition = tileLocation + directionVector;
     return (nextTilePosition.x > -1) && (nextTilePosition.y > -1) && 
         (nextTilePosition.x < mDimensions.x) && 
         (nextTilePosition.y < mDimensions.y); 
@@ -85,14 +85,14 @@ bool GameMap::IsWithinMap(const Point2D& tileLocation, eDirection direction) con
 
 void GameMap::FloodFill4(TilesArray& outputTiles, MapTile* origin, MapFloodFillFlags flags)
 {
-    Rect2D scanArea(0, 0, mDimensions.x, mDimensions.y);
+    Rectangle scanArea(0, 0, mDimensions.x, mDimensions.y);
     FloodFill4(outputTiles, origin, scanArea, flags);
 }
 
-void GameMap::FloodFill4(TilesArray& outputTiles, MapTile* origin, const Rect2D& scanArea, MapFloodFillFlags flags)
+void GameMap::FloodFill4(TilesArray& outputTiles, MapTile* origin, const Rectangle& scanArea, MapFloodFillFlags flags)
 {
     // check conditions
-    if (origin == nullptr || scanArea.mSizeX < 1 || scanArea.mSizeY < 1)
+    if (origin == nullptr || scanArea.w < 1 || scanArea.h < 1)
     {
         debug_assert(false);
         return;
@@ -138,10 +138,10 @@ void GameMap::FloodFill4(TilesArray& outputTiles, MapTile* origin, const Rect2D&
             }
 
             // bounds
-            if (tile->mTileLocation.x < scanArea.mX) continue;
-            if (tile->mTileLocation.y < scanArea.mY) continue;
-            if (tile->mTileLocation.x >= scanArea.mX + scanArea.mSizeX) continue;
-            if (tile->mTileLocation.y >= scanArea.mY + scanArea.mSizeY) continue;
+            if (tile->mTileLocation.x < scanArea.x) continue;
+            if (tile->mTileLocation.y < scanArea.y) continue;
+            if (tile->mTileLocation.x >= scanArea.x + scanArea.w) continue;
+            if (tile->mTileLocation.y >= scanArea.y + scanArea.h) continue;
 
             bool acceptableTile = flags.mSameBaseTerrain ? 
                (origin->GetBaseTerrain() == tile->GetBaseTerrain()) :

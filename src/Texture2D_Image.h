@@ -16,7 +16,7 @@ public:
     // @param dimensions: Base image dimensions
     // @param mipmapsCount: Number of additional mipmap levels that will be allocated
     // @param transparent: Image has transparent pixels
-    bool CreateImage(eTextureFormat format, const Size2D& dimensions, int mipmapsCount, bool transparent);
+    bool CreateImage(eTextureFormat format, const Point& dimensions, int mipmapsCount, bool transparent);
     
     // clear image data
     void Clear();

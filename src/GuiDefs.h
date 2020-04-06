@@ -67,7 +67,7 @@ public:
 struct GuiQuadStruct
 {
 public:
-    inline void SetupVertices(Texture2D* texture, const Rect2D& rcSrc, const Rect2D& rcQuad, Color32 color)
+    inline void SetupVertices(Texture2D* texture, const Rectangle& rcSrc, const Rectangle& rcQuad, Color32 color)
     {
         debug_assert(texture);
 
@@ -76,19 +76,19 @@ public:
 
         // setup quad vertices in specific order
         mPoints[0].mColor       = color;
-        mPoints[0].mTexcoord[0] = rcSrc.mX * invx;
-        mPoints[0].mTexcoord[1] = rcSrc.mY * invy;
-        mPoints[0].mPosition.x  = rcQuad.mX * 1.0f;
-        mPoints[0].mPosition.y  = rcQuad.mY * 1.0f;
+        mPoints[0].mTexcoord[0] = rcSrc.x * invx;
+        mPoints[0].mTexcoord[1] = rcSrc.y * invy;
+        mPoints[0].mPosition.x  = rcQuad.x * 1.0f;
+        mPoints[0].mPosition.y  = rcQuad.y * 1.0f;
         mPoints[1].mColor       = color;
         mPoints[1].mTexcoord[0] = mPoints[0].mTexcoord[0];
-        mPoints[1].mTexcoord[1] = (rcSrc.mY + rcSrc.mSizeY) * invy;
+        mPoints[1].mTexcoord[1] = (rcSrc.y + rcSrc.h) * invy;
         mPoints[1].mPosition.x  = mPoints[0].mPosition.x;
-        mPoints[1].mPosition.y  = (rcQuad.mY + rcQuad.mSizeY) * 1.0f;
+        mPoints[1].mPosition.y  = (rcQuad.y + rcQuad.h) * 1.0f;
         mPoints[2].mColor       = color;
-        mPoints[2].mTexcoord[0] = (rcSrc.mX + rcSrc.mSizeX) * invx;
+        mPoints[2].mTexcoord[0] = (rcSrc.x + rcSrc.w) * invx;
         mPoints[2].mTexcoord[1] = mPoints[1].mTexcoord[1];
-        mPoints[2].mPosition.x  = (rcQuad.mX + rcQuad.mSizeX) * 1.0f;
+        mPoints[2].mPosition.x  = (rcQuad.x + rcQuad.w) * 1.0f;
         mPoints[2].mPosition.y  = mPoints[1].mPosition.y;
         mPoints[3].mColor       = color;
         mPoints[3].mTexcoord[0] = mPoints[2].mTexcoord[0];
@@ -96,7 +96,7 @@ public:
         mPoints[3].mPosition.x  = mPoints[2].mPosition.x;
         mPoints[3].mPosition.y  = mPoints[0].mPosition.y;
     }
-    inline void SetupVertices(Texture2D* texture, const Rect2D& rcQuad, Color32 color)
+    inline void SetupVertices(Texture2D* texture, const Rectangle& rcQuad, Color32 color)
     {
         debug_assert(texture);
 
@@ -104,17 +104,17 @@ public:
         mPoints[0].mColor       = color;
         mPoints[0].mTexcoord[0] = 0.0f;
         mPoints[0].mTexcoord[1] = 0.0f;
-        mPoints[0].mPosition.x  = rcQuad.mX * 1.0f;
-        mPoints[0].mPosition.y  = rcQuad.mY * 1.0f;
+        mPoints[0].mPosition.x  = rcQuad.x * 1.0f;
+        mPoints[0].mPosition.y  = rcQuad.y * 1.0f;
         mPoints[1].mColor       = color;
         mPoints[1].mTexcoord[0] = mPoints[0].mTexcoord[0];
         mPoints[1].mTexcoord[1] = texture->mTextureDesc.mMaxV;
         mPoints[1].mPosition.x  = mPoints[0].mPosition.x;
-        mPoints[1].mPosition.y  = (rcQuad.mY + rcQuad.mSizeY) * 1.0f;
+        mPoints[1].mPosition.y  = (rcQuad.y + rcQuad.h) * 1.0f;
         mPoints[2].mColor       = color;
         mPoints[2].mTexcoord[0] = texture->mTextureDesc.mMaxU;
         mPoints[2].mTexcoord[1] = mPoints[1].mTexcoord[1];
-        mPoints[2].mPosition.x  = (rcQuad.mX + rcQuad.mSizeX) * 1.0f;
+        mPoints[2].mPosition.x  = (rcQuad.x + rcQuad.w) * 1.0f;
         mPoints[2].mPosition.y  = mPoints[1].mPosition.y;
         mPoints[3].mColor       = color;
         mPoints[3].mTexcoord[0] = mPoints[2].mTexcoord[0];

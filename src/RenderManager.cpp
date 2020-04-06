@@ -158,7 +158,7 @@ void RenderManager::RegisterSceneObjectForRendering(GameObject* gameObject)
 void RenderManager::RenderFrame()
 {
     // setup viewport area
-    Rect2D viewportRect(0, 0, gGraphicsDevice.mScreenResolution.x, gGraphicsDevice.mScreenResolution.y);
+    Rectangle viewportRect(0, 0, gGraphicsDevice.mScreenResolution.x, gGraphicsDevice.mScreenResolution.y);
     gGraphicsDevice.SetViewportRect(viewportRect);
     gGraphicsDevice.SetScissorRect(viewportRect);
 

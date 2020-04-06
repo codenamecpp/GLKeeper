@@ -834,7 +834,7 @@ bool EngineTexturesProvider::ExtractTexture(const std::string& textureName, Text
     const TextureEntryStruct& entryStruct = mEntiesArray[linearIndex];
 
     // extract texture with all mipmaps
-    Size2D textureDimensions { entryStruct.mSizeX, entryStruct.mSizeY };
+    Point textureDimensions { entryStruct.mSizeX, entryStruct.mSizeY };
     imageData.CreateImage(eTextureFormat_RGBA8, textureDimensions, entryIndex.mNumImages - 1, entryStruct.mHasAlpha);
     for (int icurr = 0; icurr < entryIndex.mNumImages; ++icurr)
     {
@@ -891,7 +891,7 @@ void EngineTexturesProvider::DumpTextures(const std::string& outputDirectory) co
         debug_assert(primaryIndex != -1);
         const TextureEntryStruct& primaryEntry = mEntiesArray[primaryIndex];
 
-        Size2D textureDimensions { primaryEntry.mSizeX, primaryEntry.mSizeY };
+        Point textureDimensions { primaryEntry.mSizeX, primaryEntry.mSizeY };
         imageData.CreateImage(eTextureFormat_RGBA8, textureDimensions, 0, primaryEntry.mHasAlpha);
 
         unsigned char* dataBuffer = imageData.GetImageDataBuffer();

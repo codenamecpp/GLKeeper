@@ -56,7 +56,7 @@ GpuTextureArray2D::~GpuTextureArray2D()
     glCheckError();
 }
 
-bool GpuTextureArray2D::Setup(eTextureFormat textureFormat, const Size2D& dimensions, int layersCount, const void* sourceData)
+bool GpuTextureArray2D::Setup(eTextureFormat textureFormat, const Point& dimensions, int layersCount, const void* sourceData)
 {
     GLuint formatGL = GetTextureInputFormatGL(textureFormat);
     GLint internalFormatGL = GetTextureInternalFormatGL(textureFormat);

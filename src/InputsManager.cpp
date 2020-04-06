@@ -94,7 +94,7 @@ void InputsManager::Clear()
     ::memset(mKeyboardKeys, 0, sizeof(mKeyboardKeys));
 }
 
-void InputsManager::SetMousePosition(const Point2D& cursorPosition)
+void InputsManager::SetMousePosition(const Point& cursorPosition)
 {
     mCursorPosition = cursorPosition;
 }

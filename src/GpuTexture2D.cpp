@@ -182,7 +182,7 @@ bool GpuTexture2D::IsInitialized() const
     return mResourceHandle != GpuTextureHandle_NULL;
 }
 
-bool GpuTexture2D::TexSubImage(int mipmapLevel, const Rect2D& rc, const void* sourceData)
+bool GpuTexture2D::TexSubImage(int mipmapLevel, const Rectangle& rc, const void* sourceData)
 {
     if (!IsInitialized())
     {
@@ -198,10 +198,10 @@ bool GpuTexture2D::TexSubImage(int mipmapLevel, const Rect2D& rc, const void* so
     int mipmapDimX = GetTextureMipmapDims(mDesc.mDimensions.x, mipmapLevel);
     int mipmapDimY = GetTextureMipmapDims(mDesc.mDimensions.y, mipmapLevel);
 
-    debug_assert(rc.mX >= 0);
-    debug_assert(rc.mY >= 0);
-    debug_assert(rc.mX + rc.mSizeX <= mipmapDimX);
-    debug_assert(rc.mY + rc.mSizeY <= mipmapDimY);
+    debug_assert(rc.x >= 0);
+    debug_assert(rc.y >= 0);
+    debug_assert(rc.x + rc.w <= mipmapDimX);
+    debug_assert(rc.y + rc.h <= mipmapDimY);
 
     GLuint gl_format = GetTextureInputFormatGL(mDesc.mTextureFormat);
     GLenum gl_data_type = GetTextureDataTypeGL(mDesc.mTextureFormat);
@@ -212,12 +212,12 @@ bool GpuTexture2D::TexSubImage(int mipmapLevel, const Rect2D& rc, const void* so
     }
 
     ScopeBinder scopedBind {this};
-    ::glTexSubImage2D(GL_TEXTURE_2D, mipmapLevel, rc.mX, rc.mY, rc.mSizeX, rc.mSizeY, gl_format, gl_data_type, sourceData);
+    ::glTexSubImage2D(GL_TEXTURE_2D, mipmapLevel, rc.x, rc.y, rc.w, rc.h, gl_format, gl_data_type, sourceData);
     glCheckError();
     return true;
 }
 
-bool GpuTexture2D::TexSubImage(int mipmapLevel, const Size2D& dimensions, const void* sourceData)
+bool GpuTexture2D::TexSubImage(int mipmapLevel, const Point& dimensions, const void* sourceData)
 {
     if (!IsInitialized())
     {
@@ -227,7 +227,7 @@ bool GpuTexture2D::TexSubImage(int mipmapLevel, const Size2D& dimensions, const 
 
     if (sourceData)
     {
-        Rect2D textureRect 
+        Rectangle textureRect 
         {
             0,
             0,
@@ -249,7 +249,7 @@ bool GpuTexture2D::TexSubImage(int mipmapLevel, const void* sourceData)
 
     if (sourceData)
     {
-        Rect2D textureRect 
+        Rectangle textureRect 
         {
             0,
             0,

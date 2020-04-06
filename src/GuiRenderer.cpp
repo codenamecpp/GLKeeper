@@ -51,15 +51,15 @@ void GuiRenderer::RenderFrameBegin()
     RenderStates guiRenderStates = RenderStates::GetForUI();
     gGraphicsDevice.SetRenderStates(guiRenderStates);
 
-    Rect2D screenRect;
-    screenRect.mX = 0;
-    screenRect.mY = 0;
-    screenRect.mSizeX = gGraphicsDevice.mViewportRect.mSizeX;
-    screenRect.mSizeY = gGraphicsDevice.mViewportRect.mSizeY;
+    Rectangle screenRect;
+    screenRect.x = 0;
+    screenRect.y = 0;
+    screenRect.w = gGraphicsDevice.mViewportRect.w;
+    screenRect.h = gGraphicsDevice.mViewportRect.h;
 
-    mProjectionMatrix2D = glm::ortho(screenRect.mX * 1.0f, 
-        (screenRect.mX + screenRect.mSizeX) * 1.0f, 
-        (screenRect.mY + screenRect.mSizeY) * 1.0f, screenRect.mY * 1.0f);
+    mProjectionMatrix2D = glm::ortho(screenRect.x * 1.0f, 
+        (screenRect.x + screenRect.w) * 1.0f, 
+        (screenRect.y + screenRect.h) * 1.0f, screenRect.y * 1.0f);
 
     mGuiRenderProgram.ActivateProgram();
     mGuiRenderProgram.SetViewProjectionMatrix(mProjectionMatrix2D);
@@ -76,11 +76,11 @@ void GuiRenderer::RenderFrameEnd()
     mGuiRenderProgram.DeactivateProgram();
 
     // restore scissor box
-    Rect2D screenRect;
-    screenRect.mX = 0;
-    screenRect.mY = 0;
-    screenRect.mSizeX = gGraphicsDevice.mViewportRect.mSizeX;
-    screenRect.mSizeY = gGraphicsDevice.mViewportRect.mSizeY;
+    Rectangle screenRect;
+    screenRect.x = 0;
+    screenRect.y = 0;
+    screenRect.w = gGraphicsDevice.mViewportRect.w;
+    screenRect.h = gGraphicsDevice.mViewportRect.h;
     gGraphicsDevice.SetScissorRect(screenRect);
 }
 
@@ -89,7 +89,7 @@ void GuiRenderer::SetCurrentTransform(glm::mat4* matrix)
     mCurrentTransform = matrix;
 }
 
-void GuiRenderer::FillRect(const Rect2D& rect, Color32 fillColor)
+void GuiRenderer::FillRect(const Rectangle& rect, Color32 fillColor)
 {
     SetCurrentBatchTexture(gTexturesManager.mWhiteTexture);
 
@@ -97,13 +97,13 @@ void GuiRenderer::FillRect(const Rect2D& rect, Color32 fillColor)
     ALLOCATE_VERTICES(6, vertices);
 
     vertices[0].mColor = fillColor;
-    vertices[0].mPosition.x = rect.mX * 1.0f;
-    vertices[0].mPosition.y = rect.mY * 1.0f;
+    vertices[0].mPosition.x = rect.x * 1.0f;
+    vertices[0].mPosition.y = rect.y * 1.0f;
     vertices[1].mColor = fillColor;
     vertices[1].mPosition.x = vertices[0].mPosition.x;
-    vertices[1].mPosition.y = (rect.mY + rect.mSizeY) * 1.0f;
+    vertices[1].mPosition.y = (rect.y + rect.h) * 1.0f;
     vertices[2].mColor = fillColor;
-    vertices[2].mPosition.x = (rect.mX + rect.mSizeX) * 1.0f;
+    vertices[2].mPosition.x = (rect.x + rect.w) * 1.0f;
     vertices[2].mPosition.y = vertices[1].mPosition.y;
     vertices[3] = vertices[0];
     vertices[4] = vertices[2];
@@ -112,7 +112,7 @@ void GuiRenderer::FillRect(const Rect2D& rect, Color32 fillColor)
     vertices[5].mPosition.y = vertices[0].mPosition.y;
 }
 
-void GuiRenderer::DrawRect(const Rect2D& rect, Color32 lineColor)
+void GuiRenderer::DrawRect(const Rectangle& rect, Color32 lineColor)
 {
     // todo
 }

@@ -9,7 +9,7 @@ public:
     // readonly
     eTextureFilterMode mFiltering;
     eTextureRepeatMode mRepeating;
-    Size2D mSize;
+    Point mSize;
     int mLayersCount;
     eTextureFormat mFormat;
 
@@ -22,7 +22,7 @@ public:
     // @param dimensions: Texture dimensions, must be POT!
     // @param layersCount: Number of textures in array
     // @param sourceData: Source data buffer, all layers must be specified if not null
-    bool Setup(eTextureFormat textureFormat, const Size2D& dimensions, int layersCount, const void* sourceData);
+    bool Setup(eTextureFormat textureFormat, const Point& dimensions, int layersCount, const void* sourceData);
 
     // uploads pixels data for layers, size of source bitmap should match current texture dimensions
     // @param startLayerIndex: First layer index

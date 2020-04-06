@@ -101,8 +101,8 @@ void GenericRoom::ReevaluateOccupationArea()
         return;
     }
 
-    Point2D rightBottomPoint = mRoomTiles[0]->mTileLocation;
-    Point2D leftTopPoint = mRoomTiles[0]->mTileLocation;
+    Point rightBottomPoint = mRoomTiles[0]->mTileLocation;
+    Point leftTopPoint = mRoomTiles[0]->mTileLocation;
 
     for (MapTile* tile : mRoomTiles)
     {
@@ -113,10 +113,10 @@ void GenericRoom::ReevaluateOccupationArea()
         else rightBottomPoint.y = tile->mTileLocation.y;
     }
 
-    mOccupationArea.mX = leftTopPoint.x;
-    mOccupationArea.mY = leftTopPoint.y;
-    mOccupationArea.mSizeX = (rightBottomPoint.x > 0) ? (rightBottomPoint.x - leftTopPoint.x + 1) : 1;
-    mOccupationArea.mSizeY = (rightBottomPoint.y > 0) ? (rightBottomPoint.y - leftTopPoint.y + 1) : 1;
+    mOccupationArea.x = leftTopPoint.x;
+    mOccupationArea.y = leftTopPoint.y;
+    mOccupationArea.w = (rightBottomPoint.x > 0) ? (rightBottomPoint.x - leftTopPoint.x + 1) : 1;
+    mOccupationArea.h = (rightBottomPoint.y > 0) ? (rightBottomPoint.y - leftTopPoint.y + 1) : 1;
 }
 
 void GenericRoom::ReevaluateInnerSquares()
@@ -496,8 +496,8 @@ void GenericRoom::ConstructTiles_3x3(DungeonBuilder& builder, const TilesArray& 
 
     for (MapTile* currTile : mapTiles)
     {
-        const int ioffsetx = currTile->mTileLocation.x - mOccupationArea.mX;
-        const int ioffsety = currTile->mTileLocation.y - mOccupationArea.mY;
+        const int ioffsetx = currTile->mTileLocation.x - mOccupationArea.x;
+        const int ioffsety = currTile->mTileLocation.y - mOccupationArea.y;
         const int ioffset = (ioffsety * 3) + ioffsetx;
 
         debug_assert(ioffset >= 0 && ioffset <= 8);
@@ -643,8 +643,8 @@ void GenericRoom::ConstructTiles_HeroGateFrontEnd(DungeonBuilder& builder, const
     const std::string& meshName = mDefinition->mCompleteResource.mResourceName;
     for (MapTile* currTile: mapTiles)
     {
-        int tilex = currTile->mTileLocation.x - mOccupationArea.mX;
-        int tiley = currTile->mTileLocation.y - mOccupationArea.mY;
+        int tilex = currTile->mTileLocation.x - mOccupationArea.x;
+        int tiley = currTile->mTileLocation.y - mOccupationArea.y;
         if (tiley > 4)
         {
             tilex = 0;
@@ -795,8 +795,8 @@ void GenericRoom::ConstructTiles_5x5Rotated(DungeonBuilder& builder, const Tiles
         const glm::mat3* rotation = nullptr;
 
         // get tile offset
-        const int ioffsetx = currTile->mTileLocation.x - mOccupationArea.mX;
-        const int ioffsety = currTile->mTileLocation.y - mOccupationArea.mY;
+        const int ioffsetx = currTile->mTileLocation.x - mOccupationArea.x;
+        const int ioffsety = currTile->mTileLocation.y - mOccupationArea.y;
         const int ioffset = (ioffsety * 5) + ioffsetx;
 
         // corner

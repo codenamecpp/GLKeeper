@@ -10,7 +10,7 @@ class TerrainMeshComponent: public GameObjectComponent
 
 public:
     // readonly
-    Rect2D mMapTerrainRect;
+    Rectangle mMapTerrainRect;
 
 public:
     TerrainMeshComponent(GameObject* gameObject);
@@ -19,7 +19,7 @@ public:
     // process render frame
     void RenderFrame(SceneRenderContext& renderContext) override;
 
-    void SetTerrainArea(const Rect2D& mapArea);
+    void SetTerrainArea(const Rectangle& mapArea);
     void InvalidateMesh();
 
     // rebuild terrain mesh and upload data to video memory

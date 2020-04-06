@@ -94,7 +94,7 @@ bool Texture2D::LoadTexture()
     
     if (imageData.IsNull()) // create dummy texture
     {
-        Size2D dummyTextureDims { 64, 64 };
+        Point dummyTextureDims { 64, 64 };
         imageData.CreateImage(eTextureFormat_RGBA8, dummyTextureDims, 0, false);
         imageData.FillWithCheckerBoard();
         if (!CreateTexture(imageData))

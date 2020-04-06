@@ -171,7 +171,7 @@ public:
         , mGenerateMipmaps() // do not generate on upload
     {
     }
-    Texture2D_Desc(eTextureFormat format, const Size2D& dimensions, int mipmapsCount, bool transparent, bool generateMipmaps)
+    Texture2D_Desc(eTextureFormat format, const Point& dimensions, int mipmapsCount, bool transparent, bool generateMipmaps)
         : mDimensions(dimensions), mImageDimensions(dimensions)
         , mTextureFormat(format)
         , mMaxU(1.0f)
@@ -186,8 +186,8 @@ public:
     eTextureFormat mTextureFormat = eTextureFormat_Null;
 
     // base level texture dimensions
-    Size2D mDimensions;
-    Size2D mImageDimensions; // NPOT size of texture image
+    Point mDimensions;
+    Point mImageDimensions; // NPOT size of texture image
 
     // normalized image size uv
     float mMaxU;
@@ -246,7 +246,7 @@ inline int GetTextureFormatBitsCount(eTextureFormat format)
 // @param format: Texture format
 // @param baseImageDims: Base image dimensions
 // @param mipmapLevel: Texture mipmap, 0 is for base image
-inline int GetTextureDataSize(eTextureFormat format, const Size2D& baseImageDims, int mipmapLevel)
+inline int GetTextureDataSize(eTextureFormat format, const Point& baseImageDims, int mipmapLevel)
 {
     int dimx = GetTextureMipmapDims(baseImageDims.x, mipmapLevel);
     int dimy = GetTextureMipmapDims(baseImageDims.y, mipmapLevel);

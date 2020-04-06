@@ -31,7 +31,7 @@ private:
     void CreateWaterLavaMeshList();
     void DestroyWaterLavaMeshList();
 
-    GameObject* CreateObjectTerrain(const Rect2D& mapArea);
+    GameObject* CreateObjectTerrain(const Rectangle& mapArea);
     GameObject* CreateObjectLava(const TilesArray& tilesArray);
     GameObject* CreateObjectWater(const TilesArray& tilesArray);
 

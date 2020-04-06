@@ -218,7 +218,7 @@ void GuiWidget::SetCurrentOriginPositionToCenter()
 {
     if (mOriginMode == eGuiOrigin_Fixed)
     {
-        Point2D localCenter (mSize.x / 2, mSize.y / 2);
+        Point localCenter (mSize.x / 2, mSize.y / 2);
         SetOriginPosition(localCenter);
     }
 
@@ -229,7 +229,7 @@ void GuiWidget::SetCurrentOriginPositionToCenter()
     }
 }
 
-void GuiWidget::SetOriginPosition(const Point2D& originPoint)
+void GuiWidget::SetOriginPosition(const Point& originPoint)
 {
     if (mOriginMode != eGuiOrigin_Fixed || mOriginPoint == originPoint)
         return;
@@ -248,9 +248,9 @@ void GuiWidget::SetOriginRelativeValue(const glm::vec2& value)
     InvalidateTransform();
 }
 
-void GuiWidget::SetPosition(const Point2D& position)
+void GuiWidget::SetPosition(const Point& position)
 {
-    Point2D newPosition = position;
+    Point newPosition = position;
     if (mHorzAlignment != eGuiHorzAlignment_None)
     {
         newPosition.x = ComputeHorzAlignmentPos();
@@ -263,7 +263,7 @@ void GuiWidget::SetPosition(const Point2D& position)
     if (mPosition == newPosition)
         return;
 
-    Point2D prevPosition = mPosition;
+    Point prevPosition = mPosition;
     mPosition = newPosition;
     InvalidateTransform();
 
@@ -276,14 +276,14 @@ void GuiWidget::SetPosition(const Point2D& position)
     HandlePositionChanged(prevPosition);
 }
 
-void GuiWidget::SetSize(const Size2D& size)
+void GuiWidget::SetSize(const Point& size)
 {
-    Size2D newSize = glm::max(size, 0);
+    Point newSize = glm::max(size, 0);
 
     if (mSize == newSize)
         return;
 
-    Size2D prevSize = mSize;
+    Point prevSize = mSize;
     mSize = newSize;
 
     // update origin point
@@ -302,17 +302,17 @@ void GuiWidget::SetSize(const Size2D& size)
     HandleSizeChanged(prevSize);
 }
 
-Point2D GuiWidget::LocalToScreen(const Point2D& position) const
+Point GuiWidget::LocalToScreen(const Point& position) const
 {
     GuiWidget* thisWidget = const_cast<GuiWidget*>(this);
     thisWidget->ComputeTransform();
 
     glm::vec4 localSpacePosition(position, 0.0f, 1.0f);
     glm::vec4 screenSpacePosition = mTransform * localSpacePosition;
-    return Point2D(screenSpacePosition);
+    return Point(screenSpacePosition);
 }
 
-Point2D GuiWidget::ScreenToLocal(const Point2D& position) const
+Point GuiWidget::ScreenToLocal(const Point& position) const
 {
     GuiWidget* thisWidget = const_cast<GuiWidget*>(this);
     thisWidget->ComputeTransform();
@@ -320,13 +320,13 @@ Point2D GuiWidget::ScreenToLocal(const Point2D& position) const
     glm::mat4 inverseTransform = glm::inverse(mTransform);
     glm::vec4 screenSpacePosition(position, 0.0f, 1.0f);
     glm::vec4 localSpacePosition = inverseTransform * screenSpacePosition;
-    return Point2D(localSpacePosition);
+    return Point(localSpacePosition);
 }
 
-bool GuiWidget::IsScreenPointInsideRect(const Point2D& screenPosition) const
+bool GuiWidget::IsScreenPointInsideRect(const Point& screenPosition) const
 {
-    Point2D localPoint = ScreenToLocal(screenPosition);
-    Rect2D localRect;
+    Point localPoint = ScreenToLocal(screenPosition);
+    Rectangle localRect;
     GetLocalRect(localRect);
     return localRect.PointWithin(localPoint);
 }
@@ -364,18 +364,18 @@ void GuiWidget::InvalidateTransform()
     }
 }
 
-void GuiWidget::ParentPositionChanged(const Point2D& prevPosition)
+void GuiWidget::ParentPositionChanged(const Point& prevPosition)
 {
     InvalidateTransform();
 }
 
-void GuiWidget::ParentSizeChanged(const Size2D& prevSize, const Size2D& currSize)
+void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
 {
     int deltax = currSize.x - prevSize.x;
     int deltay = currSize.y - prevSize.y;
 
-    Point2D newPosition = mPosition;
-    Size2D newSize = mSize;
+    Point newPosition = mPosition;
+    Point newSize = mSize;
 
     if (deltax)
     {
@@ -463,7 +463,7 @@ int GuiWidget::ComputeVertAlignmentPos() const
     return mPosition.y;
 }
 
-void GuiWidget::ComputeOriginPoint(Point2D& outputPoint) const
+void GuiWidget::ComputeOriginPoint(Point& outputPoint) const
 {
     outputPoint = mOriginPoint;
     if (mOriginMode == eGuiOrigin_Relative)
@@ -483,17 +483,17 @@ void GuiWidget::HandleUpdateSelf(float deltaTime)
     // do nothing
 }
 
-void GuiWidget::HandleSizeChanged(const Size2D& prevSize)
+void GuiWidget::HandleSizeChanged(const Point& prevSize)
 {
     // do nothing
 }
 
-void GuiWidget::HandlePositionChanged(const Point2D& prevPosition)
+void GuiWidget::HandlePositionChanged(const Point& prevPosition)
 {
     // do nothing
 }
 
-bool GuiWidget::HandleDragStart(const Point2D& screenPoint)
+bool GuiWidget::HandleDragStart(const Point& screenPoint)
 {
     // do nothing
     return false;
@@ -505,13 +505,13 @@ void GuiWidget::HandleDragCancel()
     debug_assert(false);
 }
 
-void GuiWidget::HandleDragDrop(const Point2D& screenPoint)
+void GuiWidget::HandleDragDrop(const Point& screenPoint)
 {
     // do nothing
     debug_assert(false);
 }
 
-void GuiWidget::HandleDrag(const Point2D& screenPoint)
+void GuiWidget::HandleDrag(const Point& screenPoint)
 {
     // do nothing
     debug_assert(false);

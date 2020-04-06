@@ -24,8 +24,8 @@ public:
     void SetCurrentTransform(glm::mat4* matrix);
 
     // draw without textures
-    void FillRect(const Rect2D& rect, Color32 fillColor);
-    void DrawRect(const Rect2D& rect, Color32 lineColor);
+    void FillRect(const Rectangle& rect, Color32 fillColor);
+    void DrawRect(const Rectangle& rect, Color32 lineColor);
     
     // draw quads
     // @param texture: Current texture

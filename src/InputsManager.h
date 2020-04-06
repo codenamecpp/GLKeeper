@@ -8,7 +8,7 @@ public:
     bool mMouseButtons[eMouseButton_COUNT];
     bool mKeyboardKeys[eKeycode_COUNT];
 
-    Point2D mCursorPosition;
+    Point mCursorPosition;
 
 public:
     
@@ -30,7 +30,7 @@ public:
     // set current mouse position
     // @param positionx: position x
     // @param positiony: position y
-    void SetMousePosition(const Point2D& cursorPosition);
+    void SetMousePosition(const Point& cursorPosition);
 
     // set current mouse button state
     // @param button: mouse button index

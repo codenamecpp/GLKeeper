@@ -12,7 +12,7 @@ Texture2D_Image::~Texture2D_Image()
     Clear();
 }
 
-bool Texture2D_Image::CreateImage(eTextureFormat format, const Size2D& dimensions, int mipmapsCount, bool transparent)
+bool Texture2D_Image::CreateImage(eTextureFormat format, const Point& dimensions, int mipmapsCount, bool transparent)
 {
     if (format == eTextureFormat_Null)
     {
@@ -92,7 +92,7 @@ void Texture2D_Image::ResizeToPowerOfTwo()
     }
 
     // get nearest pot dimensions
-    Size2D newTextureSize;
+    Point newTextureSize;
     newTextureSize.x = cxx::get_next_pot(mTextureDesc.mDimensions.x);
     newTextureSize.y = cxx::get_next_pot(mTextureDesc.mDimensions.y);
     

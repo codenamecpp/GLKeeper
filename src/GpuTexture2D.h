@@ -25,8 +25,8 @@ public:
     // @param offset: Specifies a texel offset within the texture array
     // @param dimensions: Specifies the dimensions of the texture subimage
     // @param sourceData: Specifies a pointer to the source data
-    bool TexSubImage(int mipmapLevel, const Rect2D& textureRect, const void* sourceData);
-    bool TexSubImage(int mipmapLevel, const Size2D& dimensions, const void* sourceData);
+    bool TexSubImage(int mipmapLevel, const Rectangle& textureRect, const void* sourceData);
+    bool TexSubImage(int mipmapLevel, const Point& dimensions, const void* sourceData);
     bool TexSubImage(int mipmapLevel, const void* sourceData);
 
     // set texture filter and wrap parameters

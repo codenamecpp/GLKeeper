@@ -78,7 +78,7 @@ void TerrainMeshComponent::RenderFrame(SceneRenderContext& renderContext)
     renderer.Render(renderContext, this);
 }
 
-void TerrainMeshComponent::SetTerrainArea(const Rect2D& mapArea)
+void TerrainMeshComponent::SetTerrainArea(const Rectangle& mapArea)
 {
     if (mMapTerrainRect == mapArea)
         return;
@@ -89,13 +89,13 @@ void TerrainMeshComponent::SetTerrainArea(const Rect2D& mapArea)
 
     cxx::aabbox sectorBox;
     // min
-    sectorBox.mMin.x = (mMapTerrainRect.mX * DUNGEON_CELL_SIZE) - DUNGEON_CELL_HALF_SIZE;
+    sectorBox.mMin.x = (mMapTerrainRect.x * DUNGEON_CELL_SIZE) - DUNGEON_CELL_HALF_SIZE;
     sectorBox.mMin.y = 0.0f;
-    sectorBox.mMin.z = (mMapTerrainRect.mY * DUNGEON_CELL_SIZE) - DUNGEON_CELL_HALF_SIZE;
+    sectorBox.mMin.z = (mMapTerrainRect.y * DUNGEON_CELL_SIZE) - DUNGEON_CELL_HALF_SIZE;
     // max
-    sectorBox.mMax.x = sectorBox.mMin.x + (mMapTerrainRect.mSizeX * DUNGEON_CELL_SIZE);
+    sectorBox.mMax.x = sectorBox.mMin.x + (mMapTerrainRect.w * DUNGEON_CELL_SIZE);
     sectorBox.mMax.y = 3.0f;
-    sectorBox.mMax.z = sectorBox.mMin.z + (mMapTerrainRect.mSizeY * DUNGEON_CELL_SIZE);
+    sectorBox.mMax.z = sectorBox.mMin.z + (mMapTerrainRect.h * DUNGEON_CELL_SIZE);
 
     mGameObject->GetTransformComponent()->SetLocalBoundingBox(sectorBox);
 }
@@ -141,7 +141,7 @@ void TerrainMeshComponent::DestroyRenderData()
 
 void TerrainMeshComponent::PrepareRenderData()
 {
-    if (mMapTerrainRect.mSizeX < 1 || mMapTerrainRect.mSizeY < 1)
+    if (mMapTerrainRect.w < 1 || mMapTerrainRect.h < 1)
     {
         debug_assert(false);
         return;
@@ -154,10 +154,10 @@ void TerrainMeshComponent::PrepareRenderData()
     // prepare data for batching
     PieceBucketContainer pieceBucketContainer;
 
-    for (int tiley = mMapTerrainRect.mY; tiley < (mMapTerrainRect.mY + mMapTerrainRect.mSizeY); ++tiley)
-    for (int tilex = mMapTerrainRect.mX; tilex < (mMapTerrainRect.mX + mMapTerrainRect.mSizeX); ++tilex)
+    for (int tiley = mMapTerrainRect.y; tiley < (mMapTerrainRect.y + mMapTerrainRect.h); ++tiley)
+    for (int tilex = mMapTerrainRect.x; tilex < (mMapTerrainRect.x + mMapTerrainRect.w); ++tilex)
     {
-        const Point2D tileLocation (tilex, tiley);
+        const Point tileLocation (tilex, tiley);
         if (!gamemap.IsWithinMap(tileLocation))
         {
             debug_assert(false);

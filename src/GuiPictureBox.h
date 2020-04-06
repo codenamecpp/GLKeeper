@@ -27,7 +27,7 @@ protected:
 
     // override GuiWidget
     void HandleRenderSelf(GuiRenderer& renderContext) override;
-    void HandleSizeChanged(const Size2D& prevSize) override;
+    void HandleSizeChanged(const Point& prevSize) override;
     GuiPictureBox* ConstructClone() override;
 
 protected:

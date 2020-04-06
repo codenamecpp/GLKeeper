@@ -86,14 +86,14 @@ void GameWorld::UpdateFrame()
 
 void GameWorld::SetupMapData(unsigned int seed)
 {
-    Size2D mapDimensions (mScenarioData.mLevelDimensionX, mScenarioData.mLevelDimensionY);
+    Point mapDimensions (mScenarioData.mLevelDimensionX, mScenarioData.mLevelDimensionY);
     mMapData.Setup(mapDimensions, seed);
 
     int currentTileIndex = 0;
     for (int tiley = 0; tiley < mScenarioData.mLevelDimensionY; ++tiley)
     for (int tilex = 0; tilex < mScenarioData.mLevelDimensionX; ++tilex)
     {
-        MapTile* currentTile = mMapData.GetMapTile(Point2D(tilex, tiley));
+        MapTile* currentTile = mMapData.GetMapTile(Point(tilex, tiley));
         debug_assert(currentTile);
 
         TerrainTypeID tileTerrainType = mScenarioData.mMapTiles[currentTileIndex].mTerrainType;
@@ -141,7 +141,7 @@ void GameWorld::ConstructStartupRooms()
     for (int tiley = 0; tiley < mMapData.mDimensions.y; ++tiley)
     for (int tilex = 0; tilex < mMapData.mDimensions.x; ++tilex)
     {
-        const Point2D currTileLocation (tilex, tiley);
+        const Point currTileLocation (tilex, tiley);
 
         MapTile* currTile = mMapData.GetMapTile(currTileLocation);
         if (currTile->mRoom)

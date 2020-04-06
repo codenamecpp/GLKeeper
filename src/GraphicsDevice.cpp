@@ -260,13 +260,13 @@ bool GraphicsDevice::Initialize()
     // setup viewport
     mViewportRect.Set(0, 0, mScreenResolution.x, mScreenResolution.y);
 
-    ::glViewport(mViewportRect.mX, mViewportRect.mY, mViewportRect.mSizeX, mViewportRect.mSizeY);
+    ::glViewport(mViewportRect.x, mViewportRect.y, mViewportRect.w, mViewportRect.h);
     glCheckError();
 
     // default value for scissor is a whole viewport
     mScissorBox = mViewportRect;
 
-    ::glScissor(mScissorBox.mX, mScissorBox.mY, mScissorBox.mSizeX, mScissorBox.mSizeY);
+    ::glScissor(mScissorBox.x, mScissorBox.y, mScissorBox.w, mScissorBox.h);
     glCheckError();
 
     ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -319,12 +319,12 @@ void GraphicsDevice::EnableFullscreen(bool fullscreenEnabled)
     if (gGLFW_MonitorHandle == nullptr && fullscreenEnabled)
     {
         gGLFW_MonitorHandle = ::glfwGetPrimaryMonitor();
-        ::glfwSetWindowMonitor(gGLFW_WindowHandle, gGLFW_MonitorHandle, 0, 0, mViewportRect.mSizeX, mViewportRect.mSizeY, 0);
+        ::glfwSetWindowMonitor(gGLFW_WindowHandle, gGLFW_MonitorHandle, 0, 0, mViewportRect.w, mViewportRect.h, 0);
     }
     else
     {
         gGLFW_MonitorHandle = nullptr;
-        ::glfwSetWindowMonitor(gGLFW_WindowHandle, gGLFW_MonitorHandle, 60, 60, mViewportRect.mSizeX, mViewportRect.mSizeY, 0);
+        ::glfwSetWindowMonitor(gGLFW_WindowHandle, gGLFW_MonitorHandle, 60, 60, mViewportRect.w, mViewportRect.h, 0);
     }
 }
 
@@ -558,25 +558,25 @@ void GraphicsDevice::Present()
     ::glfwSwapBuffers(gGLFW_WindowHandle);
 }
 
-void GraphicsDevice::SetViewportRect(const Rect2D& sourceRectangle)
+void GraphicsDevice::SetViewportRect(const Rectangle& sourceRectangle)
 {
     debug_assert(gGLFW_WindowHandle);
     if (mViewportRect == sourceRectangle)
         return;
 
     mViewportRect = sourceRectangle;
-    ::glViewport(mViewportRect.mX, mViewportRect.mY, mViewportRect.mSizeX, mViewportRect.mSizeY);
+    ::glViewport(mViewportRect.x, mViewportRect.y, mViewportRect.w, mViewportRect.h);
     glCheckError();
 }
 
-void GraphicsDevice::SetScissorRect(const Rect2D& sourceRectangle)
+void GraphicsDevice::SetScissorRect(const Rectangle& sourceRectangle)
 {
     debug_assert(gGLFW_WindowHandle);
     if (mScissorBox == sourceRectangle)
         return;
 
     mScissorBox = sourceRectangle;
-    ::glScissor(mScissorBox.mX, mScissorBox.mY, mScissorBox.mSizeX, mScissorBox.mSizeY);
+    ::glScissor(mScissorBox.x, mScissorBox.y, mScissorBox.w, mScissorBox.h);
     glCheckError();
 }
 
@@ -634,7 +634,7 @@ GpuTextureArray2D* GraphicsDevice::CreateTextureArray2D()
     return texture;   
 }
 
-GpuTextureArray2D* GraphicsDevice::CreateTextureArray2D(eTextureFormat textureFormat, const Size2D& dimensions, int layersCount, const void* sourceData)
+GpuTextureArray2D* GraphicsDevice::CreateTextureArray2D(eTextureFormat textureFormat, const Point& dimensions, int layersCount, const void* sourceData)
 {
     debug_assert(gGLFW_WindowHandle);
 

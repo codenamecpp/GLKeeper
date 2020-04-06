@@ -291,9 +291,9 @@ inline eDirection GetNextDirectionCCW(eDirection direction)
 }
 
 // get vector for direction
-inline Point2D GetDirectionVector(eDirection direction)
+inline Point GetDirectionVector(eDirection direction)
 {
-    Point2D point_vector (0, 0);
+    Point point_vector (0, 0);
     if (direction == eDirection_N || direction == eDirection_NE || direction == eDirection_NW)
     {
         point_vector.y = -1;
@@ -329,7 +329,7 @@ inline bool IsDiagonalDirection(eDirection direction)
 // compute game map block bounding box
 // @param blockLocation: Logical position
 // @param outputBounds: Output bounds
-inline void GetMapBlockBounds(const Point2D& blockLocation, cxx::aabbox& outputBounds)
+inline void GetMapBlockBounds(const Point& blockLocation, cxx::aabbox& outputBounds)
 {
     outputBounds.reset();
     // min
@@ -343,7 +343,7 @@ inline void GetMapBlockBounds(const Point2D& blockLocation, cxx::aabbox& outputB
 }
 
 // compute game map block center in world coordinates
-inline void GetMapBlockCenter(const Point2D& blockLocation, glm::vec3& outputCoord)
+inline void GetMapBlockCenter(const Point& blockLocation, glm::vec3& outputCoord)
 {
     outputCoord.x = blockLocation.x * DUNGEON_CELL_SIZE;
     outputCoord.y = 1.0f;

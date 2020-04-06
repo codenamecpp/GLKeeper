@@ -78,61 +78,58 @@ extern const Color32 Color32_Yellow;
 // defines array of bytes
 using ByteArray = std::vector<unsigned char>;
 
-// defines point in 2d space
-using Point2D = glm::ivec2;
+// defines coordinate or size in 2d
+using Point = glm::ivec2;
 
-// defines size in 2d space
-using Size2D = glm::ivec2;
-
-// defines rectangle in 2d space
-struct Rect2D
+// defines rectangle in 2d
+struct Rectangle
 {
 public:
-    Rect2D() = default;
-    Rect2D(int posx, int posy, int sizex, int sizey)
-        : mX(posx)
-        , mY(posy)
-        , mSizeX(sizex)
-        , mSizeY(sizey)
+    Rectangle() = default;
+    Rectangle(int posx, int posy, int sizex, int sizey)
+        : x(posx)
+        , y(posy)
+        , w(sizex)
+        , h(sizey)
     {
     }
     inline void Set(int posx, int posy, int sizex, int sizey)
     {
-        mX = posx;
-        mY = posy;
-        mSizeX = sizex;
-        mSizeY = sizey;
+        x = posx;
+        y = posy;
+        w = sizex;
+        h = sizey;
     }
     inline void SetNull()
     {
-        mX = 0;
-        mY = 0;
-        mSizeX = 0;
-        mSizeY = 0;
+        x = 0;
+        y = 0;
+        w = 0;
+        h = 0;
     }
-    inline bool PointWithin(const Point2D& point) const
+    inline bool PointWithin(const Point& point) const
     {
-        return point.x >= mX && point.y >= mY &&
-            point.x < (mX + mSizeX - 1) &&
-            point.y < (mY + mSizeY - 1);
+        return point.x >= x && point.y >= y &&
+            point.x < (x + w - 1) &&
+            point.y < (y + h - 1);
     }
 public:
-    int mX, mY;
-    int mSizeX, mSizeY;
+    int x, y;
+    int w, h;
 };
 
-inline bool operator == (const Rect2D& lhs, const Rect2D& rhs) 
+inline bool operator == (const Rectangle& lhs, const Rectangle& rhs) 
 { 
-    return (lhs.mX == rhs.mX) && (lhs.mY == rhs.mY) && 
-        (lhs.mSizeX == rhs.mSizeX) && 
-        (lhs.mSizeY == rhs.mSizeY);
+    return (lhs.x == rhs.x) && (lhs.y == rhs.y) && 
+        (lhs.w == rhs.w) && 
+        (lhs.h == rhs.h);
 }
 
-inline bool operator != (const Rect2D& lhs, const Rect2D& rhs)
+inline bool operator != (const Rectangle& lhs, const Rectangle& rhs)
 {
-    return (lhs.mX != rhs.mX) || (lhs.mY != rhs.mY) || 
-        (lhs.mSizeX != rhs.mSizeX) ||
-        (lhs.mSizeY != rhs.mSizeY);
+    return (lhs.x != rhs.x) || (lhs.y != rhs.y) || 
+        (lhs.w != rhs.w) ||
+        (lhs.h != rhs.h);
 }
 
 // console log message category

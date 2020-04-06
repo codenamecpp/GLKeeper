@@ -21,11 +21,11 @@ class GameMap
 {
 public:
     // readonly
-    Size2D mDimensions;
+    Point mDimensions;
 
 public:
     // setup map tiles
-    void Setup(const Size2D& mapDimensions, unsigned int randomSeed);
+    void Setup(const Point& mapDimensions, unsigned int randomSeed);
     void Clear();
 
     // get map tile by world position
@@ -34,12 +34,12 @@ public:
 
     // get map tile by logical position
     // @param tileLocation: Tile logical position
-    MapTile* GetMapTile(const Point2D& tileLocation);
-    MapTile* GetMapTile(const Point2D& tileLocation, eDirection direction);
+    MapTile* GetMapTile(const Point& tileLocation);
+    MapTile* GetMapTile(const Point& tileLocation, eDirection direction);
 
     // test whether tile position is within map
     // @param tileLocation: Tile logical position
-    inline bool IsWithinMap(const Point2D& tileLocation) const 
+    inline bool IsWithinMap(const Point& tileLocation) const 
     {
         return (tileLocation.x > -1) && (tileLocation.y > -1) && 
             (tileLocation.x < mDimensions.x) && 
@@ -47,7 +47,7 @@ public:
     }
 
     // test whether next tile position is within map
-    bool IsWithinMap(const Point2D& tileLocation, eDirection direction) const;
+    bool IsWithinMap(const Point& tileLocation, eDirection direction) const;
 
     // flood fill adjacent tiles in 4 directions
     // @param outputTiles: Result tile array including initial tile
@@ -55,7 +55,7 @@ public:
     // @param scanArea: Scanning bounds
     // @param floodFillFlags: Flags
     void FloodFill4(TilesArray& outputTiles, MapTile* origin, MapFloodFillFlags flags);
-    void FloodFill4(TilesArray& outputTiles, MapTile* origin, const Rect2D& scanArea, MapFloodFillFlags flags);
+    void FloodFill4(TilesArray& outputTiles, MapTile* origin, const Rectangle& scanArea, MapFloodFillFlags flags);
 
 private:
     void ClearFloodFillCounter();

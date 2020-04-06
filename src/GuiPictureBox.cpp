@@ -68,7 +68,7 @@ void GuiPictureBox::HandleRenderSelf(GuiRenderer& renderContext)
         mQuadsCache.size());
 }
 
-void GuiPictureBox::HandleSizeChanged(const Size2D& prevSize)
+void GuiPictureBox::HandleSizeChanged(const Point& prevSize)
 {
     InvalidateCache();
 }
@@ -86,12 +86,12 @@ void GuiPictureBox::GenerateQuads()
         mTexture->LoadTexture();
     }
 
-    Rect2D rcDestination;
+    Rectangle rcDestination;
     GetLocalRect(rcDestination);
-    if (rcDestination.mSizeX < 1 || rcDestination.mSizeY < 1)
+    if (rcDestination.w < 1 || rcDestination.h < 1)
         return;
 
-    const Size2D& imageSize = mTexture->mTextureDesc.mImageDimensions;
+    const Point& imageSize = mTexture->mTextureDesc.mImageDimensions;
     debug_assert(imageSize.x > 0 && imageSize.y > 0);
 
     if (mSizeMode == eGuiSizeMode_Scale || mSizeMode == eGuiSizeMode_Keep || 
@@ -101,25 +101,25 @@ void GuiPictureBox::GenerateQuads()
         {
             case eGuiSizeMode_ProportionalScale:
             {
-                float scalex = (rcDestination.mSizeX * 1.0f) / (imageSize.x * 1.0f);
-                float scaley = (rcDestination.mSizeY * 1.0f) / (imageSize.y * 1.0f);
+                float scalex = (rcDestination.w * 1.0f) / (imageSize.x * 1.0f);
+                float scaley = (rcDestination.h * 1.0f) / (imageSize.y * 1.0f);
                 float scaleValue = glm::min(scalex, scaley);
 
-                rcDestination.mSizeX = (int)(imageSize.x * scaleValue);
-                rcDestination.mSizeY = (int)(imageSize.y * scaleValue);
+                rcDestination.w = (int)(imageSize.x * scaleValue);
+                rcDestination.h = (int)(imageSize.y * scaleValue);
             }
             break;
             case eGuiSizeMode_Keep:
-                rcDestination.mSizeX = imageSize.x;
-                rcDestination.mSizeY = imageSize.y;
-                rcDestination.mX = 0;
-                rcDestination.mY = 0;
+                rcDestination.w = imageSize.x;
+                rcDestination.h = imageSize.y;
+                rcDestination.x = 0;
+                rcDestination.y = 0;
             break;
             case eGuiSizeMode_KeepCentered:
-                rcDestination.mSizeX = imageSize.x;
-                rcDestination.mSizeY = imageSize.y;
-                rcDestination.mX = (mSize.x / 2 - rcDestination.mSizeX / 2);
-                rcDestination.mY = (mSize.y / 2 - rcDestination.mSizeY / 2);
+                rcDestination.w = imageSize.x;
+                rcDestination.h = imageSize.y;
+                rcDestination.x = (mSize.x / 2 - rcDestination.w / 2);
+                rcDestination.y = (mSize.y / 2 - rcDestination.h / 2);
             break;
         }
 
@@ -166,11 +166,11 @@ void GuiPictureBox::GenerateQuads()
             {
                 const int CurrentTilePixels_X = (currentX == NumFullTiles_X) ? ExtraTexturesPixels_X : imageSize.x;
                 const int CurrentTilePixels_Y = (currentY == NumFullTiles_Y) ? ExtraTexturesPixels_Y : imageSize.y;
-                const Rect2D rcSrc 
+                const Rectangle rcSrc 
                 {
                     0, 0, CurrentTilePixels_X, CurrentTilePixels_Y
                 };
-                const Rect2D rcDest 
+                const Rectangle rcDest 
                 {
                     currentX * imageSize.x, 
                     currentY * imageSize.y, 
@@ -185,11 +185,11 @@ void GuiPictureBox::GenerateQuads()
             for (int currentTile = 0; currentTile < NumTiles_X; ++currentTile)
             {
                 const bool isExtraTile = (currentTile == NumFullTiles_X);
-                const Rect2D rcSrc 
+                const Rectangle rcSrc 
                 { 
                     0, 0, (isExtraTile ? ExtraTexturesPixels_X : imageSize.x), imageSize.y 
                 };
-                const Rect2D rcDest 
+                const Rectangle rcDest 
                 {
                     currentTile * TileSize_X, 0, 
                     isExtraTile ? ExtraTileSize_X : TileSize_X, TileSize_Y
@@ -202,11 +202,11 @@ void GuiPictureBox::GenerateQuads()
             for (int currentTile = 0; currentTile < NumTiles_Y; ++currentTile)
             {
                 const bool isExtraTile = (currentTile == NumFullTiles_Y);
-                const Rect2D rcSrc 
+                const Rectangle rcSrc 
                 { 
                     0, 0, imageSize.x, (isExtraTile ? ExtraTexturesPixels_Y : imageSize.y) 
                 };
-                const Rect2D rcDest 
+                const Rectangle rcDest 
                 {
                     0, currentTile * TileSize_Y, 
                     TileSize_X, isExtraTile ? ExtraTileSize_Y : TileSize_Y

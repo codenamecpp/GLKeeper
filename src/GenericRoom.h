@@ -13,7 +13,7 @@ public:
     RoomDefinition* mDefinition; // cannot be null
     RoomInstanceID mInstanceID; // instance unique identifier
     TilesArray mRoomTiles;
-    Rect2D mOccupationArea; // approximate size in tiles
+    Rectangle mOccupationArea; // approximate size in tiles
     ePlayerID mOwnerIdentifier;
 
 public:

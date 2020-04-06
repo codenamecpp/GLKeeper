@@ -23,7 +23,7 @@ public:
 
     // push grid to debug draw queue
     // @param depth_test: Enable or disable depth test for line
-    void DrawGrid(const Size2D& cellCount, const glm::vec2& cellSize, unsigned int color, bool depth_test);
+    void DrawGrid(const Point& cellCount, const glm::vec2& cellSize, unsigned int color, bool depth_test);
 
     // push bounding sphere to debug draw queue
     // @param depth_test: Enable or disable depth test for lines

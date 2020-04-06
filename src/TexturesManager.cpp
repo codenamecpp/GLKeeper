@@ -108,8 +108,8 @@ void TexturesManager::PurgeLoadedTextures()
 void TexturesManager::InitStandardTextures()
 {
     Texture2D_Image textureData;
-    Size2D colorTextureDims { 1, 1 };
-    Size2D dummyTextureDims { 64, 64 };
+    Point colorTextureDims { 1, 1 };
+    Point dummyTextureDims { 64, 64 };
     textureData.CreateImage(eTextureFormat_RGBA8, colorTextureDims, 0, false);
 
     TextureSamplerState textureSamplerState { eTextureFilterMode_Bilinear, eTextureRepeatMode_Repeat };

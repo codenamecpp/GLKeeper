@@ -8,12 +8,12 @@ class GraphicsDevice: public cxx::noncopyable
 public:
     // readonly
     RenderStates mCurrentStates;
-    Rect2D mViewportRect;
-    Rect2D mScissorBox;
+    Rectangle mViewportRect;
+    Rectangle mScissorBox;
     GraphicsDeviceCaps mCaps;
 
     // current screen params
-    Size2D mScreenResolution;
+    Point mScreenResolution;
 
 public:
 
@@ -47,7 +47,7 @@ public:
     // @param layersCount: Number of textures in array
     // @param sourceData: Source data buffer, all layers must be specified if not null
     GpuTextureArray2D* CreateTextureArray2D();
-    GpuTextureArray2D* CreateTextureArray2D(eTextureFormat textureFormat, const Size2D& dimensions, int layersCount, const void* sourceData);
+    GpuTextureArray2D* CreateTextureArray2D(eTextureFormat textureFormat, const Point& dimensions, int layersCount, const void* sourceData);
 
     // create render program, client is responsible for destroying resource
     // @param shaderSource: Source code
@@ -127,11 +127,11 @@ public:
 
     // setup dimensions of graphic device viewport
     // @param sourceRectangle: Viewport rectangle
-    void SetViewportRect(const Rect2D& sourceRectangle);
+    void SetViewportRect(const Rectangle& sourceRectangle);
 
     // setup clip rect, default is whole viewport area
     // @param sourceRectangle: Clipping rectangle
-    void SetScissorRect(const Rect2D& sourceRectangle);
+    void SetScissorRect(const Rectangle& sourceRectangle);
 
     // set clear color for render revice
     // @param clearColor: Color components

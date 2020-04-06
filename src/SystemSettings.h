@@ -6,7 +6,7 @@
 struct SystemSettings
 {
 public:
-    Size2D mScreenDimensions;
+    Point mScreenDimensions;
     bool mFullscreen = false; // enable fullscreen mode
     bool mResizeableWindow = false; // enable resize in windowed mode
     bool mEnableVSync = false; // enable vertical synchronization

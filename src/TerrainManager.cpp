@@ -72,18 +72,18 @@ void TerrainManager::CreateTerrainMeshList()
     for (int imeshy = 0; imeshy < numMeshesPerHeight; ++imeshy)
     for (int imeshx = 0; imeshx < numMeshesPerWidth; ++imeshx)
     {
-        Rect2D rcmap;
-        rcmap.mX = imeshx * TerrainMeshSizeTiles;
-        rcmap.mY = imeshy * TerrainMeshSizeTiles;
-        rcmap.mSizeX = TerrainMeshSizeTiles;
-        rcmap.mSizeY = TerrainMeshSizeTiles;
-        if (rcmap.mX + TerrainMeshSizeTiles > mapsizex)
+        Rectangle rcmap;
+        rcmap.x = imeshx * TerrainMeshSizeTiles;
+        rcmap.y = imeshy * TerrainMeshSizeTiles;
+        rcmap.w = TerrainMeshSizeTiles;
+        rcmap.h = TerrainMeshSizeTiles;
+        if (rcmap.x + TerrainMeshSizeTiles > mapsizex)
         {
-            rcmap.mSizeX = mapsizex - rcmap.mX;
+            rcmap.w = mapsizex - rcmap.x;
         }
-        if (rcmap.mY + TerrainMeshSizeTiles > mapsizey)
+        if (rcmap.y + TerrainMeshSizeTiles > mapsizey)
         {
-            rcmap.mSizeY = mapsizey - rcmap.mY;
+            rcmap.h = mapsizey - rcmap.y;
         }
 
         GameObject* gameObject = CreateObjectTerrain(rcmap);
@@ -198,7 +198,7 @@ void TerrainManager::BuildFullTerrainMesh()
     for (int tiley = 0; tiley < dimsy; ++tiley)
     for (int tilex = 0; tilex < dimsx; ++tilex)
     {
-        Point2D currTilePosition (tilex, tiley);
+        Point currTilePosition (tilex, tiley);
 
         MapTile* currentTile = gGameWorld.mMapData.GetMapTile(currTilePosition);
         debug_assert(currentTile);
@@ -236,7 +236,7 @@ void TerrainManager::CreateWaterLavaMeshList()
     for (int tiley = 0; tiley < gGameWorld.mMapData.mDimensions.y; ++tiley)
     for (int tilex = 0; tilex < gGameWorld.mMapData.mDimensions.x; ++tilex)
     {
-        Point2D currTilePosition (tilex, tiley);
+        Point currTilePosition (tilex, tiley);
 
         MapTile* currMapTile = gGameWorld.mMapData.GetMapTile(currTilePosition);
 
@@ -321,7 +321,7 @@ void TerrainManager::DestroyWaterLavaMeshList()
     mWaterLavaMeshArray.clear();
 }
 
-GameObject* TerrainManager::CreateObjectTerrain(const Rect2D& mapArea)
+GameObject* TerrainManager::CreateObjectTerrain(const Rectangle& mapArea)
 {
     GameObject* gameObject = gGameObjectsManager.CreateGameObject();
     debug_assert(gameObject);

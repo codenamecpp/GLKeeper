@@ -27,11 +27,11 @@ using CvarVector3 = ConsoleVariable<glm::vec3, CvarVector3ValueHandler>;
 class CvarVector4ValueHandler;
 using CvarVector4 = ConsoleVariable<glm::vec4, CvarVector4ValueHandler>;
 
-class CvarSize2DValueHandler;
-using CvarSize2D = ConsoleVariable<Size2D, CvarSize2DValueHandler>;
+class CvarPointValueHandler;
+using CvarPoint = ConsoleVariable<Point, CvarPointValueHandler>;
 
-class CvarRect2DValueHandler;
-using CvarRect2D = ConsoleVariable<Rect2D, CvarRect2DValueHandler>;
+class CvarRectangleValueHandler;
+using CvarRectangle = ConsoleVariable<Rectangle, CvarRectangleValueHandler>;
 
 // console variable flags
 enum 

@@ -49,7 +49,7 @@ bool DebugUIManager::Initialize()
 
     SetupStyle(io);
 
-    Size2D fontTextureDimensions;
+    Point fontTextureDimensions;
     unsigned char *pcPixels;
 
     if (!AddFontFromExternalFile(io, "fonts/cousine_regular.ttf", 17.0f))
@@ -164,7 +164,7 @@ void DebugUIManager::RenderFrame()
             if (!should_draw)
                 continue;
 
-            Rect2D rcClip {
+            Rectangle rcClip {
                 static_cast<int>(clip_rect_x), static_cast<int>(fb_height - clip_rect_h), 
                 static_cast<int>(clip_rect_w - clip_rect_x), 
                 static_cast<int>(clip_rect_h - clip_rect_y)
@@ -190,8 +190,8 @@ void DebugUIManager::UpdateFrame()
     ImGuiIO& io = ImGui::GetIO();
 
     io.DeltaTime = (float) gTimeManager.GetRealtimeFrameDelta(); // set the time elapsed since the previous frame (in seconds)
-    io.DisplaySize.x = (float) gGraphicsDevice.mViewportRect.mSizeX;
-    io.DisplaySize.y = (float) gGraphicsDevice.mViewportRect.mSizeY;
+    io.DisplaySize.x = (float) gGraphicsDevice.mViewportRect.w;
+    io.DisplaySize.y = (float) gGraphicsDevice.mViewportRect.h;
     io.MousePos.x = gInputsManager.mCursorPosition.x * 1.0f;
     io.MousePos.y = gInputsManager.mCursorPosition.y * 1.0f;
     io.MouseDown[0] = gInputsManager.GetMouseButtonL();  // set the mouse button states

@@ -34,7 +34,7 @@ private:
     void SetupCameraView();
 
 private:
-    Point2D mPrevMousePosition;
+    Point mPrevMousePosition;
 
     glm::vec3 mFocusPoint;
 

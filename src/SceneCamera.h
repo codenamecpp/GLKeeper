@@ -69,7 +69,7 @@ public:
     // @param screenCoordinate: 2d coordinates on screen
     // @param screenViewport: viewport
     // @param resultRay: Output ray info
-    bool CastRayFromScreenPoint(const glm::ivec2& screenCoordinate, const Rect2D& screenViewport, cxx::ray3d& resultRay);
+    bool CastRayFromScreenPoint(const glm::ivec2& screenCoordinate, const Rectangle& screenViewport, cxx::ray3d& resultRay);
 
 private:
     bool mProjMatrixDirty; // projection matrix need recomputation

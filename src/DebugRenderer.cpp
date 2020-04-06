@@ -115,7 +115,7 @@ void DebugRenderer::DrawLine(const glm::vec3& start_point, const glm::vec3& end_
     }
 }
 
-void DebugRenderer::DrawGrid(const Size2D& cellCount, const glm::vec2& cellSize, unsigned int color, bool depth_test)
+void DebugRenderer::DrawGrid(const Point& cellCount, const glm::vec2& cellSize, unsigned int color, bool depth_test)
 {
     const glm::vec3 cornerTL = glm::vec3 { 
         -(cellSize.x * cellCount.x) / 2.0f, 
