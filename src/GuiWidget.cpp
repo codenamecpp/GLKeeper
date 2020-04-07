@@ -686,12 +686,16 @@ void GuiWidget::SizeChanged(const Point& prevSize)
 
 void GuiWidget::ShownStateChanged()
 {
-    if (IsBeingDragged()) // force cancel drag
+    if (!IsVisible()) 
     {
-        gGuiManager.CancelDrag();
-    }
+        if (IsBeingDragged()) // force cancel drag
+        {
+            gGuiManager.CancelDrag();
+        }
 
-    SetHovered(false); // reset hovered state
+        // reset hovered state
+        mHovered = false;
+    }
 
     for (GuiWidget* currChild = mFirstChild; currChild; 
         currChild = currChild->mNextSibling)
@@ -704,9 +708,15 @@ void GuiWidget::ShownStateChanged()
 
 void GuiWidget::EnableStateChanged()
 {
-    if (IsBeingDragged()) // force cancel drag
+    if (!IsEnabled())
     {
-        gGuiManager.CancelDrag(); 
+        if (IsBeingDragged()) // force cancel drag
+        {
+            gGuiManager.CancelDrag(); 
+        }
+
+        // reset hovered state
+        mHovered = false;
     }
 
     for (GuiWidget* currChild = mFirstChild; currChild; 
