@@ -33,6 +33,12 @@ public:
     // @param deltaTime: Time passed since previous update
     void UpdateFrame(float deltaTime);
 
+    // process input event
+    // @param inputEvent: Event data
+    void ProcessEvent(MouseButtonInputEvent& inputEvent);
+    void ProcessEvent(MouseMovedInputEvent& inputEvent);
+    void ProcessEvent(MouseScrollInputEvent& inputEvent);
+
     // set current position in local or screen space
     // @param position: Position absolute or relative [0-100] %
     // @param xAddressingMode, yAddressingMode: Addressing modes for x and y
@@ -187,6 +193,10 @@ protected:
     virtual void HandleShownStateChanged();
     virtual void HandleEnableStateChanged();
     virtual void HandleHoveredStateChanged();
+
+    virtual void HandleInputEvent(MouseButtonInputEvent& inputEvent);
+    virtual void HandleInputEvent(MouseMovedInputEvent& inputEvent);
+    virtual void HandleInputEvent(MouseScrollInputEvent& inputEvent);
 
     virtual bool HasAttribute(eGuiWidgetAttribute attribute) const;
 

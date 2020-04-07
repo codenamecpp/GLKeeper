@@ -121,6 +121,42 @@ void GuiWidget::UpdateFrame(float deltaTime)
     }
 }
 
+void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
+{
+    if (!IsVisible() || !HasAttribute(eGuiWidgetAttribute_Interactive))
+        return;
+
+    inputEvent.SetConsumed(true);
+    if (!IsEnabled())
+        return;
+
+    HandleInputEvent(inputEvent);
+}
+
+void GuiWidget::ProcessEvent(MouseMovedInputEvent& inputEvent)
+{
+    if (!IsVisible() || !HasAttribute(eGuiWidgetAttribute_Interactive))
+        return;
+
+    inputEvent.SetConsumed(true);
+    if (!IsEnabled())
+        return;
+
+    HandleInputEvent(inputEvent);
+}
+
+void GuiWidget::ProcessEvent(MouseScrollInputEvent& inputEvent)
+{
+    if (!IsVisible() || !HasAttribute(eGuiWidgetAttribute_Interactive))
+        return;
+
+    inputEvent.SetConsumed(true);
+    if (!IsEnabled())
+        return;
+
+    HandleInputEvent(inputEvent);
+}
+
 bool GuiWidget::AttachChild(GuiWidget* widget)
 {
     if (widget == nullptr || widget == this || widget->mParent == this)
@@ -818,6 +854,21 @@ void GuiWidget::HandleEnableStateChanged()
 }
 
 void GuiWidget::HandleHoveredStateChanged()
+{
+    // do nothing
+}
+
+void GuiWidget::HandleInputEvent(MouseButtonInputEvent& inputEvent)
+{
+    // do nothing
+}
+
+void GuiWidget::HandleInputEvent(MouseMovedInputEvent& inputEvent)
+{
+    // do nothing
+}
+
+void GuiWidget::HandleInputEvent(MouseScrollInputEvent& inputEvent)
 {
     // do nothing
 }

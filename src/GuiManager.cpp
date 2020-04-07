@@ -72,11 +72,29 @@ void GuiManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
         mCurrentDragHandler->HandleDrag(gInputsManager.mCursorPosition);
 
         inputEvent.SetConsumed();
+        return;
+    }
+
+    if (mHoveredWidget)
+    {
+        mHoveredWidget->ProcessEvent(inputEvent);
+        return;
     }
 }
 
 void GuiManager::HandleInputEvent(MouseScrollInputEvent& inputEvent)
 {
+    if (mCurrentDragHandler) // continue drag
+    {
+        inputEvent.SetConsumed();
+        return;
+    }
+
+    if (mHoveredWidget)
+    {
+        mHoveredWidget->ProcessEvent(inputEvent);
+        return;
+    }
 }
 
 void GuiManager::HandleInputEvent(KeyInputEvent& inputEvent)
@@ -89,6 +107,11 @@ void GuiManager::HandleInputEvent(KeyCharEvent& inputEvent)
 
 void GuiManager::HandleMouseLButtonPressed(MouseButtonInputEvent& inputEvent)
 {
+    if (mHoveredWidget)
+    {
+        mHoveredWidget->ProcessEvent(inputEvent);
+        return;
+    }
 }
 
 void GuiManager::HandleMouseLButtonReleased(MouseButtonInputEvent& inputEvent)
@@ -98,6 +121,13 @@ void GuiManager::HandleMouseLButtonReleased(MouseButtonInputEvent& inputEvent)
         mCurrentDragHandler->HandleDragDrop(gInputsManager.mCursorPosition);
 
         inputEvent.SetConsumed();
+        return;
+    }
+
+    if (mHoveredWidget)
+    {
+        mHoveredWidget->ProcessEvent(inputEvent);
+        return;
     }
 }
 
