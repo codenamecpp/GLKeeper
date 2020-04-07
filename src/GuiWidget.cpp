@@ -186,6 +186,20 @@ void GuiWidget::SetAnchors(const GuiAnchorsStruct& anchors)
     InvalidateTransform();
 }
 
+void GuiWidget::SetOriginX(int posx, eGuiAddressingMode xAddressingMode)
+{
+    Point origin(posx, mOriginComponentY.mValue);
+
+    SetOrigin(origin, xAddressingMode, mOriginComponentY.mAddressingMode);
+}
+
+void GuiWidget::SetOriginY(int posy, eGuiAddressingMode yAddressingMode)
+{
+    Point origin(mOriginComponentX.mValue, posy);
+
+    SetOrigin(origin, mOriginComponentX.mAddressingMode, yAddressingMode);
+}
+
 void GuiWidget::SetOrigin(const Point& position, eGuiAddressingMode xAddressingMode, eGuiAddressingMode yAddressingMode)
 {
     GuiPositionComponent componentx (xAddressingMode, position.x);
@@ -228,6 +242,20 @@ void GuiWidget::SetOriginToCenter()
     SetOrigin(position, mOriginComponentX.mAddressingMode, mOriginComponentY.mAddressingMode);
 }
 
+void GuiWidget::SetPositionX(int posx, eGuiAddressingMode xAddressingMode)
+{
+    Point position(posx, mPositionComponentY.mValue);
+
+    SetPosition(position, xAddressingMode, mPositionComponentY.mAddressingMode);
+}
+
+void GuiWidget::SetPositionY(int posy, eGuiAddressingMode yAddressingMode)
+{
+    Point position(mPositionComponentX.mValue, posy);
+
+    SetPosition(position, mPositionComponentX.mAddressingMode, yAddressingMode);
+}
+
 void GuiWidget::SetPosition(const Point& position, eGuiAddressingMode xAddressingMode, eGuiAddressingMode yAddressingMode)
 {
     GuiPositionComponent componentx (xAddressingMode, position.x);
@@ -246,6 +274,20 @@ void GuiWidget::SetPosition(const Point& position, eGuiAddressingMode xAddressin
     mCurrentPosition = newPosition;
 
     SelfPositionChanged(prevPosition);
+}
+
+void GuiWidget::SetSizeW(int sizew, eGuiAddressingMode wAddressingMode)
+{
+    Point newsize(sizew, mSizeComponentH.mValue);
+
+    SetSize(newsize, wAddressingMode, mSizeComponentH.mAddressingMode);
+}
+
+void GuiWidget::SetSizeH(int sizeh, eGuiAddressingMode hAddressingMode)
+{
+    Point newsize(mSizeComponentW.mValue, sizeh);
+
+    SetSize(newsize, mSizeComponentW.mAddressingMode, hAddressingMode);
 }
 
 void GuiWidget::SetSize(const Point& size, eGuiAddressingMode wAddressingMode, eGuiAddressingMode hAddressingMode)

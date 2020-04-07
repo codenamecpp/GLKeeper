@@ -33,7 +33,8 @@ public:
     void SetPosition(const Point& position, 
         eGuiAddressingMode xAddressingMode = eGuiAddressingMode_Absolute, 
         eGuiAddressingMode yAddressingMode = eGuiAddressingMode_Absolute);
-
+    void SetPositionX(int posx, eGuiAddressingMode xAddressingMode = eGuiAddressingMode_Absolute);
+    void SetPositionY(int posy, eGuiAddressingMode yAddressingMode = eGuiAddressingMode_Absolute);
     void SetScreenPosition(const Point& position)
     {
         Point pos = ScreenToLocal(position);
@@ -46,7 +47,8 @@ public:
     void SetOrigin(const Point& position, 
         eGuiAddressingMode xAddressingMode = eGuiAddressingMode_Absolute, 
         eGuiAddressingMode yAddressingMode = eGuiAddressingMode_Absolute);
-
+    void SetOriginX(int posx, eGuiAddressingMode xAddressingMode = eGuiAddressingMode_Absolute);
+    void SetOriginY(int posy, eGuiAddressingMode yAddressingMode = eGuiAddressingMode_Absolute);
     void SetOriginScreenPosition(const Point& position)
     {
         Point pos = ScreenToLocal(position);
@@ -60,6 +62,8 @@ public:
     void SetSize(const Point& size, 
         eGuiAddressingMode wAddressingMode = eGuiAddressingMode_Absolute, 
         eGuiAddressingMode hAddressingMode = eGuiAddressingMode_Absolute);
+    void SetSizeW(int sizew, eGuiAddressingMode wAddressingMode = eGuiAddressingMode_Absolute);
+    void SetSizeH(int sizeh, eGuiAddressingMode hAddressingMode = eGuiAddressingMode_Absolute);
 
     // setup widget anchors
     void SetAnchors(const GuiAnchorsStruct& anchors);
