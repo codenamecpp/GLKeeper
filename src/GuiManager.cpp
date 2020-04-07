@@ -46,6 +46,8 @@ void GuiManager::UpdateFrame()
     {
         currWidget->UpdateFrame(deltaTime);
     }
+
+    UpdateCurrentHoveredWidget();
 }
 
 void GuiManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
@@ -65,9 +67,9 @@ void GuiManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 
 void GuiManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
 {
-    if (mDraggedWidget) // continue drag
+    if (mCurrentDragHandler) // continue drag
     {
-        mDraggedWidget->HandleDrag(gInputsManager.mCursorPosition);
+        mCurrentDragHandler->HandleDrag(gInputsManager.mCursorPosition);
 
         inputEvent.SetConsumed();
     }
@@ -91,11 +93,37 @@ void GuiManager::HandleMouseLButtonPressed(MouseButtonInputEvent& inputEvent)
 
 void GuiManager::HandleMouseLButtonReleased(MouseButtonInputEvent& inputEvent)
 {
-    if (mDraggedWidget) // finish drag
+    if (mCurrentDragHandler) // finish drag
     {
-        mDraggedWidget->HandleDragDrop(gInputsManager.mCursorPosition);
+        mCurrentDragHandler->HandleDragDrop(gInputsManager.mCursorPosition);
 
         inputEvent.SetConsumed();
+    }
+}
+
+void GuiManager::UpdateCurrentHoveredWidget()
+{
+    GuiWidget* newHovered = nullptr;
+
+    for (auto reverse_iter = mWidgets.rbegin(); reverse_iter != mWidgets.rend(); ++reverse_iter)
+    {
+        newHovered = (*reverse_iter)->PickWidget(gInputsManager.mCursorPosition);
+        if (newHovered)
+            break;
+    }
+
+    if (mHoveredWidget == newHovered)
+        return;
+
+    if (mHoveredWidget)
+    {
+        mHoveredWidget->SetHovered(false);
+    }
+
+    mHoveredWidget = newHovered;
+    if (mHoveredWidget)
+    {
+        mHoveredWidget->SetHovered(true);
     }
 }
 
@@ -142,27 +170,24 @@ GuiWidget* GuiManager::ConstructWidget(const std::string& className) const
     return nullptr;
 }
 
-void GuiManager::StartDrag(GuiWidget* widget)
+void GuiManager::StartDrag(GuiDragDropHandler* dragHandler, const Point& screenPoint)
 {
-    debug_assert(widget);
-    if (widget == nullptr || mDraggedWidget == widget)
+    debug_assert(dragHandler);
+    if (dragHandler == nullptr || mCurrentDragHandler == dragHandler)
         return;
 
     CancelDrag();
 
-    mDraggedWidget = nullptr;
-    if (widget->HandleDragStart(gInputsManager.mCursorPosition))
-    {
-        mDraggedWidget = widget;
-    }
+    mCurrentDragHandler = dragHandler;
+    mCurrentDragHandler->HandleDragStart(screenPoint);
 }
 
 void GuiManager::CancelDrag()
 {
-    if (mDraggedWidget)
+    if (mCurrentDragHandler)
     {
-        mDraggedWidget->HandleDragCancel();
-        mDraggedWidget = nullptr;
+        mCurrentDragHandler->HandleDragCancel();
+        mCurrentDragHandler = nullptr;
     }
 }
 

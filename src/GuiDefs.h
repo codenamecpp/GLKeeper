@@ -40,6 +40,7 @@ decl_enum_strings(eGuiAddressingMode);
 enum eGuiWidgetAttribute
 {
     eGuiWidgetAttribute_Interactive, // widget receiving mouse inputs and can be pressed or hovered
+    eGuiWidgetAttribute_DragDrop, // widget supports drag and drop
 };
 
 // position along one of the axes
@@ -150,6 +151,31 @@ public:
     // 2 - BOTTOM RIGHT
     // 3 - TOP RIGHT
     Vertex2D mPoints[4];
+};
+
+// drag and drop events listener
+class GuiDragDropHandler
+{
+public:
+    virtual ~GuiDragDropHandler()
+    {
+    }
+    // on start drag
+    void HandleDragStart(const Point& screenPoint)
+    {
+    }
+    // drag interrupted
+    void HandleDragCancel()
+    {
+    }
+    // dropped
+    void HandleDragDrop(const Point& screenPoint)
+    {
+    }
+    // process drag
+    void HandleDrag(const Point& screenPoint)
+    {
+    }
 };
 
 // creates widget instance of specific class

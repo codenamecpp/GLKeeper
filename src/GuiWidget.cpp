@@ -194,6 +194,9 @@ GuiWidget* GuiWidget::PickWidget(const Point& screenPosition)
 {
     GuiWidget* resultWidget = nullptr;
 
+    if (!IsVisible())
+        return nullptr;
+
     // process in reversed oreder
     for (GuiWidget* currChild = GetLastChild(); currChild;
         currChild = currChild->mPrevSibling)
@@ -387,18 +390,6 @@ void GuiWidget::SetHovered(bool isHovered)
     HoveredStateChanged();
 }
 
-void GuiWidget::SetPressed(bool isPressed)
-{
-    if (!IsEnabled() || !HasAttribute(eGuiWidgetAttribute_Interactive))
-        return;
-
-    if (mPressed == isPressed)
-        return;
-
-    mPressed = isPressed;
-    PressedStateChanged();
-}
-
 void GuiWidget::SetVisible(bool isVisible)
 {
     if (mSelfVisible == isVisible)
@@ -425,6 +416,20 @@ void GuiWidget::SetEnabled(bool isEnabled)
             return;
     }
     EnableStateChanged();
+}
+
+bool GuiWidget::StartDrag(const Point& screenPoint)
+{
+    if (!IsEnabled() || !IsVisible() || !HasAttribute(eGuiWidgetAttribute_DragDrop))
+        return false;
+
+    gGuiManager.StartDrag(this, screenPoint);
+    return true;
+}
+
+bool GuiWidget::IsBeingDragged() const
+{
+    return gGuiManager.mCurrentDragHandler == this;
 }
 
 Point GuiWidget::LocalToScreen(const Point& position) const
@@ -755,6 +760,24 @@ void GuiWidget::ComputeAbsoluteSize(Point& outputSize) const
 void GuiWidget::HandleRender(GuiRenderer& renderContext)
 {
     // do nothing
+
+#ifdef _DEBUG
+    
+    Rectangle rc;
+    GetLocalRect(rc);
+
+    Color32 fillColor = mDebugColorNormal;
+    if (!IsEnabled())
+    {
+        fillColor = mDebugColorDisabled;
+    }
+    else if (IsHovered())
+    {
+        fillColor = mDebugColorHovered;
+    }
+    renderContext.FillRect(rc, fillColor);
+
+#endif
 }
 
 void GuiWidget::HandleUpdate(float deltaTime)
@@ -792,35 +815,12 @@ void GuiWidget::HandlePressedStateChanged()
     // do nothing
 }
 
-bool GuiWidget::HandleDragStart(const Point& screenPoint)
-{
-    // do nothing
-    return false;
-}
-
-void GuiWidget::HandleDragCancel()
-{
-    // do nothing
-    debug_assert(false);
-}
-
-void GuiWidget::HandleDragDrop(const Point& screenPoint)
-{
-    // do nothing
-    debug_assert(false);
-}
-
-void GuiWidget::HandleDrag(const Point& screenPoint)
-{
-    // do nothing
-    debug_assert(false);
-}
-
 bool GuiWidget::HasAttribute(eGuiWidgetAttribute attribute) const
 {
     switch (attribute)
     {
         case eGuiWidgetAttribute_Interactive: return false;
+        case eGuiWidgetAttribute_DragDrop: return false;
     }
     return false;
 }

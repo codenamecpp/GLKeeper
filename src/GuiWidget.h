@@ -4,6 +4,8 @@
 
 // basic gui element class
 class GuiWidget: public cxx::handled_object<GuiWidget>
+    // internals
+    , private GuiDragDropHandler
 {
     friend class GuiManager;
 
@@ -11,7 +13,11 @@ public:
     std::string mName; // user-defined identifier for widget
     GuiUserData mUserData; // user-defined data
 
-    Color32 mDebugColor = Color32_Gray;
+#ifdef _DEBUG
+    Color32 mDebugColorNormal = Color32_Gray;
+    Color32 mDebugColorHovered = Color32_Gray;
+    Color32 mDebugColorDisabled = Color32_Gray;
+#endif
 
 public:
     // construct widget
@@ -124,19 +130,18 @@ public:
     // set enabled or disabled state
     void SetEnabled(bool isEnabled);
 
-    // test whether widget is visible and enabled
-    bool IsVisible() const;
-    bool IsEnabled() const;
-
     // set current hovered state
     void SetHovered(bool isHovered);
 
-    // set current pressed state
-    void SetPressed(bool isPressed);
+    // test whether widget is visible, enabled or hovered
+    bool IsVisible() const;
+    bool IsEnabled() const;
+    bool IsHovered() const { return mHovered; }
 
-    // test whether widget is hovered and pressed
-    inline bool IsHovered() const { return mHovered; }
-    inline bool IsPressed() const { return mPressed; }
+    // start drag
+    // @return false if widget is ignoring drag
+    bool StartDrag(const Point& screenPoint);
+    bool IsBeingDragged() const;
 
     // convert from local to screen space and vice versa
     // @param position: Point
@@ -185,11 +190,6 @@ protected:
     virtual void HandleHoveredStateChanged();
     virtual void HandlePressedStateChanged();
 
-    virtual bool HandleDragStart(const Point& screenPoint);
-    virtual void HandleDragCancel();
-    virtual void HandleDragDrop(const Point& screenPoint);
-    virtual void HandleDrag(const Point& screenPoint);
-
     virtual bool HasAttribute(eGuiWidgetAttribute attribute) const;
 
     virtual GuiWidget* ConstructClone();
@@ -227,9 +227,7 @@ protected:
     bool mSelfVisible = true;
 
     bool mTransformInvalidated = false; // transformations matrix dirty
-
     bool mHovered = false;
-    bool mPressed = false;
 };
 
 // base widget class
