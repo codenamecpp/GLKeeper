@@ -113,6 +113,16 @@ public:
     // get current size
     inline Point GetSize() const { return mCurrentSize; }
 
+    // show current visibility state
+    void ShowWidget(bool isShown);
+
+    // set enabled or disabled state
+    void EnableWidget(bool isEnabled);
+
+    // test whether widget is visible and enabled
+    bool IsVisible() const;
+    bool IsEnabled() const;
+
     // convert from local to screen space and vice versa
     // @param position: Point
     Point LocalToScreen(const Point& position) const;
@@ -124,7 +134,7 @@ public:
 
     // clone widget with or without its chindren
     GuiWidget* Clone();
-    GuiWidget* CloseDeep();
+    GuiWidget* CloneDeep();
 
 protected:
     // copy properties
@@ -132,8 +142,13 @@ protected:
 
     void ParentPositionChanged(const Point& prevPosition);
     void ParentSizeChanged(const Point& prevSize, const Point& currSize);
-    void SelfPositionChanged(const Point& prevPosition);
-    void SelfSizeChanged(const Point& prevSize);
+    void ParentVisibilityStateChanged();
+    void ParentEnableStateChanged();
+
+    void PositionChanged(const Point& prevPosition);
+    void SizeChanged(const Point& prevSize);
+    void VisibilityStateChanged();
+    void EnableStateChanged();
 
     void ComputeAbsoluteOrigin(Point& outputPoint) const;
     void ComputeAbsolutePosition(Point& outputPoint) const;
@@ -141,10 +156,13 @@ protected:
 
 protected:
     // overridable
-    virtual void HandleRenderSelf(GuiRenderer& renderContext);
-    virtual void HandleUpdateSelf(float deltaTime);
+    virtual void HandleRender(GuiRenderer& renderContext);
+    virtual void HandleUpdate(float deltaTime);
     virtual void HandleSizeChanged(const Point& prevSize);
     virtual void HandlePositionChanged(const Point& prevPosition);
+
+    virtual void HandleVisibilityStateChanged();
+    virtual void HandleEnableStateChanged();
 
     virtual bool HandleDragStart(const Point& screenPoint);
     virtual void HandleDragCancel();
@@ -181,7 +199,11 @@ protected:
 
     glm::vec2 mScale;
     glm::mat4 mTransform; // current transformations matrix, screen space
+
+    // state flags
     bool mTransformInvalidated = false; // transformations matrix dirty
+    bool mSelfEnabled = true; // self enabled state
+    bool mSelfVisible = true; // self visibility state
 };
 
 // base widget class

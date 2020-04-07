@@ -50,7 +50,7 @@ GuiPictureBox* GuiPictureBox::ConstructClone()
     return selfCopy;
 }
 
-void GuiPictureBox::HandleRenderSelf(GuiRenderer& renderContext)
+void GuiPictureBox::HandleRender(GuiRenderer& renderContext)
 {
     if (mTexture == nullptr)
         return;

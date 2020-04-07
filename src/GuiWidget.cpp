@@ -43,6 +43,8 @@ GuiWidget::GuiWidget(GuiWidget* copyWidget)
     , mCurrentPosition(copyWidget->mCurrentPosition)
     , mCurrentSize(copyWidget->mCurrentSize)
     , mCurrentOrigin(copyWidget->mCurrentOrigin)
+    , mSelfVisible(copyWidget->mSelfVisible)
+    , mSelfEnabled(copyWidget->mSelfEnabled)
 {
     debug_assert(mClass);
 }
@@ -62,14 +64,14 @@ GuiWidget* GuiWidget::Clone()
     return selfClone;
 }
 
-GuiWidget* GuiWidget::CloseDeep()
+GuiWidget* GuiWidget::CloneDeep()
 {
     GuiWidget* selfClone = Clone();
 
     for (GuiWidget* currChild = mFirstChild; currChild;
         currChild = currChild->mNextSibling)
     {
-        GuiWidget* childClone = currChild->CloseDeep();
+        GuiWidget* childClone = currChild->CloneDeep();
         selfClone->AttachChild(childClone);
     }
     return selfClone;
@@ -80,7 +82,7 @@ void GuiWidget::RenderFrame(GuiRenderer& renderContext)
     ComputeTransform();
 
     renderContext.SetCurrentTransform(&mTransform);
-    HandleRenderSelf(renderContext);
+    HandleRender(renderContext);
 
     for (GuiWidget* currChild = mFirstChild; currChild; 
         currChild = currChild->mNextSibling)
@@ -91,7 +93,7 @@ void GuiWidget::RenderFrame(GuiRenderer& renderContext)
 
 void GuiWidget::UpdateFrame(float deltaTime)
 {
-    HandleUpdateSelf(deltaTime);
+    HandleUpdate(deltaTime);
 
     for (GuiWidget* currChild = mFirstChild; currChild; 
         currChild = currChild->mNextSibling)
@@ -118,9 +120,9 @@ bool GuiWidget::AttachChild(GuiWidget* widget)
     }
 
     GuiWidget* tailWidget = mFirstChild;
-    for (; tailWidget && tailWidget->mNextSibling; 
-        tailWidget = tailWidget->mNextSibling)
+    for (; tailWidget && tailWidget->mNextSibling; tailWidget = tailWidget->mNextSibling)
     {
+        // iterate
     }
 
     if (tailWidget == nullptr)
@@ -273,7 +275,7 @@ void GuiWidget::SetPosition(const Point& position, eGuiAddressingMode xAddressin
     Point prevPosition = mCurrentPosition;
     mCurrentPosition = newPosition;
 
-    SelfPositionChanged(prevPosition);
+    PositionChanged(prevPosition);
 }
 
 void GuiWidget::SetSizeW(int sizew, eGuiAddressingMode wAddressingMode)
@@ -309,7 +311,51 @@ void GuiWidget::SetSize(const Point& size, eGuiAddressingMode wAddressingMode, e
     Point prevSize = mCurrentSize;
     mCurrentSize = newSize;
 
-    SelfSizeChanged(prevSize);
+    SizeChanged(prevSize);
+}
+
+bool GuiWidget::IsVisible() const
+{
+    if (mParent)
+        return mSelfVisible && mParent->IsVisible();
+
+    return mSelfVisible;
+}
+
+bool GuiWidget::IsEnabled() const
+{
+    if (mParent)
+        return mSelfEnabled && mParent->IsEnabled();
+
+    return mSelfEnabled;
+}
+
+void GuiWidget::ShowWidget(bool isShown)
+{
+    if (mSelfVisible == isShown)
+        return;
+
+    mSelfVisible = isShown;
+    if (mParent) // check inherited state
+    {
+        if (!mParent->IsVisible())
+            return;
+    }
+    VisibilityStateChanged();
+}
+
+void GuiWidget::EnableWidget(bool isEnabled)
+{
+    if (mSelfEnabled == isEnabled)
+        return;
+
+    mSelfEnabled = isEnabled;
+    if (mParent) // check inherited state
+    {
+        if (!mParent->IsEnabled())
+            return;
+    }
+    EnableStateChanged();
 }
 
 Point GuiWidget::LocalToScreen(const Point& position) const
@@ -453,7 +499,7 @@ void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
     {
         Point prevPosition = mCurrentPosition;
         mCurrentPosition = newPosition;
-        SelfPositionChanged(prevPosition);
+        PositionChanged(prevPosition);
     }
 
     // compute relative size
@@ -477,11 +523,21 @@ void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
     {
         Point prevSize = mCurrentSize;
         mCurrentSize = correctSize;
-        SelfSizeChanged(prevSize);
+        SizeChanged(prevSize);
     }
 }
 
-void GuiWidget::SelfPositionChanged(const Point& prevPosition)
+void GuiWidget::ParentVisibilityStateChanged()
+{
+    // do nothing
+}
+
+void GuiWidget::ParentEnableStateChanged()
+{
+    // do nothing
+}
+
+void GuiWidget::PositionChanged(const Point& prevPosition)
 {
     InvalidateTransform();
 
@@ -494,7 +550,7 @@ void GuiWidget::SelfPositionChanged(const Point& prevPosition)
     HandlePositionChanged(prevPosition);
 }
 
-void GuiWidget::SelfSizeChanged(const Point& prevSize)
+void GuiWidget::SizeChanged(const Point& prevSize)
 {
     // update origin point
     if (mOriginComponentX.mAddressingMode == eGuiAddressingMode_Relative || 
@@ -511,6 +567,28 @@ void GuiWidget::SelfSizeChanged(const Point& prevSize)
     }
 
     HandleSizeChanged(prevSize);
+}
+
+void GuiWidget::VisibilityStateChanged()
+{
+    for (GuiWidget* currChild = mFirstChild; currChild; 
+        currChild = currChild->mNextSibling)
+    {
+        currChild->ParentVisibilityStateChanged();
+    }
+
+    HandleVisibilityStateChanged();
+}
+
+void GuiWidget::EnableStateChanged()
+{
+    for (GuiWidget* currChild = mFirstChild; currChild; 
+        currChild = currChild->mNextSibling)
+    {
+        currChild->ParentEnableStateChanged();
+    }
+
+    HandleEnableStateChanged();
 }
 
 void GuiWidget::ComputeAbsoluteOrigin(Point& outputPoint) const
@@ -595,12 +673,12 @@ void GuiWidget::ComputeAbsoluteSize(Point& outputSize) const
     }
 }
 
-void GuiWidget::HandleRenderSelf(GuiRenderer& renderContext)
+void GuiWidget::HandleRender(GuiRenderer& renderContext)
 {
     // do nothing
 }
 
-void GuiWidget::HandleUpdateSelf(float deltaTime)
+void GuiWidget::HandleUpdate(float deltaTime)
 {
     // do nothing
 }
@@ -611,6 +689,16 @@ void GuiWidget::HandleSizeChanged(const Point& prevSize)
 }
 
 void GuiWidget::HandlePositionChanged(const Point& prevPosition)
+{
+    // do nothing
+}
+
+void GuiWidget::HandleVisibilityStateChanged()
+{
+    // do nothing
+}
+
+void GuiWidget::HandleEnableStateChanged()
 {
     // do nothing
 }

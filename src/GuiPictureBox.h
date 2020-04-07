@@ -26,7 +26,7 @@ protected:
     void GenerateQuads();
 
     // override GuiWidget
-    void HandleRenderSelf(GuiRenderer& renderContext) override;
+    void HandleRender(GuiRenderer& renderContext) override;
     void HandleSizeChanged(const Point& prevSize) override;
     GuiPictureBox* ConstructClone() override;
 
