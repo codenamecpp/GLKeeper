@@ -120,6 +120,7 @@ void GuiManager::HandleMouseLButtonReleased(MouseButtonInputEvent& inputEvent)
     if (mCurrentDragHandler) // finish drag
     {
         mCurrentDragHandler->HandleDragDrop(gInputsManager.mCursorPosition);
+        mCurrentDragHandler = nullptr;
 
         inputEvent.SetConsumed();
         return;

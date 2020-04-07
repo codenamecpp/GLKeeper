@@ -227,14 +227,13 @@ protected:
     Point mCurrentSize;
     Point mCurrentOrigin; // local space
 
-    glm::vec2 mScale;
     glm::mat4 mTransform; // current transformations matrix, screen space
 
     // state flags
     bool mSelfEnabled = true;
     bool mSelfVisible = true;
 
-    bool mTransformInvalidated = false; // transformations matrix dirty
+    bool mTransformInvalidated = true; // transformations matrix dirty
     bool mHovered = false;
 };
 

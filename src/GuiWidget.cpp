@@ -16,7 +16,6 @@ GuiWidget::GuiWidget(): GuiWidget(&gBaseWidgetClass)
 
 GuiWidget::GuiWidget(GuiWidgetClass* widgetClass)
     : mClass(widgetClass)
-    , mScale(1.0f)
     , mTransform(1.0f)
     , mCurrentSize()
     , mCurrentPosition()
@@ -31,7 +30,6 @@ GuiWidget::GuiWidget(GuiWidget* copyWidget)
     , mName(copyWidget->mName)
     , mUserData()
     , mAnchors(copyWidget->mAnchors)
-    , mScale(copyWidget->mScale)
     , mTransform(copyWidget->mTransform)
     , mTransformInvalidated(copyWidget->mTransformInvalidated)
     , mOriginComponentX(copyWidget->mOriginComponentX)
@@ -511,12 +509,12 @@ void GuiWidget::ComputeTransform()
     {
         mParent->ComputeTransform();
 
-        mTransform = glm::translate(-glm::vec3(mCurrentOrigin, 0.0f)) * glm::scale(glm::vec3(mScale, 0.0f)) * 
+        mTransform = glm::translate(-glm::vec3(mCurrentOrigin, 0.0f)) *
             glm::translate(glm::vec3(mCurrentPosition, 0.0f)) * mParent->mTransform;
     }
     else
     {
-        mTransform = glm::translate(-glm::vec3(mCurrentOrigin, 0.0f)) * glm::scale(glm::vec3(mScale, 0.0f)) *
+        mTransform = glm::translate(-glm::vec3(mCurrentOrigin, 0.0f)) *
             glm::translate(glm::vec3(mCurrentPosition, 0.0f));
     }
     mTransformInvalidated = false;
@@ -818,24 +816,6 @@ void GuiWidget::ComputeAbsoluteSize(Point& outputSize) const
 void GuiWidget::HandleRender(GuiRenderer& renderContext)
 {
     // do nothing
-
-#ifdef _DEBUG
-    
-    Rectangle rc;
-    GetLocalRect(rc);
-
-    Color32 fillColor = mDebugColorNormal;
-    if (!IsEnabled())
-    {
-        fillColor = mDebugColorDisabled;
-    }
-    else if (IsHovered())
-    {
-        fillColor = mDebugColorHovered;
-    }
-    renderContext.FillRect(rc, fillColor);
-
-#endif
 }
 
 void GuiWidget::HandleUpdate(float deltaTime)

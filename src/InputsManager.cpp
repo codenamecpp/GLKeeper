@@ -2,6 +2,7 @@
 #include "InputsManager.h"
 #include "DebugUIManager.h"
 #include "GameMain.h"
+#include "GuiManager.h"
 
 InputsManager gInputsManager;
 
@@ -27,6 +28,11 @@ void InputsManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 
     if (!inputEvent.mConsumed)
     {
+        gGuiManager.HandleInputEvent(inputEvent);
+    }
+
+    if (!inputEvent.mConsumed)
+    {
         gGameMain.HandleInputEvent(inputEvent);
     }
 }
@@ -43,6 +49,11 @@ void InputsManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
 
     if (!inputEvent.mConsumed)
     {
+        gGuiManager.HandleInputEvent(inputEvent);
+    }
+
+    if (!inputEvent.mConsumed)
+    {
         gGameMain.HandleInputEvent(inputEvent);
     }
 }
@@ -52,6 +63,11 @@ void InputsManager::HandleInputEvent(MouseScrollInputEvent& inputEvent)
     if (gDebugUIManager.IsInitialized())
     {
         gDebugUIManager.HandleInputEvent(inputEvent);
+    }
+
+    if (!inputEvent.mConsumed)
+    {
+        gGuiManager.HandleInputEvent(inputEvent);
     }
 
     if (!inputEvent.mConsumed)
@@ -71,6 +87,11 @@ void InputsManager::HandleInputEvent(KeyInputEvent& inputEvent)
 
     if (!inputEvent.mConsumed)
     {
+        gGuiManager.HandleInputEvent(inputEvent);
+    }
+
+    if (!inputEvent.mConsumed)
+    {
         gGameMain.HandleInputEvent(inputEvent);
     }
 }
@@ -80,6 +101,11 @@ void InputsManager::HandleInputEvent(KeyCharEvent& inputEvent)
     if (gDebugUIManager.IsInitialized())
     {
         gDebugUIManager.HandleInputEvent(inputEvent);
+    }
+
+    if (!inputEvent.mConsumed)
+    {
+        gGuiManager.HandleInputEvent(inputEvent);
     }
 
     if (!inputEvent.mConsumed)

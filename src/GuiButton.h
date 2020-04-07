@@ -14,8 +14,11 @@ protected:
 
     // override GuiWidget
     void HandleRender(GuiRenderer& renderContext) override;
+    void HandleInputEvent(MouseButtonInputEvent& inputEvent) override;
+    bool HasAttribute(eGuiWidgetAttribute attribute) const override;
     GuiButton* ConstructClone() override;
 
+protected:
 };
 
 // button widget class
