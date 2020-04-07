@@ -62,6 +62,11 @@ GuiWidget* GuiWidget::GetLastChild() const
 
 GuiWidget::~GuiWidget()
 {
+    if (IsBeingDragged())
+    {
+        gGuiManager.ClearDrag(); // clear silently
+    }
+
     if (mParent)
     {
         mParent->DetachChild(this);
@@ -645,6 +650,13 @@ void GuiWidget::SizeChanged(const Point& prevSize)
 
 void GuiWidget::ShownStateChanged()
 {
+    if (IsBeingDragged()) // force cancel drag
+    {
+        gGuiManager.CancelDrag();
+    }
+
+    SetHovered(false); // reset hovered state
+
     for (GuiWidget* currChild = mFirstChild; currChild; 
         currChild = currChild->mNextSibling)
     {
@@ -656,6 +668,11 @@ void GuiWidget::ShownStateChanged()
 
 void GuiWidget::EnableStateChanged()
 {
+    if (IsBeingDragged()) // force cancel drag
+    {
+        gGuiManager.CancelDrag(); 
+    }
+
     for (GuiWidget* currChild = mFirstChild; currChild; 
         currChild = currChild->mNextSibling)
     {
@@ -668,11 +685,6 @@ void GuiWidget::EnableStateChanged()
 void GuiWidget::HoveredStateChanged()
 {
     HandleHoveredStateChanged();
-}
-
-void GuiWidget::PressedStateChanged()
-{
-    HandlePressedStateChanged();
 }
 
 void GuiWidget::ComputeAbsoluteOrigin(Point& outputPoint) const
@@ -806,11 +818,6 @@ void GuiWidget::HandleEnableStateChanged()
 }
 
 void GuiWidget::HandleHoveredStateChanged()
-{
-    // do nothing
-}
-
-void GuiWidget::HandlePressedStateChanged()
 {
     // do nothing
 }

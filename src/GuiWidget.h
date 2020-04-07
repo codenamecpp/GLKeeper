@@ -172,7 +172,6 @@ protected:
     void ShownStateChanged();
     void EnableStateChanged();
     void HoveredStateChanged();
-    void PressedStateChanged();
 
     void ComputeAbsoluteOrigin(Point& outputPoint) const;
     void ComputeAbsolutePosition(Point& outputPoint) const;
@@ -188,7 +187,6 @@ protected:
     virtual void HandleShownStateChanged();
     virtual void HandleEnableStateChanged();
     virtual void HandleHoveredStateChanged();
-    virtual void HandlePressedStateChanged();
 
     virtual bool HasAttribute(eGuiWidgetAttribute attribute) const;
 

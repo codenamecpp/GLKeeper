@@ -191,6 +191,11 @@ void GuiManager::CancelDrag()
     }
 }
 
+void GuiManager::ClearDrag()
+{
+    mCurrentDragHandler = nullptr;
+}
+
 void GuiManager::HandleScreenResolutionChanged()
 {
 }

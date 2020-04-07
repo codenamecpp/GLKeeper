@@ -43,6 +43,9 @@ public:
     // dragged widget control
     void StartDrag(GuiDragDropHandler* dragHandler, const Point& screenPoint);
     void CancelDrag();
+    
+    // clear current drag handler silently
+    void ClearDrag();
 
     // process screen resolution changed event
     void HandleScreenResolutionChanged();
