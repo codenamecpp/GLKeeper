@@ -330,21 +330,21 @@ bool GuiWidget::IsEnabled() const
     return mSelfEnabled;
 }
 
-void GuiWidget::ShowWidget(bool isShown)
+void GuiWidget::SetVisible(bool isVisible)
 {
-    if (mSelfVisible == isShown)
+    if (mSelfVisible == isVisible)
         return;
 
-    mSelfVisible = isShown;
+    mSelfVisible = isVisible;
     if (mParent) // check inherited state
     {
         if (!mParent->IsVisible())
             return;
     }
-    VisibilityStateChanged();
+    ShownStateChanged();
 }
 
-void GuiWidget::EnableWidget(bool isEnabled)
+void GuiWidget::SetEnabled(bool isEnabled)
 {
     if (mSelfEnabled == isEnabled)
         return;
@@ -527,7 +527,7 @@ void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
     }
 }
 
-void GuiWidget::ParentVisibilityStateChanged()
+void GuiWidget::ParentShownStateChanged()
 {
     // do nothing
 }
@@ -569,15 +569,15 @@ void GuiWidget::SizeChanged(const Point& prevSize)
     HandleSizeChanged(prevSize);
 }
 
-void GuiWidget::VisibilityStateChanged()
+void GuiWidget::ShownStateChanged()
 {
     for (GuiWidget* currChild = mFirstChild; currChild; 
         currChild = currChild->mNextSibling)
     {
-        currChild->ParentVisibilityStateChanged();
+        currChild->ParentShownStateChanged();
     }
 
-    HandleVisibilityStateChanged();
+    HandleShownStateChanged();
 }
 
 void GuiWidget::EnableStateChanged()
@@ -693,7 +693,7 @@ void GuiWidget::HandlePositionChanged(const Point& prevPosition)
     // do nothing
 }
 
-void GuiWidget::HandleVisibilityStateChanged()
+void GuiWidget::HandleShownStateChanged()
 {
     // do nothing
 }

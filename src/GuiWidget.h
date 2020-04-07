@@ -114,10 +114,10 @@ public:
     inline Point GetSize() const { return mCurrentSize; }
 
     // show current visibility state
-    void ShowWidget(bool isShown);
+    void SetVisible(bool isVisible);
 
     // set enabled or disabled state
-    void EnableWidget(bool isEnabled);
+    void SetEnabled(bool isEnabled);
 
     // test whether widget is visible and enabled
     bool IsVisible() const;
@@ -142,12 +142,12 @@ protected:
 
     void ParentPositionChanged(const Point& prevPosition);
     void ParentSizeChanged(const Point& prevSize, const Point& currSize);
-    void ParentVisibilityStateChanged();
+    void ParentShownStateChanged();
     void ParentEnableStateChanged();
 
     void PositionChanged(const Point& prevPosition);
     void SizeChanged(const Point& prevSize);
-    void VisibilityStateChanged();
+    void ShownStateChanged();
     void EnableStateChanged();
 
     void ComputeAbsoluteOrigin(Point& outputPoint) const;
@@ -161,7 +161,7 @@ protected:
     virtual void HandleSizeChanged(const Point& prevSize);
     virtual void HandlePositionChanged(const Point& prevPosition);
 
-    virtual void HandleVisibilityStateChanged();
+    virtual void HandleShownStateChanged();
     virtual void HandleEnableStateChanged();
 
     virtual bool HandleDragStart(const Point& screenPoint);
