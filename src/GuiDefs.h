@@ -37,6 +37,11 @@ enum eGuiAddressingMode
 };
 decl_enum_strings(eGuiAddressingMode);
 
+enum eGuiWidgetAttribute
+{
+    eGuiWidgetAttribute_Interactive, // widget receiving mouse inputs and can be pressed or hovered
+};
+
 // position along one of the axes
 struct GuiPositionComponent
 {

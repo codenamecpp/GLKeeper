@@ -49,6 +49,17 @@ GuiWidget::GuiWidget(GuiWidget* copyWidget)
     debug_assert(mClass);
 }
 
+GuiWidget* GuiWidget::GetLastChild() const
+{
+    for (GuiWidget* currWidget = mFirstChild; currWidget; 
+        currWidget = currWidget->mNextSibling)
+    {
+        if (currWidget->mNextSibling == nullptr)
+            return currWidget;
+    }
+    return mFirstChild;
+}
+
 GuiWidget::~GuiWidget()
 {
     if (mParent)
@@ -80,6 +91,9 @@ GuiWidget* GuiWidget::CloneDeep()
 void GuiWidget::RenderFrame(GuiRenderer& renderContext)
 {
     ComputeTransform();
+
+    if (!IsVisible())
+        return;
 
     renderContext.SetCurrentTransform(&mTransform);
     HandleRender(renderContext);
@@ -174,6 +188,37 @@ void GuiWidget::DetachAndFreeChildren()
         DetachChild(deleteWidget);
         SafeDelete(deleteWidget);
     }
+}
+
+GuiWidget* GuiWidget::PickWidget(const Point& screenPosition)
+{
+    GuiWidget* resultWidget = nullptr;
+
+    // process in reversed oreder
+    for (GuiWidget* currChild = GetLastChild(); currChild;
+        currChild = currChild->mPrevSibling)
+    {
+        // is point within widget and visible
+        if (!currChild->IsVisible() || !currChild->IsScreenPointInsideRect(screenPosition))
+            continue;
+
+        GuiWidget* currPicked = currChild->PickWidget(screenPosition);
+        if (currPicked)
+        {
+            resultWidget = currPicked;
+            break;
+        }
+    }
+
+    if (resultWidget == nullptr)
+    {
+        if (HasAttribute(eGuiWidgetAttribute_Interactive))
+        {
+            resultWidget = this;
+        }
+    }
+
+    return resultWidget;
 }
 
 void GuiWidget::SetAnchors(const GuiAnchorsStruct& anchors)
@@ -328,6 +373,30 @@ bool GuiWidget::IsEnabled() const
         return mSelfEnabled && mParent->IsEnabled();
 
     return mSelfEnabled;
+}
+
+void GuiWidget::SetHovered(bool isHovered)
+{
+    if (!IsEnabled() || !HasAttribute(eGuiWidgetAttribute_Interactive))
+        return;
+
+    if (mHovered == isHovered)
+        return;
+
+    mHovered = isHovered;
+    HoveredStateChanged();
+}
+
+void GuiWidget::SetPressed(bool isPressed)
+{
+    if (!IsEnabled() || !HasAttribute(eGuiWidgetAttribute_Interactive))
+        return;
+
+    if (mPressed == isPressed)
+        return;
+
+    mPressed = isPressed;
+    PressedStateChanged();
 }
 
 void GuiWidget::SetVisible(bool isVisible)
@@ -591,6 +660,16 @@ void GuiWidget::EnableStateChanged()
     HandleEnableStateChanged();
 }
 
+void GuiWidget::HoveredStateChanged()
+{
+    HandleHoveredStateChanged();
+}
+
+void GuiWidget::PressedStateChanged()
+{
+    HandlePressedStateChanged();
+}
+
 void GuiWidget::ComputeAbsoluteOrigin(Point& outputPoint) const
 {
     outputPoint.x = mOriginComponentX.mValue;
@@ -703,6 +782,16 @@ void GuiWidget::HandleEnableStateChanged()
     // do nothing
 }
 
+void GuiWidget::HandleHoveredStateChanged()
+{
+    // do nothing
+}
+
+void GuiWidget::HandlePressedStateChanged()
+{
+    // do nothing
+}
+
 bool GuiWidget::HandleDragStart(const Point& screenPoint)
 {
     // do nothing
@@ -725,6 +814,15 @@ void GuiWidget::HandleDrag(const Point& screenPoint)
 {
     // do nothing
     debug_assert(false);
+}
+
+bool GuiWidget::HasAttribute(eGuiWidgetAttribute attribute) const
+{
+    switch (attribute)
+    {
+        case eGuiWidgetAttribute_Interactive: return false;
+    }
+    return false;
 }
 
 GuiWidget* GuiWidget::ConstructClone()

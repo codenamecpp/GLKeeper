@@ -94,6 +94,11 @@ public:
     inline GuiWidget* NextSibling() const { return mNextSibling; }
     inline GuiWidget* PrevSibling() const { return mPrevSibling; }
 
+    // find visible and interactive child widget at specified screen coordinate
+    // return self if no child can be picked
+    // @param screenPosition: Screen coordinate
+    GuiWidget* PickWidget(const Point& screenPosition);
+
     // get current position in local or screen space
     inline Point GetPosition() const { return mCurrentPosition; }
     inline Point GetScreenPosition() const
@@ -113,7 +118,7 @@ public:
     // get current size
     inline Point GetSize() const { return mCurrentSize; }
 
-    // show current visibility state
+    // set current visibility state
     void SetVisible(bool isVisible);
 
     // set enabled or disabled state
@@ -122,6 +127,16 @@ public:
     // test whether widget is visible and enabled
     bool IsVisible() const;
     bool IsEnabled() const;
+
+    // set current hovered state
+    void SetHovered(bool isHovered);
+
+    // set current pressed state
+    void SetPressed(bool isPressed);
+
+    // test whether widget is hovered and pressed
+    inline bool IsHovered() const { return mHovered; }
+    inline bool IsPressed() const { return mPressed; }
 
     // convert from local to screen space and vice versa
     // @param position: Point
@@ -140,6 +155,8 @@ protected:
     // copy properties
     GuiWidget(GuiWidget* copyWidget);
 
+    GuiWidget* GetLastChild() const;
+
     void ParentPositionChanged(const Point& prevPosition);
     void ParentSizeChanged(const Point& prevSize, const Point& currSize);
     void ParentShownStateChanged();
@@ -149,6 +166,8 @@ protected:
     void SizeChanged(const Point& prevSize);
     void ShownStateChanged();
     void EnableStateChanged();
+    void HoveredStateChanged();
+    void PressedStateChanged();
 
     void ComputeAbsoluteOrigin(Point& outputPoint) const;
     void ComputeAbsolutePosition(Point& outputPoint) const;
@@ -163,11 +182,15 @@ protected:
 
     virtual void HandleShownStateChanged();
     virtual void HandleEnableStateChanged();
+    virtual void HandleHoveredStateChanged();
+    virtual void HandlePressedStateChanged();
 
     virtual bool HandleDragStart(const Point& screenPoint);
     virtual void HandleDragCancel();
     virtual void HandleDragDrop(const Point& screenPoint);
     virtual void HandleDrag(const Point& screenPoint);
+
+    virtual bool HasAttribute(eGuiWidgetAttribute attribute) const;
 
     virtual GuiWidget* ConstructClone();
 
@@ -180,17 +203,16 @@ protected:
     GuiWidget* mPrevSibling = nullptr;
 
     // layout params
-
+    GuiAnchorsStruct mAnchors;
+    // origin
     GuiPositionComponent mOriginComponentX;
     GuiPositionComponent mOriginComponentY;
-
+    // position
     GuiPositionComponent mPositionComponentX;
     GuiPositionComponent mPositionComponentY;
-
+    // size
     GuiSizeComponent mSizeComponentW;
-    GuiSizeComponent mSizeComponentH;
-
-    GuiAnchorsStruct mAnchors;
+    GuiSizeComponent mSizeComponentH;    
 
     // current location and dimensions, local space
     Point mCurrentPosition;
@@ -201,9 +223,13 @@ protected:
     glm::mat4 mTransform; // current transformations matrix, screen space
 
     // state flags
+    bool mSelfEnabled = true;
+    bool mSelfVisible = true;
+
     bool mTransformInvalidated = false; // transformations matrix dirty
-    bool mSelfEnabled = true; // self enabled state
-    bool mSelfVisible = true; // self visibility state
+
+    bool mHovered = false;
+    bool mPressed = false;
 };
 
 // base widget class
