@@ -3,7 +3,7 @@
 #include "GuiRenderer.h"
 #include "Texture2D.h"
 
-// base widget class factory
+// widget class factory
 static GuiWidgetFactory<GuiPictureBox> _PictureBoxWidgetsFactory;
 
 GuiWidgetClass gPictureBoxWidgetClass("picture_box", &_PictureBoxWidgetsFactory);
@@ -15,6 +15,7 @@ GuiPictureBox::GuiPictureBox() : GuiPictureBox(&gPictureBoxWidgetClass)
 }
 
 GuiPictureBox::GuiPictureBox(GuiWidgetClass* widgetClass)
+    : GuiWidget(widgetClass)
 {
 }
 

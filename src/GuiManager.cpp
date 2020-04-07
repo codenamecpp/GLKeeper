@@ -5,6 +5,7 @@
 #include "TimeManager.h"
 #include "GuiPictureBox.h"
 #include "InputsManager.h"
+#include "GuiButton.h"
 
 GuiManager gGuiManager;
 
@@ -177,6 +178,7 @@ void GuiManager::RegisterWidgetsClasses()
 {
     RegisterWidgetClass(&gBaseWidgetClass);
     RegisterWidgetClass(&gPictureBoxWidgetClass);
+    RegisterWidgetClass(&gButtonWidgetClass);
 }
 
 GuiWidgetClass* GuiManager::GetWidgetClass(const std::string& className) const

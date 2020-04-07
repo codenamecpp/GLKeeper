@@ -180,6 +180,7 @@
     <ClInclude Include="3rd_party\std_image.h" />
     <ClInclude Include="AABBTree.h" />
     <ClInclude Include="CreatureDefs.h" />
+    <ClInclude Include="GuiButton.h" />
     <ClInclude Include="GuiPictureBox.h" />
     <ClInclude Include="GuiWidget.h" />
     <ClInclude Include="StatisticsWindow.h" />
@@ -304,6 +305,7 @@
     <ClCompile Include="ConsoleVariable.cpp" />
     <ClCompile Include="ConsoleWindow.cpp" />
     <ClCompile Include="DebugUIWindow.cpp" />
+    <ClCompile Include="GuiButton.cpp" />
     <ClCompile Include="GuiPictureBox.cpp" />
     <ClCompile Include="GuiWidget.cpp" />
     <ClCompile Include="StatisticsWindow.cpp" />
