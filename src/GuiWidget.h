@@ -21,7 +21,6 @@ public:
 
 public:
     // construct widget
-    GuiWidget(GuiWidgetClass* widgetClass);
     GuiWidget();
     virtual ~GuiWidget();
 
@@ -163,6 +162,7 @@ public:
     GuiWidget* CloneDeep();
 
 protected:
+    GuiWidget(GuiWidgetClass* widgetClass);
     // copy properties
     GuiWidget(GuiWidget* copyWidget);
 

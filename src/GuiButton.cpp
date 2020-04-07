@@ -40,6 +40,10 @@ void GuiButton::HandleRender(GuiRenderer& renderContext)
     {
         fillColor = mDebugColorHovered;
     }
+    else if (IsBeingDragged())
+    {
+        fillColor = Color32_Green;
+    }
     renderContext.FillRect(rc, fillColor);
 
 #endif

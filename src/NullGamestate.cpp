@@ -21,6 +21,23 @@ void NullGamestate::HandleGamestateEnter()
         button->mDebugColorDisabled = Color32_GrimGray;
         button->mDebugColorHovered = Color32_Orange;
 
+        {
+            GuiPictureBox* picture = new GuiPictureBox;
+            {
+                Texture2D_Image texture_image;
+                texture_image.CreateImage(eTextureFormat_RGBA8, Point(32, 32), 0, false);
+                texture_image.FillWithCheckerBoard();
+
+                Texture2D* texture = new Texture2D("dummy");
+                texture->CreateTexture(texture_image);
+
+                picture->SetTexture(texture);
+            }
+            picture->SetSizeMode(eGuiSizeMode_KeepCentered);
+            picture->SetSize(Point(100, 100), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
+            button->AttachChild(picture);
+        }
+
         gRootWidget->AttachChild(button);
     }
 

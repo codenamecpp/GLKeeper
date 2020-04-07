@@ -7,9 +7,9 @@ class GuiButton: public GuiWidget
 {
 public:
     GuiButton();
-    GuiButton(GuiWidgetClass* widgetClass);
 
 protected:
+    GuiButton(GuiWidgetClass* widgetClass);
     GuiButton(GuiButton* copyWidget);
 
     // override GuiWidget

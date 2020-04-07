@@ -7,7 +7,6 @@ class GuiPictureBox: public GuiWidget
 {
 public:
     GuiPictureBox();
-    GuiPictureBox(GuiWidgetClass* widgetClass);
 
     // setup size mode for current picture
     // @param sizeMode: New mode
@@ -17,8 +16,8 @@ public:
     // @param texture: New texture
     void SetTexture(Texture2D* texture);
 
-    // copy properties
 protected:
+    GuiPictureBox(GuiWidgetClass* widgetClass);
     GuiPictureBox(GuiPictureBox* copyWidget);
 
     // process drawable quads
