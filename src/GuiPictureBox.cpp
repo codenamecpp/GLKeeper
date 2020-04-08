@@ -92,6 +92,8 @@ void GuiPictureBox::GenerateQuads()
     if (rcDestination.w < 1 || rcDestination.h < 1)
         return;
 
+    Color32 verticesColor = Color32_White;
+
     const Point& imageSize = mTexture->mTextureDesc.mImageDimensions;
     debug_assert(imageSize.x > 0 && imageSize.y > 0);
 
@@ -127,7 +129,7 @@ void GuiPictureBox::GenerateQuads()
         mQuadsCache.emplace_back();
 
         GuiQuadStruct& quad = mQuadsCache.back();
-        quad.SetupVertices(mTexture, rcDestination, Color32_White);
+        quad.SetupVertices(mTexture, rcDestination, verticesColor);
     }
     else if (mSizeMode == eGuiSizeMode_TileHorizontal || mSizeMode == eGuiSizeMode_TileVertical || mSizeMode == eGuiSizeMode_Tile)
     {
@@ -178,7 +180,7 @@ void GuiPictureBox::GenerateQuads()
                     CurrentTilePixels_X, 
                     CurrentTilePixels_Y
                 };
-                mQuadsCache[currentY * NumTiles_X + currentX].SetupVertices(mTexture, rcSrc, rcDest, Color32_White);
+                mQuadsCache[currentY * NumTiles_X + currentX].SetupVertices(mTexture, rcSrc, rcDest, verticesColor);
             }
         }
         else if (mSizeMode == eGuiSizeMode_TileHorizontal)
@@ -195,7 +197,7 @@ void GuiPictureBox::GenerateQuads()
                     currentTile * TileSize_X, 0, 
                     isExtraTile ? ExtraTileSize_X : TileSize_X, TileSize_Y
                 };
-                mQuadsCache[currentTile].SetupVertices(mTexture, rcSrc, rcDest, Color32_White);
+                mQuadsCache[currentTile].SetupVertices(mTexture, rcSrc, rcDest, verticesColor);
             }
         }
         else if (mSizeMode == eGuiSizeMode_TileVertical)
@@ -212,7 +214,7 @@ void GuiPictureBox::GenerateQuads()
                     0, currentTile * TileSize_Y, 
                     TileSize_X, isExtraTile ? ExtraTileSize_Y : TileSize_Y
                 };
-                mQuadsCache[currentTile].SetupVertices(mTexture, rcSrc, rcDest, Color32_White);
+                mQuadsCache[currentTile].SetupVertices(mTexture, rcSrc, rcDest, verticesColor);
             }
         } // if
     }

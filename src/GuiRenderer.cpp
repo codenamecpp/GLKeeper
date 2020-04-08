@@ -202,3 +202,32 @@ void GuiRenderer::TransformVertices(Vertex2D* vertices)
         vertices->mPosition = glm::vec2(*mCurrentTransform * glm::vec4(vertices->mPosition, 0.0f, 1.0f));
     }
 }
+
+void GuiRenderer::TransformClipRect(Rectangle& rectangle) const
+{
+    if (mCurrentTransform)
+    {
+        glm::vec2 pos = glm::vec2(*mCurrentTransform * glm::vec4(rectangle.x * 1.0, rectangle.y * 1.0f, 0.0f, 1.0f));
+        glm::vec2 dim = glm::vec2(*mCurrentTransform * glm::vec4(rectangle.w * 1.0, rectangle.h * 1.0f, 0.0f, 0.0f));
+
+        rectangle.w = (int) dim.x;
+        rectangle.h = (int) dim.y;
+
+        rectangle.x = (int) pos.x;
+        rectangle.y = (int) pos.y;
+
+        rectangle.y = gGraphicsDevice.mViewportRect.h - (rectangle.y + rectangle.h);
+    }
+}
+
+void GuiRenderer::PushClipRect(const Rectangle& rcLocal)
+{
+    Rectangle cliprect = rcLocal;
+
+    TransformClipRect(cliprect);
+    gGraphicsDevice.SetScissorRect(cliprect);
+}
+
+void GuiRenderer::PopClipRect()
+{
+}

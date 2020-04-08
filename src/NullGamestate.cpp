@@ -15,8 +15,10 @@ void NullGamestate::HandleGamestateEnter()
 
     {
         GuiButton* button = new GuiButton;
-        button->SetPosition(Point(100, 100));
-        button->SetSize(Point(100, 60));
+        button->SetPosition(Point(50, 50), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
+        button->SetSize(Point(60, 60), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
+        button->SetOrigin(Point(50, 50), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
+        button->SetClipChildren(true);
 
         button->mDebugColorDisabled = Color32_GrimGray;
         button->mDebugColorHovered = Color32_Orange;
@@ -33,8 +35,10 @@ void NullGamestate::HandleGamestateEnter()
 
                 picture->SetTexture(texture);
             }
-            picture->SetSizeMode(eGuiSizeMode_KeepCentered);
-            picture->SetSize(Point(100, 100), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
+            picture->SetSizeMode(eGuiSizeMode_Scale);
+            picture->SetSize(Point(198, 198), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
+            picture->SetPosition(Point(50, 50), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
+            picture->SetOrigin(Point(50, 50), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
             button->AttachChild(picture);
         }
 

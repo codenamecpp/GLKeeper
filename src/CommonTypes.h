@@ -107,11 +107,42 @@ public:
         w = 0;
         h = 0;
     }
+    // test whether point is within rect
     inline bool PointWithin(const Point& point) const
     {
         return point.x >= x && point.y >= y &&
             point.x < (x + w - 1) &&
             point.y < (y + h - 1);
+    }
+    // get union area of two rectangles
+    inline Rectangle GetUnion(const Rectangle& rc) const
+    {
+        Rectangle rcOutput;
+
+        int maxx = glm::max(x + w, rc.x + rc.w);
+        int maxy = glm::max(y + h, rc.y + rc.h);
+
+        rcOutput.x = glm::min(x, rc.x);
+        rcOutput.y = glm::min(y, rc.y);
+        rcOutput.w = glm::max(maxx - rcOutput.x, 0);
+        rcOutput.h = glm::max(maxy - rcOutput.y, 0);
+
+        return rcOutput;
+    }
+    // get intersection area of two rectangles
+    inline Rectangle GetIntersection(const Rectangle& rc) const
+    {        
+        Rectangle rcOutput;
+
+        int minx = glm::min(x + w, rc.x + rc.w);
+        int miny = glm::min(y + h, rc.y + rc.h);
+
+        rcOutput.x = glm::max(x, rc.x);
+        rcOutput.y = glm::max(y, rc.y);
+        rcOutput.w = glm::max(minx - rcOutput.x, 0);
+        rcOutput.h = glm::max(miny - rcOutput.y, 0);
+
+        return rcOutput;
     }
 public:
     int x, y;

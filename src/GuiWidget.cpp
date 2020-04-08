@@ -43,6 +43,7 @@ GuiWidget::GuiWidget(GuiWidget* copyWidget)
     , mCurrentOrigin(copyWidget->mCurrentOrigin)
     , mSelfVisible(copyWidget->mSelfVisible)
     , mSelfEnabled(copyWidget->mSelfEnabled)
+    , mClipChildren(copyWidget->mClipChildren)
 {
     debug_assert(mClass);
 }
@@ -99,12 +100,26 @@ void GuiWidget::RenderFrame(GuiRenderer& renderContext)
         return;
 
     renderContext.SetCurrentTransform(&mTransform);
+
+    bool isClipChildren = mClipChildren;
+    if (isClipChildren)
+    {
+        Rectangle rcClip;
+        GetLocalRect(rcClip);
+        renderContext.PushClipRect(rcClip);
+    }
+
     HandleRender(renderContext);
 
     for (GuiWidget* currChild = mFirstChild; currChild; 
         currChild = currChild->mNextSibling)
     {
         currChild->RenderFrame(renderContext);
+    }
+
+    if (isClipChildren)
+    {
+        renderContext.PopClipRect();
     }
 }
 
@@ -307,30 +322,6 @@ void GuiWidget::SetOrigin(const Point& position, eGuiAddressingMode xAddressingM
     InvalidateTransform();
 }
 
-void GuiWidget::SetOriginToCenter()
-{
-    Point position = mCurrentOrigin;
-    if (mOriginComponentX.mAddressingMode == eGuiAddressingMode_Absolute)
-    {
-        position.x = mCurrentSize.x / 2;
-    }
-    else
-    {
-        position.x = 50;
-    }
-
-    if (mOriginComponentY.mAddressingMode == eGuiAddressingMode_Absolute)
-    {
-        position.y = mCurrentSize.y / 2;
-    }
-    else
-    {
-        position.y = 50;
-    }
-
-    SetOrigin(position, mOriginComponentX.mAddressingMode, mOriginComponentY.mAddressingMode);
-}
-
 void GuiWidget::SetPositionX(int posx, eGuiAddressingMode xAddressingMode)
 {
     Point position(posx, mPositionComponentY.mValue);
@@ -427,6 +418,11 @@ void GuiWidget::SetHovered(bool isHovered)
 
     mHovered = isHovered;
     HoveredStateChanged();
+}
+
+void GuiWidget::SetClipChildren(bool isEnabled)
+{
+    mClipChildren = isEnabled;
 }
 
 void GuiWidget::SetVisible(bool isVisible)

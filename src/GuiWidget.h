@@ -65,7 +65,6 @@ public:
         Point pos = ScreenToLocal(position);
         SetOrigin(pos, eGuiAddressingMode_Absolute, eGuiAddressingMode_Absolute);
     }
-    void SetOriginToCenter();
 
     // set current size
     // @param size: Size absolute or relative [0-100] %
@@ -138,10 +137,14 @@ public:
     // set current hovered state
     void SetHovered(bool isHovered);
 
+    // set clipping child widgets feature
+    void SetClipChildren(bool isEnabled);
+
     // test whether widget is visible, enabled or hovered
     bool IsVisible() const;
     bool IsEnabled() const;
     bool IsHovered() const { return mHovered; }
+    bool IsClipChildren() const { return mClipChildren; }
 
     // start drag
     // @return false if widget is ignoring drag
@@ -232,6 +235,7 @@ protected:
     // state flags
     bool mSelfEnabled = true;
     bool mSelfVisible = true;
+    bool mClipChildren = false;
 
     bool mTransformInvalidated = true; // transformations matrix dirty
     bool mHovered = false;

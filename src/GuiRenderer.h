@@ -37,25 +37,26 @@ public:
         DrawQuads(texture, &quad, 1);
     }
 
+    void PushClipRect(const Rectangle& rcLocal);
+    void PopClipRect();
+
 private:
     void FlushPendingDrawCalls();
 
     void SetCurrentBatchTexture(Texture2D* newTexutre);
     void TransformVertices(Vertex2D* vertices);
+    void TransformClipRect(Rectangle& rectangle) const;
 
 private:
-    GuiRenderProgram mGuiRenderProgram;
+    static const int MaxBatchVertices = 16384;
 
+    GuiRenderProgram mGuiRenderProgram;
     glm::mat4 mProjectionMatrix2D;
     glm::mat4* mCurrentTransform = nullptr;
-
+    std::vector<Rectangle> mClipRectsStack;
+    GpuBuffer* mVertexBuffer = nullptr;
     // current batch data
     Texture2D* mCurrentTexture = nullptr;
-  
-    static const int MaxBatchVertices = 16384;
     int mBatchVertexCount = 0;
     Vertex2D mBatchVertices[MaxBatchVertices];
-
-    // vertex buffer
-    GpuBuffer* mVertexBuffer = nullptr;
 };
