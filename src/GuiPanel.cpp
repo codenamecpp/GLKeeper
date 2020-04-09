@@ -2,6 +2,7 @@
 #include "GuiPanel.h"
 #include "GuiManager.h"
 #include "InputsManager.h"
+#include "GuiRenderer.h"
 
 // widget class factory
 static GuiWidgetFactory<GuiPanel> _PanelWidgetsFactory;
@@ -24,6 +25,12 @@ GuiPanel::GuiPanel(GuiPanel* copyWidget)
 
 void GuiPanel::HandleRender(GuiRenderer& renderContext)
 {
+    Rectangle rcLocal;
+    GetLocalRect(rcLocal);
+
+    Color32 fillColor = Color32_SkyBlue;
+    fillColor.mA = 128;
+    renderContext.FillRect(rcLocal, fillColor);
 }
 
 void GuiPanel::HandleInputEvent(MouseButtonInputEvent& inputEvent)
