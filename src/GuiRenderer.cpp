@@ -114,7 +114,7 @@ void GuiRenderer::FillRect(const Rectangle& rect, Color32 fillColor)
     TransformVertices(vertices);
 }
 
-void GuiRenderer::DrawRect(const Rectangle& rect, Color32 lineColor)
+void GuiRenderer::DrawRect(const Rectangle& rect, Color32 lineColor, int lineWidth)
 {
     // todo
 }

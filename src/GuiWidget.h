@@ -4,8 +4,7 @@
 
 // basic gui element class
 class GuiWidget: public cxx::handled_object<GuiWidget>
-    // internals
-    , private GuiDragDropHandler
+    , public GuiDragDropHandler
 {
     friend class GuiManager;
 

@@ -65,6 +65,7 @@ public:
     eGuiAddressingMode mAddressingMode = eGuiAddressingMode_Absolute;
     int mValue = 0;
 };
+
 // alias
 using GuiSizeComponent = GuiPositionComponent;
 

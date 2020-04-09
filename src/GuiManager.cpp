@@ -224,11 +224,25 @@ void GuiManager::CancelDrag()
     }
 }
 
-void GuiManager::ClearDrag()
-{
-    mCurrentDragHandler = nullptr;
-}
-
 void GuiManager::HandleScreenResolutionChanged()
 {
+}
+
+void GuiManager::HandleWidgetDestroy(GuiWidget* widget)
+{
+    if (widget == nullptr)
+    {
+        debug_assert(false);
+        return;
+    }
+
+    if (widget == mCurrentDragHandler)
+    {
+        mCurrentDragHandler = nullptr; // clear silently
+    }
+
+    if (widget == mHoveredWidget)
+    {
+        mHoveredWidget = nullptr;
+    }
 }

@@ -61,10 +61,7 @@ GuiWidget* GuiWidget::GetLastChild() const
 
 GuiWidget::~GuiWidget()
 {
-    if (IsBeingDragged())
-    {
-        gGuiManager.ClearDrag(); // clear silently
-    }
+    gGuiManager.HandleWidgetDestroy(this);
 
     if (mParent)
     {

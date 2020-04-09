@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GuiWidget.h"
+#include "GuiEvents.h"
 
 class GuiManager: public cxx::noncopyable
 {
@@ -44,11 +45,10 @@ public:
     void StartDrag(GuiDragDropHandler* dragHandler, const Point& screenPoint);
     void CancelDrag();
     
-    // clear current drag handler silently
-    void ClearDrag();
-
     // process screen resolution changed event
     void HandleScreenResolutionChanged();
+
+    void HandleWidgetDestroy(GuiWidget* widget);
 
     // temporary
     // todo: remove

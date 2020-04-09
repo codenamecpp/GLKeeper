@@ -29,7 +29,7 @@ public:
 
     // draw without textures
     void FillRect(const Rectangle& rect, Color32 fillColor);
-    void DrawRect(const Rectangle& rect, Color32 lineColor);
+    void DrawRect(const Rectangle& rect, Color32 lineColor, int lineWidth = 1);
     
     // draw quads
     // @param texture: Current texture

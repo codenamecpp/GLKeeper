@@ -181,6 +181,7 @@
     <ClInclude Include="AABBTree.h" />
     <ClInclude Include="CreatureDefs.h" />
     <ClInclude Include="GuiButton.h" />
+    <ClInclude Include="GuiEvents.h" />
     <ClInclude Include="GuiPictureBox.h" />
     <ClInclude Include="GuiWidget.h" />
     <ClInclude Include="StatisticsWindow.h" />
