@@ -6,6 +6,7 @@
 #include "GuiPictureBox.h"
 #include "InputsManager.h"
 #include "GuiButton.h"
+#include "GuiPanel.h"
 
 GuiManager gGuiManager;
 
@@ -75,6 +76,8 @@ void GuiManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
         inputEvent.SetConsumed();
         return;
     }
+
+    UpdateCurrentHoveredWidget(); // extra lookup just in case
 
     if (mHoveredWidget)
     {
@@ -180,6 +183,7 @@ void GuiManager::RegisterWidgetsClasses()
     RegisterWidgetClass(&gBaseWidgetClass);
     RegisterWidgetClass(&gPictureBoxWidgetClass);
     RegisterWidgetClass(&gButtonWidgetClass);
+    RegisterWidgetClass(&gPanelWidgetClass);
 }
 
 GuiWidgetClass* GuiManager::GetWidgetClass(const std::string& className) const
@@ -203,24 +207,21 @@ GuiWidget* GuiManager::ConstructWidget(const std::string& className) const
     return nullptr;
 }
 
-void GuiManager::StartDrag(GuiDragDropHandler* dragHandler, const Point& screenPoint)
+void GuiManager::SetDragHandler(GuiDragDropHandler* dragHandler, const Point& screenPoint)
 {
-    debug_assert(dragHandler);
-    if (dragHandler == nullptr || mCurrentDragHandler == dragHandler)
+    if (mCurrentDragHandler == dragHandler)
         return;
 
-    CancelDrag();
-
-    mCurrentDragHandler = dragHandler;
-    mCurrentDragHandler->HandleDragStart(screenPoint);
-}
-
-void GuiManager::CancelDrag()
-{
     if (mCurrentDragHandler)
     {
         mCurrentDragHandler->HandleDragCancel();
         mCurrentDragHandler = nullptr;
+    }
+
+    mCurrentDragHandler = dragHandler;
+    if (mCurrentDragHandler)
+    {
+        mCurrentDragHandler->HandleDragStart(screenPoint);
     }
 }
 

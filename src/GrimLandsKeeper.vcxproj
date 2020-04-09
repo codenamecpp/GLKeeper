@@ -182,6 +182,7 @@
     <ClInclude Include="CreatureDefs.h" />
     <ClInclude Include="GuiButton.h" />
     <ClInclude Include="GuiEvents.h" />
+    <ClInclude Include="GuiPanel.h" />
     <ClInclude Include="GuiPictureBox.h" />
     <ClInclude Include="GuiWidget.h" />
     <ClInclude Include="StatisticsWindow.h" />
@@ -307,6 +308,7 @@
     <ClCompile Include="ConsoleWindow.cpp" />
     <ClCompile Include="DebugUIWindow.cpp" />
     <ClCompile Include="GuiButton.cpp" />
+    <ClCompile Include="GuiPanel.cpp" />
     <ClCompile Include="GuiPictureBox.cpp" />
     <ClCompile Include="GuiWidget.cpp" />
     <ClCompile Include="StatisticsWindow.cpp" />

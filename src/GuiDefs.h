@@ -5,8 +5,11 @@
 // forwards
 class GuiRenderer;
 class GuiWidget;
+class GuiButton;
+class GuiPictureBox;
+class GuiPanel;
+using GuiWidgetHandle = cxx::handle<GuiWidget>;
 
-// alias
 using GuiUserData = void*; // widget custom data
 
 enum eGuiVertAlignment

@@ -36,7 +36,7 @@ void NullGamestate::HandleGamestateEnter()
                 picture->SetTexture(texture);
             }
             picture->SetSizeMode(eGuiSizeMode_Scale);
-            picture->SetSize(Point(198, 198), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
+            picture->SetSize(Point(10, 10), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
             picture->SetPosition(Point(50, 50), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
             picture->SetOrigin(Point(50, 50), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
             button->AttachChild(picture);

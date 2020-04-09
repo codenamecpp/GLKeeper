@@ -456,7 +456,7 @@ bool GuiWidget::StartDrag(const Point& screenPoint)
     if (!IsEnabled() || !IsVisible() || !HasAttribute(eGuiWidgetAttribute_DragDrop))
         return false;
 
-    gGuiManager.StartDrag(this, screenPoint);
+    gGuiManager.SetDragHandler(this, screenPoint);
     return true;
 }
 
@@ -682,7 +682,7 @@ void GuiWidget::ShownStateChanged()
     {
         if (IsBeingDragged()) // force cancel drag
         {
-            gGuiManager.CancelDrag();
+            gGuiManager.SetDragHandler(nullptr, Point());
         }
 
         // reset hovered state
@@ -704,7 +704,7 @@ void GuiWidget::EnableStateChanged()
     {
         if (IsBeingDragged()) // force cancel drag
         {
-            gGuiManager.CancelDrag(); 
+            gGuiManager.SetDragHandler(nullptr, Point()); 
         }
 
         // reset hovered state

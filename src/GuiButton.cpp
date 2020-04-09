@@ -2,6 +2,7 @@
 #include "GuiButton.h"
 #include "GuiRenderer.h"
 #include "InputsManager.h"
+#include "GuiManager.h"
 
 // widget class factory
 static GuiWidgetFactory<GuiButton> _ButtonWidgetsFactory;
@@ -53,7 +54,7 @@ void GuiButton::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
     if (inputEvent.HasPressed(eMouseButton_Left))
     {
-        StartDrag(gInputsManager.mCursorPosition);
+        gGuiManager.SetDragHandler(this, gInputsManager.mCursorPosition);
     }
 }
 

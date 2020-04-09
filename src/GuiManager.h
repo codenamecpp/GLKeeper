@@ -41,9 +41,8 @@ public:
     // @param className: Widget class name
     GuiWidget* ConstructWidget(const std::string& className) const;
 
-    // dragged widget control
-    void StartDrag(GuiDragDropHandler* dragHandler, const Point& screenPoint);
-    void CancelDrag();
+    // set drag handler or null to cancel current drag
+    void SetDragHandler(GuiDragDropHandler* dragHandler, const Point& screenPoint);
     
     // process screen resolution changed event
     void HandleScreenResolutionChanged();
