@@ -106,7 +106,8 @@ void GuiWidget::RenderFrame(GuiRenderer& renderContext)
     {
         Rectangle rcClip;
         GetLocalRect(rcClip);
-        renderContext.PushClipRect(rcClip);
+        if (!renderContext.EnterChildClipArea(rcClip))
+            return;
     }
 
     HandleRender(renderContext);
@@ -119,7 +120,7 @@ void GuiWidget::RenderFrame(GuiRenderer& renderContext)
 
     if (isClipChildren)
     {
-        renderContext.PopClipRect();
+        renderContext.LeaveChildClipArea();
     }
 }
 

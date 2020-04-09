@@ -220,14 +220,45 @@ void GuiRenderer::TransformClipRect(Rectangle& rectangle) const
     }
 }
 
-void GuiRenderer::PushClipRect(const Rectangle& rcLocal)
+bool GuiRenderer::EnterChildClipArea(const Rectangle& rcLocal)
 {
-    Rectangle cliprect = rcLocal;
+    Rectangle newCliprect = rcLocal;
+    TransformClipRect(newCliprect);
 
-    TransformClipRect(cliprect);
-    gGraphicsDevice.SetScissorRect(cliprect);
+    Rectangle currentCliprect = gGraphicsDevice.mScissorBox;
+
+    newCliprect = newCliprect.GetIntersection(currentCliprect);
+    if (newCliprect.h < 1 || newCliprect.w < 1)
+    {
+        return false;
+    }
+
+    mClipRectsStack.push_back(currentCliprect);
+    if (newCliprect != currentCliprect)
+    {
+        FlushPendingDrawCalls();
+
+        gGraphicsDevice.SetScissorRect(newCliprect);
+    }
+    return true;
 }
 
-void GuiRenderer::PopClipRect()
+void GuiRenderer::LeaveChildClipArea()
 {
+    if (mClipRectsStack.empty())
+    {
+        debug_assert(false);
+        return;
+    }
+
+    Rectangle prevCliprect = mClipRectsStack.back();
+    mClipRectsStack.pop_back();
+
+    Rectangle currentCliprect = gGraphicsDevice.mScissorBox;
+
+    if (currentCliprect != prevCliprect)
+    {
+        FlushPendingDrawCalls();
+        gGraphicsDevice.SetScissorRect(prevCliprect);
+    }
 }

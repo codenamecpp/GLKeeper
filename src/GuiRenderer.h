@@ -23,6 +23,10 @@ public:
     // @param matrix: Transformation matrix, null for reset current
     void SetCurrentTransform(glm::mat4* matrix);
 
+    // @returns false if area is being cut off entirely entirely 
+    bool EnterChildClipArea(const Rectangle& rcLocal);
+    void LeaveChildClipArea();
+
     // draw without textures
     void FillRect(const Rectangle& rect, Color32 fillColor);
     void DrawRect(const Rectangle& rect, Color32 lineColor);
@@ -36,9 +40,6 @@ public:
     {
         DrawQuads(texture, &quad, 1);
     }
-
-    void PushClipRect(const Rectangle& rcLocal);
-    void PopClipRect();
 
 private:
     void FlushPendingDrawCalls();
