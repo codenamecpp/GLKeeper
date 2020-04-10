@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GuiWidget.h"
-#include "GuiEvents.h"
 
 class GuiManager: public cxx::noncopyable
 {
@@ -41,13 +40,20 @@ public:
     // @param className: Widget class name
     GuiWidget* ConstructWidget(const std::string& className) const;
 
-    // set drag handler or null to cancel current drag
+    // set active drag handler
+    // @param dragHandler: New handler or null to cancel current drag
+    // @param screenPoint: Start drag position in screen coordinates
     void SetDragHandler(GuiDragDropHandler* dragHandler, const Point& screenPoint);
     
     // process screen resolution changed event
     void HandleScreenResolutionChanged();
 
+    // process widget being destroyed event
+    // @param widget: Target widget
     void HandleWidgetDestroy(GuiWidget* widget);
+
+    // 
+    void PostEvent(GuiEvent* ev);
 
     // temporary
     // todo: remove

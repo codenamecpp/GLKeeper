@@ -17,6 +17,8 @@ protected:
     void HandleInputEvent(MouseButtonInputEvent& inputEvent) override;
     bool HasAttribute(eGuiWidgetAttribute attribute) const override;
     GuiButton* ConstructClone() override;
+    // override drag'n'drop
+    void HandleDragDrop(const Point& screenPoint) override;
 
 protected:
 };

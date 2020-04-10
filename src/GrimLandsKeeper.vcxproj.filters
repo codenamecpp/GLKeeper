@@ -456,11 +456,11 @@
     <ClInclude Include="GuiButton.h">
       <Filter>Game\GUI\WidgetsLibrary</Filter>
     </ClInclude>
-    <ClInclude Include="GuiEvents.h">
-      <Filter>Game\GUI</Filter>
-    </ClInclude>
     <ClInclude Include="GuiPanel.h">
       <Filter>Game\GUI\WidgetsLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="GuiEvent.h">
+      <Filter>Game\GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -9,6 +9,7 @@ class GuiButton;
 class GuiPictureBox;
 class GuiPanel;
 using GuiWidgetHandle = cxx::handle<GuiWidget>;
+struct GuiEvent;
 
 using GuiUserData = void*; // widget custom data
 
@@ -165,19 +166,19 @@ public:
     {
     }
     // on start drag
-    void HandleDragStart(const Point& screenPoint)
+    virtual void HandleDragStart(const Point& screenPoint)
     {
     }
     // drag interrupted
-    void HandleDragCancel()
+    virtual void HandleDragCancel()
     {
     }
     // dropped
-    void HandleDragDrop(const Point& screenPoint)
+    virtual void HandleDragDrop(const Point& screenPoint)
     {
     }
     // process drag
-    void HandleDrag(const Point& screenPoint)
+    virtual void HandleDrag(const Point& screenPoint)
     {
     }
 };

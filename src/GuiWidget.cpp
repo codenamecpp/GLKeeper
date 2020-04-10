@@ -636,12 +636,18 @@ void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
 
 void GuiWidget::ParentShownStateChanged()
 {
-    // do nothing
+    if (!mSelfVisible)
+        return;
+
+    ShownStateChanged();
 }
 
 void GuiWidget::ParentEnableStateChanged()
 {
-    // do nothing
+    if (!mSelfEnabled)
+        return;
+
+    EnableStateChanged();
 }
 
 void GuiWidget::PositionChanged(const Point& prevPosition)

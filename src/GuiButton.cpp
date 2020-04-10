@@ -3,6 +3,7 @@
 #include "GuiRenderer.h"
 #include "InputsManager.h"
 #include "GuiManager.h"
+#include "GuiEvent.h"
 
 // widget class factory
 static GuiWidgetFactory<GuiButton> _ButtonWidgetsFactory;
@@ -73,4 +74,14 @@ GuiButton* GuiButton::ConstructClone()
 {
     GuiButton* selfCopy = new GuiButton(this);
     return selfCopy;
+}
+
+void GuiButton::HandleDragDrop(const Point& screenPoint)
+{
+    if (IsScreenPointInsideRect(screenPoint))
+    {
+        // post event notification
+        GuiEvent* ev = GuiEvent::GetEvent(this, eGuiEvent_MouseClick);
+
+    }
 }
