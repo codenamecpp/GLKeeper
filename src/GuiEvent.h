@@ -1,64 +1,57 @@
 #pragma once
 
 #include "GuiDefs.h"
+#include "GuiWidget.h"
 
 // gui event type
 enum eGuiEvent
 {
-    eGuiEvent_MouseClick,
+    eGuiEvent_Click,
 };
 decl_enum_strings(eGuiEvent);
 
-// gui widget events struct
+// base events struct of gui widget
 struct GuiEvent
 {
 public:
-    // allocate new event
-    static GuiEvent* GetEvent(GuiWidget* eventSender, eGuiEvent eventType)
+    GuiEvent(GuiWidget* eventSender, eGuiEvent eventType)
+        : mEventSender(eventSender)
+        , mEventId(eventType)
     {
-        GuiEvent* ev = GetEventsPool().create(eventSender, eventType);
-        return ev;
-    }
-
-    // free event
-    void FreeEvent()
-    {
-        GetEventsPool().destroy(this);
     }
 
 public:
-    GuiWidgetHandle mEventSender;
-    
-    eGuiEvent mEventType;// event identifier
+    GuiWidgetHandle mEventSender; // sender widget handle
 
-    // event specific properties
-    union
-    {
-        struct // eGuiEvent_MouseClick
-        {
+    eGuiEvent mEventId;// event identifier
+};
 
-        } mMouseClick;
-    };
+// widget events handler
+class GuiEventsHandler
+{
+    friend class GuiManager;
+
+public:
+    GuiEventsHandler() = default;
+    virtual ~GuiEventsHandler();
+
+    void Subscribe(GuiWidget* eventSource, eGuiEvent eventId);
+    void Unsubscribe(GuiWidget* eventSource, eGuiEvent eventId);
+    void Unsubscribe(GuiWidget* eventSource);
+    void UnsubscribeAll();
+
+protected:
+    // overridables
+    virtual void HandleEvent(GuiWidget* sender, GuiEvent* eventData);
 
 private:
-    // implementation details
+    bool ProcessEvent(GuiEvent* eventData);
 
-    friend class cxx::details::object_pool_node<GuiEvent>;
-
-    GuiEvent(GuiWidget* eventSender, eGuiEvent eventType)
-        : mEventSender(eventSender)
-        , mEventType(eventType)
+private:
+    struct Subscription
     {
-    }
-
-    ~GuiEvent()
-    {
-    }
-
-    using GuiEventsPool = cxx::object_pool<GuiEvent>;
-    static GuiEventsPool& GetEventsPool()
-    {
-        static GuiEventsPool sEventsPool;
-        return sEventsPool;
-    }
+        eGuiEvent mEventsId;
+        GuiWidget* mEventsSource = nullptr;
+    };
+    std::vector<Subscription> mSubscriptions;
 };

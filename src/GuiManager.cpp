@@ -10,6 +10,12 @@
 
 GuiManager gGuiManager;
 
+GuiManager::GuiManager()
+{
+    mEventsQueue.reserve(256);
+    mProcessingEventsQueue.reserve(256);
+}
+
 bool GuiManager::Initialize()
 {
     RegisterWidgetsClasses();
@@ -20,6 +26,9 @@ void GuiManager::Deinit()
 {
     mWidgetsClasses.clear();
     mWidgets.clear();
+    mEventHandlers.clear();
+
+    ClearEventsQueue();
 }
 
 void GuiManager::AttachWidget(GuiWidget* widget)
@@ -42,8 +51,9 @@ void GuiManager::RenderFrame(GuiRenderer& renderContext)
 
 void GuiManager::UpdateFrame()
 {
-    float deltaTime = (float) gTimeManager.GetRealtimeFrameDelta();
+    ProcessEventsQueue();
 
+    float deltaTime = (float) gTimeManager.GetRealtimeFrameDelta();
     for (GuiWidget* currWidget: mWidgets)
     {
         currWidget->UpdateFrame(deltaTime);
@@ -246,4 +256,67 @@ void GuiManager::HandleWidgetDestroy(GuiWidget* widget)
     {
         mHoveredWidget = nullptr;
     }
+}
+
+void GuiManager::PostGuiEvent(GuiEvent* eventData)
+{
+    if (eventData == nullptr)
+    {
+        debug_assert(false);
+        return;
+    }
+
+    if (mEventHandlers.empty()) // no one's there
+        return;
+
+    mEventsQueue.push_back(*eventData);
+}
+
+void GuiManager::RegisterEventsHandler(GuiEventsHandler* eventsHandler)
+{
+    debug_assert(eventsHandler);
+    if (eventsHandler)
+    {
+        cxx::push_back_if_unique(mEventHandlers, eventsHandler);
+    }
+}
+
+void GuiManager::UnregisterEventsHandler(GuiEventsHandler* eventsHandler)
+{
+    debug_assert(eventsHandler);
+    if (eventsHandler)
+    {
+        cxx::erase_elements(mEventHandlers, eventsHandler);
+    }
+}
+
+void GuiManager::ProcessEventsQueue()
+{
+    if (mEventsQueue.empty())
+        return;
+
+    if (mEventHandlers.empty()) // no one's there
+    {
+        ClearEventsQueue();
+        return;
+    }
+
+    mProcessingEventsQueue.swap(mEventsQueue);
+    for (GuiEvent& currentEvent: mProcessingEventsQueue)
+    {
+        for (GuiEventsHandler* currHandler: mEventHandlers)
+        {
+            if (currentEvent.mEventSender == nullptr) // needs to be checked each iteration - handle may exire
+                break;
+
+            currHandler->ProcessEvent(&currentEvent);
+        }
+    }
+    mProcessingEventsQueue.clear();
+}
+
+void GuiManager::ClearEventsQueue()
+{
+    mEventsQueue.clear();
+    mProcessingEventsQueue.clear();
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GuiWidget.h"
+#include "GuiEvent.h"
 
 class GuiManager: public cxx::noncopyable
 {
@@ -10,6 +11,8 @@ public:
     GuiWidget* mHoveredWidget = nullptr;
 
 public:
+    GuiManager();
+
     // setup gui manager internal resources
     bool Initialize();
     void Deinit();
@@ -52,8 +55,14 @@ public:
     // @param widget: Target widget
     void HandleWidgetDestroy(GuiWidget* widget);
 
-    // 
-    void PostEvent(GuiEvent* ev);
+    // push event to events queue and notify registered handlers at beginning of next frame
+    // @param eventData: source event data
+    void PostGuiEvent(GuiEvent* eventData);
+
+    // add or remove gui events handler, usually these methods are not explicitly called
+    // @param eventsHandler: Handler
+    void RegisterEventsHandler(GuiEventsHandler* eventsHandler);
+    void UnregisterEventsHandler(GuiEventsHandler* eventsHandler);
 
     // temporary
     // todo: remove
@@ -67,12 +76,16 @@ private:
     void HandleMouseLButtonReleased(MouseButtonInputEvent& inputEvent);
 
     void UpdateCurrentHoveredWidget();
+    void ProcessEventsQueue();
+    void ClearEventsQueue();
 
 private:
     using GuiWidgetClassesMap = std::unordered_map<std::string, GuiWidgetClass*>;
     GuiWidgetClassesMap mWidgetsClasses;
 
-
+    std::vector<GuiEventsHandler*> mEventHandlers;
+    std::vector<GuiEvent> mEventsQueue;
+    std::vector<GuiEvent> mProcessingEventsQueue;
 
     std::vector<GuiWidget*> mWidgets; // temporary: todo: remove
 };

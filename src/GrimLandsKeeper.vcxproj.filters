@@ -706,6 +706,9 @@
     <ClCompile Include="GuiPanel.cpp">
       <Filter>Game\GUI\WidgetsLibrary</Filter>
     </ClCompile>
+    <ClCompile Include="GuiEvent.cpp">
+      <Filter>Game\GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\docs\creatures_anims.txt">

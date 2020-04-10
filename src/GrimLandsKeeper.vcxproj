@@ -308,6 +308,7 @@
     <ClCompile Include="ConsoleWindow.cpp" />
     <ClCompile Include="DebugUIWindow.cpp" />
     <ClCompile Include="GuiButton.cpp" />
+    <ClCompile Include="GuiEvent.cpp" />
     <ClCompile Include="GuiPanel.cpp" />
     <ClCompile Include="GuiPictureBox.cpp" />
     <ClCompile Include="GuiWidget.cpp" />

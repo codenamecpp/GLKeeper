@@ -80,8 +80,7 @@ void GuiButton::HandleDragDrop(const Point& screenPoint)
 {
     if (IsScreenPointInsideRect(screenPoint))
     {
-        // post event notification
-        GuiEvent* ev = GuiEvent::GetEvent(this, eGuiEvent_MouseClick);
-
+        GuiEvent ev(this, eGuiEvent_Click);
+        gGuiManager.PostGuiEvent(&ev);
     }
 }

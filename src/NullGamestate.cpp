@@ -9,6 +9,20 @@
 
 static GuiWidget* gRootWidget = nullptr;
 
+class MyHandler: public GuiEventsHandler
+{
+public:
+    void HandleEvent(GuiWidget* sender, GuiEvent* eventData) override
+    {
+        mBox->SetVisible(!mBox->IsVisible());
+    }
+
+public:
+    GuiPictureBox* mBox = nullptr;
+};
+
+static MyHandler ghandler;
+
 void NullGamestate::HandleGamestateEnter()
 {
     gRootWidget = new GuiWidget;
@@ -27,6 +41,8 @@ void NullGamestate::HandleGamestateEnter()
             button->SetOrigin(Point(50, 50), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
             //button->SetClipChildren(true);
 
+            ghandler.Subscribe(button, eGuiEvent_Click);
+
             button->mDebugColorDisabled = Color32_GrimGray;
             button->mDebugColorHovered = Color32_Orange;
 
@@ -41,6 +57,7 @@ void NullGamestate::HandleGamestateEnter()
                     texture->CreateTexture(texture_image);
 
                     picture->SetTexture(texture);
+                    ghandler.mBox = picture;
                 }
                 picture->SetSizeMode(eGuiSizeMode_Scale);
                 picture->SetSize(Point(10, 10), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
