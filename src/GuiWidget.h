@@ -78,7 +78,7 @@ public:
     // get current position and size
     inline Rectangle GetLocalRect() const
     {
-        Rectangle rcLocal (0, 0, mCurrentSize.x, mCurrentSize.y);
+        Rectangle rcLocal (0, 0, mSize.x, mSize.y);
         return rcLocal;
     }
 
@@ -106,23 +106,23 @@ public:
     GuiWidget* GetChild(int index) const;
 
     // get current position in local or screen space
-    inline Point GetPosition() const { return mCurrentPosition; }
+    inline Point GetPosition() const { return mPosition; }
     inline Point GetScreenPosition() const
     {
-        Point screenPosition = LocalToScreen(mCurrentPosition);
+        Point screenPosition = LocalToScreen(mPosition);
         return screenPosition;
     }
 
     // get current origin point in local or screen space
-    inline Point GetOrigin() const { return mCurrentOrigin; }
+    inline Point GetOrigin() const { return mOrigin; }
     inline Point GetOriginScreenPosition() const
     {
-        Point screenPosition = LocalToScreen(mCurrentOrigin);
+        Point screenPosition = LocalToScreen(mOrigin);
         return screenPosition;
     }
 
     // get current size
-    inline Point GetSize() const { return mCurrentSize; }
+    inline Point GetSize() const { return mSize; }
 
     // set current visibility state
     void SetVisible(bool isVisible);
@@ -178,9 +178,9 @@ protected:
     void EnableStateChanged();
     void HoveredStateChanged();
 
-    Point GetOriginPixels() const;
-    Point GetPositionPixels() const;
-    Point GetSizePixels() const;
+    Point ComputeOriginPixels() const;
+    Point ComputePositionPixels() const;
+    Point ComputeSizePixels() const;
 
     void SetAnchorPositions();
 
@@ -217,17 +217,20 @@ protected:
     // layout params
     GuiAnchors mAnchors;
 
-    GuiPositionValue mOriginX;
-    GuiPositionValue mOriginY;
-    GuiPositionValue mPositionX;
-    GuiPositionValue mPositionY;
-    GuiSizeValue mSizeW;
-    GuiSizeValue mSizeH;    
+    eGuiUnits mOriginUnitsX = eGuiUnits_Pixels;
+    eGuiUnits mOriginUnitsY = eGuiUnits_Pixels;
+    Point mOriginPercents;
+    Point mOrigin; // pixels
 
-    // current location and dimensions, local space
-    Point mCurrentPosition;
-    Point mCurrentSize;
-    Point mCurrentOrigin; // local space
+    eGuiUnits mPositionUnitsX = eGuiUnits_Pixels;
+    eGuiUnits mPositionUnitsY = eGuiUnits_Pixels;
+    Point mPositionPercents;
+    Point mPosition; // pixels
+
+    eGuiUnits mSizeUnitsW = eGuiUnits_Pixels;
+    eGuiUnits mSizeUnitsH = eGuiUnits_Pixels;
+    Point mSizePercents;
+    Point mSize;
 
     glm::mat4 mTransform; // current transformations matrix, screen space
 

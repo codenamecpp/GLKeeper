@@ -17,9 +17,12 @@ GuiWidget::GuiWidget(): GuiWidget(&gBaseWidgetClass)
 GuiWidget::GuiWidget(GuiWidgetClass* widgetClass)
     : mClass(widgetClass)
     , mTransform(1.0f)
-    , mCurrentSize()
-    , mCurrentPosition()
-    , mCurrentOrigin()
+    , mOriginPercents()
+    , mOrigin()
+    , mPositionPercents()
+    , mPosition()
+    , mSizePercents()
+    , mSize()
     , mUserData()
 {
     debug_assert(mClass);
@@ -32,15 +35,18 @@ GuiWidget::GuiWidget(GuiWidget* copyWidget)
     , mAnchors(copyWidget->mAnchors)
     , mTransform(copyWidget->mTransform)
     , mTransformInvalidated(copyWidget->mTransformInvalidated)
-    , mOriginX(copyWidget->mOriginX)
-    , mOriginY(copyWidget->mOriginY)
-    , mPositionX(copyWidget->mPositionX)
-    , mPositionY(copyWidget->mPositionY)
-    , mSizeW(copyWidget->mSizeW)
-    , mSizeH(copyWidget->mSizeH)
-    , mCurrentPosition(copyWidget->mCurrentPosition)
-    , mCurrentSize(copyWidget->mCurrentSize)
-    , mCurrentOrigin(copyWidget->mCurrentOrigin)
+    , mOriginUnitsX(copyWidget->mOriginUnitsX)
+    , mOriginUnitsY(copyWidget->mOriginUnitsY)
+    , mOriginPercents(copyWidget->mOriginPercents)
+    , mOrigin(copyWidget->mOrigin)
+    , mPositionUnitsX(copyWidget->mPositionUnitsX)
+    , mPositionUnitsY(copyWidget->mPositionUnitsY)
+    , mPositionPercents(copyWidget->mPositionPercents)
+    , mPosition(copyWidget->mPosition)
+    , mSizeUnitsW(copyWidget->mSizeUnitsW)
+    , mSizeUnitsH(copyWidget->mSizeUnitsH)
+    , mSizePercents(copyWidget->mSizePercents)
+    , mSize(copyWidget->mSize)
     , mSelfVisible(copyWidget->mSelfVisible)
     , mSelfEnabled(copyWidget->mSelfEnabled)
     , mClipChildren(copyWidget->mClipChildren)
@@ -203,7 +209,7 @@ bool GuiWidget::AttachChild(GuiWidget* widget)
 
     widget->mParent = this;
     widget->InvalidateTransform();
-    widget->ParentSizeChanged(mCurrentSize, mCurrentSize); // force update layout
+    widget->ParentSizeChanged(mSize, mSize); // force update layout
     widget->SetAnchorPositions();
     HandleChildAttached(widget);
     return true;
@@ -324,104 +330,88 @@ void GuiWidget::SetAnchors(const GuiAnchors& anchors)
 
 void GuiWidget::SetOriginX(int posx, eGuiUnits units_x)
 {
-    Point origin(posx, mCurrentOrigin.y);
-    if (mOriginY.mUnits == eGuiUnits_Percents)
-    {
-        origin.y = mOriginY.mValue;
-    }
-    SetOrigin(origin, units_x, mOriginY.mUnits);
+    Point origin(posx, (mOriginUnitsY == eGuiUnits_Percents) ? mOriginPercents.y : mOrigin.y);
+    SetOrigin(origin, units_x, mOriginUnitsY);
 }
 
 void GuiWidget::SetOriginY(int posy, eGuiUnits units_y)
 {
-    Point origin(mCurrentOrigin.x, posy);
-    if (mOriginX.mUnits == eGuiUnits_Percents)
-    {
-        origin.x = mOriginX.mValue;
-    }
-    SetOrigin(origin, mOriginX.mUnits, units_y);
+    Point origin((mOriginUnitsX == eGuiUnits_Percents) ? mOriginPercents.x : mOrigin.x, posy);
+    SetOrigin(origin, mOriginUnitsX, units_y);
 }
 
 void GuiWidget::SetOrigin(const Point& position, eGuiUnits units_x, eGuiUnits units_y)
 {
-    mOriginX = GuiPositionValue(units_x, position.x);
-    mOriginY = GuiPositionValue(units_y, position.y);
+    Point prevOrigin = mOrigin;
 
-    Point computePosition = GetOriginPixels();
-    if (computePosition != mCurrentOrigin)
+    mOriginUnitsX = units_x;
+    mOriginUnitsY = units_y;
+
+    (mOriginUnitsX == eGuiUnits_Percents ? mOriginPercents.x : mOrigin.x) = position.x;
+    (mOriginUnitsY == eGuiUnits_Percents ? mOriginPercents.y : mOrigin.y) = position.y;
+
+    mOrigin = ComputeOriginPixels();
+    if (mOrigin != prevOrigin)
     {
-        Point prevOrigin = mCurrentOrigin;
-        mCurrentOrigin = computePosition;
         InvalidateTransform();
     }
 }
 
 void GuiWidget::SetPositionX(int posx, eGuiUnits units_x)
 {
-    Point position(posx, mCurrentPosition.y);
-    if (mPositionY.mUnits == eGuiUnits_Percents)
-    {
-        position.y = mPositionY.mValue;
-    }
-    SetPosition(position, units_x, mPositionY.mUnits);
+    Point position(posx, (mPositionUnitsY == eGuiUnits_Percents) ? mPositionPercents.y : mPosition.y);
+    SetPosition(position, units_x, mPositionUnitsY);
 }
 
 void GuiWidget::SetPositionY(int posy, eGuiUnits units_y)
 {
-    Point position(mCurrentPosition.x, posy);
-    if (mPositionX.mUnits == eGuiUnits_Percents)
-    {
-        position.x = mPositionX.mValue;
-    }
-    SetPosition(position, mPositionX.mUnits, units_y);
+    Point position((mPositionUnitsX == eGuiUnits_Percents ? mPositionPercents.x : mPosition.x), posy);
+    SetPosition(position, mPositionUnitsX, units_y);
 }
 
 void GuiWidget::SetPosition(const Point& position, eGuiUnits units_x, eGuiUnits units_y)
 {
-    mPositionX = GuiPositionValue (units_x, position.x);
-    mPositionY = GuiPositionValue (units_y, position.y);
+    Point prevPosition = mPosition;
 
-    Point computePosition = GetPositionPixels();
-    if (computePosition != mCurrentPosition)
+    mPositionUnitsX = units_x;
+    mPositionUnitsY = units_y;
+
+    (mPositionUnitsX == eGuiUnits_Percents ? mPositionPercents.x : mPosition.x) = position.x;
+    (mPositionUnitsY == eGuiUnits_Percents ? mPositionPercents.y : mPosition.y) = position.y;
+
+    mPosition = ComputePositionPixels();
+    if (mPosition != prevPosition)
     {
-        Point prevPosition = mCurrentPosition;
-        mCurrentPosition = computePosition;
         PositionChanged(prevPosition);
     }
 }
 
 void GuiWidget::SetSizeW(int sizew, eGuiUnits units_w)
 {
-    Point newsize(sizew, mCurrentSize.y);
-    if (mSizeH.mUnits == eGuiUnits_Percents)
-    {
-        newsize.y = mSizeH.mValue;
-    }
-    SetSize(newsize, units_w, mSizeH.mUnits);
+    Point newsize(sizew, (mSizeUnitsH == eGuiUnits_Percents) ? mSizePercents.y : mSize.y);
+    SetSize(newsize, units_w, mSizeUnitsH);
 }
 
 void GuiWidget::SetSizeH(int sizeh, eGuiUnits units_h)
 {
-    Point newsize(mCurrentSize.x, sizeh);
-    if (mSizeW.mUnits == eGuiUnits_Percents)
-    {
-        newsize.x = mSizeW.mValue;
-    }
-    SetSize(newsize, mSizeW.mUnits, units_h);
+    Point newsize((mSizeUnitsW == eGuiUnits_Percents) ? mSizePercents.x : mSize.x, sizeh);
+    SetSize(newsize, mSizeUnitsW, units_h);
 }
 
 void GuiWidget::SetSize(const Point& size, eGuiUnits units_w, eGuiUnits units_h)
 {
     Point correctSize = glm::max(size, 0); // sanity check
+    Point prevSize = mSize;
 
-    mSizeW = GuiSizeValue (units_w, correctSize.x);
-    mSizeH = GuiSizeValue (units_h, correctSize.y);
+    mSizeUnitsW = units_w;
+    mSizeUnitsH = units_h;
 
-    Point computeSize = GetSizePixels();
-    if (computeSize != mCurrentSize)
+    (mSizeUnitsW == eGuiUnits_Percents ? mSizePercents.x : mSize.x) = correctSize.x;
+    (mSizeUnitsH == eGuiUnits_Percents ? mSizePercents.y : mSize.y) = correctSize.y;
+
+    mSize = ComputeSizePixels();
+    if (mSize != prevSize)
     {
-        Point prevSize = mCurrentSize;
-        mCurrentSize = computeSize;
         SizeChanged(prevSize);
     }
 }
@@ -538,13 +528,13 @@ void GuiWidget::ComputeTransform()
     {
         mParent->ComputeTransform();
 
-        mTransform = glm::translate(-glm::vec3(mCurrentOrigin, 0.0f)) *
-            glm::translate(glm::vec3(mCurrentPosition, 0.0f)) * mParent->mTransform;
+        mTransform = glm::translate(-glm::vec3(mOrigin, 0.0f)) *
+            glm::translate(glm::vec3(mPosition, 0.0f)) * mParent->mTransform;
     }
     else
     {
-        mTransform = glm::translate(-glm::vec3(mCurrentOrigin, 0.0f)) *
-            glm::translate(glm::vec3(mCurrentPosition, 0.0f));
+        mTransform = glm::translate(-glm::vec3(mOrigin, 0.0f)) *
+            glm::translate(glm::vec3(mPosition, 0.0f));
     }
     mTransformInvalidated = false;
 }
@@ -572,97 +562,95 @@ void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
     int deltax = currSize.x - prevSize.x;
     int deltay = currSize.y - prevSize.y;
 
-    Point newPosition = mCurrentPosition;
-    Point newSize = mCurrentSize;
+    Point newPosition = mPosition;
+    Point newSize = mSize;
 
     if (mAnchors.mL && mAnchors.mR)
     {
-        if (mSizeW.mUnits == eGuiUnits_Pixels)
+        if (mSizeUnitsW == eGuiUnits_Pixels)
         {
-            newSize.x = mCurrentSize.x + deltax;
+            newSize.x = mSize.x + deltax;
         }
         else
         {
             // ignore
         }
     }
-    else if (mPositionX.mUnits == eGuiUnits_Pixels)
+    else if (mPositionUnitsX == eGuiUnits_Pixels)
     {
         if (mAnchors.mR)
         {
-            newPosition.x = mCurrentPosition.x + deltax;
+            newPosition.x = mPosition.x + deltax;
         }
         else if (!mAnchors.mL)
         {
-            newPosition.x = mCurrentPosition.x + deltax / 2;
+            newPosition.x = mPosition.x + deltax / 2;
         }
     }
 
     if (mAnchors.mT && mAnchors.mB)
     {
-        if (mSizeH.mUnits == eGuiUnits_Pixels)
+        if (mSizeUnitsH == eGuiUnits_Pixels)
         {
-            newSize.y = mCurrentSize.y + deltay;
+            newSize.y = mSize.y + deltay;
         }
         else
         {
             // ignore
         }
     }
-    else if (mPositionY.mUnits == eGuiUnits_Pixels)
+    else if (mPositionUnitsY == eGuiUnits_Pixels)
     {
         if (mAnchors.mB)
         {
-            newPosition.y = mCurrentPosition.y + deltay;
+            newPosition.y = mPosition.y + deltay;
         }
-        else if (!mAnchors.mT && mPositionY.mUnits == eGuiUnits_Pixels)
+        else if (!mAnchors.mT)
         {
-            newPosition.y = mCurrentPosition.y + deltay / 2;
+            newPosition.y = mPosition.y + deltay / 2;
         }
     }
 
     // compute relative position
-    if (mPositionX.mUnits == eGuiUnits_Percents ||
-        mPositionY.mUnits == eGuiUnits_Percents)
+    if (mPositionUnitsX == eGuiUnits_Percents || mPositionUnitsY == eGuiUnits_Percents)
     {
-        Point temporaryPoint = GetPositionPixels();
-        if (mPositionX.mUnits == eGuiUnits_Percents)
+        Point temporaryPoint = ComputePositionPixels();
+        if (mPositionUnitsX == eGuiUnits_Percents)
         {
             newPosition.x = temporaryPoint.x;
         }
-        if (mPositionY.mUnits == eGuiUnits_Percents)
+        if (mPositionUnitsY == eGuiUnits_Percents)
         {
             newPosition.y = temporaryPoint.y;
         }
     }
 
-    if (newPosition != mCurrentPosition)
+    if (newPosition != mPosition)
     {
-        Point prevPosition = mCurrentPosition;
-        mCurrentPosition = newPosition;
+        Point prevPosition = mPosition;
+        mPosition = newPosition;
         PositionChanged(prevPosition);
     }
 
     // compute relative size
-    if (mSizeW.mUnits == eGuiUnits_Percents ||
-        mSizeH.mUnits == eGuiUnits_Percents)
+    if (mSizeUnitsW == eGuiUnits_Percents || mSizeUnitsH == eGuiUnits_Percents)
     {
-        Point temporarySize = GetSizePixels();
-        if (mSizeW.mUnits == eGuiUnits_Percents)
+        Point temporarySize = ComputeSizePixels();
+        if (mSizeUnitsW == eGuiUnits_Percents)
         {
             newSize.x = temporarySize.x;
         }
-        if (mSizeH.mUnits == eGuiUnits_Percents)
+        if (mSizeUnitsH == eGuiUnits_Percents)
         {
             newSize.y = temporarySize.y;
         }
     }
 
     Point correctSize = glm::max(newSize, 0); // sanity check
-    if (correctSize != mCurrentSize)
+    if (correctSize != mSize)
     {
-        Point prevSize = mCurrentSize;
-        mCurrentSize = correctSize;
+        Point prevSize = mSize;
+        mSize = correctSize;
         SizeChanged(prevSize);
     }
 }
@@ -699,17 +687,16 @@ void GuiWidget::PositionChanged(const Point& prevPosition)
 void GuiWidget::SizeChanged(const Point& prevSize)
 {
     // update origin point
-    if (mOriginX.mUnits == eGuiUnits_Percents || 
-        mOriginY.mUnits == eGuiUnits_Percents)
+    if (mOriginUnitsX == eGuiUnits_Percents || mOriginUnitsY == eGuiUnits_Percents)
     {
-        mCurrentOrigin = GetOriginPixels();
+        mOrigin = ComputeOriginPixels();
         InvalidateTransform();
     }
 
     for (GuiWidget* currChild = mFirstChild; currChild; 
         currChild = currChild->mNextSibling)
     {
-        currChild->ParentSizeChanged(prevSize, mCurrentSize);
+        currChild->ParentSizeChanged(prevSize, mSize);
     }
 
     HandleSizeChanged(prevSize);
@@ -782,69 +769,69 @@ void GuiWidget::HoveredStateChanged()
     HandleHoveredStateChanged();
 }
 
-Point GuiWidget::GetOriginPixels() const
+Point GuiWidget::ComputeOriginPixels() const
 {
-    Point outputPoint(mOriginX.mValue, mOriginY.mValue);
+    Point outputPoint = mOrigin;
 
-    if (mOriginX.mUnits == eGuiUnits_Percents)
+    if (mOriginUnitsX == eGuiUnits_Percents)
     {
-        float valuex = mCurrentSize.x * (outputPoint.x * 1.0f / 100.0f);
+        float valuex = mSize.x * (mOriginPercents.x * 1.0f / 100.0f);
         outputPoint.x = (int) valuex;
     }
 
-    if (mOriginY.mUnits == eGuiUnits_Percents)
+    if (mOriginUnitsY == eGuiUnits_Percents)
     {
-        float valuey = mCurrentSize.y * (outputPoint.y * 1.0f / 100.0f);
+        float valuey = mSize.y * (mOriginPercents.y * 1.0f / 100.0f);
         outputPoint.y = (int) valuey;
     }
 
     return outputPoint;
 }
 
-Point GuiWidget::GetPositionPixels() const
+Point GuiWidget::ComputePositionPixels() const
 {
-    Point outputPoint(mPositionX.mValue, mPositionY.mValue);
+    Point outputPoint = mPosition;
 
     if (mParent == nullptr ||
-        (mPositionX.mUnits == eGuiUnits_Pixels && mPositionY.mUnits == eGuiUnits_Pixels))
+        (mPositionUnitsX == eGuiUnits_Pixels && mPositionUnitsY == eGuiUnits_Pixels))
     {
         return outputPoint;
     }
 
-    if (mPositionX.mUnits == eGuiUnits_Percents)
+    if (mPositionUnitsX == eGuiUnits_Percents)
     {
-        float valuex = mParent->mCurrentSize.x * (outputPoint.x * 1.0f / 100.0f);
+        float valuex = mParent->mSize.x * (mPositionPercents.x * 1.0f / 100.0f);
         outputPoint.x = (int) valuex;
     }
 
-    if (mPositionY.mUnits == eGuiUnits_Percents)
+    if (mPositionUnitsY == eGuiUnits_Percents)
     {
-        float valuey = mParent->mCurrentSize.y * (outputPoint.y * 1.0f / 100.0f);
+        float valuey = mParent->mSize.y * (mPositionPercents.y * 1.0f / 100.0f);
         outputPoint.y = (int) valuey;
     }
 
     return outputPoint;
 }
 
-Point GuiWidget::GetSizePixels() const
+Point GuiWidget::ComputeSizePixels() const
 {
-    Point outputSize(mSizeW.mValue, mSizeH.mValue);
+    Point outputSize = mSize;
 
     if (mParent == nullptr ||
-        (mSizeW.mUnits == eGuiUnits_Pixels && mSizeH.mUnits == eGuiUnits_Pixels))
+        (mSizeUnitsW == eGuiUnits_Pixels && mSizeUnitsH == eGuiUnits_Pixels))
     {
         return outputSize;
     }
 
-    if (mSizeW.mUnits == eGuiUnits_Percents)
+    if (mSizeUnitsW == eGuiUnits_Percents)
     {
-        float valuew = mParent->mCurrentSize.x * (outputSize.x * 1.0f / 100.0f);
+        float valuew = mParent->mSize.x * (mSizePercents.x * 1.0f / 100.0f);
         outputSize.x = (int) valuew;
     }
 
-    if (mSizeH.mUnits == eGuiUnits_Percents)
+    if (mSizeUnitsH == eGuiUnits_Percents)
     {
-        float valueh = mParent->mCurrentSize.y * (outputSize.y * 1.0f / 100.0f);
+        float valueh = mParent->mSize.y * (mSizePercents.y * 1.0f / 100.0f);
         outputSize.y = (int) valueh;
     }
 

@@ -48,32 +48,6 @@ enum eGuiWidgetAttribute
     eGuiWidgetAttribute_PickTarget, // cannot pick child widgets
 };
 
-// position along one of the axes
-struct GuiPositionValue
-{
-public:
-    GuiPositionValue() = default;
-    GuiPositionValue(eGuiUnits units, int value)
-        : mUnits(units)
-        , mValue(value)
-    {
-    }
-    inline bool operator == (const GuiPositionValue& other) const
-    {
-        return mUnits == other.mUnits && mValue == other.mValue;
-    }
-    inline bool operator != (const GuiPositionValue& other) const
-    {
-        return mUnits != other.mUnits || mValue != other.mValue;
-    }
-public:
-    eGuiUnits mUnits = eGuiUnits_Pixels;
-    int mValue = 0;
-};
-
-// alias
-using GuiSizeValue = GuiPositionValue;
-
 // gui widget anchors struct
 struct GuiAnchors
 {
