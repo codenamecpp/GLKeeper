@@ -400,7 +400,7 @@ void GuiWidget::SetSizeH(int sizeh, eGuiUnits units_h)
 
 void GuiWidget::SetSize(const Point& size, eGuiUnits units_w, eGuiUnits units_h)
 {
-    Point correctSize = glm::max(size, 0); // sanity check
+    Point correctSize = glm::max(size, mMinSize); // sanity check
     Point prevSize = mSize;
 
     mSizeUnitsW = units_w;
@@ -447,6 +447,16 @@ void GuiWidget::SetHovered(bool isHovered)
 void GuiWidget::SetClipChildren(bool isEnabled)
 {
     mClipChildren = isEnabled;
+}
+
+void GuiWidget::SetMinSize(const Point& minSize)
+{
+    mMinSize = minSize;
+}
+
+void GuiWidget::SetMaxSize(const Point& maxSize)
+{
+    mMaxSize = maxSize;
 }
 
 void GuiWidget::SetVisible(bool isVisible)
@@ -640,7 +650,7 @@ void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
         }
     }
 
-    Point correctSize = glm::max(newSize, 0); // sanity check
+    Point correctSize = glm::max(newSize, mMinSize); // sanity check
     if (correctSize != mSize)
     {
         Point prevSize = mSize;

@@ -59,9 +59,10 @@ void NullGamestate::HandleGamestateEnter()
 
         {
             GuiSlider* slider = new GuiSlider;
-            slider->SetPosition(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
-            slider->SetOrigin(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
+            slider->SetPosition(Point(50, 50));
+            //slider->SetOrigin(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
             slider->SetSize(Point(600, 70));
+            slider->SetMinSize(Point(400, 40));
 
             GuiAnchors anchors;
             anchors.mB = true; anchors.mT = true; anchors.mL = true; anchors.mR = true;

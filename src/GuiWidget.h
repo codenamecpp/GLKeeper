@@ -124,6 +124,9 @@ public:
     // get current size
     inline Point GetSize() const { return mSize; }
 
+    void SetMinSize(const Point& minSize);
+    void SetMaxSize(const Point& maxSize);
+
     // set current visibility state
     void SetVisible(bool isVisible);
 
@@ -236,6 +239,9 @@ protected:
     eGuiUnits mSizeUnitsH = eGuiUnits_Pixels;
     Point mSizePercents;
     Point mSize;
+
+    Point mMinSize;
+    Point mMaxSize;
 
     glm::mat4 mTransform; // current transformations matrix, screen space
 

@@ -48,9 +48,9 @@ void GuiSlider::SetupSliderWidget()
 
     GuiAnchors anchors;
     anchors.mL = true;
-    anchors.mR = true;
+    anchors.mR = false;
     anchors.mT = true;
-    anchors.mB = true;
+    anchors.mB = false;
 
     mSliderWidget->SetAnchors(anchors);
 }
