@@ -691,8 +691,11 @@ void GuiWidget::ShownStateChanged()
             gGuiManager.SetDragHandler(nullptr, Point());
         }
 
-        // reset hovered state
-        mHovered = false;
+        if (IsHovered()) // force cancel hover
+        {
+            mHovered = false;
+            HoveredStateChanged();
+        }
     }
 
     for (GuiWidget* currChild = mFirstChild; currChild; 
@@ -713,8 +716,11 @@ void GuiWidget::EnableStateChanged()
             gGuiManager.SetDragHandler(nullptr, Point()); 
         }
 
-        // reset hovered state
-        mHovered = false;
+        if (IsHovered()) // force cancel hover
+        {
+            mHovered = false;
+            HoveredStateChanged();
+        }
     }
 
     for (GuiWidget* currChild = mFirstChild; currChild; 

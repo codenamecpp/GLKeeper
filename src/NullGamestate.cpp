@@ -14,7 +14,10 @@ class MyHandler: public GuiEventsHandler
 public:
     void HandleClickEvent(GuiWidget* sender, GuiEvent* eventData) override
     {
-        SafeDelete(mBox);
+        if (mBox)
+        {
+            mBox->SetVisible(!mBox->IsVisible());
+        }
     }
     void HandleMouseEnter(GuiWidget* sender, GuiEvent* eventData) override
     {
