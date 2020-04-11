@@ -87,8 +87,7 @@ void GuiPictureBox::GenerateQuads()
         mTexture->LoadTexture();
     }
 
-    Rectangle rcDestination;
-    GetLocalRect(rcDestination);
+    Rectangle rcDestination = GetLocalRect();
     if (rcDestination.w < 1 || rcDestination.h < 1)
         return;
 

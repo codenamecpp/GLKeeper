@@ -49,30 +49,30 @@ enum eGuiWidgetAttribute
 };
 
 // position along one of the axes
-struct GuiPositionComponent
+struct GuiPositionValue
 {
 public:
-    GuiPositionComponent() = default;
-    GuiPositionComponent(eGuiUnits units, int value)
-        : mValueUnits(units)
+    GuiPositionValue() = default;
+    GuiPositionValue(eGuiUnits units, int value)
+        : mUnits(units)
         , mValue(value)
     {
     }
-    inline bool operator == (const GuiPositionComponent& other) const
+    inline bool operator == (const GuiPositionValue& other) const
     {
-        return mValueUnits == other.mValueUnits && mValue == other.mValue;
+        return mUnits == other.mUnits && mValue == other.mValue;
     }
-    inline bool operator != (const GuiPositionComponent& other) const
+    inline bool operator != (const GuiPositionValue& other) const
     {
-        return mValueUnits != other.mValueUnits || mValue != other.mValue;
+        return mUnits != other.mUnits || mValue != other.mValue;
     }
 public:
-    eGuiUnits mValueUnits = eGuiUnits_Pixels;
+    eGuiUnits mUnits = eGuiUnits_Pixels;
     int mValue = 0;
 };
 
 // alias
-using GuiSizeComponent = GuiPositionComponent;
+using GuiSizeValue = GuiPositionValue;
 
 // gui widget anchors struct
 struct GuiAnchors

@@ -30,8 +30,7 @@ void GuiButton::HandleRender(GuiRenderer& renderContext)
 {
 #ifdef _DEBUG
 
-    Rectangle rc;
-    GetLocalRect(rc);
+    Rectangle rc = GetLocalRect();
 
     Color32 fillColor = mDebugColorNormal;
     if (!IsEnabled())

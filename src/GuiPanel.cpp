@@ -25,8 +25,7 @@ GuiPanel::GuiPanel(GuiPanel* copyWidget)
 
 void GuiPanel::HandleRender(GuiRenderer& renderContext)
 {
-    Rectangle rcLocal;
-    GetLocalRect(rcLocal);
+    Rectangle rcLocal = GetLocalRect();
 
     Color32 fillColor = Color32_SkyBlue;
     fillColor.mA = 128;

@@ -76,13 +76,10 @@ public:
     bool IsScreenPointInsideRect(const Point& screenPosition) const;
 
     // get current position and size
-    // @param outputRect: Output local rect
-    void GetLocalRect(Rectangle& outputRect) const
+    inline Rectangle GetLocalRect() const
     {
-        outputRect.x = 0;
-        outputRect.y = 0;
-        outputRect.w = mCurrentSize.x;
-        outputRect.h = mCurrentSize.y;
+        Rectangle rcLocal (0, 0, mCurrentSize.x, mCurrentSize.y);
+        return rcLocal;
     }
 
     // attach or detach child widget
@@ -181,9 +178,11 @@ protected:
     void EnableStateChanged();
     void HoveredStateChanged();
 
-    void ComputeAbsoluteOrigin(Point& outputPoint) const;
-    void ComputeAbsolutePosition(Point& outputPoint) const;
-    void ComputeAbsoluteSize(Point& outputSize) const;
+    Point GetOriginPixels() const;
+    Point GetPositionPixels() const;
+    Point GetSizePixels() const;
+
+    void SetAnchorPositions();
 
 protected:
     // overridable
@@ -217,15 +216,13 @@ protected:
 
     // layout params
     GuiAnchors mAnchors;
-    // origin
-    GuiPositionComponent mOriginComponentX;
-    GuiPositionComponent mOriginComponentY;
-    // position
-    GuiPositionComponent mPositionComponentX;
-    GuiPositionComponent mPositionComponentY;
-    // size
-    GuiSizeComponent mSizeComponentW;
-    GuiSizeComponent mSizeComponentH;    
+
+    GuiPositionValue mOriginX;
+    GuiPositionValue mOriginY;
+    GuiPositionValue mPositionX;
+    GuiPositionValue mPositionY;
+    GuiSizeValue mSizeW;
+    GuiSizeValue mSizeH;    
 
     // current location and dimensions, local space
     Point mCurrentPosition;

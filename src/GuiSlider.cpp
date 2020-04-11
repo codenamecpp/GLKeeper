@@ -42,14 +42,14 @@ void GuiSlider::SetupSliderWidget()
 {
     debug_assert(mSliderWidget);
 
-    mSliderWidget->SetPosition(Point(50, 50), eGuiUnits_Pixels, eGuiUnits_Pixels);
+    mSliderWidget->SetPosition(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
     mSliderWidget->SetOrigin(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
     mSliderWidget->SetSize(Point(30, mCurrentSize.y - 20));
 
     GuiAnchors anchors;
-    anchors.mL = false;
+    anchors.mL = true;
     anchors.mR = true;
-    anchors.mT = false;
+    anchors.mT = true;
     anchors.mB = true;
 
     mSliderWidget->SetAnchors(anchors);
@@ -57,8 +57,7 @@ void GuiSlider::SetupSliderWidget()
 
 void GuiSlider::HandleRender(GuiRenderer& renderContext)
 {
-    Rectangle rc;
-    GetLocalRect(rc);
+    Rectangle rc = GetLocalRect();
     renderContext.FillRect(rc, Color32_White);
 }
 
