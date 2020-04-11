@@ -252,19 +252,23 @@ GuiWidget* GuiWidget::PickWidget(const Point& screenPosition)
     if (!IsVisible())
         return nullptr;
 
-    // process in reversed oreder
-    for (GuiWidget* currChild = GetLastChild(); currChild;
-        currChild = currChild->mPrevSibling)
+    // pick child widgets only if not pick target
+    if (!HasAttribute(eGuiWidgetAttribute_PickTarget))
     {
-        // is point within widget and visible
-        if (!currChild->IsVisible() || !currChild->IsScreenPointInsideRect(screenPosition))
-            continue;
-
-        GuiWidget* currPicked = currChild->PickWidget(screenPosition);
-        if (currPicked)
+        // process in reversed oreder
+        for (GuiWidget* currChild = GetLastChild(); currChild;
+            currChild = currChild->mPrevSibling)
         {
-            resultWidget = currPicked;
-            break;
+            // is point within widget and visible
+            if (!currChild->IsVisible() || !currChild->IsScreenPointInsideRect(screenPosition))
+                continue;
+
+            GuiWidget* currPicked = currChild->PickWidget(screenPosition);
+            if (currPicked)
+            {
+                resultWidget = currPicked;
+                break;
+            }
         }
     }
 
@@ -305,7 +309,7 @@ GuiWidget* GuiWidget::GetChild(int index) const
     return nullptr;
 }
 
-void GuiWidget::SetAnchors(const GuiAnchorsStruct& anchors)
+void GuiWidget::SetAnchors(const GuiAnchors& anchors)
 {
     if (mAnchors.mLeft == anchors.mLeft && mAnchors.mTop == anchors.mTop && 
         mAnchors.mRight == anchors.mRight && mAnchors.mBottom == anchors.mBottom)
@@ -575,7 +579,7 @@ void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
         {
             if (mSizeComponentW.mAddressingMode == eGuiAddressingMode_Absolute)
             {
-                newSize.x = mCurrentSize.x + deltax / 2;
+                newSize.x = mCurrentSize.x + deltax;
             }
             else
             {
@@ -598,7 +602,7 @@ void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
         {
             if (mSizeComponentH.mAddressingMode == eGuiAddressingMode_Absolute)
             {
-                newSize.y = mCurrentSize.y + deltay / 2;
+                newSize.y = mCurrentSize.y + deltay;
             }
             else
             {

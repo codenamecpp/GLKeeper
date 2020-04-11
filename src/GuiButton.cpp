@@ -72,8 +72,8 @@ bool GuiButton::HasAttribute(eGuiWidgetAttribute attribute) const
 
 GuiButton* GuiButton::ConstructClone()
 {
-    GuiButton* selfCopy = new GuiButton(this);
-    return selfCopy;
+    GuiButton* selfClone = new GuiButton(this);
+    return selfClone;
 }
 
 void GuiButton::HandleDragDrop(const Point& screenPoint)

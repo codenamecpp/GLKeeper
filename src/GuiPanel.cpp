@@ -52,6 +52,6 @@ bool GuiPanel::HasAttribute(eGuiWidgetAttribute attribute) const
 
 GuiPanel* GuiPanel::ConstructClone()
 {
-    GuiPanel* selfCopy = new GuiPanel(this);
-    return selfCopy;
+    GuiPanel* selfClone = new GuiPanel(this);
+    return selfClone;
 }

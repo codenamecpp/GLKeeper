@@ -7,6 +7,7 @@
 #include "InputsManager.h"
 #include "GuiButton.h"
 #include "GuiPanel.h"
+#include "GuiSlider.h"
 
 GuiManager gGuiManager;
 
@@ -194,6 +195,7 @@ void GuiManager::RegisterWidgetsClasses()
     RegisterWidgetClass(&gPictureBoxWidgetClass);
     RegisterWidgetClass(&gButtonWidgetClass);
     RegisterWidgetClass(&gPanelWidgetClass);
+    RegisterWidgetClass(&gSliderWidgetClass);
 }
 
 GuiWidgetClass* GuiManager::GetWidgetClass(const std::string& className) const

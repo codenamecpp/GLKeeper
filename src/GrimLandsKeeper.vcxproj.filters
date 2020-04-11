@@ -462,6 +462,9 @@
     <ClInclude Include="3rd_party\stb_image.h">
       <Filter>Third_Party\stb</Filter>
     </ClInclude>
+    <ClInclude Include="GuiSlider.h">
+      <Filter>Game\GUI\WidgetsLibrary</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -708,6 +711,9 @@
     </ClCompile>
     <ClCompile Include="GuiEvent.cpp">
       <Filter>Game\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiSlider.cpp">
+      <Filter>Game\GUI\WidgetsLibrary</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

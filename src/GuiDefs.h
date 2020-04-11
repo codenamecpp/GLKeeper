@@ -45,6 +45,7 @@ enum eGuiWidgetAttribute
 {
     eGuiWidgetAttribute_Interactive, // widget receiving mouse inputs and can be pressed or hovered
     eGuiWidgetAttribute_DragDrop, // widget supports drag and drop
+    eGuiWidgetAttribute_PickTarget, // cannot pick child widgets
 };
 
 // position along one of the axes
@@ -74,11 +75,11 @@ public:
 using GuiSizeComponent = GuiPositionComponent;
 
 // gui widget anchors struct
-struct GuiAnchorsStruct
+struct GuiAnchors
 {
 public:
-    GuiAnchorsStruct() = default;
-    GuiAnchorsStruct(bool anchorLeft, bool anchorTop, bool anchorRight, bool anchorBottom)
+    GuiAnchors() = default;
+    GuiAnchors(bool anchorLeft, bool anchorTop, bool anchorRight, bool anchorBottom)
         : mLeft(anchorLeft)
         , mTop(anchorTop)
         , mRight(anchorRight)

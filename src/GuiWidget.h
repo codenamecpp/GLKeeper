@@ -75,7 +75,7 @@ public:
     void SetSizeH(int sizeh, eGuiAddressingMode hAddressingMode = eGuiAddressingMode_Absolute);
 
     // setup widget anchors
-    void SetAnchors(const GuiAnchorsStruct& anchors);
+    void SetAnchors(const GuiAnchors& anchors);
 
     // test whether screen space point is within widget rect
     // @param screenPosition: Test point
@@ -222,7 +222,7 @@ protected:
     GuiWidget* mPrevSibling = nullptr;
 
     // layout params
-    GuiAnchorsStruct mAnchors;
+    GuiAnchors mAnchors;
     // origin
     GuiPositionComponent mOriginComponentX;
     GuiPositionComponent mOriginComponentY;

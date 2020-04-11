@@ -6,6 +6,8 @@
 #include "GuiPictureBox.h"
 #include "GraphicsDevice.h"
 #include "GuiPanel.h"
+#include "GuiSlider.h"
+#include "TexturesManager.h"
 
 static GuiWidget* gRootWidget = nullptr;
 
@@ -17,6 +19,10 @@ public:
         if (mBox)
         {
             mBox->SetVisible(!mBox->IsVisible());
+        }
+        if (mSlider)
+        {
+            mSlider->SetEnabled(!mSlider->IsEnabled());
         }
     }
     void HandleMouseEnter(GuiWidget* sender, GuiEvent* eventData) override
@@ -36,6 +42,7 @@ public:
 
 public:
     GuiPictureBox* mBox = nullptr;
+    GuiSlider* mSlider = nullptr;
 };
 
 static MyHandler ghandler;
@@ -47,47 +54,66 @@ void NullGamestate::HandleGamestateEnter()
 
     {
         GuiPanel* panel = new GuiPanel;
-        panel->SetSize(Point(700, 400));
-        panel->SetClipChildren(true);
+        panel->SetSize(Point(100, 100), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
         gRootWidget->AttachChild(panel);
 
+        //{
+        //    GuiButton* button = new GuiButton;
+        //    button->SetPosition(Point(50, 50), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
+        //    button->SetSize(Point(60, 60), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
+        //    button->SetOrigin(Point(50, 50), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
+        //    //button->SetClipChildren(true);
+
+        //    ghandler.Subscribe(button, eGuiEvent_Click);
+        //    ghandler.Subscribe(button, eGuiEvent_MouseEnter);
+        //    ghandler.Subscribe(button, eGuiEvent_MouseLeave);
+
+        //    button->mDebugColorDisabled = Color32_GrimGray;
+        //    button->mDebugColorHovered = Color32_Orange;
+
+        //    {
+        //        GuiPictureBox* picture = new GuiPictureBox;
+        //        {
+        //            Texture2D_Image texture_image;
+        //            texture_image.LoadFromFile("D:/Temp/fill.png");
+        //            texture_image.ResizeToPowerOfTwo();
+
+        //            Texture2D* texture = new Texture2D("dummy");
+        //            texture->CreateTexture(texture_image);
+
+        //            picture->SetTexture(texture);
+        //            ghandler.mBox = picture;
+        //        }
+        //        picture->SetSizeMode(eGuiSizeMode_Tile);
+        //        picture->SetSize(Point(256, 190));
+        //        picture->SetPosition(Point(50, 50), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
+        //        button->AttachChild(picture);
+        //    }
+
+        //    panel->AttachChild(button);
+        //}
+
         {
-            GuiButton* button = new GuiButton;
-            button->SetPosition(Point(50, 50), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
-            button->SetSize(Point(60, 60), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
-            button->SetOrigin(Point(50, 50), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
-            //button->SetClipChildren(true);
+            GuiSlider* slider = new GuiSlider;
+            slider->SetPosition(Point(100, 100));
+            slider->SetSize(Point(300, 80));
 
-            ghandler.Subscribe(button, eGuiEvent_Click);
-            ghandler.Subscribe(button, eGuiEvent_MouseEnter);
-            ghandler.Subscribe(button, eGuiEvent_MouseLeave);
-
-            button->mDebugColorDisabled = Color32_GrimGray;
-            button->mDebugColorHovered = Color32_Orange;
-
+            GuiAnchors anchors;
+            anchors.mBottom = true; anchors.mTop = true; anchors.mLeft = true; anchors.mRight = true;
+            slider->SetAnchors(anchors);
+            ghandler.mSlider = slider;
             {
-                GuiPictureBox* picture = new GuiPictureBox;
-                {
-                    Texture2D_Image texture_image;
-                    texture_image.LoadFromFile("D:/Temp/fill.png");
-                    texture_image.ResizeToPowerOfTwo();
-
-                    Texture2D* texture = new Texture2D("dummy");
-                    texture->CreateTexture(texture_image);
-
-                    picture->SetTexture(texture);
-                    ghandler.mBox = picture;
-                }
-                picture->SetSizeMode(eGuiSizeMode_Tile);
-                picture->SetSize(Point(256, 190));
-                picture->SetPosition(Point(50, 50), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
-                button->AttachChild(picture);
+                GuiPictureBox* picbox = new GuiPictureBox;
+                picbox->mName = "#slider";
+                picbox->SetTexture(gTexturesManager.mBlackTexture);
+                picbox->SetSizeMode(eGuiSizeMode_Scale);
+                //picbox->SetSize(Point(60, 60));
+                slider->AttachChild(picbox);
             }
 
-            panel->AttachChild(button);
+            panel->AttachChild(slider);
         }
     }
-
 
     gGuiManager.AttachWidget(gRootWidget);
 }

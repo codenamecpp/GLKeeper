@@ -184,6 +184,7 @@
     <ClInclude Include="GuiEvent.h" />
     <ClInclude Include="GuiPanel.h" />
     <ClInclude Include="GuiPictureBox.h" />
+    <ClInclude Include="GuiSlider.h" />
     <ClInclude Include="GuiWidget.h" />
     <ClInclude Include="StatisticsWindow.h" />
     <ClInclude Include="GameMap.h" />
@@ -311,6 +312,7 @@
     <ClCompile Include="GuiEvent.cpp" />
     <ClCompile Include="GuiPanel.cpp" />
     <ClCompile Include="GuiPictureBox.cpp" />
+    <ClCompile Include="GuiSlider.cpp" />
     <ClCompile Include="GuiWidget.cpp" />
     <ClCompile Include="StatisticsWindow.cpp" />
     <ClCompile Include="GameMap.cpp" />

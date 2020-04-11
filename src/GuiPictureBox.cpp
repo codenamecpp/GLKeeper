@@ -47,8 +47,8 @@ void GuiPictureBox::SetTexture(Texture2D* texture)
 
 GuiPictureBox* GuiPictureBox::ConstructClone()
 {
-    GuiPictureBox* selfCopy = new GuiPictureBox(this);
-    return selfCopy;
+    GuiPictureBox* selfClone = new GuiPictureBox(this);
+    return selfClone;
 }
 
 void GuiPictureBox::HandleRender(GuiRenderer& renderContext)
