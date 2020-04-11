@@ -29,14 +29,14 @@ public:
     {
         if (mBox)
         {
-            mBox->SetSize(Point(100, 100), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
+            mBox->SetSize(Point(100, 100), eGuiUnits_Percents, eGuiUnits_Percents);
         }
     }
     void HandleMouseLeave(GuiWidget* sender, GuiEvent* eventData) override
     {
         if (mBox)
         {
-            mBox->SetSize(Point(20, 20), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
+            mBox->SetSize(Point(20, 20), eGuiUnits_Percents, eGuiUnits_Percents);
         }
     }
 
@@ -54,7 +54,7 @@ void NullGamestate::HandleGamestateEnter()
 
     {
         GuiPanel* panel = new GuiPanel;
-        panel->SetSize(Point(100, 100), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
+        panel->SetSize(Point(100, 100), eGuiUnits_Percents, eGuiUnits_Percents);
         gRootWidget->AttachChild(panel);
 
         //{

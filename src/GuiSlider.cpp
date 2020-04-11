@@ -42,8 +42,8 @@ void GuiSlider::SetupSliderWidget()
 {
     debug_assert(mSliderWidget);
 
-    mSliderWidget->SetPosition(Point(50, 50), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
-    mSliderWidget->SetOrigin(Point(50, 50), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
+    mSliderWidget->SetPosition(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
+    mSliderWidget->SetOrigin(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
     mSliderWidget->SetSize(Point(30, mCurrentSize.y - 20));
 
     GuiAnchors anchors;

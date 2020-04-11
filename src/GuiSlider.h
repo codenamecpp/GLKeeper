@@ -41,8 +41,8 @@ protected:
 protected:
     GuiWidget* mSliderWidget = nullptr;
     int mMin = 0;
-    int mMax = 0;
-    int mPageSize = 0;
+    int mMax = 100;
+    int mPageSize = 10;
 };
 
 // slider widget class

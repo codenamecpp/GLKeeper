@@ -343,8 +343,8 @@ impl_enum_strings(eGuiSizeMode)
     {eGuiSizeMode_TileHorizontal, "tile_horz"},
 };
 
-impl_enum_strings(eGuiAddressingMode)
+impl_enum_strings(eGuiUnits)
 {
-    {eGuiAddressingMode_Absolute, "absolute"},
-    {eGuiAddressingMode_Relative, "relative"},
+    {eGuiUnits_Pixels, "pixels"},
+    {eGuiUnits_Percents, "percents"},
 };

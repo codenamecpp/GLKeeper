@@ -39,40 +39,34 @@ public:
 
     // set current position in local or screen space
     // @param position: Position absolute or relative [0-100] %
-    // @param xAddressingMode, yAddressingMode: Addressing modes for x and y
-    void SetPosition(const Point& position, 
-        eGuiAddressingMode xAddressingMode = eGuiAddressingMode_Absolute, 
-        eGuiAddressingMode yAddressingMode = eGuiAddressingMode_Absolute);
-    void SetPositionX(int posx, eGuiAddressingMode xAddressingMode = eGuiAddressingMode_Absolute);
-    void SetPositionY(int posy, eGuiAddressingMode yAddressingMode = eGuiAddressingMode_Absolute);
+    // @param units_x, units_y: Units of x and y
+    void SetPosition(const Point& position, eGuiUnits units_x = eGuiUnits_Pixels, eGuiUnits units_y = eGuiUnits_Pixels);
+    void SetPositionX(int posx, eGuiUnits untis_x = eGuiUnits_Pixels);
+    void SetPositionY(int posy, eGuiUnits units_y = eGuiUnits_Pixels);
     void SetScreenPosition(const Point& position)
     {
         Point pos = ScreenToLocal(position);
-        SetPosition(pos, eGuiAddressingMode_Absolute, eGuiAddressingMode_Absolute);
+        SetPosition(pos, eGuiUnits_Pixels, eGuiUnits_Pixels);
     }
 
     // set current origin position in local or screen space
     // @param position: Position absolute or relative [0-100] %
-    // @param xAddressingMode, yAddressingMode: Addressing modes for x and y
-    void SetOrigin(const Point& position, 
-        eGuiAddressingMode xAddressingMode = eGuiAddressingMode_Absolute, 
-        eGuiAddressingMode yAddressingMode = eGuiAddressingMode_Absolute);
-    void SetOriginX(int posx, eGuiAddressingMode xAddressingMode = eGuiAddressingMode_Absolute);
-    void SetOriginY(int posy, eGuiAddressingMode yAddressingMode = eGuiAddressingMode_Absolute);
+    // @param units_x, units_y: Units of x and y
+    void SetOrigin(const Point& position, eGuiUnits units_x = eGuiUnits_Pixels, eGuiUnits units_y = eGuiUnits_Pixels);
+    void SetOriginX(int posx, eGuiUnits units_x = eGuiUnits_Pixels);
+    void SetOriginY(int posy, eGuiUnits units_y = eGuiUnits_Pixels);
     void SetOriginScreenPosition(const Point& position)
     {
         Point pos = ScreenToLocal(position);
-        SetOrigin(pos, eGuiAddressingMode_Absolute, eGuiAddressingMode_Absolute);
+        SetOrigin(pos, eGuiUnits_Pixels, eGuiUnits_Pixels);
     }
 
     // set current size
     // @param size: Size absolute or relative [0-100] %
-    // @param wAddressingMode, hAddressingMode: Addressing modes for w and h
-    void SetSize(const Point& size, 
-        eGuiAddressingMode wAddressingMode = eGuiAddressingMode_Absolute, 
-        eGuiAddressingMode hAddressingMode = eGuiAddressingMode_Absolute);
-    void SetSizeW(int sizew, eGuiAddressingMode wAddressingMode = eGuiAddressingMode_Absolute);
-    void SetSizeH(int sizeh, eGuiAddressingMode hAddressingMode = eGuiAddressingMode_Absolute);
+    // @param units_w, units_h: Units of w and h
+    void SetSize(const Point& size, eGuiUnits units_w = eGuiUnits_Pixels, eGuiUnits units_h = eGuiUnits_Pixels);
+    void SetSizeW(int sizew, eGuiUnits units_w = eGuiUnits_Pixels);
+    void SetSizeH(int sizeh, eGuiUnits units_h = eGuiUnits_Pixels);
 
     // setup widget anchors
     void SetAnchors(const GuiAnchors& anchors);

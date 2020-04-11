@@ -34,12 +34,12 @@ enum eGuiSizeMode
 };
 decl_enum_strings(eGuiSizeMode);
 
-enum eGuiAddressingMode
+enum eGuiUnits
 {
-    eGuiAddressingMode_Absolute,
-    eGuiAddressingMode_Relative,
+    eGuiUnits_Pixels,
+    eGuiUnits_Percents,
 };
-decl_enum_strings(eGuiAddressingMode);
+decl_enum_strings(eGuiUnits);
 
 enum eGuiWidgetAttribute
 {
@@ -53,21 +53,21 @@ struct GuiPositionComponent
 {
 public:
     GuiPositionComponent() = default;
-    GuiPositionComponent(eGuiAddressingMode addressingMode, int value)
-        : mAddressingMode(addressingMode)
+    GuiPositionComponent(eGuiUnits units, int value)
+        : mValueUnits(units)
         , mValue(value)
     {
     }
     inline bool operator == (const GuiPositionComponent& other) const
     {
-        return mAddressingMode == other.mAddressingMode && mValue == other.mValue;
+        return mValueUnits == other.mValueUnits && mValue == other.mValue;
     }
     inline bool operator != (const GuiPositionComponent& other) const
     {
-        return mAddressingMode != other.mAddressingMode || mValue != other.mValue;
+        return mValueUnits != other.mValueUnits || mValue != other.mValue;
     }
 public:
-    eGuiAddressingMode mAddressingMode = eGuiAddressingMode_Absolute;
+    eGuiUnits mValueUnits = eGuiUnits_Pixels;
     int mValue = 0;
 };
 
