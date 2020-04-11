@@ -7,6 +7,8 @@
 enum eGuiEvent
 {
     eGuiEvent_Click,
+    eGuiEvent_MouseEnter,
+    eGuiEvent_MouseLeave,
 };
 decl_enum_strings(eGuiEvent);
 
@@ -42,7 +44,9 @@ public:
 
 protected:
     // overridables
-    virtual void HandleClickEvent(GuiWidget* sender, GuiEvent* eventData);
+    virtual void HandleClickEvent(GuiWidget* sender, GuiEvent* eventData) {}
+    virtual void HandleMouseEnter(GuiWidget* sender, GuiEvent* eventData) {}
+    virtual void HandleMouseLeave(GuiWidget* sender, GuiEvent* eventData) {}
 
 private:
     bool ProcessEvent(GuiEvent* eventData);

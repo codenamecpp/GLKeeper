@@ -16,6 +16,20 @@ public:
     {
         SafeDelete(mBox);
     }
+    void HandleMouseEnter(GuiWidget* sender, GuiEvent* eventData) override
+    {
+        if (mBox)
+        {
+            mBox->SetSize(Point(100, 100), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
+        }
+    }
+    void HandleMouseLeave(GuiWidget* sender, GuiEvent* eventData) override
+    {
+        if (mBox)
+        {
+            mBox->SetSize(Point(20, 20), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
+        }
+    }
 
 public:
     GuiPictureBox* mBox = nullptr;
@@ -42,6 +56,8 @@ void NullGamestate::HandleGamestateEnter()
             //button->SetClipChildren(true);
 
             ghandler.Subscribe(button, eGuiEvent_Click);
+            ghandler.Subscribe(button, eGuiEvent_MouseEnter);
+            ghandler.Subscribe(button, eGuiEvent_MouseLeave);
 
             button->mDebugColorDisabled = Color32_GrimGray;
             button->mDebugColorHovered = Color32_Orange;

@@ -728,6 +728,18 @@ void GuiWidget::EnableStateChanged()
 
 void GuiWidget::HoveredStateChanged()
 {
+    if (IsHovered())
+    {
+        GuiEvent ev (this, eGuiEvent_MouseEnter);
+        gGuiManager.PostGuiEvent(&ev);
+
+    }
+    else
+    {
+        GuiEvent ev (this, eGuiEvent_MouseLeave);
+        gGuiManager.PostGuiEvent(&ev);
+    }
+
     HandleHoveredStateChanged();
 }
 
