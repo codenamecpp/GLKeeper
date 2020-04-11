@@ -6,7 +6,7 @@
 // widget class factory
 static GuiWidgetFactory<GuiPictureBox> _PictureBoxWidgetsFactory;
 
-GuiWidgetClass gPictureBoxWidgetClass("picture_box", &_PictureBoxWidgetsFactory);
+GuiWidgetClass gPictureBoxWidgetClass("picture_box", &_PictureBoxWidgetsFactory, &gBaseWidgetClass);
 
 //////////////////////////////////////////////////////////////////////////
 

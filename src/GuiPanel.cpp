@@ -7,7 +7,7 @@
 // widget class factory
 static GuiWidgetFactory<GuiPanel> _PanelWidgetsFactory;
 
-GuiWidgetClass gPanelWidgetClass("panel", &_PanelWidgetsFactory);
+GuiWidgetClass gPanelWidgetClass("panel", &_PanelWidgetsFactory, &gBaseWidgetClass);
 
 GuiPanel::GuiPanel(): GuiPanel(&gPanelWidgetClass)
 {

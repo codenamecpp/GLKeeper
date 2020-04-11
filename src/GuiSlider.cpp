@@ -7,7 +7,7 @@
 // widget class factory
 static GuiWidgetFactory<GuiSlider> _SliderWidgetsFactory;
 
-GuiWidgetClass gSliderWidgetClass("slider", &_SliderWidgetsFactory);
+GuiWidgetClass gSliderWidgetClass("slider", &_SliderWidgetsFactory, &gBaseWidgetClass);
 
 GuiSlider::GuiSlider(): GuiSlider(&gSliderWidgetClass)
 {

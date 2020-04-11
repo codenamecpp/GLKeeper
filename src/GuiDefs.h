@@ -218,10 +218,14 @@ public:
     // it should not be null
     GuiWidgetFactoryInterface* mFactory;
 
+    // used for rtti
+    GuiWidgetClass* mParentClass;
+
 public:
-    GuiWidgetClass(std::string&& className, GuiWidgetFactoryInterface* factory)
+    GuiWidgetClass(std::string&& className, GuiWidgetFactoryInterface* factory, GuiWidgetClass* parentClass)
         : mClassName(className)
         , mFactory(factory)
+        , mParentClass(parentClass)
     {
         debug_assert(mFactory);
     }

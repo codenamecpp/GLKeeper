@@ -6,7 +6,7 @@
 // base widget class factory
 static GuiWidgetFactory<GuiWidget> _BaseWidgetsFactory;
 
-GuiWidgetClass gBaseWidgetClass("widget", &_BaseWidgetsFactory);
+GuiWidgetClass gBaseWidgetClass("widget", &_BaseWidgetsFactory, nullptr);
 
 //////////////////////////////////////////////////////////////////////////
 

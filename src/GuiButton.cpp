@@ -8,7 +8,7 @@
 // widget class factory
 static GuiWidgetFactory<GuiButton> _ButtonWidgetsFactory;
 
-GuiWidgetClass gButtonWidgetClass("button", &_ButtonWidgetsFactory);
+GuiWidgetClass gButtonWidgetClass("button", &_ButtonWidgetsFactory, &gBaseWidgetClass);
 
 //////////////////////////////////////////////////////////////////////////
 
