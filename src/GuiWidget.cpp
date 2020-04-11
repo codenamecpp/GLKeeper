@@ -209,8 +209,8 @@ bool GuiWidget::AttachChild(GuiWidget* widget)
 
     widget->mParent = this;
     widget->InvalidateTransform();
-    widget->ParentSizeChanged(mSize, mSize); // force update layout
     widget->SetAnchorPositions();
+    widget->ParentSizeChanged(mSize, mSize); // force update layout
     HandleChildAttached(widget);
     return true;
 }
@@ -567,16 +567,13 @@ void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
 
     if (mAnchors.mL && mAnchors.mR)
     {
-        if (mSizeUnitsW == eGuiUnits_Pixels)
+        newSize.x = currSize.x - (mAnchorDistL + mAnchorDistR);
+        if (newSize.x < 0)
         {
-            newSize.x = mSize.x + deltax;
-        }
-        else
-        {
-            // ignore
+            newSize.x = 0;
         }
     }
-    else if (mPositionUnitsX == eGuiUnits_Pixels)
+    else
     {
         if (mAnchors.mR)
         {
@@ -590,16 +587,13 @@ void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
 
     if (mAnchors.mT && mAnchors.mB)
     {
-        if (mSizeUnitsH == eGuiUnits_Pixels)
+        newSize.y = currSize.y - (mAnchorDistB + mAnchorDistT);
+        if (newSize.y < 0)
         {
-            newSize.y = mSize.y + deltay;
-        }
-        else
-        {
-            // ignore
+            newSize.y = 0;
         }
     }
-    else if (mPositionUnitsY == eGuiUnits_Pixels)
+    else
     {
         if (mAnchors.mB)
         {
@@ -840,11 +834,6 @@ Point GuiWidget::ComputeSizePixels() const
 
 bool GuiWidget::HasAttribute(eGuiWidgetAttribute attribute) const
 {
-    switch (attribute)
-    {
-        case eGuiWidgetAttribute_Interactive: return false;
-        case eGuiWidgetAttribute_DragDrop: return false;
-    }
     return false;
 }
 
@@ -856,5 +845,16 @@ GuiWidget* GuiWidget::ConstructClone()
 
 void GuiWidget::SetAnchorPositions()
 {
+    mAnchorDistL = 0;
+    mAnchorDistT = 0;
+    mAnchorDistR = 0;
+    mAnchorDistB = 0;
 
+    if (mParent == nullptr)
+        return;
+
+    mAnchorDistL = mPosition.x - mOrigin.x;
+    mAnchorDistT = mPosition.y - mOrigin.y;
+    mAnchorDistR = mParent->mSize.x - (mAnchorDistL + mSize.x);
+    mAnchorDistB = mParent->mSize.y - (mAnchorDistT + mSize.y);
 }

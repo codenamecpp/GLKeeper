@@ -217,6 +217,11 @@ protected:
     // layout params
     GuiAnchors mAnchors;
 
+    int mAnchorDistL = 0;
+    int mAnchorDistT = 0;
+    int mAnchorDistR = 0;
+    int mAnchorDistB = 0;
+
     eGuiUnits mOriginUnitsX = eGuiUnits_Pixels;
     eGuiUnits mOriginUnitsY = eGuiUnits_Pixels;
     Point mOriginPercents;

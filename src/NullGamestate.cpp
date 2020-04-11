@@ -29,7 +29,7 @@ public:
     {
         if (mBox)
         {
-            mBox->SetSize(Point(100, 100), eGuiUnits_Percents, eGuiUnits_Percents);
+            mBox->SetSize(Point(30, 30), eGuiUnits_Percents, eGuiUnits_Percents);
         }
     }
     void HandleMouseLeave(GuiWidget* sender, GuiEvent* eventData) override
@@ -57,41 +57,42 @@ void NullGamestate::HandleGamestateEnter()
         panel->SetSize(Point(100, 100), eGuiUnits_Percents, eGuiUnits_Percents);
         gRootWidget->AttachChild(panel);
 
-        //{
-        //    GuiButton* button = new GuiButton;
-        //    button->SetPosition(Point(50, 50), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
-        //    button->SetSize(Point(60, 60), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
-        //    button->SetOrigin(Point(50, 50), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
-        //    //button->SetClipChildren(true);
+        {
+            GuiButton* button = new GuiButton;
+            button->SetPosition(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
+            button->SetSize(Point(60, 60), eGuiUnits_Percents, eGuiUnits_Percents);
+            button->SetOrigin(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
+            //button->SetClipChildren(true);
 
-        //    ghandler.Subscribe(button, eGuiEvent_Click);
-        //    ghandler.Subscribe(button, eGuiEvent_MouseEnter);
-        //    ghandler.Subscribe(button, eGuiEvent_MouseLeave);
+            ghandler.Subscribe(button, eGuiEvent_Click);
+            ghandler.Subscribe(button, eGuiEvent_MouseEnter);
+            ghandler.Subscribe(button, eGuiEvent_MouseLeave);
 
-        //    button->mDebugColorDisabled = Color32_GrimGray;
-        //    button->mDebugColorHovered = Color32_Orange;
+            button->mDebugColorDisabled = Color32_GrimGray;
+            button->mDebugColorHovered = Color32_Orange;
 
-        //    {
-        //        GuiPictureBox* picture = new GuiPictureBox;
-        //        {
-        //            Texture2D_Image texture_image;
-        //            texture_image.LoadFromFile("D:/Temp/fill.png");
-        //            texture_image.ResizeToPowerOfTwo();
+            {
+                GuiPictureBox* picture = new GuiPictureBox;
+                {
+                    Texture2D_Image texture_image;
+                    texture_image.LoadFromFile("D:/Temp/fill.png");
+                    texture_image.ResizeToPowerOfTwo();
 
-        //            Texture2D* texture = new Texture2D("dummy");
-        //            texture->CreateTexture(texture_image);
+                    Texture2D* texture = new Texture2D("dummy");
+                    texture->CreateTexture(texture_image);
 
-        //            picture->SetTexture(texture);
-        //            ghandler.mBox = picture;
-        //        }
-        //        picture->SetSizeMode(eGuiSizeMode_Tile);
-        //        picture->SetSize(Point(256, 190));
-        //        picture->SetPosition(Point(50, 50), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
-        //        button->AttachChild(picture);
-        //    }
+                    picture->SetTexture(texture);
+                    ghandler.mBox = picture;
+                }
+                picture->SetSizeMode(eGuiSizeMode_Tile);
+                picture->SetSize(Point(256, 190));
+                picture->SetOrigin(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
+                picture->SetPosition(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
+                button->AttachChild(picture);
+            }
 
-        //    panel->AttachChild(button);
-        //}
+            panel->AttachChild(button);
+        }
 
         {
             GuiSlider* slider = new GuiSlider;
