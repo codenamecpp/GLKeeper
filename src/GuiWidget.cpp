@@ -573,20 +573,20 @@ void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
     Point newPosition = mCurrentPosition;
     Point newSize = mCurrentSize;
 
-    if (mPositionComponentX.mAddressingMode == eGuiAddressingMode_Absolute) // test anchors
+    if (mAnchors.mLeft && mAnchors.mRight)
     {
-        if (mAnchors.mLeft && mAnchors.mRight)
+        if (mSizeComponentW.mAddressingMode == eGuiAddressingMode_Absolute)
         {
-            if (mSizeComponentW.mAddressingMode == eGuiAddressingMode_Absolute)
-            {
-                newSize.x = mCurrentSize.x + deltax;
-            }
-            else
-            {
-                // ignore
-            }
+            newSize.x = mCurrentSize.x + deltax;
         }
-        else if (mAnchors.mRight)
+        else
+        {
+            // ignore
+        }
+    }
+    else if (mPositionComponentX.mAddressingMode == eGuiAddressingMode_Absolute)
+    {
+        if (mAnchors.mRight)
         {
             newPosition.x = mCurrentPosition.x + deltax;
         }
@@ -596,24 +596,24 @@ void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
         }
     }
 
-    if (mPositionComponentY.mAddressingMode == eGuiAddressingMode_Absolute) // test anchors
+    if (mAnchors.mTop && mAnchors.mBottom)
     {
-        if (mAnchors.mTop && mAnchors.mBottom)
+        if (mSizeComponentH.mAddressingMode == eGuiAddressingMode_Absolute)
         {
-            if (mSizeComponentH.mAddressingMode == eGuiAddressingMode_Absolute)
-            {
-                newSize.y = mCurrentSize.y + deltay;
-            }
-            else
-            {
-                // ignore
-            }
+            newSize.y = mCurrentSize.y + deltay;
         }
-        else if (mAnchors.mBottom)
+        else
+        {
+            // ignore
+        }
+    }
+    else if (mPositionComponentY.mAddressingMode == eGuiAddressingMode_Absolute)
+    {
+        if (mAnchors.mBottom)
         {
             newPosition.y = mCurrentPosition.y + deltay;
         }
-        else if (!mAnchors.mTop)
+        else if (!mAnchors.mTop && mPositionComponentY.mAddressingMode == eGuiAddressingMode_Absolute)
         {
             newPosition.y = mCurrentPosition.y + deltay / 2;
         }
