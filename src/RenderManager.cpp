@@ -177,14 +177,14 @@ void RenderManager::RenderFrame()
 
     RenderStates prevRenderStates = gGraphicsDevice.mCurrentStates;
 
-    // draw debug ui
-    mGuiRenderer.RenderFrameBegin();
-    gDebugUIManager.RenderFrame();
-    mGuiRenderer.RenderFrameEnd();
-
     // draw game ui
     mGuiRenderer.RenderFrameBegin();
     gGuiManager.RenderFrame(mGuiRenderer);
+    mGuiRenderer.RenderFrameEnd();
+
+    // draw debug ui
+    mGuiRenderer.RenderFrameBegin();
+    gDebugUIManager.RenderFrame();
     mGuiRenderer.RenderFrameEnd();
 
     // finish draw
