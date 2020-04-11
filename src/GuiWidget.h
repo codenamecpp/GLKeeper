@@ -108,6 +108,12 @@ public:
     // @param screenPosition: Screen coordinate
     GuiWidget* PickWidget(const Point& screenPosition);
 
+    // get child widget by its name
+    GuiWidget* GetChild(const std::string& name) const;
+
+    // get child widget by its index
+    GuiWidget* GetChild(int index) const;
+
     // get current position in local or screen space
     inline Point GetPosition() const { return mCurrentPosition; }
     inline Point GetScreenPosition() const
