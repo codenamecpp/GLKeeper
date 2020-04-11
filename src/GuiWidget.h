@@ -193,18 +193,21 @@ protected:
 
 protected:
     // overridable
-    virtual void HandleRender(GuiRenderer& renderContext);
-    virtual void HandleUpdate(float deltaTime);
-    virtual void HandleSizeChanged(const Point& prevSize);
-    virtual void HandlePositionChanged(const Point& prevPosition);
+    virtual void HandleRender(GuiRenderer& renderContext) {}
+    virtual void HandleUpdate(float deltaTime) {}
+    virtual void HandleSizeChanged(const Point& prevSize) {}
+    virtual void HandlePositionChanged(const Point& prevPosition) {}
 
-    virtual void HandleShownStateChanged();
-    virtual void HandleEnableStateChanged();
-    virtual void HandleHoveredStateChanged();
+    virtual void HandleChildAttached(GuiWidget* childWidget) {}
+    virtual void HandleChildDetached(GuiWidget* childWidget) {}
 
-    virtual void HandleInputEvent(MouseButtonInputEvent& inputEvent);
-    virtual void HandleInputEvent(MouseMovedInputEvent& inputEvent);
-    virtual void HandleInputEvent(MouseScrollInputEvent& inputEvent);
+    virtual void HandleShownStateChanged() {}
+    virtual void HandleEnableStateChanged() {}
+    virtual void HandleHoveredStateChanged() {}
+
+    virtual void HandleInputEvent(MouseButtonInputEvent& inputEvent) {}
+    virtual void HandleInputEvent(MouseMovedInputEvent& inputEvent) {}
+    virtual void HandleInputEvent(MouseScrollInputEvent& inputEvent) {}
 
     virtual bool HasAttribute(eGuiWidgetAttribute attribute) const;
 

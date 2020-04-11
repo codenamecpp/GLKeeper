@@ -206,6 +206,7 @@ bool GuiWidget::AttachChild(GuiWidget* widget)
     widget->InvalidateTransform();
     widget->ParentSizeChanged(mCurrentSize, mCurrentSize); // force update layout
 
+    HandleChildAttached(widget);
     return true;
 }
 
@@ -229,6 +230,8 @@ bool GuiWidget::DetachChild(GuiWidget* widget)
         widget->mNextSibling->mPrevSibling = widget->mPrevSibling;
     }
     widget->mParent = nullptr;
+
+    HandleChildDetached(widget);
     return true;
 }
 
@@ -855,56 +858,6 @@ void GuiWidget::ComputeAbsoluteSize(Point& outputSize) const
             outputSize.y = 0;
         }
     }
-}
-
-void GuiWidget::HandleRender(GuiRenderer& renderContext)
-{
-    // do nothing
-}
-
-void GuiWidget::HandleUpdate(float deltaTime)
-{
-    // do nothing
-}
-
-void GuiWidget::HandleSizeChanged(const Point& prevSize)
-{
-    // do nothing
-}
-
-void GuiWidget::HandlePositionChanged(const Point& prevPosition)
-{
-    // do nothing
-}
-
-void GuiWidget::HandleShownStateChanged()
-{
-    // do nothing
-}
-
-void GuiWidget::HandleEnableStateChanged()
-{
-    // do nothing
-}
-
-void GuiWidget::HandleHoveredStateChanged()
-{
-    // do nothing
-}
-
-void GuiWidget::HandleInputEvent(MouseButtonInputEvent& inputEvent)
-{
-    // do nothing
-}
-
-void GuiWidget::HandleInputEvent(MouseMovedInputEvent& inputEvent)
-{
-    // do nothing
-}
-
-void GuiWidget::HandleInputEvent(MouseScrollInputEvent& inputEvent)
-{
-    // do nothing
 }
 
 bool GuiWidget::HasAttribute(eGuiWidgetAttribute attribute) const
