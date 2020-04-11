@@ -311,8 +311,8 @@ GuiWidget* GuiWidget::GetChild(int index) const
 
 void GuiWidget::SetAnchors(const GuiAnchors& anchors)
 {
-    if (mAnchors.mLeft == anchors.mLeft && mAnchors.mTop == anchors.mTop && 
-        mAnchors.mRight == anchors.mRight && mAnchors.mBottom == anchors.mBottom)
+    if (mAnchors.mL == anchors.mL && mAnchors.mT == anchors.mT && 
+        mAnchors.mR == anchors.mR && mAnchors.mB == anchors.mB)
     {
         return;
     }
@@ -573,7 +573,7 @@ void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
     Point newPosition = mCurrentPosition;
     Point newSize = mCurrentSize;
 
-    if (mAnchors.mLeft && mAnchors.mRight)
+    if (mAnchors.mL && mAnchors.mR)
     {
         if (mSizeComponentW.mValueUnits == eGuiUnits_Pixels)
         {
@@ -586,17 +586,17 @@ void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
     }
     else if (mPositionComponentX.mValueUnits == eGuiUnits_Pixels)
     {
-        if (mAnchors.mRight)
+        if (mAnchors.mR)
         {
             newPosition.x = mCurrentPosition.x + deltax;
         }
-        else if (!mAnchors.mLeft)
+        else if (!mAnchors.mL)
         {
             newPosition.x = mCurrentPosition.x + deltax / 2;
         }
     }
 
-    if (mAnchors.mTop && mAnchors.mBottom)
+    if (mAnchors.mT && mAnchors.mB)
     {
         if (mSizeComponentH.mValueUnits == eGuiUnits_Pixels)
         {
@@ -609,11 +609,11 @@ void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
     }
     else if (mPositionComponentY.mValueUnits == eGuiUnits_Pixels)
     {
-        if (mAnchors.mBottom)
+        if (mAnchors.mB)
         {
             newPosition.y = mCurrentPosition.y + deltay;
         }
-        else if (!mAnchors.mTop && mPositionComponentY.mValueUnits == eGuiUnits_Pixels)
+        else if (!mAnchors.mT && mPositionComponentY.mValueUnits == eGuiUnits_Pixels)
         {
             newPosition.y = mCurrentPosition.y + deltay / 2;
         }

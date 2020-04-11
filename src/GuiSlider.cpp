@@ -42,15 +42,15 @@ void GuiSlider::SetupSliderWidget()
 {
     debug_assert(mSliderWidget);
 
-    mSliderWidget->SetPosition(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
+    mSliderWidget->SetPosition(Point(50, 50), eGuiUnits_Pixels, eGuiUnits_Pixels);
     mSliderWidget->SetOrigin(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
     mSliderWidget->SetSize(Point(30, mCurrentSize.y - 20));
 
     GuiAnchors anchors;
-    anchors.mLeft   = true;
-    anchors.mRight  = true;
-    anchors.mTop    = true;
-    anchors.mBottom = true;
+    anchors.mL = false;
+    anchors.mR = true;
+    anchors.mT = false;
+    anchors.mB = true;
 
     mSliderWidget->SetAnchors(anchors);
 }

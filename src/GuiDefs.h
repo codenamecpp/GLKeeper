@@ -80,15 +80,15 @@ struct GuiAnchors
 public:
     GuiAnchors() = default;
     GuiAnchors(bool anchorLeft, bool anchorTop, bool anchorRight, bool anchorBottom)
-        : mLeft(anchorLeft)
-        , mTop(anchorTop)
-        , mRight(anchorRight)
-        , mBottom(anchorBottom)
+        : mL(anchorLeft)
+        , mT(anchorTop)
+        , mR(anchorRight)
+        , mB(anchorBottom)
     {
     }
 public:
-    bool mLeft = true, mTop = true;
-    bool mRight = false, mBottom = false;
+    bool mL = true, mT = true;
+    bool mR = false, mB = false;
 };
 
 // gui textured quad

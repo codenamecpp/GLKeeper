@@ -99,7 +99,7 @@ void NullGamestate::HandleGamestateEnter()
             slider->SetSize(Point(300, 80));
 
             GuiAnchors anchors;
-            anchors.mBottom = true; anchors.mTop = true; anchors.mLeft = true; anchors.mRight = true;
+            anchors.mB = true; anchors.mT = true; anchors.mL = true; anchors.mR = true;
             slider->SetAnchors(anchors);
             ghandler.mSlider = slider;
             {
