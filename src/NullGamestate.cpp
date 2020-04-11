@@ -12,9 +12,9 @@ static GuiWidget* gRootWidget = nullptr;
 class MyHandler: public GuiEventsHandler
 {
 public:
-    void HandleEvent(GuiWidget* sender, GuiEvent* eventData) override
+    void HandleClickEvent(GuiWidget* sender, GuiEvent* eventData) override
     {
-        mBox->SetVisible(!mBox->IsVisible());
+        SafeDelete(mBox);
     }
 
 public:
@@ -36,7 +36,7 @@ void NullGamestate::HandleGamestateEnter()
 
         {
             GuiButton* button = new GuiButton;
-            button->SetPosition(Point(100, 50), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
+            button->SetPosition(Point(50, 50), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
             button->SetSize(Point(60, 60), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
             button->SetOrigin(Point(50, 50), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
             //button->SetClipChildren(true);
@@ -50,8 +50,8 @@ void NullGamestate::HandleGamestateEnter()
                 GuiPictureBox* picture = new GuiPictureBox;
                 {
                     Texture2D_Image texture_image;
-                    texture_image.CreateImage(eTextureFormat_RGBA8, Point(32, 32), 0, false);
-                    texture_image.FillWithCheckerBoard();
+                    texture_image.LoadFromFile("D:/Temp/fill.png");
+                    texture_image.ResizeToPowerOfTwo();
 
                     Texture2D* texture = new Texture2D("dummy");
                     texture->CreateTexture(texture_image);
@@ -59,9 +59,9 @@ void NullGamestate::HandleGamestateEnter()
                     picture->SetTexture(texture);
                     ghandler.mBox = picture;
                 }
-                picture->SetSizeMode(eGuiSizeMode_Scale);
-                picture->SetSize(Point(10, 10), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
-                picture->SetPosition(Point(-40, 50), eGuiAddressingMode_Absolute, eGuiAddressingMode_Relative);
+                picture->SetSizeMode(eGuiSizeMode_Tile);
+                picture->SetSize(Point(256, 190));
+                picture->SetPosition(Point(50, 50), eGuiAddressingMode_Relative, eGuiAddressingMode_Relative);
                 button->AttachChild(picture);
             }
 

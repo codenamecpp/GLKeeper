@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Texture2D_Image.h"
 #include "stb_image_write.h"
+#include "stb_image.h"
 
 Texture2D_Image::Texture2D_Image()
 {
@@ -49,6 +50,42 @@ bool Texture2D_Image::CreateImage(eTextureFormat format, const Point& dimensions
 
     debug_assert(dataLength > 0);
     mImageData.resize(dataLength);
+    return true;
+}
+
+bool Texture2D_Image::LoadFromFile(const std::string& filePath, eTextureFormat forceFormat)
+{
+    int dimx = 0;
+    int dimy = 0;
+    int num_channels = 0;
+    int desired_channels = GetTextureFormatBytesCount(forceFormat);
+
+    if (desired_channels == 0)
+    {
+        debug_assert(false);
+        return false;
+    }
+
+    stbi_uc* image_data = stbi_load(filePath.c_str(), &dimx, &dimy, &num_channels, desired_channels);
+    if (image_data == nullptr)
+    {
+        debug_assert(false);
+        return false;
+    }
+
+    Clear();
+
+    mTextureDesc.mDimensions.x = dimx;
+    mTextureDesc.mDimensions.y = dimy;
+    mTextureDesc.mImageDimensions.x = dimx;
+    mTextureDesc.mImageDimensions.y = dimy;
+    mTextureDesc.mTextureFormat = forceFormat;
+
+    int dataLength = dimx * dimy * num_channels;
+    debug_assert(dataLength > 0);
+    mImageData.assign(image_data, image_data + dataLength);
+
+    stbi_image_free(image_data);
     return true;
 }
 

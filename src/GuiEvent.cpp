@@ -77,7 +77,7 @@ void GuiEventsHandler::UnsubscribeAll()
     gGuiManager.UnregisterEventsHandler(this);
 }
 
-void GuiEventsHandler::HandleEvent(GuiWidget* sender, GuiEvent* eventData)
+void GuiEventsHandler::HandleClickEvent(GuiWidget* sender, GuiEvent* eventData)
 {
     // do nothing
 }
@@ -93,7 +93,12 @@ bool GuiEventsHandler::ProcessEvent(GuiEvent* eventData)
     {
         if (curr.mEventsSource == eventData->mEventSender && curr.mEventsId == eventData->mEventId)
         {
-            HandleEvent(curr.mEventsSource, eventData);
+            switch (curr.mEventsId)
+            {
+                case eGuiEvent_Click: 
+                    HandleClickEvent(eventData->mEventSender, eventData); 
+                break;
+            }
             return true;
         }
     }

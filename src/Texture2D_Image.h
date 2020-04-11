@@ -31,6 +31,11 @@ public:
     bool DumpToFile(const std::string& filePath) const;
     bool DumpToFile(const std::string& filePath, int mipmap) const;
 
+    // load image data from external file and convert to desired pixel format
+    // @param filePath: File path
+    // @param forceFormat: Desired format
+    bool LoadFromFile(const std::string& filePath, eTextureFormat forceFormat = eTextureFormat_RGBA8);
+
     // create checker board pattern, base image must be allocated
     // @param mipmap: Mipmap level, 0 is for base image
     // @returns false if pixels format not supported

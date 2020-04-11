@@ -42,7 +42,7 @@ public:
 
 protected:
     // overridables
-    virtual void HandleEvent(GuiWidget* sender, GuiEvent* eventData);
+    virtual void HandleClickEvent(GuiWidget* sender, GuiEvent* eventData);
 
 private:
     bool ProcessEvent(GuiEvent* eventData);

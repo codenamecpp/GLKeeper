@@ -177,7 +177,7 @@
     <ClInclude Include="3rd_party\stb_image_write.h" />
     <ClInclude Include="3rd_party\stb_rect_pack.h" />
     <ClInclude Include="3rd_party\stb_sprintf.h" />
-    <ClInclude Include="3rd_party\std_image.h" />
+    <ClInclude Include="3rd_party\stb_image.h" />
     <ClInclude Include="AABBTree.h" />
     <ClInclude Include="CreatureDefs.h" />
     <ClInclude Include="GuiButton.h" />

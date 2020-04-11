@@ -203,9 +203,6 @@
     <ClInclude Include="3rd_party\stb_sprintf.h">
       <Filter>Third_Party\stb</Filter>
     </ClInclude>
-    <ClInclude Include="3rd_party\std_image.h">
-      <Filter>Third_Party\stb</Filter>
-    </ClInclude>
     <ClInclude Include="3rd_party\stb_image_write.h">
       <Filter>Third_Party\stb</Filter>
     </ClInclude>
@@ -461,6 +458,9 @@
     </ClInclude>
     <ClInclude Include="GuiEvent.h">
       <Filter>Game\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="3rd_party\stb_image.h">
+      <Filter>Third_Party\stb</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
