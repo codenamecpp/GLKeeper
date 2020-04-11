@@ -172,8 +172,8 @@ protected:
     void ParentShownStateChanged();
     void ParentEnableStateChanged();
 
-    void PositionChanged(const Point& prevPosition);
-    void SizeChanged(const Point& prevSize);
+    void PositionChanged(const Point& prevPosition, bool setAnchors);
+    void SizeChanged(const Point& prevSize, bool setAnchors);
     void ShownStateChanged();
     void EnableStateChanged();
     void HoveredStateChanged();

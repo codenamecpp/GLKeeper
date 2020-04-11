@@ -44,7 +44,7 @@ void GuiSlider::SetupSliderWidget()
 
     mSliderWidget->SetPosition(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
     mSliderWidget->SetOrigin(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
-    mSliderWidget->SetSize(Point(30, mSize.y - 20));
+    mSliderWidget->SetSize(Point(80, mSize.y - 20));
 
     GuiAnchors anchors;
     anchors.mL = true;
@@ -67,7 +67,6 @@ bool GuiSlider::HasAttribute(eGuiWidgetAttribute attribute) const
     {
         case eGuiWidgetAttribute_Interactive:
         case eGuiWidgetAttribute_DragDrop:
-        case eGuiWidgetAttribute_PickTarget:
             return true;
     }
     return false;
@@ -130,8 +129,10 @@ void GuiSlider::HandleDrag(const Point& screenPoint)
 
     Point cursorPositionLocal = ScreenToLocal(screenPoint);
 
+    Point sliderSize = mSliderWidget->GetSize();
+
     // map cursor position to size
-    int sliderPositionLocal = glm::clamp(cursorPositionLocal.x, 0, mSize.x);
+    int sliderPositionLocal = glm::clamp(cursorPositionLocal.x, sliderSize.x, mSize.x - sliderSize.x);
 
     mSliderWidget->SetPositionX(sliderPositionLocal);
 }

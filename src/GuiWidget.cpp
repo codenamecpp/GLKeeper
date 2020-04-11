@@ -382,7 +382,7 @@ void GuiWidget::SetPosition(const Point& position, eGuiUnits units_x, eGuiUnits 
     mPosition = ComputePositionPixels();
     if (mPosition != prevPosition)
     {
-        PositionChanged(prevPosition);
+        PositionChanged(prevPosition, true);
     }
 }
 
@@ -412,7 +412,7 @@ void GuiWidget::SetSize(const Point& size, eGuiUnits units_w, eGuiUnits units_h)
     mSize = ComputeSizePixels();
     if (mSize != prevSize)
     {
-        SizeChanged(prevSize);
+        SizeChanged(prevSize, true);
     }
 }
 
@@ -623,7 +623,7 @@ void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
     {
         Point prevPosition = mPosition;
         mPosition = newPosition;
-        PositionChanged(prevPosition);
+        PositionChanged(prevPosition, false);
     }
 
     // compute relative size
@@ -645,7 +645,7 @@ void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
     {
         Point prevSize = mSize;
         mSize = correctSize;
-        SizeChanged(prevSize);
+        SizeChanged(prevSize, false);
     }
 }
 
@@ -665,7 +665,7 @@ void GuiWidget::ParentEnableStateChanged()
     EnableStateChanged();
 }
 
-void GuiWidget::PositionChanged(const Point& prevPosition)
+void GuiWidget::PositionChanged(const Point& prevPosition, bool setAnchors)
 {
     InvalidateTransform();
 
@@ -675,10 +675,15 @@ void GuiWidget::PositionChanged(const Point& prevPosition)
         currChild->ParentPositionChanged(prevPosition);
     }
 
+    if (setAnchors)
+    {
+        SetAnchorPositions();
+    }
+
     HandlePositionChanged(prevPosition);
 }
 
-void GuiWidget::SizeChanged(const Point& prevSize)
+void GuiWidget::SizeChanged(const Point& prevSize, bool setAnchors)
 {
     // update origin point
     if (mOriginUnitsX == eGuiUnits_Percents || mOriginUnitsY == eGuiUnits_Percents)
@@ -691,6 +696,11 @@ void GuiWidget::SizeChanged(const Point& prevSize)
         currChild = currChild->mNextSibling)
     {
         currChild->ParentSizeChanged(prevSize, mSize);
+    }
+
+    if (setAnchors)
+    {
+        SetAnchorPositions();
     }
 
     HandleSizeChanged(prevSize);

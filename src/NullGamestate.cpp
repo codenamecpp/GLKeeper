@@ -58,50 +58,15 @@ void NullGamestate::HandleGamestateEnter()
         gRootWidget->AttachChild(panel);
 
         {
-            GuiButton* button = new GuiButton;
-            button->SetPosition(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
-            button->SetSize(Point(60, 60), eGuiUnits_Percents, eGuiUnits_Percents);
-            button->SetOrigin(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
-            //button->SetClipChildren(true);
-
-            ghandler.Subscribe(button, eGuiEvent_Click);
-            ghandler.Subscribe(button, eGuiEvent_MouseEnter);
-            ghandler.Subscribe(button, eGuiEvent_MouseLeave);
-
-            button->mDebugColorDisabled = Color32_GrimGray;
-            button->mDebugColorHovered = Color32_Orange;
-
-            {
-                GuiPictureBox* picture = new GuiPictureBox;
-                {
-                    Texture2D_Image texture_image;
-                    texture_image.LoadFromFile("D:/Temp/fill.png");
-                    texture_image.ResizeToPowerOfTwo();
-
-                    Texture2D* texture = new Texture2D("dummy");
-                    texture->CreateTexture(texture_image);
-
-                    picture->SetTexture(texture);
-                    ghandler.mBox = picture;
-                }
-                picture->SetSizeMode(eGuiSizeMode_Tile);
-                picture->SetSize(Point(256, 190));
-                picture->SetOrigin(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
-                picture->SetPosition(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
-                button->AttachChild(picture);
-            }
-
-            panel->AttachChild(button);
-        }
-
-        {
             GuiSlider* slider = new GuiSlider;
-            slider->SetPosition(Point(100, 100));
-            slider->SetSize(Point(300, 80));
+            slider->SetPosition(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
+            slider->SetOrigin(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
+            slider->SetSize(Point(600, 70));
 
             GuiAnchors anchors;
             anchors.mB = true; anchors.mT = true; anchors.mL = true; anchors.mR = true;
             slider->SetAnchors(anchors);
+
             ghandler.mSlider = slider;
             {
                 GuiPictureBox* picbox = new GuiPictureBox;
@@ -110,6 +75,26 @@ void NullGamestate::HandleGamestateEnter()
                 picbox->SetSizeMode(eGuiSizeMode_Scale);
                 //picbox->SetSize(Point(60, 60));
                 slider->AttachChild(picbox);
+            }
+
+            {
+                GuiButton* left_button = new GuiButton;
+                left_button->SetSize(Point(60, 60));
+                left_button->SetPosition(Point(35, 50), eGuiUnits_Pixels, eGuiUnits_Percents);
+                left_button->SetOrigin(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
+                slider->AttachChild(left_button);
+            }
+
+            {
+                GuiButton* right_button = new GuiButton;
+                right_button->SetSize(Point(60, 60));
+                right_button->SetPosition(Point(565, 50), eGuiUnits_Pixels, eGuiUnits_Percents);
+                right_button->SetOrigin(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
+
+                GuiAnchors anchors;
+                anchors.mB = false; anchors.mT = false; anchors.mL = false; anchors.mR = true;
+                right_button->SetAnchors(anchors);
+                slider->AttachChild(right_button);
             }
 
             panel->AttachChild(slider);
