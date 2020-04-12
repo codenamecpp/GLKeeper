@@ -59,12 +59,11 @@ public:
     void RegisterEventsHandler(GuiEventsHandler* eventsHandler);
     void UnregisterEventsHandler(GuiEventsHandler* eventsHandler);
 
-    // attach/detach interactive gui layer
-    // @param interactiveLayer: Layer
-    void AttachGuiLayer(GuiLayer* interactiveLayer);
-    void DetachGuiLayer(GuiLayer* interactiveLayer);
-    void DetachAllGuiLayers();
-    bool IsGuiLayerAttached(const GuiLayer* interactiveLayer) const;
+    // attach/detach widgets
+    // @param hierarchy: Hierarchy
+    void AttachWidgets(GuiHierarchy* hierarchy);
+    void DetachWidgets(GuiHierarchy* hierarchy);
+    void DetachAllWidgets();
 
 private:
     void RegisterWidgetsClasses();
@@ -80,7 +79,7 @@ private:
     std::vector<GuiEventsHandler*> mEventHandlers;
     std::vector<GuiEvent> mEventsQueue;
     std::vector<GuiEvent> mProcessingEventsQueue;
-    std::vector<GuiLayer*> mLayers;
+    std::vector<GuiHierarchy*> mHiers;
 };
 
 extern GuiManager gGuiManager;

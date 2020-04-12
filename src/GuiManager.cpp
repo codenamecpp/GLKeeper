@@ -8,7 +8,7 @@
 #include "GuiButton.h"
 #include "GuiPanel.h"
 #include "GuiSlider.h"
-#include "GuiLayer.h"
+#include "GuiHierarchy.h"
 
 GuiManager gGuiManager;
 
@@ -31,16 +31,16 @@ void GuiManager::Deinit()
     mWidgetsClasses.clear();
     mEventHandlers.clear();
 
-    DetachAllGuiLayers();
+    DetachAllWidgets();
     ClearEventsQueue();
 }
 
 void GuiManager::RenderFrame(GuiRenderer& renderContext)
 {
-    // render interactive ui layers
-    for (GuiLayer* currentLayer: mLayers)
+    // render widgets
+    for (GuiHierarchy* currHier: mHiers)
     {
-        currentLayer->RenderFrame(renderContext);
+        currHier->RenderFrame(renderContext);
     }
 }
 
@@ -48,11 +48,10 @@ void GuiManager::UpdateFrame()
 {
     ProcessEventsQueue();
 
-    float deltaTime = (float) gTimeManager.GetRealtimeFrameDelta();
-    // update interactive ui layers
-    for (GuiLayer* currentLayer: mLayers)
+    // update widgets
+    for (GuiHierarchy* currHier: mHiers)
     {
-        currentLayer->UpdateFrame(deltaTime);
+        currHier->UpdateFrame();
     }
 
     ScanHoveredWidget();
@@ -120,15 +119,15 @@ void GuiManager::ScanHoveredWidget()
 {
     GuiWidget* newHovered = nullptr;
 
-    if (!mLayers.empty())
+    if (!mHiers.empty())
     {
-        for (auto reverse_iter = mLayers.rbegin(); reverse_iter != mLayers.rend(); ++reverse_iter)
+        for (auto reverse_iter = mHiers.rbegin(); reverse_iter != mHiers.rend(); ++reverse_iter)
         {
-            GuiLayer* currentLayer = *reverse_iter;
-            if (currentLayer->mRootWidget == nullptr)
+            GuiHierarchy* currentHier = *reverse_iter;
+            if (currentHier->mRootWidget == nullptr)
                 continue;
 
-            newHovered = currentLayer->mRootWidget->PickWidget(gInputsManager.mCursorPosition);
+            newHovered = currentHier->mRootWidget->PickWidget(gInputsManager.mCursorPosition);
             if (newHovered)
                 break;
         }
@@ -270,28 +269,23 @@ void GuiManager::ClearEventsQueue()
     mProcessingEventsQueue.clear();
 }
 
-void GuiManager::AttachGuiLayer(GuiLayer* interactiveLayer)
+void GuiManager::AttachWidgets(GuiHierarchy* hierarchy)
 {
-    if (interactiveLayer == nullptr)
+    if (hierarchy == nullptr)
     {
         debug_assert(false);
         return;
     }
 
-    cxx::push_back_if_unique(mLayers, interactiveLayer);
+    cxx::push_back_if_unique(mHiers, hierarchy);
 }
 
-void GuiManager::DetachGuiLayer(GuiLayer* interactiveLayer)
+void GuiManager::DetachWidgets(GuiHierarchy* hierarchy)
 {
-    cxx::erase_elements(mLayers, interactiveLayer);
+    cxx::erase_elements(mHiers, hierarchy);
 }
 
-void GuiManager::DetachAllGuiLayers()
+void GuiManager::DetachAllWidgets()
 {
-    mLayers.clear();
-}
-
-bool GuiManager::IsGuiLayerAttached(const GuiLayer* interactiveLayer) const
-{
-    return cxx::contains(mLayers, interactiveLayer);
+    mHiers.clear();
 }

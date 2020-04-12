@@ -3,6 +3,7 @@
 #include "GuiManager.h"
 #include "GuiRenderer.h"
 #include "InputsManager.h"
+#include "GraphicsDevice.h"
 
 // base widget class factory
 static GuiWidgetFactory<GuiWidget> _BaseWidgetsFactory;
@@ -816,21 +817,22 @@ Point GuiWidget::ComputePositionPixels() const
 {
     Point outputPoint = mPosition;
 
-    if (mParent == nullptr ||
-        (mPositionUnitsX == eGuiUnits_Pixels && mPositionUnitsY == eGuiUnits_Pixels))
+    if (mPositionUnitsX == eGuiUnits_Pixels && mPositionUnitsY == eGuiUnits_Pixels)
     {
         return outputPoint;
     }
 
+    const Point& parentSize = mParent ? mParent->mSize : gGraphicsDevice.mScreenResolution;
+
     if (mPositionUnitsX == eGuiUnits_Percents)
     {
-        float valuex = mParent->mSize.x * (mPositionPercents.x * 1.0f / 100.0f);
+        float valuex = parentSize.x * (mPositionPercents.x * 1.0f / 100.0f);
         outputPoint.x = (int) valuex;
     }
 
     if (mPositionUnitsY == eGuiUnits_Percents)
     {
-        float valuey = mParent->mSize.y * (mPositionPercents.y * 1.0f / 100.0f);
+        float valuey = parentSize.y * (mPositionPercents.y * 1.0f / 100.0f);
         outputPoint.y = (int) valuey;
     }
 
@@ -841,21 +843,22 @@ Point GuiWidget::ComputeSizePixels() const
 {
     Point outputSize = mSize;
 
-    if (mParent == nullptr ||
-        (mSizeUnitsW == eGuiUnits_Pixels && mSizeUnitsH == eGuiUnits_Pixels))
+    if (mSizeUnitsW == eGuiUnits_Pixels && mSizeUnitsH == eGuiUnits_Pixels)
     {
         return outputSize;
     }
 
+    const Point& parentSize = mParent ? mParent->mSize : gGraphicsDevice.mScreenResolution;
+
     if (mSizeUnitsW == eGuiUnits_Percents)
     {
-        float valuew = mParent->mSize.x * (mSizePercents.x * 1.0f / 100.0f);
+        float valuew = parentSize.x * (mSizePercents.x * 1.0f / 100.0f);
         outputSize.x = (int) valuew;
     }
 
     if (mSizeUnitsH == eGuiUnits_Percents)
     {
-        float valueh = mParent->mSize.y * (mSizePercents.y * 1.0f / 100.0f);
+        float valueh = parentSize.y * (mSizePercents.y * 1.0f / 100.0f);
         outputSize.y = (int) valueh;
     }
 
@@ -880,13 +883,12 @@ void GuiWidget::SetAnchorPositions()
     mAnchorDistR = 0;
     mAnchorDistB = 0;
 
-    if (mParent == nullptr)
-        return;
+    const Point& parentSize = mParent ? mParent->mSize : gGraphicsDevice.mScreenResolution;
 
     mAnchorDistL = mPosition.x - mOrigin.x;
     mAnchorDistT = mPosition.y - mOrigin.y;
-    mAnchorDistR = mParent->mSize.x - (mAnchorDistL + mSize.x);
-    mAnchorDistB = mParent->mSize.y - (mAnchorDistT + mSize.y);
+    mAnchorDistR = parentSize.x - (mAnchorDistL + mSize.x);
+    mAnchorDistB = parentSize.y - (mAnchorDistT + mSize.y);
 }
 
 void GuiWidget::ReleaseMouseCapture()
