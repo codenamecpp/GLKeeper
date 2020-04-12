@@ -44,8 +44,7 @@ decl_enum_strings(eGuiUnits);
 enum eGuiWidgetAttribute
 {
     eGuiWidgetAttribute_Interactive, // widget receiving mouse inputs and can be pressed or hovered
-    eGuiWidgetAttribute_DragDrop, // widget supports drag and drop
-    eGuiWidgetAttribute_PickTarget, // cannot pick child widgets
+    eGuiWidgetAttribute_DisablePickChildren, // cannot pick child widgets
 };
 
 // gui widget anchors struct
@@ -131,31 +130,6 @@ public:
     // 2 - BOTTOM RIGHT
     // 3 - TOP RIGHT
     Vertex2D mPoints[4];
-};
-
-// drag and drop events listener
-class GuiDragDropHandler
-{
-public:
-    virtual ~GuiDragDropHandler()
-    {
-    }
-    // on start drag
-    virtual void HandleDragStart(const Point& screenPoint)
-    {
-    }
-    // drag interrupted
-    virtual void HandleDragCancel()
-    {
-    }
-    // dropped
-    virtual void HandleDragDrop(const Point& screenPoint)
-    {
-    }
-    // process drag
-    virtual void HandleDrag(const Point& screenPoint)
-    {
-    }
 };
 
 // creates widget instance of specific class

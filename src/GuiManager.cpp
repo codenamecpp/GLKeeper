@@ -25,6 +25,8 @@ bool GuiManager::Initialize()
 
 void GuiManager::Deinit()
 {
+    mMouseCaptureWidget = nullptr;
+
     mWidgetsClasses.clear();
     mWidgets.clear();
     mEventHandlers.clear();
@@ -60,55 +62,56 @@ void GuiManager::UpdateFrame()
         currWidget->UpdateFrame(deltaTime);
     }
 
-    UpdateCurrentHoveredWidget();
+    ScanHoveredWidget();
 }
 
 void GuiManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
-    if (inputEvent.mButton == eMouseButton_Left)
+    if (mMouseCaptureWidget)
     {
-        if (inputEvent.mPressed)
-        {
-            HandleMouseLButtonPressed(inputEvent);
-        }
-        else
-        {
-            HandleMouseLButtonReleased(inputEvent);
-        }
+        mMouseCaptureWidget->ProcessEvent(inputEvent);
+
+        // skip hovered widget
+        return;
+    }
+
+    if (mHoveredWidget)
+    {
+        mHoveredWidget->ProcessEvent(inputEvent);
     }
 }
 
 void GuiManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
 {
-    if (mCurrentDragHandler) // continue drag
-    {
-        mCurrentDragHandler->HandleDrag(gInputsManager.mCursorPosition);
+    ScanHoveredWidget(); // do extra scan
 
-        inputEvent.SetConsumed();
+    if (mMouseCaptureWidget)
+    {
+        mMouseCaptureWidget->ProcessEvent(inputEvent);
+
+        // skip hovered widget
         return;
     }
-
-    UpdateCurrentHoveredWidget(); // extra lookup just in case
 
     if (mHoveredWidget)
     {
         mHoveredWidget->ProcessEvent(inputEvent);
-        return;
     }
 }
 
 void GuiManager::HandleInputEvent(MouseScrollInputEvent& inputEvent)
 {
-    if (mCurrentDragHandler) // continue drag
+    if (mMouseCaptureWidget)
     {
-        inputEvent.SetConsumed();
+        mMouseCaptureWidget->ProcessEvent(inputEvent);
+
+        // skip hovered widget
         return;
     }
 
     if (mHoveredWidget)
     {
         mHoveredWidget->ProcessEvent(inputEvent);
-        return;
     }
 }
 
@@ -120,34 +123,7 @@ void GuiManager::HandleInputEvent(KeyCharEvent& inputEvent)
 {
 }
 
-void GuiManager::HandleMouseLButtonPressed(MouseButtonInputEvent& inputEvent)
-{
-    if (mHoveredWidget)
-    {
-        mHoveredWidget->ProcessEvent(inputEvent);
-        return;
-    }
-}
-
-void GuiManager::HandleMouseLButtonReleased(MouseButtonInputEvent& inputEvent)
-{
-    if (mCurrentDragHandler) // finish drag
-    {
-        mCurrentDragHandler->HandleDragDrop(gInputsManager.mCursorPosition);
-        mCurrentDragHandler = nullptr;
-
-        inputEvent.SetConsumed();
-        return;
-    }
-
-    if (mHoveredWidget)
-    {
-        mHoveredWidget->ProcessEvent(inputEvent);
-        return;
-    }
-}
-
-void GuiManager::UpdateCurrentHoveredWidget()
+void GuiManager::ScanHoveredWidget()
 {
     GuiWidget* newHovered = nullptr;
 
@@ -219,24 +195,6 @@ GuiWidget* GuiManager::ConstructWidget(const std::string& className) const
     return nullptr;
 }
 
-void GuiManager::SetDragHandler(GuiDragDropHandler* dragHandler, const Point& screenPoint)
-{
-    if (mCurrentDragHandler == dragHandler)
-        return;
-
-    if (mCurrentDragHandler)
-    {
-        mCurrentDragHandler->HandleDragCancel();
-        mCurrentDragHandler = nullptr;
-    }
-
-    mCurrentDragHandler = dragHandler;
-    if (mCurrentDragHandler)
-    {
-        mCurrentDragHandler->HandleDragStart(screenPoint);
-    }
-}
-
 void GuiManager::HandleScreenResolutionChanged()
 {
 }
@@ -249,9 +207,9 @@ void GuiManager::HandleWidgetDestroy(GuiWidget* widget)
         return;
     }
 
-    if (widget == mCurrentDragHandler)
+    if (widget == mMouseCaptureWidget)
     {
-        mCurrentDragHandler = nullptr; // clear silently
+        mMouseCaptureWidget = nullptr;
     }
 
     if (widget == mHoveredWidget)
@@ -260,18 +218,12 @@ void GuiManager::HandleWidgetDestroy(GuiWidget* widget)
     }
 }
 
-void GuiManager::PostGuiEvent(GuiEvent* eventData)
+void GuiManager::PostGuiEvent(const GuiEvent& eventData)
 {
-    if (eventData == nullptr)
-    {
-        debug_assert(false);
-        return;
-    }
-
     if (mEventHandlers.empty()) // no one's there
         return;
 
-    mEventsQueue.push_back(*eventData);
+    mEventsQueue.push_back(eventData);
 }
 
 void GuiManager::RegisterEventsHandler(GuiEventsHandler* eventsHandler)

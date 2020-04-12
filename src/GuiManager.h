@@ -7,7 +7,7 @@ class GuiManager: public cxx::noncopyable
 {
 public:
     // readonly
-    GuiDragDropHandler* mCurrentDragHandler = nullptr;
+    GuiWidget* mMouseCaptureWidget = nullptr;
     GuiWidget* mHoveredWidget = nullptr;
 
 public:
@@ -42,11 +42,6 @@ public:
     // construct new widget of specified class, if it registered
     // @param className: Widget class name
     GuiWidget* ConstructWidget(const std::string& className) const;
-
-    // set active drag handler
-    // @param dragHandler: New handler or null to cancel current drag
-    // @param screenPoint: Start drag position in screen coordinates
-    void SetDragHandler(GuiDragDropHandler* dragHandler, const Point& screenPoint);
     
     // process screen resolution changed event
     void HandleScreenResolutionChanged();
@@ -57,7 +52,7 @@ public:
 
     // push event to events queue and notify registered handlers at beginning of next frame
     // @param eventData: source event data
-    void PostGuiEvent(GuiEvent* eventData);
+    void PostGuiEvent(const GuiEvent& eventData);
 
     // add or remove gui events handler, usually these methods are not explicitly called
     // @param eventsHandler: Handler
@@ -72,10 +67,7 @@ public:
 private:
     void RegisterWidgetsClasses();
 
-    void HandleMouseLButtonPressed(MouseButtonInputEvent& inputEvent);
-    void HandleMouseLButtonReleased(MouseButtonInputEvent& inputEvent);
-
-    void UpdateCurrentHoveredWidget();
+    void ScanHoveredWidget();
     void ProcessEventsQueue();
     void ClearEventsQueue();
 

@@ -42,9 +42,6 @@ bool GuiPanel::HasAttribute(eGuiWidgetAttribute attribute) const
     {
         case eGuiWidgetAttribute_Interactive:
             return true;
-
-        case eGuiWidgetAttribute_DragDrop:
-            return false;
     }
     return false;
 }

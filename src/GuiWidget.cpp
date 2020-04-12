@@ -2,6 +2,7 @@
 #include "GuiWidget.h"
 #include "GuiManager.h"
 #include "GuiRenderer.h"
+#include "InputsManager.h"
 
 // base widget class factory
 static GuiWidgetFactory<GuiWidget> _BaseWidgetsFactory;
@@ -146,7 +147,38 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
     if (!IsEnabled())
         return;
 
+    // post event
+    GuiEvent eventData (this, inputEvent.mPressed ? eGuiEvent_MouseDown : eGuiEvent_MouseUp, inputEvent.mButton);
+    gGuiManager.PostGuiEvent(eventData);
+    
+    bool hasBeenClicked = false;
+    // process clicks
+    if (inputEvent.mButton == eMouseButton_Left)
+    {
+        if (IsScreenPointInsideRect(gInputsManager.mCursorPosition))
+        {
+            if (inputEvent.mPressed)
+            {
+                CaptureMouse();
+            }
+            else
+            {
+                hasBeenClicked = IsMouseCaptured();
+                ReleaseMouseCapture();
+            }    
+        }
+    }
+
     HandleInputEvent(inputEvent);
+
+    if (hasBeenClicked)
+    {
+        // post event
+        GuiEvent clickEventData (this, eGuiEvent_Click, inputEvent.mButton);
+        gGuiManager.PostGuiEvent(clickEventData);
+
+        HandleClick();
+    }
 }
 
 void GuiWidget::ProcessEvent(MouseMovedInputEvent& inputEvent)
@@ -258,7 +290,7 @@ GuiWidget* GuiWidget::PickWidget(const Point& screenPosition)
         return nullptr;
 
     // pick child widgets only if not pick target
-    if (!HasAttribute(eGuiWidgetAttribute_PickTarget))
+    if (!HasAttribute(eGuiWidgetAttribute_DisablePickChildren))
     {
         // process in reversed oreder
         for (GuiWidget* currChild = GetLastChild(); currChild;
@@ -487,20 +519,6 @@ void GuiWidget::SetEnabled(bool isEnabled)
     EnableStateChanged();
 }
 
-bool GuiWidget::StartDrag(const Point& screenPoint)
-{
-    if (!IsEnabled() || !IsVisible() || !HasAttribute(eGuiWidgetAttribute_DragDrop))
-        return false;
-
-    gGuiManager.SetDragHandler(this, screenPoint);
-    return true;
-}
-
-bool GuiWidget::IsBeingDragged() const
-{
-    return gGuiManager.mCurrentDragHandler == this;
-}
-
 Point GuiWidget::LocalToScreen(const Point& position) const
 {
     GuiWidget* thisWidget = const_cast<GuiWidget*>(this);
@@ -720,10 +738,7 @@ void GuiWidget::ShownStateChanged()
 {
     if (!IsVisible()) 
     {
-        if (IsBeingDragged()) // force cancel drag
-        {
-            gGuiManager.SetDragHandler(nullptr, Point());
-        }
+        ReleaseMouseCapture();
 
         if (IsHovered()) // force cancel hover
         {
@@ -745,10 +760,7 @@ void GuiWidget::EnableStateChanged()
 {
     if (!IsEnabled())
     {
-        if (IsBeingDragged()) // force cancel drag
-        {
-            gGuiManager.SetDragHandler(nullptr, Point()); 
-        }
+        ReleaseMouseCapture();
 
         if (IsHovered()) // force cancel hover
         {
@@ -770,14 +782,14 @@ void GuiWidget::HoveredStateChanged()
 {
     if (IsHovered())
     {
-        GuiEvent ev (this, eGuiEvent_MouseEnter);
-        gGuiManager.PostGuiEvent(&ev);
+        GuiEvent eventData (this, eGuiEvent_MouseEnter);
+        gGuiManager.PostGuiEvent(eventData);
 
     }
     else
     {
-        GuiEvent ev (this, eGuiEvent_MouseLeave);
-        gGuiManager.PostGuiEvent(&ev);
+        GuiEvent eventData (this, eGuiEvent_MouseLeave);
+        gGuiManager.PostGuiEvent(eventData);
     }
 
     HandleHoveredStateChanged();
@@ -877,4 +889,23 @@ void GuiWidget::SetAnchorPositions()
     mAnchorDistT = mPosition.y - mOrigin.y;
     mAnchorDistR = mParent->mSize.x - (mAnchorDistL + mSize.x);
     mAnchorDistB = mParent->mSize.y - (mAnchorDistT + mSize.y);
+}
+
+void GuiWidget::ReleaseMouseCapture()
+{
+    if (gGuiManager.mMouseCaptureWidget == this)
+    {
+        gGuiManager.mMouseCaptureWidget = nullptr;
+    }
+}
+
+void GuiWidget::CaptureMouse()
+{
+    debug_assert(gGuiManager.mMouseCaptureWidget == nullptr);
+    gGuiManager.mMouseCaptureWidget = this;
+}
+
+bool GuiWidget::IsMouseCaptured() const
+{
+    return gGuiManager.mMouseCaptureWidget == this;
 }

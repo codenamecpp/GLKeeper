@@ -32,12 +32,6 @@ protected:
     void HandleChildDetached(GuiWidget* childWidget) override;
     GuiSlider* ConstructClone() override;
 
-    // override dragndrop
-    void HandleDragStart(const Point& screenPoint) override;
-    void HandleDragCancel() override;
-    void HandleDragDrop(const Point& screenPoint) override;
-    void HandleDrag(const Point& screenPoint) override;
-
 protected:
     GuiWidget* mSliderWidget = nullptr;
     int mMin = 0;

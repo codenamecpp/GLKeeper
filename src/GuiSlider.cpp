@@ -66,7 +66,6 @@ bool GuiSlider::HasAttribute(eGuiWidgetAttribute attribute) const
     switch (attribute)
     {
         case eGuiWidgetAttribute_Interactive:
-        case eGuiWidgetAttribute_DragDrop:
             return true;
     }
     return false;
@@ -74,10 +73,6 @@ bool GuiSlider::HasAttribute(eGuiWidgetAttribute attribute) const
 
 void GuiSlider::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
-    if (inputEvent.HasPressed(eMouseButton_Left))
-    {
-        gGuiManager.SetDragHandler(this, gInputsManager.mCursorPosition);
-    }
 }
 
 void GuiSlider::HandleChildAttached(GuiWidget* childWidget)
@@ -93,10 +88,6 @@ void GuiSlider::HandleChildDetached(GuiWidget* childWidget)
 {
     if (mSliderWidget && (mSliderWidget == childWidget))
     {
-        if (IsBeingDragged()) // force cancel drag
-        {
-            gGuiManager.SetDragHandler(nullptr, Point());
-        }
 
         mSliderWidget = nullptr;
     }
@@ -106,33 +97,4 @@ GuiSlider* GuiSlider::ConstructClone()
 {
     GuiSlider* selfClone = new GuiSlider(this);
     return selfClone;
-}
-
-void GuiSlider::HandleDragStart(const Point& screenPoint)
-{
-    debug_assert(mSliderWidget);
-}
-
-void GuiSlider::HandleDragCancel()
-{
-    debug_assert(mSliderWidget);
-}
-
-void GuiSlider::HandleDragDrop(const Point& screenPoint)
-{
-    debug_assert(mSliderWidget);
-}
-
-void GuiSlider::HandleDrag(const Point& screenPoint)
-{
-    debug_assert(mSliderWidget);
-
-    Point cursorPositionLocal = ScreenToLocal(screenPoint);
-
-    Point sliderSize = mSliderWidget->GetSize();
-
-    // map cursor position to size
-    int sliderPositionLocal = glm::clamp(cursorPositionLocal.x, sliderSize.x, mSize.x - sliderSize.x);
-
-    mSliderWidget->SetPositionX(sliderPositionLocal);
 }

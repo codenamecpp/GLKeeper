@@ -4,7 +4,6 @@
 
 // basic gui element class
 class GuiWidget: public cxx::handled_object<GuiWidget>
-    , public GuiDragDropHandler
 {
     friend class GuiManager;
 
@@ -145,11 +144,6 @@ public:
     bool IsHovered() const { return mHovered; }
     bool IsClipChildren() const { return mClipChildren; }
 
-    // start drag
-    // @return false if widget is ignoring drag
-    bool StartDrag(const Point& screenPoint);
-    bool IsBeingDragged() const;
-
     // convert from local to screen space and vice versa
     // @param position: Point
     Point LocalToScreen(const Point& position) const;
@@ -187,6 +181,10 @@ protected:
 
     void SetAnchorPositions();
 
+    void ReleaseMouseCapture();
+    void CaptureMouse();
+    bool IsMouseCaptured() const;
+
 protected:
     // overridable
     virtual void HandleRender(GuiRenderer& renderContext) {}
@@ -204,6 +202,8 @@ protected:
     virtual void HandleInputEvent(MouseButtonInputEvent& inputEvent) {}
     virtual void HandleInputEvent(MouseMovedInputEvent& inputEvent) {}
     virtual void HandleInputEvent(MouseScrollInputEvent& inputEvent) {}
+
+    virtual void HandleClick() {}
 
     virtual bool HasAttribute(eGuiWidgetAttribute attribute) const;
 

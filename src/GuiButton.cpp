@@ -41,7 +41,7 @@ void GuiButton::HandleRender(GuiRenderer& renderContext)
     {
         fillColor = mDebugColorHovered;
     }
-    else if (IsBeingDragged())
+    else if (IsMouseCaptured())
     {
         fillColor = Color32_Green;
     }
@@ -52,10 +52,6 @@ void GuiButton::HandleRender(GuiRenderer& renderContext)
 
 void GuiButton::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
-    if (inputEvent.HasPressed(eMouseButton_Left))
-    {
-        gGuiManager.SetDragHandler(this, gInputsManager.mCursorPosition);
-    }
 }
 
 bool GuiButton::HasAttribute(eGuiWidgetAttribute attribute) const
@@ -63,7 +59,6 @@ bool GuiButton::HasAttribute(eGuiWidgetAttribute attribute) const
     switch (attribute)
     {
         case eGuiWidgetAttribute_Interactive:
-        case eGuiWidgetAttribute_DragDrop:
             return true;
     }
     return false;
@@ -73,13 +68,4 @@ GuiButton* GuiButton::ConstructClone()
 {
     GuiButton* selfClone = new GuiButton(this);
     return selfClone;
-}
-
-void GuiButton::HandleDragDrop(const Point& screenPoint)
-{
-    if (IsScreenPointInsideRect(screenPoint))
-    {
-        GuiEvent ev(this, eGuiEvent_Click);
-        gGuiManager.PostGuiEvent(&ev);
-    }
 }
