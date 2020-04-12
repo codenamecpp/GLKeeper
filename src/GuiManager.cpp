@@ -119,7 +119,12 @@ void GuiManager::ScanHoveredWidget()
 {
     GuiWidget* newHovered = nullptr;
 
-    if (!mHiers.empty())
+    if (mMouseCaptureWidget)
+    {
+        newHovered = mMouseCaptureWidget->PickWidget(gInputsManager.mCursorPosition);
+    }
+
+    if (newHovered == nullptr)
     {
         for (auto reverse_iter = mHiers.rbegin(); reverse_iter != mHiers.rend(); ++reverse_iter)
         {

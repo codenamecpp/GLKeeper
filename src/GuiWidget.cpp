@@ -310,7 +310,7 @@ GuiWidget* GuiWidget::PickWidget(const Point& screenPosition)
 
     if (resultWidget == nullptr)
     {
-        if (HasAttribute(eGuiWidgetAttribute_Interactive))
+        if (IsScreenPointInsideRect(screenPosition) && HasAttribute(eGuiWidgetAttribute_Interactive))
         {
             resultWidget = this;
         }

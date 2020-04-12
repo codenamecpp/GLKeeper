@@ -2,8 +2,11 @@
 
 #include "GenericGamestate.h"
 #include "ToolsUILayoutsEditWindow.h"
+#include "GuiHierarchy.h"
+#include "GuiEvent.h"
 
 class LayoutsEditGamestate: public GenericGamestate
+    , public GuiEventsHandler
 {
 public:
     void HandleGamestateEnter() override;
@@ -16,6 +19,15 @@ public:
     void HandleInputEvent(KeyInputEvent& inputEvent) override;
     void HandleInputEvent(KeyCharEvent& inputEvent) override;
 
+protected:
+    // override GuiEventsHandler
+    void HandleClickEvent(GuiWidget* sender) override;
+    void HandleMouseEnter(GuiWidget* sender) override;
+    void HandleMouseLeave(GuiWidget* sender) override;
+    void HandleMouseDown(GuiWidget* sender, eMouseButton mbutton) override;
+    void HandleMouseUp(GuiWidget* sender, eMouseButton mbutton) override;
+
 private:
     ToolsUILayoutsEditWindow mLayoutsEditWindow;
+    GuiHierarchy mHier;
 };

@@ -10,7 +10,7 @@ public:
 
     // setup size mode for current picture
     // @param sizeMode: New mode
-    void SetSizeMode(eGuiSizeMode sizeMode);
+    void SetScaleMode(eGuiSizeMode sizeMode);
 
     // setup texture
     // @param texture: New texture

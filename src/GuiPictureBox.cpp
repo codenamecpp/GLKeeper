@@ -27,7 +27,7 @@ GuiPictureBox::GuiPictureBox(GuiPictureBox* copyWidget)
 {
 }
 
-void GuiPictureBox::SetSizeMode(eGuiSizeMode sizeMode)
+void GuiPictureBox::SetScaleMode(eGuiSizeMode sizeMode)
 {
     if (mSizeMode == sizeMode)
         return;

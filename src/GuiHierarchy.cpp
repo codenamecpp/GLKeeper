@@ -6,6 +6,11 @@
 
 GuiHierarchy::~GuiHierarchy()
 {
+    Clear();
+}
+
+void GuiHierarchy::Clear()
+{
     SafeDelete(mRootWidget);
 }
 
@@ -23,5 +28,21 @@ void GuiHierarchy::UpdateFrame()
     {
         float deltaTime = (float) gTimeManager.GetRealtimeFrameDelta();
         mRootWidget->UpdateFrame(deltaTime);
+    }
+}
+
+void GuiHierarchy::SetVisible(bool isVisible)
+{
+    if (mRootWidget)
+    {
+        mRootWidget->SetVisible(isVisible);
+    }
+}
+
+void GuiHierarchy::SetEnabled(bool isEnabled)
+{
+    if (mRootWidget)
+    {
+        mRootWidget->SetEnabled(isEnabled);
     }
 }

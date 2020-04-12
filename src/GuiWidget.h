@@ -144,6 +144,8 @@ public:
     bool IsHovered() const { return mHovered; }
     bool IsClipChildren() const { return mClipChildren; }
 
+    bool IsMouseCaptured() const;
+
     // convert from local to screen space and vice versa
     // @param position: Point
     Point LocalToScreen(const Point& position) const;
@@ -180,9 +182,7 @@ protected:
     Point ComputeSizePixels() const;
 
     void SetAnchorPositions();
-
     void ReleaseMouseCapture();
-    bool IsMouseCaptured() const;
 
 protected:
     // overridable

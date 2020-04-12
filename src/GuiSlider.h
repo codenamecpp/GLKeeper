@@ -1,9 +1,11 @@
 #pragma once
 
 #include "GuiWidget.h"
+#include "GuiEvent.h"
 
 // slider widget
 class GuiSlider: public GuiWidget
+    , public GuiEventsHandler
 {
 public:
     GuiSlider();
@@ -22,9 +24,10 @@ protected:
     GuiSlider(GuiWidgetClass* widgetClass);
     GuiSlider(GuiSlider* copyWidget);
 
-    void SetupSliderWidget();
+    void SetupControlWidget(GuiWidget* controlWidget);
 
     // override GuiWidget
+    void HandleUpdate(float deltaTime) override;
     void HandleRender(GuiRenderer& renderContext) override;
     bool HasAttribute(eGuiWidgetAttribute attribute) const override;
     void HandleInputEvent(MouseButtonInputEvent& inputEvent) override;
@@ -32,11 +35,18 @@ protected:
     void HandleChildDetached(GuiWidget* childWidget) override;
     GuiSlider* ConstructClone() override;
 
+    // override GuiEventsHandler
+    void HandleMouseDown(GuiWidget* sender, eMouseButton mbutton) override;
+    void HandleMouseUp(GuiWidget* sender, eMouseButton mbutton) override;
+
 protected:
-    GuiWidget* mSliderWidget = nullptr;
     int mMin = 0;
     int mMax = 100;
     int mPageSize = 10;
+    // control widgets
+    GuiWidget* mSliderWidget = nullptr;
+    GuiWidget* mMinWidget = nullptr;
+    GuiWidget* mMaxWidget = nullptr;
 };
 
 // slider widget class
