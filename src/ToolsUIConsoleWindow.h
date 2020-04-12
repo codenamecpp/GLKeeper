@@ -1,22 +1,22 @@
 #pragma once
 
-#include "DebugUIWindow.h"
+#include "ToolsUIWindow.h"
 
 // forwards
 struct ImGuiInputTextCallbackData;
 
-// debug console window
-class ConsoleWindow: public DebugUIWindow
+// console window
+class ToolsUIConsoleWindow: public ToolsUIWindow
 {
 public:
     bool mAutoScroll = true;
     bool mScrollToBottom = false;
 
 public:
-    ConsoleWindow();
+    ToolsUIConsoleWindow();
 
 private:
-    // override DebugGuiWindow
+    // override ToolsUIWindow
     void DoUI(ImGuiIO& imguiContext) override;
 
     // internals
@@ -30,4 +30,4 @@ private:
     int mHistoryPos = -1; // -1: new line, 0..History.Size-1 browsing history.
 };
 
-extern ConsoleWindow gConsoleWindow;
+extern ToolsUIConsoleWindow gConsoleWindow;

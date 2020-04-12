@@ -3,10 +3,10 @@
 #include "RenderScene.h"
 #include "Console.h"
 #include "GenericGamestate.h"
-#include "ConsoleWindow.h"
+#include "ToolsUIConsoleWindow.h"
 #include "System.h"
 #include "GameWorld.h"
-#include "DebugUIManager.h"
+#include "ToolsUIManager.h"
 
 GameMain gGameMain;
 
@@ -20,7 +20,7 @@ bool GameMain::Initialize()
         return false;
     }
 
-    gDebugUIManager.AttachWindow(&mFpsWindow);
+    gToolsUIManager.AttachWindow(&mFpsWindow);
     mFpsWindow.SetWindowShown(false);
 
     if (!gGameWorld.Initialize())
@@ -38,7 +38,7 @@ bool GameMain::Initialize()
 
     //SwitchToGameState(&mGameplayGamestate);
 
-    SwitchToGameState(&mNullGamestate);
+    SwitchToGameState(&mLayoutsEditGamestate);
 
     return true;
 }
@@ -49,7 +49,7 @@ void GameMain::Deinit()
 
     SwitchToGameState(nullptr);
 
-    gDebugUIManager.DetachWindow(&mFpsWindow);
+    gToolsUIManager.DetachWindow(&mFpsWindow);
     gRenderScene.Deinit();
 }
 
@@ -143,9 +143,9 @@ bool GameMain::IsGameplayGamestate() const
     return mCurrentGamestate == &mGameplayGamestate;
 }
 
-bool GameMain::IsNullGamestate() const
+bool GameMain::IsLayoutsEditGamestate() const
 {
-    return mCurrentGamestate == &mNullGamestate;
+    return mCurrentGamestate == &mLayoutsEditGamestate;
 }
 
 void GameMain::HandleScreenResolutionChanged()

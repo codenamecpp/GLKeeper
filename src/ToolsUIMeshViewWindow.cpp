@@ -1,6 +1,6 @@
 #include "pch.h"
-#include "MeshViewWindow.h"
-#include "DebugUIManager.h"
+#include "ToolsUIMeshViewWindow.h"
+#include "ToolsUIManager.h"
 #include "FileSystem.h"
 #include "Console.h"
 #include "FileSystemArchive.h"
@@ -12,24 +12,24 @@
 #include "AnimModelComponent.h"
 #include "GameObject.h"
 
-MeshViewWindow::MeshViewWindow()
+ToolsUIMeshViewWindow::ToolsUIMeshViewWindow()
 {
     mModelsListFilter = new ImGuiTextFilter;
 }
 
-MeshViewWindow::~MeshViewWindow()
+ToolsUIMeshViewWindow::~ToolsUIMeshViewWindow()
 {
     SafeDelete(mModelsListFilter);
 }
 
-void MeshViewWindow::Setup(MeshViewGamestate* meshviewGamestate)
+void ToolsUIMeshViewWindow::Setup(MeshViewGamestate* meshviewGamestate)
 {
     mMeshViewGamestate = meshviewGamestate;
 
     LoadModelsList();
 }
 
-void MeshViewWindow::LoadModelsList()
+void ToolsUIMeshViewWindow::LoadModelsList()
 {
     mAllModelsList.clear();
     if (FileSystemArchive* archive = gFileSystem.FindResourceArchive("Meshes.WAD"))
@@ -47,7 +47,7 @@ void MeshViewWindow::LoadModelsList()
     UpdateFilteredElementsList();
 }
 
-void MeshViewWindow::DoUI(ImGuiIO& imguiContext)
+void ToolsUIMeshViewWindow::DoUI(ImGuiIO& imguiContext)
 {
     ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
 
@@ -225,7 +225,7 @@ void MeshViewWindow::DoUI(ImGuiIO& imguiContext)
     ImGui::End();
 }
 
-void MeshViewWindow::UpdateFilteredElementsList()
+void ToolsUIMeshViewWindow::UpdateFilteredElementsList()
 {
     mFilteredList.clear();
     mFilteredList.reserve(mAllModelsList.size());
@@ -239,7 +239,7 @@ void MeshViewWindow::UpdateFilteredElementsList()
     }
 }
 
-void MeshViewWindow::ChangeModelAsset(const char* assetName)
+void ToolsUIMeshViewWindow::ChangeModelAsset(const char* assetName)
 {
     if (mMeshViewGamestate)
     {

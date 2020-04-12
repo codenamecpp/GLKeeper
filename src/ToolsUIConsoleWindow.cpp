@@ -1,16 +1,16 @@
 #include "pch.h"
 #include "imgui.h"
-#include "ConsoleWindow.h"
+#include "ToolsUIConsoleWindow.h"
 #include "Console.h"
 #include "ConsoleVariable.h"
 
-ConsoleWindow gConsoleWindow;
+ToolsUIConsoleWindow gConsoleWindow;
 
-ConsoleWindow::ConsoleWindow()
+ToolsUIConsoleWindow::ToolsUIConsoleWindow()
 {
 }
 
-void ConsoleWindow::DoUI(ImGuiIO& imguiContext)
+void ToolsUIConsoleWindow::DoUI(ImGuiIO& imguiContext)
 {
     ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoNav;
 
@@ -74,7 +74,7 @@ void ConsoleWindow::DoUI(ImGuiIO& imguiContext)
 
     auto TextEditCallbackStub = [](ImGuiInputTextCallbackData* data) -> int
     {
-        ConsoleWindow* this_ = (ConsoleWindow*) data->UserData;
+        ToolsUIConsoleWindow* this_ = (ToolsUIConsoleWindow*) data->UserData;
         debug_assert(this_);
         return this_->TextEditCallback(data);
     };
@@ -99,7 +99,7 @@ void ConsoleWindow::DoUI(ImGuiIO& imguiContext)
     ImGui::End();
 }
 
-int ConsoleWindow::TextEditCallback(ImGuiInputTextCallbackData* data)
+int ToolsUIConsoleWindow::TextEditCallback(ImGuiInputTextCallbackData* data)
 {
     switch (data->EventFlag)
     {
@@ -222,7 +222,7 @@ int ConsoleWindow::TextEditCallback(ImGuiInputTextCallbackData* data)
     return 0;
 }
 
-void ConsoleWindow::Exec()
+void ToolsUIConsoleWindow::Exec()
 {
     if (!mInputString.empty())
     {
@@ -257,7 +257,7 @@ void ConsoleWindow::Exec()
     MoveInputToHistory();
 }
 
-void ConsoleWindow::MoveInputToHistory()
+void ToolsUIConsoleWindow::MoveInputToHistory()
 {
     const int MaxHistoryEntries = 6;
     if (mHistory.size() >= MaxHistoryEntries)

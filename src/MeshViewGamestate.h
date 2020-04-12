@@ -2,12 +2,12 @@
 
 #include "GenericGamestate.h"
 #include "OrbitCameraController.h"
-#include "MeshViewWindow.h"
+#include "ToolsUIMeshViewWindow.h"
 
 // mesh browser utility gamestate
 class MeshViewGamestate: public GenericGamestate
 {
-    friend class MeshViewWindow;
+    friend class ToolsUIMeshViewWindow;
 
 public:
     // enter game state
@@ -33,5 +33,5 @@ public:
 private:
     OrbitCameraController mOrbitCameraController;
     GameObject* mModelObject = nullptr;
-    MeshViewWindow mMeshViewWindow;
+    ToolsUIMeshViewWindow mMeshViewWindow;
 };

@@ -2,8 +2,8 @@
 
 #include "MeshViewGamestate.h"
 #include "GameplayGamestate.h"
-#include "NullGamestate.h"
-#include "StatisticsWindow.h"
+#include "LayoutsEditGamestate.h"
+#include "ToolsUISceneStatisticsWindow.h"
 
 // game core
 class GameMain: public cxx::noncopyable
@@ -39,7 +39,7 @@ public:
     // determine current game state
     bool IsMeshViewGamestate() const;
     bool IsGameplayGamestate() const;
-    bool IsNullGamestate() const;
+    bool IsLayoutsEditGamestate() const;
 
     void HandleScreenResolutionChanged();
 
@@ -49,9 +49,9 @@ private:
 private:
     MeshViewGamestate mMeshViewGamestate;
     GameplayGamestate mGameplayGamestate;
-    NullGamestate mNullGamestate;
+    LayoutsEditGamestate mLayoutsEditGamestate;
 
-    StatisticsWindow mFpsWindow;
+    ToolsUISceneStatisticsWindow mFpsWindow;
 };
 
 extern GameMain gGameMain;

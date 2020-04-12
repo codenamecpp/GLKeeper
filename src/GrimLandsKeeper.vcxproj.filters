@@ -50,9 +50,6 @@
     <Filter Include="Game\GUI">
       <UniqueIdentifier>{29e877b2-cd75-42db-97e8-6988bfc8e0c9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Application\DebugUI">
-      <UniqueIdentifier>{cab02080-9d94-428b-9fe1-8cc097e21510}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Third_Party\micropather">
       <UniqueIdentifier>{587d3ed4-1e6f-4f29-a0f0-70825ca6bc5e}</UniqueIdentifier>
     </Filter>
@@ -70,9 +67,6 @@
     </Filter>
     <Filter Include="Game\Render\Shaders">
       <UniqueIdentifier>{cfb6657e-5426-4871-9802-c0f6ab065078}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Application\DebugUI\Windows">
-      <UniqueIdentifier>{22d845d7-589e-4583-bc6e-5ee20689b6bb}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game\World">
       <UniqueIdentifier>{407424f7-127b-475d-ba67-a7cf395d1fd5}</UniqueIdentifier>
@@ -94,6 +88,12 @@
     </Filter>
     <Filter Include="Game\GUI\WidgetsLibrary">
       <UniqueIdentifier>{75816ac9-2884-4e8b-b301-5a900ad8cfda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\ToolsUI">
+      <UniqueIdentifier>{cab02080-9d94-428b-9fe1-8cc097e21510}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Application\ToolsUI\Windows">
+      <UniqueIdentifier>{22d845d7-589e-4583-bc6e-5ee20689b6bb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -318,12 +318,6 @@
     <ClInclude Include="SceneRenderList.h">
       <Filter>Game\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="MeshViewWindow.h">
-      <Filter>Application\DebugUI\Windows</Filter>
-    </ClInclude>
-    <ClInclude Include="ConsoleWindow.h">
-      <Filter>Application\DebugUI\Windows</Filter>
-    </ClInclude>
     <ClInclude Include="GameplayGamestate.h">
       <Filter>Game\GameStates</Filter>
     </ClInclude>
@@ -420,18 +414,6 @@
     <ClInclude Include="GameObjectComponentsFactory.h">
       <Filter>Game\GameObject\Components</Filter>
     </ClInclude>
-    <ClInclude Include="NullGamestate.h">
-      <Filter>Game\GameStates</Filter>
-    </ClInclude>
-    <ClInclude Include="StatisticsWindow.h">
-      <Filter>Application\DebugUI\Windows</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugUIManager.h">
-      <Filter>Application\DebugUI</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugUIWindow.h">
-      <Filter>Application\DebugUI</Filter>
-    </ClInclude>
     <ClInclude Include="GuiRenderProgram.h">
       <Filter>Game\Render\Shaders</Filter>
     </ClInclude>
@@ -464,6 +446,27 @@
     </ClInclude>
     <ClInclude Include="GuiSlider.h">
       <Filter>Game\GUI\WidgetsLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="LayoutsEditGamestate.h">
+      <Filter>Game\GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolsUIWindow.h">
+      <Filter>Application\ToolsUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolsUIManager.h">
+      <Filter>Application\ToolsUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolsUIConsoleWindow.h">
+      <Filter>Application\ToolsUI\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolsUIMeshViewWindow.h">
+      <Filter>Application\ToolsUI\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolsUILayoutsEditWindow.h">
+      <Filter>Application\ToolsUI\Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolsUISceneStatisticsWindow.h">
+      <Filter>Application\ToolsUI\Windows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -595,12 +598,6 @@
     <ClCompile Include="RenderScene.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="MeshViewWindow.cpp">
-      <Filter>Application\DebugUI\Windows</Filter>
-    </ClCompile>
-    <ClCompile Include="ConsoleWindow.cpp">
-      <Filter>Application\DebugUI\Windows</Filter>
-    </ClCompile>
     <ClCompile Include="GameplayGamestate.cpp">
       <Filter>Game\GameStates</Filter>
     </ClCompile>
@@ -679,18 +676,6 @@
     <ClCompile Include="GameObjectComponentsFactory.cpp">
       <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
-    <ClCompile Include="NullGamestate.cpp">
-      <Filter>Game\GameStates</Filter>
-    </ClCompile>
-    <ClCompile Include="StatisticsWindow.cpp">
-      <Filter>Application\DebugUI\Windows</Filter>
-    </ClCompile>
-    <ClCompile Include="DebugUIManager.cpp">
-      <Filter>Application\DebugUI</Filter>
-    </ClCompile>
-    <ClCompile Include="DebugUIWindow.cpp">
-      <Filter>Application\DebugUI</Filter>
-    </ClCompile>
     <ClCompile Include="GuiManager.cpp">
       <Filter>Game\GUI</Filter>
     </ClCompile>
@@ -714,6 +699,27 @@
     </ClCompile>
     <ClCompile Include="GuiSlider.cpp">
       <Filter>Game\GUI\WidgetsLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="LayoutsEditGamestate.cpp">
+      <Filter>Game\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolsUIWindow.cpp">
+      <Filter>Application\ToolsUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolsUIManager.cpp">
+      <Filter>Application\ToolsUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolsUIConsoleWindow.cpp">
+      <Filter>Application\ToolsUI\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolsUIMeshViewWindow.cpp">
+      <Filter>Application\ToolsUI\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolsUILayoutsEditWindow.cpp">
+      <Filter>Application\ToolsUI\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolsUISceneStatisticsWindow.cpp">
+      <Filter>Application\ToolsUI\Windows</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

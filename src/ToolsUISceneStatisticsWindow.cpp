@@ -1,12 +1,12 @@
 #include "pch.h"
 #include "imgui.h"
-#include "StatisticsWindow.h"
+#include "ToolsUISceneStatisticsWindow.h"
 
-StatisticsWindow::StatisticsWindow()
+ToolsUISceneStatisticsWindow::ToolsUISceneStatisticsWindow()
 {
 }
 
-void StatisticsWindow::DoUI(ImGuiIO& imguiContext)
+void ToolsUISceneStatisticsWindow::DoUI(ImGuiIO& imguiContext)
 {
     ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | 
         ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;

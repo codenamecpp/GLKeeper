@@ -1,23 +1,23 @@
 #pragma once
 
-#include "DebugUIWindow.h"
+#include "ToolsUIWindow.h"
 
 class MeshViewGamestate;
 
 // imgui internals
 struct ImGuiTextFilter;
 
-// mesh view ui
-class MeshViewWindow: public DebugUIWindow
+// mesh view window
+class ToolsUIMeshViewWindow: public ToolsUIWindow
 {
 public:
-    MeshViewWindow();
-    ~MeshViewWindow();
+    ToolsUIMeshViewWindow();
+    ~ToolsUIMeshViewWindow();
 
     void Setup(MeshViewGamestate* meshviewGamestate);
 
 private:
-    // override DebugGuiWindow
+    // override ToolsUIWindow
     void DoUI(ImGuiIO& imguiContext) override;
 
     void UpdateFilteredElementsList();

@@ -7,8 +7,8 @@
 #include "EngineTexturesProvider.h"
 #include "RenderManager.h"
 #include "TimeManager.h"
-#include "DebugUIManager.h"
-#include "ConsoleWindow.h"
+#include "ToolsUIManager.h"
+#include "ToolsUIConsoleWindow.h"
 #include "TexturesManager.h"
 #include "GameMain.h"
 #include "ModelAssetsManager.h"
@@ -79,7 +79,7 @@ void System::Initialize(int argc, char *argv[])
         Terminate();
     }
 
-    if (!gDebugUIManager.Initialize())
+    if (!gToolsUIManager.Initialize())
     {
         gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize debug gui system");
         // ignore failure
@@ -127,7 +127,7 @@ void System::Deinit()
     gGuiManager.Deinit();
     gModelsManager.Deinit();
     gTexturesManager.Deinit();
-    gDebugUIManager.Deinit();
+    gToolsUIManager.Deinit();
     gRenderManager.Deinit();
     gTimeManager.Deinit();
     gGraphicsDevice.Deinit();
@@ -163,7 +163,7 @@ void System::Execute()
         // update frame
         gTexturesManager.UpdateFrame();
         gGameMain.UpdateFrame();
-        gDebugUIManager.UpdateFrame();
+        gToolsUIManager.UpdateFrame();
         gGuiManager.UpdateFrame();
 
         // render frame
@@ -194,7 +194,7 @@ void System::HandleScreenResolutionChanged()
 {
     gTexturesManager.HandleScreenResolutionChanged();
     gGameMain.HandleScreenResolutionChanged();
-    gDebugUIManager.HandleScreenResolutionChanged();
+    gToolsUIManager.HandleScreenResolutionChanged();
     gGuiManager.HandleScreenResolutionChanged();
     gRenderManager.HandleScreenResolutionChanged();
 }

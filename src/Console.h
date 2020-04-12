@@ -4,7 +4,7 @@
 // it is used for debug logging, commands execute and set game variables in runtime
 class Console: public cxx::noncopyable
 {
-    friend class ConsoleWindow;
+    friend class ToolsUIConsoleWindow;
 
 public:
 

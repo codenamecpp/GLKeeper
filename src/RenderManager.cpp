@@ -2,7 +2,7 @@
 #include "RenderManager.h"
 #include "GraphicsDevice.h"
 #include "Console.h"
-#include "DebugUIManager.h"
+#include "ToolsUIManager.h"
 #include "GameMain.h"
 #include "ConsoleVariable.h"
 #include "RenderScene.h"
@@ -184,7 +184,7 @@ void RenderManager::RenderFrame()
 
     // draw debug ui
     mGuiRenderer.RenderFrameBegin();
-    gDebugUIManager.RenderFrame();
+    gToolsUIManager.RenderFrame();
     mGuiRenderer.RenderFrameEnd();
 
     // finish draw

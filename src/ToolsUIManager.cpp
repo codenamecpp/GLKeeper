@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "DebugUIManager.h"
+#include "ToolsUIManager.h"
 #include "imgui.h"
 #include "GraphicsDevice.h"
 #include "FileSystem.h"
@@ -7,16 +7,16 @@
 #include "InputsManager.h"
 #include "TimeManager.h"
 #include "GpuBuffer.h"
-#include "DebugUIWindow.h"
+#include "ToolsUIWindow.h"
 #include "Texture2D.h"
 
-DebugUIManager gDebugUIManager;
+ToolsUIManager gToolsUIManager;
 
 // imgui specific data size constants
 const unsigned int Sizeof_ImGuiVertex = sizeof(ImDrawVert);
 const unsigned int Sizeof_ImGuiIndex = sizeof(ImDrawIdx);
 
-bool DebugUIManager::Initialize()
+bool ToolsUIManager::Initialize()
 {
     // initialize imgui context
     IMGUI_CHECKVERSION();
@@ -79,7 +79,7 @@ bool DebugUIManager::Initialize()
     return true;
 }
 
-void DebugUIManager::Deinit()
+void ToolsUIManager::Deinit()
 {
     if (!IsInitialized())
         return;
@@ -109,12 +109,12 @@ void DebugUIManager::Deinit()
     }
 }
 
-bool DebugUIManager::IsInitialized() const
+bool ToolsUIManager::IsInitialized() const
 {
     return ImGui::GetCurrentContext() != nullptr;
 }
 
-void DebugUIManager::RenderFrame()
+void ToolsUIManager::RenderFrame()
 {
     ImDrawData* imGuiDrawData = ImGui::GetDrawData();
 
@@ -185,7 +185,7 @@ void DebugUIManager::RenderFrame()
     }
 }
 
-void DebugUIManager::UpdateFrame()
+void ToolsUIManager::UpdateFrame()
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -205,7 +205,7 @@ void DebugUIManager::UpdateFrame()
         ImGui::ShowDemoWindow();
     }
 
-    for (DebugUIWindow* currWindow: mAllWindowsList)
+    for (ToolsUIWindow* currWindow: mAllWindowsList)
     {
         if (!currWindow->mWindowShown)
             continue;
@@ -216,7 +216,7 @@ void DebugUIManager::UpdateFrame()
     ImGui::Render();
 }
 
-void DebugUIManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
+void ToolsUIManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -226,7 +226,7 @@ void DebugUIManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
     }
 }
 
-void DebugUIManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
+void ToolsUIManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -236,7 +236,7 @@ void DebugUIManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
     }
 }
 
-void DebugUIManager::HandleInputEvent(MouseScrollInputEvent& inputEvent)
+void ToolsUIManager::HandleInputEvent(MouseScrollInputEvent& inputEvent)
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -249,7 +249,7 @@ void DebugUIManager::HandleInputEvent(MouseScrollInputEvent& inputEvent)
     }
 }
 
-void DebugUIManager::HandleInputEvent(KeyInputEvent& inputEvent)
+void ToolsUIManager::HandleInputEvent(KeyInputEvent& inputEvent)
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -264,7 +264,7 @@ void DebugUIManager::HandleInputEvent(KeyInputEvent& inputEvent)
     }
 }
 
-void DebugUIManager::HandleInputEvent(KeyCharEvent& inputEvent)
+void ToolsUIManager::HandleInputEvent(KeyCharEvent& inputEvent)
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -276,7 +276,7 @@ void DebugUIManager::HandleInputEvent(KeyCharEvent& inputEvent)
     }
 }
 
-bool DebugUIManager::AddFontFromExternalFile(ImGuiIO& imguiIO, const char* fontFile, float fontSize)
+bool ToolsUIManager::AddFontFromExternalFile(ImGuiIO& imguiIO, const char* fontFile, float fontSize)
 {
     bool isSuccess = false;
 
@@ -303,7 +303,7 @@ bool DebugUIManager::AddFontFromExternalFile(ImGuiIO& imguiIO, const char* fontF
     return isSuccess;
 }
 
-void DebugUIManager::SetupStyle(ImGuiIO& imguiIO)
+void ToolsUIManager::SetupStyle(ImGuiIO& imguiIO)
 {
     //ImGui::StyleColorsDark();
     ImGuiStyle & style = ImGui::GetStyle();
@@ -392,7 +392,7 @@ void DebugUIManager::SetupStyle(ImGuiIO& imguiIO)
 #endif
 }
 
-void DebugUIManager::AttachWindow(DebugUIWindow* debugWindow)
+void ToolsUIManager::AttachWindow(ToolsUIWindow* debugWindow)
 {
     debug_assert(debugWindow);
     auto found_iterator = std::find(mAllWindowsList.begin(), mAllWindowsList.end(), debugWindow);
@@ -402,7 +402,7 @@ void DebugUIManager::AttachWindow(DebugUIWindow* debugWindow)
     }
 }
 
-void DebugUIManager::DetachWindow(DebugUIWindow* debugWindow)
+void ToolsUIManager::DetachWindow(ToolsUIWindow* debugWindow)
 {
     debug_assert(debugWindow);
     auto found_iterator = std::find(mAllWindowsList.begin(), mAllWindowsList.end(), debugWindow);
@@ -412,7 +412,7 @@ void DebugUIManager::DetachWindow(DebugUIWindow* debugWindow)
     }
 }
 
-void DebugUIManager::HandleScreenResolutionChanged()
+void ToolsUIManager::HandleScreenResolutionChanged()
 {
 
 }

@@ -1,8 +1,9 @@
 #pragma once
 
 #include "GenericGamestate.h"
+#include "ToolsUILayoutsEditWindow.h"
 
-class NullGamestate: public GenericGamestate
+class LayoutsEditGamestate: public GenericGamestate
 {
 public:
     void HandleGamestateEnter() override;
@@ -16,5 +17,5 @@ public:
     void HandleInputEvent(KeyCharEvent& inputEvent) override;
 
 private:
-
+    ToolsUILayoutsEditWindow mLayoutsEditWindow;
 };
