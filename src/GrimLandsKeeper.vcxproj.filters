@@ -468,6 +468,9 @@
     <ClInclude Include="ToolsUISceneStatisticsWindow.h">
       <Filter>Application\ToolsUI\Windows</Filter>
     </ClInclude>
+    <ClInclude Include="GuiLayer.h">
+      <Filter>Game\GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -720,6 +723,9 @@
     </ClCompile>
     <ClCompile Include="ToolsUISceneStatisticsWindow.cpp">
       <Filter>Application\ToolsUI\Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiLayer.cpp">
+      <Filter>Game\GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -68,8 +68,6 @@ GuiWidget* GuiWidget::GetLastChild() const
 
 GuiWidget::~GuiWidget()
 {
-    gGuiManager.HandleWidgetDestroy(this);
-
     if (mParent)
     {
         mParent->DetachChild(this);

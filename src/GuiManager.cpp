@@ -8,6 +8,7 @@
 #include "GuiButton.h"
 #include "GuiPanel.h"
 #include "GuiSlider.h"
+#include "GuiLayer.h"
 
 GuiManager gGuiManager;
 
@@ -28,27 +29,18 @@ void GuiManager::Deinit()
     ClearMouseCapture();
 
     mWidgetsClasses.clear();
-    mWidgets.clear();
     mEventHandlers.clear();
 
+    DetachAllGuiLayers();
     ClearEventsQueue();
-}
-
-void GuiManager::AttachWidget(GuiWidget* widget)
-{
-    cxx::push_back_if_unique(mWidgets, widget);
-}
-
-void GuiManager::DetachWidget(GuiWidget* widget)
-{
-    cxx::erase_elements(mWidgets, widget);
 }
 
 void GuiManager::RenderFrame(GuiRenderer& renderContext)
 {
-    for (GuiWidget* currWidget: mWidgets)
+    // render interactive ui layers
+    for (GuiLayer* currentLayer: mLayers)
     {
-        currWidget->RenderFrame(renderContext);
+        currentLayer->RenderFrame(renderContext);
     }
 }
 
@@ -57,9 +49,10 @@ void GuiManager::UpdateFrame()
     ProcessEventsQueue();
 
     float deltaTime = (float) gTimeManager.GetRealtimeFrameDelta();
-    for (GuiWidget* currWidget: mWidgets)
+    // update interactive ui layers
+    for (GuiLayer* currentLayer: mLayers)
     {
-        currWidget->UpdateFrame(deltaTime);
+        currentLayer->UpdateFrame(deltaTime);
     }
 
     ScanHoveredWidget();
@@ -127,11 +120,18 @@ void GuiManager::ScanHoveredWidget()
 {
     GuiWidget* newHovered = nullptr;
 
-    for (auto reverse_iter = mWidgets.rbegin(); reverse_iter != mWidgets.rend(); ++reverse_iter)
+    if (!mLayers.empty())
     {
-        newHovered = (*reverse_iter)->PickWidget(gInputsManager.mCursorPosition);
-        if (newHovered)
-            break;
+        for (auto reverse_iter = mLayers.rbegin(); reverse_iter != mLayers.rend(); ++reverse_iter)
+        {
+            GuiLayer* currentLayer = *reverse_iter;
+            if (currentLayer->mRootWidget == nullptr)
+                continue;
+
+            newHovered = currentLayer->mRootWidget->PickWidget(gInputsManager.mCursorPosition);
+            if (newHovered)
+                break;
+        }
     }
 
     if (mHoveredWidget == newHovered)
@@ -213,25 +213,6 @@ void GuiManager::HandleScreenResolutionChanged()
 {
 }
 
-void GuiManager::HandleWidgetDestroy(GuiWidget* widget)
-{
-    if (widget == nullptr)
-    {
-        debug_assert(false);
-        return;
-    }
-
-    if (widget == mMouseCaptureWidget)
-    {
-        ClearMouseCapture();
-    }
-
-    if (widget == mHoveredWidget)
-    {
-        mHoveredWidget = nullptr;
-    }
-}
-
 void GuiManager::PostGuiEvent(const GuiEvent& eventData)
 {
     if (mEventHandlers.empty()) // no one's there
@@ -287,4 +268,30 @@ void GuiManager::ClearEventsQueue()
 {
     mEventsQueue.clear();
     mProcessingEventsQueue.clear();
+}
+
+void GuiManager::AttachGuiLayer(GuiLayer* interactiveLayer)
+{
+    if (interactiveLayer == nullptr)
+    {
+        debug_assert(false);
+        return;
+    }
+
+    cxx::push_back_if_unique(mLayers, interactiveLayer);
+}
+
+void GuiManager::DetachGuiLayer(GuiLayer* interactiveLayer)
+{
+    cxx::erase_elements(mLayers, interactiveLayer);
+}
+
+void GuiManager::DetachAllGuiLayers()
+{
+    mLayers.clear();
+}
+
+bool GuiManager::IsGuiLayerAttached(const GuiLayer* interactiveLayer) const
+{
+    return cxx::contains(mLayers, interactiveLayer);
 }

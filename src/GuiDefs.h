@@ -3,6 +3,7 @@
 #include "Texture2D.h"
 
 // forwards
+class GuiLayer;
 class GuiRenderer;
 class GuiWidget;
 class GuiButton;

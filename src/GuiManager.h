@@ -7,8 +7,8 @@ class GuiManager: public cxx::noncopyable
 {
 public:
     // readonly
-    GuiWidget* mMouseCaptureWidget = nullptr;
-    GuiWidget* mHoveredWidget = nullptr;
+    cxx::handle<GuiWidget> mMouseCaptureWidget;
+    cxx::handle<GuiWidget> mHoveredWidget;
 
 public:
     GuiManager();
@@ -50,10 +50,6 @@ public:
     // process screen resolution changed event
     void HandleScreenResolutionChanged();
 
-    // process widget being destroyed event
-    // @param widget: Target widget
-    void HandleWidgetDestroy(GuiWidget* widget);
-
     // push event to events queue and notify registered handlers at beginning of next frame
     // @param eventData: source event data
     void PostGuiEvent(const GuiEvent& eventData);
@@ -63,10 +59,12 @@ public:
     void RegisterEventsHandler(GuiEventsHandler* eventsHandler);
     void UnregisterEventsHandler(GuiEventsHandler* eventsHandler);
 
-    // temporary
-    // todo: remove
-    void AttachWidget(GuiWidget* widget);
-    void DetachWidget(GuiWidget* widget);
+    // attach/detach interactive gui layer
+    // @param interactiveLayer: Layer
+    void AttachGuiLayer(GuiLayer* interactiveLayer);
+    void DetachGuiLayer(GuiLayer* interactiveLayer);
+    void DetachAllGuiLayers();
+    bool IsGuiLayerAttached(const GuiLayer* interactiveLayer) const;
 
 private:
     void RegisterWidgetsClasses();
@@ -82,8 +80,7 @@ private:
     std::vector<GuiEventsHandler*> mEventHandlers;
     std::vector<GuiEvent> mEventsQueue;
     std::vector<GuiEvent> mProcessingEventsQueue;
-
-    std::vector<GuiWidget*> mWidgets; // temporary: todo: remove
+    std::vector<GuiLayer*> mLayers;
 };
 
 extern GuiManager gGuiManager;
