@@ -182,7 +182,6 @@ protected:
     void SetAnchorPositions();
 
     void ReleaseMouseCapture();
-    void CaptureMouse();
     bool IsMouseCaptured() const;
 
 protected:

@@ -25,7 +25,7 @@ bool GuiManager::Initialize()
 
 void GuiManager::Deinit()
 {
-    mMouseCaptureWidget = nullptr;
+    ClearMouseCapture();
 
     mWidgetsClasses.clear();
     mWidgets.clear();
@@ -195,6 +195,20 @@ GuiWidget* GuiManager::ConstructWidget(const std::string& className) const
     return nullptr;
 }
 
+void GuiManager::CaptureMouseInputs(GuiWidget* mouseListener)
+{
+    if (mMouseCaptureWidget == mouseListener)
+        return;
+
+    debug_assert(mMouseCaptureWidget == nullptr);
+    mMouseCaptureWidget = mouseListener;
+}
+
+void GuiManager::ClearMouseCapture()
+{
+    mMouseCaptureWidget = nullptr;
+}
+
 void GuiManager::HandleScreenResolutionChanged()
 {
 }
@@ -209,7 +223,7 @@ void GuiManager::HandleWidgetDestroy(GuiWidget* widget)
 
     if (widget == mMouseCaptureWidget)
     {
-        mMouseCaptureWidget = nullptr;
+        ClearMouseCapture();
     }
 
     if (widget == mHoveredWidget)

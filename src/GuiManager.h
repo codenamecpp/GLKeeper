@@ -42,6 +42,10 @@ public:
     // construct new widget of specified class, if it registered
     // @param className: Widget class name
     GuiWidget* ConstructWidget(const std::string& className) const;
+
+    // start listen mouse events
+    void CaptureMouseInputs(GuiWidget* mouseListener);
+    void ClearMouseCapture();
     
     // process screen resolution changed event
     void HandleScreenResolutionChanged();

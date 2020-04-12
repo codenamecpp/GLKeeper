@@ -155,17 +155,17 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
     // process clicks
     if (inputEvent.mButton == eMouseButton_Left)
     {
-        if (IsScreenPointInsideRect(gInputsManager.mCursorPosition))
+        if (inputEvent.mPressed)
         {
-            if (inputEvent.mPressed)
+            if (IsHovered())
             {
-                CaptureMouse();
+                gGuiManager.CaptureMouseInputs(this);
             }
-            else
-            {
-                hasBeenClicked = IsMouseCaptured();
-                ReleaseMouseCapture();
-            }    
+        }
+        else
+        {
+            hasBeenClicked = IsHovered() && IsMouseCaptured();
+            ReleaseMouseCapture();
         }
     }
 
@@ -893,16 +893,10 @@ void GuiWidget::SetAnchorPositions()
 
 void GuiWidget::ReleaseMouseCapture()
 {
-    if (gGuiManager.mMouseCaptureWidget == this)
+    if (IsMouseCaptured())
     {
-        gGuiManager.mMouseCaptureWidget = nullptr;
+        gGuiManager.ClearMouseCapture();
     }
-}
-
-void GuiWidget::CaptureMouse()
-{
-    debug_assert(gGuiManager.mMouseCaptureWidget == nullptr);
-    gGuiManager.mMouseCaptureWidget = this;
 }
 
 bool GuiWidget::IsMouseCaptured() const
