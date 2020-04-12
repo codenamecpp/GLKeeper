@@ -91,15 +91,23 @@ bool GuiEventsHandler::ProcessEvent(GuiEvent* eventData)
             switch (curr.mEventsId)
             {
                 case eGuiEvent_Click: 
-                    HandleClickEvent(eventData->mEventSender, eventData); 
+                    HandleClickEvent(eventData->mEventSender); 
                 break;
 
                 case eGuiEvent_MouseEnter:
-                    HandleMouseEnter(eventData->mEventSender, eventData);
+                    HandleMouseEnter(eventData->mEventSender);
                 break;
 
                 case eGuiEvent_MouseLeave:
-                    HandleMouseLeave(eventData->mEventSender, eventData);
+                    HandleMouseLeave(eventData->mEventSender);
+                break;
+                
+                case eGuiEvent_MouseDown:
+                    HandleMouseDown(eventData->mEventSender, eventData->mMouseButton);
+                break;
+
+                case eGuiEvent_MouseUp:
+                    HandleMouseUp(eventData->mEventSender, eventData->mMouseButton);
                 break;
             }
             return true;

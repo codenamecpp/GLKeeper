@@ -9,6 +9,8 @@ enum eGuiEvent
     eGuiEvent_Click,
     eGuiEvent_MouseEnter,
     eGuiEvent_MouseLeave,
+    eGuiEvent_MouseDown,
+    eGuiEvent_MouseUp,
 };
 decl_enum_strings(eGuiEvent);
 
@@ -19,6 +21,13 @@ public:
     GuiEvent(GuiWidget* eventSender, eGuiEvent eventType)
         : mEventSender(eventSender)
         , mEventId(eventType)
+        , mMouseButton()
+    {
+    }
+    GuiEvent(GuiWidget* eventSender, eGuiEvent eventType, eMouseButton mouseButton)
+        : mEventSender(eventSender)
+        , mEventId(eventType)
+        , mMouseButton()
     {
     }
 
@@ -26,6 +35,8 @@ public:
     GuiWidgetHandle mEventSender; // sender widget handle
 
     eGuiEvent mEventId;// event identifier
+
+    eMouseButton mMouseButton; // eGuiEvent_MouseButtonDown, eGuiEvent_MouseButtonUp
 };
 
 // widget events handler
@@ -44,9 +55,11 @@ public:
 
 protected:
     // overridables
-    virtual void HandleClickEvent(GuiWidget* sender, GuiEvent* eventData) {}
-    virtual void HandleMouseEnter(GuiWidget* sender, GuiEvent* eventData) {}
-    virtual void HandleMouseLeave(GuiWidget* sender, GuiEvent* eventData) {}
+    virtual void HandleClickEvent(GuiWidget* sender) {}
+    virtual void HandleMouseEnter(GuiWidget* sender) {}
+    virtual void HandleMouseLeave(GuiWidget* sender) {}
+    virtual void HandleMouseDown(GuiWidget* sender, eMouseButton mbutton) {}
+    virtual void HandleMouseUp(GuiWidget* sender, eMouseButton mbutton) {}
 
 private:
     bool ProcessEvent(GuiEvent* eventData);
