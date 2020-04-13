@@ -139,6 +139,11 @@ std::string json_document_node::get_element_name() const
     return mJsonElement->string;
 }
 
+void json_document_node::set_null()
+{
+    mJsonElement = nullptr;
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 json_document::json_document(const std::string& content)

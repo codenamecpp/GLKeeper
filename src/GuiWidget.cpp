@@ -56,6 +56,113 @@ GuiWidget::GuiWidget(GuiWidget* copyWidget)
     debug_assert(mClass);
 }
 
+void GuiWidget::HandleLoadProperties(cxx::json_document_node documentNode)
+{
+    if (cxx::json_node_string prop_name = documentNode["name"]) { mName = prop_name.get_value(); }
+    debug_assert(mName.length());
+    if (cxx::json_node_boolean prop_visible = documentNode["visible"]) 
+    {  
+        SetVisible(prop_visible.get_value());
+    }
+    if (cxx::json_node_boolean prop_enabled = documentNode["enabled"])
+    {
+        SetEnabled(prop_enabled.get_value());
+    }
+    if (cxx::json_node_boolean prop_clip_children = documentNode["clip_children"])
+    {
+        SetClipChildren(prop_clip_children.get_value());
+    }
+    // min size
+    if (cxx::json_node_object prop_minsize = documentNode["min_size"])
+    {
+        Point minSize(0, 0);
+        if (cxx::json_node_numeric prop_w = prop_minsize["w"]) { minSize.x = prop_w.get_value_integer(); }
+        if (cxx::json_node_numeric prop_h = prop_minsize["h"]) { minSize.y = prop_h.get_value_integer(); }
+        SetMinSize(minSize);
+    }
+    // max size
+    if (cxx::json_node_object prop_maxsize = documentNode["max_size"])
+    {
+        Point maxSize(0, 0);
+        if (cxx::json_node_numeric prop_w = prop_maxsize["w"]) { maxSize.x = prop_w.get_value_integer(); }
+        if (cxx::json_node_numeric prop_h = prop_maxsize["h"]) { maxSize.y = prop_h.get_value_integer(); }
+        SetMaxSize(maxSize);
+    }    
+    // origin
+    {
+        Point origin(0, 0);
+        if (cxx::json_node_object prop_position = documentNode["origin"])
+        {
+            if (cxx::json_node_numeric prop_x = prop_position["x"]) { origin.x = prop_x.get_value_integer(); }
+            if (cxx::json_node_numeric prop_y = prop_position["y"]) { origin.y = prop_y.get_value_integer(); }
+        }
+        eGuiUnits unitsX = eGuiUnits_Pixels;
+        eGuiUnits unitsY = eGuiUnits_Pixels;
+        if (cxx::json_node_object prop_units = documentNode["origin_units"])
+        {
+            if (cxx::json_node_enum<eGuiUnits> prop_x = prop_units["x"]) { unitsX = prop_x.get_value(); }
+            if (cxx::json_node_enum<eGuiUnits> prop_y = prop_units["y"]) { unitsY = prop_y.get_value(); }
+        }
+        SetOrigin(origin, unitsX, unitsY);
+    }
+    // position
+    {
+        Point position(0, 0);
+        if (cxx::json_node_object prop_position = documentNode["pos"])
+        {
+            if (cxx::json_node_numeric prop_x = prop_position["x"]) { position.x = prop_x.get_value_integer(); }
+            if (cxx::json_node_numeric prop_y = prop_position["y"]) { position.y = prop_y.get_value_integer(); }
+        }
+        eGuiUnits unitsX = eGuiUnits_Pixels;
+        eGuiUnits unitsY = eGuiUnits_Pixels;
+        if (cxx::json_node_object prop_units = documentNode["pos_units"])
+        {
+            if (cxx::json_node_enum<eGuiUnits> prop_x = prop_units["x"]) { unitsX = prop_x.get_value(); }
+            if (cxx::json_node_enum<eGuiUnits> prop_y = prop_units["y"]) { unitsY = prop_y.get_value(); }
+        }
+        SetPosition(position, unitsX, unitsY);
+    }
+    // size
+    {
+        Point size(0, 0);
+        if (cxx::json_node_object prop_size = documentNode["size"])
+        {
+            if (cxx::json_node_numeric prop_w = prop_size["w"]) { size.x = prop_w.get_value_integer(); }
+            if (cxx::json_node_numeric prop_h = prop_size["h"]) { size.y = prop_h.get_value_integer(); }
+        }
+        eGuiUnits unitsW = eGuiUnits_Pixels;
+        eGuiUnits unitsH = eGuiUnits_Pixels;
+        if (cxx::json_node_object prop_units = documentNode["size_units"])
+        {
+            if (cxx::json_node_enum<eGuiUnits> prop_w = prop_units["w"]) { unitsW = prop_w.get_value(); }
+            if (cxx::json_node_enum<eGuiUnits> prop_h = prop_units["h"]) { unitsH = prop_h.get_value(); }
+        }
+        SetSize(size, unitsW, unitsH);
+    }
+    // anchors
+    if (cxx::json_node_object prop_anchors = documentNode["anchors"])
+    {
+        GuiAnchors anchors;
+        if (cxx::json_node_boolean prop_anchor = prop_anchors["left"]) { anchors.mL = prop_anchor.get_value(); }
+        if (cxx::json_node_boolean prop_anchor = prop_anchors["right"]) { anchors.mR = prop_anchor.get_value(); }
+        if (cxx::json_node_boolean prop_anchor = prop_anchors["top"]) { anchors.mT = prop_anchor.get_value(); }
+        if (cxx::json_node_boolean prop_anchor = prop_anchors["bottom"]) { anchors.mB = prop_anchor.get_value(); }
+        SetAnchors(anchors);
+    }
+}
+
+void GuiWidget::LoadProperties(cxx::json_document_node documentNode)
+{
+    debug_assert(mFirstChild == nullptr); // somewhat odd situation and needs to be investigated
+
+    if (!documentNode)
+    {
+        debug_assert(false);
+        return;
+    }
+    HandleLoadProperties(documentNode);
+}
+
 GuiWidget* GuiWidget::GetLastChild() const
 {
     for (GuiWidget* currWidget = mFirstChild; currWidget; 
@@ -586,9 +693,6 @@ void GuiWidget::ParentPositionChanged(const Point& prevPosition)
 
 void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
 {
-    int deltax = currSize.x - prevSize.x;
-    int deltay = currSize.y - prevSize.y;
-
     Point newPosition = mPosition;
     Point newSize = mSize;
 
@@ -604,11 +708,11 @@ void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
     {
         if (mAnchors.mR)
         {
-            newPosition.x = mPosition.x + deltax;
+            newPosition.x = currSize.x - mAnchorDistR;
         }
         else if (!mAnchors.mL)
         {
-            newPosition.x = mPosition.x + deltax / 2;
+            newPosition.x = (currSize.x - (mAnchorDistL + mAnchorDistR)) / 2;
         }
     }
 
@@ -624,11 +728,11 @@ void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
     {
         if (mAnchors.mB)
         {
-            newPosition.y = mPosition.y + deltay;
+            newPosition.y = currSize.y - mAnchorDistB;
         }
         else if (!mAnchors.mT)
         {
-            newPosition.y = mPosition.y + deltay / 2;
+            newPosition.y = (currSize.y - (mAnchorDistT + mAnchorDistB)) / 2;
         }
     }
 

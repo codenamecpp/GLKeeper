@@ -2,6 +2,7 @@
 #include "GuiPictureBox.h"
 #include "GuiRenderer.h"
 #include "Texture2D.h"
+#include "TexturesManager.h"
 
 // widget class factory
 static GuiWidgetFactory<GuiPictureBox> _PictureBoxWidgetsFactory;
@@ -25,6 +26,22 @@ GuiPictureBox::GuiPictureBox(GuiPictureBox* copyWidget)
     , mTexture(copyWidget->mTexture)
     , mQuadsCache(copyWidget->mQuadsCache)
 {
+}
+
+void GuiPictureBox::HandleLoadProperties(cxx::json_document_node documentNode)
+{
+    GuiWidget::HandleLoadProperties(documentNode);
+
+    if (cxx::json_node_enum<eGuiSizeMode> prop_size_mode = documentNode["size_mode"]) 
+    { 
+        SetScaleMode(prop_size_mode.get_value()); 
+    }
+
+    if (cxx::json_node_string prop_texture = documentNode["texture"])
+    {
+        Texture2D* texture = gTexturesManager.GetTexture2D(prop_texture.get_value());
+        SetTexture(texture);
+    }
 }
 
 void GuiPictureBox::SetScaleMode(eGuiSizeMode sizeMode)

@@ -30,6 +30,8 @@
 #include <functional>
 #include <thread>
 #include <unordered_map>
+#include <sstream>
+#include <iterator>
 
 #ifdef FS_EXPERIMENTAL
     #include <experimental/filesystem>

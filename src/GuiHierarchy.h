@@ -11,7 +11,9 @@ public:
 public:
     ~GuiHierarchy();
 
-    // free widgets
+    // load widgets hierarchy from json document
+    // @param fileName: File name
+    bool LoadFromFile(const std::string& fileName);
     void Clear();
 
     // render hierarchy
@@ -23,4 +25,11 @@ public:
     // show or hire, enable or disable hierarchy
     void SetVisible(bool isVisible);
     void SetEnabled(bool isEnabled);
+
+    // handle screen resolution changed during runtime
+    void FitLayoutToScreen(const Point& screenDimensions);
+
+    // find widget by specific location within hierarchy
+    // @param widgetPath: Path, don't include root
+    GuiWidget* GetWidgetByPath(const std::string& widgetPath) const;
 };

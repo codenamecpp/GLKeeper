@@ -53,6 +53,26 @@ namespace cxx
     // does a varargs printf into a temp buffer, not thread safe
     const char* va(const char *format_string, ...);
 
+    // simple tokenizer for strings
+    struct string_tokenizer
+    {
+    public:
+        string_tokenizer(const std::string& source_string)
+            : mSourceStringStream(source_string)
+        {
+        }
+        bool get_next(std::string& output_string, char delimiter = '/')
+        {
+            output_string.clear();
+            if (std::getline(mSourceStringStream, output_string, delimiter))
+                return true;
+
+            return false;
+        }
+    private:
+        std::stringstream mSourceStringStream;
+    };
+
     // test whether input symbol is blank character
     inline bool is_blank_char(char inchar)
     {

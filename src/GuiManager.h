@@ -79,7 +79,7 @@ private:
     std::vector<GuiEventsHandler*> mEventHandlers;
     std::vector<GuiEvent> mEventsQueue;
     std::vector<GuiEvent> mProcessingEventsQueue;
-    std::vector<GuiHierarchy*> mHiers;
+    std::vector<GuiHierarchy*> mHiersList;
 };
 
 extern GuiManager gGuiManager;

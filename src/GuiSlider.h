@@ -5,7 +5,7 @@
 
 // slider widget
 class GuiSlider: public GuiWidget
-    , public GuiEventsHandler
+    , public GuiEventsHandler // handle child events
 {
 public:
     GuiSlider();
@@ -40,13 +40,14 @@ protected:
     void HandleMouseUp(GuiWidget* sender, eMouseButton mbutton) override;
 
 protected:
+    int mSpacing = 2;
     int mMin = 0;
     int mMax = 100;
     int mPageSize = 10;
     // control widgets
     GuiWidget* mSliderWidget = nullptr;
-    GuiWidget* mMinWidget = nullptr;
-    GuiWidget* mMaxWidget = nullptr;
+    GuiWidget* mDecPosWidget = nullptr;
+    GuiWidget* mIncPosWidget = nullptr;
 };
 
 // slider widget class

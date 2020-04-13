@@ -14,67 +14,24 @@
 void LayoutsEditGamestate::HandleGamestateEnter()
 {
     gToolsUIManager.AttachWindow(&mLayoutsEditWindow);
-
     gGuiManager.AttachWidgets(&mHier);
 
-    mHier.mRootWidget = new GuiWidget;
-    mHier.mRootWidget->mName = "root";
-    
+    if (!mHier.LoadFromFile("layouts/test.json"))
     {
-        GuiButton* button = new GuiButton;
-        button->mName = "button_0";
-        button->mDebugColorHovered = Color32_DarkGray;
-
-        button->SetPosition(Point(200, 200));
-        button->SetSize(Point(100, 100));
-        Subscribe(button, eGuiEvent_Click);
-        Subscribe(button, eGuiEvent_MouseDown);
-        Subscribe(button, eGuiEvent_MouseUp);
-        Subscribe(button, eGuiEvent_MouseEnter);
-        Subscribe(button, eGuiEvent_MouseLeave);
-        mHier.mRootWidget->AttachChild(button);
-
-        {
-            GuiPictureBox* picbox = new GuiPictureBox;
-            picbox->mName = "picbox_0";
-            picbox->SetSize(Point(85, 85), eGuiUnits_Percents, eGuiUnits_Percents);
-            picbox->SetOrigin(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
-            picbox->SetPosition(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
-            picbox->SetTexture(gTexturesManager.mWhiteTexture);
-            picbox->SetScaleMode(eGuiSizeMode_Scale);
-            button->AttachChild(picbox);
-        }
+        debug_assert(false);
     }
 
+    if (GuiWidget* button0 = mHier.GetWidgetByPath("button_0"))
     {
-        GuiSlider* slider = new GuiSlider;
-        slider->mName = "slider_0";
-        slider->SetPosition(Point(400, 200));
-        slider->SetSize(Point(400, 30));
-
-        {
-            GuiButton* slider_thumb = new GuiButton;
-            slider_thumb->mName = "#slider";
-            slider_thumb->mDebugColorHovered = Color32_DarkGray;
-            slider->AttachChild(slider_thumb);
-        }
-
-        {
-            GuiButton* slider_min = new GuiButton;
-            slider_min->mName = "#min";
-            slider_min->mDebugColorHovered = Color32_DarkGray;
-            slider->AttachChild(slider_min);
-        }
-
-        {
-            GuiButton* slider_max = new GuiButton;
-            slider_max->mName = "#max";
-            slider_max->mDebugColorHovered = Color32_DarkGray;
-            slider->AttachChild(slider_max);
-        }
-
-        mHier.mRootWidget->AttachChild(slider);
+        Subscribe(button0, eGuiEvent_Click);
+        Subscribe(button0, eGuiEvent_MouseDown);
+        Subscribe(button0, eGuiEvent_MouseUp);
+        Subscribe(button0, eGuiEvent_MouseEnter);
+        Subscribe(button0, eGuiEvent_MouseLeave);
     }
+
+    GuiWidget* sliderThumb = mHier.GetWidgetByPath("slider_0/#slider");
+    int bp = 0;
 }
 
 void LayoutsEditGamestate::HandleGamestateLeave()
@@ -105,6 +62,13 @@ void LayoutsEditGamestate::HandleInputEvent(MouseScrollInputEvent& inputEvent)
 
 void LayoutsEditGamestate::HandleInputEvent(KeyInputEvent& inputEvent)
 {
+    if (inputEvent.HasPressed(eKeycode_F5))
+    {
+        if (!mHier.LoadFromFile("layouts/test.json"))
+        {
+            debug_assert(false);
+        }
+    }
 }
 
 void LayoutsEditGamestate::HandleInputEvent(KeyCharEvent& inputEvent)

@@ -41,8 +41,7 @@ void GuiSlider::SetPageSize(int pageSize)
 
 void GuiSlider::SetupControlWidget(GuiWidget* controlWidget)
 {
-    debug_assert(controlWidget);
-    if (controlWidget == mSliderWidget)
+    if (mSliderWidget && controlWidget == mSliderWidget)
     {
         controlWidget->SetPosition(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
         controlWidget->SetOrigin(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
@@ -57,34 +56,22 @@ void GuiSlider::SetupControlWidget(GuiWidget* controlWidget)
         controlWidget->SetAnchors(anchors);
     }
 
-    if (controlWidget == mMinWidget)
+    if (mDecPosWidget && controlWidget == mDecPosWidget)
     {
-        controlWidget->SetPosition(Point(0, 50), eGuiUnits_Percents, eGuiUnits_Percents);
-        controlWidget->SetOrigin(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
-        controlWidget->SetSize(Point(mSize.y - 20, mSize.y - 20));
+        controlWidget->SetPosition(Point(mSpacing, mSpacing));
+        controlWidget->SetOrigin(Point(0, 0), eGuiUnits_Percents, eGuiUnits_Percents);
+        controlWidget->SetSize(Point(32, 32));
 
-        GuiAnchors anchors;
-        anchors.mL = true;
-        anchors.mR = false;
-        anchors.mT = true;
-        anchors.mB = false;
-
-        controlWidget->SetAnchors(anchors);
+        controlWidget->SetAnchors(GuiAnchors(true, true, false, true));
     }
 
-    if (controlWidget == mMaxWidget)
+    if (mIncPosWidget && controlWidget == mIncPosWidget)
     {
-        controlWidget->SetPosition(Point(100, 50), eGuiUnits_Percents, eGuiUnits_Percents);
-        controlWidget->SetOrigin(Point(50, 50), eGuiUnits_Percents, eGuiUnits_Percents);
-        controlWidget->SetSize(Point(mSize.y - 20, mSize.y - 20));
+        controlWidget->SetPosition(Point(mSize.x - mSpacing, mSpacing));
+        controlWidget->SetOrigin(Point(100, 0), eGuiUnits_Percents, eGuiUnits_Percents);
+        controlWidget->SetSize(Point(32, 32));
 
-        GuiAnchors anchors;
-        anchors.mL = true;
-        anchors.mR = false;
-        anchors.mT = true;
-        anchors.mB = false;
-
-        controlWidget->SetAnchors(anchors);
+        controlWidget->SetAnchors(GuiAnchors(false, true, true, true));
     }
 }
 
@@ -92,7 +79,7 @@ void GuiSlider::HandleUpdate(float deltaTime)
 {
     if (mSliderWidget && mSliderWidget->IsMouseCaptured())
     {
-        Point pos = mSliderWidget->ScreenToLocal(gInputsManager.mCursorPosition) + mSliderWidget->GetPosition() - mSliderWidget->GetOrigin();
+        Point pos = ScreenToLocal(gInputsManager.mCursorPosition);
         mSliderWidget->SetPositionX(pos.x);
     }
 }
@@ -125,14 +112,14 @@ void GuiSlider::HandleChildAttached(GuiWidget* childWidget)
         mSliderWidget = childWidget;
         doSubscribe = true;
     }
-    if ((mMinWidget == nullptr) && (childWidget->mName == "#min"))
+    if ((mDecPosWidget == nullptr) && (childWidget->mName == "#min"))
     {
-        mMinWidget = childWidget;
+        mDecPosWidget = childWidget;
         doSubscribe = true;
     }
-    if ((mMaxWidget == nullptr) && (childWidget->mName == "#max"))
+    if ((mIncPosWidget == nullptr) && (childWidget->mName == "#max"))
     {
-        mMaxWidget = childWidget;
+        mIncPosWidget = childWidget;
         doSubscribe = true;
     }
 
@@ -152,14 +139,14 @@ void GuiSlider::HandleChildDetached(GuiWidget* childWidget)
         mSliderWidget = nullptr;
     }
 
-    if (mMinWidget && (mMinWidget == childWidget))
+    if (mDecPosWidget && (mDecPosWidget == childWidget))
     {
-        mMinWidget = nullptr;
+        mDecPosWidget = nullptr;
     }
 
-    if (mMaxWidget && (mMaxWidget == childWidget))
+    if (mIncPosWidget && (mIncPosWidget == childWidget))
     {
-        mMaxWidget = nullptr;
+        mIncPosWidget = nullptr;
     }
 
     Unsubscribe(childWidget);
@@ -173,12 +160,14 @@ GuiSlider* GuiSlider::ConstructClone()
 
 void GuiSlider::HandleMouseDown(GuiWidget* sender, eMouseButton mbutton)
 {
-    if (sender == mMinWidget)
+    if (mSliderWidget == nullptr)
+        return;
+    if (sender == mDecPosWidget)
     {
         mSliderWidget->SetPositionX(mSliderWidget->GetPosition().x - 10);
     }
 
-    if (sender == mMaxWidget)
+    if (sender == mIncPosWidget)
     {
         mSliderWidget->SetPositionX(mSliderWidget->GetPosition().x + 10);
     }
@@ -190,12 +179,12 @@ void GuiSlider::HandleMouseDown(GuiWidget* sender, eMouseButton mbutton)
 
 void GuiSlider::HandleMouseUp(GuiWidget* sender, eMouseButton mbutton)
 {
-    if (sender == mMinWidget)
+    if (sender == mDecPosWidget)
     {
 
     }
 
-    if (sender == mMaxWidget)
+    if (sender == mIncPosWidget)
     {
 
     }

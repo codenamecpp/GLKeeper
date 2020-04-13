@@ -6,6 +6,7 @@
 class GuiWidget: public cxx::handled_object<GuiWidget>
 {
     friend class GuiManager;
+    friend class GuiHierarchy;
 
 public:
     std::string mName; // user-defined identifier for widget
@@ -29,6 +30,9 @@ public:
     // process widget logic and all children
     // @param deltaTime: Time passed since previous update
     void UpdateFrame(float deltaTime);
+
+    // read widget properties from json document
+    void LoadProperties(cxx::json_document_node documentNode);
 
     // process input event
     // @param inputEvent: Event data
@@ -185,7 +189,9 @@ protected:
     void ReleaseMouseCapture();
 
 protected:
-    // overridable
+    // overridables
+    virtual void HandleLoadProperties(cxx::json_document_node documentNode);
+
     virtual void HandleRender(GuiRenderer& renderContext) {}
     virtual void HandleUpdate(float deltaTime) {}
     virtual void HandleSizeChanged(const Point& prevSize) {}

@@ -9,6 +9,7 @@
 #include "GuiPanel.h"
 #include "GuiSlider.h"
 #include "GuiHierarchy.h"
+#include "GraphicsDevice.h"
 
 GuiManager gGuiManager;
 
@@ -38,7 +39,7 @@ void GuiManager::Deinit()
 void GuiManager::RenderFrame(GuiRenderer& renderContext)
 {
     // render widgets
-    for (GuiHierarchy* currHier: mHiers)
+    for (GuiHierarchy* currHier: mHiersList)
     {
         currHier->RenderFrame(renderContext);
     }
@@ -49,7 +50,7 @@ void GuiManager::UpdateFrame()
     ProcessEventsQueue();
 
     // update widgets
-    for (GuiHierarchy* currHier: mHiers)
+    for (GuiHierarchy* currHier: mHiersList)
     {
         currHier->UpdateFrame();
     }
@@ -126,7 +127,7 @@ void GuiManager::ScanHoveredWidget()
 
     if (newHovered == nullptr)
     {
-        for (auto reverse_iter = mHiers.rbegin(); reverse_iter != mHiers.rend(); ++reverse_iter)
+        for (auto reverse_iter = mHiersList.rbegin(); reverse_iter != mHiersList.rend(); ++reverse_iter)
         {
             GuiHierarchy* currentHier = *reverse_iter;
             if (currentHier->mRootWidget == nullptr)
@@ -215,6 +216,10 @@ void GuiManager::ClearMouseCapture()
 
 void GuiManager::HandleScreenResolutionChanged()
 {
+    for (GuiHierarchy* currHier: mHiersList)
+    {
+        currHier->FitLayoutToScreen(gGraphicsDevice.mScreenResolution);
+    }
 }
 
 void GuiManager::PostGuiEvent(const GuiEvent& eventData)
@@ -282,15 +287,15 @@ void GuiManager::AttachWidgets(GuiHierarchy* hierarchy)
         return;
     }
 
-    cxx::push_back_if_unique(mHiers, hierarchy);
+    cxx::push_back_if_unique(mHiersList, hierarchy);
 }
 
 void GuiManager::DetachWidgets(GuiHierarchy* hierarchy)
 {
-    cxx::erase_elements(mHiers, hierarchy);
+    cxx::erase_elements(mHiersList, hierarchy);
 }
 
 void GuiManager::DetachAllWidgets()
 {
-    mHiers.clear();
+    mHiersList.clear();
 }

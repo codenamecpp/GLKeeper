@@ -44,6 +44,9 @@ namespace cxx
         // get name of element
         std::string get_element_name() const;
 
+        // set node null
+        void set_null();
+
         // operators
         inline bool operator == (const json_document_node& rhs) const { return mJsonElement && rhs.mJsonElement == mJsonElement; }
         inline bool operator != (const json_document_node& rhs) const { return !mJsonElement || rhs.mJsonElement != mJsonElement; }
@@ -136,6 +139,52 @@ namespace cxx
 
     private:
         void validate();
+    };
+
+    //////////////////////////////////////////////////////////////////////////
+
+    template<typename TEnumClass>
+    class json_node_enum: public json_document_node
+    {
+    public:
+        // cast generic node to enum
+        // @param genericNode: Generic json node
+        json_node_enum(const json_document_node& genericNode): json_document_node(genericNode)
+        {
+            validate();
+        }
+
+        json_node_enum& operator = (const json_node_array& genericNode)
+        {
+            json_document_node::operator = (genericNode);
+            validate();
+            return *this;
+        }
+
+        TEnumClass get_value() const
+        {
+            debug_assert(this->operator bool());
+            return mEnumValue;
+        }
+
+    private:
+        void validate()
+        {
+            if (json_node_string stringNode = *this)
+            {
+                std::string enumValueString = stringNode.get_value();
+                if (parse_enum(enumValueString.c_str(), mEnumValue))
+                {
+                    return; // success
+                }
+            }
+            // fail
+            debug_assert(false);
+            set_null();            
+        }
+
+    private:
+        TEnumClass mEnumValue = TEnumClass();
     };
 
     //////////////////////////////////////////////////////////////////////////
