@@ -498,7 +498,7 @@ void json_node_array::validate()
 
 //////////////////////////////////////////////////////////////////////////
 
-bool json_get_attribute(json_document_node json_node, const std::string& attribute_name, bool& output)
+bool json_get_attribute(const json_document_node& json_node, const std::string& attribute_name, bool& output)
 {
     if (json_node_boolean booleanNode = json_node[attribute_name])
     {
@@ -508,7 +508,7 @@ bool json_get_attribute(json_document_node json_node, const std::string& attribu
     return false;
 }
 
-bool json_get_attribute(json_document_node json_node, const std::string& attribute_name, std::string& output)
+bool json_get_attribute(const json_document_node& json_node, const std::string& attribute_name, std::string& output)
 {
     if (json_node_string stringNode = json_node[attribute_name])
     {
@@ -518,7 +518,7 @@ bool json_get_attribute(json_document_node json_node, const std::string& attribu
     return false;
 }
 
-bool json_get_attribute(json_document_node json_node, const std::string& attribute_name, int& output)
+bool json_get_attribute(const json_document_node& json_node, const std::string& attribute_name, int& output)
 {
     if (json_node_numeric numericNode = json_node[attribute_name])
     {
@@ -528,7 +528,7 @@ bool json_get_attribute(json_document_node json_node, const std::string& attribu
     return false;
 }
 
-bool json_get_attribute(json_document_node json_node, const std::string& attribute_name, float& output)
+bool json_get_attribute(const json_document_node& json_node, const std::string& attribute_name, float& output)
 {
     if (json_node_numeric numericNode = json_node[attribute_name])
     {

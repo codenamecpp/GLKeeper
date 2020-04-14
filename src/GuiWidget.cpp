@@ -158,8 +158,6 @@ void GuiWidget::HandleLoadProperties(cxx::json_document_node documentNode)
 
 void GuiWidget::LoadProperties(cxx::json_document_node documentNode)
 {
-    debug_assert(mFirstChild == nullptr); // somewhat odd situation and needs to be investigated
-
     if (!documentNode)
     {
         debug_assert(false);

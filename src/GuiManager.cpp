@@ -10,6 +10,7 @@
 #include "GuiSlider.h"
 #include "GuiHierarchy.h"
 #include "GraphicsDevice.h"
+#include "FileSystem.h"
 
 GuiManager gGuiManager;
 
@@ -22,16 +23,18 @@ GuiManager::GuiManager()
 bool GuiManager::Initialize()
 {
     RegisterWidgetsClasses();
+
+    LoadTemplateWidgets();
     return true;
 }
 
 void GuiManager::Deinit()
 {
+    FreeTemplateWidgets();
+    UnregisterWidgetsClasses();
+
+    UnregisterAllEventsHandlers();
     ClearMouseCapture();
-
-    mWidgetsClasses.clear();
-    mEventHandlers.clear();
-
     DetachAllWidgets();
     ClearEventsQueue();
 }
@@ -179,6 +182,108 @@ void GuiManager::RegisterWidgetsClasses()
     RegisterWidgetClass(&gSliderWidgetClass);
 }
 
+void GuiManager::UnregisterWidgetsClasses()
+{
+    mWidgetsClasses.clear();
+}
+
+bool GuiManager::LoadTemplateWidgets()
+{
+    std::string jsonDocumentContent;
+    if (!gFileSystem.ReadTextFile("layouts/templates.json", jsonDocumentContent))
+    {
+        debug_assert(false);
+        return false;
+    }
+
+    cxx::json_document jsonDocument;
+    if (!jsonDocument.parse_document(jsonDocumentContent))
+    {
+        debug_assert(false);
+        return false;
+    }
+
+    // widget deserializer
+    std::function<GuiWidget*(cxx::json_node_object objectNode)> DeserializeWidget = 
+        [&DeserializeWidget](cxx::json_node_object objectNode) -> GuiWidget*
+    {
+        if (!objectNode)
+        {
+            debug_assert(false);
+            return nullptr;
+        }
+
+        GuiWidget* widget = nullptr;
+
+        std::string className;
+        if (cxx::json_get_attribute(objectNode, "class", className))
+        {
+            widget = gGuiManager.ConstructWidget(className);
+        }
+
+        if (widget == nullptr)
+        {
+            debug_assert(false);
+            return nullptr;
+        }
+
+        widget->LoadProperties(objectNode);
+
+        // deserialize childs
+        if (cxx::json_node_array childsNode = objectNode["children"])
+        {
+            for (cxx::json_node_object currNode = childsNode.first_child(); currNode; 
+                currNode = currNode.next_sibling())
+            {
+                GuiWidget* childWidget = DeserializeWidget(currNode);
+                if (childWidget == nullptr)
+                {
+                    debug_assert(false);
+                    continue;
+                }
+                widget->AttachChild(childWidget);
+            }
+        }
+        return widget;
+    };
+
+    cxx::json_document_node rootNode = jsonDocument.get_root_node();
+    for (cxx::json_document_node currNode = rootNode.first_child(); currNode;
+        currNode = currNode.next_sibling())
+    {
+        std::string templateClassName = currNode.get_element_name();
+        if (mTemplateWidgetsClasses.find(templateClassName) != mTemplateWidgetsClasses.end())
+        {
+            debug_assert(false);
+
+            gConsole.LogMessage(eLogMessage_Warning, "Template widget class already exists '%s'", templateClassName.c_str());
+            continue;
+        }
+
+        GuiWidget* widget = DeserializeWidget(currNode);
+        if (widget == nullptr)
+        {
+            debug_assert(false);
+
+            gConsole.LogMessage(eLogMessage_Warning, "Cannot load template widget class '%s'", templateClassName.c_str());
+            continue;
+        }
+
+        mTemplateWidgetsClasses[templateClassName] = widget;
+    }
+    return true;
+}
+
+void GuiManager::FreeTemplateWidgets()
+{
+    for (auto& curr: mTemplateWidgetsClasses)
+    {
+        SafeDelete(curr.second);
+    }
+
+    mTemplateWidgetsClasses.clear();
+}
+
 GuiWidgetClass* GuiManager::GetWidgetClass(const std::string& className) const
 {
     auto iterator_found = mWidgetsClasses.find(className);
@@ -196,6 +301,18 @@ GuiWidget* GuiManager::ConstructWidget(const std::string& className) const
         return widgetClass->mFactory->ConstructWidget();
     }
 
+    debug_assert(false);
+    return nullptr;
+}
+
+GuiWidget* GuiManager::ConstructTemplateWidget(const std::string& templateClassName) const
+{
+    auto template_iter = mTemplateWidgetsClasses.find(templateClassName);
+    if (template_iter != mTemplateWidgetsClasses.end())
+    {
+        GuiWidget* templateClone = template_iter->second->CloneDeep();
+        return templateClone;
+    }
     debug_assert(false);
     return nullptr;
 }
@@ -246,6 +363,11 @@ void GuiManager::UnregisterEventsHandler(GuiEventsHandler* eventsHandler)
     {
         cxx::erase_elements(mEventHandlers, eventsHandler);
     }
+}
+
+void GuiManager::UnregisterAllEventsHandlers()
+{
+    mEventHandlers.clear();
 }
 
 void GuiManager::ProcessEventsQueue()

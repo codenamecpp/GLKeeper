@@ -1,0 +1,43 @@
+{
+    "test_button":
+    {
+        "class":"button",
+        "name":"button_0",
+        "pos": {"x":200, "y":200},
+        "size": {"w":100, "h":100},
+        "children":
+        [
+            {
+                "class":"picture_box",
+                "name":"picture_box_0",
+                "size": {"w":85, "h":85}, "size_units": {"w":"percents", "h":"percents"},
+                "origin": {"x":50, "y":50}, "origin_units": {"x":"percents", "y":"percents"},
+                "pos": {"x":50, "y":50}, "pos_units": {"x":"percents", "y":"percents"},
+                "texture":"white",
+                "size_mode":"scale"
+            }
+        ]
+    },
+
+    "test_slider":
+    {
+        "class":"slider",
+        "name":"slider_0",
+        "pos": {"x":400, "y":200},
+        "size": {"w":400, "h":30},
+        "anchors": {"left":true, "right":true, "top":true, "bottom":true},
+        "children":
+        [
+            {
+                "class":"button", "name":"#min"
+            },
+            {
+                "class":"button", "name":"#max"
+            },
+            {
+                "class":"button", "name":"#slider"
+            }
+        ]
+    }
+
+}

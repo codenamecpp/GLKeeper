@@ -32,6 +32,7 @@ bool GuiHierarchy::LoadFromFile(const std::string& fileName)
     std::function<GuiWidget*(cxx::json_node_object objectNode)> DeserializeWidget = 
         [&DeserializeWidget](cxx::json_node_object objectNode) -> GuiWidget*
         {
+            bool widgetIsTemplate = false;
             if (!objectNode)
             {
                 debug_assert(false);
@@ -44,6 +45,11 @@ bool GuiHierarchy::LoadFromFile(const std::string& fileName)
             if (cxx::json_get_attribute(objectNode, "class", className))
             {
                 widget = gGuiManager.ConstructWidget(className);
+            }
+            else if (cxx::json_get_attribute(objectNode, "template_class", className))
+            {
+                widget = gGuiManager.ConstructTemplateWidget(className);
+                widgetIsTemplate = true;
             }
 
             if (widget == nullptr)

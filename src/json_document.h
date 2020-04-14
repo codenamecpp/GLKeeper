@@ -191,13 +191,13 @@ namespace cxx
 
     // helpers
 
-    bool json_get_attribute(json_document_node json_node, const std::string& attribute_name, bool& output);
-    bool json_get_attribute(json_document_node json_node, const std::string& attribute_name, std::string& output);
-    bool json_get_attribute(json_document_node json_node, const std::string& attribute_name, int& output);
-    bool json_get_attribute(json_document_node json_node, const std::string& attribute_name, float& output);
+    bool json_get_attribute(const json_document_node& json_node, const std::string& attribute_name, bool& output);
+    bool json_get_attribute(const json_document_node& json_node, const std::string& attribute_name, std::string& output);
+    bool json_get_attribute(const json_document_node& json_node, const std::string& attribute_name, int& output);
+    bool json_get_attribute(const json_document_node& json_node, const std::string& attribute_name, float& output);
         
     template<typename TEnumClass>
-    bool json_get_attribute(json_document_node json_node, const std::string& attribute_name, TEnumClass& output)
+    bool json_get_attribute(const json_document_node& json_node, const std::string& attribute_name, TEnumClass& output)
     {
         if (json_node_enum<TEnumClass> enumNode = json_node[attribute_name])
         {

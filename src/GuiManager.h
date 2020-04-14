@@ -43,6 +43,10 @@ public:
     // @param className: Widget class name
     GuiWidget* ConstructWidget(const std::string& className) const;
 
+    // construct new template widget of specified class, if it registered
+    // @param className: Template widget class name
+    GuiWidget* ConstructTemplateWidget(const std::string& templateClassName) const;
+
     // start listen mouse events
     void CaptureMouseInputs(GuiWidget* mouseListener);
     void ClearMouseCapture();
@@ -58,6 +62,7 @@ public:
     // @param eventsHandler: Handler
     void RegisterEventsHandler(GuiEventsHandler* eventsHandler);
     void UnregisterEventsHandler(GuiEventsHandler* eventsHandler);
+    void UnregisterAllEventsHandlers();
 
     // attach/detach widgets
     // @param hierarchy: Hierarchy
@@ -67,6 +72,10 @@ public:
 
 private:
     void RegisterWidgetsClasses();
+    void UnregisterWidgetsClasses();
+
+    bool LoadTemplateWidgets();
+    void FreeTemplateWidgets();
 
     void ScanHoveredWidget();
     void ProcessEventsQueue();
@@ -75,6 +84,9 @@ private:
 private:
     using GuiWidgetClassesMap = std::unordered_map<std::string, GuiWidgetClass*>;
     GuiWidgetClassesMap mWidgetsClasses;
+
+    using GuiTemplateWidgetsMap = std::unordered_map<std::string, GuiWidget*>;
+    GuiTemplateWidgetsMap mTemplateWidgetsClasses;
 
     std::vector<GuiEventsHandler*> mEventHandlers;
     std::vector<GuiEvent> mEventsQueue;
