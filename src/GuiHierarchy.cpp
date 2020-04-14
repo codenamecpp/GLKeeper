@@ -39,9 +39,11 @@ bool GuiHierarchy::LoadFromFile(const std::string& fileName)
             }
 
             GuiWidget* widget = nullptr;
-            if (cxx::json_node_string classNode = objectNode["class"])
+
+            std::string className;
+            if (cxx::json_get_attribute(objectNode, "class", className))
             {
-                widget = gGuiManager.ConstructWidget(classNode.get_value());
+                widget = gGuiManager.ConstructWidget(className);
             }
 
             if (widget == nullptr)

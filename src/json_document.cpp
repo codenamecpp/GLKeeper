@@ -496,4 +496,46 @@ void json_node_array::validate()
     }
 }
 
+//////////////////////////////////////////////////////////////////////////
+
+bool json_get_attribute(json_document_node json_node, const std::string& attribute_name, bool& output)
+{
+    if (json_node_boolean booleanNode = json_node[attribute_name])
+    {
+        output = booleanNode.get_value();
+        return true;
+    }
+    return false;
+}
+
+bool json_get_attribute(json_document_node json_node, const std::string& attribute_name, std::string& output)
+{
+    if (json_node_string stringNode = json_node[attribute_name])
+    {
+        output = stringNode.get_value();
+        return true;
+    }
+    return false;
+}
+
+bool json_get_attribute(json_document_node json_node, const std::string& attribute_name, int& output)
+{
+    if (json_node_numeric numericNode = json_node[attribute_name])
+    {
+        output = numericNode.get_value_integer();
+        return true;
+    }
+    return false;
+}
+
+bool json_get_attribute(json_document_node json_node, const std::string& attribute_name, float& output)
+{
+    if (json_node_numeric numericNode = json_node[attribute_name])
+    {
+        output = numericNode.get_value_float();
+        return true;
+    }
+    return false;
+}
+
 } // namespace cxx

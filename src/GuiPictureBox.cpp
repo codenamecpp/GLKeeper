@@ -32,14 +32,16 @@ void GuiPictureBox::HandleLoadProperties(cxx::json_document_node documentNode)
 {
     GuiWidget::HandleLoadProperties(documentNode);
 
-    if (cxx::json_node_enum<eGuiSizeMode> prop_size_mode = documentNode["size_mode"]) 
+    eGuiSizeMode scaleMode = eGuiSizeMode_Keep;
+    if (cxx::json_get_attribute(documentNode, "size_mode", scaleMode)) 
     { 
-        SetScaleMode(prop_size_mode.get_value()); 
+        SetScaleMode(scaleMode); 
     }
 
-    if (cxx::json_node_string prop_texture = documentNode["texture"])
+    std::string textureName;
+    if (cxx::json_get_attribute(documentNode, "texture", textureName))
     {
-        Texture2D* texture = gTexturesManager.GetTexture2D(prop_texture.get_value());
+        Texture2D* texture = gTexturesManager.GetTexture2D(textureName);
         SetTexture(texture);
     }
 }

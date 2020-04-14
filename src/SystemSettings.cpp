@@ -21,30 +21,11 @@ void SystemSettings::SetFromJsonDocument(const cxx::json_document& sourceDocumen
     cxx::json_document_node rootNode = sourceDocument.get_root_node();
 
     // graphics settings
-    if (cxx::json_node_numeric screen_size_w = rootNode["screen_size_w"])
-    {
-        mScreenDimensions.x = screen_size_w.get_value_integer();
-    }
-
-    if (cxx::json_node_numeric screen_size_h = rootNode["screen_size_h"])
-    {
-        mScreenDimensions.y = screen_size_h.get_value_integer();
-    }
-
-    if (cxx::json_node_boolean set_fullscreen = rootNode["set_fullscreen"])
-    {
-        mFullscreen = set_fullscreen.get_value();
-    }
-
-    if (cxx::json_node_boolean enable_vsync = rootNode["enable_vsync"])
-    {
-        mEnableVSync = enable_vsync.get_value();
-    }
-
-    if (cxx::json_node_boolean enable_resize = rootNode["resizeable_window"])
-    {
-        mResizeableWindow = enable_resize.get_value();
-    }
+    cxx::json_get_attribute(rootNode, "screen_size_w", mScreenDimensions.x);
+    cxx::json_get_attribute(rootNode, "screen_size_h", mScreenDimensions.y);
+    cxx::json_get_attribute(rootNode, "set_fullscreen", mFullscreen);
+    cxx::json_get_attribute(rootNode, "enable_vsync", mEnableVSync);
+    cxx::json_get_attribute(rootNode, "resizeable_window", mResizeableWindow);
 }
 
 void SystemSettings::StoreToJsonDocument(cxx::json_document& sourceDocument)

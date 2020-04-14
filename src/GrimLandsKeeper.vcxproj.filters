@@ -95,6 +95,9 @@
     <Filter Include="Application\ToolsUI\Windows">
       <UniqueIdentifier>{22d845d7-589e-4583-bc6e-5ee20689b6bb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Data\Layouts">
+      <UniqueIdentifier>{28665352-7ac3-458c-84da-6979357bfcc0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -763,6 +766,9 @@
     </None>
     <None Include="..\data\shaders\water_lava.glsl">
       <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\data\layouts\test.json">
+      <Filter>Data\Layouts</Filter>
     </None>
   </ItemGroup>
 </Project>
