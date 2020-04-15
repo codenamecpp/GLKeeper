@@ -770,5 +770,8 @@
     <None Include="..\data\layouts\test.json">
       <Filter>Data\Layouts</Filter>
     </None>
+    <None Include="..\data\layouts\templates.json">
+      <Filter>Data\Layouts</Filter>
+    </None>
   </ItemGroup>
 </Project>

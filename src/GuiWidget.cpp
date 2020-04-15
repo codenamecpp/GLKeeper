@@ -52,6 +52,7 @@ GuiWidget::GuiWidget(GuiWidget* copyWidget)
     , mSelfVisible(copyWidget->mSelfVisible)
     , mSelfEnabled(copyWidget->mSelfEnabled)
     , mClipChildren(copyWidget->mClipChildren)
+    , mTemplateClassName(copyWidget->mTemplateClassName)
 {
     debug_assert(mClass);
 }

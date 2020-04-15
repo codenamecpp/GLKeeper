@@ -268,7 +268,7 @@ bool GuiManager::LoadTemplateWidgets()
             gConsole.LogMessage(eLogMessage_Warning, "Cannot load template widget class '%s'", templateClassName.c_str());
             continue;
         }
-
+        widget->mTemplateClassName = templateClassName;
         mTemplateWidgetsClasses[templateClassName] = widget;
     }
     return true;

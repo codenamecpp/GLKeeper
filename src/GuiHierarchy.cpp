@@ -60,6 +60,9 @@ bool GuiHierarchy::LoadFromFile(const std::string& fileName)
 
             widget->LoadProperties(objectNode);
 
+            if (widgetIsTemplate) // dont deserialize children for template widgets
+                return widget;
+
             // deserialize childs
             if (cxx::json_node_array childsNode = objectNode["children"])
             {

@@ -18,6 +18,9 @@ public:
     Color32 mDebugColorDisabled = Color32_Gray;
 #endif
 
+    // readonly
+    std::string mTemplateClassName; // specified for template widgets
+
 public:
     // construct widget
     GuiWidget();
