@@ -6,10 +6,14 @@
 class GuiButton: public GuiWidget
 {
 public:
+    
+    static GuiWidgetMetaClass MetaClass; // button widget class
+
+public:
     GuiButton();
 
 protected:
-    GuiButton(GuiWidgetClass* widgetClass);
+    GuiButton(GuiWidgetMetaClass* widgetClass);
     GuiButton(GuiButton* copyWidget);
 
     // override GuiWidget
@@ -20,6 +24,3 @@ protected:
 
 protected:
 };
-
-// button widget class
-extern GuiWidgetClass gButtonWidgetClass;

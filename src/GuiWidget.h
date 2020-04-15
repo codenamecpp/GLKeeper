@@ -9,6 +9,9 @@ class GuiWidget: public cxx::handled_object<GuiWidget>
     friend class GuiHierarchy;
 
 public:
+    
+    static GuiWidgetMetaClass MetaClass; // base widget class
+
     std::string mName; // user-defined identifier for widget
     GuiUserData mUserData; // user-defined data
 
@@ -166,8 +169,21 @@ public:
     GuiWidget* Clone();
     GuiWidget* CloneDeep();
 
+    template<typename TargetWidgetClass>
+    inline TargetWidgetClass* CastToWidgetClass()
+    {
+        GuiWidgetMetaClass* target_metaclass = &TargetWidgetClass::MetaClass;
+        for (GuiWidgetMetaClass* currentMetaclass = mMetaClass; currentMetaclass; 
+            currentMetaclass = currentMetaclass->mParentClass)
+        {
+            if (target_metaclass == currentMetaclass)
+                return static_cast<TargetWidgetClass*>(this);
+        }
+        return nullptr;
+    }
+
 protected:
-    GuiWidget(GuiWidgetClass* widgetClass);
+    GuiWidget(GuiWidgetMetaClass* widgetClass);
     // copy properties
     GuiWidget(GuiWidget* copyWidget);
 
@@ -218,7 +234,7 @@ protected:
     virtual GuiWidget* ConstructClone();
 
 protected:
-    GuiWidgetClass* mClass; // cannot be null
+    GuiWidgetMetaClass* mMetaClass; // cannot be null
 
     GuiWidget* mParent = nullptr;
     GuiWidget* mFirstChild = nullptr;
@@ -261,6 +277,3 @@ protected:
     bool mTransformInvalidated = true; // transformations matrix dirty
     bool mHovered = false;
 };
-
-// base widget class
-extern GuiWidgetClass gBaseWidgetClass;

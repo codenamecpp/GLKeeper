@@ -6,7 +6,7 @@
 #include "GuiPictureBox.h"
 #include "GraphicsDevice.h"
 #include "GuiPanel.h"
-#include "GuiSlider.h"
+#include "GuiScrollbar.h"
 #include "TexturesManager.h"
 #include "ToolsUIManager.h"
 #include "Console.h"
@@ -23,6 +23,10 @@ void LayoutsEditGamestate::HandleGamestateEnter()
 
     if (GuiWidget* button0 = mHier.GetWidgetByPath("button_0"))
     {
+        GuiPictureBox* pbox = button0->CastToWidgetClass<GuiPictureBox>();
+        GuiPanel* pnel = button0->CastToWidgetClass<GuiPanel>();
+        GuiButton* pb = button0->CastToWidgetClass<GuiButton>();
+
         Subscribe(button0, eGuiEvent_Click);
         Subscribe(button0, eGuiEvent_MouseDown);
         Subscribe(button0, eGuiEvent_MouseUp);

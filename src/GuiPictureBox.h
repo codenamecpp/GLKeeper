@@ -6,6 +6,10 @@
 class GuiPictureBox: public GuiWidget
 {
 public:
+
+    static GuiWidgetMetaClass MetaClass; // picturebox widget class
+
+public:
     GuiPictureBox();
 
     // setup size mode for current picture
@@ -17,7 +21,7 @@ public:
     void SetTexture(Texture2D* texture);
 
 protected:
-    GuiPictureBox(GuiWidgetClass* widgetClass);
+    GuiPictureBox(GuiWidgetMetaClass* widgetClass);
     GuiPictureBox(GuiPictureBox* copyWidget);
 
     // process drawable quads
@@ -36,6 +40,3 @@ protected:
 
     std::vector<GuiQuadStruct> mQuadsCache;
 };
-
-// picturebox widget class
-extern GuiWidgetClass gPictureBoxWidgetClass;

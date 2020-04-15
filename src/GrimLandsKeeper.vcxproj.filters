@@ -447,9 +447,6 @@
     <ClInclude Include="3rd_party\stb_image.h">
       <Filter>Third_Party\stb</Filter>
     </ClInclude>
-    <ClInclude Include="GuiSlider.h">
-      <Filter>Game\GUI\WidgetsLibrary</Filter>
-    </ClInclude>
     <ClInclude Include="LayoutsEditGamestate.h">
       <Filter>Game\GameStates</Filter>
     </ClInclude>
@@ -473,6 +470,9 @@
     </ClInclude>
     <ClInclude Include="GuiHierarchy.h">
       <Filter>Game\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GuiScrollbar.h">
+      <Filter>Game\GUI\WidgetsLibrary</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -703,9 +703,6 @@
     <ClCompile Include="GuiEvent.cpp">
       <Filter>Game\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="GuiSlider.cpp">
-      <Filter>Game\GUI\WidgetsLibrary</Filter>
-    </ClCompile>
     <ClCompile Include="LayoutsEditGamestate.cpp">
       <Filter>Game\GameStates</Filter>
     </ClCompile>
@@ -729,6 +726,9 @@
     </ClCompile>
     <ClCompile Include="GuiHierarchy.cpp">
       <Filter>Game\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiScrollbar.cpp">
+      <Filter>Game\GUI\WidgetsLibrary</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

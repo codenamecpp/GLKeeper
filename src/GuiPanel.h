@@ -6,10 +6,14 @@
 class GuiPanel: public GuiWidget
 {
 public:
+
+    static GuiWidgetMetaClass MetaClass; // panel widget class
+
+public:
     GuiPanel();
 
 protected:
-    GuiPanel(GuiWidgetClass* widgetClass);
+    GuiPanel(GuiWidgetMetaClass* widgetClass);
     GuiPanel(GuiPanel* copyWidget);
 
     // override GuiWidget
@@ -20,6 +24,3 @@ protected:
 
 protected:
 };
-
-// panel widget class
-extern GuiWidgetClass gPanelWidgetClass;

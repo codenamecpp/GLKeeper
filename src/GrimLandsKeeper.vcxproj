@@ -185,7 +185,7 @@
     <ClInclude Include="GuiHierarchy.h" />
     <ClInclude Include="GuiPanel.h" />
     <ClInclude Include="GuiPictureBox.h" />
-    <ClInclude Include="GuiSlider.h" />
+    <ClInclude Include="GuiScrollbar.h" />
     <ClInclude Include="GuiWidget.h" />
     <ClInclude Include="ToolsUILayoutsEditWindow.h" />
     <ClInclude Include="ToolsUISceneStatisticsWindow.h" />
@@ -316,7 +316,7 @@
     <ClCompile Include="GuiEvent.cpp" />
     <ClCompile Include="GuiPanel.cpp" />
     <ClCompile Include="GuiPictureBox.cpp" />
-    <ClCompile Include="GuiSlider.cpp" />
+    <ClCompile Include="GuiScrollbar.cpp" />
     <ClCompile Include="GuiWidget.cpp" />
     <ClCompile Include="ToolsUISceneStatisticsWindow.cpp" />
     <ClCompile Include="GameMap.cpp" />

@@ -8,15 +8,15 @@
 // widget class factory
 static GuiWidgetFactory<GuiButton> _ButtonWidgetsFactory;
 
-GuiWidgetClass gButtonWidgetClass("button", &_ButtonWidgetsFactory, &gBaseWidgetClass);
+GuiWidgetMetaClass GuiButton::MetaClass("button", &_ButtonWidgetsFactory, &GuiWidget::MetaClass);
 
 //////////////////////////////////////////////////////////////////////////
 
-GuiButton::GuiButton(): GuiButton(&gButtonWidgetClass)
+GuiButton::GuiButton(): GuiButton(&MetaClass)
 {
 }
 
-GuiButton::GuiButton(GuiWidgetClass* widgetClass)
+GuiButton::GuiButton(GuiWidgetMetaClass* widgetClass)
     : GuiWidget(widgetClass)
 {
 }

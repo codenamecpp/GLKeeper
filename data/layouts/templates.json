@@ -19,10 +19,10 @@
         ]
     },
 
-    "test_slider":
+    "test_scrollbar":
     {
-        "class":"slider",
-        "name":"slider_0",
+        "class":"scrollbar",
+        "name":"scrollbar_0",
         "pos": {"x":400, "y":200},
         "size": {"w":400, "h":30},
         "anchors": {"left":true, "right":true, "top":true, "bottom":true},

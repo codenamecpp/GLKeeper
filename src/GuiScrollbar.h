@@ -3,12 +3,16 @@
 #include "GuiWidget.h"
 #include "GuiEvent.h"
 
-// slider widget
-class GuiSlider: public GuiWidget
+// scrollbar widget
+class GuiScrollbar: public GuiWidget
     , public GuiEventsHandler // handle child events
 {
 public:
-    GuiSlider();
+
+    static GuiWidgetMetaClass MetaClass; // scrollbar widget class
+
+public:
+    GuiScrollbar();
 
     // set slider params
     void SetMin(int minValue);
@@ -21,8 +25,8 @@ public:
     inline int GetPageSize() const { return mPageSize; }
 
 protected:
-    GuiSlider(GuiWidgetClass* widgetClass);
-    GuiSlider(GuiSlider* copyWidget);
+    GuiScrollbar(GuiWidgetMetaClass* widgetClass);
+    GuiScrollbar(GuiScrollbar* copyWidget);
 
     void SetupControlWidget(GuiWidget* controlWidget);
 
@@ -33,7 +37,7 @@ protected:
     void HandleInputEvent(MouseButtonInputEvent& inputEvent) override;
     void HandleChildAttached(GuiWidget* childWidget) override;
     void HandleChildDetached(GuiWidget* childWidget) override;
-    GuiSlider* ConstructClone() override;
+    GuiScrollbar* ConstructClone() override;
 
     // override GuiEventsHandler
     void HandleMouseDown(GuiWidget* sender, eMouseButton mbutton) override;
@@ -49,6 +53,3 @@ protected:
     GuiWidget* mDecPosWidget = nullptr;
     GuiWidget* mIncPosWidget = nullptr;
 };
-
-// slider widget class
-extern GuiWidgetClass gSliderWidgetClass;

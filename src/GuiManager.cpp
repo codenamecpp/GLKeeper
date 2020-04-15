@@ -7,7 +7,7 @@
 #include "InputsManager.h"
 #include "GuiButton.h"
 #include "GuiPanel.h"
-#include "GuiSlider.h"
+#include "GuiScrollbar.h"
 #include "GuiHierarchy.h"
 #include "GraphicsDevice.h"
 #include "FileSystem.h"
@@ -157,13 +157,13 @@ void GuiManager::ScanHoveredWidget()
     }
 }
 
-bool GuiManager::RegisterWidgetClass(GuiWidgetClass* widgetsClass)
+bool GuiManager::RegisterWidgetClass(GuiWidgetMetaClass* widgetsClass)
 {
     debug_assert(widgetsClass);
     if (widgetsClass == nullptr || widgetsClass->mFactory == nullptr)
         return false;
 
-    GuiWidgetClass*& classRegistered = mWidgetsClasses[widgetsClass->mClassName];
+    GuiWidgetMetaClass*& classRegistered = mWidgetsClasses[widgetsClass->mClassName];
     if (classRegistered)
     {
         gConsole.LogMessage(eLogMessage_Warning, "Widget class '%s' already registered in gui manager", widgetsClass->mClassName.c_str());
@@ -175,11 +175,11 @@ bool GuiManager::RegisterWidgetClass(GuiWidgetClass* widgetsClass)
 
 void GuiManager::RegisterWidgetsClasses()
 {
-    RegisterWidgetClass(&gBaseWidgetClass);
-    RegisterWidgetClass(&gPictureBoxWidgetClass);
-    RegisterWidgetClass(&gButtonWidgetClass);
-    RegisterWidgetClass(&gPanelWidgetClass);
-    RegisterWidgetClass(&gSliderWidgetClass);
+    RegisterWidgetClass(&GuiWidget::MetaClass);
+    RegisterWidgetClass(&GuiPictureBox::MetaClass);
+    RegisterWidgetClass(&GuiButton::MetaClass);
+    RegisterWidgetClass(&GuiPanel::MetaClass);
+    RegisterWidgetClass(&GuiScrollbar::MetaClass);
 }
 
 void GuiManager::UnregisterWidgetsClasses()
@@ -284,7 +284,7 @@ void GuiManager::FreeTemplateWidgets()
     mTemplateWidgetsClasses.clear();
 }
 
-GuiWidgetClass* GuiManager::GetWidgetClass(const std::string& className) const
+GuiWidgetMetaClass* GuiManager::GetWidgetClass(const std::string& className) const
 {
     auto iterator_found = mWidgetsClasses.find(className);
     if (iterator_found == mWidgetsClasses.end())
@@ -295,7 +295,7 @@ GuiWidgetClass* GuiManager::GetWidgetClass(const std::string& className) const
 
 GuiWidget* GuiManager::ConstructWidget(const std::string& className) const
 {
-    if (GuiWidgetClass* widgetClass = GetWidgetClass(className))
+    if (GuiWidgetMetaClass* widgetClass = GetWidgetClass(className))
     {
         debug_assert(widgetClass->mFactory);
         return widgetClass->mFactory->ConstructWidget();

@@ -1,45 +1,45 @@
 #include "pch.h"
-#include "GuiSlider.h"
+#include "GuiScrollbar.h"
 #include "GuiManager.h"
 #include "InputsManager.h"
 #include "GuiRenderer.h"
 #include "Console.h"
 
 // widget class factory
-static GuiWidgetFactory<GuiSlider> _SliderWidgetsFactory;
+static GuiWidgetFactory<GuiScrollbar> _ScrollbarWidgetsFactory;
 
-GuiWidgetClass gSliderWidgetClass("slider", &_SliderWidgetsFactory, &gBaseWidgetClass);
+GuiWidgetMetaClass GuiScrollbar::MetaClass("scrollbar", &_ScrollbarWidgetsFactory, &GuiWidget::MetaClass);
 
-GuiSlider::GuiSlider(): GuiSlider(&gSliderWidgetClass)
+GuiScrollbar::GuiScrollbar(): GuiScrollbar(&MetaClass)
 {
 }
 
-GuiSlider::GuiSlider(GuiWidgetClass* widgetClass)
+GuiScrollbar::GuiScrollbar(GuiWidgetMetaClass* widgetClass)
     : GuiWidget(widgetClass)
 {
 }
 
-GuiSlider::GuiSlider(GuiSlider* copyWidget)
+GuiScrollbar::GuiScrollbar(GuiScrollbar* copyWidget)
     : GuiWidget(copyWidget)
 {
 }
 
-void GuiSlider::SetMin(int minValue)
+void GuiScrollbar::SetMin(int minValue)
 {
     mMin = minValue;
 }
 
-void GuiSlider::SetMax(int maxValue)
+void GuiScrollbar::SetMax(int maxValue)
 {
     mMax = maxValue;
 }
 
-void GuiSlider::SetPageSize(int pageSize)
+void GuiScrollbar::SetPageSize(int pageSize)
 {
     mPageSize = pageSize;
 }
 
-void GuiSlider::SetupControlWidget(GuiWidget* controlWidget)
+void GuiScrollbar::SetupControlWidget(GuiWidget* controlWidget)
 {
     if (mSliderWidget && controlWidget == mSliderWidget)
     {
@@ -75,7 +75,7 @@ void GuiSlider::SetupControlWidget(GuiWidget* controlWidget)
     }
 }
 
-void GuiSlider::HandleUpdate(float deltaTime)
+void GuiScrollbar::HandleUpdate(float deltaTime)
 {
     if (mSliderWidget && mSliderWidget->IsMouseCaptured())
     {
@@ -84,13 +84,13 @@ void GuiSlider::HandleUpdate(float deltaTime)
     }
 }
 
-void GuiSlider::HandleRender(GuiRenderer& renderContext)
+void GuiScrollbar::HandleRender(GuiRenderer& renderContext)
 {
     Rectangle rc = GetLocalRect();
     renderContext.FillRect(rc, Color32_White);
 }
 
-bool GuiSlider::HasAttribute(eGuiWidgetAttribute attribute) const
+bool GuiScrollbar::HasAttribute(eGuiWidgetAttribute attribute) const
 {
     switch (attribute)
     {
@@ -100,11 +100,11 @@ bool GuiSlider::HasAttribute(eGuiWidgetAttribute attribute) const
     return false;
 }
 
-void GuiSlider::HandleInputEvent(MouseButtonInputEvent& inputEvent)
+void GuiScrollbar::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
 }
 
-void GuiSlider::HandleChildAttached(GuiWidget* childWidget)
+void GuiScrollbar::HandleChildAttached(GuiWidget* childWidget)
 {
     bool doSubscribe = true;
     if ((mSliderWidget == nullptr) && (childWidget->mName == "#slider"))
@@ -132,7 +132,7 @@ void GuiSlider::HandleChildAttached(GuiWidget* childWidget)
     }
 }
 
-void GuiSlider::HandleChildDetached(GuiWidget* childWidget)
+void GuiScrollbar::HandleChildDetached(GuiWidget* childWidget)
 {
     if (mSliderWidget && (mSliderWidget == childWidget))
     {
@@ -152,13 +152,13 @@ void GuiSlider::HandleChildDetached(GuiWidget* childWidget)
     Unsubscribe(childWidget);
 }
 
-GuiSlider* GuiSlider::ConstructClone()
+GuiScrollbar* GuiScrollbar::ConstructClone()
 {
-    GuiSlider* selfClone = new GuiSlider(this);
+    GuiScrollbar* selfClone = new GuiScrollbar(this);
     return selfClone;
 }
 
-void GuiSlider::HandleMouseDown(GuiWidget* sender, eMouseButton mbutton)
+void GuiScrollbar::HandleMouseDown(GuiWidget* sender, eMouseButton mbutton)
 {
     if (mSliderWidget == nullptr)
         return;
@@ -177,7 +177,7 @@ void GuiSlider::HandleMouseDown(GuiWidget* sender, eMouseButton mbutton)
     }
 }
 
-void GuiSlider::HandleMouseUp(GuiWidget* sender, eMouseButton mbutton)
+void GuiScrollbar::HandleMouseUp(GuiWidget* sender, eMouseButton mbutton)
 {
     if (sender == mDecPosWidget)
     {

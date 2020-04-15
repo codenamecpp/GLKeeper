@@ -33,11 +33,11 @@ public:
 
     // register specific widget class in gui system
     // @returns false if class name is not unique or factory does not specified for this class
-    bool RegisterWidgetClass(GuiWidgetClass* widgetsClass);
+    bool RegisterWidgetClass(GuiWidgetMetaClass* widgetsClass);
 
     // find widget class by its name
     // @param className: Widget class name
-    GuiWidgetClass* GetWidgetClass(const std::string& className) const;
+    GuiWidgetMetaClass* GetWidgetClass(const std::string& className) const;
 
     // construct new widget of specified class, if it registered
     // @param className: Widget class name
@@ -82,7 +82,7 @@ private:
     void ClearEventsQueue();
 
 private:
-    using GuiWidgetClassesMap = std::unordered_map<std::string, GuiWidgetClass*>;
+    using GuiWidgetClassesMap = std::unordered_map<std::string, GuiWidgetMetaClass*>;
     GuiWidgetClassesMap mWidgetsClasses;
 
     using GuiTemplateWidgetsMap = std::unordered_map<std::string, GuiWidget*>;

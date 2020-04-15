@@ -157,7 +157,7 @@ public:
 };
 
 // widget class descriptor, unique for each type of widgets
-class GuiWidgetClass
+class GuiWidgetMetaClass
 {
 public:
     // widget class does not changes during runtime
@@ -168,10 +168,10 @@ public:
     GuiWidgetFactoryInterface* mFactory;
 
     // used for rtti
-    GuiWidgetClass* mParentClass;
+    GuiWidgetMetaClass* mParentClass;
 
 public:
-    GuiWidgetClass(std::string&& className, GuiWidgetFactoryInterface* factory, GuiWidgetClass* parentClass)
+    GuiWidgetMetaClass(std::string&& className, GuiWidgetFactoryInterface* factory, GuiWidgetMetaClass* parentClass)
         : mClassName(className)
         , mFactory(factory)
         , mParentClass(parentClass)

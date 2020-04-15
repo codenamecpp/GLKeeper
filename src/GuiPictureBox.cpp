@@ -7,15 +7,15 @@
 // widget class factory
 static GuiWidgetFactory<GuiPictureBox> _PictureBoxWidgetsFactory;
 
-GuiWidgetClass gPictureBoxWidgetClass("picture_box", &_PictureBoxWidgetsFactory, &gBaseWidgetClass);
+GuiWidgetMetaClass GuiPictureBox::MetaClass("picture_box", &_PictureBoxWidgetsFactory, &GuiWidget::MetaClass);
 
 //////////////////////////////////////////////////////////////////////////
 
-GuiPictureBox::GuiPictureBox() : GuiPictureBox(&gPictureBoxWidgetClass)
+GuiPictureBox::GuiPictureBox() : GuiPictureBox(&MetaClass)
 {
 }
 
-GuiPictureBox::GuiPictureBox(GuiWidgetClass* widgetClass)
+GuiPictureBox::GuiPictureBox(GuiWidgetMetaClass* widgetClass)
     : GuiWidget(widgetClass)
 {
 }

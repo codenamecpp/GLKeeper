@@ -8,16 +8,16 @@
 // base widget class factory
 static GuiWidgetFactory<GuiWidget> _BaseWidgetsFactory;
 
-GuiWidgetClass gBaseWidgetClass("widget", &_BaseWidgetsFactory, nullptr);
+GuiWidgetMetaClass GuiWidget::MetaClass("widget", &_BaseWidgetsFactory, nullptr);
 
 //////////////////////////////////////////////////////////////////////////
 
-GuiWidget::GuiWidget(): GuiWidget(&gBaseWidgetClass)
+GuiWidget::GuiWidget(): GuiWidget(&MetaClass)
 {
 }
 
-GuiWidget::GuiWidget(GuiWidgetClass* widgetClass)
-    : mClass(widgetClass)
+GuiWidget::GuiWidget(GuiWidgetMetaClass* widgetClass)
+    : mMetaClass(widgetClass)
     , mTransform(1.0f)
     , mOriginPercents()
     , mOrigin()
@@ -27,11 +27,11 @@ GuiWidget::GuiWidget(GuiWidgetClass* widgetClass)
     , mSize()
     , mUserData()
 {
-    debug_assert(mClass);
+    debug_assert(mMetaClass);
 }
 
 GuiWidget::GuiWidget(GuiWidget* copyWidget)
-    : mClass(copyWidget->mClass)
+    : mMetaClass(copyWidget->mMetaClass)
     , mName(copyWidget->mName)
     , mUserData()
     , mAnchors(copyWidget->mAnchors)
@@ -54,7 +54,7 @@ GuiWidget::GuiWidget(GuiWidget* copyWidget)
     , mClipChildren(copyWidget->mClipChildren)
     , mTemplateClassName(copyWidget->mTemplateClassName)
 {
-    debug_assert(mClass);
+    debug_assert(mMetaClass);
 }
 
 void GuiWidget::HandleLoadProperties(cxx::json_document_node documentNode)
