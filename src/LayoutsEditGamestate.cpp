@@ -27,11 +27,7 @@ void LayoutsEditGamestate::HandleGamestateEnter()
         GuiPanel* pnel = button0->CastToWidgetClass<GuiPanel>();
         GuiButton* pb = button0->CastToWidgetClass<GuiButton>();
 
-        Subscribe(button0, eGuiEvent_Click);
-        Subscribe(button0, eGuiEvent_MouseDown);
-        Subscribe(button0, eGuiEvent_MouseUp);
-        Subscribe(button0, eGuiEvent_MouseEnter);
-        Subscribe(button0, eGuiEvent_MouseLeave);
+        Subscribe(button0, eGuiEvent_All);
     }
 
     GuiWidget* sliderThumb = mHier.GetWidgetByPath("slider_0/#slider");

@@ -56,7 +56,7 @@ public:
 
     // push event to events queue and notify registered handlers at beginning of next frame
     // @param eventData: source event data
-    void PostGuiEvent(const GuiEvent& eventData);
+    void BroadcastEvent(const GuiEvent& eventData);
 
     // add or remove gui events handler, usually these methods are not explicitly called
     // @param eventsHandler: Handler

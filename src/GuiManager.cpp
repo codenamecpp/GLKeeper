@@ -339,10 +339,16 @@ void GuiManager::HandleScreenResolutionChanged()
     }
 }
 
-void GuiManager::PostGuiEvent(const GuiEvent& eventData)
+void GuiManager::BroadcastEvent(const GuiEvent& eventData)
 {
     if (mEventHandlers.empty()) // no one's there
         return;
+
+    if (eventData.mEventId == eGuiEvent_All) // unexpected
+    {
+        debug_assert(false);
+        return;
+    }
 
     mEventsQueue.push_back(eventData);
 }

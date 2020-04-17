@@ -11,6 +11,8 @@ enum eGuiEvent
     eGuiEvent_MouseLeave,
     eGuiEvent_MouseDown,
     eGuiEvent_MouseUp,
+
+    eGuiEvent_All, // not an event
 };
 decl_enum_strings(eGuiEvent);
 

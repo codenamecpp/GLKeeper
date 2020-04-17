@@ -41,6 +41,12 @@ void GuiEventsHandler::Unsubscribe(GuiWidget* eventSource, eGuiEvent eventId)
         return;
     }
 
+    if (eventId == eGuiEvent_All)
+    {
+        Unsubscribe(eventSource);
+        return;
+    }
+
     cxx::erase_elements_if(mSubscriptions, [eventSource, eventId](const Subscription& curr)
         {
             return curr.mEventsSource == eventSource && curr.mEventsId == eventId;
@@ -86,9 +92,10 @@ bool GuiEventsHandler::ProcessEvent(GuiEvent* eventData)
 
     for (const Subscription& curr: mSubscriptions)
     {
-        if (curr.mEventsSource == eventData->mEventSender && curr.mEventsId == eventData->mEventId)
+        if (curr.mEventsSource == eventData->mEventSender && 
+            (curr.mEventsId == eventData->mEventId || curr.mEventsId == eGuiEvent_All))
         {
-            switch (curr.mEventsId)
+            switch (eventData->mEventId)
             {
                 case eGuiEvent_Click: 
                     HandleClickEvent(eventData->mEventSender); 

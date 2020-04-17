@@ -257,7 +257,7 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
 
     // post event
     GuiEvent eventData (this, inputEvent.mPressed ? eGuiEvent_MouseDown : eGuiEvent_MouseUp, inputEvent.mButton);
-    gGuiManager.PostGuiEvent(eventData);
+    gGuiManager.BroadcastEvent(eventData);
     
     bool hasBeenClicked = false;
     // process clicks
@@ -283,7 +283,7 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
     {
         // post event
         GuiEvent clickEventData (this, eGuiEvent_Click, inputEvent.mButton);
-        gGuiManager.PostGuiEvent(clickEventData);
+        gGuiManager.BroadcastEvent(clickEventData);
 
         HandleClick();
     }
@@ -888,13 +888,13 @@ void GuiWidget::HoveredStateChanged()
     if (IsHovered())
     {
         GuiEvent eventData (this, eGuiEvent_MouseEnter);
-        gGuiManager.PostGuiEvent(eventData);
+        gGuiManager.BroadcastEvent(eventData);
 
     }
     else
     {
         GuiEvent eventData (this, eGuiEvent_MouseLeave);
-        gGuiManager.PostGuiEvent(eventData);
+        gGuiManager.BroadcastEvent(eventData);
     }
 
     HandleHoveredStateChanged();
