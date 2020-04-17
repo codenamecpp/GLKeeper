@@ -474,6 +474,9 @@
     <ClInclude Include="GuiScrollbar.h">
       <Filter>Game\GUI\WidgetsLibrary</Filter>
     </ClInclude>
+    <ClInclude Include="GuiAnimation.h">
+      <Filter>Game\GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -729,6 +732,9 @@
     </ClCompile>
     <ClCompile Include="GuiScrollbar.cpp">
       <Filter>Game\GUI\WidgetsLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiAnimation.cpp">
+      <Filter>Game\GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -498,7 +498,7 @@ void json_node_array::validate()
 
 //////////////////////////////////////////////////////////////////////////
 
-bool json_get_attribute(const json_document_node& json_node, const std::string& attribute_name, bool& output)
+bool json_get_attribute(json_node_object json_node, const std::string& attribute_name, bool& output)
 {
     if (json_node_boolean booleanNode = json_node[attribute_name])
     {
@@ -508,7 +508,7 @@ bool json_get_attribute(const json_document_node& json_node, const std::string& 
     return false;
 }
 
-bool json_get_attribute(const json_document_node& json_node, const std::string& attribute_name, std::string& output)
+bool json_get_attribute(json_node_object json_node, const std::string& attribute_name, std::string& output)
 {
     if (json_node_string stringNode = json_node[attribute_name])
     {
@@ -518,7 +518,7 @@ bool json_get_attribute(const json_document_node& json_node, const std::string& 
     return false;
 }
 
-bool json_get_attribute(const json_document_node& json_node, const std::string& attribute_name, int& output)
+bool json_get_attribute(json_node_object json_node, const std::string& attribute_name, int& output)
 {
     if (json_node_numeric numericNode = json_node[attribute_name])
     {
@@ -528,9 +528,49 @@ bool json_get_attribute(const json_document_node& json_node, const std::string& 
     return false;
 }
 
-bool json_get_attribute(const json_document_node& json_node, const std::string& attribute_name, float& output)
+bool json_get_attribute(json_node_object json_node, const std::string& attribute_name, float& output)
 {
     if (json_node_numeric numericNode = json_node[attribute_name])
+    {
+        output = numericNode.get_value_float();
+        return true;
+    }
+    return false;
+}
+
+bool json_get_array_item(json_node_array json_node, int item_index, bool& output)
+{
+    if (json_node_boolean booleanNode = json_node[item_index])
+    {
+        output = booleanNode.get_value();
+        return true;
+    }
+    return false;
+}
+
+bool json_get_array_item(json_node_array json_node, int item_index, std::string& output)
+{
+    if (json_node_string stringNode = json_node[item_index])
+    {
+        output = stringNode.get_value();
+        return true;
+    }
+    return false;
+}
+
+bool json_get_array_item(json_node_array json_node, int item_index, int& output)
+{
+    if (json_node_numeric numericNode = json_node[item_index])
+    {
+        output = numericNode.get_value_integer();
+        return true;
+    }
+    return false;
+}
+
+bool json_get_array_item(json_node_array json_node, int item_index, float& output)
+{
+    if (json_node_numeric numericNode = json_node[item_index])
     {
         output = numericNode.get_value_float();
         return true;

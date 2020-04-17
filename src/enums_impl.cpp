@@ -348,3 +348,17 @@ impl_enum_strings(eGuiUnits)
     {eGuiUnits_Pixels, "pixels"},
     {eGuiUnits_Percents, "percents"},
 };
+
+impl_enum_strings(eGuiAnimationStatus)
+{
+    {eGuiAnimationStatus_Stopped, "stopped"},
+    {eGuiAnimationStatus_PlayingForward, "play_forward"},
+    {eGuiAnimationStatus_PlayingBackward, "play_backward"},
+};
+
+impl_enum_strings(eGuiAnimationLoop)
+{
+    {eGuiAnimationLoop_None, "none"},
+    {eGuiAnimationLoop_PingPong, "ping_pong"},
+    {eGuiAnimationLoop_FromStart, "from_start"},
+};

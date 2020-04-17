@@ -209,7 +209,7 @@ protected:
 
 protected:
     // overridables
-    virtual void HandleLoadProperties(cxx::json_document_node documentNode);
+    virtual void HandleLoadProperties(cxx::json_document_node documentNode) {}
 
     virtual void HandleRender(GuiRenderer& renderContext) {}
     virtual void HandleUpdate(float deltaTime) {}

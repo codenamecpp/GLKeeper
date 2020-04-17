@@ -57,8 +57,14 @@ GuiWidget::GuiWidget(GuiWidget* copyWidget)
     debug_assert(mMetaClass);
 }
 
-void GuiWidget::HandleLoadProperties(cxx::json_document_node documentNode)
+void GuiWidget::LoadProperties(cxx::json_document_node documentNode)
 {
+    if (!documentNode)
+    {
+        debug_assert(false);
+        return;
+    }
+
     cxx::json_get_attribute(documentNode, "name", mName);
     debug_assert(mName.length());
 
@@ -79,69 +85,69 @@ void GuiWidget::HandleLoadProperties(cxx::json_document_node documentNode)
         SetClipChildren(is_clip_children);
     }
     // min size
-    if (cxx::json_node_object prop_minsize = documentNode["min_size"])
+    if (cxx::json_node_array prop_minsize = documentNode["min_size"])
     {
         Point minSize(0, 0);
-        cxx::json_get_attribute(prop_minsize, "w", minSize.x);
-        cxx::json_get_attribute(prop_minsize, "h", minSize.y);
+        cxx::json_get_array_item(prop_minsize, 0, minSize.x);
+        cxx::json_get_array_item(prop_minsize, 1, minSize.y);
         SetMinSize(minSize);
     }
     // max size
-    if (cxx::json_node_object prop_maxsize = documentNode["max_size"])
+    if (cxx::json_node_array prop_maxsize = documentNode["max_size"])
     {
         Point maxSize(0, 0);
-        cxx::json_get_attribute(prop_maxsize, "w", maxSize.x);
-        cxx::json_get_attribute(prop_maxsize, "h", maxSize.y);
+        cxx::json_get_array_item(prop_maxsize, 0, maxSize.x);
+        cxx::json_get_array_item(prop_maxsize, 1, maxSize.y);
         SetMaxSize(maxSize);
     }    
     // origin
     {
         Point origin(0, 0);
-        if (cxx::json_node_object prop_position = documentNode["origin"])
+        if (cxx::json_node_array prop_position = documentNode["origin"])
         {
-            cxx::json_get_attribute(prop_position, "x", origin.x);
-            cxx::json_get_attribute(prop_position, "y", origin.y);
+            cxx::json_get_array_item(prop_position, 0, origin.x);
+            cxx::json_get_array_item(prop_position, 1, origin.y);
         }
         eGuiUnits unitsX = eGuiUnits_Pixels;
         eGuiUnits unitsY = eGuiUnits_Pixels;
-        if (cxx::json_node_object prop_units = documentNode["origin_units"])
+        if (cxx::json_node_array prop_units = documentNode["origin_units"])
         {
-            cxx::json_get_attribute(prop_units, "x", unitsX);
-            cxx::json_get_attribute(prop_units, "y", unitsY);
+            cxx::json_get_array_item(prop_units, 0, unitsX);
+            cxx::json_get_array_item(prop_units, 1, unitsY);
         }
         SetOrigin(origin, unitsX, unitsY);
     }
     // position
     {
         Point position(0, 0);
-        if (cxx::json_node_object prop_position = documentNode["pos"])
+        if (cxx::json_node_array prop_position = documentNode["pos"])
         {
-            cxx::json_get_attribute(prop_position, "x", position.x);
-            cxx::json_get_attribute(prop_position, "y", position.y);
+            cxx::json_get_array_item(prop_position, 0, position.x);
+            cxx::json_get_array_item(prop_position, 1, position.y);
         }
         eGuiUnits unitsX = eGuiUnits_Pixels;
         eGuiUnits unitsY = eGuiUnits_Pixels;
-        if (cxx::json_node_object prop_units = documentNode["pos_units"])
+        if (cxx::json_node_array prop_units = documentNode["pos_units"])
         {
-            cxx::json_get_attribute(prop_units, "x", unitsX);
-            cxx::json_get_attribute(prop_units, "y", unitsY);
+            cxx::json_get_array_item(prop_units, 0, unitsX);
+            cxx::json_get_array_item(prop_units, 1, unitsY);
         }
         SetPosition(position, unitsX, unitsY);
     }
     // size
     {
         Point size(0, 0);
-        if (cxx::json_node_object prop_size = documentNode["size"])
+        if (cxx::json_node_array prop_size = documentNode["size"])
         {
-            cxx::json_get_attribute(prop_size, "w", size.x);
-            cxx::json_get_attribute(prop_size, "h", size.y);
+            cxx::json_get_array_item(prop_size, 0, size.x);
+            cxx::json_get_array_item(prop_size, 1, size.y);
         }
         eGuiUnits unitsW = eGuiUnits_Pixels;
         eGuiUnits unitsH = eGuiUnits_Pixels;
-        if (cxx::json_node_object prop_units = documentNode["size_units"])
+        if (cxx::json_node_array prop_units = documentNode["size_units"])
         {
-            cxx::json_get_attribute(prop_units, "w", unitsW);
-            cxx::json_get_attribute(prop_units, "h", unitsH);
+            cxx::json_get_array_item(prop_units, 0, unitsW);
+            cxx::json_get_array_item(prop_units, 1, unitsH);
         }
         SetSize(size, unitsW, unitsH);
     }
@@ -155,15 +161,7 @@ void GuiWidget::HandleLoadProperties(cxx::json_document_node documentNode)
         cxx::json_get_attribute(prop_anchors, "bottom", anchors.mB);
         SetAnchors(anchors);
     }
-}
 
-void GuiWidget::LoadProperties(cxx::json_document_node documentNode)
-{
-    if (!documentNode)
-    {
-        debug_assert(false);
-        return;
-    }
     HandleLoadProperties(documentNode);
 }
 

@@ -6,6 +6,7 @@
 class GuiHierarchy;
 class GuiRenderer;
 class GuiWidget;
+class GuiAnimation;
 class GuiButton;
 class GuiPictureBox;
 class GuiPanel;
@@ -47,6 +48,22 @@ enum eGuiWidgetAttribute
     eGuiWidgetAttribute_Interactive, // widget receiving mouse inputs and can be pressed or hovered
     eGuiWidgetAttribute_DisablePickChildren, // cannot pick child widgets
 };
+
+enum eGuiAnimationStatus
+{
+    eGuiAnimationStatus_Stopped,
+    eGuiAnimationStatus_PlayingForward,
+    eGuiAnimationStatus_PlayingBackward,
+};
+decl_enum_strings(eGuiAnimationStatus);
+
+enum eGuiAnimationLoop
+{
+    eGuiAnimationLoop_None,
+    eGuiAnimationLoop_PingPong,
+    eGuiAnimationLoop_FromStart,
+};
+decl_enum_strings(eGuiAnimationLoop);
 
 // gui widget anchors struct
 struct GuiAnchors

@@ -180,6 +180,7 @@
     <ClInclude Include="3rd_party\stb_image.h" />
     <ClInclude Include="AABBTree.h" />
     <ClInclude Include="CreatureDefs.h" />
+    <ClInclude Include="GuiAnimation.h" />
     <ClInclude Include="GuiButton.h" />
     <ClInclude Include="GuiEvent.h" />
     <ClInclude Include="GuiHierarchy.h" />
@@ -308,6 +309,7 @@
     <ClCompile Include="CommonTypes.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="ConsoleVariable.cpp" />
+    <ClCompile Include="GuiAnimation.cpp" />
     <ClCompile Include="GuiHierarchy.cpp" />
     <ClCompile Include="ToolsUIConsoleWindow.cpp" />
     <ClCompile Include="ToolsUILayoutsEditWindow.cpp" />
