@@ -82,9 +82,15 @@ public:
 
     // @param eventSource cannot be null
     void Subscribe(cxx::unique_string eventId, cxx::unique_string eventSource);
+    void Subscribe(cxx::unique_string eventId, GuiWidget* eventSource);
+
     void Unsubscribe(cxx::unique_string eventId, cxx::unique_string eventSource);
     void Unsubscribe(cxx::unique_string eventId);
+    void Unsubscribe(cxx::unique_string eventId, GuiWidget* eventSource);
+
     void UnsubscribeAll();
+
+    bool HasSubscriptions() const;
 
 protected:
     // overridables
@@ -93,12 +99,18 @@ protected:
     virtual void HandleMouseLeave(GuiWidget* sender) {}
     virtual void HandleMouseDown(GuiWidget* sender, eMouseButton mbutton) {}
     virtual void HandleMouseUp(GuiWidget* sender, eMouseButton mbutton) {}
-    virtual void HandleEvent(cxx::unique_string eventId, GuiWidget* sender) {}
+    virtual void HandleEvent(GuiWidget* sender, cxx::unique_string eventId) {}
 
 private:
     void ProcessEvent(GuiEvent* eventData);
 
 private:
-    using Subscriptions = std::vector<cxx::unique_string>; // widget names
+    using NameSubscriptions = std::vector<cxx::unique_string>; // widget names
+    using PtrsSubscriptions = std::vector<GuiWidget*>; // widget pointers
+    struct Subscriptions
+    {
+        NameSubscriptions mNames;
+        PtrsSubscriptions mPointers;
+    };
     std::map<cxx::unique_string, Subscriptions> mSubscriptions;
 };

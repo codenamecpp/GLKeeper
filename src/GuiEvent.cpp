@@ -22,18 +22,30 @@ void GuiEventsHandler::Subscribe(cxx::unique_string eventId, cxx::unique_string 
         return;
     }
 
-    bool registerEventsHandler = mSubscriptions.empty();
-
-    Subscriptions& eventSourcesList = mSubscriptions[eventId];
-    if (!cxx::contains(eventSourcesList, eventSource))
-    {
-        eventSourcesList.push_back(eventSource);
-    }
-
-    if (registerEventsHandler)
+    if (!HasSubscriptions())
     {
         gGuiManager.RegisterEventsHandler(this);
     }
+
+    Subscriptions& subscriptions = mSubscriptions[eventId];
+    cxx::push_back_if_unique(subscriptions.mNames, eventSource);
+}
+
+void GuiEventsHandler::Subscribe(cxx::unique_string eventId, GuiWidget* eventSource)
+{
+    if (eventId.empty() || eventSource == nullptr)
+    {
+        debug_assert(false);
+        return;
+    }
+
+    if (!HasSubscriptions())
+    {
+        gGuiManager.RegisterEventsHandler(this);
+    }
+
+    Subscriptions& subscriptions = mSubscriptions[eventId];
+    cxx::push_back_if_unique(subscriptions.mPointers, eventSource);
 }
 
 void GuiEventsHandler::Unsubscribe(cxx::unique_string eventId, cxx::unique_string eventSource)
@@ -48,15 +60,41 @@ void GuiEventsHandler::Unsubscribe(cxx::unique_string eventId, cxx::unique_strin
     if (map_iterator == mSubscriptions.end())
         return;
 
-    Subscriptions& eventSourcesList = map_iterator->second;
-    cxx::erase_elements(eventSourcesList, eventSource);
+    Subscriptions& subscriptions = map_iterator->second;
+    cxx::erase_elements(subscriptions.mNames, eventSource);
 
-    if (eventSourcesList.empty())
+    if (subscriptions.mNames.empty() && subscriptions.mPointers.empty())
     {
         mSubscriptions.erase(map_iterator);
     }
 
-    if (mSubscriptions.empty())
+    if (!HasSubscriptions())
+    {
+        gGuiManager.UnregisterEventsHandler(this);
+    }
+}
+
+void GuiEventsHandler::Unsubscribe(cxx::unique_string eventId, GuiWidget* eventSource)
+{
+    if (eventId.empty() || eventSource == nullptr)
+    {
+        debug_assert(false);
+        return;
+    }
+
+    auto map_iterator = mSubscriptions.find(eventId);
+    if (map_iterator == mSubscriptions.end())
+        return;
+
+    Subscriptions& subscriptions = map_iterator->second;
+    cxx::erase_elements(subscriptions.mPointers, eventSource);
+
+    if (subscriptions.mNames.empty() && subscriptions.mPointers.empty())
+    {
+        mSubscriptions.erase(map_iterator);
+    }
+
+    if (!HasSubscriptions())
     {
         gGuiManager.UnregisterEventsHandler(this);
     }
@@ -71,11 +109,12 @@ void GuiEventsHandler::Unsubscribe(cxx::unique_string eventId)
     }
 
     auto map_iterator = mSubscriptions.find(eventId);
-    if (map_iterator == mSubscriptions.end())
-        return;
+    if (map_iterator != mSubscriptions.end())
+    {
+        mSubscriptions.erase(map_iterator);
+    }
 
-    mSubscriptions.erase(map_iterator);
-    if (mSubscriptions.empty())
+    if (!HasSubscriptions())
     {
         gGuiManager.UnregisterEventsHandler(this);
     }
@@ -85,6 +124,11 @@ void GuiEventsHandler::UnsubscribeAll()
 {
     mSubscriptions.clear();
     gGuiManager.UnregisterEventsHandler(this);
+}
+
+bool GuiEventsHandler::HasSubscriptions() const
+{
+    return !mSubscriptions.empty();
 }
 
 void GuiEventsHandler::ProcessEvent(GuiEvent* eventData)
@@ -98,8 +142,13 @@ void GuiEventsHandler::ProcessEvent(GuiEvent* eventData)
     if (map_iterator == mSubscriptions.end())
         return;
 
-    if (!cxx::contains(map_iterator->second, eventData->mEventSender->mName))
+    // check by pointer and name
+    const Subscriptions& subscriptions = map_iterator->second;
+    if (!cxx::contains(subscriptions.mPointers, eventData->mEventSender) &&
+        !cxx::contains(subscriptions.mNames, eventData->mEventSender->mName))
+    {
         return;
+    }
 
     if (eventData->mEventId == GuiEventId_Click)
     {
@@ -131,5 +180,5 @@ void GuiEventsHandler::ProcessEvent(GuiEvent* eventData)
         return;
     }
 
-    HandleEvent(eventData->mEventId, eventData->mEventSender);
+    HandleEvent(eventData->mEventSender, eventData->mEventId);
 }

@@ -29,7 +29,7 @@ void LayoutsEditGamestate::HandleGamestateEnter()
     Subscribe(GuiEventId_MouseLeave, buttonName);
 
     GuiWidget* sliderThumb = mHier.GetWidgetByPath("slider_0/#slider");
-    int bp = 0;
+    Subscribe(GuiEventId_MouseDown, sliderThumb);
 }
 
 void LayoutsEditGamestate::HandleGamestateLeave()
