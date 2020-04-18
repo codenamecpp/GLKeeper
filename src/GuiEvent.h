@@ -15,8 +15,6 @@ enum eGuiEvent: unsigned int
 
 inline eGuiEvent operator | (eGuiEvent lhs, eGuiEvent rhs) { return (eGuiEvent)((unsigned int)(lhs) | (unsigned int)(rhs)); }
 inline eGuiEvent operator & (eGuiEvent lhs, eGuiEvent rhs) { return (eGuiEvent)((unsigned int)(lhs) & (unsigned int)(rhs)); }
-inline eGuiEvent operator ^ (eGuiEvent lhs, eGuiEvent rhs) { return (eGuiEvent)((unsigned int)(lhs) ^ (unsigned int)(rhs)); }
-inline eGuiEvent operator ~ (eGuiEvent bits) { return (eGuiEvent)(~(unsigned int)(bits)); }
 
 // all standard events mask except for action
 const eGuiEvent GuiEvent_All = 
