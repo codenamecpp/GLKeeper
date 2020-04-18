@@ -229,6 +229,7 @@
     <ClInclude Include="GuiDefs.h" />
     <ClInclude Include="GuiManager.h" />
     <ClInclude Include="GuiRenderer.h" />
+    <ClInclude Include="unique_string.h" />
     <ClInclude Include="WallSection.h" />
     <ClInclude Include="ScenarioDefs.h" />
     <ClInclude Include="ScenarioLoader.h" />
@@ -371,6 +372,7 @@
     <ClCompile Include="TerrainMeshComponent.cpp" />
     <ClCompile Include="GuiManager.cpp" />
     <ClCompile Include="GuiRenderer.cpp" />
+    <ClCompile Include="unique_string.cpp" />
     <ClCompile Include="WallSection.cpp" />
     <ClCompile Include="ScenarioLoader.cpp" />
     <ClCompile Include="SceneCamera.cpp" />

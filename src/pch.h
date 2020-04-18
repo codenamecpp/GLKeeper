@@ -66,6 +66,7 @@
 #include "json_document.h"
 #include "common_utils.h"
 #include "handle.h"
+#include "unique_string.h"
 
 // game
 
