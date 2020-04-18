@@ -178,7 +178,7 @@ class GuiWidgetMetaClass
 {
 public:
     // widget class does not changes during runtime
-    const std::string mClassName;
+    cxx::unique_string mClassName;
 
     // factory is responsible for constructing widgets of this class
     // it should not be null
@@ -188,7 +188,7 @@ public:
     GuiWidgetMetaClass* mParentClass;
 
 public:
-    GuiWidgetMetaClass(std::string&& className, GuiWidgetFactoryInterface* factory, GuiWidgetMetaClass* parentClass)
+    GuiWidgetMetaClass(cxx::unique_string className, GuiWidgetFactoryInterface* factory, GuiWidgetMetaClass* parentClass)
         : mClassName(className)
         , mFactory(factory)
         , mParentClass(parentClass)

@@ -44,11 +44,11 @@ bool GuiHierarchy::LoadFromFile(const std::string& fileName)
             std::string className;
             if (cxx::json_get_attribute(objectNode, "class", className))
             {
-                widget = gGuiManager.ConstructWidget(className);
+                widget = gGuiManager.ConstructWidget(cxx::unique_string(className));
             }
             else if (cxx::json_get_attribute(objectNode, "template_class", className))
             {
-                widget = gGuiManager.ConstructTemplateWidget(className);
+                widget = gGuiManager.ConstructTemplateWidget(cxx::unique_string(className));
                 widgetIsTemplate = true;
             }
 
@@ -143,7 +143,7 @@ GuiWidget* GuiHierarchy::GetWidgetByPath(const std::string& widgetPath) const
 
     if (!cxx::contains(widgetPath, '/'))
     {
-        return mRootWidget->GetChild(widgetPath);
+        return mRootWidget->GetChild(cxx::unique_string(widgetPath));
     }
     
     GuiWidget* currentWidget = mRootWidget;
@@ -156,7 +156,7 @@ GuiWidget* GuiHierarchy::GetWidgetByPath(const std::string& widgetPath) const
             break;
 
         debug_assert(!currentName.empty());
-        if (GuiWidget* child = currentWidget->GetChild(currentName))
+        if (GuiWidget* child = currentWidget->GetChild(cxx::unique_string(currentName)))
         {
             currentWidget = child;
             continue;

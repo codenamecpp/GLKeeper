@@ -218,7 +218,7 @@ bool GuiManager::LoadTemplateWidgets()
         std::string className;
         if (cxx::json_get_attribute(objectNode, "class", className))
         {
-            widget = gGuiManager.ConstructWidget(className);
+            widget = gGuiManager.ConstructWidget(cxx::unique_string(className));
         }
 
         if (widget == nullptr)
@@ -251,7 +251,7 @@ bool GuiManager::LoadTemplateWidgets()
     for (cxx::json_document_node currNode = rootNode.first_child(); currNode;
         currNode = currNode.next_sibling())
     {
-        std::string templateClassName = currNode.get_element_name();
+        cxx::unique_string templateClassName = cxx::unique_string(currNode.get_element_name());
         if (mTemplateWidgetsClasses.find(templateClassName) != mTemplateWidgetsClasses.end())
         {
             debug_assert(false);
@@ -284,7 +284,7 @@ void GuiManager::FreeTemplateWidgets()
     mTemplateWidgetsClasses.clear();
 }
 
-GuiWidgetMetaClass* GuiManager::GetWidgetClass(const std::string& className) const
+GuiWidgetMetaClass* GuiManager::GetWidgetClass(cxx::unique_string className) const
 {
     auto iterator_found = mWidgetsClasses.find(className);
     if (iterator_found == mWidgetsClasses.end())
@@ -293,7 +293,7 @@ GuiWidgetMetaClass* GuiManager::GetWidgetClass(const std::string& className) con
     return iterator_found->second;
 }
 
-GuiWidget* GuiManager::ConstructWidget(const std::string& className) const
+GuiWidget* GuiManager::ConstructWidget(cxx::unique_string className) const
 {
     if (GuiWidgetMetaClass* widgetClass = GetWidgetClass(className))
     {
@@ -305,9 +305,9 @@ GuiWidget* GuiManager::ConstructWidget(const std::string& className) const
     return nullptr;
 }
 
-GuiWidget* GuiManager::ConstructTemplateWidget(const std::string& templateClassName) const
+GuiWidget* GuiManager::ConstructTemplateWidget(cxx::unique_string className) const
 {
-    auto template_iter = mTemplateWidgetsClasses.find(templateClassName);
+    auto template_iter = mTemplateWidgetsClasses.find(className);
     if (template_iter != mTemplateWidgetsClasses.end())
     {
         GuiWidget* templateClone = template_iter->second->CloneDeep();
@@ -344,8 +344,7 @@ void GuiManager::BroadcastEvent(const GuiEvent& eventData)
     if (mEventHandlers.empty()) // no one's there
         return;
 
-    // check single event
-    if ((eventData.mEventId == 0) || !cxx::is_pot(eventData.mEventId))
+    if (eventData.mEventId.empty())
     {
         debug_assert(false);
         return;

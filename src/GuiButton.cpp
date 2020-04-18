@@ -7,8 +7,7 @@
 
 // widget class factory
 static GuiWidgetFactory<GuiButton> _ButtonWidgetsFactory;
-
-GuiWidgetMetaClass GuiButton::MetaClass("button", &_ButtonWidgetsFactory, &GuiWidget::MetaClass);
+GuiWidgetMetaClass GuiButton::MetaClass(cxx::unique_string("button"), &_ButtonWidgetsFactory, &GuiWidget::MetaClass);
 
 //////////////////////////////////////////////////////////////////////////
 

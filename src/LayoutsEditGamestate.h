@@ -21,7 +21,7 @@ public:
 
 protected:
     // override GuiEventsHandler
-    void HandleClickEvent(GuiWidget* sender) override;
+    void HandleClick(GuiWidget* sender) override;
     void HandleMouseEnter(GuiWidget* sender) override;
     void HandleMouseLeave(GuiWidget* sender) override;
     void HandleMouseDown(GuiWidget* sender, eMouseButton mbutton) override;

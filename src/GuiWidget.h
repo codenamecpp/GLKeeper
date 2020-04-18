@@ -12,7 +12,7 @@ public:
     
     static GuiWidgetMetaClass MetaClass; // base widget class
 
-    std::string mName; // user-defined identifier for widget
+    cxx::unique_string mName; // user-defined identifier for widget
     GuiUserData mUserData; // user-defined data
 
 #ifdef _DEBUG
@@ -22,7 +22,7 @@ public:
 #endif
 
     // readonly
-    std::string mTemplateClassName; // specified for template widgets
+    cxx::unique_string mTemplateClassName; // specified for template widgets
 
 public:
     // construct widget
@@ -109,7 +109,7 @@ public:
     GuiWidget* PickWidget(const Point& screenPosition);
 
     // get child widget by its name
-    GuiWidget* GetChild(const std::string& name) const;
+    GuiWidget* GetChild(const cxx::unique_string& name) const;
 
     // get child widget by its index
     GuiWidget* GetChild(int index) const;
@@ -204,6 +204,7 @@ protected:
     Point ComputePositionPixels() const;
     Point ComputeSizePixels() const;
 
+    void SetDetached();
     void SetAnchorPositions();
     void ReleaseMouseCapture();
 

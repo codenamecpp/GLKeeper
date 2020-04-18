@@ -72,6 +72,8 @@ namespace cxx
 
         inline bool operator == (const unique_string& other_string) const { return mStringHolder == other_string.mStringHolder; }
         inline bool operator != (const unique_string& other_string) const { return mStringHolder != other_string.mStringHolder; }
+        inline bool operator < (const unique_string& other_string) const { return mStringHolder->mString < other_string.mStringHolder->mString; }
+        inline bool operator > (const unique_string& other_string) const { return mStringHolder->mString > other_string.mStringHolder->mString; }
         // compare unique string content with std string
         inline bool operator == (const std::string& other_string) const
         {
@@ -92,21 +94,30 @@ namespace cxx
         }
         inline bool empty() const
         {
-            return mStringHolder == &sNullUniqueString;
+            return mStringHolder == get_null_string_data();
         }
         inline const char* c_str() const { return mStringHolder->mString.c_str(); }
 
     private:
         struct string_holder;
-        static std::map<std::string, string_holder> sUniqueStringsTable;
-        static string_holder sNullUniqueString;
 
+        using unique_string_table = std::map<std::string, string_holder>;
+        static unique_string_table& get_strings_table()
+        {
+            static unique_string_table uniqueStringsTable;
+            return uniqueStringsTable;
+        }
         struct string_holder
         {
         public:
             std::string mString; // unique data
             unsigned int mReferenceCounter = 0;
         };
+        static string_holder* get_null_string_data()
+        {
+            static string_holder nullUniqueString;
+            return &nullUniqueString;
+        }
 
     private:
         // set unique string data for c string content
@@ -122,7 +133,7 @@ namespace cxx
         void reset_data_internal();
 
     private:
-        string_holder* mStringHolder = &sNullUniqueString;
+        string_holder* mStringHolder = get_null_string_data();
     };
 
 } // namespace cxx

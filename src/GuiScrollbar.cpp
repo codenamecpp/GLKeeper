@@ -7,8 +7,7 @@
 
 // widget class factory
 static GuiWidgetFactory<GuiScrollbar> _ScrollbarWidgetsFactory;
-
-GuiWidgetMetaClass GuiScrollbar::MetaClass("scrollbar", &_ScrollbarWidgetsFactory, &GuiWidget::MetaClass);
+GuiWidgetMetaClass GuiScrollbar::MetaClass(cxx::unique_string("scrollbar"), &_ScrollbarWidgetsFactory, &GuiWidget::MetaClass);
 
 GuiScrollbar::GuiScrollbar(): GuiScrollbar(&MetaClass)
 {
@@ -125,8 +124,8 @@ void GuiScrollbar::HandleChildAttached(GuiWidget* childWidget)
 
     if (doSubscribe)
     {
-        Subscribe(childWidget, eGuiEvent_MouseDown);
-        Subscribe(childWidget, eGuiEvent_MouseUp);
+        Subscribe(GuiEventId_MouseDown, childWidget->mName);
+        Subscribe(GuiEventId_MouseUp, childWidget->mName);
 
         SetupControlWidget(childWidget);
     }
@@ -134,22 +133,30 @@ void GuiScrollbar::HandleChildAttached(GuiWidget* childWidget)
 
 void GuiScrollbar::HandleChildDetached(GuiWidget* childWidget)
 {
+    bool doUnSubscribe = false;
     if (mSliderWidget && (mSliderWidget == childWidget))
     {
         mSliderWidget = nullptr;
+        doUnSubscribe = true;
     }
 
     if (mDecPosWidget && (mDecPosWidget == childWidget))
     {
         mDecPosWidget = nullptr;
+        doUnSubscribe = true;
     }
 
     if (mIncPosWidget && (mIncPosWidget == childWidget))
     {
         mIncPosWidget = nullptr;
+        doUnSubscribe = true;
     }
 
-    Unsubscribe(childWidget);
+    if (doUnSubscribe)
+    {
+        Unsubscribe(GuiEventId_MouseDown, childWidget->mName);
+        Unsubscribe(GuiEventId_MouseUp, childWidget->mName);
+    }
 }
 
 GuiScrollbar* GuiScrollbar::ConstructClone()

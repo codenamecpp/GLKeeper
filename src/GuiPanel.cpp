@@ -6,8 +6,7 @@
 
 // widget class factory
 static GuiWidgetFactory<GuiPanel> _PanelWidgetsFactory;
-
-GuiWidgetMetaClass GuiPanel::MetaClass("panel", &_PanelWidgetsFactory, &GuiWidget::MetaClass);
+GuiWidgetMetaClass GuiPanel::MetaClass(cxx::unique_string("panel"), &_PanelWidgetsFactory, &GuiWidget::MetaClass);
 
 GuiPanel::GuiPanel(): GuiPanel(&MetaClass)
 {

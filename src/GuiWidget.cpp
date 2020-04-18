@@ -7,8 +7,7 @@
 
 // base widget class factory
 static GuiWidgetFactory<GuiWidget> _BaseWidgetsFactory;
-
-GuiWidgetMetaClass GuiWidget::MetaClass("widget", &_BaseWidgetsFactory, nullptr);
+GuiWidgetMetaClass GuiWidget::MetaClass(cxx::unique_string("widget"), &_BaseWidgetsFactory, nullptr);
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -65,7 +64,11 @@ void GuiWidget::LoadProperties(cxx::json_document_node documentNode)
         return;
     }
 
-    cxx::json_get_attribute(documentNode, "name", mName);
+    std::string name;
+    if (cxx::json_get_attribute(documentNode, "name", name))
+    {
+        mName = cxx::unique_string(name);
+    }
     debug_assert(mName.length());
 
     bool is_visible = false;
@@ -182,7 +185,13 @@ GuiWidget::~GuiWidget()
     {
         mParent->DetachChild(this);
     }
-    DetachAndFreeChildren();
+
+    while (mFirstChild)
+    {
+        GuiWidget* deleteWidget = mFirstChild;
+        deleteWidget->SetDetached(); // doesn't invoke HandleChildDetached - it is pointless in destructor
+        SafeDelete(deleteWidget);
+    }
 }
 
 GuiWidget* GuiWidget::Clone()
@@ -256,10 +265,14 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
         return;
 
     // post event
+    if (inputEvent.mPressed)
     {
-        GuiEvent eventData (this, inputEvent.mPressed ? eGuiEvent_MouseDown : eGuiEvent_MouseUp);
-        eventData.mMouseButton = inputEvent.mButton;
-        eventData.mMouseScreenPosition = gInputsManager.mCursorPosition;
+        GuiEvent eventData = GuiEvent::ForMouseDown(this, inputEvent.mButton, gInputsManager.mCursorPosition);
+        gGuiManager.BroadcastEvent(eventData);
+    }
+    else
+    {
+        GuiEvent eventData = GuiEvent::ForMouseUp(this, inputEvent.mButton, gInputsManager.mCursorPosition);
         gGuiManager.BroadcastEvent(eventData);
     }
     
@@ -287,10 +300,8 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
     {
         // post event
         {
-            GuiEvent clickEventData (this, eGuiEvent_Click);
-            clickEventData.mMouseButton = inputEvent.mButton;
-            clickEventData.mMouseScreenPosition = gInputsManager.mCursorPosition;
-            gGuiManager.BroadcastEvent(clickEventData);
+            GuiEvent eventData = GuiEvent::ForClick(this, gInputsManager.mCursorPosition);
+            gGuiManager.BroadcastEvent(eventData);
         }
 
         HandleClick();
@@ -370,19 +381,8 @@ bool GuiWidget::DetachChild(GuiWidget* widget)
         debug_assert(false);
         return false;
     }
-    if (widget == mFirstChild)
-    {
-        mFirstChild = widget->mNextSibling;
-    }
-    if (widget->mPrevSibling)
-    {
-        widget->mPrevSibling->mNextSibling = widget->mNextSibling;
-    }
-    if (widget->mNextSibling)
-    {
-        widget->mNextSibling->mPrevSibling = widget->mPrevSibling;
-    }
-    widget->mParent = nullptr;
+
+    widget->SetDetached();
 
     HandleChildDetached(widget);
     return true;
@@ -393,9 +393,33 @@ void GuiWidget::DetachAndFreeChildren()
     while (mFirstChild)
     {
         GuiWidget* deleteWidget = mFirstChild;
-        DetachChild(deleteWidget);
         SafeDelete(deleteWidget);
     }
+}
+
+void GuiWidget::SetDetached()
+{
+    if (mParent == nullptr)
+    {
+        debug_assert(mPrevSibling == nullptr);
+        debug_assert(mNextSibling == nullptr);
+
+        return;
+    }
+
+    if (this == mParent->mFirstChild)
+    {
+        mParent->mFirstChild = mNextSibling;
+    }
+    if (mPrevSibling)
+    {
+        mPrevSibling->mNextSibling = mNextSibling;
+    }
+    if (mNextSibling)
+    {
+        mNextSibling->mPrevSibling = mPrevSibling;
+    }
+    mParent = nullptr;
 }
 
 GuiWidget* GuiWidget::PickWidget(const Point& screenPosition)
@@ -436,7 +460,7 @@ GuiWidget* GuiWidget::PickWidget(const Point& screenPosition)
     return resultWidget;
 }
 
-GuiWidget* GuiWidget::GetChild(const std::string& name) const
+GuiWidget* GuiWidget::GetChild(const cxx::unique_string& name) const
 {
     for (GuiWidget* currChild = mFirstChild; currChild; 
         currChild = currChild->mNextSibling)
@@ -895,15 +919,13 @@ void GuiWidget::HoveredStateChanged()
 {
     if (IsHovered())
     {
-        GuiEvent eventData (this, eGuiEvent_MouseEnter);
-        eventData.mMouseScreenPosition = gInputsManager.mCursorPosition;
+        GuiEvent eventData = GuiEvent::ForMouseEnter(this, gInputsManager.mCursorPosition);
         gGuiManager.BroadcastEvent(eventData);
 
     }
     else
     {
-        GuiEvent eventData (this, eGuiEvent_MouseLeave);
-        eventData.mMouseScreenPosition = gInputsManager.mCursorPosition;
+        GuiEvent eventData = GuiEvent::ForMouseLeave(this, gInputsManager.mCursorPosition);
         gGuiManager.BroadcastEvent(eventData);
     }
 

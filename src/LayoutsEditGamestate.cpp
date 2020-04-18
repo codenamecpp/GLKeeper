@@ -21,14 +21,12 @@ void LayoutsEditGamestate::HandleGamestateEnter()
         debug_assert(false);
     }
 
-    if (GuiWidget* button0 = mHier.GetWidgetByPath("button_0"))
-    {
-        GuiPictureBox* pbox = button0->CastToWidgetClass<GuiPictureBox>();
-        GuiPanel* pnel = button0->CastToWidgetClass<GuiPanel>();
-        GuiButton* pb = button0->CastToWidgetClass<GuiButton>();
-
-        Subscribe(button0, GuiEvent_All);
-    }
+    cxx::unique_string buttonName ("button_0");
+    Subscribe(GuiEventId_Click, buttonName);
+    Subscribe(GuiEventId_MouseDown, buttonName);
+    Subscribe(GuiEventId_MouseUp, buttonName);
+    Subscribe(GuiEventId_MouseEnter, buttonName);
+    Subscribe(GuiEventId_MouseLeave, buttonName);
 
     GuiWidget* sliderThumb = mHier.GetWidgetByPath("slider_0/#slider");
     int bp = 0;
@@ -75,7 +73,7 @@ void LayoutsEditGamestate::HandleInputEvent(KeyCharEvent& inputEvent)
 {
 }
 
-void LayoutsEditGamestate::HandleClickEvent(GuiWidget* sender)
+void LayoutsEditGamestate::HandleClick(GuiWidget* sender)
 {
     debug_assert(sender);
     gConsole.LogMessage(eLogMessage_Debug, "on_click %s", sender->mName.c_str());

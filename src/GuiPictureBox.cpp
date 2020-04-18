@@ -6,8 +6,7 @@
 
 // widget class factory
 static GuiWidgetFactory<GuiPictureBox> _PictureBoxWidgetsFactory;
-
-GuiWidgetMetaClass GuiPictureBox::MetaClass("picture_box", &_PictureBoxWidgetsFactory, &GuiWidget::MetaClass);
+GuiWidgetMetaClass GuiPictureBox::MetaClass(cxx::unique_string("picture_box"), &_PictureBoxWidgetsFactory, &GuiWidget::MetaClass);
 
 //////////////////////////////////////////////////////////////////////////
 

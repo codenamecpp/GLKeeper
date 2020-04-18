@@ -4,12 +4,6 @@
 namespace cxx
 {
 
-// unique string table singleton
-std::map<std::string, unique_string::string_holder> unique_string::sUniqueStringsTable;
-
-// null unique string singleton
-unique_string::string_holder unique_string::sNullUniqueString;
-
 void unique_string::set_data_internal(const char* string_content)
 {
     // check whether string isn't null
@@ -18,9 +12,10 @@ void unique_string::set_data_internal(const char* string_content)
         reset_data_internal();
         return;
     }
-
     std::string string_content_temp(string_content);
-    string_holder& holder = sUniqueStringsTable[string_content_temp];
+
+    unique_string_table& strings_table = get_strings_table();
+    string_holder& holder = strings_table[string_content_temp];
     if (holder.mReferenceCounter == 0) 
     {
         // consume temporary std string
@@ -28,7 +23,6 @@ void unique_string::set_data_internal(const char* string_content)
     }
     set_data_internal(&holder);
 }
-
 
 void unique_string::set_data_internal(const std::string& string_content)
 {
@@ -39,7 +33,8 @@ void unique_string::set_data_internal(const std::string& string_content)
         return;
     }
 
-    string_holder& holder = sUniqueStringsTable[string_content];
+    unique_string_table& strings_table = get_strings_table();
+    string_holder& holder = strings_table[string_content];
     if (holder.mReferenceCounter == 0) 
     {
         holder.mString = string_content;
@@ -55,7 +50,7 @@ void unique_string::set_data_internal(string_holder* content_holder)
     reset_data_internal();
     mStringHolder = content_holder;
 
-    if (mStringHolder != &sNullUniqueString)
+    if (mStringHolder != get_null_string_data())
     {
         ++mStringHolder->mReferenceCounter;
     }
@@ -63,23 +58,26 @@ void unique_string::set_data_internal(string_holder* content_holder)
 
 void unique_string::reset_data_internal()
 {
-    if (mStringHolder == &sNullUniqueString)
+    string_holder* null_string_data = get_null_string_data();
+    if (mStringHolder == null_string_data)
         return;
 
     debug_assert(mStringHolder->mReferenceCounter > 0);
     if (--mStringHolder->mReferenceCounter == 0)
     {
-        auto map_iterator = sUniqueStringsTable.find(mStringHolder->mString);
-        if (map_iterator != sUniqueStringsTable.end())
+        unique_string_table& strings_table = get_strings_table();
+        auto map_iterator = strings_table.find(mStringHolder->mString);
+        if (map_iterator != strings_table.end())
         {
-            sUniqueStringsTable.erase(map_iterator);
+            strings_table.erase(map_iterator);
         }
         else
         {
             debug_assert(false);
         }
     }
-    mStringHolder = &sNullUniqueString;
+
+    mStringHolder = null_string_data;
 }
 
 } // namespace cxx
