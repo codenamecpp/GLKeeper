@@ -36,7 +36,7 @@ void GuiEventsHandler::Unsubscribe(GuiWidget* eventSource, eGuiEvent eventId)
         return;
 
     eGuiEvent& currentEventsMask = map_iterator->second;
-    currentEventsMask = (eGuiEvent) ((unsigned int) currentEventsMask & ~(unsigned int)eventId);
+    currentEventsMask = currentEventsMask & (currentEventsMask ^ eventId);
     if (currentEventsMask == 0)
     {
         mSubscriptions.erase(map_iterator);
