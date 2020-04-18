@@ -3,6 +3,7 @@
 namespace cxx
 {
     // stores unique pointer to immutable string
+    // not thread-safe
     class unique_string
     {
     public:

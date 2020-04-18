@@ -23,6 +23,12 @@ namespace cxx
         return value;
     }
 
+    // test number is power of two
+    inline bool is_pot(unsigned int value)
+    {
+        return value && !(value & (value - 1));
+    }
+
     // test is number even or odd
     inline bool is_even(unsigned int value) { return (value % 2) == 0; }
     inline bool is_odd(unsigned int value)  { return (value % 2)  > 0; }

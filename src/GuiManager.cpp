@@ -344,7 +344,8 @@ void GuiManager::BroadcastEvent(const GuiEvent& eventData)
     if (mEventHandlers.empty()) // no one's there
         return;
 
-    if (eventData.mEventId == eGuiEvent_All) // unexpected
+    // check single event
+    if ((eventData.mEventId == 0) || !cxx::is_pot(eventData.mEventId))
     {
         debug_assert(false);
         return;

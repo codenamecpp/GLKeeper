@@ -4,17 +4,23 @@
 #include "GuiWidget.h"
 
 // gui event type
-enum eGuiEvent
+enum eGuiEvent: unsigned int
 {
-    eGuiEvent_Click,
-    eGuiEvent_MouseEnter,
-    eGuiEvent_MouseLeave,
-    eGuiEvent_MouseDown,
-    eGuiEvent_MouseUp,
-
-    eGuiEvent_All, // not an event
+    eGuiEvent_Click         = (1U << 0),
+    eGuiEvent_MouseEnter    = (1U << 1),
+    eGuiEvent_MouseLeave    = (1U << 2),
+    eGuiEvent_MouseDown     = (1U << 3),
+    eGuiEvent_MouseUp       = (1U << 4),
 };
-decl_enum_strings(eGuiEvent);
+
+inline eGuiEvent operator | (eGuiEvent lhs, eGuiEvent rhs) { return (eGuiEvent)((unsigned int)(lhs) | (unsigned int)(rhs)); }
+inline eGuiEvent operator & (eGuiEvent lhs, eGuiEvent rhs) { return (eGuiEvent)((unsigned int)(lhs) & (unsigned int)(rhs)); }
+inline eGuiEvent operator ^ (eGuiEvent lhs, eGuiEvent rhs) { return (eGuiEvent)((unsigned int)(lhs) ^ (unsigned int)(rhs)); }
+inline eGuiEvent operator ~ (eGuiEvent bits) { return (eGuiEvent)(~(unsigned int)(bits)); }
+
+// all standard events mask except for action
+const eGuiEvent GuiEvent_All = 
+    (eGuiEvent_Click | eGuiEvent_MouseEnter | eGuiEvent_MouseLeave | eGuiEvent_MouseDown | eGuiEvent_MouseUp);
 
 // base events struct of gui widget
 struct GuiEvent
@@ -32,12 +38,10 @@ public:
         , mMouseButton()
     {
     }
-
 public:
     GuiWidgetHandle mEventSender; // sender widget handle
-
     eGuiEvent mEventId;// event identifier
-
+    // event specific args
     eMouseButton mMouseButton; // eGuiEvent_MouseButtonDown, eGuiEvent_MouseButtonUp
 };
 
@@ -50,6 +54,7 @@ public:
     GuiEventsHandler() = default;
     virtual ~GuiEventsHandler();
 
+    // @param eventSource cannot be null
     void Subscribe(GuiWidget* eventSource, eGuiEvent eventId);
     void Unsubscribe(GuiWidget* eventSource, eGuiEvent eventId);
     void Unsubscribe(GuiWidget* eventSource);
@@ -64,13 +69,8 @@ protected:
     virtual void HandleMouseUp(GuiWidget* sender, eMouseButton mbutton) {}
 
 private:
-    bool ProcessEvent(GuiEvent* eventData);
+    void ProcessEvent(GuiEvent* eventData);
 
 private:
-    struct Subscription
-    {
-        eGuiEvent mEventsId;
-        GuiWidget* mEventsSource = nullptr;
-    };
-    std::vector<Subscription> mSubscriptions;
+    std::map<GuiWidget*, eGuiEvent> mSubscriptions;
 };

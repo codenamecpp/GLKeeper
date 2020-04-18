@@ -10,47 +10,37 @@ GuiEventsHandler::~GuiEventsHandler()
 
 void GuiEventsHandler::Subscribe(GuiWidget* eventSource, eGuiEvent eventId)
 {
-    if (eventSource == nullptr)
+    if (eventSource == nullptr || eventId == 0)
     {
         debug_assert(false);
         return;
     }
 
-    bool subsFound = cxx::contains_if(mSubscriptions,
-        [eventSource, eventId](const Subscription& curr)
-        {
-            return curr.mEventsSource == eventSource && curr.mEventsId == eventId;
-        });
+    bool registerEventsHandler = mSubscriptions.empty();
 
-    if (subsFound)
-        return;
+    eGuiEvent& currentEventsMask = mSubscriptions[eventSource];
+    currentEventsMask = (currentEventsMask | eventId);
 
-    Subscription subs;
-        subs.mEventsSource = eventSource;
-        subs.mEventsId = eventId;
-    mSubscriptions.push_back(subs);
-
-    gGuiManager.RegisterEventsHandler(this);
+    if (registerEventsHandler)
+    {
+        gGuiManager.RegisterEventsHandler(this);
+    }
 }
 
 void GuiEventsHandler::Unsubscribe(GuiWidget* eventSource, eGuiEvent eventId)
 {
-    if (eventSource == nullptr)
-    {
-        debug_assert(false);
-        return;
-    }
+    debug_assert(eventSource);
 
-    if (eventId == eGuiEvent_All)
-    {
-        Unsubscribe(eventSource);
+    auto map_iterator = mSubscriptions.find(eventSource);
+    if (map_iterator == mSubscriptions.end())
         return;
-    }
 
-    cxx::erase_elements_if(mSubscriptions, [eventSource, eventId](const Subscription& curr)
-        {
-            return curr.mEventsSource == eventSource && curr.mEventsId == eventId;
-        });
+    eGuiEvent& currentEventsMask = map_iterator->second;
+    currentEventsMask = currentEventsMask & ~(eventId);
+    if (currentEventsMask == 0)
+    {
+        mSubscriptions.erase(map_iterator);
+    }
 
     if (mSubscriptions.empty())
     {
@@ -60,21 +50,7 @@ void GuiEventsHandler::Unsubscribe(GuiWidget* eventSource, eGuiEvent eventId)
 
 void GuiEventsHandler::Unsubscribe(GuiWidget* eventSource)
 {
-    if (eventSource == nullptr)
-    {
-        debug_assert(false);
-        return;
-    }
-
-    cxx::erase_elements_if(mSubscriptions, [eventSource](const Subscription& curr)
-        {
-            return curr.mEventsSource == eventSource;
-        });
-
-    if (mSubscriptions.empty())
-    {
-        gGuiManager.UnregisterEventsHandler(this);
-    }
+    Unsubscribe(eventSource, GuiEvent_All);
 }
 
 void GuiEventsHandler::UnsubscribeAll()
@@ -83,42 +59,36 @@ void GuiEventsHandler::UnsubscribeAll()
     gGuiManager.UnregisterEventsHandler(this);
 }
 
-bool GuiEventsHandler::ProcessEvent(GuiEvent* eventData)
+void GuiEventsHandler::ProcessEvent(GuiEvent* eventData)
 {
     debug_assert(eventData);
 
     if (eventData->mEventSender == nullptr)
-        return false;
+        return;
 
-    for (const Subscription& curr: mSubscriptions)
+    auto map_iterator = mSubscriptions.find(eventData->mEventSender);
+    if (map_iterator == mSubscriptions.end())
+        return;
+
+    if ((map_iterator->second & eventData->mEventId) == 0)
+        return;
+
+    switch (eventData->mEventId)
     {
-        if (curr.mEventsSource == eventData->mEventSender && 
-            (curr.mEventsId == eventData->mEventId || curr.mEventsId == eGuiEvent_All))
-        {
-            switch (eventData->mEventId)
-            {
-                case eGuiEvent_Click: 
-                    HandleClickEvent(eventData->mEventSender); 
-                break;
-
-                case eGuiEvent_MouseEnter:
-                    HandleMouseEnter(eventData->mEventSender);
-                break;
-
-                case eGuiEvent_MouseLeave:
-                    HandleMouseLeave(eventData->mEventSender);
-                break;
-                
-                case eGuiEvent_MouseDown:
-                    HandleMouseDown(eventData->mEventSender, eventData->mMouseButton);
-                break;
-
-                case eGuiEvent_MouseUp:
-                    HandleMouseUp(eventData->mEventSender, eventData->mMouseButton);
-                break;
-            }
-            return true;
-        }
+        case eGuiEvent_Click: 
+            HandleClickEvent(eventData->mEventSender); 
+        break;
+        case eGuiEvent_MouseEnter:
+            HandleMouseEnter(eventData->mEventSender);
+        break;
+        case eGuiEvent_MouseLeave:
+            HandleMouseLeave(eventData->mEventSender);
+        break;
+        case eGuiEvent_MouseDown:
+            HandleMouseDown(eventData->mEventSender, eventData->mMouseButton);
+        break;
+        case eGuiEvent_MouseUp:
+            HandleMouseUp(eventData->mEventSender, eventData->mMouseButton);
+        break;
     }
-    return false;
 }
