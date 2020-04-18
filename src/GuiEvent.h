@@ -25,16 +25,11 @@ const eGuiEvent GuiEvent_All =
 struct GuiEvent
 {
 public:
-    GuiEvent(GuiWidget* eventSender, eGuiEvent eventType)
+    GuiEvent(GuiWidget* eventSender, eGuiEvent eventId)
         : mEventSender(eventSender)
-        , mEventId(eventType)
+        , mEventId(eventId)
         , mMouseButton()
-    {
-    }
-    GuiEvent(GuiWidget* eventSender, eGuiEvent eventType, eMouseButton mouseButton)
-        : mEventSender(eventSender)
-        , mEventId(eventType)
-        , mMouseButton()
+        , mMouseScreenPosition()
     {
     }
 public:
@@ -42,6 +37,7 @@ public:
     eGuiEvent mEventId;// event identifier
     // event specific args
     eMouseButton mMouseButton; // eGuiEvent_MouseButtonDown, eGuiEvent_MouseButtonUp
+    Point mMouseScreenPosition; // eGuiEvent_MouseEnter, eGuiEvent_MouseLeave, eGuiEvent_MouseDown, eGuiEvent_MouseUp, eGuiEvent_Click
 };
 
 // widget events handler

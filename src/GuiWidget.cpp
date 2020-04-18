@@ -256,8 +256,12 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
         return;
 
     // post event
-    GuiEvent eventData (this, inputEvent.mPressed ? eGuiEvent_MouseDown : eGuiEvent_MouseUp, inputEvent.mButton);
-    gGuiManager.BroadcastEvent(eventData);
+    {
+        GuiEvent eventData (this, inputEvent.mPressed ? eGuiEvent_MouseDown : eGuiEvent_MouseUp);
+        eventData.mMouseButton = inputEvent.mButton;
+        eventData.mMouseScreenPosition = gInputsManager.mCursorPosition;
+        gGuiManager.BroadcastEvent(eventData);
+    }
     
     bool hasBeenClicked = false;
     // process clicks
@@ -282,8 +286,12 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
     if (hasBeenClicked)
     {
         // post event
-        GuiEvent clickEventData (this, eGuiEvent_Click, inputEvent.mButton);
-        gGuiManager.BroadcastEvent(clickEventData);
+        {
+            GuiEvent clickEventData (this, eGuiEvent_Click);
+            clickEventData.mMouseButton = inputEvent.mButton;
+            clickEventData.mMouseScreenPosition = gInputsManager.mCursorPosition;
+            gGuiManager.BroadcastEvent(clickEventData);
+        }
 
         HandleClick();
     }
@@ -888,12 +896,14 @@ void GuiWidget::HoveredStateChanged()
     if (IsHovered())
     {
         GuiEvent eventData (this, eGuiEvent_MouseEnter);
+        eventData.mMouseScreenPosition = gInputsManager.mCursorPosition;
         gGuiManager.BroadcastEvent(eventData);
 
     }
     else
     {
         GuiEvent eventData (this, eGuiEvent_MouseLeave);
+        eventData.mMouseScreenPosition = gInputsManager.mCursorPosition;
         gGuiManager.BroadcastEvent(eventData);
     }
 
