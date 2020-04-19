@@ -519,6 +519,17 @@ GuiWidget* GuiWidget::GetChild(const cxx::unique_string& name) const
     return nullptr;
 }
 
+GuiWidget* GuiWidget::GetChild(const std::string& name) const
+{
+    for (GuiWidget* currChild = mFirstChild; currChild; 
+        currChild = currChild->mNextSibling)
+    {
+        if (currChild->mName == name)
+            return currChild;
+    }
+    return nullptr;
+}
+
 GuiWidget* GuiWidget::GetChild(int index) const
 {
     debug_assert(index >= 0);

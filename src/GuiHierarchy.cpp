@@ -143,7 +143,7 @@ GuiWidget* GuiHierarchy::GetWidgetByPath(const std::string& widgetPath) const
 
     if (!cxx::contains(widgetPath, '/'))
     {
-        return mRootWidget->GetChild(cxx::unique_string(widgetPath));
+        return mRootWidget->GetChild(widgetPath);
     }
     
     GuiWidget* currentWidget = mRootWidget;
@@ -156,7 +156,7 @@ GuiWidget* GuiHierarchy::GetWidgetByPath(const std::string& widgetPath) const
             break;
 
         debug_assert(!currentName.empty());
-        if (GuiWidget* child = currentWidget->GetChild(cxx::unique_string(currentName)))
+        if (GuiWidget* child = currentWidget->GetChild(currentName))
         {
             currentWidget = child;
             continue;

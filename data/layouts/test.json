@@ -2,7 +2,11 @@
     "class":"widget", "name":"root", "size":[100,100], "size_units":["percents","percents"],
     "children":
     [
-        {"template_class":"test_button", "name":"button_0", "pos":[200,200], "size":[100,100]},
+        {"template_class":"test_button", "name":"button_0", "pos":[200,200], "size":[100,100],
+            "events":{
+                "on_click": "custom_on_click_event"
+            }
+        },
         {"template_class":"test_scrollbar", "name":"slider_0", "pos":[400,200], "size":[400,30]},
         {"template_class":"test_button", "name":"button_1", "pos":[200,600], "size":[100,100]},
         {"template_class":"test_scrollbar", "name":"", "pos":[400,600], "size":[400,30]}

@@ -26,6 +26,7 @@ protected:
     void HandleMouseLeave(GuiWidget* sender) override;
     void HandleMouseDown(GuiWidget* sender, eMouseButton mbutton) override;
     void HandleMouseUp(GuiWidget* sender, eMouseButton mbutton) override;
+    void HandleEvent(GuiWidget* sender, cxx::unique_string eventId) override;
 
 private:
     ToolsUILayoutsEditWindow mLayoutsEditWindow;

@@ -27,6 +27,7 @@ void LayoutsEditGamestate::HandleGamestateEnter()
     Subscribe(GuiEventId_MouseUp, buttonName);
     Subscribe(GuiEventId_MouseEnter, buttonName);
     Subscribe(GuiEventId_MouseLeave, buttonName);
+    Subscribe(cxx::unique_string("custom_on_click_event"), buttonName);
 
     GuiWidget* sliderThumb = mHier.GetWidgetByPath("slider_0/#slider");
     Subscribe(GuiEventId_MouseDown, sliderThumb);
@@ -101,4 +102,10 @@ void LayoutsEditGamestate::HandleMouseUp(GuiWidget* sender, eMouseButton mbutton
 {
     debug_assert(sender);
     gConsole.LogMessage(eLogMessage_Debug, "on_mouse_up %s", sender->mName.c_str());
+}
+
+void LayoutsEditGamestate::HandleEvent(GuiWidget* sender, cxx::unique_string eventId)
+{
+    debug_assert(sender);
+    gConsole.LogMessage(eLogMessage_Debug, "on_event '%s'", eventId.c_str());
 }
