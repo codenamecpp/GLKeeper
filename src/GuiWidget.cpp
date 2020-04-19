@@ -4,6 +4,7 @@
 #include "GuiRenderer.h"
 #include "InputsManager.h"
 #include "GraphicsDevice.h"
+#include "GuiHelpers.h"
 
 // base widget class factory
 static GuiWidgetFactory<GuiWidget> _BaseWidgetsFactory;
@@ -117,51 +118,46 @@ void GuiWidget::LoadProperties(cxx::json_document_node documentNode)
     // origin
     {
         Point origin(0, 0);
-        if (cxx::json_node_array prop_position = documentNode["origin"])
-        {
-            cxx::json_get_array_item(prop_position, 0, origin.x);
-            cxx::json_get_array_item(prop_position, 1, origin.y);
-        }
         eGuiUnits unitsX = eGuiUnits_Pixels;
         eGuiUnits unitsY = eGuiUnits_Pixels;
-        if (cxx::json_node_array prop_units = documentNode["origin_units"])
+
+        if (cxx::json_node_array prop_position = documentNode["origin"])
         {
-            cxx::json_get_array_item(prop_units, 0, unitsX);
-            cxx::json_get_array_item(prop_units, 1, unitsY);
+            if (!GetPixelsOrPercentsValue(prop_position[0], unitsX, origin.x) ||
+                !GetPixelsOrPercentsValue(prop_position[1], unitsY, origin.y))
+            {
+                debug_assert(false);
+            }
         }
         SetOrigin(origin, unitsX, unitsY);
     }
     // position
     {
         Point position(0, 0);
-        if (cxx::json_node_array prop_position = documentNode["pos"])
-        {
-            cxx::json_get_array_item(prop_position, 0, position.x);
-            cxx::json_get_array_item(prop_position, 1, position.y);
-        }
         eGuiUnits unitsX = eGuiUnits_Pixels;
         eGuiUnits unitsY = eGuiUnits_Pixels;
-        if (cxx::json_node_array prop_units = documentNode["pos_units"])
+        if (cxx::json_node_array prop_position = documentNode["pos"])
         {
-            cxx::json_get_array_item(prop_units, 0, unitsX);
-            cxx::json_get_array_item(prop_units, 1, unitsY);
+            if (!GetPixelsOrPercentsValue(prop_position[0], unitsX, position.x) ||
+                !GetPixelsOrPercentsValue(prop_position[1], unitsY, position.y))
+            {
+                debug_assert(false);
+            }
         }
         SetPosition(position, unitsX, unitsY);
     }
     // size
     {
         Point size(0, 0);
-        if (cxx::json_node_array prop_size = documentNode["size"])
-        {
-            cxx::json_get_array_item(prop_size, 0, size.x);
-            cxx::json_get_array_item(prop_size, 1, size.y);
-        }
         eGuiUnits unitsW = eGuiUnits_Pixels;
         eGuiUnits unitsH = eGuiUnits_Pixels;
-        if (cxx::json_node_array prop_units = documentNode["size_units"])
+        if (cxx::json_node_array prop_size = documentNode["size"])
         {
-            cxx::json_get_array_item(prop_units, 0, unitsW);
-            cxx::json_get_array_item(prop_units, 1, unitsH);
+            if (!GetPixelsOrPercentsValue(prop_size[0], unitsW, size.x) ||
+                !GetPixelsOrPercentsValue(prop_size[1], unitsH, size.y))
+            {
+                debug_assert(false);
+            }
         }
         SetSize(size, unitsW, unitsH);
     }

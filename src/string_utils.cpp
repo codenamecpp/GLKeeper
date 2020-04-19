@@ -14,6 +14,23 @@ void str_to_upper(std::string& input_string)
     ::std::transform(input_string.begin(), input_string.end(), input_string.begin(), ::toupper);
 }
 
+bool ends_with(const std::string& source_string, const std::string& suffix_string)
+{
+    if (source_string.length() >= suffix_string.length()) 
+    {
+        return (0 == source_string.compare(source_string.length() - suffix_string.length(), suffix_string.length(), suffix_string));
+    }
+    return false;
+}
+
+bool ends_with(const std::string& source_string, char suffix_char)
+{
+    if (source_string.empty())
+        return false;
+
+    return suffix_char == source_string.back();
+}
+
 void trim_left(std::string& input_string)
 {
     input_string.erase(input_string.begin(), std::find_if(input_string.begin(), input_string.end(), 

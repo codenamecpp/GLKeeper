@@ -480,6 +480,9 @@
     <ClInclude Include="unique_string.h">
       <Filter>Lib</Filter>
     </ClInclude>
+    <ClInclude Include="GuiHelpers.h">
+      <Filter>Game\GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

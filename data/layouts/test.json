@@ -3,17 +3,13 @@
     {
         "test_button":
         {
-            "class":"button", "name":"button_0", "pos":[200,200], "size":[100,100],
+            "class":"button", "name":"button_0", "pos":["200",200], "size":[100,100],
             "children":
             [
                 {
-                    "class":"picture_box", 
-                    "name":"picture_box_0", 
-                    "size":[85,85], "size_units":["percents","percents"], 
-                    "origin":[50,50], "origin_units":["percents","percents"], 
-                    "pos":[50,50], "pos_units":["percents","percents"], 
-                    "texture":"white", 
-                    "size_mode":"scale"
+                    "class":"picture_box", "name":"picture_box_0", 
+                    "size":["85%","85%"], "origin":["50%","50%"], "pos":["50%","50%"],
+                    "texture":"white", "size_mode":"scale"
                 }
             ]
         },
@@ -39,7 +35,7 @@
 
     "hierarchy":
     {
-        "class":"widget", "name":"root", "size":[100,100], "size_units":["percents","percents"],
+        "class":"widget", "name":"root", "size":["100%","100%"],
         "children":
         [
             {"template_class":"test_button", "name":"button_0", "pos":[200,200], "size":[100,100],

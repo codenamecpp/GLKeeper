@@ -87,5 +87,9 @@ namespace cxx
     // convert target string to upper or lower case
     void str_to_lower(std::string& input_string);
     void str_to_upper(std::string& input_string);
+    
+    // test whether string has specific suffix
+    bool ends_with(const std::string& source_string, const std::string& suffix_string);
+    bool ends_with(const std::string& source_string, char suffix_char);
 
 } // namespace cxx
