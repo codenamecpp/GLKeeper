@@ -122,7 +122,9 @@ public:
     // get child widget by its name
     GuiWidget* GetChild(const cxx::unique_string& name) const;
     GuiWidget* GetChild(const std::string& name) const;
-
+    // get first child withing sub-hierarchy with specific name
+    GuiWidget* SearchForChild(const cxx::unique_string& name) const;
+    GuiWidget* SearchForChild(const std::string& name) const;
     // get child widget by its index
     GuiWidget* GetChild(int index) const;
 

@@ -7,7 +7,7 @@
 
 GuiHierarchy::~GuiHierarchy()
 {
-    Clear();
+    Cleanup();
 }
 
 bool GuiHierarchy::LoadFromFile(const std::string& fileName)
@@ -26,7 +26,7 @@ bool GuiHierarchy::LoadFromFile(const std::string& fileName)
         return false;
     }
 
-    Clear();
+    Cleanup();
 
     // widget deserializer
     std::function<GuiWidget*(cxx::json_node_object objectNode)> DeserializeWidget = 
@@ -90,7 +90,7 @@ bool GuiHierarchy::LoadFromFile(const std::string& fileName)
     return true;
 }
 
-void GuiHierarchy::Clear()
+void GuiHierarchy::Cleanup()
 {
     SafeDelete(mRootWidget);
 }

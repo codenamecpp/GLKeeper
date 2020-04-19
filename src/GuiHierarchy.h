@@ -14,7 +14,7 @@ public:
     // load widgets hierarchy from json document
     // @param fileName: File name
     bool LoadFromFile(const std::string& fileName);
-    void Clear();
+    void Cleanup();
 
     // render hierarchy
     void RenderFrame(GuiRenderer& renderContext);

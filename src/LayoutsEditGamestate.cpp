@@ -29,7 +29,7 @@ void LayoutsEditGamestate::HandleGamestateEnter()
     Subscribe(GuiEventId_MouseLeave, buttonName);
     Subscribe(cxx::unique_string("custom_on_click_event"), buttonName);
 
-    GuiWidget* sliderThumb = mHier.GetWidgetByPath("slider_0/#slider");
+    GuiWidget* sliderThumb = mHier.GetWidgetByPath("root/slider_0/#slider");
     Subscribe(GuiEventId_MouseDown, sliderThumb);
 }
 
@@ -40,7 +40,7 @@ void LayoutsEditGamestate::HandleGamestateLeave()
     UnsubscribeAll();
 
     gGuiManager.DetachWidgets(&mHier);
-    mHier.Clear();
+    mHier.Cleanup();
 }
 
 void LayoutsEditGamestate::HandleUpdateFrame()

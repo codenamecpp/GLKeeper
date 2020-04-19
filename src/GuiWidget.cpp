@@ -545,6 +545,42 @@ GuiWidget* GuiWidget::GetChild(int index) const
     return nullptr;
 }
 
+GuiWidget* GuiWidget::SearchForChild(const cxx::unique_string& name) const
+{
+    GuiWidget* child = GetChild(name);
+    if (child == nullptr)
+    {
+        // fullscan sub-hierarchy
+        for (GuiWidget* currChild = mFirstChild; currChild; 
+            currChild = currChild->mNextSibling)
+        {
+            child = currChild->SearchForChild(name);
+            if (child)
+                break;
+            
+        }
+    }
+    return child;
+}
+
+GuiWidget* GuiWidget::SearchForChild(const std::string& name) const
+{
+    GuiWidget* child = GetChild(name);
+    if (child == nullptr)
+    {
+        // fullscan sub-hierarchy
+        for (GuiWidget* currChild = mFirstChild; currChild; 
+            currChild = currChild->mNextSibling)
+        {
+            child = currChild->SearchForChild(name);
+            if (child)
+                break;
+
+        }
+    }
+    return child;
+}
+
 void GuiWidget::SetAnchors(const GuiAnchors& anchors)
 {
     if (mAnchors.mL == anchors.mL && mAnchors.mT == anchors.mT && 
