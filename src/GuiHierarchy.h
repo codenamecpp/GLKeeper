@@ -32,4 +32,26 @@ public:
     // find widget by specific location within hierarchy
     // @param widgetPath: Path, don't include root
     GuiWidget* GetWidgetByPath(const std::string& widgetPath) const;
+
+    // get first widget withing hierarchy with specific name
+    GuiWidget* SearchForWidget(const cxx::unique_string& name) const;
+    GuiWidget* SearchForWidget(const std::string& name) const;
+
+private:
+    // construct new template widget of specified class
+    // @param className: Template widget class name
+    GuiWidget* ConstructTemplateWidget(cxx::unique_string className) const;
+
+    // destroy template widgets
+    void FreeTemplateWidgets();
+
+    GuiWidget* DeserializeWidgetWithChildren(cxx::json_node_object objectNode);
+    GuiWidget* DeserializeTemplateWidget(cxx::json_node_object objectNode);
+
+    bool LoadTemplateWidgets(cxx::json_node_object objectNode);
+    bool LoadHierarchy(cxx::json_node_object objectNode);
+
+private:
+    using GuiTemplateWidgetsMap = std::map<cxx::unique_string, GuiWidget*>;
+    GuiTemplateWidgetsMap mTemplateWidgetsClasses;
 };

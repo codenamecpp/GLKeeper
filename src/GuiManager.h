@@ -43,10 +43,6 @@ public:
     // @param className: Widget class name
     GuiWidget* ConstructWidget(cxx::unique_string className) const;
 
-    // construct new template widget of specified class, if it registered
-    // @param className: Template widget class name
-    GuiWidget* ConstructTemplateWidget(cxx::unique_string className) const;
-
     // start listen mouse events
     void CaptureMouseInputs(GuiWidget* mouseListener);
     void ClearMouseCapture();
@@ -74,9 +70,6 @@ private:
     void RegisterWidgetsClasses();
     void UnregisterWidgetsClasses();
 
-    bool LoadTemplateWidgets();
-    void FreeTemplateWidgets();
-
     void ScanHoveredWidget();
     void ProcessEventsQueue();
     void ClearEventsQueue();
@@ -86,9 +79,6 @@ private:
 private:
     using GuiWidgetClassesMap = std::map<cxx::unique_string, GuiWidgetMetaClass*>;
     GuiWidgetClassesMap mWidgetsClasses;
-
-    using GuiTemplateWidgetsMap = std::map<cxx::unique_string, GuiWidget*>;
-    GuiTemplateWidgetsMap mTemplateWidgetsClasses;
 
     std::vector<GuiEventsHandler*> mEventHandlers;
     std::vector<GuiEvent> mEventsQueue;
