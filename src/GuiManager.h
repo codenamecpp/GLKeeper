@@ -81,6 +81,8 @@ private:
     void ProcessEventsQueue();
     void ClearEventsQueue();
 
+    bool IsProcessingEvents() const;
+
 private:
     using GuiWidgetClassesMap = std::map<cxx::unique_string, GuiWidgetMetaClass*>;
     GuiWidgetClassesMap mWidgetsClasses;

@@ -33,10 +33,11 @@ void GuiManager::Deinit()
     FreeTemplateWidgets();
     UnregisterWidgetsClasses();
 
+    ClearEventsQueue();
+
     UnregisterAllEventsHandlers();
     ClearMouseCapture();
     DetachAllWidgets();
-    ClearEventsQueue();
 }
 
 void GuiManager::RenderFrame(GuiRenderer& renderContext)
@@ -364,8 +365,18 @@ void GuiManager::RegisterEventsHandler(GuiEventsHandler* eventsHandler)
 
 void GuiManager::UnregisterEventsHandler(GuiEventsHandler* eventsHandler)
 {
-    debug_assert(eventsHandler);
-    if (eventsHandler)
+    GuiEventsHandler* nullHandler = nullptr;
+    if (eventsHandler == nullHandler)
+    {
+        debug_assert(false);
+        return;
+    }
+
+    if (IsProcessingEvents())
+    {
+        std::replace(mEventHandlers.begin(), mEventHandlers.end(), eventsHandler, nullHandler);
+    }
+    else
     {
         cxx::erase_elements(mEventHandlers, eventsHandler);
     }
@@ -373,7 +384,18 @@ void GuiManager::UnregisterEventsHandler(GuiEventsHandler* eventsHandler)
 
 void GuiManager::UnregisterAllEventsHandlers()
 {
-    mEventHandlers.clear();
+    if (IsProcessingEvents())
+    {
+        std::transform(mEventHandlers.begin(), mEventHandlers.end(), mEventHandlers.begin(), 
+            [](GuiEventsHandler* handler)
+            {
+                return nullptr;
+            });
+    }
+    else
+    {
+        mEventHandlers.clear();
+    }
 }
 
 void GuiManager::ProcessEventsQueue()
@@ -387,24 +409,45 @@ void GuiManager::ProcessEventsQueue()
         return;
     }
 
+    bool hasNullHandlers = false;
+
     mProcessingEventsQueue.swap(mEventsQueue);
     for (GuiEvent& currentEvent: mProcessingEventsQueue)
     {
-        for (GuiEventsHandler* currHandler: mEventHandlers)
+        for (size_t icurr = 0, Num = mEventHandlers.size(); icurr < Num; ++icurr)
         {
-            if (currentEvent.mEventSender == nullptr) // needs to be checked each iteration - handle may exire
+            if (currentEvent.mEventSender == nullptr) // needs to be checked each iteration - handle may expire
                 break;
+
+            GuiEventsHandler* currHandler = mEventHandlers[icurr];
+            if (currHandler == nullptr)
+            {
+                hasNullHandlers = true;
+                continue;
+            }
 
             currHandler->ProcessEvent(&currentEvent);
         }
     }
     mProcessingEventsQueue.clear();
+
+    if (hasNullHandlers)
+    {
+        cxx::erase_elements(mEventHandlers, nullptr);
+    }
 }
 
 void GuiManager::ClearEventsQueue()
 {
     mEventsQueue.clear();
+
+    debug_assert(mProcessingEventsQueue.empty());
     mProcessingEventsQueue.clear();
+}
+
+bool GuiManager::IsProcessingEvents() const
+{
+    return !mProcessingEventsQueue.empty();
 }
 
 void GuiManager::AttachWidgets(GuiHierarchy* hierarchy)
