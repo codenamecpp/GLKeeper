@@ -87,7 +87,8 @@ public:
     void Unsubscribe(cxx::unique_string eventId, cxx::unique_string eventSource);
     void Unsubscribe(cxx::unique_string eventId);
     void Unsubscribe(cxx::unique_string eventId, GuiWidget* eventSource);
-
+    void UnsubscribeEventsSource(cxx::unique_string eventSource);
+    void UnsubscribeEventsSource(GuiWidget* eventSource);
     void UnsubscribeAll();
 
     bool HasSubscriptions() const;
@@ -103,6 +104,7 @@ protected:
 
 private:
     void ProcessEvent(GuiEvent* eventData);
+    void RemoveEventsWithoutSubscribers();
 
 private:
     using NameSubscriptions = std::vector<cxx::unique_string>; // widget names

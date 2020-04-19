@@ -48,6 +48,43 @@ void GuiEventsHandler::Subscribe(cxx::unique_string eventId, GuiWidget* eventSou
     cxx::push_back_if_unique(subscriptions.mPointers, eventSource);
 }
 
+void GuiEventsHandler::UnsubscribeEventsSource(cxx::unique_string eventSource)
+{
+    if (eventSource.empty())
+    {
+        debug_assert(false);
+        return;
+    }
+
+    for (auto& curr_iterator: mSubscriptions)
+    {
+        cxx::erase_elements(curr_iterator.second.mNames, eventSource);
+    }
+    RemoveEventsWithoutSubscribers();
+    if (!HasSubscriptions())
+    {
+        gGuiManager.UnregisterEventsHandler(this);
+    }
+}
+
+void GuiEventsHandler::UnsubscribeEventsSource(GuiWidget* eventSource)
+{
+    if (eventSource == nullptr)
+    {
+        debug_assert(false);
+        return;
+    }
+    for (auto& curr_iterator: mSubscriptions)
+    {
+        cxx::erase_elements(curr_iterator.second.mPointers, eventSource);
+    }
+    RemoveEventsWithoutSubscribers();
+    if (!HasSubscriptions())
+    {
+        gGuiManager.UnregisterEventsHandler(this);
+    }
+}
+
 void GuiEventsHandler::Unsubscribe(cxx::unique_string eventId, cxx::unique_string eventSource)
 {
     if (eventId.empty() || eventSource.empty())
@@ -57,17 +94,11 @@ void GuiEventsHandler::Unsubscribe(cxx::unique_string eventId, cxx::unique_strin
     }
 
     auto map_iterator = mSubscriptions.find(eventId);
-    if (map_iterator == mSubscriptions.end())
-        return;
-
-    Subscriptions& subscriptions = map_iterator->second;
-    cxx::erase_elements(subscriptions.mNames, eventSource);
-
-    if (subscriptions.mNames.empty() && subscriptions.mPointers.empty())
+    if (map_iterator != mSubscriptions.end())
     {
-        mSubscriptions.erase(map_iterator);
+        cxx::erase_elements(map_iterator->second.mNames, eventSource);
     }
-
+    RemoveEventsWithoutSubscribers();
     if (!HasSubscriptions())
     {
         gGuiManager.UnregisterEventsHandler(this);
@@ -83,17 +114,11 @@ void GuiEventsHandler::Unsubscribe(cxx::unique_string eventId, GuiWidget* eventS
     }
 
     auto map_iterator = mSubscriptions.find(eventId);
-    if (map_iterator == mSubscriptions.end())
-        return;
-
-    Subscriptions& subscriptions = map_iterator->second;
-    cxx::erase_elements(subscriptions.mPointers, eventSource);
-
-    if (subscriptions.mNames.empty() && subscriptions.mPointers.empty())
+    if (map_iterator != mSubscriptions.end())
     {
-        mSubscriptions.erase(map_iterator);
+        cxx::erase_elements(map_iterator->second.mPointers, eventSource);
     }
-
+    RemoveEventsWithoutSubscribers();
     if (!HasSubscriptions())
     {
         gGuiManager.UnregisterEventsHandler(this);
@@ -181,4 +206,20 @@ void GuiEventsHandler::ProcessEvent(GuiEvent* eventData)
     }
 
     HandleEvent(eventData->mEventSender, eventData->mEventId);
+}
+
+void GuiEventsHandler::RemoveEventsWithoutSubscribers()
+{
+    for (auto map_iteartor = mSubscriptions.begin(); 
+        map_iteartor != mSubscriptions.end();)
+    {
+        if (map_iteartor->second.mNames.empty() && map_iteartor->second.mPointers.empty())
+        {
+            map_iteartor = mSubscriptions.erase(map_iteartor);
+        }
+        else
+        {
+            ++map_iteartor;
+        }
+    }
 }
