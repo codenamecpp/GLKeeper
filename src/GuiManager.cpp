@@ -216,10 +216,10 @@ bool GuiManager::LoadTemplateWidgets()
 
         GuiWidget* widget = nullptr;
 
-        std::string className;
+        cxx::unique_string className;
         if (cxx::json_get_attribute(objectNode, "class", className))
         {
-            widget = gGuiManager.ConstructWidget(cxx::unique_string(className));
+            widget = gGuiManager.ConstructWidget(className);
         }
 
         if (widget == nullptr)

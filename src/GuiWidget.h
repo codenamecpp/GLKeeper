@@ -15,6 +15,17 @@ public:
     cxx::unique_string mName; // user-defined identifier for widget
     GuiUserData mUserData; // user-defined data
 
+    // custom events
+    cxx::unique_string mOnClickEvent;
+    cxx::unique_string mOnMouseEnterEvent;
+    cxx::unique_string mOnMouseLeaveEvent;
+    cxx::unique_string mOnMouseLButtonDownEvent;
+    cxx::unique_string mOnMouseRButtonDownEvent;
+    cxx::unique_string mOnMouseMButtonDownEvent;
+    cxx::unique_string mOnMouseLButtonUpEvent;
+    cxx::unique_string mOnMouseRButtonUpEvent;
+    cxx::unique_string mOnMouseMButtonUpEvent;
+
 #ifdef _DEBUG
     Color32 mDebugColorNormal = Color32_Gray;
     Color32 mDebugColorHovered = Color32_Gray;

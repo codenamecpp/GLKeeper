@@ -5,6 +5,8 @@ struct cJSON;
 
 namespace cxx
 {
+    class unique_string;
+
     // element of configuration document
     class json_document_node
     {
@@ -193,6 +195,7 @@ namespace cxx
 
     bool json_get_attribute(json_node_object json_node, const std::string& attribute_name, bool& output);
     bool json_get_attribute(json_node_object json_node, const std::string& attribute_name, std::string& output);
+    bool json_get_attribute(json_node_object json_node, const std::string& attribute_name, unique_string& output);
     bool json_get_attribute(json_node_object json_node, const std::string& attribute_name, int& output);
     bool json_get_attribute(json_node_object json_node, const std::string& attribute_name, float& output);
         
@@ -209,6 +212,7 @@ namespace cxx
 
     bool json_get_array_item(json_node_array json_node, int item_index, bool& output);
     bool json_get_array_item(json_node_array json_node, int item_index, std::string& output);
+    bool json_get_array_item(json_node_array json_node, int item_index, unique_string& output);
     bool json_get_array_item(json_node_array json_node, int item_index, int& output);
     bool json_get_array_item(json_node_array json_node, int item_index, float& output);
 

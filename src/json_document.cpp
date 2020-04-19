@@ -508,6 +508,16 @@ bool json_get_attribute(json_node_object json_node, const std::string& attribute
     return false;
 }
 
+bool json_get_attribute(json_node_object json_node, const std::string& attribute_name, unique_string& output)
+{
+    if (json_node_string stringNode = json_node[attribute_name])
+    {
+        output = unique_string(stringNode.get_value());
+        return true;
+    }
+    return false;
+}
+
 bool json_get_attribute(json_node_object json_node, const std::string& attribute_name, std::string& output)
 {
     if (json_node_string stringNode = json_node[attribute_name])
@@ -553,6 +563,16 @@ bool json_get_array_item(json_node_array json_node, int item_index, std::string&
     if (json_node_string stringNode = json_node[item_index])
     {
         output = stringNode.get_value();
+        return true;
+    }
+    return false;
+}
+
+bool json_get_array_item(json_node_array json_node, int item_index, unique_string& output)
+{
+    if (json_node_string stringNode = json_node[item_index])
+    {
+        output = unique_string(stringNode.get_value());
         return true;
     }
     return false;

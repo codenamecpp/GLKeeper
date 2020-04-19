@@ -25,6 +25,12 @@ public:
 
     // event construction helpers
 
+    static GuiEvent ForCustomEvent(GuiWidget* eventSender, cxx::unique_string eventId)
+    {
+        GuiEvent ev (eventSender, eventId);
+        return ev;
+    }
+
     static GuiEvent ForClick(GuiWidget* eventSender, const Point& screenPosition)
     {
         GuiEvent ev (eventSender, GuiEventId_Click);

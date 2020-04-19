@@ -52,6 +52,15 @@ GuiWidget::GuiWidget(GuiWidget* copyWidget)
     , mSelfEnabled(copyWidget->mSelfEnabled)
     , mClipChildren(copyWidget->mClipChildren)
     , mTemplateClassName(copyWidget->mTemplateClassName)
+    , mOnClickEvent(copyWidget->mOnClickEvent)
+    , mOnMouseEnterEvent(copyWidget->mOnMouseEnterEvent)
+    , mOnMouseLeaveEvent(copyWidget->mOnMouseLeaveEvent)
+    , mOnMouseLButtonDownEvent(copyWidget->mOnMouseLButtonDownEvent)
+    , mOnMouseRButtonDownEvent(copyWidget->mOnMouseRButtonDownEvent)
+    , mOnMouseMButtonDownEvent(copyWidget->mOnMouseMButtonDownEvent)
+    , mOnMouseLButtonUpEvent(copyWidget->mOnMouseLButtonUpEvent)
+    , mOnMouseRButtonUpEvent(copyWidget->mOnMouseRButtonUpEvent)
+    , mOnMouseMButtonUpEvent(copyWidget->mOnMouseMButtonUpEvent)
 {
     debug_assert(mMetaClass);
 }
@@ -64,12 +73,14 @@ void GuiWidget::LoadProperties(cxx::json_document_node documentNode)
         return;
     }
 
-    std::string name;
-    if (cxx::json_get_attribute(documentNode, "name", name))
+    cxx::json_get_attribute(documentNode, "name", mName);
+
+    if (mName.empty())
     {
+        // generate unique name
+        const char* name = cxx::va("%s_%p", mMetaClass->mClassName.c_str(), this);
         mName = cxx::unique_string(name);
     }
-    debug_assert(mName.length());
 
     bool is_visible = false;
     bool is_enabled = false;
@@ -163,6 +174,20 @@ void GuiWidget::LoadProperties(cxx::json_document_node documentNode)
         cxx::json_get_attribute(prop_anchors, "top", anchors.mT);
         cxx::json_get_attribute(prop_anchors, "bottom", anchors.mB);
         SetAnchors(anchors);
+    }
+
+    // custom events
+    if (cxx::json_node_object events_node = documentNode["events"])
+    {
+        cxx::json_get_attribute(events_node, "on_click", mOnClickEvent);
+        cxx::json_get_attribute(events_node, "on_mouse_enter", mOnMouseEnterEvent);
+        cxx::json_get_attribute(events_node, "on_mouse_leave", mOnMouseLeaveEvent);
+        cxx::json_get_attribute(events_node, "on_lbutton_down", mOnMouseLButtonDownEvent);
+        cxx::json_get_attribute(events_node, "on_rbutton_down", mOnMouseRButtonDownEvent);
+        cxx::json_get_attribute(events_node, "on_mbutton_down", mOnMouseMButtonDownEvent);
+        cxx::json_get_attribute(events_node, "on_lbutton_up", mOnMouseLButtonUpEvent);
+        cxx::json_get_attribute(events_node, "on_rbutton_up", mOnMouseRButtonUpEvent);
+        cxx::json_get_attribute(events_node, "on_mbutton_up", mOnMouseMButtonUpEvent);
     }
 
     HandleLoadProperties(documentNode);
@@ -275,6 +300,22 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
         GuiEvent eventData = GuiEvent::ForMouseUp(this, inputEvent.mButton, gInputsManager.mCursorPosition);
         gGuiManager.BroadcastEvent(eventData);
     }
+
+    // custom event
+    {
+        cxx::unique_string customEventId;
+        switch (inputEvent.mButton)
+        {
+            case eMouseButton_Left: customEventId = inputEvent.mPressed ? mOnMouseLButtonDownEvent : mOnMouseLButtonUpEvent; break;
+            case eMouseButton_Right: customEventId = inputEvent.mPressed ? mOnMouseRButtonDownEvent : mOnMouseRButtonUpEvent; break;
+            case eMouseButton_Middle: customEventId = inputEvent.mPressed ? mOnMouseMButtonDownEvent : mOnMouseMButtonUpEvent; break;
+        }
+        if (!customEventId.empty())
+        {
+            GuiEvent customEvent = GuiEvent::ForCustomEvent(this, customEventId);
+            gGuiManager.BroadcastEvent(customEvent);
+        }
+    }
     
     bool hasBeenClicked = false;
     // process clicks
@@ -302,6 +343,13 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
         {
             GuiEvent eventData = GuiEvent::ForClick(this, gInputsManager.mCursorPosition);
             gGuiManager.BroadcastEvent(eventData);
+        }
+
+        // custom event
+        if (!mOnClickEvent.empty())
+        {
+            GuiEvent customEvent = GuiEvent::ForCustomEvent(this, mOnClickEvent);
+            gGuiManager.BroadcastEvent(customEvent);
         }
 
         HandleClick();
@@ -922,11 +970,24 @@ void GuiWidget::HoveredStateChanged()
         GuiEvent eventData = GuiEvent::ForMouseEnter(this, gInputsManager.mCursorPosition);
         gGuiManager.BroadcastEvent(eventData);
 
+        // custom event
+        if (!mOnMouseEnterEvent.empty())
+        {
+            GuiEvent customEvent = GuiEvent::ForCustomEvent(this, mOnMouseEnterEvent);
+            gGuiManager.BroadcastEvent(customEvent);
+        }
     }
     else
     {
         GuiEvent eventData = GuiEvent::ForMouseLeave(this, gInputsManager.mCursorPosition);
         gGuiManager.BroadcastEvent(eventData);
+
+        // custom event
+        if (!mOnMouseLeaveEvent.empty())
+        {
+            GuiEvent customEvent = GuiEvent::ForCustomEvent(this, mOnMouseLeaveEvent);
+            gGuiManager.BroadcastEvent(customEvent);
+        }
     }
 
     HandleHoveredStateChanged();
