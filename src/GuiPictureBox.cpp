@@ -27,7 +27,7 @@ GuiPictureBox::GuiPictureBox(GuiPictureBox* copyWidget)
 {
 }
 
-void GuiPictureBox::HandleLoadProperties(cxx::json_document_node documentNode)
+void GuiPictureBox::HandleLoadProperties(cxx::json_node_object documentNode)
 {
     GuiWidget::HandleLoadProperties(documentNode);
 

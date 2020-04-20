@@ -44,7 +44,7 @@ bool GuiHierarchy::LoadFromFile(const std::string& fileName)
     // load widgets hierarchy
     if (cxx::json_node_object hierarchyNode = jsonRootNode["hierarchy"])
     {
-        if (!LoadHierarchy(hierarchyNode))
+        if (!LoadHierarchy(hierarchyNode.first_child()))
         {
             debug_assert(false);
 
@@ -229,7 +229,7 @@ GuiWidget* GuiHierarchy::DeserializeWidgetWithChildren(cxx::json_node_object obj
         return widget;
 
     // deserialize childs
-    if (cxx::json_node_array childsNode = objectNode["children"])
+    if (cxx::json_node_object childsNode = objectNode["children"])
     {
         for (cxx::json_node_object currNode = childsNode.first_child(); currNode; 
             currNode = currNode.next_sibling())
@@ -271,7 +271,7 @@ GuiWidget* GuiHierarchy::DeserializeTemplateWidget(cxx::json_node_object objectN
     widget->LoadProperties(objectNode);
 
     // deserialize childs
-    if (cxx::json_node_array childsNode = objectNode["children"])
+    if (cxx::json_node_object childsNode = objectNode["children"])
     {
         for (cxx::json_node_object currNode = childsNode.first_child(); currNode; 
             currNode = currNode.next_sibling())

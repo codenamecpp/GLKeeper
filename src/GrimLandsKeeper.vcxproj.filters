@@ -98,6 +98,9 @@
     <Filter Include="Data\Layouts">
       <UniqueIdentifier>{28665352-7ac3-458c-84da-6979357bfcc0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game\GUI\WidgetsLibrary\WidgetsStates">
+      <UniqueIdentifier>{0eaafdb0-2582-48d0-9819-facfa54926fb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -474,14 +477,14 @@
     <ClInclude Include="GuiScrollbar.h">
       <Filter>Game\GUI\WidgetsLibrary</Filter>
     </ClInclude>
-    <ClInclude Include="GuiAnimation.h">
-      <Filter>Game\GUI</Filter>
-    </ClInclude>
     <ClInclude Include="unique_string.h">
       <Filter>Lib</Filter>
     </ClInclude>
     <ClInclude Include="GuiHelpers.h">
       <Filter>Game\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GuiStateProps.h">
+      <Filter>Game\GUI\WidgetsLibrary\WidgetsStates</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -739,11 +742,11 @@
     <ClCompile Include="GuiScrollbar.cpp">
       <Filter>Game\GUI\WidgetsLibrary</Filter>
     </ClCompile>
-    <ClCompile Include="GuiAnimation.cpp">
-      <Filter>Game\GUI</Filter>
-    </ClCompile>
     <ClCompile Include="unique_string.cpp">
       <Filter>Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiStateProps.cpp">
+      <Filter>Game\GUI\WidgetsLibrary\WidgetsStates</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

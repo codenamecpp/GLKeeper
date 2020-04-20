@@ -6,10 +6,10 @@
 class GuiHierarchy;
 class GuiRenderer;
 class GuiWidget;
-class GuiAnimation;
 class GuiButton;
 class GuiPictureBox;
 class GuiPanel;
+class GuiStateProps;
 using GuiWidgetHandle = cxx::handle<GuiWidget>;
 struct GuiEvent;
 

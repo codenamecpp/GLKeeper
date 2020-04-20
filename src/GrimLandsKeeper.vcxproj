@@ -180,7 +180,6 @@
     <ClInclude Include="3rd_party\stb_image.h" />
     <ClInclude Include="AABBTree.h" />
     <ClInclude Include="CreatureDefs.h" />
-    <ClInclude Include="GuiAnimation.h" />
     <ClInclude Include="GuiButton.h" />
     <ClInclude Include="GuiEvent.h" />
     <ClInclude Include="GuiHelpers.h" />
@@ -188,6 +187,7 @@
     <ClInclude Include="GuiPanel.h" />
     <ClInclude Include="GuiPictureBox.h" />
     <ClInclude Include="GuiScrollbar.h" />
+    <ClInclude Include="GuiStateProps.h" />
     <ClInclude Include="GuiWidget.h" />
     <ClInclude Include="ToolsUILayoutsEditWindow.h" />
     <ClInclude Include="ToolsUISceneStatisticsWindow.h" />
@@ -311,8 +311,8 @@
     <ClCompile Include="CommonTypes.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="ConsoleVariable.cpp" />
-    <ClCompile Include="GuiAnimation.cpp" />
     <ClCompile Include="GuiHierarchy.cpp" />
+    <ClCompile Include="GuiStateProps.cpp" />
     <ClCompile Include="ToolsUIConsoleWindow.cpp" />
     <ClCompile Include="ToolsUILayoutsEditWindow.cpp" />
     <ClCompile Include="ToolsUIWindow.cpp" />

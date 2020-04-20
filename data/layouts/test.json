@@ -1,51 +1,55 @@
 {
-    "templates": 
+    "templates":
     {
         "test_button":
         {
-            "class":"button", "name":"button_0", "pos":["200",200], "size":[100,100],
+            "class":"button", "pos":[200,200], "size":[100,100], "origin":["50%","50%"],
             "children":
-            [
+            {
+                "picture_box_0":
                 {
-                    "class":"picture_box", "name":"picture_box_0", 
-                    "size":["85%","85%"], "origin":["50%","50%"], "pos":["50%","50%"],
-                    "texture":"white", "size_mode":"scale"
+                    "class":"picture_box", "size":["85%","85%"], "origin":["50%","50%"], "pos":["50%","50%"], "texture":"white", "size_mode":"scale"
                 }
-            ]
+            }
         },
 
         "test_scrollbar":
         {
-            "class":"scrollbar", "name":"scrollbar_0", "pos":[400,200], "size":[400,30],
-            "anchors": {"left":true, "right":true, "top":true, "bottom":true},
+            "class":"scrollbar", "pos":[400,200], "size":[400,30], "anchors": {"left":true, "right":true, "top":true, "bottom":true},
             "children":
-            [
-                {
-                    "class":"button", "name":"#min"
-                },
-                {
-                    "class":"button", "name":"#max"
-                },
-                {
-                    "class":"button", "name":"#slider"
-                }
-            ]
+            {
+                "#min" : {"class":"button"},
+                "#max": {"class":"button"},
+                "#slider": {"class":"button"}
+            }
         }
     },
 
     "hierarchy":
     {
-        "class":"widget", "name":"root", "size":["100%","100%"],
-        "children":
-        [
-            {"template_class":"test_button", "name":"button_0", "pos":[200,200], "size":[100,100],
-                "events":{
-                    "on_click": "custom_on_click_event"
-                }
-            },
-            {"template_class":"test_scrollbar", "name":"slider_0", "pos":[400,200], "size":[400,30]},
-            {"template_class":"test_button", "name":"button_1", "pos":[200,600], "size":[100,100]},
-            {"template_class":"test_scrollbar", "name":"", "pos":[400,600], "size":[400,30]}
-        ]
+        "root":
+        {
+            "class":"widget", "size":["100%","100%"],
+            "children":
+            {
+                "button_0":
+                {
+                    "template_class":"test_button", "pos":[200,200], "size":[100,100],
+                    "events":
+                    {
+                        "on_click": "custom_on_click_event"
+                    },
+                    "states":
+                    {
+                        "normal": { "size":[100,100] },
+                        "pressed": { "size":[80,80] },
+                        "hovered": { "size":[110,110] }
+                    }
+                },
+                "slider_0": {"template_class":"test_scrollbar", "pos":[400,200], "size":[400,30]},
+                "button_1": {"template_class":"test_button", "pos":[200,600], "size":[100,100]},
+                "sb_0": {"template_class":"test_scrollbar", "pos":[400,600], "size":[400,30]}
+            }
+        }
     }
 }

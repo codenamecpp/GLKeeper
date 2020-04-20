@@ -5,6 +5,7 @@
 #include "InputsManager.h"
 #include "GraphicsDevice.h"
 #include "GuiHelpers.h"
+#include "GuiStateProps.h"
 
 // base widget class factory
 static GuiWidgetFactory<GuiWidget> _BaseWidgetsFactory;
@@ -64,9 +65,16 @@ GuiWidget::GuiWidget(GuiWidget* copyWidget)
     , mOnMouseMButtonUpEvent(copyWidget->mOnMouseMButtonUpEvent)
 {
     debug_assert(mMetaClass);
+
+    // clone state props
+    for (const auto& currState: copyWidget->mStatesProps)
+    {
+        GuiStateProps* originalProps = currState.second;
+        mStatesProps[currState.first] = originalProps->Clone();
+    }
 }
 
-void GuiWidget::LoadProperties(cxx::json_document_node documentNode)
+void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
 {
     if (!documentNode)
     {
@@ -74,8 +82,7 @@ void GuiWidget::LoadProperties(cxx::json_document_node documentNode)
         return;
     }
 
-    cxx::json_get_attribute(documentNode, "name", mName);
-
+    mName = cxx::unique_string(documentNode.get_element_name());
     if (mName.empty())
     {
         // generate unique name
@@ -186,7 +193,29 @@ void GuiWidget::LoadProperties(cxx::json_document_node documentNode)
         cxx::json_get_attribute(events_node, "on_mbutton_up", mOnMouseMButtonUpEvent);
     }
 
+    // state props
+    if (cxx::json_node_object states_node = documentNode["states"])
+    {
+        for (cxx::json_node_object curr_state = states_node.first_child(); curr_state;
+            curr_state = curr_state.next_sibling())
+        {
+            GuiStateProps* stateProps = HandleLoadStateProperties(curr_state);
+            mStatesProps[stateProps->mStateId] = stateProps;
+        }
+    }
+
     HandleLoadProperties(documentNode);
+}
+
+GuiStateProps* GuiWidget::HandleLoadStateProperties(cxx::json_node_object documentNode)
+{
+    GuiStateProps* props = new GuiStateProps;
+    if (!props->LoadStateProperties(documentNode))
+    {
+        SafeDelete(props);
+    }
+    debug_assert(props);
+    return props;
 }
 
 GuiWidget* GuiWidget::GetLastChild() const
@@ -213,6 +242,13 @@ GuiWidget::~GuiWidget()
         deleteWidget->SetDetached(); // doesn't invoke HandleChildDetached - it is pointless in destructor
         SafeDelete(deleteWidget);
     }
+
+    // release state props
+    for (auto& currState: mStatesProps)
+    {
+        SafeDelete(currState.second);
+    }
+    mStatesProps.clear();
 }
 
 GuiWidget* GuiWidget::Clone()

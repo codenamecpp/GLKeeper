@@ -29,7 +29,7 @@ protected:
     void GenerateQuads();
 
     // override GuiWidget
-    void HandleLoadProperties(cxx::json_document_node documentNode) override;
+    void HandleLoadProperties(cxx::json_node_object documentNode) override;
     void HandleRender(GuiRenderer& renderContext) override;
     void HandleSizeChanged(const Point& prevSize) override;
     GuiPictureBox* ConstructClone() override;
