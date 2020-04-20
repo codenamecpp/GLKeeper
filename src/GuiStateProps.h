@@ -7,7 +7,7 @@ class GuiStateProps: public cxx::noncopyable
 {
 public:
     // readonly
-    cxx::unique_string mStateId;
+    std::string mStateName;
 
 public:
     GuiStateProps();

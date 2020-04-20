@@ -50,7 +50,7 @@ bool GuiStateProps::LoadStateProperties(cxx::json_node_object documentNode)
         return false;
     }
 
-    mStateId = documentNode.get_element_name();
+    mStateName = documentNode.get_element_name();
 
     mVisibleSet = cxx::json_get_attribute(documentNode, "visible", mVisibleProp);
     mEnabledSet = cxx::json_get_attribute(documentNode, "enabled", mEnabledProp);
