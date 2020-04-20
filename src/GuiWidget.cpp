@@ -5,7 +5,6 @@
 #include "InputsManager.h"
 #include "GraphicsDevice.h"
 #include "GuiHelpers.h"
-#include "GuiStateProps.h"
 
 // base widget class factory
 static GuiWidgetFactory<GuiWidget> _BaseWidgetsFactory;
@@ -65,12 +64,6 @@ GuiWidget::GuiWidget(GuiWidget* copyWidget)
     , mOnMouseMButtonUpEvent(copyWidget->mOnMouseMButtonUpEvent)
 {
     debug_assert(mMetaClass);
-
-    // clone states
-    for (GuiStateProps* currState: copyWidget->mStatesProps)
-    {
-        mStatesProps.push_back(currState);
-    }
 }
 
 void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
@@ -191,30 +184,7 @@ void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
         cxx::json_get_attribute(events_node, "on_rbutton_up", mOnMouseRButtonUpEvent);
         cxx::json_get_attribute(events_node, "on_mbutton_up", mOnMouseMButtonUpEvent);
     }
-
-    // state props
-    if (cxx::json_node_object states_node = documentNode["states"])
-    {
-        for (cxx::json_node_object curr_state = states_node.first_child(); curr_state;
-            curr_state = curr_state.next_sibling())
-        {
-            GuiStateProps* stateProps = HandleLoadStateProperties(curr_state);
-            mStatesProps.push_back(stateProps);
-        }
-    }
-
     HandleLoadProperties(documentNode);
-}
-
-GuiStateProps* GuiWidget::HandleLoadStateProperties(cxx::json_node_object documentNode)
-{
-    GuiStateProps* props = new GuiStateProps;
-    if (!props->LoadStateProperties(documentNode))
-    {
-        SafeDelete(props);
-    }
-    debug_assert(props);
-    return props;
 }
 
 GuiWidget* GuiWidget::GetLastChild() const
@@ -241,13 +211,6 @@ GuiWidget::~GuiWidget()
         deleteWidget->SetDetached(); // doesn't invoke HandleChildDetached - it is pointless in destructor
         SafeDelete(deleteWidget);
     }
-
-    // release state props
-    for (GuiStateProps* currState: mStatesProps)
-    {
-        SafeDelete(currState);
-    }
-    mStatesProps.clear();
 }
 
 GuiWidget* GuiWidget::Clone()

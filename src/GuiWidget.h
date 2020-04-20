@@ -225,7 +225,6 @@ protected:
 protected:
     // overridables
     virtual void HandleLoadProperties(cxx::json_node_object documentNode) {}
-    virtual GuiStateProps* HandleLoadStateProperties(cxx::json_node_object documentNode);
 
     virtual void HandleRender(GuiRenderer& renderContext) {}
     virtual void HandleUpdate(float deltaTime) {}
@@ -284,9 +283,6 @@ protected:
     Point mMaxSize;
 
     glm::mat4 mTransform; // current transformations matrix, screen space
-
-    // states
-    std::vector<GuiStateProps*> mStatesProps;
 
     // state flags
     bool mSelfEnabled = true;

@@ -98,9 +98,6 @@
     <Filter Include="Data\Layouts">
       <UniqueIdentifier>{28665352-7ac3-458c-84da-6979357bfcc0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\GUI\WidgetsLibrary\WidgetsStates">
-      <UniqueIdentifier>{0eaafdb0-2582-48d0-9819-facfa54926fb}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -483,9 +480,6 @@
     <ClInclude Include="GuiHelpers.h">
       <Filter>Game\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="GuiStateProps.h">
-      <Filter>Game\GUI\WidgetsLibrary\WidgetsStates</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -744,9 +738,6 @@
     </ClCompile>
     <ClCompile Include="unique_string.cpp">
       <Filter>Lib</Filter>
-    </ClCompile>
-    <ClCompile Include="GuiStateProps.cpp">
-      <Filter>Game\GUI\WidgetsLibrary\WidgetsStates</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
