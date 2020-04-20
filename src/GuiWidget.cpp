@@ -66,11 +66,10 @@ GuiWidget::GuiWidget(GuiWidget* copyWidget)
 {
     debug_assert(mMetaClass);
 
-    // clone state props
-    for (const auto& currState: copyWidget->mStatesProps)
+    // clone states
+    for (GuiStateProps* currState: copyWidget->mStatesProps)
     {
-        GuiStateProps* originalProps = currState.second;
-        mStatesProps[currState.first] = originalProps->Clone();
+        mStatesProps.push_back(currState);
     }
 }
 
@@ -200,7 +199,7 @@ void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
             curr_state = curr_state.next_sibling())
         {
             GuiStateProps* stateProps = HandleLoadStateProperties(curr_state);
-            mStatesProps[stateProps->mStateId] = stateProps;
+            mStatesProps.push_back(stateProps);
         }
     }
 
@@ -244,9 +243,9 @@ GuiWidget::~GuiWidget()
     }
 
     // release state props
-    for (auto& currState: mStatesProps)
+    for (GuiStateProps* currState: mStatesProps)
     {
-        SafeDelete(currState.second);
+        SafeDelete(currState);
     }
     mStatesProps.clear();
 }

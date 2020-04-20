@@ -286,7 +286,7 @@ protected:
     glm::mat4 mTransform; // current transformations matrix, screen space
 
     // states
-    std::map<cxx::unique_string, GuiStateProps*> mStatesProps;
+    std::vector<GuiStateProps*> mStatesProps;
 
     // state flags
     bool mSelfEnabled = true;
