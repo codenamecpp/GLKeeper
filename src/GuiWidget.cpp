@@ -161,14 +161,17 @@ void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
         SetSize(size, unitsW, unitsH);
     }
     // anchors
-    if (cxx::json_node_object prop_anchors = documentNode["anchors"])
+    if (cxx::json_document_node prop_anchors = documentNode["anchors"])
     {
         GuiAnchors anchors;
-        cxx::json_get_attribute(prop_anchors, "left", anchors.mL);
-        cxx::json_get_attribute(prop_anchors, "right", anchors.mR);
-        cxx::json_get_attribute(prop_anchors, "top", anchors.mT);
-        cxx::json_get_attribute(prop_anchors, "bottom", anchors.mB);
-        SetAnchors(anchors);
+        if (ParseAnchors(prop_anchors, anchors))
+        {
+            SetAnchors(anchors);
+        }
+        else
+        {
+            debug_assert(false);
+        }
     }
 
     // custom events

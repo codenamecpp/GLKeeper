@@ -4,7 +4,7 @@
 
 // parse json attribute and get size or position value along with units in which it specified
 // for example: ["10%", 200] - 10 percents and 200 pixels
-inline bool GetPixelsOrPercentsValue(const cxx::json_document_node& node, eGuiUnits& output_units, int& output_value)
+inline bool GetPixelsOrPercentsValue(cxx::json_document_node node, eGuiUnits& output_units, int& output_value)
 {
     // percents or pixels
     if (cxx::json_node_string string_node = node)
@@ -35,6 +35,58 @@ inline bool GetPixelsOrPercentsValue(const cxx::json_document_node& node, eGuiUn
     {
         output_units = eGuiUnits_Pixels;
         output_value = numeric_node.get_value_integer();
+        return true;
+    }
+    return false;
+}
+
+// parse gui anchors state from json node
+// example: ["left", "right"] - left and right anchors are set
+// example: ["all"] - all anchors are set 
+inline bool ParseAnchors(cxx::json_node_array node, GuiAnchors& output_anchors)
+{
+    if (node)
+    {
+        output_anchors.mB = false;
+        output_anchors.mL = false;
+        output_anchors.mR = false;
+        output_anchors.mT = false;
+
+        std::string string_value;
+        for (cxx::json_node_string currElement = node.first_child(); currElement;
+            currElement = currElement.next_sibling())
+        {
+            string_value = currElement.get_value();
+            if (string_value == "left")
+            {
+                output_anchors.mL = true;
+                continue;
+            }
+            if (string_value == "right")
+            {
+                output_anchors.mR = true;
+                continue;
+            }
+            if (string_value == "top")
+            {
+                output_anchors.mT = true;
+                continue;
+            }
+            if (string_value == "bottom")
+            {
+                output_anchors.mL = true;
+                continue;
+            }
+            if (string_value == "all")
+            {
+                output_anchors.mL = true;
+                output_anchors.mR = true;
+                output_anchors.mT = true;
+                output_anchors.mB = true;
+                return true;
+            }
+            debug_assert(false);
+        }
         return true;
     }
     return false;
