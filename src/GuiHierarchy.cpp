@@ -27,8 +27,13 @@ bool GuiHierarchy::LoadFromFile(const std::string& fileName)
         return false;
     }
 
+    return LoadFromJson(jsonDocument);
+}
+
+bool GuiHierarchy::LoadFromJson(const cxx::json_document& jsonDocument)
+{
     Cleanup();
-    
+
     // load template widgets
     cxx::json_document_node jsonRootNode = jsonDocument.get_root_node();
     if (cxx::json_node_object templatesNode = jsonRootNode["templates"])
@@ -119,13 +124,25 @@ GuiWidget* GuiHierarchy::GetWidgetByPath(const std::string& widgetPath) const
 
     if (!cxx::contains(widgetPath, '/'))
     {
-        return mRootWidget->GetChild(widgetPath);
+        if (mRootWidget->mName == widgetPath)
+            return mRootWidget;
+
+        return nullptr;
     }
     
-    GuiWidget* currentWidget = mRootWidget;
-
     std::string currentName;
     cxx::string_tokenizer tokenizer(widgetPath);
+    // get root name
+    if (!tokenizer.get_next(currentName))
+    {
+        debug_assert(false);
+        return nullptr;
+    }
+
+    if (mRootWidget->mName != currentName)
+        return nullptr;
+
+    GuiWidget* currentWidget = mRootWidget;
     for (;;)
     {
         if (!tokenizer.get_next(currentName))
