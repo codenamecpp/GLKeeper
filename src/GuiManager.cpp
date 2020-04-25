@@ -33,7 +33,7 @@ void GuiManager::Deinit()
     ClearEventsQueue();
 
     UnregisterAllEventsHandlers();
-    ClearMouseCapture();
+    SetSelectedWidget(nullptr);
     DetachAllWidgets();
 }
 
@@ -61,9 +61,9 @@ void GuiManager::UpdateFrame()
 
 void GuiManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
-    if (mMouseCaptureWidget)
+    if (mSelectedWidget)
     {
-        mMouseCaptureWidget->ProcessEvent(inputEvent);
+        mSelectedWidget->ProcessEvent(inputEvent);
 
         // skip hovered widget
         return;
@@ -79,9 +79,9 @@ void GuiManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
 {
     ScanHoveredWidget(); // do extra scan
 
-    if (mMouseCaptureWidget)
+    if (mSelectedWidget)
     {
-        mMouseCaptureWidget->ProcessEvent(inputEvent);
+        mSelectedWidget->ProcessEvent(inputEvent);
 
         // skip hovered widget
         return;
@@ -95,9 +95,9 @@ void GuiManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
 
 void GuiManager::HandleInputEvent(MouseScrollInputEvent& inputEvent)
 {
-    if (mMouseCaptureWidget)
+    if (mSelectedWidget)
     {
-        mMouseCaptureWidget->ProcessEvent(inputEvent);
+        mSelectedWidget->ProcessEvent(inputEvent);
 
         // skip hovered widget
         return;
@@ -121,9 +121,9 @@ void GuiManager::ScanHoveredWidget()
 {
     GuiWidget* newHovered = nullptr;
 
-    if (mMouseCaptureWidget)
+    if (mSelectedWidget)
     {
-        newHovered = mMouseCaptureWidget->PickWidget(gInputsManager.mCursorPosition);
+        newHovered = mSelectedWidget->PickWidget(gInputsManager.mCursorPosition);
     }
 
     if (newHovered == nullptr)
@@ -194,30 +194,24 @@ GuiWidgetMetaClass* GuiManager::GetWidgetClass(cxx::unique_string className) con
     return iterator_found->second;
 }
 
-GuiWidget* GuiManager::ConstructWidget(cxx::unique_string className) const
+GuiWidget* GuiManager::CreateWidget(cxx::unique_string className) const
 {
     if (GuiWidgetMetaClass* widgetClass = GetWidgetClass(className))
     {
         debug_assert(widgetClass->mFactory);
-        return widgetClass->mFactory->ConstructWidget();
+        return widgetClass->mFactory->CreateWidget();
     }
 
     debug_assert(false);
     return nullptr;
 }
 
-void GuiManager::CaptureMouseInputs(GuiWidget* mouseListener)
+void GuiManager::SetSelectedWidget(GuiWidget* mouseListener)
 {
-    if (mMouseCaptureWidget == mouseListener)
+    if (mSelectedWidget == mouseListener)
         return;
 
-    debug_assert(mMouseCaptureWidget == nullptr);
-    mMouseCaptureWidget = mouseListener;
-}
-
-void GuiManager::ClearMouseCapture()
-{
-    mMouseCaptureWidget = nullptr;
+    mSelectedWidget = mouseListener;
 }
 
 void GuiManager::HandleScreenResolutionChanged()

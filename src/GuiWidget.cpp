@@ -8,7 +8,7 @@
 
 // base widget class factory
 static GuiWidgetFactory<GuiWidget> _BaseWidgetsFactory;
-GuiWidgetMetaClass GuiWidget::MetaClass(cxx::unique_string("widget"), &_BaseWidgetsFactory, nullptr);
+GuiWidgetMetaClass GuiWidget::MetaClass ( cxx::unique_string("widget"), &_BaseWidgetsFactory, nullptr );
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -122,8 +122,8 @@ void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
 
         if (cxx::json_node_array prop_position = documentNode["origin"])
         {
-            if (!GetPixelsOrPercentsValue(prop_position[0], unitsX, origin.x) ||
-                !GetPixelsOrPercentsValue(prop_position[1], unitsY, origin.y))
+            if (!GuiParsePixelsOrPercents(prop_position[0], unitsX, origin.x) ||
+                !GuiParsePixelsOrPercents(prop_position[1], unitsY, origin.y))
             {
                 debug_assert(false);
             }
@@ -137,8 +137,8 @@ void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
         eGuiUnits unitsY = eGuiUnits_Pixels;
         if (cxx::json_node_array prop_position = documentNode["pos"])
         {
-            if (!GetPixelsOrPercentsValue(prop_position[0], unitsX, position.x) ||
-                !GetPixelsOrPercentsValue(prop_position[1], unitsY, position.y))
+            if (!GuiParsePixelsOrPercents(prop_position[0], unitsX, position.x) ||
+                !GuiParsePixelsOrPercents(prop_position[1], unitsY, position.y))
             {
                 debug_assert(false);
             }
@@ -152,8 +152,8 @@ void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
         eGuiUnits unitsH = eGuiUnits_Pixels;
         if (cxx::json_node_array prop_size = documentNode["size"])
         {
-            if (!GetPixelsOrPercentsValue(prop_size[0], unitsW, size.x) ||
-                !GetPixelsOrPercentsValue(prop_size[1], unitsH, size.y))
+            if (!GuiParsePixelsOrPercents(prop_size[0], unitsW, size.x) ||
+                !GuiParsePixelsOrPercents(prop_size[1], unitsH, size.y))
             {
                 debug_assert(false);
             }
@@ -164,7 +164,7 @@ void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
     if (cxx::json_document_node prop_anchors = documentNode["anchors"])
     {
         GuiAnchors anchors;
-        if (ParseAnchors(prop_anchors, anchors))
+        if (GuiParseAnchors(prop_anchors, anchors))
         {
             SetAnchors(anchors);
         }
@@ -218,7 +218,7 @@ GuiWidget::~GuiWidget()
 
 GuiWidget* GuiWidget::Clone()
 {
-    GuiWidget* selfClone = ConstructClone();
+    GuiWidget* selfClone = CreateClone();
     return selfClone;
 }
 
@@ -322,13 +322,13 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
         {
             if (IsHovered())
             {
-                gGuiManager.CaptureMouseInputs(this);
+                gGuiManager.SetSelectedWidget(this);
             }
         }
         else
         {
-            hasBeenClicked = IsHovered() && IsMouseCaptured();
-            ReleaseMouseCapture();
+            hasBeenClicked = IsHovered() && IsSelected();
+            Deselect();
         }
     }
 
@@ -413,7 +413,7 @@ bool GuiWidget::AttachChild(GuiWidget* widget)
 
     widget->mParent = this;
     widget->InvalidateTransform();
-    widget->SetAnchorPositions();
+    widget->SetupAnchorsOffsets();
     widget->ParentSizeChanged(mSize, mSize); // force update layout
     HandleChildAttached(widget);
     return true;
@@ -587,7 +587,7 @@ void GuiWidget::SetAnchors(const GuiAnchors& anchors)
     }
 
     mAnchors = anchors;
-    SetAnchorPositions();
+    SetupAnchorsOffsets();
 
     InvalidateTransform();
 }
@@ -934,7 +934,7 @@ void GuiWidget::PositionChanged(const Point& prevPosition, bool setAnchors)
 
     if (setAnchors)
     {
-        SetAnchorPositions();
+        SetupAnchorsOffsets();
     }
 
     HandlePositionChanged(prevPosition);
@@ -957,7 +957,7 @@ void GuiWidget::SizeChanged(const Point& prevSize, bool setAnchors)
 
     if (setAnchors)
     {
-        SetAnchorPositions();
+        SetupAnchorsOffsets();
     }
 
     HandleSizeChanged(prevSize);
@@ -967,7 +967,7 @@ void GuiWidget::ShownStateChanged()
 {
     if (!IsVisible()) 
     {
-        ReleaseMouseCapture();
+        Deselect();
 
         if (IsHovered()) // force cancel hover
         {
@@ -989,7 +989,7 @@ void GuiWidget::EnableStateChanged()
 {
     if (!IsEnabled())
     {
-        ReleaseMouseCapture();
+        Deselect();
 
         if (IsHovered()) // force cancel hover
         {
@@ -1113,13 +1113,13 @@ bool GuiWidget::HasAttribute(eGuiWidgetAttribute attribute) const
     return false;
 }
 
-GuiWidget* GuiWidget::ConstructClone()
+GuiWidget* GuiWidget::CreateClone()
 {
     GuiWidget* selfClone = new GuiWidget(this);
     return selfClone;
 }
 
-void GuiWidget::SetAnchorPositions()
+void GuiWidget::SetupAnchorsOffsets()
 {
     mAnchorDistL = 0;
     mAnchorDistT = 0;
@@ -1134,15 +1134,15 @@ void GuiWidget::SetAnchorPositions()
     mAnchorDistB = parentSize.y - (mAnchorDistT + mSize.y);
 }
 
-void GuiWidget::ReleaseMouseCapture()
+void GuiWidget::Deselect()
 {
-    if (IsMouseCaptured())
+    if (IsSelected())
     {
-        gGuiManager.ClearMouseCapture();
+        gGuiManager.SetSelectedWidget(nullptr);
     }
 }
 
-bool GuiWidget::IsMouseCaptured() const
+bool GuiWidget::IsSelected() const
 {
-    return gGuiManager.mMouseCaptureWidget == this;
+    return gGuiManager.mSelectedWidget == this;
 }

@@ -45,7 +45,7 @@ bool GuiPanel::HasAttribute(eGuiWidgetAttribute attribute) const
     return false;
 }
 
-GuiPanel* GuiPanel::ConstructClone()
+GuiPanel* GuiPanel::CreateClone()
 {
     GuiPanel* selfClone = new GuiPanel(this);
     return selfClone;

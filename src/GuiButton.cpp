@@ -40,7 +40,7 @@ void GuiButton::HandleRender(GuiRenderer& renderContext)
     {
         fillColor = mDebugColorHovered;
     }
-    else if (IsMouseCaptured())
+    else if (IsSelected())
     {
         fillColor = Color32_Green;
     }
@@ -63,7 +63,7 @@ bool GuiButton::HasAttribute(eGuiWidgetAttribute attribute) const
     return false;
 }
 
-GuiButton* GuiButton::ConstructClone()
+GuiButton* GuiButton::CreateClone()
 {
     GuiButton* selfClone = new GuiButton(this);
     return selfClone;

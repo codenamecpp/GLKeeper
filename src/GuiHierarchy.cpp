@@ -110,7 +110,7 @@ void GuiHierarchy::FitLayoutToScreen(const Point& screenDimensions)
 {
     if (mRootWidget)
     {
-        mRootWidget->ParentSizeChanged(mRootWidget->GetSize(), screenDimensions);
+        mRootWidget->ParentSizeChanged(mRootWidget->mSize, screenDimensions);
     }
 }
 
@@ -190,7 +190,7 @@ GuiWidget* GuiHierarchy::SearchForWidget(const std::string& name) const
     return mRootWidget->SearchForChild(name);
 }
 
-GuiWidget* GuiHierarchy::ConstructTemplateWidget(cxx::unique_string className) const
+GuiWidget* GuiHierarchy::CreateTemplateWidget(cxx::unique_string className) const
 {
     auto template_iter = mTemplateWidgetsClasses.find(className);
     if (template_iter != mTemplateWidgetsClasses.end())
@@ -226,11 +226,11 @@ GuiWidget* GuiHierarchy::DeserializeWidgetWithChildren(cxx::json_node_object obj
     cxx::unique_string className;
     if (cxx::json_get_attribute(objectNode, "class", className))
     {
-        widget = gGuiManager.ConstructWidget(className);
+        widget = gGuiManager.CreateWidget(className);
     }
     else if (cxx::json_get_attribute(objectNode, "template_class", className))
     {
-        widget = ConstructTemplateWidget(className);
+        widget = CreateTemplateWidget(className);
         widgetIsTemplate = true;
     }
 
@@ -276,7 +276,7 @@ GuiWidget* GuiHierarchy::DeserializeTemplateWidget(cxx::json_node_object objectN
     cxx::unique_string className;
     if (cxx::json_get_attribute(objectNode, "class", className))
     {
-        widget = gGuiManager.ConstructWidget(className);
+        widget = gGuiManager.CreateWidget(className);
     }
 
     if (widget == nullptr)

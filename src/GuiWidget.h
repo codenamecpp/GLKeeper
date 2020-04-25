@@ -35,6 +35,12 @@ public:
     // readonly
     cxx::unique_string mTemplateClassName; // specified for template widgets
 
+    Point mOrigin; // pixels
+    Point mPosition; // pixels
+    Point mSize; // pixels
+    Point mMinSize; // pixels
+    Point mMaxSize; // pixels
+
 public:
     // construct widget
     GuiWidget();
@@ -128,24 +134,19 @@ public:
     // get child widget by its index
     GuiWidget* GetChild(int index) const;
 
-    // get current position in local or screen space
-    inline Point GetPosition() const { return mPosition; }
+    // get current position in screen space
     inline Point GetScreenPosition() const
     {
         Point screenPosition = LocalToScreen(mPosition);
         return screenPosition;
     }
 
-    // get current origin point in local or screen space
-    inline Point GetOrigin() const { return mOrigin; }
+    // get current origin point in screen space
     inline Point GetOriginScreenPosition() const
     {
         Point screenPosition = LocalToScreen(mOrigin);
         return screenPosition;
     }
-
-    // get current size
-    inline Point GetSize() const { return mSize; }
 
     void SetMinSize(const Point& minSize);
     void SetMaxSize(const Point& maxSize);
@@ -168,7 +169,7 @@ public:
     bool IsHovered() const { return mHovered; }
     bool IsClipChildren() const { return mClipChildren; }
 
-    bool IsMouseCaptured() const;
+    bool IsSelected() const;
 
     // convert from local to screen space and vice versa
     // @param position: Point
@@ -219,8 +220,8 @@ protected:
     Point ComputeSizePixels() const;
 
     void SetDetached();
-    void SetAnchorPositions();
-    void ReleaseMouseCapture();
+    void SetupAnchorsOffsets();
+    void Deselect();
 
 protected:
     // overridables
@@ -246,7 +247,7 @@ protected:
 
     virtual bool HasAttribute(eGuiWidgetAttribute attribute) const;
 
-    virtual GuiWidget* ConstructClone();
+    virtual GuiWidget* CreateClone();
 
 protected:
     GuiWidgetMetaClass* mMetaClass; // cannot be null
@@ -267,20 +268,14 @@ protected:
     eGuiUnits mOriginUnitsX = eGuiUnits_Pixels;
     eGuiUnits mOriginUnitsY = eGuiUnits_Pixels;
     Point mOriginPercents;
-    Point mOrigin; // pixels
 
     eGuiUnits mPositionUnitsX = eGuiUnits_Pixels;
     eGuiUnits mPositionUnitsY = eGuiUnits_Pixels;
     Point mPositionPercents;
-    Point mPosition; // pixels
 
     eGuiUnits mSizeUnitsW = eGuiUnits_Pixels;
     eGuiUnits mSizeUnitsH = eGuiUnits_Pixels;
     Point mSizePercents;
-    Point mSize;
-
-    Point mMinSize;
-    Point mMaxSize;
 
     glm::mat4 mTransform; // current transformations matrix, screen space
 

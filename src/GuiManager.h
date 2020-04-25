@@ -7,7 +7,7 @@ class GuiManager: public cxx::noncopyable
 {
 public:
     // readonly
-    cxx::handle<GuiWidget> mMouseCaptureWidget;
+    cxx::handle<GuiWidget> mSelectedWidget; // mouse captured
     cxx::handle<GuiWidget> mHoveredWidget;
 
 public:
@@ -41,11 +41,10 @@ public:
 
     // construct new widget of specified class, if it registered
     // @param className: Widget class name
-    GuiWidget* ConstructWidget(cxx::unique_string className) const;
+    GuiWidget* CreateWidget(cxx::unique_string className) const;
 
     // start listen mouse events
-    void CaptureMouseInputs(GuiWidget* mouseListener);
-    void ClearMouseCapture();
+    void SetSelectedWidget(GuiWidget* widget);
     
     // process screen resolution changed event
     void HandleScreenResolutionChanged();

@@ -32,7 +32,7 @@ protected:
     void HandleLoadProperties(cxx::json_node_object documentNode) override;
     void HandleRender(GuiRenderer& renderContext) override;
     void HandleSizeChanged(const Point& prevSize) override;
-    GuiPictureBox* ConstructClone() override;
+    GuiPictureBox* CreateClone() override;
 
 protected:
     Texture2D* mTexture = nullptr;

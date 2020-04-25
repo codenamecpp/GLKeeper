@@ -63,7 +63,7 @@ void GuiPictureBox::SetTexture(Texture2D* texture)
     InvalidateCache();
 }
 
-GuiPictureBox* GuiPictureBox::ConstructClone()
+GuiPictureBox* GuiPictureBox::CreateClone()
 {
     GuiPictureBox* selfClone = new GuiPictureBox(this);
     return selfClone;

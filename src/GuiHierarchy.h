@@ -41,7 +41,7 @@ public:
 private:
     // construct new template widget of specified class
     // @param className: Template widget class name
-    GuiWidget* ConstructTemplateWidget(cxx::unique_string className) const;
+    GuiWidget* CreateTemplateWidget(cxx::unique_string className) const;
 
     // destroy template widgets
     void FreeTemplateWidgets();

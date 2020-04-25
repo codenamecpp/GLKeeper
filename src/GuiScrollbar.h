@@ -37,7 +37,7 @@ protected:
     void HandleInputEvent(MouseButtonInputEvent& inputEvent) override;
     void HandleChildAttached(GuiWidget* childWidget) override;
     void HandleChildDetached(GuiWidget* childWidget) override;
-    GuiScrollbar* ConstructClone() override;
+    GuiScrollbar* CreateClone() override;
 
     // override GuiEventsHandler
     void HandleMouseDown(GuiWidget* sender, eMouseButton mbutton) override;

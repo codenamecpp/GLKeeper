@@ -4,7 +4,7 @@
 
 // parse json attribute and get size or position value along with units in which it specified
 // for example: ["10%", 200] - 10 percents and 200 pixels
-inline bool GetPixelsOrPercentsValue(cxx::json_document_node node, eGuiUnits& output_units, int& output_value)
+inline bool GuiParsePixelsOrPercents(cxx::json_document_node node, eGuiUnits& output_units, int& output_value)
 {
     // percents or pixels
     if (cxx::json_node_string string_node = node)
@@ -43,7 +43,7 @@ inline bool GetPixelsOrPercentsValue(cxx::json_document_node node, eGuiUnits& ou
 // parse gui anchors state from json node
 // example: ["left", "right"] - left and right anchors are set
 // example: ["all"] - all anchors are set 
-inline bool ParseAnchors(cxx::json_node_array node, GuiAnchors& output_anchors)
+inline bool GuiParseAnchors(cxx::json_node_array node, GuiAnchors& output_anchors)
 {
     if (node)
     {

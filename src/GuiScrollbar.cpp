@@ -76,7 +76,7 @@ void GuiScrollbar::SetupControlWidget(GuiWidget* controlWidget)
 
 void GuiScrollbar::HandleUpdate(float deltaTime)
 {
-    if (mSliderWidget && mSliderWidget->IsMouseCaptured())
+    if (mSliderWidget && mSliderWidget->IsSelected())
     {
         Point pos = ScreenToLocal(gInputsManager.mCursorPosition);
         mSliderWidget->SetPositionX(pos.x);
@@ -159,7 +159,7 @@ void GuiScrollbar::HandleChildDetached(GuiWidget* childWidget)
     }
 }
 
-GuiScrollbar* GuiScrollbar::ConstructClone()
+GuiScrollbar* GuiScrollbar::CreateClone()
 {
     GuiScrollbar* selfClone = new GuiScrollbar(this);
     return selfClone;
@@ -171,12 +171,12 @@ void GuiScrollbar::HandleMouseDown(GuiWidget* sender, eMouseButton mbutton)
         return;
     if (sender == mDecPosWidget)
     {
-        mSliderWidget->SetPositionX(mSliderWidget->GetPosition().x - 10);
+        mSliderWidget->SetPositionX(mSliderWidget->mPosition.x - 10);
     }
 
     if (sender == mIncPosWidget)
     {
-        mSliderWidget->SetPositionX(mSliderWidget->GetPosition().x + 10);
+        mSliderWidget->SetPositionX(mSliderWidget->mPosition.x + 10);
     }
 
     if (sender == mSliderWidget)

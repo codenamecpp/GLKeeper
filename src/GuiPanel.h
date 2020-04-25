@@ -20,7 +20,7 @@ protected:
     void HandleRender(GuiRenderer& renderContext) override;
     void HandleInputEvent(MouseButtonInputEvent& inputEvent) override;
     bool HasAttribute(eGuiWidgetAttribute attribute) const override;
-    GuiPanel* ConstructClone() override;
+    GuiPanel* CreateClone() override;
 
 protected:
 };

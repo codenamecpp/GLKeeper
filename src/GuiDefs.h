@@ -157,7 +157,7 @@ public:
     {
     }
 
-    virtual GuiWidget* ConstructWidget() = 0;
+    virtual GuiWidget* CreateWidget() = 0;
 };
 
 // typical widget factory implementation
@@ -165,8 +165,8 @@ template<typename TWidgetClass>
 class GuiWidgetFactory final: public GuiWidgetFactoryInterface
 {
 public:
-    // Construct widget instance on heap
-    inline TWidgetClass* ConstructWidget() override
+    // construct widget instance on heap
+    inline TWidgetClass* CreateWidget() override
     {
         return new TWidgetClass;
     }
