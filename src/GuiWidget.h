@@ -170,6 +170,7 @@ public:
     bool IsClipChildren() const { return mClipChildren; }
 
     bool IsSelected() const;
+    void Deselect();
 
     // convert from local to screen space and vice versa
     // @param position: Point
@@ -183,19 +184,6 @@ public:
     // clone widget with or without its chindren
     GuiWidget* Clone();
     GuiWidget* CloneDeep();
-
-    template<typename TargetWidgetClass>
-    inline TargetWidgetClass* CastToWidgetClass()
-    {
-        GuiWidgetMetaClass* target_metaclass = &TargetWidgetClass::MetaClass;
-        for (GuiWidgetMetaClass* currentMetaclass = mMetaClass; currentMetaclass; 
-            currentMetaclass = currentMetaclass->mParentClass)
-        {
-            if (target_metaclass == currentMetaclass)
-                return static_cast<TargetWidgetClass*>(this);
-        }
-        return nullptr;
-    }
 
 protected:
     GuiWidget(GuiWidgetMetaClass* widgetClass);
@@ -221,7 +209,6 @@ protected:
 
     void SetDetached();
     void SetupAnchorsOffsets();
-    void Deselect();
 
 protected:
     // overridables

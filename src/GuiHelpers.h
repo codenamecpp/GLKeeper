@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GuiDefs.h"
+#include "GuiWidget.h"
 
 // parse json attribute and get size or position value along with units in which it specified
 // for example: ["10%", 200] - 10 percents and 200 pixels
@@ -90,4 +91,17 @@ inline bool GuiParseAnchors(cxx::json_node_array node, GuiAnchors& output_anchor
         return true;
     }
     return false;
+}
+
+template<typename TargetWidgetClass>
+inline TargetWidgetClass* GuiCastWidgetClass()
+{
+    GuiWidgetMetaClass* target_metaclass = &TargetWidgetClass::MetaClass;
+    for (GuiWidgetMetaClass* currentMetaclass = mMetaClass; currentMetaclass; 
+        currentMetaclass = currentMetaclass->mParentClass)
+    {
+        if (target_metaclass == currentMetaclass)
+            return static_cast<TargetWidgetClass*>(this);
+    }
+    return nullptr;
 }

@@ -57,6 +57,7 @@ bool GuiButton::HasAttribute(eGuiWidgetAttribute attribute) const
 {
     switch (attribute)
     {
+        case eGuiWidgetAttribute_Selectable:
         case eGuiWidgetAttribute_Interactive:
             return true;
     }

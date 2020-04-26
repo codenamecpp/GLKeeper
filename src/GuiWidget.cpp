@@ -289,12 +289,12 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
     // post event
     if (inputEvent.mPressed)
     {
-        GuiEvent eventData = GuiEvent::ForMouseDown(this, inputEvent.mButton, gInputsManager.mCursorPosition);
+        GuiEvent eventData = GuiEvent::MouseDownEvent(this, inputEvent.mButton, gInputsManager.mCursorPosition);
         gGuiManager.BroadcastEvent(eventData);
     }
     else
     {
-        GuiEvent eventData = GuiEvent::ForMouseUp(this, inputEvent.mButton, gInputsManager.mCursorPosition);
+        GuiEvent eventData = GuiEvent::MouseUpEvent(this, inputEvent.mButton, gInputsManager.mCursorPosition);
         gGuiManager.BroadcastEvent(eventData);
     }
 
@@ -309,14 +309,14 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
         }
         if (!customEventId.empty())
         {
-            GuiEvent customEvent = GuiEvent::ForCustomEvent(this, customEventId);
+            GuiEvent customEvent = GuiEvent::CustomEvent(this, customEventId);
             gGuiManager.BroadcastEvent(customEvent);
         }
     }
     
     bool hasBeenClicked = false;
     // process clicks
-    if (inputEvent.mButton == eMouseButton_Left)
+    if (inputEvent.mButton == eMouseButton_Left && HasAttribute(eGuiWidgetAttribute_Selectable))
     {
         if (inputEvent.mPressed)
         {
@@ -338,14 +338,14 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
     {
         // post event
         {
-            GuiEvent eventData = GuiEvent::ForClick(this, gInputsManager.mCursorPosition);
+            GuiEvent eventData = GuiEvent::ClickEvent(this, gInputsManager.mCursorPosition);
             gGuiManager.BroadcastEvent(eventData);
         }
 
         // custom event
         if (!mOnClickEvent.empty())
         {
-            GuiEvent customEvent = GuiEvent::ForCustomEvent(this, mOnClickEvent);
+            GuiEvent customEvent = GuiEvent::CustomEvent(this, mOnClickEvent);
             gGuiManager.BroadcastEvent(customEvent);
         }
 
@@ -1011,25 +1011,25 @@ void GuiWidget::HoveredStateChanged()
 {
     if (IsHovered())
     {
-        GuiEvent eventData = GuiEvent::ForMouseEnter(this, gInputsManager.mCursorPosition);
+        GuiEvent eventData = GuiEvent::MouseEnterEvent(this, gInputsManager.mCursorPosition);
         gGuiManager.BroadcastEvent(eventData);
 
         // custom event
         if (!mOnMouseEnterEvent.empty())
         {
-            GuiEvent customEvent = GuiEvent::ForCustomEvent(this, mOnMouseEnterEvent);
+            GuiEvent customEvent = GuiEvent::CustomEvent(this, mOnMouseEnterEvent);
             gGuiManager.BroadcastEvent(customEvent);
         }
     }
     else
     {
-        GuiEvent eventData = GuiEvent::ForMouseLeave(this, gInputsManager.mCursorPosition);
+        GuiEvent eventData = GuiEvent::MouseLeaveEvent(this, gInputsManager.mCursorPosition);
         gGuiManager.BroadcastEvent(eventData);
 
         // custom event
         if (!mOnMouseLeaveEvent.empty())
         {
-            GuiEvent customEvent = GuiEvent::ForCustomEvent(this, mOnMouseLeaveEvent);
+            GuiEvent customEvent = GuiEvent::CustomEvent(this, mOnMouseLeaveEvent);
             gGuiManager.BroadcastEvent(customEvent);
         }
     }

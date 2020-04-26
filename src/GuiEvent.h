@@ -25,34 +25,34 @@ public:
 
     // event construction helpers
 
-    static GuiEvent ForCustomEvent(GuiWidget* eventSender, cxx::unique_string eventId)
+    static GuiEvent CustomEvent(GuiWidget* eventSender, cxx::unique_string eventId)
     {
         GuiEvent ev (eventSender, eventId);
         return ev;
     }
 
-    static GuiEvent ForClick(GuiWidget* eventSender, const Point& screenPosition)
+    static GuiEvent ClickEvent(GuiWidget* eventSender, const Point& screenPosition)
     {
         GuiEvent ev (eventSender, GuiEventId_Click);
         ev.mMouseScreenPosition = screenPosition;
         return ev;
     }
 
-    static GuiEvent ForMouseEnter(GuiWidget* eventSender, const Point& screenPosition)
+    static GuiEvent MouseEnterEvent(GuiWidget* eventSender, const Point& screenPosition)
     {
         GuiEvent ev (eventSender, GuiEventId_MouseEnter);
         ev.mMouseScreenPosition = screenPosition;
         return ev;
     }
 
-    static GuiEvent ForMouseLeave(GuiWidget* eventSender, const Point& screenPosition)
+    static GuiEvent MouseLeaveEvent(GuiWidget* eventSender, const Point& screenPosition)
     {
         GuiEvent ev (eventSender, GuiEventId_MouseLeave);
         ev.mMouseScreenPosition = screenPosition;
         return ev;
     }
 
-    static GuiEvent ForMouseDown(GuiWidget* eventSender, eMouseButton mouseButton, const Point& screenPosition)
+    static GuiEvent MouseDownEvent(GuiWidget* eventSender, eMouseButton mouseButton, const Point& screenPosition)
     {
         GuiEvent ev (eventSender, GuiEventId_MouseDown);
         ev.mMouseButton = mouseButton;
@@ -60,7 +60,7 @@ public:
         return ev;
     }
 
-    static GuiEvent ForMouseUp(GuiWidget* eventSender, eMouseButton mouseButton, const Point& screenPosition)
+    static GuiEvent MouseUpEvent(GuiWidget* eventSender, eMouseButton mouseButton, const Point& screenPosition)
     {
         GuiEvent ev (eventSender, GuiEventId_MouseUp);
         ev.mMouseButton = mouseButton;
