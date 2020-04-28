@@ -8,7 +8,18 @@
             {
                 "picture_box_0":
                 {
-                    "class":"picture_box", "size":["85%","85%"], "origin":["50%","50%"], "pos":["50%","50%"], "texture":"white", "size_mode":"scale"
+                    "class":"picture_box", "size":["85%","85%"], "origin":["50%","50%"], "pos":["50%","50%"], "texture":"white", "size_mode":"scale",
+                    "visibility_conditions":"normal_state && !(hovered_state || pressed_state)"
+                },
+                "picture_box_1":
+                {
+                    "class":"picture_box", "size":["80%","80%"], "origin":["50%","50%"], "pos":["50%","50%"], "texture":"white", "size_mode":"scale",
+                    "visibility_conditions":"hovered_state && !(normal_state || pressed_state)"
+                },
+                "picture_box_2":
+                {
+                    "class":"picture_box", "size":["70%","70%"], "origin":["50%","50%"], "pos":["50%","50%"], "texture":"white", "size_mode":"scale",
+                    "visibility_conditions":"pressed_state && !(normal_state || hovered_state)"
                 }
             }
         },

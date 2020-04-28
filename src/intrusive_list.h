@@ -211,8 +211,8 @@ namespace cxx
         inline intrusive_iterator operator ++ (int)
         {
             debug_assert(mNode);
-
-            intrusive_iterator it(mNode->get_next_node());
+            intrusive_iterator it(mNode);
+            mNode = mNode->get_next_node();
             return it;
         }
 
@@ -220,8 +220,8 @@ namespace cxx
         inline intrusive_iterator operator -- (int)
         {
             debug_assert(mNode);
-
-            intrusive_iterator it(mNode->get_prev_node());
+            intrusive_iterator it(mNode);
+            mNode = mNode->get_prev_node();
             return it;
         }
 

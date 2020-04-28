@@ -67,6 +67,7 @@
 #include "common_utils.h"
 #include "handle.h"
 #include "unique_string.h"
+#include "logical_expression.h"
 
 // game
 

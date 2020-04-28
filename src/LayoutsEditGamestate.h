@@ -4,11 +4,14 @@
 #include "ToolsUILayoutsEditWindow.h"
 #include "GuiHierarchy.h"
 #include "GuiEvent.h"
+#include "GuiHelpers.h"
 
 class LayoutsEditGamestate: public GenericGamestate
     , public GuiEventsHandler
 {
 public:
+    LayoutsEditGamestate();
+
     void HandleGamestateEnter() override;
     void HandleGamestateLeave() override;
     void HandleUpdateFrame() override;
@@ -28,7 +31,15 @@ protected:
     void HandleMouseUp(GuiWidget* sender, eMouseButton mbutton) override;
     void HandleEvent(GuiWidget* sender, cxx::unique_string eventId) override;
 
+    void SetupVisibility();
+
 private:
     ToolsUILayoutsEditWindow mLayoutsEditWindow;
     GuiHierarchy mHier;
+
+    GuiVisibilityConditions mVisibilityConds;
+
+    cxx::unique_string mNormalStateId;
+    cxx::unique_string mHoveredStateId;
+    cxx::unique_string mPressedStateId;
 };

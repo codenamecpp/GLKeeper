@@ -62,6 +62,7 @@ GuiWidget::GuiWidget(GuiWidget* copyWidget)
     , mOnMouseLButtonUpEvent(copyWidget->mOnMouseLButtonUpEvent)
     , mOnMouseRButtonUpEvent(copyWidget->mOnMouseRButtonUpEvent)
     , mOnMouseMButtonUpEvent(copyWidget->mOnMouseMButtonUpEvent)
+    , mVisibilityConditions(copyWidget->mVisibilityConditions)
 {
     debug_assert(mMetaClass);
 }
@@ -187,6 +188,16 @@ void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
         cxx::json_get_attribute(events_node, "on_rbutton_up", mOnMouseRButtonUpEvent);
         cxx::json_get_attribute(events_node, "on_mbutton_up", mOnMouseMButtonUpEvent);
     }
+    // visibility conditions
+    std::string expr;
+    if (cxx::json_get_attribute(documentNode, "visibility_conditions", expr))
+    {
+        if (!mVisibilityConditions.parse_expression(expr))
+        {
+            debug_assert(false);
+        }
+    }
+
     HandleLoadProperties(documentNode);
 }
 

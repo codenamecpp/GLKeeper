@@ -41,6 +41,10 @@ public:
     Point mMinSize; // pixels
     Point mMaxSize; // pixels
 
+    GuiWidgetMetaClass* mMetaClass; // cannot be null, cannot be changed once widget created
+
+    cxx::logical_expression mVisibilityConditions;
+
 public:
     // construct widget
     GuiWidget();
@@ -237,8 +241,6 @@ protected:
     virtual GuiWidget* CreateClone();
 
 protected:
-    GuiWidgetMetaClass* mMetaClass; // cannot be null
-
     GuiWidget* mParent = nullptr;
     GuiWidget* mFirstChild = nullptr;
     GuiWidget* mNextSibling = nullptr;
