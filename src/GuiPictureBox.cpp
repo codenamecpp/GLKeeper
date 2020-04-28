@@ -109,7 +109,7 @@ void GuiPictureBox::GenerateQuads()
     if (rcDestination.w < 1 || rcDestination.h < 1)
         return;
 
-    Color32 verticesColor = Color32_White;
+    Color32 verticesColor = mTintColor;
 
     const Point& imageSize = mTexture->mTextureDesc.mImageDimensions;
     debug_assert(imageSize.x > 0 && imageSize.y > 0);

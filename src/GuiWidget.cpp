@@ -63,6 +63,7 @@ GuiWidget::GuiWidget(GuiWidget* copyWidget)
     , mOnMouseRButtonUpEvent(copyWidget->mOnMouseRButtonUpEvent)
     , mOnMouseMButtonUpEvent(copyWidget->mOnMouseMButtonUpEvent)
     , mVisibilityConditions(copyWidget->mVisibilityConditions)
+    , mTintColor(copyWidget->mTintColor)
 {
     debug_assert(mMetaClass);
 }
@@ -188,6 +189,13 @@ void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
         cxx::json_get_attribute(events_node, "on_rbutton_up", mOnMouseRButtonUpEvent);
         cxx::json_get_attribute(events_node, "on_mbutton_up", mOnMouseMButtonUpEvent);
     }
+
+    // colors
+    if (cxx::json_document_node tint_color_node = documentNode["tint_color"])
+    {
+        GuiParseColor(tint_color_node, mTintColor);
+    }
+
     // visibility conditions
     std::string expr;
     if (cxx::json_get_attribute(documentNode, "visibility_conditions", expr))

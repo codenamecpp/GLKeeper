@@ -32,6 +32,8 @@ public:
     Color32 mDebugColorDisabled = Color32_Gray;
 #endif
 
+    Color32 mTintColor = Color32_White;
+
     // readonly
     cxx::unique_string mTemplateClassName; // specified for template widgets
 

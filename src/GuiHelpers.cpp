@@ -88,3 +88,35 @@ bool GuiParseAnchors(cxx::json_node_array node, GuiAnchors& output_anchors)
     }
     return false;
 }
+
+bool GuiParseColor(cxx::json_document_node node, Color32& output_color)
+{
+    output_color = 0; // set to black
+    if (cxx::json_node_array arrayNode = node)
+    {
+        if (cxx::json_get_array_item(arrayNode, 0, output_color.mR) &&
+            cxx::json_get_array_item(arrayNode, 1, output_color.mG) &&
+            cxx::json_get_array_item(arrayNode, 2, output_color.mB) &&
+            cxx::json_get_array_item(arrayNode, 3, output_color.mA))
+        {
+            return true;
+        }
+        debug_assert(false);
+    }
+    if (cxx::json_node_string stringNode = node)
+    {
+        std::string hexString = stringNode.get_value();
+
+        char* p;
+        unsigned int color_value = strtoul(hexString.c_str(), &p, 16);
+        if (*p == 0)
+        {
+            output_color = color_value;
+            // reverse channels order
+            std::reverse(output_color.mChannels, output_color.mChannels + 4);
+            return true;
+        }
+        debug_assert(false);
+    }
+    return false;
+}

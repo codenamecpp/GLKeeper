@@ -588,6 +588,30 @@ bool json_get_array_item(json_node_array json_node, int item_index, int& output)
     return false;
 }
 
+bool json_get_array_item(json_node_array json_node, int item_index, unsigned char& output)
+{
+    if (json_node_numeric numericNode = json_node[item_index])
+    {
+        int source_value_int = numericNode.get_value_integer();
+        output = (unsigned char) source_value_int;
+        debug_assert(output == source_value_int);
+        return true;
+    }
+    return false;
+}
+
+bool json_get_array_item(json_node_array json_node, int item_index, char& output)
+{
+    if (json_node_numeric numericNode = json_node[item_index])
+    {
+        int source_value_int = numericNode.get_value_integer();
+        output = (char) source_value_int;
+        debug_assert(output == source_value_int);
+        return true;
+    }
+    return false;
+}
+
 bool json_get_array_item(json_node_array json_node, int item_index, float& output)
 {
     if (json_node_numeric numericNode = json_node[item_index])
