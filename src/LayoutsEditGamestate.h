@@ -37,8 +37,6 @@ private:
     ToolsUILayoutsEditWindow mLayoutsEditWindow;
     GuiHierarchy mHier;
 
-    GuiVisibilityConditions mVisibilityConds;
-
     cxx::unique_string mNormalStateId;
     cxx::unique_string mHoveredStateId;
     cxx::unique_string mPressedStateId;

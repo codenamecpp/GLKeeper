@@ -38,7 +38,7 @@ void LayoutsEditGamestate::HandleGamestateEnter()
         Subscribe(GuiEventId_MouseLeave, buttonWidget);
         Subscribe(cxx::unique_string("custom_on_click_event"), buttonWidget);
 
-        mVisibilityConds.Bind(buttonWidget);
+
         SetupVisibility();
     }
 
@@ -129,26 +129,26 @@ void LayoutsEditGamestate::HandleEvent(GuiWidget* sender, cxx::unique_string eve
 
 void LayoutsEditGamestate::SetupVisibility()
 {
-    GuiWidget* widget = mVisibilityConds.mRootWidget;
-    debug_assert(widget);
+    //GuiWidget* widget = mVisibilityConds.mRootWidget;
+    //debug_assert(widget);
 
-    if (widget->IsSelected())
-    {
-        mVisibilityConds.SetState(mNormalStateId, false);
-        mVisibilityConds.SetState(mHoveredStateId, false);
-        mVisibilityConds.SetState(mPressedStateId, true);
-    }
-    else if (widget->IsHovered())
-    {
-        mVisibilityConds.SetState(mNormalStateId, false);
-        mVisibilityConds.SetState(mHoveredStateId, true);
-        mVisibilityConds.SetState(mPressedStateId, false);
-    }
-    else
-    {
-        mVisibilityConds.SetState(mNormalStateId, true);
-        mVisibilityConds.SetState(mHoveredStateId, false);
-        mVisibilityConds.SetState(mPressedStateId, false);
-    }
-    mVisibilityConds.SetVisibility();
+    //if (widget->IsSelected())
+    //{
+    //    mVisibilityConds.SetState(mNormalStateId, false);
+    //    mVisibilityConds.SetState(mHoveredStateId, false);
+    //    mVisibilityConds.SetState(mPressedStateId, true);
+    //}
+    //else if (widget->IsHovered())
+    //{
+    //    mVisibilityConds.SetState(mNormalStateId, false);
+    //    mVisibilityConds.SetState(mHoveredStateId, true);
+    //    mVisibilityConds.SetState(mPressedStateId, false);
+    //}
+    //else
+    //{
+    //    mVisibilityConds.SetState(mNormalStateId, true);
+    //    mVisibilityConds.SetState(mHoveredStateId, false);
+    //    mVisibilityConds.SetState(mPressedStateId, false);
+    //}
+    //mVisibilityConds.SetVisibility();
 }

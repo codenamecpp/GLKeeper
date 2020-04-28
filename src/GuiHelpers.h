@@ -33,37 +33,28 @@ inline TargetWidgetClass* GuiCastWidgetClass(GuiWidget* sourceWidget)
     return resultWidget;
 }
 
-class GuiVisibilityConditions
+template<typename TFunc>
+inline void GuiRefreshVisibility(GuiWidget* sourceWidget, TFunc func)
 {
-public:
-    // readonly
-    GuiWidget* mRootWidget = nullptr;
-    
-public:
-    GuiVisibilityConditions() = default;
-
-    void SetState(cxx::unique_string stateIdentifier, bool isTrue);
-    void Invalidate();
-    void SetVisibility();
-    void Clear();
-
-    void Bind(GuiWidget* widget);
-
-private:
-    void SetVisibility(GuiWidget* widget);
-    bool IsConditionTrue(const std::)
-
-private:
-
-    struct ConditionState
+    debug_assert(sourceWidget);
+    if (sourceWidget && sourceWidget->mVisibilityConditions.non_null())
     {
-        bool mIsTrue = false;
-        bool mIsInitialized = false;
-    };
+        sourceWidget->mVisibilityConditions.evaluate_expression(func);
+    }
+}
 
-    // combination of enabled or disabled conditions -
-    // each condition is name identifier
-    std::map<cxx::unique_string, ConditionState> mConditionsMap;
-
-    bool mInvalidated = false;
-};
+template<typename TFunc>
+inline void GuiRefreshVisibilityRecursive(GuiWidget* sourceWidget, TFunc func)
+{
+    debug_assert(sourceWidget);
+    if (sourceWidget && sourceWidget->mVisibilityConditions.non_null())
+    {
+        sourceWidget->mVisibilityConditions.evaluate_expression(func);
+        // process children
+        for (GuiWidget* currChild = sourceWidget->GetChild(); currChild;
+            currChild = currChild->NextSibling())
+        {
+            GuiRefreshVisibilityRecursive(currChild, func);
+        }
+    }
+}
