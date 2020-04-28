@@ -42,9 +42,10 @@ template<typename TFunc>
 inline void GuiRefreshVisibility(GuiWidget* sourceWidget, TFunc func)
 {
     debug_assert(sourceWidget);
-    if (sourceWidget && sourceWidget->mVisibilityConditions.non_null())
+    if (sourceWidget->mVisibilityConditions.non_null())
     {
-        sourceWidget->mVisibilityConditions.evaluate_expression(func);
+        bool isVisible = sourceWidget->mVisibilityConditions.evaluate_expression(func);
+        sourceWidget->SetVisible(isVisible);
     }
 }
 
@@ -52,14 +53,11 @@ template<typename TFunc>
 inline void GuiRefreshVisibilityRecursive(GuiWidget* sourceWidget, TFunc func)
 {
     debug_assert(sourceWidget);
-    if (sourceWidget && sourceWidget->mVisibilityConditions.non_null())
+    GuiRefreshVisibility(sourceWidget, func);
+    // process children
+    for (GuiWidget* currChild = sourceWidget->GetChild(); currChild;
+        currChild = currChild->NextSibling())
     {
-        sourceWidget->mVisibilityConditions.evaluate_expression(func);
-        // process children
-        for (GuiWidget* currChild = sourceWidget->GetChild(); currChild;
-            currChild = currChild->NextSibling())
-        {
-            GuiRefreshVisibilityRecursive(currChild, func);
-        }
+        GuiRefreshVisibilityRecursive(currChild, func);
     }
 }

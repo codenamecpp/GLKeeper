@@ -12,9 +12,6 @@
 #include "Console.h"
 
 LayoutsEditGamestate::LayoutsEditGamestate()
-    :mNormalStateId("visible_when_normal")
-    ,mHoveredStateId("visible_when_hovered")
-    ,mPressedStateId("visible_when_pressed")
 {
 
 }
@@ -38,7 +35,8 @@ void LayoutsEditGamestate::HandleGamestateEnter()
         Subscribe(GuiEventId_MouseLeave, buttonWidget);
         Subscribe(cxx::unique_string("custom_on_click_event"), buttonWidget);
 
-
+        mButton = GuiCastWidgetClass<GuiButton>(buttonWidget);
+        debug_assert(mButton);
         SetupVisibility();
     }
 
@@ -129,6 +127,24 @@ void LayoutsEditGamestate::HandleEvent(GuiWidget* sender, cxx::unique_string eve
 
 void LayoutsEditGamestate::SetupVisibility()
 {
+    GuiRefreshVisibilityRecursive(mButton, [this](const std::string& name)->bool
+        {
+            if (name == "normal_state")
+            {
+                return !this->mButton->IsSelected() && !this->mButton->IsHovered();
+            }
+            if (name == "hovered_state")
+            {
+                return this->mButton->IsHovered();
+            }
+            if (name == "pressed_state")
+            {
+                return this->mButton->IsSelected();
+            }
+            debug_assert(false);
+            return false;
+        });
+
     //GuiWidget* widget = mVisibilityConds.mRootWidget;
     //debug_assert(widget);
 

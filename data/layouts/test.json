@@ -22,7 +22,7 @@
                 {
                     "class":"picture_box", "size":["70%","70%"], "origin":["50%","50%"], "pos":["50%","50%"], "texture":"white", "size_mode":"scale",
                     "tint_color":"0000ffff",
-                    "visibility_conditions":"pressed_state && !(normal_state || hovered_state)"
+                    "visibility_conditions":"pressed_state"
                 }
             }
         },
