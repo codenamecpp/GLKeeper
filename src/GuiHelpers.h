@@ -1,107 +1,63 @@
 #pragma once
 
 #include "GuiDefs.h"
-#include "GuiWidget.h"
 
 // parse json attribute and get size or position value along with units in which it specified
 // for example: ["10%", 200] - 10 percents and 200 pixels
-inline bool GuiParsePixelsOrPercents(cxx::json_document_node node, eGuiUnits& output_units, int& output_value)
-{
-    // percents or pixels
-    if (cxx::json_node_string string_node = node)
-    {
-        std::string string_value = string_node.get_value();
-        if (cxx::ends_with(string_value, '%'))
-        {
-            // looks like percents
-            if (::sscanf(string_value.c_str(), "%d", &output_value) > 0)
-            {
-                output_units = eGuiUnits_Percents;
-                return true;
-            }
-        }
-        else
-        {
-            if (::sscanf(string_value.c_str(), "%d", &output_value) > 0)
-            {
-                output_units = eGuiUnits_Pixels;
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // pixels
-    if (cxx::json_node_numeric numeric_node = node)
-    {
-        output_units = eGuiUnits_Pixels;
-        output_value = numeric_node.get_value_integer();
-        return true;
-    }
-    return false;
-}
+bool GuiParsePixelsOrPercents(cxx::json_document_node node, eGuiUnits& output_units, int& output_value);
 
 // parse gui anchors state from json node
 // example: ["left", "right"] - left and right anchors are set
 // example: ["all"] - all anchors are set 
-inline bool GuiParseAnchors(cxx::json_node_array node, GuiAnchors& output_anchors)
-{
-    if (node)
-    {
-        output_anchors.mB = false;
-        output_anchors.mL = false;
-        output_anchors.mR = false;
-        output_anchors.mT = false;
+bool GuiParseAnchors(cxx::json_node_array node, GuiAnchors& output_anchors);
 
-        std::string string_value;
-        for (cxx::json_node_string currElement = node.first_child(); currElement;
-            currElement = currElement.next_sibling())
+// parse color from json attribute
+// as array of ints example: [0, 255, 0, 255] - rgba
+// as string example: "00ff00ff" - rgba
+bool GuiParseColor(cxx::json_document_node node, Color32& output_color);
+
+// try to cast base widget pointer to specific widget class
+template<typename TargetWidgetClass>
+inline TargetWidgetClass* GuiCastWidgetClass(GuiWidget* sourceWidget)
+{
+    TargetWidgetClass* resultWidget = nullptr;
+    debug_assert(sourceWidget);
+    if (sourceWidget)
+    {
+        GuiWidgetMetaClass* target_metaclass = &TargetWidgetClass::MetaClass;
+        for (GuiWidgetMetaClass* currMetaclass = sourceWidget->mMetaClass; currMetaclass; 
+            currMetaclass = currMetaclass->mParentClass)
         {
-            string_value = currElement.get_value();
-            if (string_value == "left")
+            if (target_metaclass == currMetaclass)
             {
-                output_anchors.mL = true;
-                continue;
+                resultWidget = (TargetWidgetClass*) sourceWidget;
+                break;
             }
-            if (string_value == "right")
-            {
-                output_anchors.mR = true;
-                continue;
-            }
-            if (string_value == "top")
-            {
-                output_anchors.mT = true;
-                continue;
-            }
-            if (string_value == "bottom")
-            {
-                output_anchors.mL = true;
-                continue;
-            }
-            if (string_value == "all")
-            {
-                output_anchors.mL = true;
-                output_anchors.mR = true;
-                output_anchors.mT = true;
-                output_anchors.mB = true;
-                return true;
-            }
-            debug_assert(false);
         }
-        return true;
     }
-    return false;
+    return resultWidget;
 }
 
-template<typename TargetWidgetClass>
-inline TargetWidgetClass* GuiCastWidgetClass()
+template<typename TFunc>
+inline void GuiRefreshVisibility(GuiWidget* sourceWidget, TFunc func)
 {
-    GuiWidgetMetaClass* target_metaclass = &TargetWidgetClass::MetaClass;
-    for (GuiWidgetMetaClass* currentMetaclass = mMetaClass; currentMetaclass; 
-        currentMetaclass = currentMetaclass->mParentClass)
+    debug_assert(sourceWidget);
+    if (sourceWidget->mVisibilityConditions.non_null())
     {
-        if (target_metaclass == currentMetaclass)
-            return static_cast<TargetWidgetClass*>(this);
+        bool isVisible = sourceWidget->mVisibilityConditions.evaluate_expression(func);
+        sourceWidget->SetVisible(isVisible);
     }
-    return nullptr;
+}
+
+template<typename TFunc>
+inline void GuiRefreshVisibilityRecursive(GuiWidget* sourceWidget, TFunc func)
+{
+    debug_assert(sourceWidget);
+    GuiRefreshVisibility(sourceWidget, func);
+    // process children
+    for (GuiWidget* currChild = sourceWidget->GetChild(); currChild;
+        currChild = currChild->NextSibling())
+    {
+        GuiRefreshVisibilityRecursive(currChild, func);
+    }
 }

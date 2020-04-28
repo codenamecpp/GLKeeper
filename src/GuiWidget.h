@@ -32,6 +32,8 @@ public:
     Color32 mDebugColorDisabled = Color32_Gray;
 #endif
 
+    Color32 mTintColor = Color32_White;
+
     // readonly
     cxx::unique_string mTemplateClassName; // specified for template widgets
 
@@ -40,6 +42,10 @@ public:
     Point mSize; // pixels
     Point mMinSize; // pixels
     Point mMaxSize; // pixels
+
+    GuiWidgetMetaClass* mMetaClass; // cannot be null, cannot be changed once widget created
+
+    cxx::logical_expression mVisibilityConditions;
 
 public:
     // construct widget
@@ -237,8 +243,6 @@ protected:
     virtual GuiWidget* CreateClone();
 
 protected:
-    GuiWidgetMetaClass* mMetaClass; // cannot be null
-
     GuiWidget* mParent = nullptr;
     GuiWidget* mFirstChild = nullptr;
     GuiWidget* mNextSibling = nullptr;

@@ -38,9 +38,25 @@ public:
     // implicit conversion to int
     inline operator unsigned int () const { return mRGBA; }
 
+    inline unsigned char operator [] (int index) const
+    {
+        debug_assert(index > -1 && index < 4);
+        return mChannels[index];
+    }
+
+    inline unsigned char& operator [] (int index)
+    {
+        debug_assert(index > -1 && index < 4);
+        return mChannels[index];
+    }
+
 public:
     union
     {
+        struct
+        {
+            unsigned char mChannels[4];
+        };
         struct
         {
             unsigned char mR;
@@ -48,7 +64,6 @@ public:
             unsigned char mB;
             unsigned char mA;
         };
-
         unsigned int mRGBA;
     };
 };

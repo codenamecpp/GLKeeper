@@ -188,6 +188,7 @@
     <ClInclude Include="GuiPictureBox.h" />
     <ClInclude Include="GuiScrollbar.h" />
     <ClInclude Include="GuiWidget.h" />
+    <ClInclude Include="logical_expression.h" />
     <ClInclude Include="ToolsUILayoutsEditWindow.h" />
     <ClInclude Include="ToolsUISceneStatisticsWindow.h" />
     <ClInclude Include="GameMap.h" />
@@ -310,6 +311,7 @@
     <ClCompile Include="CommonTypes.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="ConsoleVariable.cpp" />
+    <ClCompile Include="GuiHelpers.cpp" />
     <ClCompile Include="GuiHierarchy.cpp" />
     <ClCompile Include="ToolsUIConsoleWindow.cpp" />
     <ClCompile Include="ToolsUILayoutsEditWindow.cpp" />

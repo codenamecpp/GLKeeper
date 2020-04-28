@@ -11,6 +11,11 @@
 #include "ToolsUIManager.h"
 #include "Console.h"
 
+LayoutsEditGamestate::LayoutsEditGamestate()
+{
+
+}
+
 void LayoutsEditGamestate::HandleGamestateEnter()
 {
     gToolsUIManager.AttachWindow(&mLayoutsEditWindow);
@@ -21,13 +26,19 @@ void LayoutsEditGamestate::HandleGamestateEnter()
         debug_assert(false);
     }
 
-    cxx::unique_string buttonName ("button_0");
-    Subscribe(GuiEventId_Click, buttonName);
-    Subscribe(GuiEventId_MouseDown, buttonName);
-    Subscribe(GuiEventId_MouseUp, buttonName);
-    Subscribe(GuiEventId_MouseEnter, buttonName);
-    Subscribe(GuiEventId_MouseLeave, buttonName);
-    Subscribe(cxx::unique_string("custom_on_click_event"), buttonName);
+    if (GuiWidget* buttonWidget = mHier.SearchForWidget("button_0"))
+    {
+        Subscribe(GuiEventId_Click, buttonWidget);
+        Subscribe(GuiEventId_MouseDown, buttonWidget);
+        Subscribe(GuiEventId_MouseUp, buttonWidget);
+        Subscribe(GuiEventId_MouseEnter, buttonWidget);
+        Subscribe(GuiEventId_MouseLeave, buttonWidget);
+        Subscribe(cxx::unique_string("custom_on_click_event"), buttonWidget);
+
+        mButton = GuiCastWidgetClass<GuiButton>(buttonWidget);
+        debug_assert(mButton);
+        SetupVisibility();
+    }
 
     GuiWidget* sliderThumb = mHier.GetWidgetByPath("root/slider_0/#slider");
     Subscribe(GuiEventId_MouseDown, sliderThumb);
@@ -84,28 +95,76 @@ void LayoutsEditGamestate::HandleMouseEnter(GuiWidget* sender)
 {
     debug_assert(sender);
     gConsole.LogMessage(eLogMessage_Debug, "on_mouse_enter %s", sender->mName.c_str());
+    SetupVisibility();
 }
 
 void LayoutsEditGamestate::HandleMouseLeave(GuiWidget* sender)
 {
     debug_assert(sender);
     gConsole.LogMessage(eLogMessage_Debug, "on_mouse_leave %s", sender->mName.c_str());
+    SetupVisibility();
 }
 
 void LayoutsEditGamestate::HandleMouseDown(GuiWidget* sender, eMouseButton mbutton)
 {
     debug_assert(sender);
     gConsole.LogMessage(eLogMessage_Debug, "on_mouse_down %s", sender->mName.c_str());
+    SetupVisibility();
 }
 
 void LayoutsEditGamestate::HandleMouseUp(GuiWidget* sender, eMouseButton mbutton)
 {
     debug_assert(sender);
     gConsole.LogMessage(eLogMessage_Debug, "on_mouse_up %s", sender->mName.c_str());
+    SetupVisibility();
 }
 
 void LayoutsEditGamestate::HandleEvent(GuiWidget* sender, cxx::unique_string eventId)
 {
     debug_assert(sender);
     gConsole.LogMessage(eLogMessage_Debug, "on_event '%s'", eventId.c_str());
+}
+
+void LayoutsEditGamestate::SetupVisibility()
+{
+    GuiRefreshVisibilityRecursive(mButton, [this](const std::string& name)->bool
+        {
+            if (name == "normal_state")
+            {
+                return !this->mButton->IsSelected() && !this->mButton->IsHovered();
+            }
+            if (name == "hovered_state")
+            {
+                return this->mButton->IsHovered();
+            }
+            if (name == "pressed_state")
+            {
+                return this->mButton->IsSelected();
+            }
+            debug_assert(false);
+            return false;
+        });
+
+    //GuiWidget* widget = mVisibilityConds.mRootWidget;
+    //debug_assert(widget);
+
+    //if (widget->IsSelected())
+    //{
+    //    mVisibilityConds.SetState(mNormalStateId, false);
+    //    mVisibilityConds.SetState(mHoveredStateId, false);
+    //    mVisibilityConds.SetState(mPressedStateId, true);
+    //}
+    //else if (widget->IsHovered())
+    //{
+    //    mVisibilityConds.SetState(mNormalStateId, false);
+    //    mVisibilityConds.SetState(mHoveredStateId, true);
+    //    mVisibilityConds.SetState(mPressedStateId, false);
+    //}
+    //else
+    //{
+    //    mVisibilityConds.SetState(mNormalStateId, true);
+    //    mVisibilityConds.SetState(mHoveredStateId, false);
+    //    mVisibilityConds.SetState(mPressedStateId, false);
+    //}
+    //mVisibilityConds.SetVisibility();
 }

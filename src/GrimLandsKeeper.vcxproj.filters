@@ -480,6 +480,9 @@
     <ClInclude Include="GuiHelpers.h">
       <Filter>Game\GUI</Filter>
     </ClInclude>
+    <ClInclude Include="logical_expression.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -738,6 +741,9 @@
     </ClCompile>
     <ClCompile Include="unique_string.cpp">
       <Filter>Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiHelpers.cpp">
+      <Filter>Game\GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

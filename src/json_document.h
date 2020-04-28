@@ -214,6 +214,8 @@ namespace cxx
     bool json_get_array_item(json_node_array json_node, int item_index, std::string& output);
     bool json_get_array_item(json_node_array json_node, int item_index, unique_string& output);
     bool json_get_array_item(json_node_array json_node, int item_index, int& output);
+    bool json_get_array_item(json_node_array json_node, int item_index, unsigned char& output);
+    bool json_get_array_item(json_node_array json_node, int item_index, char& output);
     bool json_get_array_item(json_node_array json_node, int item_index, float& output);
 
     template<typename TEnumClass>
