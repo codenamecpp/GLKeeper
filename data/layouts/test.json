@@ -10,13 +10,13 @@
                 {
                     "class":"picture_box", "size":["85%","85%"], "origin":["50%","50%"], "pos":["50%","50%"], "texture":"white", "size_mode":"scale",
                     "tint_color":"ff0000ff",
-                    "visibility_conditions":"normal_state && !(hovered_state || pressed_state)"
+                    "visibility_conditions":"!(hovered_state || pressed_state)"
                 },
                 "picture_box_1":
                 {
                     "class":"picture_box", "size":["80%","80%"], "origin":["50%","50%"], "pos":["50%","50%"], "texture":"white", "size_mode":"scale",
                     "tint_color":"00ff00ff",
-                    "visibility_conditions":"hovered_state && !(normal_state || pressed_state)"
+                    "visibility_conditions":"hovered_state && !pressed_state"
                 },
                 "picture_box_2":
                 {
