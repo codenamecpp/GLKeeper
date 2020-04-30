@@ -27,7 +27,16 @@ void GuiWidgetAction::PerformAction()
     if (!EvaluateConditions())
         return;
 
-    HandlePerformAction();
+    GuiWidget* target = mParentWidget;
+    if (!mTargetPath.empty())
+    {
+        target = GuiGetChildWidgetByPath(mParentWidget, mTargetPath);
+    }
+    debug_assert(target);
+    if (target)
+    {
+        HandlePerformAction(target);
+    }
 }
 
 void GuiWidgetAction::ReleaseAction()
@@ -96,59 +105,70 @@ public:
     }
     GuiWidgetActionShow(GuiWidget* parentWidget, const GuiWidgetActionShow* copyAction)
         : GuiWidgetAction(parentWidget, copyAction)
+        , mIsShow(copyAction->mIsShow)
     {
     }
-    void HandlePerformAction() override
+    void HandlePerformAction(GuiWidget* targetWidget) override
     {
-        GuiWidget* target = mParentWidget;
-        if (!mTargetPath.empty())
+        targetWidget->SetVisible(mIsShow);
+    }
+    bool HandleDeserialize(cxx::json_node_object actionNode) override
+    {
+        if (!cxx::json_get_attribute(actionNode, "value", mIsShow))
         {
-            target = GuiGetChildWidgetByPath(mParentWidget, mTargetPath);
+            int bp = 0;
         }
-        if (target)
-        {
-            target->SetVisible(true);
-        }
-        debug_assert(target);
+        return true;
     }
     GuiWidgetActionShow* HandleCloneAction(GuiWidget* parentWidget) override
     {
         debug_assert(parentWidget);
         return new GuiWidgetActionShow(parentWidget, this);
     }
+public:
+    bool mIsShow = true;
 };
 
 //////////////////////////////////////////////////////////////////////////
 
-class GuiWidgetActionHide: public GuiWidgetAction
+class GuiWidgetActionSize: public GuiWidgetAction
 {
 public:
-    GuiWidgetActionHide(GuiWidget* parentWidget)
+    GuiWidgetActionSize(GuiWidget* parentWidget)
         : GuiWidgetAction(parentWidget)
     {
     }
-    GuiWidgetActionHide(GuiWidget* parentWidget, const GuiWidgetActionHide* copyAction)
+    GuiWidgetActionSize(GuiWidget* parentWidget, const GuiWidgetActionSize* copyAction)
         : GuiWidgetAction(parentWidget, copyAction)
+        , mUnitsW(copyAction->mUnitsW)
+        , mUnitsH(copyAction->mUnitsH)
+        , mSize(copyAction->mSize)
     {
     }
-    void HandlePerformAction() override
+    void HandlePerformAction(GuiWidget* targetWidget) override
     {
-        GuiWidget* target = mParentWidget;
-        if (!mTargetPath.empty())
-        {
-            target = GuiGetChildWidgetByPath(mParentWidget, mTargetPath);
-        }
-        if (target)
-        {
-            target->SetVisible(false);
-        }
-        debug_assert(target);
+        targetWidget->SetSize(mSize, mUnitsW, mUnitsH);
     }
-    GuiWidgetActionHide* HandleCloneAction(GuiWidget* parentWidget) override
+    bool HandleDeserialize(cxx::json_node_object actionNode) override
+    {
+        cxx::json_node_array sizeNode = actionNode["value"];
+        if (!GuiParsePixelsOrPercents(sizeNode[0], mUnitsW, mSize.x) ||
+            !GuiParsePixelsOrPercents(sizeNode[1], mUnitsH, mSize.y))
+        {
+            debug_assert(false);
+            return false;
+        }
+        return true;
+    }
+    GuiWidgetActionSize* HandleCloneAction(GuiWidget* parentWidget) override
     {
         debug_assert(parentWidget);
-        return new GuiWidgetActionHide(parentWidget, this);
+        return new GuiWidgetActionSize(parentWidget, this);
     }
+private:
+    eGuiUnits mUnitsW;
+    eGuiUnits mUnitsH;
+    Point mSize;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -253,13 +273,13 @@ GuiWidgetAction* GuiWidgetActionsManager::DeserializeAction(cxx::json_node_objec
     }
 
     GuiWidgetAction* action = nullptr;
-    if (actionId == "hide")
-    {
-        action = new GuiWidgetActionHide(actionsParent);
-    }
-    else if (actionId == "show")
+    if (actionId == "show")
     {
         action = new GuiWidgetActionShow(actionsParent);
+    }
+    else if (actionId == "size")
+    {
+        action = new GuiWidgetActionSize(actionsParent);
     }
 
     debug_assert(action);

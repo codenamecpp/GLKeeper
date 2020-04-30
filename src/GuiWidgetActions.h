@@ -28,7 +28,7 @@ protected:
 
 protected:
     // overridables
-    virtual void HandlePerformAction() = 0;
+    virtual void HandlePerformAction(GuiWidget* targetWidget) = 0;
     virtual bool HandleDeserialize(cxx::json_node_object actionNode)
     {
         return true;

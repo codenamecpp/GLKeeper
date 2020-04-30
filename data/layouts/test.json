@@ -6,42 +6,37 @@
             "class":"button", "pos":[200,200], "size":[100,100], "origin":["50%","50%"],
             "children":
             {
-                "normal":
+                "icon":
                 {
-                    "class":"picture_box", "size":["85%","85%"], "origin":["50%","50%"], "pos":["50%","50%"], "texture":"white", "size_mode":"scale",
-                    "tint_color":"ff0000ff", "visible":true
+                    "class":"picture_box", "size":["100%","100%"], "origin":["50%","50%"], "pos":["50%","50%"], "tint_color":"ffffffff",
+                    "texture":"GUI\\Rooms\\Bridge_Stone", "size_mode":"scale"
                 },
-                "hovered":
+                "hover_frame":
                 {
-                    "class":"picture_box", "size":["80%","80%"], "origin":["50%","50%"], "pos":["50%","50%"], "texture":"white", "size_mode":"scale",
-                    "tint_color":"00ff00ff", "visible":false
-                },
-                "pressed":
-                {
-                    "class":"picture_box", "size":["70%","70%"], "origin":["50%","50%"], "pos":["50%","50%"], "texture":"white", "size_mode":"scale",
-                    "tint_color":"0000ffff", "visible":false
+                    "class":"picture_box", "size":["100%","100%"], "origin":["50%","50%"], "pos":["50%","50%"], "tint_color":"ffffffff",
+                    "texture":"GUI\\Icons\\frame", "size_mode":"scale", "visible":false
                 }
             },
             "actions":
             {
                 "on_mouse_enter": 
                 [
-                    {"action":"hide", "target":"normal"},
-                    {"action":"hide", "target":"pressed"},
-                    {"action":"show", "target":"hovered"}
+                    {"action":"show", "value":true, "target":"hover_frame"}
                 ],
 
                 "on_mouse_leave": 
                 [
-                    {"action":"show", "target":"normal", "conditions":"!pressed"},
-                    {"action":"show", "target":"pressed", "conditions":"pressed"},
-                    {"action":"hide", "target":"hovered"}
+                    {"action":"show", "value":false, "target":"hover_frame"}
+                ],
+
+                "on_mouse_down":
+                [
+                    {"action":"size", "value":["96%","96%"], "target":"icon"}
                 ],
 
                 "on_mouse_up":
                 [
-                    {"action":"show", "target":"normal", "conditions":"!hovered"},
-                    {"action":"hide", "target":"pressed"}
+                    {"action":"size", "value":["100%","100%"], "target":"icon"}
                 ]
             }
         },
@@ -71,16 +66,10 @@
                     "events":
                     {
                         "on_click": "custom_on_click_event"
-                    },
-                    "states":
-                    {
-                        "normal": { "size":[100,100] },
-                        "pressed": { "size":[80,80] },
-                        "hovered": { "size":[110,110] }
                     }
                 },
                 "slider_0": {"template_class":"test_scrollbar", "pos":[400,200], "size":[400,30]},
-                "button_1": {"template_class":"test_button", "pos":[200,600], "size":[100,100]},
+                "button_1": {"template_class":"test_button", "pos":[200,600], "size":[50,50]},
                 "sb_0": {"template_class":"test_scrollbar", "pos":[400,600], "size":[400,30]}
             }
         }
