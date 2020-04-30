@@ -124,8 +124,8 @@ void GuiScrollbar::HandleChildAttached(GuiWidget* childWidget)
 
     if (doSubscribe)
     {
-        Subscribe(GuiEventId_MouseDown, childWidget->mName);
-        Subscribe(GuiEventId_MouseUp, childWidget->mName);
+        Subscribe(GuiEventId_OnMouseDown, childWidget->mName);
+        Subscribe(GuiEventId_OnMouseUp, childWidget->mName);
 
         SetupControlWidget(childWidget);
     }
@@ -154,8 +154,8 @@ void GuiScrollbar::HandleChildDetached(GuiWidget* childWidget)
 
     if (doUnSubscribe)
     {
-        Unsubscribe(GuiEventId_MouseDown, childWidget->mName);
-        Unsubscribe(GuiEventId_MouseUp, childWidget->mName);
+        Unsubscribe(GuiEventId_OnMouseDown, childWidget->mName);
+        Unsubscribe(GuiEventId_OnMouseUp, childWidget->mName);
     }
 }
 

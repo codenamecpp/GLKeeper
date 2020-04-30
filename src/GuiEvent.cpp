@@ -3,11 +3,15 @@
 #include "GuiWidget.h"
 #include "GuiManager.h"
 
-const cxx::unique_string GuiEventId_Click("on_click");
-const cxx::unique_string GuiEventId_MouseEnter("on_mouse_enter");
-const cxx::unique_string GuiEventId_MouseLeave("on_mouse_leave");
-const cxx::unique_string GuiEventId_MouseDown("on_mouse_down");
-const cxx::unique_string GuiEventId_MouseUp("on_mouse_up");
+const cxx::unique_string GuiEventId_OnClick("on_click");
+const cxx::unique_string GuiEventId_OnMouseEnter("on_mouse_enter");
+const cxx::unique_string GuiEventId_OnMouseLeave("on_mouse_leave");
+const cxx::unique_string GuiEventId_OnMouseDown("on_mouse_down");
+const cxx::unique_string GuiEventId_OnMouseUp("on_mouse_up");
+const cxx::unique_string GuiEventId_OnEnable("on_enable");
+const cxx::unique_string GuiEventId_OnDisable("on_disable");
+const cxx::unique_string GuiEventId_OnShow("on_show");
+const cxx::unique_string GuiEventId_OnHide("on_hide");
 
 GuiEventsHandler::~GuiEventsHandler()
 {
@@ -175,31 +179,31 @@ void GuiEventsHandler::ProcessEvent(GuiEvent* eventData)
         return;
     }
 
-    if (eventData->mEventId == GuiEventId_Click)
+    if (eventData->mEventId == GuiEventId_OnClick)
     {
         HandleClick(eventData->mEventSender); 
         return;
     }
 
-    if (eventData->mEventId == GuiEventId_MouseEnter)
+    if (eventData->mEventId == GuiEventId_OnMouseEnter)
     {
         HandleMouseEnter(eventData->mEventSender);
         return;
     }
 
-    if (eventData->mEventId == GuiEventId_MouseLeave)
+    if (eventData->mEventId == GuiEventId_OnMouseLeave)
     {
         HandleMouseLeave(eventData->mEventSender);
         return;
     }
 
-    if (eventData->mEventId == GuiEventId_MouseDown)
+    if (eventData->mEventId == GuiEventId_OnMouseDown)
     {
         HandleMouseDown(eventData->mEventSender, eventData->mMouseButton);
         return;
     }
 
-    if (eventData->mEventId == GuiEventId_MouseUp)
+    if (eventData->mEventId == GuiEventId_OnMouseUp)
     {
         HandleMouseUp(eventData->mEventSender, eventData->mMouseButton);
         return;

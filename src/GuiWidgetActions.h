@@ -61,7 +61,7 @@ public:
     void CopyActions(const GuiWidgetActionsList& source);
 
     // invoke actions associated with event id
-    void InvokeEventActions(cxx::unique_string eventId);
+    void InvokeEventActions(const GuiEvent& eventData);
 
 private:
     struct EventActionStruct

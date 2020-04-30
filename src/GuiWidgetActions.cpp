@@ -2,6 +2,7 @@
 #include "GuiWidgetActions.h"
 #include "GuiWidget.h"
 #include "GuiHelpers.h"
+#include "GuiEvent.h"
 
 GuiWidgetActionsManager gGuiWidgetActionsManager;
 
@@ -189,11 +190,11 @@ void GuiWidgetActionsList::ClearActions()
     mActionsList.clear();
 }
 
-void GuiWidgetActionsList::InvokeEventActions(cxx::unique_string eventId)
+void GuiWidgetActionsList::InvokeEventActions(const GuiEvent& eventData)
 {
     for (const EventActionStruct& curr: mActionsList)
     {
-        if (curr.mEventId == eventId)
+        if (curr.mEventId == eventData.mEventId)
         {
             curr.mAction->PerformAction();
         }

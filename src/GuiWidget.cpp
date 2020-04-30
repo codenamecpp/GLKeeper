@@ -308,13 +308,13 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
     if (inputEvent.mPressed)
     {
         GuiEvent eventData = GuiEvent::MouseDownEvent(this, inputEvent.mButton, gInputsManager.mCursorPosition);
-        mActionsHolder.InvokeEventActions(eventData.mEventId);
+        mActionsHolder.InvokeEventActions(eventData);
         gGuiManager.BroadcastEvent(eventData);
     }
     else
     {
         GuiEvent eventData = GuiEvent::MouseUpEvent(this, inputEvent.mButton, gInputsManager.mCursorPosition);
-        mActionsHolder.InvokeEventActions(eventData.mEventId);
+        mActionsHolder.InvokeEventActions(eventData);
         gGuiManager.BroadcastEvent(eventData);
     }
 
@@ -330,7 +330,7 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
         if (!customEventId.empty())
         {
             GuiEvent customEvent = GuiEvent::CustomEvent(this, customEventId);
-            mActionsHolder.InvokeEventActions(customEvent.mEventId);
+            mActionsHolder.InvokeEventActions(customEvent);
             gGuiManager.BroadcastEvent(customEvent);
         }
     }
@@ -360,7 +360,7 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
         // post event
         {
             GuiEvent eventData = GuiEvent::ClickEvent(this, gInputsManager.mCursorPosition);
-            mActionsHolder.InvokeEventActions(eventData.mEventId);
+            mActionsHolder.InvokeEventActions(eventData);
             gGuiManager.BroadcastEvent(eventData);
         }
 
@@ -368,7 +368,7 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
         if (!mOnClickEvent.empty())
         {
             GuiEvent customEvent = GuiEvent::CustomEvent(this, mOnClickEvent);
-            mActionsHolder.InvokeEventActions(customEvent.mEventId);
+            mActionsHolder.InvokeEventActions(customEvent);
             gGuiManager.BroadcastEvent(customEvent);
         }
 
@@ -997,6 +997,16 @@ void GuiWidget::ShownStateChanged()
             mHovered = false;
             HoveredStateChanged();
         }
+
+        GuiEvent eventData = GuiEvent::HideEvent(this);
+        mActionsHolder.InvokeEventActions(eventData);
+        gGuiManager.BroadcastEvent(eventData);
+    }
+    else
+    {
+        GuiEvent eventData = GuiEvent::ShowEvent(this);
+        mActionsHolder.InvokeEventActions(eventData);
+        gGuiManager.BroadcastEvent(eventData);
     }
 
     for (GuiWidget* currChild = mFirstChild; currChild; 
@@ -1019,6 +1029,16 @@ void GuiWidget::EnableStateChanged()
             mHovered = false;
             HoveredStateChanged();
         }
+
+        GuiEvent eventData = GuiEvent::DisableEvent(this);
+        mActionsHolder.InvokeEventActions(eventData);
+        gGuiManager.BroadcastEvent(eventData);
+    }
+    else
+    {
+        GuiEvent eventData = GuiEvent::EnableEvent(this);
+        mActionsHolder.InvokeEventActions(eventData);
+        gGuiManager.BroadcastEvent(eventData);
     }
 
     for (GuiWidget* currChild = mFirstChild; currChild; 
@@ -1035,28 +1055,28 @@ void GuiWidget::HoveredStateChanged()
     if (IsHovered())
     {
         GuiEvent eventData = GuiEvent::MouseEnterEvent(this, gInputsManager.mCursorPosition);
-        mActionsHolder.InvokeEventActions(eventData.mEventId);
+        mActionsHolder.InvokeEventActions(eventData);
         gGuiManager.BroadcastEvent(eventData);
 
         // custom event
         if (!mOnMouseEnterEvent.empty())
         {
             GuiEvent customEvent = GuiEvent::CustomEvent(this, mOnMouseEnterEvent);
-            mActionsHolder.InvokeEventActions(customEvent.mEventId);
+            mActionsHolder.InvokeEventActions(customEvent);
             gGuiManager.BroadcastEvent(customEvent);
         }
     }
     else
     {
         GuiEvent eventData = GuiEvent::MouseLeaveEvent(this, gInputsManager.mCursorPosition);
-        mActionsHolder.InvokeEventActions(eventData.mEventId);
+        mActionsHolder.InvokeEventActions(eventData);
         gGuiManager.BroadcastEvent(eventData);
 
         // custom event
         if (!mOnMouseLeaveEvent.empty())
         {
             GuiEvent customEvent = GuiEvent::CustomEvent(this, mOnMouseLeaveEvent);
-            mActionsHolder.InvokeEventActions(customEvent.mEventId);
+            mActionsHolder.InvokeEventActions(customEvent);
             gGuiManager.BroadcastEvent(customEvent);
         }
     }

@@ -28,11 +28,11 @@ void LayoutsEditGamestate::HandleGamestateEnter()
 
     if (GuiWidget* buttonWidget = mHier.SearchForWidget("button_0"))
     {
-        Subscribe(GuiEventId_Click, buttonWidget);
-        Subscribe(GuiEventId_MouseDown, buttonWidget);
-        Subscribe(GuiEventId_MouseUp, buttonWidget);
-        Subscribe(GuiEventId_MouseEnter, buttonWidget);
-        Subscribe(GuiEventId_MouseLeave, buttonWidget);
+        Subscribe(GuiEventId_OnClick, buttonWidget);
+        Subscribe(GuiEventId_OnMouseDown, buttonWidget);
+        Subscribe(GuiEventId_OnMouseUp, buttonWidget);
+        Subscribe(GuiEventId_OnMouseEnter, buttonWidget);
+        Subscribe(GuiEventId_OnMouseLeave, buttonWidget);
         Subscribe(cxx::unique_string("custom_on_click_event"), buttonWidget);
 
         SetupVisibility(buttonWidget);
@@ -40,18 +40,18 @@ void LayoutsEditGamestate::HandleGamestateEnter()
 
     if (GuiWidget* buttonWidget = mHier.SearchForWidget("button_1"))
     {
-        Subscribe(GuiEventId_Click, buttonWidget);
-        Subscribe(GuiEventId_MouseDown, buttonWidget);
-        Subscribe(GuiEventId_MouseUp, buttonWidget);
-        Subscribe(GuiEventId_MouseEnter, buttonWidget);
-        Subscribe(GuiEventId_MouseLeave, buttonWidget);
+        Subscribe(GuiEventId_OnClick, buttonWidget);
+        Subscribe(GuiEventId_OnMouseDown, buttonWidget);
+        Subscribe(GuiEventId_OnMouseUp, buttonWidget);
+        Subscribe(GuiEventId_OnMouseEnter, buttonWidget);
+        Subscribe(GuiEventId_OnMouseLeave, buttonWidget);
         Subscribe(cxx::unique_string("custom_on_click_event"), buttonWidget);
 
         SetupVisibility(buttonWidget);
     }
 
     GuiWidget* sliderThumb = mHier.GetWidgetByPath("root/slider_0/#slider");
-    Subscribe(GuiEventId_MouseDown, sliderThumb);
+    Subscribe(GuiEventId_OnMouseDown, sliderThumb);
 }
 
 void LayoutsEditGamestate::HandleGamestateLeave()
