@@ -137,17 +137,4 @@ void LayoutsEditGamestate::HandleEvent(GuiWidget* sender, cxx::unique_string eve
 
 void LayoutsEditGamestate::SetupVisibility(GuiWidget* widget)
 {
-    GuiRefreshVisibilityRecursive(widget, [widget](const std::string& name)->bool
-        {
-            if (name == "hovered_state")
-            {
-                return widget->IsHovered();
-            }
-            if (name == "pressed_state")
-            {
-                return widget->IsSelected();
-            }
-            debug_assert(false);
-            return false;
-        });
 }

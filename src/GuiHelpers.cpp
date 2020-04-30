@@ -120,3 +120,39 @@ bool GuiParseColor(cxx::json_document_node node, Color32& output_color)
     }
     return false;
 }
+
+GuiWidget* GuiGetChildWidgetByPath(GuiWidget* parent_widget, const std::string& child_path)
+{
+    if (parent_widget == nullptr)
+    {
+        debug_assert(false);
+        return nullptr;
+    }
+
+    if (!cxx::contains(child_path, '/'))
+    {
+        return parent_widget->GetChild(child_path);
+    }
+    
+    std::string currentName;
+    cxx::string_tokenizer tokenizer(child_path);
+
+    GuiWidget* currentWidget = parent_widget;
+    for (;;)
+    {
+        if (!tokenizer.get_next(currentName))
+            break;
+
+        debug_assert(!currentName.empty());
+        if (GuiWidget* child = currentWidget->GetChild(currentName))
+        {
+            currentWidget = child;
+            continue;
+        }
+        // not found
+        currentWidget = nullptr;
+        break;
+    }
+
+    return currentWidget;
+}

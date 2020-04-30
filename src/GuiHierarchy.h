@@ -31,7 +31,7 @@ public:
     void FitLayoutToScreen(const Point& screenDimensions);
 
     // find widget by specific location within hierarchy
-    // @param widgetPath: Path, don't include root
+    // @param widgetPath: Path, includes root
     GuiWidget* GetWidgetByPath(const std::string& widgetPath) const;
 
     // get first widget withing hierarchy with specific name

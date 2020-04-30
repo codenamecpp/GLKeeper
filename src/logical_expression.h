@@ -87,7 +87,7 @@ namespace cxx
         // get expression result
         // @param func: Boolean values provider
         template<typename TFunc>
-        inline bool evaluate_expression(TFunc func)
+        inline bool evaluate_expression(TFunc func) const
         {
             if (non_null())
             {
@@ -317,7 +317,7 @@ namespace cxx
         // syntax tree traverse
 
         template<typename TFunc>
-        bool evaluate_node(SyntreeNode* treeNode, TFunc func)
+        bool evaluate_node(SyntreeNode* treeNode, TFunc func) const
         {
             debug_assert(treeNode);
             switch (treeNode->mNodeID)

@@ -6,24 +6,43 @@
             "class":"button", "pos":[200,200], "size":[100,100], "origin":["50%","50%"],
             "children":
             {
-                "picture_box_0":
+                "normal":
                 {
                     "class":"picture_box", "size":["85%","85%"], "origin":["50%","50%"], "pos":["50%","50%"], "texture":"white", "size_mode":"scale",
-                    "tint_color":"ff0000ff",
-                    "visibility_conditions":"!(hovered_state || pressed_state)"
+                    "tint_color":"ff0000ff", "visible":true
                 },
-                "picture_box_1":
+                "hovered":
                 {
                     "class":"picture_box", "size":["80%","80%"], "origin":["50%","50%"], "pos":["50%","50%"], "texture":"white", "size_mode":"scale",
-                    "tint_color":"00ff00ff",
-                    "visibility_conditions":"hovered_state && !pressed_state"
+                    "tint_color":"00ff00ff", "visible":false
                 },
-                "picture_box_2":
+                "pressed":
                 {
                     "class":"picture_box", "size":["70%","70%"], "origin":["50%","50%"], "pos":["50%","50%"], "texture":"white", "size_mode":"scale",
-                    "tint_color":"0000ffff",
-                    "visibility_conditions":"pressed_state"
+                    "tint_color":"0000ffff", "visible":false
                 }
+            },
+            "actions":
+            {
+                "on_mouse_enter": 
+                [
+                    {"action":"hide", "target":"normal"},
+                    {"action":"hide", "target":"pressed"},
+                    {"action":"show", "target":"hovered"}
+                ],
+
+                "on_mouse_leave": 
+                [
+                    {"action":"show", "target":"normal", "conditions":"!pressed"},
+                    {"action":"show", "target":"pressed", "conditions":"pressed"},
+                    {"action":"hide", "target":"hovered"}
+                ],
+
+                "on_mouse_up":
+                [
+                    {"action":"show", "target":"normal", "conditions":"!hovered"},
+                    {"action":"hide", "target":"pressed"}
+                ]
             }
         },
 

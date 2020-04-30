@@ -1,12 +1,14 @@
 #pragma once
 
 #include "GuiDefs.h"
+#include "GuiWidgetActions.h"
 
 // basic gui element class
 class GuiWidget: public cxx::handled_object<GuiWidget>
 {
     friend class GuiManager;
     friend class GuiHierarchy;
+    friend class GuiWidgetActionsManager;
 
 public:
     
@@ -44,8 +46,6 @@ public:
     Point mMaxSize; // pixels
 
     GuiWidgetMetaClass* mMetaClass; // cannot be null, cannot be changed once widget created
-
-    cxx::logical_expression mVisibilityConditions;
 
 public:
     // construct widget
@@ -243,6 +243,8 @@ protected:
     virtual GuiWidget* CreateClone();
 
 protected:
+    GuiWidgetActionsList mActionsHolder;
+
     GuiWidget* mParent = nullptr;
     GuiWidget* mFirstChild = nullptr;
     GuiWidget* mNextSibling = nullptr;

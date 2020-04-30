@@ -3,11 +3,11 @@
 #include "GuiWidget.h"
 #include "GuiManager.h"
 
-const cxx::unique_string GuiEventId_Click("click");
-const cxx::unique_string GuiEventId_MouseEnter("mouse_enter");
-const cxx::unique_string GuiEventId_MouseLeave("mouse_leave");
-const cxx::unique_string GuiEventId_MouseDown("mouse_down");
-const cxx::unique_string GuiEventId_MouseUp("mouse_up");
+const cxx::unique_string GuiEventId_Click("on_click");
+const cxx::unique_string GuiEventId_MouseEnter("on_mouse_enter");
+const cxx::unique_string GuiEventId_MouseLeave("on_mouse_leave");
+const cxx::unique_string GuiEventId_MouseDown("on_mouse_down");
+const cxx::unique_string GuiEventId_MouseUp("on_mouse_up");
 
 GuiEventsHandler::~GuiEventsHandler()
 {
