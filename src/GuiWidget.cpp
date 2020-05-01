@@ -205,7 +205,7 @@ void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
     // actions
     if (cxx::json_document_node actions_node = documentNode["actions"])
     {
-        gGuiWidgetActionsManager.DeserializeActions(actions_node, mActionsHolder);
+        LoadActions(actions_node);
     }
 
     // attributes
@@ -1195,4 +1195,28 @@ void GuiWidget::Deselect()
 bool GuiWidget::IsSelected() const
 {
     return gGuiManager.mSelectedWidget == this;
+}
+
+void GuiWidget::LoadActions(cxx::json_node_object actionsNode)
+{
+    // iterate events
+    for (cxx::json_node_array currNode = actionsNode.first_child(); currNode;
+        currNode = currNode.next_sibling())
+    {
+        cxx::unique_string eventId = cxx::unique_string(currNode.get_element_name());
+
+        // iterate actions
+        for (cxx::json_node_object currActionNode = currNode.first_child(); currActionNode;
+            currActionNode = currActionNode.next_sibling())
+        {
+            GuiWidgetAction* widgetAction = gGuiWidgetActionsManager.DeserializeAction(currActionNode, this);
+            if (widgetAction == nullptr)
+            {
+                debug_assert(false);
+                continue;
+            }
+
+            mActionsHolder.AddAction(eventId, widgetAction);
+        }
+    }    
 }

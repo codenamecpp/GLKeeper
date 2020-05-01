@@ -215,6 +215,9 @@ protected:
     void SetDetached();
     void SetupAnchorsOffsets();
 
+    // load widget actions from json document node
+    void LoadActions(cxx::json_node_object actionsNode);
+
 protected:
     // overridables
     virtual void HandleLoadProperties(cxx::json_node_object documentNode) {}

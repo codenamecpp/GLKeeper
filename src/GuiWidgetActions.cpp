@@ -324,30 +324,6 @@ void GuiWidgetActionsHolder::CopyActions(const GuiWidgetActionsHolder& source)
 
 //////////////////////////////////////////////////////////////////////////
 
-void GuiWidgetActionsManager::DeserializeActions(cxx::json_node_object actionsNode, GuiWidgetActionsHolder& actionsList)
-{    
-    // iterate events
-    for (cxx::json_node_array currNode = actionsNode.first_child(); currNode;
-        currNode = currNode.next_sibling())
-    {
-        cxx::unique_string eventId = cxx::unique_string(currNode.get_element_name());
-
-        // iterate actions
-        for (cxx::json_node_object currActionNode = currNode.first_child(); currActionNode;
-            currActionNode = currActionNode.next_sibling())
-        {
-            GuiWidgetAction* widgetAction = DeserializeAction(currActionNode, actionsList.mParentWidget);
-            if (widgetAction == nullptr)
-            {
-                debug_assert(false);
-                continue;
-            }
-
-            actionsList.AddAction(eventId, widgetAction);
-        }
-    }    
-}
-
 GuiWidgetAction* GuiWidgetActionsManager::DeserializeAction(cxx::json_node_object actionNode, GuiWidget* actionsParent)
 {
     std::string actionId;

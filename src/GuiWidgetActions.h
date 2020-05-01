@@ -80,11 +80,8 @@ private:
 class GuiWidgetActionsManager: public cxx::noncopyable
 {
 public:
-    // try load widget actions from json document node
-    void DeserializeActions(cxx::json_node_object actionsNode, GuiWidgetActionsHolder& actionsList);
-
-private:
     // try load single widget action from json document node
+    // @returns null on error
     GuiWidgetAction* DeserializeAction(cxx::json_node_object actionNode, GuiWidget* actionsParent);
 };
 
