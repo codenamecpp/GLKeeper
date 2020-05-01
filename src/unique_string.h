@@ -45,6 +45,11 @@ namespace cxx
             set_data_internal(string_content);
         }
 
+        inline void assign(const char* string_begin, const char* string_end)
+        {
+            set_data_internal(string_begin, string_end);
+        }
+
         // set null unique string
         inline void clear()
         {
@@ -122,6 +127,7 @@ namespace cxx
     private:
         // set unique string data for c string content
         void set_data_internal(const char* string_content);
+        void set_data_internal(const char* string_begin, const char* string_end);
 
         // set unique string data for std string content
         void set_data_internal(const std::string& string_content);

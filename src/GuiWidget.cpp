@@ -1237,7 +1237,7 @@ void GuiWidget::LoadActions(cxx::json_node_object actionsNode)
         for (cxx::json_node_object currActionNode = currNode.first_child(); currActionNode;
             currActionNode = currActionNode.next_sibling())
         {
-            GuiWidgetAction* widgetAction = gGuiWidgetActionsFactory.DeserializeAction(currActionNode);
+            GuiAction* widgetAction = gGuiActionsFactory.DeserializeAction(currActionNode);
             if (widgetAction == nullptr)
             {
                 debug_assert(false);

@@ -1,21 +1,21 @@
 #include "pch.h"
-#include "GuiWidgetActions.h"
+#include "GuiAction.h"
 #include "GuiWidget.h"
 #include "GuiHelpers.h"
 #include "GuiEvent.h"
 #include "GuiPictureBox.h"
 
-GuiWidgetActionsFactory gGuiWidgetActionsFactory;
+GuiActionsFactory gGuiActionsFactory;
 
 //////////////////////////////////////////////////////////////////////////
 
-GuiWidgetAction::GuiWidgetAction(const GuiWidgetAction* copyAction)
+GuiAction::GuiAction(const GuiAction* copyAction)
     : mConditions(copyAction->mConditions)
     , mTargetPath(copyAction->mTargetPath)
 {
 }
 
-void GuiWidgetAction::PerformAction(GuiWidget* parentWidget)
+void GuiAction::PerformAction(GuiWidget* parentWidget)
 {
     if (!EvaluateConditions(parentWidget))
         return;
@@ -32,12 +32,12 @@ void GuiWidgetAction::PerformAction(GuiWidget* parentWidget)
     }
 }
 
-void GuiWidgetAction::ReleaseAction()
+void GuiAction::ReleaseAction()
 {
     delete this;
 }
 
-bool GuiWidgetAction::Deserialize(cxx::json_node_object actionNode)
+bool GuiAction::Deserialize(cxx::json_node_object actionNode)
 {
     std::string conditions;
     if (cxx::json_get_attribute(actionNode, "conditions", conditions))
@@ -52,19 +52,19 @@ bool GuiWidgetAction::Deserialize(cxx::json_node_object actionNode)
     return HandleDeserialize(actionNode);
 }
 
-GuiWidgetAction* GuiWidgetAction::CloneAction()
+GuiAction* GuiAction::CloneAction()
 {
     return HandleCloneAction();
 }
 
-bool GuiWidgetAction::EvaluateConditions(GuiWidget* parentWidget) const
+bool GuiAction::EvaluateConditions(GuiWidget* parentWidget) const
 {
     debug_assert(parentWidget);
 
     bool isTrue = true;
     if (mConditions.non_null())
     {
-        isTrue = mConditions.evaluate_expression([parentWidget](const std::string& name)
+        isTrue = mConditions.evaluate_expression([parentWidget](const cxx::unique_string& name)
         {
             if (name == "pressed")
             {
@@ -91,12 +91,12 @@ bool GuiWidgetAction::EvaluateConditions(GuiWidget* parentWidget) const
 
 //////////////////////////////////////////////////////////////////////////
 
-class GuiWidgetActionShow: public GuiWidgetAction
+class GuiWidgetActionShow: public GuiAction
 {
 public:
     GuiWidgetActionShow() = default;
     GuiWidgetActionShow(const GuiWidgetActionShow* copyAction)
-        : GuiWidgetAction(copyAction)
+        : GuiAction(copyAction)
         , mIsShow(copyAction->mIsShow)
     {
     }
@@ -122,12 +122,12 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 
-class GuiWidgetActionSize: public GuiWidgetAction
+class GuiWidgetActionSize: public GuiAction
 {
 public:
     GuiWidgetActionSize() = default;
     GuiWidgetActionSize(const GuiWidgetActionSize* copyAction)
-        : GuiWidgetAction(copyAction)
+        : GuiAction(copyAction)
         , mUnitsW(copyAction->mUnitsW)
         , mUnitsH(copyAction->mUnitsH)
         , mSize(copyAction->mSize)
@@ -160,12 +160,12 @@ private:
 
 //////////////////////////////////////////////////////////////////////////
 
-class GuiWidgetActionSetTexture: public GuiWidgetAction
+class GuiWidgetActionSetTexture: public GuiAction
 {
 public:
     GuiWidgetActionSetTexture() = default;
     GuiWidgetActionSetTexture(const GuiWidgetActionSetTexture* copyAction)
-        : GuiWidgetAction(copyAction)
+        : GuiAction(copyAction)
         , mTextureName(copyAction->mTextureName)
     {
     }
@@ -201,12 +201,12 @@ private:
 
 //////////////////////////////////////////////////////////////////////////
 
-class GuiWidgetActionEmitEvent: public GuiWidgetAction
+class GuiWidgetActionEmitEvent: public GuiAction
 {
 public:
     GuiWidgetActionEmitEvent() = default;
     GuiWidgetActionEmitEvent(const GuiWidgetActionEmitEvent* copyAction)
-        : GuiWidgetAction(copyAction)
+        : GuiAction(copyAction)
         , mEventId(copyAction->mEventId)
     {
     }
@@ -235,12 +235,12 @@ private:
 
 //////////////////////////////////////////////////////////////////////////
 
-class GuiWidgetActionBackgroundColor: public GuiWidgetAction
+class GuiWidgetActionBackgroundColor: public GuiAction
 {
 public:
     GuiWidgetActionBackgroundColor() = default;
     GuiWidgetActionBackgroundColor(const GuiWidgetActionBackgroundColor* copyAction)
-        : GuiWidgetAction(copyAction)
+        : GuiAction(copyAction)
         , mBackgroundColor(copyAction->mBackgroundColor)
     {
     }
@@ -265,18 +265,18 @@ private:
 
 //////////////////////////////////////////////////////////////////////////
 
-GuiWidgetActionsHolder::GuiWidgetActionsHolder(GuiWidget* actionsParentWidget)
+GuiActionsHolder::GuiActionsHolder(GuiWidget* actionsParentWidget)
     : mParentWidget(actionsParentWidget)
 {
     debug_assert(mParentWidget);
 }
 
-GuiWidgetActionsHolder::~GuiWidgetActionsHolder()
+GuiActionsHolder::~GuiActionsHolder()
 {
     ClearActions();
 }
 
-void GuiWidgetActionsHolder::AddAction(cxx::unique_string eventId, GuiWidgetAction* action)
+void GuiActionsHolder::AddAction(cxx::unique_string eventId, GuiAction* action)
 {
     if (cxx::contains_if(mActionsList, [&eventId, action](const EventActionStruct& curr)
         {
@@ -293,7 +293,7 @@ void GuiWidgetActionsHolder::AddAction(cxx::unique_string eventId, GuiWidgetActi
     mActionsList.push_back(evActionStruct);
 }
 
-void GuiWidgetActionsHolder::ClearActions()
+void GuiActionsHolder::ClearActions()
 {
     for (const EventActionStruct& curr: mActionsList)
     {
@@ -302,7 +302,7 @@ void GuiWidgetActionsHolder::ClearActions()
     mActionsList.clear();
 }
 
-void GuiWidgetActionsHolder::EmitEvent(cxx::unique_string eventId)
+void GuiActionsHolder::EmitEvent(cxx::unique_string eventId)
 {
     for (const EventActionStruct& curr: mActionsList)
     {
@@ -313,11 +313,11 @@ void GuiWidgetActionsHolder::EmitEvent(cxx::unique_string eventId)
     }
 }
 
-void GuiWidgetActionsHolder::CopyActions(const GuiWidgetActionsHolder& source)
+void GuiActionsHolder::CopyActions(const GuiActionsHolder& source)
 {
     for (const EventActionStruct& curr_element: source.mActionsList)
     {
-        GuiWidgetAction* action = curr_element.mAction->CloneAction();
+        GuiAction* action = curr_element.mAction->CloneAction();
         debug_assert(action);
 
         if (action)
@@ -329,7 +329,7 @@ void GuiWidgetActionsHolder::CopyActions(const GuiWidgetActionsHolder& source)
 
 //////////////////////////////////////////////////////////////////////////
 
-GuiWidgetAction* GuiWidgetActionsFactory::DeserializeAction(cxx::json_node_object actionNode)
+GuiAction* GuiActionsFactory::DeserializeAction(cxx::json_node_object actionNode)
 {
     std::string actionId;
     if (!cxx::json_get_attribute(actionNode, "action", actionId))
@@ -338,7 +338,7 @@ GuiWidgetAction* GuiWidgetActionsFactory::DeserializeAction(cxx::json_node_objec
         return nullptr;
     }
     // todo: refactore this if/else mess
-    GuiWidgetAction* action = nullptr;
+    GuiAction* action = nullptr;
     if (actionId == "show")
     {
         action = new GuiWidgetActionShow;

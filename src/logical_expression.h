@@ -118,7 +118,7 @@ namespace cxx
             SyntreeNodeID mNodeID;
             SyntreeNode* mExpressionL = nullptr;
             SyntreeNode* mExpressionR = nullptr;
-            std::string mIdentifier;
+            unique_string mIdentifier;
         };
 
         // input characters stream helper
@@ -274,17 +274,17 @@ namespace cxx
         {
             SyntreeNode* expression_node = nullptr;
 
-            std::string name;
+            unique_string name;
             if (parse_identifier(charactersStream, name))
             {
                 expression_node = new_syntree_node(SyntreeNode_Identifier);
-                expression_node->mIdentifier.swap(name);
+                expression_node->mIdentifier = name;
             }
             debug_assert(expression_node);
             return expression_node;
         }
 
-        bool parse_identifier(characters_stream& charactersStream, std::string& name)
+        bool parse_identifier(characters_stream& charactersStream, unique_string& name)
         {
             const char* nameStart = charactersStream.mCursor;
             const char* nameEnd = nameStart;
