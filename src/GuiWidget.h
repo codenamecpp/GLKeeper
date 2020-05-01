@@ -38,14 +38,13 @@ public:
 
     // readonly
     cxx::unique_string mTemplateClassName; // specified for template widgets
-
     Point mOrigin; // pixels
     Point mPosition; // pixels
     Point mSize; // pixels
     Point mMinSize; // pixels
     Point mMaxSize; // pixels
-
     GuiWidgetMetaClass* mMetaClass; // cannot be null, cannot be changed once widget created
+    GuiWidgetActionsHolder mActionsHolder;
 
 public:
     // construct widget
@@ -241,8 +240,6 @@ protected:
     virtual GuiWidget* CreateClone();
 
 protected:
-    GuiWidgetActionsList mActionsHolder;
-
     GuiWidget* mParent = nullptr;
     GuiWidget* mFirstChild = nullptr;
     GuiWidget* mNextSibling = nullptr;

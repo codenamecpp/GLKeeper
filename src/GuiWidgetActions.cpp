@@ -219,18 +219,57 @@ private:
 
 //////////////////////////////////////////////////////////////////////////
 
-GuiWidgetActionsList::GuiWidgetActionsList(GuiWidget* actionsParentWidget)
+class GuiWidgetActionEmitEvent: public GuiWidgetAction
+{
+public:
+    GuiWidgetActionEmitEvent(GuiWidget* parentWidget)
+        : GuiWidgetAction(parentWidget)
+    {
+    }
+    GuiWidgetActionEmitEvent(GuiWidget* parentWidget, const GuiWidgetActionEmitEvent* copyAction)
+        : GuiWidgetAction(parentWidget, copyAction)
+        , mEventId(copyAction->mEventId)
+    {
+    }
+    void HandlePerformAction(GuiWidget* targetWidget) override
+    {
+        if (mEventId.empty())
+        {
+            debug_assert(false);
+            return;
+        }
+        targetWidget->mActionsHolder.EmitEvent(mEventId);
+    }
+    bool HandleDeserialize(cxx::json_node_object actionNode) override
+    {
+        cxx::json_get_attribute(actionNode, "value", mEventId);
+        debug_assert(!mEventId.empty());
+        return true;
+    }
+    GuiWidgetActionEmitEvent* HandleCloneAction(GuiWidget* parentWidget) override
+    {
+        debug_assert(parentWidget);
+        return new GuiWidgetActionEmitEvent(parentWidget, this);
+    }
+private:
+    cxx::unique_string mEventId;
+};
+
+
+//////////////////////////////////////////////////////////////////////////
+
+GuiWidgetActionsHolder::GuiWidgetActionsHolder(GuiWidget* actionsParentWidget)
     : mParentWidget(actionsParentWidget)
 {
     debug_assert(mParentWidget);
 }
 
-GuiWidgetActionsList::~GuiWidgetActionsList()
+GuiWidgetActionsHolder::~GuiWidgetActionsHolder()
 {
     ClearActions();
 }
 
-void GuiWidgetActionsList::AddAction(cxx::unique_string eventId, GuiWidgetAction* action)
+void GuiWidgetActionsHolder::AddAction(cxx::unique_string eventId, GuiWidgetAction* action)
 {
     if (cxx::contains_if(mActionsList, [&eventId, action](const EventActionStruct& curr)
         {
@@ -247,7 +286,7 @@ void GuiWidgetActionsList::AddAction(cxx::unique_string eventId, GuiWidgetAction
     mActionsList.push_back(evActionStruct);
 }
 
-void GuiWidgetActionsList::ClearActions()
+void GuiWidgetActionsHolder::ClearActions()
 {
     for (const EventActionStruct& curr: mActionsList)
     {
@@ -256,18 +295,18 @@ void GuiWidgetActionsList::ClearActions()
     mActionsList.clear();
 }
 
-void GuiWidgetActionsList::InvokeEventActions(const GuiEvent& eventData)
+void GuiWidgetActionsHolder::EmitEvent(cxx::unique_string eventId)
 {
     for (const EventActionStruct& curr: mActionsList)
     {
-        if (curr.mEventId == eventData.mEventId)
+        if (curr.mEventId == eventId)
         {
             curr.mAction->PerformAction();
         }
     }
 }
 
-void GuiWidgetActionsList::CopyActions(const GuiWidgetActionsList& source)
+void GuiWidgetActionsHolder::CopyActions(const GuiWidgetActionsHolder& source)
 {
     debug_assert(mParentWidget);
 
@@ -285,7 +324,7 @@ void GuiWidgetActionsList::CopyActions(const GuiWidgetActionsList& source)
 
 //////////////////////////////////////////////////////////////////////////
 
-void GuiWidgetActionsManager::DeserializeActions(cxx::json_node_object actionsNode, GuiWidgetActionsList& actionsList)
+void GuiWidgetActionsManager::DeserializeActions(cxx::json_node_object actionsNode, GuiWidgetActionsHolder& actionsList)
 {    
     // iterate events
     for (cxx::json_node_array currNode = actionsNode.first_child(); currNode;
@@ -330,6 +369,10 @@ GuiWidgetAction* GuiWidgetActionsManager::DeserializeAction(cxx::json_node_objec
     else if (actionId == "texture")
     {
         action = new GuiWidgetActionSetTexture(actionsParent);
+    }
+    else if (actionId == "emit_event")
+    {
+        action = new GuiWidgetActionEmitEvent(actionsParent);
     }
 
     debug_assert(action);

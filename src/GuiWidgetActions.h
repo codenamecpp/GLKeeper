@@ -4,7 +4,7 @@
 
 // forwards
 class GuiWidgetAction;
-class GuiWidgetActionsList;
+class GuiWidgetActionsHolder;
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -44,24 +44,24 @@ protected:
 
 //////////////////////////////////////////////////////////////////////////
 
-// widget actions list
-class GuiWidgetActionsList: public cxx::noncopyable
+// widget actions holder
+class GuiWidgetActionsHolder: public cxx::noncopyable
 {
 public:
     // readonly
     GuiWidget* mParentWidget;
 
 public:
-    GuiWidgetActionsList(GuiWidget* actionsParentWidget);
-    ~GuiWidgetActionsList();
+    GuiWidgetActionsHolder(GuiWidget* actionsParentWidget);
+    ~GuiWidgetActionsHolder();
 
     // add action to controller
     void AddAction(cxx::unique_string eventId, GuiWidgetAction* action);
     void ClearActions();
-    void CopyActions(const GuiWidgetActionsList& source);
+    void CopyActions(const GuiWidgetActionsHolder& source);
 
     // invoke actions associated with event id
-    void InvokeEventActions(const GuiEvent& eventData);
+    void EmitEvent(cxx::unique_string eventId);
 
 private:
     struct EventActionStruct
@@ -81,8 +81,9 @@ class GuiWidgetActionsManager: public cxx::noncopyable
 {
 public:
     // try load widget actions from json document node
-    void DeserializeActions(cxx::json_node_object actionsNode, GuiWidgetActionsList& actionsList);
+    void DeserializeActions(cxx::json_node_object actionsNode, GuiWidgetActionsHolder& actionsList);
 
+private:
     // try load single widget action from json document node
     GuiWidgetAction* DeserializeAction(cxx::json_node_object actionNode, GuiWidget* actionsParent);
 };

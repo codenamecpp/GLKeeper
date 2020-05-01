@@ -39,6 +39,16 @@
                 "on_mouse_up":
                 [
                     {"action":"size", "value":["100%","100%"], "target":"icon"}
+                ],
+
+                "on_click":
+                [
+                    {"action":"emit_event", "value":"cutom_event_id"}
+                ],
+
+                "cutom_event_id":
+                [
+                    {"action":"show", "value":false, "target":"icon"}
                 ]
             }
         },
