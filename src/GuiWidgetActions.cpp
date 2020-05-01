@@ -5,7 +5,7 @@
 #include "GuiEvent.h"
 #include "GuiPictureBox.h"
 
-GuiWidgetActionsManager gGuiWidgetActionsManager;
+GuiWidgetActionsFactory gGuiWidgetActionsFactory;
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -217,7 +217,7 @@ public:
             debug_assert(false);
             return;
         }
-        targetWidget->mActionsHolder.EmitEvent(mEventId);
+        targetWidget->mActions.EmitEvent(mEventId);
     }
     bool HandleDeserialize(cxx::json_node_object actionNode) override
     {
@@ -329,7 +329,7 @@ void GuiWidgetActionsHolder::CopyActions(const GuiWidgetActionsHolder& source)
 
 //////////////////////////////////////////////////////////////////////////
 
-GuiWidgetAction* GuiWidgetActionsManager::DeserializeAction(cxx::json_node_object actionNode)
+GuiWidgetAction* GuiWidgetActionsFactory::DeserializeAction(cxx::json_node_object actionNode)
 {
     std::string actionId;
     if (!cxx::json_get_attribute(actionNode, "action", actionId))
@@ -337,7 +337,7 @@ GuiWidgetAction* GuiWidgetActionsManager::DeserializeAction(cxx::json_node_objec
         debug_assert(false);
         return nullptr;
     }
-
+    // todo: refactore this if/else mess
     GuiWidgetAction* action = nullptr;
     if (actionId == "show")
     {
@@ -365,11 +365,10 @@ GuiWidgetAction* GuiWidgetActionsManager::DeserializeAction(cxx::json_node_objec
     {
         if (!action->Deserialize(actionNode))
         {
-            debug_assert(false);
-
             action->ReleaseAction();
             action = nullptr;
         }
+        debug_assert(action);
     }
     return action;
 }

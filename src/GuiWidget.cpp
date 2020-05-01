@@ -26,7 +26,7 @@ GuiWidget::GuiWidget(GuiWidgetMetaClass* widgetClass)
     , mSizePercents()
     , mSize()
     , mUserData()
-    , mActionsHolder(this)
+    , mActions(this)
 {
     debug_assert(mMetaClass);
 }
@@ -64,7 +64,7 @@ GuiWidget::GuiWidget(GuiWidget* copyWidget)
     , mOnMouseRButtonUpEvent(copyWidget->mOnMouseRButtonUpEvent)
     , mOnMouseMButtonUpEvent(copyWidget->mOnMouseMButtonUpEvent)
     , mTintColor(copyWidget->mTintColor)
-    , mActionsHolder(this)
+    , mActions(this)
     , mHasInteractiveAttribute(copyWidget->mHasInteractiveAttribute)
     , mHasSelectableAttribute(copyWidget->mHasSelectableAttribute)
     , mHasDisablePickChildrenAttribute(copyWidget->mHasDisablePickChildrenAttribute)
@@ -75,7 +75,7 @@ GuiWidget::GuiWidget(GuiWidget* copyWidget)
 {
     debug_assert(mMetaClass);
 
-    mActionsHolder.CopyActions(copyWidget->mActionsHolder);
+    mActions.CopyActions(copyWidget->mActions);
 }
 
 void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
@@ -334,13 +334,13 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
     if (inputEvent.mPressed)
     {
         GuiEvent eventData = GuiEvent::MouseDownEvent(this, inputEvent.mButton, gInputsManager.mCursorPosition);
-        mActionsHolder.EmitEvent(eventData.mEventId);
+        mActions.EmitEvent(eventData.mEventId);
         gGuiManager.BroadcastEvent(eventData);
     }
     else
     {
         GuiEvent eventData = GuiEvent::MouseUpEvent(this, inputEvent.mButton, gInputsManager.mCursorPosition);
-        mActionsHolder.EmitEvent(eventData.mEventId);
+        mActions.EmitEvent(eventData.mEventId);
         gGuiManager.BroadcastEvent(eventData);
     }
 
@@ -356,7 +356,7 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
         if (!customEventId.empty())
         {
             GuiEvent customEvent = GuiEvent::CustomEvent(this, customEventId);
-            mActionsHolder.EmitEvent(customEvent.mEventId);
+            mActions.EmitEvent(customEvent.mEventId);
             gGuiManager.BroadcastEvent(customEvent);
         }
     }
@@ -386,7 +386,7 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
         // post event
         {
             GuiEvent eventData = GuiEvent::ClickEvent(this, gInputsManager.mCursorPosition);
-            mActionsHolder.EmitEvent(eventData.mEventId);
+            mActions.EmitEvent(eventData.mEventId);
             gGuiManager.BroadcastEvent(eventData);
         }
 
@@ -394,7 +394,7 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
         if (!mOnClickEvent.empty())
         {
             GuiEvent customEvent = GuiEvent::CustomEvent(this, mOnClickEvent);
-            mActionsHolder.EmitEvent(customEvent.mEventId);
+            mActions.EmitEvent(customEvent.mEventId);
             gGuiManager.BroadcastEvent(customEvent);
         }
 
@@ -1035,13 +1035,13 @@ void GuiWidget::ShownStateChanged()
         }
 
         GuiEvent eventData = GuiEvent::HideEvent(this);
-        mActionsHolder.EmitEvent(eventData.mEventId);
+        mActions.EmitEvent(eventData.mEventId);
         gGuiManager.BroadcastEvent(eventData);
     }
     else
     {
         GuiEvent eventData = GuiEvent::ShowEvent(this);
-        mActionsHolder.EmitEvent(eventData.mEventId);
+        mActions.EmitEvent(eventData.mEventId);
         gGuiManager.BroadcastEvent(eventData);
     }
 
@@ -1067,13 +1067,13 @@ void GuiWidget::EnableStateChanged()
         }
 
         GuiEvent eventData = GuiEvent::DisableEvent(this);
-        mActionsHolder.EmitEvent(eventData.mEventId);
+        mActions.EmitEvent(eventData.mEventId);
         gGuiManager.BroadcastEvent(eventData);
     }
     else
     {
         GuiEvent eventData = GuiEvent::EnableEvent(this);
-        mActionsHolder.EmitEvent(eventData.mEventId);
+        mActions.EmitEvent(eventData.mEventId);
         gGuiManager.BroadcastEvent(eventData);
     }
 
@@ -1091,28 +1091,28 @@ void GuiWidget::HoveredStateChanged()
     if (IsHovered())
     {
         GuiEvent eventData = GuiEvent::MouseEnterEvent(this, gInputsManager.mCursorPosition);
-        mActionsHolder.EmitEvent(eventData.mEventId);
+        mActions.EmitEvent(eventData.mEventId);
         gGuiManager.BroadcastEvent(eventData);
 
         // custom event
         if (!mOnMouseEnterEvent.empty())
         {
             GuiEvent customEvent = GuiEvent::CustomEvent(this, mOnMouseEnterEvent);
-            mActionsHolder.EmitEvent(customEvent.mEventId);
+            mActions.EmitEvent(customEvent.mEventId);
             gGuiManager.BroadcastEvent(customEvent);
         }
     }
     else
     {
         GuiEvent eventData = GuiEvent::MouseLeaveEvent(this, gInputsManager.mCursorPosition);
-        mActionsHolder.EmitEvent(eventData.mEventId);
+        mActions.EmitEvent(eventData.mEventId);
         gGuiManager.BroadcastEvent(eventData);
 
         // custom event
         if (!mOnMouseLeaveEvent.empty())
         {
             GuiEvent customEvent = GuiEvent::CustomEvent(this, mOnMouseLeaveEvent);
-            mActionsHolder.EmitEvent(customEvent.mEventId);
+            mActions.EmitEvent(customEvent.mEventId);
             gGuiManager.BroadcastEvent(customEvent);
         }
     }
@@ -1237,14 +1237,14 @@ void GuiWidget::LoadActions(cxx::json_node_object actionsNode)
         for (cxx::json_node_object currActionNode = currNode.first_child(); currActionNode;
             currActionNode = currActionNode.next_sibling())
         {
-            GuiWidgetAction* widgetAction = gGuiWidgetActionsManager.DeserializeAction(currActionNode);
+            GuiWidgetAction* widgetAction = gGuiWidgetActionsFactory.DeserializeAction(currActionNode);
             if (widgetAction == nullptr)
             {
                 debug_assert(false);
                 continue;
             }
 
-            mActionsHolder.AddAction(eventId, widgetAction);
+            mActions.AddAction(eventId, widgetAction);
         }
     }    
 }

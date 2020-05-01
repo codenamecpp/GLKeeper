@@ -75,7 +75,7 @@ private:
 //////////////////////////////////////////////////////////////////////////
 
 // actions manager
-class GuiWidgetActionsManager: public cxx::noncopyable
+class GuiWidgetActionsFactory: public cxx::noncopyable
 {
 public:
     // try load single widget action from json document node
@@ -83,4 +83,4 @@ public:
     GuiWidgetAction* DeserializeAction(cxx::json_node_object actionNode);
 };
 
-extern GuiWidgetActionsManager gGuiWidgetActionsManager;
+extern GuiWidgetActionsFactory gGuiWidgetActionsFactory;

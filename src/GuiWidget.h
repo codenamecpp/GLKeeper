@@ -8,7 +8,7 @@ class GuiWidget: public cxx::handled_object<GuiWidget>
 {
     friend class GuiManager;
     friend class GuiHierarchy;
-    friend class GuiWidgetActionsManager;
+    friend class GuiWidgetActionsFactory;
 
 public:
     
@@ -40,7 +40,7 @@ public:
     Point mMinSize; // pixels
     Point mMaxSize; // pixels
     GuiWidgetMetaClass* mMetaClass; // cannot be null, cannot be changed once widget created
-    GuiWidgetActionsHolder mActionsHolder;
+    GuiWidgetActionsHolder mActions;
 
 public:
     // construct widget
