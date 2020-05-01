@@ -233,6 +233,35 @@ private:
     cxx::unique_string mEventId;
 };
 
+//////////////////////////////////////////////////////////////////////////
+
+class GuiWidgetActionBackgroundColor: public GuiWidgetAction
+{
+public:
+    GuiWidgetActionBackgroundColor() = default;
+    GuiWidgetActionBackgroundColor(const GuiWidgetActionBackgroundColor* copyAction)
+        : GuiWidgetAction(copyAction)
+        , mBackgroundColor(copyAction->mBackgroundColor)
+    {
+    }
+    void HandlePerformAction(GuiWidget* targetWidget) override
+    {
+        targetWidget->mBackgroundColor = mBackgroundColor;
+    }
+    bool HandleDeserialize(cxx::json_node_object actionNode) override
+    {
+        if (!GuiParseColor(actionNode["value"], mBackgroundColor))
+            return false;
+
+        return true;
+    }
+    GuiWidgetActionBackgroundColor* HandleCloneAction() override
+    {
+        return new GuiWidgetActionBackgroundColor(this);
+    }
+private:
+    Color32 mBackgroundColor = Color32_Gray;
+};
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -325,6 +354,10 @@ GuiWidgetAction* GuiWidgetActionsManager::DeserializeAction(cxx::json_node_objec
     else if (actionId == "emit_event")
     {
         action = new GuiWidgetActionEmitEvent;
+    }
+    else if (actionId == "background_color")
+    {
+        action = new GuiWidgetActionBackgroundColor;
     }
 
     debug_assert(action);

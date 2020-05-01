@@ -164,12 +164,17 @@ public:
     // set clipping child widgets feature
     void SetClipChildren(bool isEnabled);
 
+    // enable or disable borders and background draw
+    void SetDrawBackground(bool isEnabled);
+    void SetDrawBorders(bool isEnabled);
+
     // test whether widget is visible, enabled or hovered
     bool IsVisible() const;
     bool IsEnabled() const;
     bool IsHovered() const { return mHovered; }
     bool IsClipChildren() const { return mClipChildren; }
 
+    // test whether widget is selected
     bool IsSelected() const;
     void Deselect();
 

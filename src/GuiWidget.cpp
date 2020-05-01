@@ -772,6 +772,16 @@ void GuiWidget::SetMaxSize(const Point& maxSize)
     mMaxSize = maxSize;
 }
 
+void GuiWidget::SetDrawBackground(bool isEnabled)
+{
+    mHasDrawBackgroundAttribute = isEnabled;
+}
+
+void GuiWidget::SetDrawBorders(bool isEnabled)
+{
+    mHasDrawBordersAttribute = isEnabled;
+}
+
 void GuiWidget::SetVisible(bool isVisible)
 {
     if (mSelfVisible == isVisible)

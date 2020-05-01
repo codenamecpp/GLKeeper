@@ -60,7 +60,22 @@
             {
                 "#min" : {"class":"button", "draw_background":true},
                 "#max": {"class":"button", "draw_background":true},
-                "#slider": {"class":"button", "draw_background":true}
+                "#slider": 
+                {
+                    "class":"button", "draw_background":true,
+                    "actions":
+                    {
+                        "on_mouse_enter": 
+                        [
+                            {"action":"background_color", "value":"00ff00ff"}
+                        ],
+
+                        "on_mouse_leave": 
+                        [
+                            {"action":"background_color", "value":"666666ff"}
+                        ]
+                    }
+                }
             }
         }
     },
