@@ -28,13 +28,9 @@ public:
     cxx::unique_string mOnMouseRButtonUpEvent;
     cxx::unique_string mOnMouseMButtonUpEvent;
 
-#ifdef _DEBUG
-    Color32 mDebugColorNormal = Color32_Gray;
-    Color32 mDebugColorHovered = Color32_Gray;
-    Color32 mDebugColorDisabled = Color32_Gray;
-#endif
-
     Color32 mTintColor = Color32_White;
+    Color32 mBackgroundColor = Color32_Gray;
+    Color32 mBordersColor = Color32_White;
 
     // readonly
     cxx::unique_string mTemplateClassName; // specified for template widgets
@@ -274,6 +270,8 @@ protected:
     bool mHasInteractiveAttribute = false; // widget receiving mouse inputs and can be pressed or hovered
     bool mHasSelectableAttribute = false; // // widget becomes selected on mouse left button pressed
     bool mHasDisablePickChildrenAttribute = false; // cannot pick child widgets
+    bool mHasDrawBackgroundAttribute = false; // fill widget rectangle with background color
+    bool mHasDrawBordersAttribute = false; // draw borders
 
     // state flags
     bool mSelfEnabled = true;

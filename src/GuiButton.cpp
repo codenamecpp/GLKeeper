@@ -27,34 +27,6 @@ GuiButton::GuiButton(GuiButton* copyWidget)
 {
 }
 
-void GuiButton::HandleRender(GuiRenderer& renderContext)
-{
-#ifdef _DEBUG
-
-    Rectangle rc = GetLocalRect();
-
-    Color32 fillColor = mDebugColorNormal;
-    if (!IsEnabled())
-    {
-        fillColor = mDebugColorDisabled;
-    }
-    else if (IsHovered())
-    {
-        fillColor = mDebugColorHovered;
-    }
-    else if (IsSelected())
-    {
-        fillColor = Color32_Green;
-    }
-    renderContext.FillRect(rc, fillColor);
-
-#endif
-}
-
-void GuiButton::HandleInputEvent(MouseButtonInputEvent& inputEvent)
-{
-}
-
 GuiButton* GuiButton::CreateClone()
 {
     GuiButton* selfClone = new GuiButton(this);

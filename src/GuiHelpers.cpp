@@ -91,7 +91,6 @@ bool GuiParseAnchors(cxx::json_node_array node, GuiAnchors& output_anchors)
 
 bool GuiParseColor(cxx::json_document_node node, Color32& output_color)
 {
-    output_color = 0; // set to black
     if (cxx::json_node_array arrayNode = node)
     {
         if (cxx::json_get_array_item(arrayNode, 0, output_color.mR) &&

@@ -68,6 +68,10 @@ GuiWidget::GuiWidget(GuiWidget* copyWidget)
     , mHasInteractiveAttribute(copyWidget->mHasInteractiveAttribute)
     , mHasSelectableAttribute(copyWidget->mHasSelectableAttribute)
     , mHasDisablePickChildrenAttribute(copyWidget->mHasDisablePickChildrenAttribute)
+    , mHasDrawBackgroundAttribute(copyWidget->mHasDrawBackgroundAttribute)
+    , mHasDrawBordersAttribute(copyWidget->mHasDrawBordersAttribute)
+    , mBordersColor(copyWidget->mBordersColor)
+    , mBackgroundColor(copyWidget->mBackgroundColor)
 {
     debug_assert(mMetaClass);
 
@@ -197,10 +201,9 @@ void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
     }
 
     // colors
-    if (cxx::json_document_node tint_color_node = documentNode["tint_color"])
-    {
-        GuiParseColor(tint_color_node, mTintColor);
-    }
+    GuiParseColor(documentNode["tint_color"], mTintColor);
+    GuiParseColor(documentNode["background_color"], mBackgroundColor);
+    GuiParseColor(documentNode["borders_color"], mBordersColor);
 
     // actions
     if (cxx::json_document_node actions_node = documentNode["actions"])
@@ -212,6 +215,8 @@ void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
     cxx::json_get_attribute(documentNode, "interactive", mHasInteractiveAttribute);
     cxx::json_get_attribute(documentNode, "selectable", mHasSelectableAttribute);
     cxx::json_get_attribute(documentNode, "disable_pick_children", mHasDisablePickChildrenAttribute);
+    cxx::json_get_attribute(documentNode, "draw_background", mHasDrawBackgroundAttribute);
+    cxx::json_get_attribute(documentNode, "draw_borders", mHasDrawBordersAttribute);
 
     HandleLoadProperties(documentNode);
 }
@@ -273,9 +278,22 @@ void GuiWidget::RenderFrame(GuiRenderer& renderContext)
     bool isClipChildren = mClipChildren;
     if (isClipChildren)
     {
-        Rectangle rcClip = GetLocalRect();
-        if (!renderContext.EnterChildClipArea(rcClip))
+        Rectangle rcLocal = GetLocalRect();
+        if (!renderContext.EnterChildClipArea(rcLocal))
             return;
+    }
+
+    if (mHasDrawBackgroundAttribute || mHasDrawBordersAttribute)
+    {
+        Rectangle rcLocal = GetLocalRect();
+        if (mHasDrawBackgroundAttribute)
+        {
+            renderContext.FillRect(rcLocal, mBackgroundColor);
+        }
+        if (mHasDrawBordersAttribute)
+        {
+            renderContext.DrawRect(rcLocal, mBordersColor);
+        }
     }
 
     HandleRender(renderContext);
@@ -1209,7 +1227,7 @@ void GuiWidget::LoadActions(cxx::json_node_object actionsNode)
         for (cxx::json_node_object currActionNode = currNode.first_child(); currActionNode;
             currActionNode = currActionNode.next_sibling())
         {
-            GuiWidgetAction* widgetAction = gGuiWidgetActionsManager.DeserializeAction(currActionNode, this);
+            GuiWidgetAction* widgetAction = gGuiWidgetActionsManager.DeserializeAction(currActionNode);
             if (widgetAction == nullptr)
             {
                 debug_assert(false);

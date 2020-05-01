@@ -12,19 +12,19 @@ class GuiWidgetActionsHolder;
 class GuiWidgetAction: public cxx::noncopyable
 {
 public:
-    void PerformAction();
+    void PerformAction(GuiWidget* parentWidget);
     void ReleaseAction();
     bool Deserialize(cxx::json_node_object actionNode);
-    GuiWidgetAction* CloneAction(GuiWidget* parentWidget);
+    GuiWidgetAction* CloneAction();
 
 protected:
-    GuiWidgetAction(GuiWidget* parentWidget);
-    GuiWidgetAction(GuiWidget* parentWidget, const GuiWidgetAction* copyAction);
+    GuiWidgetAction() = default;
+    GuiWidgetAction(const GuiWidgetAction* copyAction);
     virtual ~GuiWidgetAction()
     {
     }
 
-    bool EvaluateConditions() const;
+    bool EvaluateConditions(GuiWidget* parentWidget) const;
 
 protected:
     // overridables
@@ -33,13 +33,12 @@ protected:
     {
         return true;
     }
-    virtual GuiWidgetAction* HandleCloneAction(GuiWidget* parentWidget) = 0;
+    virtual GuiWidgetAction* HandleCloneAction() = 0;
 
 protected:
-    GuiWidget* mParentWidget; // mandatory
-
-    cxx::logical_expression mConditions; // optional
-    std::string mTargetPath; // optional
+    // common properties
+    cxx::logical_expression mConditions;
+    std::string mTargetPath;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -70,7 +69,6 @@ private:
         cxx::unique_string mEventId;
         GuiWidgetAction* mAction; // action associated with event
     };
-
     std::vector<EventActionStruct> mActionsList;
 };
 
@@ -82,7 +80,7 @@ class GuiWidgetActionsManager: public cxx::noncopyable
 public:
     // try load single widget action from json document node
     // @returns null on error
-    GuiWidgetAction* DeserializeAction(cxx::json_node_object actionNode, GuiWidget* actionsParent);
+    GuiWidgetAction* DeserializeAction(cxx::json_node_object actionNode);
 };
 
 extern GuiWidgetActionsManager gGuiWidgetActionsManager;

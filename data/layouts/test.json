@@ -58,9 +58,9 @@
             "class":"scrollbar", "pos":[400,200], "size":[400,30], "anchors":["all"],
             "children":
             {
-                "#min" : {"class":"button"},
-                "#max": {"class":"button"},
-                "#slider": {"class":"button"}
+                "#min" : {"class":"button", "draw_background":true},
+                "#max": {"class":"button", "draw_background":true},
+                "#slider": {"class":"button", "draw_background":true}
             }
         }
     },
