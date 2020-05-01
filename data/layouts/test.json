@@ -21,12 +21,14 @@
             {
                 "on_mouse_enter": 
                 [
-                    {"action":"show", "value":true, "target":"hover_frame"}
+                    {"action":"show", "value":true, "target":"hover_frame"},
+                    {"action":"texture", "value":"GUI\\Options\\i-audio", "target":"icon"}
                 ],
 
                 "on_mouse_leave": 
                 [
-                    {"action":"show", "value":false, "target":"hover_frame"}
+                    {"action":"show", "value":false, "target":"hover_frame"},
+                    {"action":"texture", "value":"GUI\\Rooms\\Bridge_Stone", "target":"icon"}
                 ],
 
                 "on_mouse_down":

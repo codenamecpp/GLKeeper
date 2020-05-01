@@ -3,6 +3,7 @@
 #include "GuiWidget.h"
 #include "GuiHelpers.h"
 #include "GuiEvent.h"
+#include "GuiPictureBox.h"
 
 GuiWidgetActionsManager gGuiWidgetActionsManager;
 
@@ -173,6 +174,51 @@ private:
 
 //////////////////////////////////////////////////////////////////////////
 
+class GuiWidgetActionSetTexture: public GuiWidgetAction
+{
+public:
+    GuiWidgetActionSetTexture(GuiWidget* parentWidget)
+        : GuiWidgetAction(parentWidget)
+    {
+    }
+    GuiWidgetActionSetTexture(GuiWidget* parentWidget, const GuiWidgetActionSetTexture* copyAction)
+        : GuiWidgetAction(parentWidget, copyAction)
+        , mTextureName(copyAction->mTextureName)
+    {
+    }
+    void HandlePerformAction(GuiWidget* targetWidget) override
+    {
+        GuiPictureBox* pictureBox = GuiCastWidgetClass<GuiPictureBox>(targetWidget);
+        if (pictureBox)
+        {
+            if (mTextureName.empty())
+            {
+                // clear current texture
+                pictureBox->SetTexture(nullptr);
+            }
+            else
+            {
+                pictureBox->SetTexture(mTextureName);
+            }
+        }
+        debug_assert(pictureBox);
+    }
+    bool HandleDeserialize(cxx::json_node_object actionNode) override
+    {
+        cxx::json_get_attribute(actionNode, "value", mTextureName);
+        return true;
+    }
+    GuiWidgetActionSetTexture* HandleCloneAction(GuiWidget* parentWidget) override
+    {
+        debug_assert(parentWidget);
+        return new GuiWidgetActionSetTexture(parentWidget, this);
+    }
+private:
+    std::string mTextureName;
+};
+
+//////////////////////////////////////////////////////////////////////////
+
 GuiWidgetActionsList::GuiWidgetActionsList(GuiWidget* actionsParentWidget)
     : mParentWidget(actionsParentWidget)
 {
@@ -280,6 +326,10 @@ GuiWidgetAction* GuiWidgetActionsManager::DeserializeAction(cxx::json_node_objec
     else if (actionId == "size")
     {
         action = new GuiWidgetActionSize(actionsParent);
+    }
+    else if (actionId == "texture")
+    {
+        action = new GuiWidgetActionSetTexture(actionsParent);
     }
 
     debug_assert(action);
