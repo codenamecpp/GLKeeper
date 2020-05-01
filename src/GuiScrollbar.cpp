@@ -16,6 +16,7 @@ GuiScrollbar::GuiScrollbar(): GuiScrollbar(&MetaClass)
 GuiScrollbar::GuiScrollbar(GuiWidgetMetaClass* widgetClass)
     : GuiWidget(widgetClass)
 {
+    mHasInteractiveAttribute = true;
 }
 
 GuiScrollbar::GuiScrollbar(GuiScrollbar* copyWidget)
@@ -87,16 +88,6 @@ void GuiScrollbar::HandleRender(GuiRenderer& renderContext)
 {
     Rectangle rc = GetLocalRect();
     renderContext.FillRect(rc, Color32_White);
-}
-
-bool GuiScrollbar::HasAttribute(eGuiWidgetAttribute attribute) const
-{
-    switch (attribute)
-    {
-        case eGuiWidgetAttribute_Interactive:
-            return true;
-    }
-    return false;
 }
 
 void GuiScrollbar::HandleInputEvent(MouseButtonInputEvent& inputEvent)

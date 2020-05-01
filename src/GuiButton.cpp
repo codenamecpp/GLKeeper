@@ -18,6 +18,8 @@ GuiButton::GuiButton(): GuiButton(&MetaClass)
 GuiButton::GuiButton(GuiWidgetMetaClass* widgetClass)
     : GuiWidget(widgetClass)
 {
+    mHasInteractiveAttribute = true;
+    mHasSelectableAttribute = true;
 }
 
 GuiButton::GuiButton(GuiButton* copyWidget)
@@ -51,17 +53,6 @@ void GuiButton::HandleRender(GuiRenderer& renderContext)
 
 void GuiButton::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
-}
-
-bool GuiButton::HasAttribute(eGuiWidgetAttribute attribute) const
-{
-    switch (attribute)
-    {
-        case eGuiWidgetAttribute_Selectable:
-        case eGuiWidgetAttribute_Interactive:
-            return true;
-    }
-    return false;
 }
 
 GuiButton* GuiButton::CreateClone()

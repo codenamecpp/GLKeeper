@@ -238,8 +238,6 @@ protected:
 
     virtual void HandleClick() {}
 
-    virtual bool HasAttribute(eGuiWidgetAttribute attribute) const;
-
     virtual GuiWidget* CreateClone();
 
 protected:
@@ -271,6 +269,11 @@ protected:
     Point mSizePercents;
 
     glm::mat4 mTransform; // current transformations matrix, screen space
+
+    // attributes
+    bool mHasInteractiveAttribute = false; // widget receiving mouse inputs and can be pressed or hovered
+    bool mHasSelectableAttribute = false; // // widget becomes selected on mouse left button pressed
+    bool mHasDisablePickChildrenAttribute = false; // cannot pick child widgets
 
     // state flags
     bool mSelfEnabled = true;

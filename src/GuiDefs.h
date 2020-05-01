@@ -42,13 +42,6 @@ enum eGuiUnits
 };
 decl_enum_strings(eGuiUnits);
 
-enum eGuiWidgetAttribute
-{
-    eGuiWidgetAttribute_Interactive, // widget receiving mouse inputs and can be pressed or hovered
-    eGuiWidgetAttribute_DisablePickChildren, // cannot pick child widgets
-    eGuiWidgetAttribute_Selectable, // widget becomes selected on mouse left button pressed
-};
-
 enum eGuiAnimationStatus
 {
     eGuiAnimationStatus_Stopped,

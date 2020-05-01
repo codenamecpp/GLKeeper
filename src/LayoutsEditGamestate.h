@@ -31,8 +31,6 @@ protected:
     void HandleMouseUp(GuiWidget* sender, eMouseButton mbutton) override;
     void HandleEvent(GuiWidget* sender, cxx::unique_string eventId) override;
 
-    void SetupVisibility(GuiWidget* widget);
-
 private:
     ToolsUILayoutsEditWindow mLayoutsEditWindow;
     GuiHierarchy mHier;

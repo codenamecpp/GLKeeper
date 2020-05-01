@@ -34,8 +34,6 @@ void LayoutsEditGamestate::HandleGamestateEnter()
         Subscribe(GuiEventId_OnMouseEnter, buttonWidget);
         Subscribe(GuiEventId_OnMouseLeave, buttonWidget);
         Subscribe(cxx::unique_string("custom_on_click_event"), buttonWidget);
-
-        SetupVisibility(buttonWidget);
     }
 
     if (GuiWidget* buttonWidget = mHier.SearchForWidget("button_1"))
@@ -46,8 +44,7 @@ void LayoutsEditGamestate::HandleGamestateEnter()
         Subscribe(GuiEventId_OnMouseEnter, buttonWidget);
         Subscribe(GuiEventId_OnMouseLeave, buttonWidget);
         Subscribe(cxx::unique_string("custom_on_click_event"), buttonWidget);
-
-        SetupVisibility(buttonWidget);
+        buttonWidget->SetEnabled(false);
     }
 
     GuiWidget* sliderThumb = mHier.GetWidgetByPath("root/slider_0/#slider");
@@ -105,36 +102,28 @@ void LayoutsEditGamestate::HandleMouseEnter(GuiWidget* sender)
 {
     debug_assert(sender);
     gConsole.LogMessage(eLogMessage_Debug, "on_mouse_enter %s", sender->mName.c_str());
-    SetupVisibility(sender);
 }
 
 void LayoutsEditGamestate::HandleMouseLeave(GuiWidget* sender)
 {
     debug_assert(sender);
     gConsole.LogMessage(eLogMessage_Debug, "on_mouse_leave %s", sender->mName.c_str());
-    SetupVisibility(sender);
 }
 
 void LayoutsEditGamestate::HandleMouseDown(GuiWidget* sender, eMouseButton mbutton)
 {
     debug_assert(sender);
     gConsole.LogMessage(eLogMessage_Debug, "on_mouse_down %s", sender->mName.c_str());
-    SetupVisibility(sender);
 }
 
 void LayoutsEditGamestate::HandleMouseUp(GuiWidget* sender, eMouseButton mbutton)
 {
     debug_assert(sender);
     gConsole.LogMessage(eLogMessage_Debug, "on_mouse_up %s", sender->mName.c_str());
-    SetupVisibility(sender);
 }
 
 void LayoutsEditGamestate::HandleEvent(GuiWidget* sender, cxx::unique_string eventId)
 {
     debug_assert(sender);
     gConsole.LogMessage(eLogMessage_Debug, "on_event '%s'", eventId.c_str());
-}
-
-void LayoutsEditGamestate::SetupVisibility(GuiWidget* widget)
-{
 }

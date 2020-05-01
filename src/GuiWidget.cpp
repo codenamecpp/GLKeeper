@@ -65,6 +65,9 @@ GuiWidget::GuiWidget(GuiWidget* copyWidget)
     , mOnMouseMButtonUpEvent(copyWidget->mOnMouseMButtonUpEvent)
     , mTintColor(copyWidget->mTintColor)
     , mActionsHolder(this)
+    , mHasInteractiveAttribute(copyWidget->mHasInteractiveAttribute)
+    , mHasSelectableAttribute(copyWidget->mHasSelectableAttribute)
+    , mHasDisablePickChildrenAttribute(copyWidget->mHasDisablePickChildrenAttribute)
 {
     debug_assert(mMetaClass);
 
@@ -205,6 +208,11 @@ void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
         gGuiWidgetActionsManager.DeserializeActions(actions_node, mActionsHolder);
     }
 
+    // attributes
+    cxx::json_get_attribute(documentNode, "interactive", mHasInteractiveAttribute);
+    cxx::json_get_attribute(documentNode, "selectable", mHasSelectableAttribute);
+    cxx::json_get_attribute(documentNode, "disable_pick_children", mHasDisablePickChildrenAttribute);
+
     HandleLoadProperties(documentNode);
 }
 
@@ -297,7 +305,7 @@ void GuiWidget::UpdateFrame(float deltaTime)
 
 void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
 {
-    if (!IsVisible() || !HasAttribute(eGuiWidgetAttribute_Interactive))
+    if (!IsVisible() || !mHasInteractiveAttribute)
         return;
 
     inputEvent.SetConsumed(true);
@@ -337,7 +345,7 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
     
     bool hasBeenClicked = false;
     // process clicks
-    if (inputEvent.mButton == eMouseButton_Left && HasAttribute(eGuiWidgetAttribute_Selectable))
+    if (inputEvent.mButton == eMouseButton_Left && mHasSelectableAttribute)
     {
         if (inputEvent.mPressed)
         {
@@ -378,7 +386,7 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
 
 void GuiWidget::ProcessEvent(MouseMovedInputEvent& inputEvent)
 {
-    if (!IsVisible() || !HasAttribute(eGuiWidgetAttribute_Interactive))
+    if (!IsVisible() || !mHasInteractiveAttribute)
         return;
 
     inputEvent.SetConsumed(true);
@@ -390,7 +398,7 @@ void GuiWidget::ProcessEvent(MouseMovedInputEvent& inputEvent)
 
 void GuiWidget::ProcessEvent(MouseScrollInputEvent& inputEvent)
 {
-    if (!IsVisible() || !HasAttribute(eGuiWidgetAttribute_Interactive))
+    if (!IsVisible() || !mHasInteractiveAttribute)
         return;
 
     inputEvent.SetConsumed(true);
@@ -498,7 +506,7 @@ GuiWidget* GuiWidget::PickWidget(const Point& screenPosition)
         return nullptr;
 
     // pick child widgets only if not pick target
-    if (!HasAttribute(eGuiWidgetAttribute_DisablePickChildren))
+    if (!mHasDisablePickChildrenAttribute)
     {
         // process in reversed oreder
         for (GuiWidget* currChild = GetLastChild(); currChild;
@@ -519,7 +527,7 @@ GuiWidget* GuiWidget::PickWidget(const Point& screenPosition)
 
     if (resultWidget == nullptr)
     {
-        if (IsScreenPointInsideRect(screenPosition) && HasAttribute(eGuiWidgetAttribute_Interactive))
+        if (IsScreenPointInsideRect(screenPosition) && mHasInteractiveAttribute)
         {
             resultWidget = this;
         }
@@ -721,7 +729,7 @@ bool GuiWidget::IsEnabled() const
 
 void GuiWidget::SetHovered(bool isHovered)
 {
-    if (!IsEnabled() || !HasAttribute(eGuiWidgetAttribute_Interactive))
+    if (!IsEnabled() || !mHasInteractiveAttribute)
         return;
 
     if (mHovered == isHovered)
@@ -1153,11 +1161,6 @@ Point GuiWidget::ComputeSizePixels() const
     }
 
     return outputSize;
-}
-
-bool GuiWidget::HasAttribute(eGuiWidgetAttribute attribute) const
-{
-    return false;
 }
 
 GuiWidget* GuiWidget::CreateClone()
