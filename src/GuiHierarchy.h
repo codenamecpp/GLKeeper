@@ -38,11 +38,11 @@ public:
     GuiWidget* SearchForWidget(const cxx::unique_string& name) const;
     GuiWidget* SearchForWidget(const std::string& name) const;
 
-private:
     // construct new template widget of specified class
     // @param className: Template widget class name
     GuiWidget* CreateTemplateWidget(cxx::unique_string className) const;
 
+private:
     // destroy template widgets
     void FreeTemplateWidgets();
 
