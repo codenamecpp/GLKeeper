@@ -8,6 +8,7 @@
 
 class LayoutsEditGamestate: public GenericGamestate
     , public GuiEventsHandler
+    , public GuiActionContext
 {
 public:
     LayoutsEditGamestate();
@@ -30,6 +31,9 @@ protected:
     void HandleMouseDown(GuiWidget* sender, eMouseButton mbutton) override;
     void HandleMouseUp(GuiWidget* sender, eMouseButton mbutton) override;
     void HandleEvent(GuiWidget* sender, cxx::unique_string eventId) override;
+
+    // override GuiActionContext
+    bool ResolveCondition(const GuiWidget* source, const cxx::unique_string& name, bool& isTrue) override;
 
 private:
     ToolsUILayoutsEditWindow mLayoutsEditWindow;

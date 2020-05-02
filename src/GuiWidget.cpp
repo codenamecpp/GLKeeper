@@ -1254,8 +1254,11 @@ void GuiWidget::LoadActions(cxx::json_node_object actionsNode)
     }    
 }
 
-bool GuiWidget::ResolveCondition(const cxx::unique_string& name, bool& isTrue)
+bool GuiWidget::ResolveCondition(const cxx::unique_string& name, bool& isTrue) const
 {
+    if (HandleResolveCondition(name, isTrue))
+        return true;
+
     static cxx::unique_string id_pressed("pressed");
     static cxx::unique_string id_hovered("hovered");
     static cxx::unique_string id_enabled("enabled");
@@ -1286,12 +1289,12 @@ bool GuiWidget::ResolveCondition(const cxx::unique_string& name, bool& isTrue)
     }
 
     // examine ext contexts up to the root
-    for (GuiWidget* currWidget = this; currWidget; 
+    for (const GuiWidget* currWidget = this; currWidget; 
         currWidget = currWidget->mParent)
     {
         GuiActionContext* actionContext = currWidget->mActionsContext;
-        if (actionContext && actionContext->ResolveCondition(name, isTrue))
-            break;
+        if (actionContext && actionContext->ResolveCondition(currWidget, name, isTrue))
+            return true;
     }
 
     debug_assert(false);

@@ -5,7 +5,6 @@
 
 // basic gui element class
 class GuiWidget: public cxx::handled_object<GuiWidget>
-    , public GuiActionContext
 {
     friend class GuiManager;
     friend class GuiHierarchy;
@@ -221,15 +220,18 @@ protected:
     void SetDetached();
     void SetupAnchorsOffsets();
 
+    bool ResolveCondition(const cxx::unique_string& name, bool& isTrue) const;
+
     // load widget actions from json document node
     void LoadActions(cxx::json_node_object actionsNode);
 
 protected:
-    // override GuiActionsContext
-    bool ResolveCondition(const cxx::unique_string& name, bool& isTrue) override;
-
     // overridables
     virtual void HandleLoadProperties(cxx::json_node_object documentNode) {}
+    virtual bool HandleResolveCondition(const cxx::unique_string& name, bool& isTrue) const
+    {
+        return false;
+    }
 
     virtual void HandleRender(GuiRenderer& renderContext) {}
     virtual void HandleUpdate(float deltaTime) {}

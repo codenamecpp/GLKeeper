@@ -17,7 +17,7 @@ public:
     // try to resolve single condition by name
     // @param name: Identifier name
     // @param isTrue: Output result    
-    virtual bool ResolveCondition(const cxx::unique_string& name, bool& isTrue) = 0;
+    virtual bool ResolveCondition(const GuiWidget* source, const cxx::unique_string& name, bool& isTrue) = 0;
 };
 
 //////////////////////////////////////////////////////////////////////////
