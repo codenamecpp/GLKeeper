@@ -5,6 +5,7 @@
 #include "InputsManager.h"
 #include "GraphicsDevice.h"
 #include "GuiHelpers.h"
+#include "GuiLayout.h"
 
 // base widget class factory
 static GuiWidgetFactory<GuiWidget> _BaseWidgetsFactory;
@@ -76,6 +77,12 @@ GuiWidget::GuiWidget(GuiWidget* copyWidget)
     debug_assert(mMetaClass);
 
     mActions.CopyActions(copyWidget->mActions);
+
+    if (copyWidget->mLayout)
+    {
+        mLayout = new GuiLayout(this);
+        mLayout->CopyProperties(*copyWidget->mLayout);
+    }
 }
 
 void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
@@ -205,6 +212,16 @@ void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
     GuiParseColor(documentNode["background_color"], mBackgroundColor);
     GuiParseColor(documentNode["borders_color"], mBordersColor);
 
+    // layout
+    if (cxx::json_node_object layoutNode = documentNode["layout"])
+    {
+        debug_assert(mLayout);
+
+        // deserialize layout
+        mLayout = new GuiLayout(this);
+        mLayout->LoadProperties(layoutNode);
+    }
+
     // actions
     if (cxx::json_document_node actions_node = documentNode["actions"])
     {
@@ -234,6 +251,7 @@ GuiWidget* GuiWidget::GetLastChild() const
 
 GuiWidget::~GuiWidget()
 {
+    SafeDelete(mLayout);
     if (mParent)
     {
         mParent->DetachChild(this);
@@ -463,7 +481,8 @@ bool GuiWidget::AttachChild(GuiWidget* widget)
     widget->mParent = this;
     widget->InvalidateTransform();
     widget->SetupAnchorsOffsets();
-    widget->ParentSizeChanged(mSize, mSize); // force update layout
+    widget->ParentSizeChanged(mSize, mSize);
+    UpdateLayout();
     HandleChildAttached(widget);
     return true;
 }
@@ -478,6 +497,7 @@ bool GuiWidget::DetachChild(GuiWidget* widget)
 
     widget->SetDetached();
 
+    UpdateLayout();
     HandleChildDetached(widget);
     return true;
 }
@@ -639,6 +659,11 @@ void GuiWidget::SetAnchors(const GuiAnchors& anchors)
     SetupAnchorsOffsets();
 
     InvalidateTransform();
+}
+
+bool GuiWidget::HasAnchors() const
+{
+    return mAnchors.mB || mAnchors.mL || mAnchors.mR || mAnchors.mT;
 }
 
 void GuiWidget::SetOriginX(int posx, eGuiUnits units_x)
@@ -1018,7 +1043,7 @@ void GuiWidget::SizeChanged(const Point& prevSize, bool setAnchors)
     {
         SetupAnchorsOffsets();
     }
-
+    UpdateLayout();
     HandleSizeChanged(prevSize);
 }
 
@@ -1210,6 +1235,14 @@ void GuiWidget::SetupAnchorsOffsets()
     mAnchorDistT = mPosition.y - mOrigin.y;
     mAnchorDistR = parentSize.x - (mAnchorDistL + mSize.x);
     mAnchorDistB = parentSize.y - (mAnchorDistT + mSize.y);
+}
+
+void GuiWidget::UpdateLayout()
+{
+    if (mLayout)
+    {
+        mLayout->LayoutElements();
+    }
 }
 
 void GuiWidget::Deselect()

@@ -9,6 +9,7 @@ class GuiWidget: public cxx::handled_object<GuiWidget>
     friend class GuiManager;
     friend class GuiHierarchy;
     friend class GuiAction;
+    friend class GuiLayout;
 
 public:
     
@@ -98,6 +99,7 @@ public:
 
     // setup widget anchors
     void SetAnchors(const GuiAnchors& anchors);
+    bool HasAnchors() const;
 
     // test whether screen space point is within widget rect
     // @param screenPosition: Test point
@@ -220,6 +222,8 @@ protected:
     void SetDetached();
     void SetupAnchorsOffsets();
 
+    void UpdateLayout();
+
     bool ResolveCondition(const cxx::unique_string& name, bool& isTrue) const;
 
     // load widget actions from json document node
@@ -258,6 +262,8 @@ protected:
     GuiWidget* mFirstChild = nullptr;
     GuiWidget* mNextSibling = nullptr;
     GuiWidget* mPrevSibling = nullptr;
+
+    GuiLayout* mLayout = nullptr;
 
     // layout params
     GuiAnchors mAnchors;

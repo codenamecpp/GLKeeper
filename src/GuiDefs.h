@@ -9,10 +9,18 @@ class GuiWidget;
 class GuiButton;
 class GuiPictureBox;
 class GuiPanel;
+class GuiLayout;
 using GuiWidgetHandle = cxx::handle<GuiWidget>;
 struct GuiEvent;
 
 using GuiUserData = void*; // widget custom data
+
+enum eGuiLayoutOrientation
+{
+    eGuiLayoutOrientation_Horizontal,
+    eGuiLayoutOrientation_Vertical,
+};
+decl_enum_strings(eGuiLayoutOrientation);
 
 enum eGuiVertAlignment
 {

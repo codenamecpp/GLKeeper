@@ -67,11 +67,11 @@ public:
 public:
     GuiActionsHolder(GuiWidget* actionsParentWidget);
     ~GuiActionsHolder();
+    void CopyActions(const GuiActionsHolder& source);
 
     // add action to controller
     void AddAction(cxx::unique_string eventId, GuiAction* action);
     void ClearActions();
-    void CopyActions(const GuiActionsHolder& source);
 
     // invoke actions associated with event id
     void EmitEvent(cxx::unique_string eventId);
