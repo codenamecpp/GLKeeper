@@ -17,8 +17,6 @@ protected:
     GuiPanel(GuiPanel* copyWidget);
 
     // override GuiWidget
-    void HandleRender(GuiRenderer& renderContext) override;
-    void HandleInputEvent(MouseButtonInputEvent& inputEvent) override;
     GuiPanel* CreateClone() override;
 
 protected:

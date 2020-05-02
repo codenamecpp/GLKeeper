@@ -23,19 +23,6 @@ GuiPanel::GuiPanel(GuiPanel* copyWidget)
 {
 }
 
-void GuiPanel::HandleRender(GuiRenderer& renderContext)
-{
-    Rectangle rcLocal = GetLocalRect();
-
-    Color32 fillColor = Color32_SkyBlue;
-    fillColor.mA = 128;
-    renderContext.FillRect(rcLocal, fillColor);
-}
-
-void GuiPanel::HandleInputEvent(MouseButtonInputEvent& inputEvent)
-{
-}
-
 GuiPanel* GuiPanel::CreateClone()
 {
     GuiPanel* selfClone = new GuiPanel(this);
