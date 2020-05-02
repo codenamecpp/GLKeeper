@@ -18,6 +18,7 @@ public:
 
     // setup texture
     // @param texture: New texture
+    void SetTexture(const std::string& textureName);
     void SetTexture(Texture2D* texture);
 
 protected:

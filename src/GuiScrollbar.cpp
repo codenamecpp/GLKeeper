@@ -16,6 +16,7 @@ GuiScrollbar::GuiScrollbar(): GuiScrollbar(&MetaClass)
 GuiScrollbar::GuiScrollbar(GuiWidgetMetaClass* widgetClass)
     : GuiWidget(widgetClass)
 {
+    mHasInteractiveAttribute = true;
 }
 
 GuiScrollbar::GuiScrollbar(GuiScrollbar* copyWidget)
@@ -89,16 +90,6 @@ void GuiScrollbar::HandleRender(GuiRenderer& renderContext)
     renderContext.FillRect(rc, Color32_White);
 }
 
-bool GuiScrollbar::HasAttribute(eGuiWidgetAttribute attribute) const
-{
-    switch (attribute)
-    {
-        case eGuiWidgetAttribute_Interactive:
-            return true;
-    }
-    return false;
-}
-
 void GuiScrollbar::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
 }
@@ -124,8 +115,8 @@ void GuiScrollbar::HandleChildAttached(GuiWidget* childWidget)
 
     if (doSubscribe)
     {
-        Subscribe(GuiEventId_MouseDown, childWidget->mName);
-        Subscribe(GuiEventId_MouseUp, childWidget->mName);
+        Subscribe(GuiEventId_OnMouseDown, childWidget->mName);
+        Subscribe(GuiEventId_OnMouseUp, childWidget->mName);
 
         SetupControlWidget(childWidget);
     }
@@ -154,8 +145,8 @@ void GuiScrollbar::HandleChildDetached(GuiWidget* childWidget)
 
     if (doUnSubscribe)
     {
-        Unsubscribe(GuiEventId_MouseDown, childWidget->mName);
-        Unsubscribe(GuiEventId_MouseUp, childWidget->mName);
+        Unsubscribe(GuiEventId_OnMouseDown, childWidget->mName);
+        Unsubscribe(GuiEventId_OnMouseUp, childWidget->mName);
     }
 }
 

@@ -33,7 +33,6 @@ protected:
     // override GuiWidget
     void HandleUpdate(float deltaTime) override;
     void HandleRender(GuiRenderer& renderContext) override;
-    bool HasAttribute(eGuiWidgetAttribute attribute) const override;
     void HandleInputEvent(MouseButtonInputEvent& inputEvent) override;
     void HandleChildAttached(GuiWidget* childWidget) override;
     void HandleChildDetached(GuiWidget* childWidget) override;

@@ -24,6 +24,28 @@ void unique_string::set_data_internal(const char* string_content)
     set_data_internal(&holder);
 }
 
+void unique_string::set_data_internal(const char* string_begin, const char* string_end)
+{
+    debug_assert(string_begin);
+    debug_assert(string_end);
+    if (string_begin == string_end || string_begin == nullptr || string_end == nullptr)
+    {
+        reset_data_internal();
+        return;
+    }
+
+    std::string string_content_temp(string_begin, string_end);
+
+    unique_string_table& strings_table = get_strings_table();
+    string_holder& holder = strings_table[string_content_temp];
+    if (holder.mReferenceCounter == 0) 
+    {
+        // consume temporary std string
+        holder.mString.swap(string_content_temp);
+    }
+    set_data_internal(&holder);
+}
+
 void unique_string::set_data_internal(const std::string& string_content)
 {
     // check whether string isn't null

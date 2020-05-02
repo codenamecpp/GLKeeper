@@ -1,12 +1,14 @@
 #pragma once
 
 #include "GuiDefs.h"
+#include "GuiAction.h"
 
 // basic gui element class
 class GuiWidget: public cxx::handled_object<GuiWidget>
 {
     friend class GuiManager;
     friend class GuiHierarchy;
+    friend class GuiAction;
 
 public:
     
@@ -26,26 +28,20 @@ public:
     cxx::unique_string mOnMouseRButtonUpEvent;
     cxx::unique_string mOnMouseMButtonUpEvent;
 
-#ifdef _DEBUG
-    Color32 mDebugColorNormal = Color32_Gray;
-    Color32 mDebugColorHovered = Color32_Gray;
-    Color32 mDebugColorDisabled = Color32_Gray;
-#endif
-
     Color32 mTintColor = Color32_White;
+    Color32 mBackgroundColor = Color32_Gray;
+    Color32 mBordersColor = Color32_White;
 
     // readonly
     cxx::unique_string mTemplateClassName; // specified for template widgets
-
     Point mOrigin; // pixels
     Point mPosition; // pixels
     Point mSize; // pixels
     Point mMinSize; // pixels
     Point mMaxSize; // pixels
-
     GuiWidgetMetaClass* mMetaClass; // cannot be null, cannot be changed once widget created
-
-    cxx::logical_expression mVisibilityConditions;
+    GuiActionsHolder mActions;
+    GuiActionContext* mActionsContext = nullptr;
 
 public:
     // construct widget
@@ -134,6 +130,7 @@ public:
     // get child widget by its name
     GuiWidget* GetChild(const cxx::unique_string& name) const;
     GuiWidget* GetChild(const std::string& name) const;
+    GuiWidget* GetLastChild() const;
     // get first child withing sub-hierarchy with specific name
     GuiWidget* SearchForChild(const cxx::unique_string& name) const;
     GuiWidget* SearchForChild(const std::string& name) const;
@@ -169,14 +166,23 @@ public:
     // set clipping child widgets feature
     void SetClipChildren(bool isEnabled);
 
+    // enable or disable borders and background draw
+    void SetDrawBackground(bool isEnabled);
+    void SetDrawBorders(bool isEnabled);
+
     // test whether widget is visible, enabled or hovered
     bool IsVisible() const;
     bool IsEnabled() const;
     bool IsHovered() const { return mHovered; }
     bool IsClipChildren() const { return mClipChildren; }
 
+    // test whether widget is selected
     bool IsSelected() const;
     void Deselect();
+
+    // set extended context for widget actions
+    // @param context: Context or null
+    void SetActionsContext(GuiActionContext* context);
 
     // convert from local to screen space and vice versa
     // @param position: Point
@@ -196,8 +202,6 @@ protected:
     // copy properties
     GuiWidget(GuiWidget* copyWidget);
 
-    GuiWidget* GetLastChild() const;
-
     void ParentPositionChanged(const Point& prevPosition);
     void ParentSizeChanged(const Point& prevSize, const Point& currSize);
     void ParentShownStateChanged();
@@ -216,9 +220,18 @@ protected:
     void SetDetached();
     void SetupAnchorsOffsets();
 
+    bool ResolveCondition(const cxx::unique_string& name, bool& isTrue) const;
+
+    // load widget actions from json document node
+    void LoadActions(cxx::json_node_object actionsNode);
+
 protected:
     // overridables
     virtual void HandleLoadProperties(cxx::json_node_object documentNode) {}
+    virtual bool HandleResolveCondition(const cxx::unique_string& name, bool& isTrue) const
+    {
+        return false;
+    }
 
     virtual void HandleRender(GuiRenderer& renderContext) {}
     virtual void HandleUpdate(float deltaTime) {}
@@ -237,8 +250,6 @@ protected:
     virtual void HandleInputEvent(MouseScrollInputEvent& inputEvent) {}
 
     virtual void HandleClick() {}
-
-    virtual bool HasAttribute(eGuiWidgetAttribute attribute) const;
 
     virtual GuiWidget* CreateClone();
 
@@ -269,6 +280,13 @@ protected:
     Point mSizePercents;
 
     glm::mat4 mTransform; // current transformations matrix, screen space
+
+    // attributes
+    bool mHasInteractiveAttribute = false; // widget receiving mouse inputs and can be pressed or hovered
+    bool mHasSelectableAttribute = false; // // widget becomes selected on mouse left button pressed
+    bool mHasDisablePickChildrenAttribute = false; // cannot pick child widgets
+    bool mHasDrawBackgroundAttribute = false; // fill widget rectangle with background color
+    bool mHasDrawBordersAttribute = false; // draw borders
 
     // state flags
     bool mSelfEnabled = true;

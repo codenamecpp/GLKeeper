@@ -17,9 +17,6 @@ protected:
     GuiButton(GuiButton* copyWidget);
 
     // override GuiWidget
-    void HandleRender(GuiRenderer& renderContext) override;
-    void HandleInputEvent(MouseButtonInputEvent& inputEvent) override;
-    bool HasAttribute(eGuiWidgetAttribute attribute) const override;
     GuiButton* CreateClone() override;
 
 protected:

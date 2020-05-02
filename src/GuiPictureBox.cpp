@@ -63,6 +63,15 @@ void GuiPictureBox::SetTexture(Texture2D* texture)
     InvalidateCache();
 }
 
+void GuiPictureBox::SetTexture(const std::string& textureName)
+{
+    if (mTexture && mTexture->mTextureName == textureName)
+        return;
+
+    mTexture = gTexturesManager.GetTexture2D(textureName);
+    InvalidateCache();
+}
+
 GuiPictureBox* GuiPictureBox::CreateClone()
 {
     GuiPictureBox* selfClone = new GuiPictureBox(this);

@@ -15,6 +15,7 @@ GuiPanel::GuiPanel(): GuiPanel(&MetaClass)
 GuiPanel::GuiPanel(GuiWidgetMetaClass* widgetClass)
     : GuiWidget(widgetClass)
 {
+    mHasInteractiveAttribute = true;
 }
 
 GuiPanel::GuiPanel(GuiPanel* copyWidget)
@@ -33,16 +34,6 @@ void GuiPanel::HandleRender(GuiRenderer& renderContext)
 
 void GuiPanel::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
-}
-
-bool GuiPanel::HasAttribute(eGuiWidgetAttribute attribute) const
-{
-    switch (attribute)
-    {
-        case eGuiWidgetAttribute_Interactive:
-            return true;
-    }
-    return false;
 }
 
 GuiPanel* GuiPanel::CreateClone()

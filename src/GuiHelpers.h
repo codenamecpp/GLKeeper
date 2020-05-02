@@ -3,13 +3,13 @@
 #include "GuiDefs.h"
 
 // parse json attribute and get size or position value along with units in which it specified
-// for example: ["10%", 200] - 10 percents and 200 pixels
+// example: ["10%", 200] - 10 percents and 200 pixels
 bool GuiParsePixelsOrPercents(cxx::json_document_node node, eGuiUnits& output_units, int& output_value);
 
 // parse gui anchors state from json node
 // example: ["left", "right"] - left and right anchors are set
-// example: ["all"] - all anchors are set 
-bool GuiParseAnchors(cxx::json_node_array node, GuiAnchors& output_anchors);
+// example: "all" - all anchors are set 
+bool GuiParseAnchors(cxx::json_document_node node, GuiAnchors& output_anchors);
 
 // parse color from json attribute
 // as array of ints example: [0, 255, 0, 255] - rgba
@@ -38,26 +38,6 @@ inline TargetWidgetClass* GuiCastWidgetClass(GuiWidget* sourceWidget)
     return resultWidget;
 }
 
-template<typename TFunc>
-inline void GuiRefreshVisibility(GuiWidget* sourceWidget, TFunc func)
-{
-    debug_assert(sourceWidget);
-    if (sourceWidget->mVisibilityConditions.non_null())
-    {
-        bool isVisible = sourceWidget->mVisibilityConditions.evaluate_expression(func);
-        sourceWidget->SetVisible(isVisible);
-    }
-}
-
-template<typename TFunc>
-inline void GuiRefreshVisibilityRecursive(GuiWidget* sourceWidget, TFunc func)
-{
-    debug_assert(sourceWidget);
-    GuiRefreshVisibility(sourceWidget, func);
-    // process children
-    for (GuiWidget* currChild = sourceWidget->GetChild(); currChild;
-        currChild = currChild->NextSibling())
-    {
-        GuiRefreshVisibilityRecursive(currChild, func);
-    }
-}
+// get child widget by path
+// example: "first/second/third"
+GuiWidget* GuiGetChildWidgetByPath(GuiWidget* parent_widget, const std::string& child_path);

@@ -39,13 +39,32 @@
 
 #ifdef _DEBUG
     #if OS_NAME == OS_WINDOWS
+        #define debug_assert_once(expr) \
+        { \
+            static bool is_asserted = false; \
+            if (!is_asserted) \
+            { \
+                is_asserted = true; \
+                _ASSERTE(expr); \
+            } \
+        }
         #define debug_assert(expr) _ASSERTE(expr)
         #define release_assert(expr)
     #else
+        #define debug_assert_once(expr) \
+        { \
+            static bool is_asserted = false; \
+            if (!is_asserted) \
+            { \
+                is_asserted = true; \
+                assert(expr); \
+            } \
+        }
         #define debug_assert(expr) assert(expr)
         #define release_assert(expr)
     #endif
 #else
+    #define debug_assert_once(expr)
     #define debug_assert(expr)
     #define release_assert(expr)
 #endif

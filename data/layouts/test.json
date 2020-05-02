@@ -6,35 +6,76 @@
             "class":"button", "pos":[200,200], "size":[100,100], "origin":["50%","50%"],
             "children":
             {
-                "picture_box_0":
+                "icon":
                 {
-                    "class":"picture_box", "size":["85%","85%"], "origin":["50%","50%"], "pos":["50%","50%"], "texture":"white", "size_mode":"scale",
-                    "tint_color":"ff0000ff",
-                    "visibility_conditions":"!(hovered_state || pressed_state)"
+                    "class":"picture_box", "size":["100%","100%"], "origin":["50%","50%"], "pos":["50%","50%"], "tint_color":"ffffffff",
+                    "texture":"GUI\\Rooms\\Bridge_Stone", "size_mode":"scale"
                 },
-                "picture_box_1":
+                "hover_frame":
                 {
-                    "class":"picture_box", "size":["80%","80%"], "origin":["50%","50%"], "pos":["50%","50%"], "texture":"white", "size_mode":"scale",
-                    "tint_color":"00ff00ff",
-                    "visibility_conditions":"hovered_state && !pressed_state"
-                },
-                "picture_box_2":
-                {
-                    "class":"picture_box", "size":["70%","70%"], "origin":["50%","50%"], "pos":["50%","50%"], "texture":"white", "size_mode":"scale",
-                    "tint_color":"0000ffff",
-                    "visibility_conditions":"pressed_state"
+                    "class":"picture_box", "size":["100%","100%"], "origin":["50%","50%"], "pos":["50%","50%"], "tint_color":"ffffffff",
+                    "texture":"GUI\\Icons\\frame", "size_mode":"scale", "visible":false
                 }
+            },
+            "actions":
+            {
+                "on_mouse_enter": 
+                [
+                    {"action":"show", "value":true, "target":"hover_frame"},
+                    {"action":"texture", "value":"GUI\\Options\\i-audio", "target":"icon"}
+                ],
+
+                "on_mouse_leave": 
+                [
+                    {"action":"show", "value":false, "target":"hover_frame"},
+                    {"action":"texture", "value":"GUI\\Rooms\\Bridge_Stone", "target":"icon"}
+                ],
+
+                "on_mouse_down":
+                [
+                    {"action":"size", "value":["96%","96%"], "target":"icon"}
+                ],
+
+                "on_mouse_up":
+                [
+                    {"action":"size", "value":["100%","100%"], "target":"icon"}
+                ],
+
+                "on_click":
+                [
+                    {"action":"emit_event", "value":"cutom_event_id", "conditions":"hide_on_click"}
+                ],
+
+                "cutom_event_id":
+                [
+                    {"action":"show", "value":false, "target":"icon"}
+                ]
             }
         },
 
         "test_scrollbar":
         {
-            "class":"scrollbar", "pos":[400,200], "size":[400,30], "anchors":["all"],
+            "class":"scrollbar", "pos":[400,200], "size":[400,30], "anchors":"all",
             "children":
             {
-                "#min" : {"class":"button"},
-                "#max": {"class":"button"},
-                "#slider": {"class":"button"}
+                "#min" : {"class":"button", "draw_background":true},
+                "#max": {"class":"button", "draw_background":true},
+                "#slider": 
+                {
+                    "class":"button", "draw_background":true,
+                    "actions":
+                    {
+                        "on_mouse_enter": 
+                        [
+                            {"action":"background_color", "value":"00ff00ff"}
+                        ],
+
+                        "on_mouse_leave": 
+                        [
+                            {"action":"background_color", "value":"666666ff"}
+                        ]
+                    }
+                }
             }
         }
     },
@@ -52,16 +93,10 @@
                     "events":
                     {
                         "on_click": "custom_on_click_event"
-                    },
-                    "states":
-                    {
-                        "normal": { "size":[100,100] },
-                        "pressed": { "size":[80,80] },
-                        "hovered": { "size":[110,110] }
                     }
                 },
                 "slider_0": {"template_class":"test_scrollbar", "pos":[400,200], "size":[400,30]},
-                "button_1": {"template_class":"test_button", "pos":[200,600], "size":[100,100]},
+                "button_1": {"template_class":"test_button", "pos":[200,600], "size":[50,50]},
                 "sb_0": {"template_class":"test_scrollbar", "pos":[400,600], "size":[400,30]}
             }
         }

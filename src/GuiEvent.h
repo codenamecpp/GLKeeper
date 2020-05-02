@@ -4,11 +4,15 @@
 #include "GuiWidget.h"
 
 // gui events
-extern const cxx::unique_string GuiEventId_Click;
-extern const cxx::unique_string GuiEventId_MouseEnter;
-extern const cxx::unique_string GuiEventId_MouseLeave;
-extern const cxx::unique_string GuiEventId_MouseDown;
-extern const cxx::unique_string GuiEventId_MouseUp;
+extern const cxx::unique_string GuiEventId_OnClick;
+extern const cxx::unique_string GuiEventId_OnMouseEnter;
+extern const cxx::unique_string GuiEventId_OnMouseLeave;
+extern const cxx::unique_string GuiEventId_OnMouseDown;
+extern const cxx::unique_string GuiEventId_OnMouseUp;
+extern const cxx::unique_string GuiEventId_OnEnable;
+extern const cxx::unique_string GuiEventId_OnDisable;
+extern const cxx::unique_string GuiEventId_OnShow;
+extern const cxx::unique_string GuiEventId_OnHide;
 
 // base events struct of gui widget
 struct GuiEvent
@@ -33,28 +37,28 @@ public:
 
     static GuiEvent ClickEvent(GuiWidget* eventSender, const Point& screenPosition)
     {
-        GuiEvent ev (eventSender, GuiEventId_Click);
+        GuiEvent ev (eventSender, GuiEventId_OnClick);
         ev.mMouseScreenPosition = screenPosition;
         return ev;
     }
 
     static GuiEvent MouseEnterEvent(GuiWidget* eventSender, const Point& screenPosition)
     {
-        GuiEvent ev (eventSender, GuiEventId_MouseEnter);
+        GuiEvent ev (eventSender, GuiEventId_OnMouseEnter);
         ev.mMouseScreenPosition = screenPosition;
         return ev;
     }
 
     static GuiEvent MouseLeaveEvent(GuiWidget* eventSender, const Point& screenPosition)
     {
-        GuiEvent ev (eventSender, GuiEventId_MouseLeave);
+        GuiEvent ev (eventSender, GuiEventId_OnMouseLeave);
         ev.mMouseScreenPosition = screenPosition;
         return ev;
     }
 
     static GuiEvent MouseDownEvent(GuiWidget* eventSender, eMouseButton mouseButton, const Point& screenPosition)
     {
-        GuiEvent ev (eventSender, GuiEventId_MouseDown);
+        GuiEvent ev (eventSender, GuiEventId_OnMouseDown);
         ev.mMouseButton = mouseButton;
         ev.mMouseScreenPosition = screenPosition;
         return ev;
@@ -62,9 +66,33 @@ public:
 
     static GuiEvent MouseUpEvent(GuiWidget* eventSender, eMouseButton mouseButton, const Point& screenPosition)
     {
-        GuiEvent ev (eventSender, GuiEventId_MouseUp);
+        GuiEvent ev (eventSender, GuiEventId_OnMouseUp);
         ev.mMouseButton = mouseButton;
         ev.mMouseScreenPosition = screenPosition;
+        return ev;
+    }
+
+    static GuiEvent EnableEvent(GuiWidget* eventSender)
+    {
+        GuiEvent ev {eventSender, GuiEventId_OnEnable};
+        return ev;
+    }
+
+    static GuiEvent DisableEvent(GuiWidget* eventSender)
+    {
+        GuiEvent ev {eventSender, GuiEventId_OnDisable};
+        return ev;
+    }
+
+    static GuiEvent ShowEvent(GuiWidget* eventSender)
+    {
+        GuiEvent ev {eventSender, GuiEventId_OnShow};
+        return ev;
+    }
+
+    static GuiEvent HideEvent(GuiWidget* eventSender)
+    {
+        GuiEvent ev {eventSender, GuiEventId_OnHide};
         return ev;
     }
 

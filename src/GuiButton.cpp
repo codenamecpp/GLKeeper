@@ -18,50 +18,13 @@ GuiButton::GuiButton(): GuiButton(&MetaClass)
 GuiButton::GuiButton(GuiWidgetMetaClass* widgetClass)
     : GuiWidget(widgetClass)
 {
+    mHasInteractiveAttribute = true;
+    mHasSelectableAttribute = true;
 }
 
 GuiButton::GuiButton(GuiButton* copyWidget)
     : GuiWidget(copyWidget)
 {
-}
-
-void GuiButton::HandleRender(GuiRenderer& renderContext)
-{
-#ifdef _DEBUG
-
-    Rectangle rc = GetLocalRect();
-
-    Color32 fillColor = mDebugColorNormal;
-    if (!IsEnabled())
-    {
-        fillColor = mDebugColorDisabled;
-    }
-    else if (IsHovered())
-    {
-        fillColor = mDebugColorHovered;
-    }
-    else if (IsSelected())
-    {
-        fillColor = Color32_Green;
-    }
-    renderContext.FillRect(rc, fillColor);
-
-#endif
-}
-
-void GuiButton::HandleInputEvent(MouseButtonInputEvent& inputEvent)
-{
-}
-
-bool GuiButton::HasAttribute(eGuiWidgetAttribute attribute) const
-{
-    switch (attribute)
-    {
-        case eGuiWidgetAttribute_Selectable:
-        case eGuiWidgetAttribute_Interactive:
-            return true;
-    }
-    return false;
 }
 
 GuiButton* GuiButton::CreateClone()

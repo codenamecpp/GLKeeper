@@ -26,6 +26,7 @@ GuiWidget::GuiWidget(GuiWidgetMetaClass* widgetClass)
     , mSizePercents()
     , mSize()
     , mUserData()
+    , mActions(this)
 {
     debug_assert(mMetaClass);
 }
@@ -62,10 +63,19 @@ GuiWidget::GuiWidget(GuiWidget* copyWidget)
     , mOnMouseLButtonUpEvent(copyWidget->mOnMouseLButtonUpEvent)
     , mOnMouseRButtonUpEvent(copyWidget->mOnMouseRButtonUpEvent)
     , mOnMouseMButtonUpEvent(copyWidget->mOnMouseMButtonUpEvent)
-    , mVisibilityConditions(copyWidget->mVisibilityConditions)
     , mTintColor(copyWidget->mTintColor)
+    , mActions(this)
+    , mHasInteractiveAttribute(copyWidget->mHasInteractiveAttribute)
+    , mHasSelectableAttribute(copyWidget->mHasSelectableAttribute)
+    , mHasDisablePickChildrenAttribute(copyWidget->mHasDisablePickChildrenAttribute)
+    , mHasDrawBackgroundAttribute(copyWidget->mHasDrawBackgroundAttribute)
+    , mHasDrawBordersAttribute(copyWidget->mHasDrawBordersAttribute)
+    , mBordersColor(copyWidget->mBordersColor)
+    , mBackgroundColor(copyWidget->mBackgroundColor)
 {
     debug_assert(mMetaClass);
+
+    mActions.CopyActions(copyWidget->mActions);
 }
 
 void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
@@ -191,20 +201,22 @@ void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
     }
 
     // colors
-    if (cxx::json_document_node tint_color_node = documentNode["tint_color"])
+    GuiParseColor(documentNode["tint_color"], mTintColor);
+    GuiParseColor(documentNode["background_color"], mBackgroundColor);
+    GuiParseColor(documentNode["borders_color"], mBordersColor);
+
+    // actions
+    if (cxx::json_document_node actions_node = documentNode["actions"])
     {
-        GuiParseColor(tint_color_node, mTintColor);
+        LoadActions(actions_node);
     }
 
-    // visibility conditions
-    std::string expr;
-    if (cxx::json_get_attribute(documentNode, "visibility_conditions", expr))
-    {
-        if (!mVisibilityConditions.parse_expression(expr))
-        {
-            debug_assert(false);
-        }
-    }
+    // attributes
+    cxx::json_get_attribute(documentNode, "interactive", mHasInteractiveAttribute);
+    cxx::json_get_attribute(documentNode, "selectable", mHasSelectableAttribute);
+    cxx::json_get_attribute(documentNode, "disable_pick_children", mHasDisablePickChildrenAttribute);
+    cxx::json_get_attribute(documentNode, "draw_background", mHasDrawBackgroundAttribute);
+    cxx::json_get_attribute(documentNode, "draw_borders", mHasDrawBordersAttribute);
 
     HandleLoadProperties(documentNode);
 }
@@ -266,9 +278,22 @@ void GuiWidget::RenderFrame(GuiRenderer& renderContext)
     bool isClipChildren = mClipChildren;
     if (isClipChildren)
     {
-        Rectangle rcClip = GetLocalRect();
-        if (!renderContext.EnterChildClipArea(rcClip))
+        Rectangle rcLocal = GetLocalRect();
+        if (!renderContext.EnterChildClipArea(rcLocal))
             return;
+    }
+
+    if (mHasDrawBackgroundAttribute || mHasDrawBordersAttribute)
+    {
+        Rectangle rcLocal = GetLocalRect();
+        if (mHasDrawBackgroundAttribute)
+        {
+            renderContext.FillRect(rcLocal, mBackgroundColor);
+        }
+        if (mHasDrawBordersAttribute)
+        {
+            renderContext.DrawRect(rcLocal, mBordersColor);
+        }
     }
 
     HandleRender(renderContext);
@@ -298,7 +323,7 @@ void GuiWidget::UpdateFrame(float deltaTime)
 
 void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
 {
-    if (!IsVisible() || !HasAttribute(eGuiWidgetAttribute_Interactive))
+    if (!IsVisible() || !mHasInteractiveAttribute)
         return;
 
     inputEvent.SetConsumed(true);
@@ -309,11 +334,13 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
     if (inputEvent.mPressed)
     {
         GuiEvent eventData = GuiEvent::MouseDownEvent(this, inputEvent.mButton, gInputsManager.mCursorPosition);
+        mActions.EmitEvent(eventData.mEventId);
         gGuiManager.BroadcastEvent(eventData);
     }
     else
     {
         GuiEvent eventData = GuiEvent::MouseUpEvent(this, inputEvent.mButton, gInputsManager.mCursorPosition);
+        mActions.EmitEvent(eventData.mEventId);
         gGuiManager.BroadcastEvent(eventData);
     }
 
@@ -329,13 +356,14 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
         if (!customEventId.empty())
         {
             GuiEvent customEvent = GuiEvent::CustomEvent(this, customEventId);
+            mActions.EmitEvent(customEvent.mEventId);
             gGuiManager.BroadcastEvent(customEvent);
         }
     }
     
     bool hasBeenClicked = false;
     // process clicks
-    if (inputEvent.mButton == eMouseButton_Left && HasAttribute(eGuiWidgetAttribute_Selectable))
+    if (inputEvent.mButton == eMouseButton_Left && mHasSelectableAttribute)
     {
         if (inputEvent.mPressed)
         {
@@ -358,6 +386,7 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
         // post event
         {
             GuiEvent eventData = GuiEvent::ClickEvent(this, gInputsManager.mCursorPosition);
+            mActions.EmitEvent(eventData.mEventId);
             gGuiManager.BroadcastEvent(eventData);
         }
 
@@ -365,6 +394,7 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
         if (!mOnClickEvent.empty())
         {
             GuiEvent customEvent = GuiEvent::CustomEvent(this, mOnClickEvent);
+            mActions.EmitEvent(customEvent.mEventId);
             gGuiManager.BroadcastEvent(customEvent);
         }
 
@@ -374,7 +404,7 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
 
 void GuiWidget::ProcessEvent(MouseMovedInputEvent& inputEvent)
 {
-    if (!IsVisible() || !HasAttribute(eGuiWidgetAttribute_Interactive))
+    if (!IsVisible() || !mHasInteractiveAttribute)
         return;
 
     inputEvent.SetConsumed(true);
@@ -386,7 +416,7 @@ void GuiWidget::ProcessEvent(MouseMovedInputEvent& inputEvent)
 
 void GuiWidget::ProcessEvent(MouseScrollInputEvent& inputEvent)
 {
-    if (!IsVisible() || !HasAttribute(eGuiWidgetAttribute_Interactive))
+    if (!IsVisible() || !mHasInteractiveAttribute)
         return;
 
     inputEvent.SetConsumed(true);
@@ -494,7 +524,7 @@ GuiWidget* GuiWidget::PickWidget(const Point& screenPosition)
         return nullptr;
 
     // pick child widgets only if not pick target
-    if (!HasAttribute(eGuiWidgetAttribute_DisablePickChildren))
+    if (!mHasDisablePickChildrenAttribute)
     {
         // process in reversed oreder
         for (GuiWidget* currChild = GetLastChild(); currChild;
@@ -515,7 +545,7 @@ GuiWidget* GuiWidget::PickWidget(const Point& screenPosition)
 
     if (resultWidget == nullptr)
     {
-        if (IsScreenPointInsideRect(screenPosition) && HasAttribute(eGuiWidgetAttribute_Interactive))
+        if (IsScreenPointInsideRect(screenPosition) && mHasInteractiveAttribute)
         {
             resultWidget = this;
         }
@@ -717,7 +747,7 @@ bool GuiWidget::IsEnabled() const
 
 void GuiWidget::SetHovered(bool isHovered)
 {
-    if (!IsEnabled() || !HasAttribute(eGuiWidgetAttribute_Interactive))
+    if (!IsEnabled() || !mHasInteractiveAttribute)
         return;
 
     if (mHovered == isHovered)
@@ -740,6 +770,16 @@ void GuiWidget::SetMinSize(const Point& minSize)
 void GuiWidget::SetMaxSize(const Point& maxSize)
 {
     mMaxSize = maxSize;
+}
+
+void GuiWidget::SetDrawBackground(bool isEnabled)
+{
+    mHasDrawBackgroundAttribute = isEnabled;
+}
+
+void GuiWidget::SetDrawBorders(bool isEnabled)
+{
+    mHasDrawBordersAttribute = isEnabled;
 }
 
 void GuiWidget::SetVisible(bool isVisible)
@@ -993,6 +1033,16 @@ void GuiWidget::ShownStateChanged()
             mHovered = false;
             HoveredStateChanged();
         }
+
+        GuiEvent eventData = GuiEvent::HideEvent(this);
+        mActions.EmitEvent(eventData.mEventId);
+        gGuiManager.BroadcastEvent(eventData);
+    }
+    else
+    {
+        GuiEvent eventData = GuiEvent::ShowEvent(this);
+        mActions.EmitEvent(eventData.mEventId);
+        gGuiManager.BroadcastEvent(eventData);
     }
 
     for (GuiWidget* currChild = mFirstChild; currChild; 
@@ -1015,6 +1065,16 @@ void GuiWidget::EnableStateChanged()
             mHovered = false;
             HoveredStateChanged();
         }
+
+        GuiEvent eventData = GuiEvent::DisableEvent(this);
+        mActions.EmitEvent(eventData.mEventId);
+        gGuiManager.BroadcastEvent(eventData);
+    }
+    else
+    {
+        GuiEvent eventData = GuiEvent::EnableEvent(this);
+        mActions.EmitEvent(eventData.mEventId);
+        gGuiManager.BroadcastEvent(eventData);
     }
 
     for (GuiWidget* currChild = mFirstChild; currChild; 
@@ -1031,24 +1091,28 @@ void GuiWidget::HoveredStateChanged()
     if (IsHovered())
     {
         GuiEvent eventData = GuiEvent::MouseEnterEvent(this, gInputsManager.mCursorPosition);
+        mActions.EmitEvent(eventData.mEventId);
         gGuiManager.BroadcastEvent(eventData);
 
         // custom event
         if (!mOnMouseEnterEvent.empty())
         {
             GuiEvent customEvent = GuiEvent::CustomEvent(this, mOnMouseEnterEvent);
+            mActions.EmitEvent(customEvent.mEventId);
             gGuiManager.BroadcastEvent(customEvent);
         }
     }
     else
     {
         GuiEvent eventData = GuiEvent::MouseLeaveEvent(this, gInputsManager.mCursorPosition);
+        mActions.EmitEvent(eventData.mEventId);
         gGuiManager.BroadcastEvent(eventData);
 
         // custom event
         if (!mOnMouseLeaveEvent.empty())
         {
             GuiEvent customEvent = GuiEvent::CustomEvent(this, mOnMouseLeaveEvent);
+            mActions.EmitEvent(customEvent.mEventId);
             gGuiManager.BroadcastEvent(customEvent);
         }
     }
@@ -1127,11 +1191,6 @@ Point GuiWidget::ComputeSizePixels() const
     return outputSize;
 }
 
-bool GuiWidget::HasAttribute(eGuiWidgetAttribute attribute) const
-{
-    return false;
-}
-
 GuiWidget* GuiWidget::CreateClone()
 {
     GuiWidget* selfClone = new GuiWidget(this);
@@ -1161,7 +1220,83 @@ void GuiWidget::Deselect()
     }
 }
 
+void GuiWidget::SetActionsContext(GuiActionContext* context)
+{
+    mActionsContext = context;
+}
+
 bool GuiWidget::IsSelected() const
 {
     return gGuiManager.mSelectedWidget == this;
+}
+
+void GuiWidget::LoadActions(cxx::json_node_object actionsNode)
+{
+    // iterate events
+    for (cxx::json_node_array currNode = actionsNode.first_child(); currNode;
+        currNode = currNode.next_sibling())
+    {
+        cxx::unique_string eventId = cxx::unique_string(currNode.get_element_name());
+
+        // iterate actions
+        for (cxx::json_node_object currActionNode = currNode.first_child(); currActionNode;
+            currActionNode = currActionNode.next_sibling())
+        {
+            GuiAction* widgetAction = gGuiActionsFactory.DeserializeAction(currActionNode);
+            if (widgetAction == nullptr)
+            {
+                debug_assert(false);
+                continue;
+            }
+
+            mActions.AddAction(eventId, widgetAction);
+        }
+    }    
+}
+
+bool GuiWidget::ResolveCondition(const cxx::unique_string& name, bool& isTrue) const
+{
+    if (HandleResolveCondition(name, isTrue))
+        return true;
+
+    static cxx::unique_string id_pressed("pressed");
+    static cxx::unique_string id_hovered("hovered");
+    static cxx::unique_string id_enabled("enabled");
+    static cxx::unique_string id_visible("visible");
+
+    if (name == id_pressed)
+    {
+        isTrue = IsSelected();
+        return true;
+    }
+
+    if (name == id_hovered)
+    {
+        isTrue = IsHovered();
+        return true;
+    }
+
+    if (name == id_enabled)
+    {
+        isTrue = IsEnabled();
+        return true;
+    }
+
+    if (name == id_visible)
+    {
+        isTrue = IsVisible();
+        return true;
+    }
+
+    // examine ext contexts up to the root
+    for (const GuiWidget* currWidget = this; currWidget; 
+        currWidget = currWidget->mParent)
+    {
+        GuiActionContext* actionContext = currWidget->mActionsContext;
+        if (actionContext && actionContext->ResolveCondition(currWidget, name, isTrue))
+            return true;
+    }
+
+    debug_assert(false);
+    return false;
 }
