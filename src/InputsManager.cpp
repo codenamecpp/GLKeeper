@@ -17,100 +17,100 @@ void InputsManager::Deinit()
 {
 }
 
-void InputsManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
+void InputsManager::ProcessInputEvent(MouseButtonInputEvent& inputEvent)
 {
     mMouseButtons[inputEvent.mButton] = inputEvent.mPressed;
 
     if (gToolsUIManager.IsInitialized())
     {
-        gToolsUIManager.HandleInputEvent(inputEvent);
+        gToolsUIManager.ProcessInputEvent(inputEvent);
     }
 
     if (!inputEvent.mConsumed)
     {
-        gGuiManager.HandleInputEvent(inputEvent);
+        gGuiManager.ProcessInputEvent(inputEvent);
     }
 
     if (!inputEvent.mConsumed)
     {
-        gGameMain.HandleInputEvent(inputEvent);
+        gGameMain.ProcessInputEvent(inputEvent);
     }
 }
 
-void InputsManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
+void InputsManager::ProcessInputEvent(MouseMovedInputEvent& inputEvent)
 {
     mCursorPosition.x = inputEvent.mCursorPositionX;
     mCursorPosition.y = inputEvent.mCursorPositionY;
 
     if (gToolsUIManager.IsInitialized())
     {
-        gToolsUIManager.HandleInputEvent(inputEvent);
+        gToolsUIManager.ProcessInputEvent(inputEvent);
     }
 
     if (!inputEvent.mConsumed)
     {
-        gGuiManager.HandleInputEvent(inputEvent);
+        gGuiManager.ProcessInputEvent(inputEvent);
     }
 
     if (!inputEvent.mConsumed)
     {
-        gGameMain.HandleInputEvent(inputEvent);
+        gGameMain.ProcessInputEvent(inputEvent);
     }
 }
 
-void InputsManager::HandleInputEvent(MouseScrollInputEvent& inputEvent)
+void InputsManager::ProcessInputEvent(MouseScrollInputEvent& inputEvent)
 {
     if (gToolsUIManager.IsInitialized())
     {
-        gToolsUIManager.HandleInputEvent(inputEvent);
+        gToolsUIManager.ProcessInputEvent(inputEvent);
     }
 
     if (!inputEvent.mConsumed)
     {
-        gGuiManager.HandleInputEvent(inputEvent);
+        gGuiManager.ProcessInputEvent(inputEvent);
     }
 
     if (!inputEvent.mConsumed)
     {
-        gGameMain.HandleInputEvent(inputEvent);
+        gGameMain.ProcessInputEvent(inputEvent);
     }
 }
 
-void InputsManager::HandleInputEvent(KeyInputEvent& inputEvent)
+void InputsManager::ProcessInputEvent(KeyInputEvent& inputEvent)
 {
     mKeyboardKeys[inputEvent.mKeycode] = inputEvent.mPressed;
 
     if (gToolsUIManager.IsInitialized())
     {
-        gToolsUIManager.HandleInputEvent(inputEvent);
+        gToolsUIManager.ProcessInputEvent(inputEvent);
     }
 
     if (!inputEvent.mConsumed)
     {
-        gGuiManager.HandleInputEvent(inputEvent);
+        gGuiManager.ProcessInputEvent(inputEvent);
     }
 
     if (!inputEvent.mConsumed)
     {
-        gGameMain.HandleInputEvent(inputEvent);
+        gGameMain.ProcessInputEvent(inputEvent);
     }
 }
 
-void InputsManager::HandleInputEvent(KeyCharEvent& inputEvent)
+void InputsManager::ProcessInputEvent(KeyCharEvent& inputEvent)
 {
     if (gToolsUIManager.IsInitialized())
     {
-        gToolsUIManager.HandleInputEvent(inputEvent);
+        gToolsUIManager.ProcessInputEvent(inputEvent);
     }
 
     if (!inputEvent.mConsumed)
     {
-        gGuiManager.HandleInputEvent(inputEvent);
+        gGuiManager.ProcessInputEvent(inputEvent);
     }
 
     if (!inputEvent.mConsumed)
     {
-        gGameMain.HandleInputEvent(inputEvent);
+        gGameMain.ProcessInputEvent(inputEvent);
     }
 }
 

@@ -59,7 +59,7 @@ void GuiManager::UpdateFrame()
     ScanHoveredWidget();
 }
 
-void GuiManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
+void GuiManager::ProcessInputEvent(MouseButtonInputEvent& inputEvent)
 {
     if (mSelectedWidget)
     {
@@ -75,7 +75,7 @@ void GuiManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
     }
 }
 
-void GuiManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
+void GuiManager::ProcessInputEvent(MouseMovedInputEvent& inputEvent)
 {
     ScanHoveredWidget(); // do extra scan
 
@@ -93,7 +93,7 @@ void GuiManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
     }
 }
 
-void GuiManager::HandleInputEvent(MouseScrollInputEvent& inputEvent)
+void GuiManager::ProcessInputEvent(MouseScrollInputEvent& inputEvent)
 {
     if (mSelectedWidget)
     {
@@ -109,11 +109,11 @@ void GuiManager::HandleInputEvent(MouseScrollInputEvent& inputEvent)
     }
 }
 
-void GuiManager::HandleInputEvent(KeyInputEvent& inputEvent)
+void GuiManager::ProcessInputEvent(KeyInputEvent& inputEvent)
 {
 }
 
-void GuiManager::HandleInputEvent(KeyCharEvent& inputEvent)
+void GuiManager::ProcessInputEvent(KeyCharEvent& inputEvent)
 {
 }
 

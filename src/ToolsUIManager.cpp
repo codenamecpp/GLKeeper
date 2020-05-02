@@ -216,7 +216,7 @@ void ToolsUIManager::UpdateFrame()
     ImGui::Render();
 }
 
-void ToolsUIManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
+void ToolsUIManager::ProcessInputEvent(MouseButtonInputEvent& inputEvent)
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -226,7 +226,7 @@ void ToolsUIManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
     }
 }
 
-void ToolsUIManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
+void ToolsUIManager::ProcessInputEvent(MouseMovedInputEvent& inputEvent)
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -236,7 +236,7 @@ void ToolsUIManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
     }
 }
 
-void ToolsUIManager::HandleInputEvent(MouseScrollInputEvent& inputEvent)
+void ToolsUIManager::ProcessInputEvent(MouseScrollInputEvent& inputEvent)
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -249,7 +249,7 @@ void ToolsUIManager::HandleInputEvent(MouseScrollInputEvent& inputEvent)
     }
 }
 
-void ToolsUIManager::HandleInputEvent(KeyInputEvent& inputEvent)
+void ToolsUIManager::ProcessInputEvent(KeyInputEvent& inputEvent)
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -264,7 +264,7 @@ void ToolsUIManager::HandleInputEvent(KeyInputEvent& inputEvent)
     }
 }
 
-void ToolsUIManager::HandleInputEvent(KeyCharEvent& inputEvent)
+void ToolsUIManager::ProcessInputEvent(KeyCharEvent& inputEvent)
 {
     ImGuiIO& io = ImGui::GetIO();
 

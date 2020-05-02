@@ -489,6 +489,9 @@
     <ClInclude Include="GuiLayout.h">
       <Filter>Game\GUI</Filter>
     </ClInclude>
+    <ClInclude Include="GuiScreenLayer.h">
+      <Filter>Game\GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -755,6 +758,9 @@
       <Filter>Game\GUI</Filter>
     </ClCompile>
     <ClCompile Include="GuiLayout.cpp">
+      <Filter>Game\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiScreenLayer.cpp">
       <Filter>Game\GUI</Filter>
     </ClCompile>
   </ItemGroup>

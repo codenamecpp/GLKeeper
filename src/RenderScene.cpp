@@ -74,7 +74,7 @@ void RenderScene::DebugRenderFrame(DebugRenderer& renderer)
     mAABBTree.DebugRender(renderer);
 }
 
-void RenderScene::HandleInputEvent(MouseButtonInputEvent& inputEvent)
+void RenderScene::ProcessInputEvent(MouseButtonInputEvent& inputEvent)
 {
     if (mCameraController)
     {
@@ -82,7 +82,7 @@ void RenderScene::HandleInputEvent(MouseButtonInputEvent& inputEvent)
     }
 }
 
-void RenderScene::HandleInputEvent(MouseMovedInputEvent& inputEvent)
+void RenderScene::ProcessInputEvent(MouseMovedInputEvent& inputEvent)
 {
     if (mCameraController)
     {
@@ -90,7 +90,7 @@ void RenderScene::HandleInputEvent(MouseMovedInputEvent& inputEvent)
     }
 }
 
-void RenderScene::HandleInputEvent(MouseScrollInputEvent& inputEvent)
+void RenderScene::ProcessInputEvent(MouseScrollInputEvent& inputEvent)
 {
     if (mCameraController)
     {
@@ -98,7 +98,7 @@ void RenderScene::HandleInputEvent(MouseScrollInputEvent& inputEvent)
     }
 }
 
-void RenderScene::HandleInputEvent(KeyInputEvent& inputEvent)
+void RenderScene::ProcessInputEvent(KeyInputEvent& inputEvent)
 {
     if (mCameraController)
     {
@@ -106,7 +106,7 @@ void RenderScene::HandleInputEvent(KeyInputEvent& inputEvent)
     }
 }
 
-void RenderScene::HandleInputEvent(KeyCharEvent& inputEvent)
+void RenderScene::ProcessInputEvent(KeyCharEvent& inputEvent)
 {
     if (mCameraController)
     {

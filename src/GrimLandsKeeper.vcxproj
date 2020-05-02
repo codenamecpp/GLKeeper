@@ -187,6 +187,7 @@
     <ClInclude Include="GuiLayout.h" />
     <ClInclude Include="GuiPanel.h" />
     <ClInclude Include="GuiPictureBox.h" />
+    <ClInclude Include="GuiScreenLayer.h" />
     <ClInclude Include="GuiScrollbar.h" />
     <ClInclude Include="GuiWidget.h" />
     <ClInclude Include="GuiAction.h" />
@@ -317,6 +318,7 @@
     <ClCompile Include="GuiHierarchy.cpp" />
     <ClCompile Include="GuiAction.cpp" />
     <ClCompile Include="GuiLayout.cpp" />
+    <ClCompile Include="GuiScreenLayer.cpp" />
     <ClCompile Include="ToolsUIConsoleWindow.cpp" />
     <ClCompile Include="ToolsUILayoutsEditWindow.cpp" />
     <ClCompile Include="ToolsUIWindow.cpp" />
