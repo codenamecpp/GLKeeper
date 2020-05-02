@@ -40,17 +40,30 @@ bool GuiParsePixelsOrPercents(cxx::json_document_node node, eGuiUnits& output_un
     return false;
 }
 
-bool GuiParseAnchors(cxx::json_node_array node, GuiAnchors& output_anchors)
+bool GuiParseAnchors(cxx::json_document_node node, GuiAnchors& output_anchors)
 {
-    if (node)
+    std::string string_value;
+    if (cxx::json_node_string string_node = node)
+    {
+        string_value = string_node.get_value();
+        if (string_value == "all")
+        {
+            output_anchors.mL = true;
+            output_anchors.mR = true;
+            output_anchors.mT = true;
+            output_anchors.mB = true;
+            return true;
+        }
+        debug_assert(false);
+    }
+    if (cxx::json_node_array array_node = node)
     {
         output_anchors.mB = false;
         output_anchors.mL = false;
         output_anchors.mR = false;
         output_anchors.mT = false;
 
-        std::string string_value;
-        for (cxx::json_node_string currElement = node.first_child(); currElement;
+        for (cxx::json_node_string currElement = array_node.first_child(); currElement;
             currElement = currElement.next_sibling())
         {
             string_value = currElement.get_value();
@@ -73,14 +86,6 @@ bool GuiParseAnchors(cxx::json_node_array node, GuiAnchors& output_anchors)
             {
                 output_anchors.mL = true;
                 continue;
-            }
-            if (string_value == "all")
-            {
-                output_anchors.mL = true;
-                output_anchors.mR = true;
-                output_anchors.mT = true;
-                output_anchors.mB = true;
-                return true;
             }
             debug_assert(false);
         }

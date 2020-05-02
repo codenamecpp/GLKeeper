@@ -55,7 +55,7 @@
 
         "test_scrollbar":
         {
-            "class":"scrollbar", "pos":[400,200], "size":[400,30], "anchors":["all"],
+            "class":"scrollbar", "pos":[400,200], "size":[400,30], "anchors":"all",
             "children":
             {
                 "#min" : {"class":"button", "draw_background":true},

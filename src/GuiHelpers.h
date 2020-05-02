@@ -8,8 +8,8 @@ bool GuiParsePixelsOrPercents(cxx::json_document_node node, eGuiUnits& output_un
 
 // parse gui anchors state from json node
 // example: ["left", "right"] - left and right anchors are set
-// example: ["all"] - all anchors are set 
-bool GuiParseAnchors(cxx::json_node_array node, GuiAnchors& output_anchors);
+// example: "all" - all anchors are set 
+bool GuiParseAnchors(cxx::json_document_node node, GuiAnchors& output_anchors);
 
 // parse color from json attribute
 // as array of ints example: [0, 255, 0, 255] - rgba
