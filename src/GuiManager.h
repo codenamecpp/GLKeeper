@@ -59,11 +59,10 @@ public:
     void UnregisterEventsHandler(GuiEventsHandler* eventsHandler);
     void UnregisterAllEventsHandlers();
 
-    // attach/detach widgets
-    // @param hierarchy: Hierarchy
-    void AttachWidgets(GuiHierarchy* hierarchy);
-    void DetachWidgets(GuiHierarchy* hierarchy);
-    void DetachAllWidgets();
+    // attach/detach screen layers
+    void AttachScreen(GuiScreen* screen);
+    void DetachScreen(GuiScreen* screen);
+    void DetachAllScreens();
 
 private:
     void RegisterWidgetsClasses();
@@ -82,7 +81,7 @@ private:
     std::vector<GuiEventsHandler*> mEventHandlers;
     std::vector<GuiEvent> mEventsQueue;
     std::vector<GuiEvent> mProcessingEventsQueue;
-    std::vector<GuiHierarchy*> mHiersList;
+    std::vector<GuiScreen*> mScreensList;
 };
 
 extern GuiManager gGuiManager;

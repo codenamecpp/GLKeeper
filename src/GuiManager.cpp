@@ -11,6 +11,7 @@
 #include "GuiHierarchy.h"
 #include "GraphicsDevice.h"
 #include "FileSystem.h"
+#include "GuiScreen.h"
 
 GuiManager gGuiManager;
 
@@ -34,15 +35,18 @@ void GuiManager::Deinit()
 
     UnregisterAllEventsHandlers();
     SetSelectedWidget(nullptr);
-    DetachAllWidgets();
+    DetachAllScreens();
 }
 
 void GuiManager::RenderFrame(GuiRenderer& renderContext)
 {
-    // render widgets
-    for (GuiHierarchy* currHier: mHiersList)
+    // render screen layers
+    for (GuiScreen* currScreen: mScreensList)
     {
-        currHier->RenderFrame(renderContext);
+        if (currScreen == nullptr)
+            continue;
+
+        currScreen->RenderFrame(renderContext);
     }
 }
 
@@ -51,9 +55,25 @@ void GuiManager::UpdateFrame()
     ProcessEventsQueue();
 
     // update widgets
-    for (GuiHierarchy* currHier: mHiersList)
+    bool doCleanupList = false;
+
+    for (size_t iCurrentScreen = 0, Num = mScreensList.size(); iCurrentScreen < Num; 
+        ++iCurrentScreen)
     {
-        currHier->UpdateFrame();
+        if (mScreensList[iCurrentScreen])
+        {
+            mScreensList[iCurrentScreen]->UpdateFrame();
+        }
+
+        if (mScreensList[iCurrentScreen] == nullptr)
+        {
+            doCleanupList = true;
+        }
+    }
+
+    if (doCleanupList)
+    {
+        cxx::erase_elements(mScreensList, nullptr);
     }
 
     ScanHoveredWidget();
@@ -128,13 +148,19 @@ void GuiManager::ScanHoveredWidget()
 
     if (newHovered == nullptr)
     {
-        for (auto reverse_iter = mHiersList.rbegin(); reverse_iter != mHiersList.rend(); ++reverse_iter)
+        for (auto reverse_iter = mScreensList.rbegin(); reverse_iter != mScreensList.rend(); ++reverse_iter)
         {
-            GuiHierarchy* currentHier = *reverse_iter;
-            if (currentHier->mRootWidget == nullptr)
+            GuiWidget* rootWidget = nullptr;
+            GuiScreen* currentScreen = *reverse_iter;
+            if (currentScreen)
+            {
+                rootWidget = currentScreen->mHier.mRootWidget;
+            }
+
+            if (rootWidget == nullptr)
                 continue;
 
-            newHovered = currentHier->mRootWidget->PickWidget(gInputsManager.mCursorPosition);
+            newHovered = rootWidget->PickWidget(gInputsManager.mCursorPosition);
             if (newHovered)
                 break;
         }
@@ -216,9 +242,12 @@ void GuiManager::SetSelectedWidget(GuiWidget* mouseListener)
 
 void GuiManager::HandleScreenResolutionChanged()
 {
-    for (GuiHierarchy* currHier: mHiersList)
+    for (GuiScreen* currScreen: mScreensList)
     {
-        currHier->FitLayoutToScreen(gGraphicsDevice.mScreenResolution);
+        if (currScreen == nullptr)
+            continue;
+
+        currScreen->mHier.FitLayoutToScreen(gGraphicsDevice.mScreenResolution);
     }
 }
 
@@ -332,23 +361,41 @@ bool GuiManager::IsProcessingEvents() const
     return !mProcessingEventsQueue.empty();
 }
 
-void GuiManager::AttachWidgets(GuiHierarchy* hierarchy)
+void GuiManager::AttachScreen(GuiScreen* screen)
 {
-    if (hierarchy == nullptr)
+    debug_assert(screen);
+    if (screen == nullptr)
+        return;
+
+    debug_assert(screen->IsScreenInitialized());
+    debug_assert(!screen->IsScreenActive());
+
+    if (cxx::contains(mScreensList, screen))
     {
         debug_assert(false);
         return;
     }
-
-    cxx::push_back_if_unique(mHiersList, hierarchy);
+    mScreensList.push_back(screen);
 }
 
-void GuiManager::DetachWidgets(GuiHierarchy* hierarchy)
+void GuiManager::DetachScreen(GuiScreen* screen)
 {
-    cxx::erase_elements(mHiersList, hierarchy);
+    debug_assert(screen);
+    if (screen == nullptr)
+        return;
+
+    debug_assert(screen->IsScreenActive());
+    for (size_t iCurrentScreen = 0, Num = mScreensList.size(); iCurrentScreen < Num; 
+        ++iCurrentScreen)
+    {
+        if (mScreensList[iCurrentScreen] == screen)
+        {
+            mScreensList[iCurrentScreen] = nullptr;
+        }
+    }
 }
 
-void GuiManager::DetachAllWidgets()
+void GuiManager::DetachAllScreens()
 {
-    mHiersList.clear();
+    mScreensList.clear();
 }

@@ -10,6 +10,7 @@ class GuiButton;
 class GuiPictureBox;
 class GuiPanel;
 class GuiLayout;
+class GuiScreen;
 using GuiWidgetHandle = cxx::handle<GuiWidget>;
 struct GuiEvent;
 

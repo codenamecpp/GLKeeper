@@ -2,7 +2,7 @@
 
 #include "MeshViewGamestate.h"
 #include "GameplayGamestate.h"
-#include "LayoutsEditGamestate.h"
+#include "GuiTestGamestate.h"
 #include "ToolsUISceneStatisticsWindow.h"
 
 // game core
@@ -49,7 +49,7 @@ private:
 private:
     MeshViewGamestate mMeshViewGamestate;
     GameplayGamestate mGameplayGamestate;
-    LayoutsEditGamestate mLayoutsEditGamestate;
+    GuiTestGamestate mLayoutsEditGamestate;
 
     ToolsUISceneStatisticsWindow mFpsWindow;
 };

@@ -1,31 +1,33 @@
 #include "pch.h"
-#include "LayoutsEditGamestate.h"
-#include "GameMain.h"
+#include "GuiTestScreen.h"
 #include "GuiManager.h"
-#include "GuiButton.h"
-#include "GuiPictureBox.h"
-#include "GraphicsDevice.h"
-#include "GuiPanel.h"
-#include "GuiScrollbar.h"
-#include "TexturesManager.h"
-#include "ToolsUIManager.h"
 #include "Console.h"
 
-LayoutsEditGamestate::LayoutsEditGamestate()
+void GuiTestScreen::HandleRenderScreen(GuiRenderer& renderContext)
 {
-
 }
 
-void LayoutsEditGamestate::HandleGamestateEnter()
+void GuiTestScreen::HandleUpdateScreen()
 {
-    gToolsUIManager.AttachWindow(&mLayoutsEditWindow);
-    gGuiManager.AttachWidgets(&mHier);
+}
 
+void GuiTestScreen::HandleCleanupScreen()
+{
+    UnsubscribeAll();
+}
+
+bool GuiTestScreen::HandleInitializeScreen()
+{
     if (!mHier.LoadFromFile("layouts/test.json"))
     {
         debug_assert(false);
+        return false;
     }
+    return true;
+}
 
+void GuiTestScreen::HandleScreenActivated()
+{
     if (GuiWidget* buttonWidget = mHier.SearchForWidget("button_0"))
     {
         Subscribe(GuiEventId_OnClick, buttonWidget);
@@ -53,89 +55,48 @@ void LayoutsEditGamestate::HandleGamestateEnter()
     Subscribe(GuiEventId_OnMouseDown, sliderThumb);
 }
 
-void LayoutsEditGamestate::HandleGamestateLeave()
+void GuiTestScreen::HandleScreenDeactivated()
 {
-    gToolsUIManager.DetachWindow(&mLayoutsEditWindow);
-
     UnsubscribeAll();
-
-    gGuiManager.DetachWidgets(&mHier);
-    mHier.Cleanup();
 }
 
-void LayoutsEditGamestate::HandleUpdateFrame()
-{
-}
-
-void LayoutsEditGamestate::HandleInputEvent(MouseButtonInputEvent& inputEvent)
-{
-}
-
-void LayoutsEditGamestate::HandleInputEvent(MouseMovedInputEvent& inputEvent)
-{
-}
-
-void LayoutsEditGamestate::HandleInputEvent(MouseScrollInputEvent& inputEvent)
-{
-}
-
-void LayoutsEditGamestate::HandleInputEvent(KeyInputEvent& inputEvent)
-{
-    if (inputEvent.HasPressed(eKeycode_F5))
-    {
-        if (!mHier.LoadFromFile("layouts/test.json"))
-        {
-            debug_assert(false);
-        }
-    }
-}
-
-void LayoutsEditGamestate::HandleInputEvent(KeyCharEvent& inputEvent)
-{
-}
-
-void LayoutsEditGamestate::HandleClick(GuiWidget* sender)
+void GuiTestScreen::HandleClick(GuiWidget* sender)
 {
     debug_assert(sender);
     gConsole.LogMessage(eLogMessage_Debug, "on_click %s", sender->mId.c_str());
 }
 
-void LayoutsEditGamestate::HandleMouseEnter(GuiWidget* sender)
+void GuiTestScreen::HandleMouseEnter(GuiWidget* sender)
 {
     debug_assert(sender);
     gConsole.LogMessage(eLogMessage_Debug, "on_mouse_enter %s", sender->mId.c_str());
 }
 
-void LayoutsEditGamestate::HandleMouseLeave(GuiWidget* sender)
+void GuiTestScreen::HandleMouseLeave(GuiWidget* sender)
 {
     debug_assert(sender);
     gConsole.LogMessage(eLogMessage_Debug, "on_mouse_leave %s", sender->mId.c_str());
 }
 
-void LayoutsEditGamestate::HandleMouseDown(GuiWidget* sender, eMouseButton mbutton)
+void GuiTestScreen::HandleMouseDown(GuiWidget* sender, eMouseButton mbutton)
 {
     debug_assert(sender);
     gConsole.LogMessage(eLogMessage_Debug, "on_mouse_down %s", sender->mId.c_str());
 }
 
-void LayoutsEditGamestate::HandleMouseUp(GuiWidget* sender, eMouseButton mbutton)
+void GuiTestScreen::HandleMouseUp(GuiWidget* sender, eMouseButton mbutton)
 {
     debug_assert(sender);
     gConsole.LogMessage(eLogMessage_Debug, "on_mouse_up %s", sender->mId.c_str());
 }
 
-void LayoutsEditGamestate::HandleEvent(GuiWidget* sender, cxx::unique_string eventId)
+void GuiTestScreen::HandleEvent(GuiWidget* sender, cxx::unique_string eventId)
 {
     debug_assert(sender);
     gConsole.LogMessage(eLogMessage_Debug, "on_event '%s'", eventId.c_str());
 }
 
-bool LayoutsEditGamestate::ResolveCondition(const GuiWidget* source, const cxx::unique_string& name, bool& isTrue)
+bool GuiTestScreen::ResolveCondition(const GuiWidget* source, const cxx::unique_string& name, bool& isTrue)
 {
-    if (name == "hide_on_click")
-    {
-        isTrue = true;
-        return true;
-    }
     return false;
 }

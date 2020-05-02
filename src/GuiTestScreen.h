@@ -1,29 +1,25 @@
 #pragma once
 
-#include "GenericGamestate.h"
-#include "ToolsUILayoutsEditWindow.h"
+#include "GuiScreen.h"
 #include "GuiHierarchy.h"
 #include "GuiEvent.h"
 #include "GuiHelpers.h"
 
-class LayoutsEditGamestate: public GenericGamestate
+class GuiTestScreen: public GuiScreen
     , public GuiEventsHandler
     , public GuiActionContext
 {
 public:
-    LayoutsEditGamestate();
 
-    void HandleGamestateEnter() override;
-    void HandleGamestateLeave() override;
-    void HandleUpdateFrame() override;
+private:
+    // override GuiScreen
+    void HandleRenderScreen(GuiRenderer& renderContext) override;
+    void HandleUpdateScreen() override;
+    void HandleCleanupScreen() override;
+    bool HandleInitializeScreen() override;
+    void HandleScreenActivated() override;
+    void HandleScreenDeactivated() override;
 
-    void HandleInputEvent(MouseButtonInputEvent& inputEvent) override;
-    void HandleInputEvent(MouseMovedInputEvent& inputEvent) override;
-    void HandleInputEvent(MouseScrollInputEvent& inputEvent) override;
-    void HandleInputEvent(KeyInputEvent& inputEvent) override;
-    void HandleInputEvent(KeyCharEvent& inputEvent) override;
-
-protected:
     // override GuiEventsHandler
     void HandleClick(GuiWidget* sender) override;
     void HandleMouseEnter(GuiWidget* sender) override;
@@ -34,8 +30,4 @@ protected:
 
     // override GuiActionContext
     bool ResolveCondition(const GuiWidget* source, const cxx::unique_string& name, bool& isTrue) override;
-
-private:
-    ToolsUILayoutsEditWindow mLayoutsEditWindow;
-    GuiHierarchy mHier;
 };

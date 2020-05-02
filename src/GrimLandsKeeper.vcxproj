@@ -187,12 +187,12 @@
     <ClInclude Include="GuiLayout.h" />
     <ClInclude Include="GuiPanel.h" />
     <ClInclude Include="GuiPictureBox.h" />
-    <ClInclude Include="GuiScreenLayer.h" />
+    <ClInclude Include="GuiScreen.h" />
     <ClInclude Include="GuiScrollbar.h" />
+    <ClInclude Include="GuiTestScreen.h" />
     <ClInclude Include="GuiWidget.h" />
     <ClInclude Include="GuiAction.h" />
     <ClInclude Include="logical_expression.h" />
-    <ClInclude Include="ToolsUILayoutsEditWindow.h" />
     <ClInclude Include="ToolsUISceneStatisticsWindow.h" />
     <ClInclude Include="GameMap.h" />
     <ClInclude Include="GameObject.h" />
@@ -216,7 +216,7 @@
     <ClInclude Include="ConsoleVariable.inl" />
     <ClInclude Include="cvars.h" />
     <ClInclude Include="DebugDrawRenderProgram.h" />
-    <ClInclude Include="LayoutsEditGamestate.h" />
+    <ClInclude Include="GuiTestGamestate.h" />
     <ClInclude Include="RenderScene.h" />
     <ClInclude Include="ModelAsset.h" />
     <ClInclude Include="MeshViewGamestate.h" />
@@ -318,9 +318,9 @@
     <ClCompile Include="GuiHierarchy.cpp" />
     <ClCompile Include="GuiAction.cpp" />
     <ClCompile Include="GuiLayout.cpp" />
-    <ClCompile Include="GuiScreenLayer.cpp" />
+    <ClCompile Include="GuiScreen.cpp" />
+    <ClCompile Include="GuiTestScreen.cpp" />
     <ClCompile Include="ToolsUIConsoleWindow.cpp" />
-    <ClCompile Include="ToolsUILayoutsEditWindow.cpp" />
     <ClCompile Include="ToolsUIWindow.cpp" />
     <ClCompile Include="GuiButton.cpp" />
     <ClCompile Include="GuiEvent.cpp" />
@@ -344,7 +344,7 @@
     <ClCompile Include="enums_impl.cpp" />
     <ClCompile Include="FileSystem.cpp" />
     <ClCompile Include="FileSystemArchive.cpp" />
-    <ClCompile Include="LayoutsEditGamestate.cpp" />
+    <ClCompile Include="GuiTestGamestate.cpp" />
     <ClCompile Include="RenderScene.cpp" />
     <ClCompile Include="GpuBuffer.cpp" />
     <ClCompile Include="GpuBufferTexture.cpp" />
