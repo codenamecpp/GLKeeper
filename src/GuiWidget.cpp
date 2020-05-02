@@ -215,7 +215,7 @@ void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
     // layout
     if (cxx::json_node_object layoutNode = documentNode["layout"])
     {
-        debug_assert(mLayout);
+        debug_assert(mLayout == nullptr);
 
         // deserialize layout
         mLayout = new GuiLayout(this);

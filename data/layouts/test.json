@@ -24,31 +24,18 @@
                     {"action":"show", "value":true, "target":"hover_frame"},
                     {"action":"texture", "value":"GUI\\Options\\i-audio", "target":"icon"}
                 ],
-
                 "on_mouse_leave": 
                 [
                     {"action":"show", "value":false, "target":"hover_frame"},
                     {"action":"texture", "value":"GUI\\Rooms\\Bridge_Stone", "target":"icon"}
                 ],
-
                 "on_mouse_down":
                 [
                     {"action":"size", "value":["96%","96%"], "target":"icon"}
                 ],
-
                 "on_mouse_up":
                 [
                     {"action":"size", "value":["100%","100%"], "target":"icon"}
-                ],
-
-                "on_click":
-                [
-                    {"action":"emit_event", "value":"cutom_event_id", "conditions":"hide_on_click"}
-                ],
-
-                "cutom_event_id":
-                [
-                    {"action":"show", "value":false, "target":"icon"}
                 ]
             }
         },
@@ -97,7 +84,30 @@
                 },
                 "slider_0": {"template_class":"test_scrollbar", "pos":[400,200], "size":[400,30]},
                 "button_1": {"template_class":"test_button", "pos":[200,600], "size":[50,50]},
-                "sb_0": {"template_class":"test_scrollbar", "pos":[400,600], "size":[400,30]}
+                "sb_0": {"template_class":"test_scrollbar", "pos":[400,600], "size":[400,30]},
+
+                "buttons_container": 
+                {
+                    "class":"panel", "size":[700, 200], "draw_background":true, "pos":[200, 330], "anchors":"all",
+                    "layout":
+                    {
+                        "orientation":"vert", "num_rows":2, "spacing_horz":3, "spacing_vert":2
+                    },
+                    "children":
+                    {
+                        "button_1":{"template_class":"test_button", "size":[64,64]},
+                        "button_2":{"template_class":"test_button", "size":[64,64]},
+                        "button_3":{"template_class":"test_button", "size":[64,64]},
+                        "button_4":{"template_class":"test_button", "size":[64,64]},
+                        "button_5":{"template_class":"test_button", "size":[64,64]},
+                        "button_6":{"template_class":"test_button", "size":[64,64]},
+                        "button_7":{"template_class":"test_button", "size":[64,64]},
+                        "button_8":{"template_class":"test_button", "size":[64,64]},
+                        "button_9":{"template_class":"test_button", "size":[64,64]},
+                        "button_10":{"template_class":"test_button", "size":[64,64]},
+                        "button_11":{"template_class":"test_button", "size":[64,64]}
+                    }
+                }
             }
         }
     }

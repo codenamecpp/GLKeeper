@@ -28,7 +28,7 @@ void GuiLayout::CopyProperties(const GuiLayout& sourceLayout)
 
 void GuiLayout::LoadProperties(cxx::json_node_object documentNode)
 {
-    cxx::json_get_attribute(documentNode, "orient", mOrientation);
+    cxx::json_get_attribute(documentNode, "orientation", mOrientation);
     if (cxx::json_get_attribute(documentNode, "num_cols", mCols))
     {
         if (mCols < 1)
@@ -110,10 +110,6 @@ void GuiLayout::LayoutElements()
     for (GuiWidget* curr_child = mContainer->GetChild(); curr_child; 
         curr_child = curr_child->NextSibling())
     {
-        // ignore widgets with anchors
-        if (curr_child->HasAnchors())
-            continue;
-
         curr_child->SetPosition(currPos);
 
         if (mOrientation == eGuiLayoutOrientation_Horizontal)
