@@ -43,6 +43,7 @@ protected:
 protected:
     // overridables
     virtual void HandlePerformAction(GuiWidget* targetWidget) = 0;
+    virtual void HandlePerformActionOnConditionsFail(GuiWidget* targetWidget) {}
     virtual bool HandleDeserialize(cxx::json_node_object actionNode)
     {
         return true;

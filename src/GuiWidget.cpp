@@ -131,49 +131,48 @@ void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
     }    
     // origin
     {
-        Point origin(0, 0);
-        eGuiUnits unitsX = eGuiUnits_Pixels;
-        eGuiUnits unitsY = eGuiUnits_Pixels;
-
         if (cxx::json_node_array prop_position = documentNode["origin"])
         {
+            Point origin(0, 0);
+            eGuiUnits unitsX = eGuiUnits_Pixels;
+            eGuiUnits unitsY = eGuiUnits_Pixels;
             if (!GuiParsePixelsOrPercents(prop_position[0], unitsX, origin.x) ||
                 !GuiParsePixelsOrPercents(prop_position[1], unitsY, origin.y))
             {
                 debug_assert(false);
             }
+            SetOrigin(origin, unitsX, unitsY);
         }
-        SetOrigin(origin, unitsX, unitsY);
     }
     // position
     {
-        Point position(0, 0);
-        eGuiUnits unitsX = eGuiUnits_Pixels;
-        eGuiUnits unitsY = eGuiUnits_Pixels;
         if (cxx::json_node_array prop_position = documentNode["pos"])
         {
+            Point position(0, 0);
+            eGuiUnits unitsX = eGuiUnits_Pixels;
+            eGuiUnits unitsY = eGuiUnits_Pixels;
             if (!GuiParsePixelsOrPercents(prop_position[0], unitsX, position.x) ||
                 !GuiParsePixelsOrPercents(prop_position[1], unitsY, position.y))
             {
                 debug_assert(false);
             }
+            SetPosition(position, unitsX, unitsY);
         }
-        SetPosition(position, unitsX, unitsY);
     }
     // size
     {
-        Point size(0, 0);
-        eGuiUnits unitsW = eGuiUnits_Pixels;
-        eGuiUnits unitsH = eGuiUnits_Pixels;
         if (cxx::json_node_array prop_size = documentNode["size"])
         {
+            Point size(0, 0);
+            eGuiUnits unitsW = eGuiUnits_Pixels;
+            eGuiUnits unitsH = eGuiUnits_Pixels;
             if (!GuiParsePixelsOrPercents(prop_size[0], unitsW, size.x) ||
                 !GuiParsePixelsOrPercents(prop_size[1], unitsH, size.y))
             {
                 debug_assert(false);
             }
+            SetSize(size, unitsW, unitsH);
         }
-        SetSize(size, unitsW, unitsH);
     }
     // anchors
     if (cxx::json_document_node prop_anchors = documentNode["anchors"])

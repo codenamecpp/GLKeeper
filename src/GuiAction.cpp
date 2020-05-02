@@ -17,8 +17,7 @@ GuiAction::GuiAction(const GuiAction* copyAction)
 
 void GuiAction::PerformAction(GuiWidget* parentWidget)
 {
-    if (!EvaluateConditions(parentWidget))
-        return;
+    bool isConditionsTrue = EvaluateConditions(parentWidget);
 
     GuiWidget* target = parentWidget;
     if (!mTargetPath.empty())
@@ -28,7 +27,14 @@ void GuiAction::PerformAction(GuiWidget* parentWidget)
     debug_assert(target);
     if (target)
     {
-        HandlePerformAction(target);
+        if (isConditionsTrue)
+        {
+            HandlePerformAction(target);
+        }
+        else
+        {
+            HandlePerformActionOnConditionsFail(target);
+        }
     }
 }
 
@@ -249,6 +255,34 @@ private:
 
 //////////////////////////////////////////////////////////////////////////
 
+class GuiWidgetActionVisibility: public GuiAction
+{
+public:
+    GuiWidgetActionVisibility() = default;
+    GuiWidgetActionVisibility(const GuiWidgetActionVisibility* copyAction)
+        : GuiAction(copyAction)
+    {
+    }
+    void HandlePerformAction(GuiWidget* targetWidget) override
+    {
+        targetWidget->SetVisible(true);
+    }
+    void HandlePerformActionOnConditionsFail(GuiWidget* targetWidget) override
+    {
+        targetWidget->SetVisible(false);
+    }
+    bool HandleDeserialize(cxx::json_node_object actionNode) override
+    {
+        return true;
+    }
+    GuiWidgetActionVisibility* HandleCloneAction() override
+    {
+        return new GuiWidgetActionVisibility(this);
+    }
+};
+
+//////////////////////////////////////////////////////////////////////////
+
 GuiActionsHolder::GuiActionsHolder(GuiWidget* actionsParentWidget)
     : mParentWidget(actionsParentWidget)
 {
@@ -342,6 +376,10 @@ GuiAction* GuiActionsFactory::DeserializeAction(cxx::json_node_object actionNode
     else if (actionId == "background_color")
     {
         action = new GuiWidgetActionBackgroundColor;
+    }
+    else if (actionId == "visibility")
+    {
+        action = new GuiWidgetActionVisibility;
     }
 
     debug_assert(action);

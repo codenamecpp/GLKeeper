@@ -3,12 +3,20 @@
     {
         "test_button":
         {
-            "class":"button", "pos":[200,200], "size":[100,100], "origin":["50%","50%"],
+            "class":"button", "pos":[200,200], "size":[52,52],
             "children":
             [
                 {
                     "id":"icon", "class":"picture_box", "size":["100%","100%"], "origin":["50%","50%"], "pos":["50%","50%"],
                     "texture":"GUI\\Rooms\\Bridge_Stone", "size_mode":"scale"
+                },
+                {
+                    "id":"unavailable_fill", "class":"picture_box", "size":["100%","100%"], "texture":"white", "size_mode":"scale",
+                    "tint_color":[0,0,0,153], "visible":false
+                },
+                {
+                    "id":"active_overlay", "class":"picture_box", "size":["100%","100%"], 
+                    "texture":"GUI\\Icons\\selected-door", "size_mode":"scale", "visible":false
                 },
                 {
                     "id":"hover_frame", "class":"picture_box", "size":["100%","100%"], "origin":["50%","50%"], "pos":["50%","50%"],
@@ -34,6 +42,11 @@
                 "on_mouse_up":
                 [
                     {"action":"size", "value":["100%","100%"], "target":"icon"}
+                ],
+                "init":
+                [
+                    {"action":"visibility", "target":"unavailable_fill", "conditions":"!available"},
+                    {"action":"visibility", "target":"active_overlay", "conditions":"active"}
                 ]
             }
         },
@@ -69,7 +82,7 @@
         "children":
         [
             {
-                "id":"button_0", "template_class":"test_button", "pos":[200,200], "size":[100,100],
+                "id":"button_0", "template_class":"test_button", "pos":[200,200],
                 "events":
                 {
                     "on_click": "custom_on_click_event"
@@ -89,17 +102,17 @@
                 },
                 "children":
                 [
-                    {"template_class":"test_button", "size":[64,64]},
-                    {"template_class":"test_button", "size":[64,64]},
-                    {"template_class":"test_button", "size":[64,64]},
-                    {"template_class":"test_button", "size":[64,64]},
-                    {"template_class":"test_button", "size":[64,64]},
-                    {"template_class":"test_button", "size":[64,64]},
-                    {"template_class":"test_button", "size":[64,64]},
-                    {"template_class":"test_button", "size":[64,64]},
-                    {"template_class":"test_button", "size":[64,64]},
-                    {"template_class":"test_button", "size":[64,64]},
-                    {"template_class":"test_button", "size":[64,64]}
+                    {"template_class":"test_button"},
+                    {"template_class":"test_button"},
+                    {"template_class":"test_button"},
+                    {"template_class":"test_button"},
+                    {"template_class":"test_button"},
+                    {"template_class":"test_button"},
+                    {"template_class":"test_button"},
+                    {"template_class":"test_button"},
+                    {"template_class":"test_button"},
+                    {"template_class":"test_button"},
+                    {"template_class":"test_button"}
                 ]
             }
         ]

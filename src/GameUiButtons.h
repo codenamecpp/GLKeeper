@@ -10,6 +10,10 @@
 class GameUiFeatureButton: public GuiActionContext
 {
 public:
+    // readonly
+    GuiButton* mBoundButton = nullptr;
+
+public:
     GameUiFeatureButton();
     ~GameUiFeatureButton();
 
@@ -36,8 +40,6 @@ private:
     bool ResolveCondition(const GuiWidget* source, const cxx::unique_string& name, bool& isTrue) override;
 
 private:
-    GuiButton* mBoundButton = nullptr;
-
     // extended states
     bool mActiveState;
     bool mAvailableState;
