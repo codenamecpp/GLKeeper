@@ -95,11 +95,11 @@
     <Filter Include="Application\ToolsUI\Windows">
       <UniqueIdentifier>{22d845d7-589e-4583-bc6e-5ee20689b6bb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Data\Layouts">
-      <UniqueIdentifier>{28665352-7ac3-458c-84da-6979357bfcc0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\GameScreens">
       <UniqueIdentifier>{eeceb5ec-b352-4d41-9d41-2f221ceeb14d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\Screens">
+      <UniqueIdentifier>{28665352-7ac3-458c-84da-6979357bfcc0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -804,7 +804,7 @@
       <Filter>Data\Shaders</Filter>
     </None>
     <None Include="..\data\layouts\test.json">
-      <Filter>Data\Layouts</Filter>
+      <Filter>Data\Screens</Filter>
     </None>
   </ItemGroup>
 </Project>

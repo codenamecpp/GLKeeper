@@ -10,6 +10,7 @@ class GuiTestScreen: public GuiScreen
     , public GuiActionContext
 {
 public:
+    bool ReloadScreen();
 
 private:
     // override GuiScreen
@@ -17,8 +18,8 @@ private:
     void HandleUpdateScreen() override;
     void HandleCleanupScreen() override;
     bool HandleInitializeScreen() override;
-    void HandleScreenActivated() override;
-    void HandleScreenDeactivated() override;
+    void HandleStartScreen() override;
+    void HandleEndScreen() override;
 
     // override GuiEventsHandler
     void HandleClick(GuiWidget* sender) override;

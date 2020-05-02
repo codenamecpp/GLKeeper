@@ -74,7 +74,7 @@ bool GuiScreen::ActivateScreen()
     }
 
     SetScreenAttached(true);
-    HandleScreenActivated();
+    HandleStartScreen();
 
     return true;
 }
@@ -85,7 +85,7 @@ void GuiScreen::DeactivateScreen()
         return;
 
     SetScreenAttached(false);
-    HandleScreenDeactivated();
+    HandleEndScreen();
 }
 
 void GuiScreen::SetScreenAttached(bool isActive)

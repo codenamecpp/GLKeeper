@@ -3,6 +3,20 @@
 #include "GuiManager.h"
 #include "Console.h"
 
+bool GuiTestScreen::ReloadScreen()
+{
+    DeactivateScreen();
+    CleanupScreen();
+    if (InitializeScreen())
+    {
+        ActivateScreen();
+        return true;
+    }
+
+    debug_assert(false);
+    return false;
+}
+
 void GuiTestScreen::HandleRenderScreen(GuiRenderer& renderContext)
 {
 }
@@ -18,7 +32,7 @@ void GuiTestScreen::HandleCleanupScreen()
 
 bool GuiTestScreen::HandleInitializeScreen()
 {
-    if (!mHier.LoadFromFile("layouts/test.json"))
+    if (!mHier.LoadFromFile("screens/gui_test.json"))
     {
         debug_assert(false);
         return false;
@@ -26,7 +40,7 @@ bool GuiTestScreen::HandleInitializeScreen()
     return true;
 }
 
-void GuiTestScreen::HandleScreenActivated()
+void GuiTestScreen::HandleStartScreen()
 {
     if (GuiWidget* buttonWidget = mHier.SearchForWidget("button_0"))
     {
@@ -55,7 +69,7 @@ void GuiTestScreen::HandleScreenActivated()
     Subscribe(GuiEventId_OnMouseDown, sliderThumb);
 }
 
-void GuiTestScreen::HandleScreenDeactivated()
+void GuiTestScreen::HandleEndScreen()
 {
     UnsubscribeAll();
 }

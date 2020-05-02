@@ -39,7 +39,7 @@ public:
     // determine current game state
     bool IsMeshViewGamestate() const;
     bool IsGameplayGamestate() const;
-    bool IsLayoutsEditGamestate() const;
+    bool IsGuiTestGamestate() const;
 
     void HandleScreenResolutionChanged();
 
@@ -49,7 +49,7 @@ private:
 private:
     MeshViewGamestate mMeshViewGamestate;
     GameplayGamestate mGameplayGamestate;
-    GuiTestGamestate mLayoutsEditGamestate;
+    GuiTestGamestate mGuiTestGamestate;
 
     ToolsUISceneStatisticsWindow mFpsWindow;
 };

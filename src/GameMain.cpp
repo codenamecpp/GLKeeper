@@ -38,7 +38,7 @@ bool GameMain::Initialize()
 
     //SwitchToGameState(&mGameplayGamestate);
 
-    SwitchToGameState(&mLayoutsEditGamestate);
+    SwitchToGameState(&mGuiTestGamestate);
 
     return true;
 }
@@ -143,9 +143,9 @@ bool GameMain::IsGameplayGamestate() const
     return mCurrentGamestate == &mGameplayGamestate;
 }
 
-bool GameMain::IsLayoutsEditGamestate() const
+bool GameMain::IsGuiTestGamestate() const
 {
-    return mCurrentGamestate == &mLayoutsEditGamestate;
+    return mCurrentGamestate == &mGuiTestGamestate;
 }
 
 void GameMain::HandleScreenResolutionChanged()

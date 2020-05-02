@@ -20,14 +20,14 @@ public:
     void CleanupScreen();
 
     // test whether screen layer is initialized 
-    inline bool IsScreenInitialized() const { return mIsInitialized; }
+    bool IsScreenInitialized() const { return mIsInitialized; }
 
     // attach or detach screen layer to gui system, it will receive render and update events
     bool ActivateScreen();
     void DeactivateScreen();
 
     // test whether screen layer is active now
-    inline bool IsScreenActive() const { return mIsActive; }
+    bool IsScreenActive() const { return mIsActive; }
 
     // render screen layer
     void RenderFrame(GuiRenderer& renderContext);
@@ -44,8 +44,8 @@ protected:
     virtual void HandleUpdateScreen() {}
     virtual void HandleCleanupScreen() = 0;
     virtual bool HandleInitializeScreen() = 0;
-    virtual void HandleScreenActivated() {}
-    virtual void HandleScreenDeactivated() {}
+    virtual void HandleStartScreen() {}
+    virtual void HandleEndScreen() {}
 
 protected:
     bool mIsInitialized = false;

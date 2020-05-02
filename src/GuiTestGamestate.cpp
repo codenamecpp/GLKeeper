@@ -48,16 +48,7 @@ void GuiTestGamestate::HandleInputEvent(KeyInputEvent& inputEvent)
 {
     if (inputEvent.HasPressed(eKeycode_F5))
     {
-        mScreen.DeactivateScreen();
-        mScreen.CleanupScreen();
-        if (mScreen.InitializeScreen())
-        {
-            mScreen.ActivateScreen();
-        }
-        else
-        {
-            debug_assert(false);
-        }
+        mScreen.ReloadScreen();
     }
 }
 
