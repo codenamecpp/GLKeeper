@@ -893,14 +893,14 @@ void GuiWidget::ParentPositionChanged(const Point& prevPosition)
     InvalidateTransform();
 }
 
-void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
+void GuiWidget::ParentSizeChanged(const Point& prevParentSize, const Point& currParentSize)
 {
     Point newPosition = mPosition;
     Point newSize = mSize;
 
     if (mAnchors.mL && mAnchors.mR)
     {
-        newSize.x = currSize.x - (mAnchorDistL + mAnchorDistR);
+        newSize.x = currParentSize.x - (mAnchorDistL + mAnchorDistR);
         if (newSize.x < 0)
         {
             newSize.x = 0;
@@ -910,17 +910,17 @@ void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
     {
         if (mAnchors.mR)
         {
-            newPosition.x = currSize.x - mAnchorDistR;
+            newPosition.x = currParentSize.x - (mAnchorDistR + mSize.x);
         }
         else if (!mAnchors.mL)
         {
-            newPosition.x = (currSize.x - (mAnchorDistL + mAnchorDistR)) / 2;
+            newPosition.x = (currParentSize.x - (mAnchorDistL + mAnchorDistR)) / 2;
         }
     }
 
     if (mAnchors.mT && mAnchors.mB)
     {
-        newSize.y = currSize.y - (mAnchorDistB + mAnchorDistT);
+        newSize.y = currParentSize.y - (mAnchorDistB + mAnchorDistT);
         if (newSize.y < 0)
         {
             newSize.y = 0;
@@ -930,11 +930,11 @@ void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
     {
         if (mAnchors.mB)
         {
-            newPosition.y = currSize.y - mAnchorDistB;
+            newPosition.y = currParentSize.y - (mAnchorDistB + mSize.y);
         }
         else if (!mAnchors.mT)
         {
-            newPosition.y = (currSize.y - (mAnchorDistT + mAnchorDistB)) / 2;
+            newPosition.y = (currParentSize.y - (mAnchorDistT + mAnchorDistB)) / 2;
         }
     }
 
