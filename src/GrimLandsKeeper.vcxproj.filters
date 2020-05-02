@@ -47,9 +47,6 @@
     <Filter Include="Game\Scene">
       <UniqueIdentifier>{5d7e5c39-c126-4d85-af00-6cd205e2a863}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\GUI">
-      <UniqueIdentifier>{29e877b2-cd75-42db-97e8-6988bfc8e0c9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Third_Party\micropather">
       <UniqueIdentifier>{587d3ed4-1e6f-4f29-a0f0-70825ca6bc5e}</UniqueIdentifier>
     </Filter>
@@ -86,9 +83,6 @@
     <Filter Include="Game\Scene\CameraControllers">
       <UniqueIdentifier>{23269d5d-8ec3-4467-95fb-43902adf5c8d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\GUI\WidgetsLibrary">
-      <UniqueIdentifier>{75816ac9-2884-4e8b-b301-5a900ad8cfda}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Application\ToolsUI">
       <UniqueIdentifier>{cab02080-9d94-428b-9fe1-8cc097e21510}</UniqueIdentifier>
     </Filter>
@@ -100,6 +94,15 @@
     </Filter>
     <Filter Include="Data\Screens">
       <UniqueIdentifier>{28665352-7ac3-458c-84da-6979357bfcc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UserInterface">
+      <UniqueIdentifier>{e2362277-13a2-4543-8c28-1d5e46d9f263}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\GuiLibrary">
+      <UniqueIdentifier>{29e877b2-cd75-42db-97e8-6988bfc8e0c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\GuiLibrary\Widgets">
+      <UniqueIdentifier>{75816ac9-2884-4e8b-b301-5a900ad8cfda}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -424,28 +427,28 @@
       <Filter>Game\Render\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="GuiDefs.h">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClInclude>
     <ClInclude Include="GuiManager.h">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClInclude>
     <ClInclude Include="GuiWidget.h">
-      <Filter>Game\GUI\WidgetsLibrary</Filter>
+      <Filter>Game\GuiLibrary\Widgets</Filter>
     </ClInclude>
     <ClInclude Include="GuiRenderer.h">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClInclude>
     <ClInclude Include="GuiPictureBox.h">
-      <Filter>Game\GUI\WidgetsLibrary</Filter>
+      <Filter>Game\GuiLibrary\Widgets</Filter>
     </ClInclude>
     <ClInclude Include="GuiButton.h">
-      <Filter>Game\GUI\WidgetsLibrary</Filter>
+      <Filter>Game\GuiLibrary\Widgets</Filter>
     </ClInclude>
     <ClInclude Include="GuiPanel.h">
-      <Filter>Game\GUI\WidgetsLibrary</Filter>
+      <Filter>Game\GuiLibrary\Widgets</Filter>
     </ClInclude>
     <ClInclude Include="GuiEvent.h">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClInclude>
     <ClInclude Include="3rd_party\stb_image.h">
       <Filter>Third_Party\stb</Filter>
@@ -466,34 +469,37 @@
       <Filter>Application\ToolsUI\Windows</Filter>
     </ClInclude>
     <ClInclude Include="GuiHierarchy.h">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClInclude>
     <ClInclude Include="GuiScrollbar.h">
-      <Filter>Game\GUI\WidgetsLibrary</Filter>
+      <Filter>Game\GuiLibrary\Widgets</Filter>
     </ClInclude>
     <ClInclude Include="unique_string.h">
       <Filter>Lib</Filter>
     </ClInclude>
     <ClInclude Include="GuiHelpers.h">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClInclude>
     <ClInclude Include="logical_expression.h">
       <Filter>Lib</Filter>
     </ClInclude>
     <ClInclude Include="GuiAction.h">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClInclude>
     <ClInclude Include="GuiLayout.h">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClInclude>
     <ClInclude Include="GuiScreen.h">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClInclude>
     <ClInclude Include="GuiTestGamestate.h">
       <Filter>Game\GameStates</Filter>
     </ClInclude>
     <ClInclude Include="GuiTestScreen.h">
       <Filter>Game\GameScreens</Filter>
+    </ClInclude>
+    <ClInclude Include="GameUiButtons.h">
+      <Filter>Game\UserInterface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -704,25 +710,25 @@
       <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
     <ClCompile Include="GuiManager.cpp">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClCompile>
     <ClCompile Include="GuiWidget.cpp">
-      <Filter>Game\GUI\WidgetsLibrary</Filter>
+      <Filter>Game\GuiLibrary\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="GuiRenderer.cpp">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClCompile>
     <ClCompile Include="GuiPictureBox.cpp">
-      <Filter>Game\GUI\WidgetsLibrary</Filter>
+      <Filter>Game\GuiLibrary\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="GuiButton.cpp">
-      <Filter>Game\GUI\WidgetsLibrary</Filter>
+      <Filter>Game\GuiLibrary\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="GuiPanel.cpp">
-      <Filter>Game\GUI\WidgetsLibrary</Filter>
+      <Filter>Game\GuiLibrary\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="GuiEvent.cpp">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClCompile>
     <ClCompile Include="ToolsUIWindow.cpp">
       <Filter>Application\ToolsUI</Filter>
@@ -740,31 +746,34 @@
       <Filter>Application\ToolsUI\Windows</Filter>
     </ClCompile>
     <ClCompile Include="GuiHierarchy.cpp">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClCompile>
     <ClCompile Include="GuiScrollbar.cpp">
-      <Filter>Game\GUI\WidgetsLibrary</Filter>
+      <Filter>Game\GuiLibrary\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="unique_string.cpp">
       <Filter>Lib</Filter>
     </ClCompile>
     <ClCompile Include="GuiHelpers.cpp">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClCompile>
     <ClCompile Include="GuiAction.cpp">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClCompile>
     <ClCompile Include="GuiLayout.cpp">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClCompile>
     <ClCompile Include="GuiScreen.cpp">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClCompile>
     <ClCompile Include="GuiTestGamestate.cpp">
       <Filter>Game\GameStates</Filter>
     </ClCompile>
     <ClCompile Include="GuiTestScreen.cpp">
       <Filter>Game\GameScreens</Filter>
+    </ClCompile>
+    <ClCompile Include="GameUiButtons.cpp">
+      <Filter>Game\UserInterface</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -180,6 +180,7 @@
     <ClInclude Include="3rd_party\stb_image.h" />
     <ClInclude Include="AABBTree.h" />
     <ClInclude Include="CreatureDefs.h" />
+    <ClInclude Include="GameUiButtons.h" />
     <ClInclude Include="GuiButton.h" />
     <ClInclude Include="GuiEvent.h" />
     <ClInclude Include="GuiHelpers.h" />
@@ -314,6 +315,7 @@
     <ClCompile Include="CommonTypes.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="ConsoleVariable.cpp" />
+    <ClCompile Include="GameUiButtons.cpp" />
     <ClCompile Include="GuiHelpers.cpp" />
     <ClCompile Include="GuiHierarchy.cpp" />
     <ClCompile Include="GuiAction.cpp" />
