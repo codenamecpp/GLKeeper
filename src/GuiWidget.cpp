@@ -1220,6 +1220,11 @@ void GuiWidget::Deselect()
     }
 }
 
+void GuiWidget::SetActionsContext(GuiActionContext* context)
+{
+    mActionsContext = context;
+}
+
 bool GuiWidget::IsSelected() const
 {
     return gGuiManager.mSelectedWidget == this;
@@ -1247,4 +1252,48 @@ void GuiWidget::LoadActions(cxx::json_node_object actionsNode)
             mActions.AddAction(eventId, widgetAction);
         }
     }    
+}
+
+bool GuiWidget::ResolveCondition(const cxx::unique_string& name, bool& isTrue)
+{
+    static cxx::unique_string id_pressed("pressed");
+    static cxx::unique_string id_hovered("hovered");
+    static cxx::unique_string id_enabled("enabled");
+    static cxx::unique_string id_visible("visible");
+
+    if (name == id_pressed)
+    {
+        isTrue = IsSelected();
+        return true;
+    }
+
+    if (name == id_hovered)
+    {
+        isTrue = IsHovered();
+        return true;
+    }
+
+    if (name == id_enabled)
+    {
+        isTrue = IsEnabled();
+        return true;
+    }
+
+    if (name == id_visible)
+    {
+        isTrue = IsVisible();
+        return true;
+    }
+
+    // examine ext contexts up to the root
+    for (GuiWidget* currWidget = this; currWidget; 
+        currWidget = currWidget->mParent)
+    {
+        GuiActionContext* actionContext = currWidget->mActionsContext;
+        if (actionContext && actionContext->ResolveCondition(name, isTrue))
+            break;
+    }
+
+    debug_assert(false);
+    return false;
 }

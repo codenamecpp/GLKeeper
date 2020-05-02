@@ -8,6 +8,20 @@ class GuiActionsHolder;
 
 //////////////////////////////////////////////////////////////////////////
 
+class GuiActionContext: public cxx::noncopyable
+{
+public:
+    virtual ~GuiActionContext()
+    {
+    }
+    // try to resolve single condition by name
+    // @param name: Identifier name
+    // @param isTrue: Output result    
+    virtual bool ResolveCondition(const cxx::unique_string& name, bool& isTrue) = 0;
+};
+
+//////////////////////////////////////////////////////////////////////////
+
 // base widget action class
 class GuiAction: public cxx::noncopyable
 {

@@ -5,9 +5,11 @@
 
 // basic gui element class
 class GuiWidget: public cxx::handled_object<GuiWidget>
+    , public GuiActionContext
 {
     friend class GuiManager;
     friend class GuiHierarchy;
+    friend class GuiAction;
 
 public:
     
@@ -40,6 +42,7 @@ public:
     Point mMaxSize; // pixels
     GuiWidgetMetaClass* mMetaClass; // cannot be null, cannot be changed once widget created
     GuiActionsHolder mActions;
+    GuiActionContext* mActionsContext = nullptr;
 
 public:
     // construct widget
@@ -128,6 +131,7 @@ public:
     // get child widget by its name
     GuiWidget* GetChild(const cxx::unique_string& name) const;
     GuiWidget* GetChild(const std::string& name) const;
+    GuiWidget* GetLastChild() const;
     // get first child withing sub-hierarchy with specific name
     GuiWidget* SearchForChild(const cxx::unique_string& name) const;
     GuiWidget* SearchForChild(const std::string& name) const;
@@ -177,6 +181,10 @@ public:
     bool IsSelected() const;
     void Deselect();
 
+    // set extended context for widget actions
+    // @param context: Context or null
+    void SetActionsContext(GuiActionContext* context);
+
     // convert from local to screen space and vice versa
     // @param position: Point
     Point LocalToScreen(const Point& position) const;
@@ -194,8 +202,6 @@ protected:
     GuiWidget(GuiWidgetMetaClass* widgetClass);
     // copy properties
     GuiWidget(GuiWidget* copyWidget);
-
-    GuiWidget* GetLastChild() const;
 
     void ParentPositionChanged(const Point& prevPosition);
     void ParentSizeChanged(const Point& prevSize, const Point& currSize);
@@ -219,6 +225,9 @@ protected:
     void LoadActions(cxx::json_node_object actionsNode);
 
 protected:
+    // override GuiActionsContext
+    bool ResolveCondition(const cxx::unique_string& name, bool& isTrue) override;
+
     // overridables
     virtual void HandleLoadProperties(cxx::json_node_object documentNode) {}
 

@@ -66,24 +66,8 @@ bool GuiAction::EvaluateConditions(GuiWidget* parentWidget) const
     {
         isTrue = mConditions.evaluate_expression([parentWidget](const cxx::unique_string& name)
         {
-            if (name == "pressed")
-            {
-                return parentWidget->IsSelected();
-            }
-            if (name == "hovered")
-            {
-                return parentWidget->IsHovered();
-            }
-            if (name == "enabled")
-            {
-                return parentWidget->IsEnabled();
-            }
-            if (name == "visible")
-            {
-                return parentWidget->IsVisible();
-            }
-            debug_assert(false);
-            return false;
+            bool condition;
+            return parentWidget->ResolveCondition(name, condition) && condition;
         });
     }
     return isTrue;
