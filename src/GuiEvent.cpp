@@ -174,7 +174,7 @@ void GuiEventsHandler::ProcessEvent(GuiEvent* eventData)
     // check by pointer and name
     const Subscriptions& subscriptions = map_iterator->second;
     if (!cxx::contains(subscriptions.mPointers, eventData->mEventSender) &&
-        !cxx::contains(subscriptions.mNames, eventData->mEventSender->mName))
+        !cxx::contains(subscriptions.mNames, eventData->mEventSender->mId))
     {
         return;
     }

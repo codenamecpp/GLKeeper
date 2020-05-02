@@ -34,7 +34,7 @@ GuiWidget::GuiWidget(GuiWidgetMetaClass* widgetClass)
 
 GuiWidget::GuiWidget(GuiWidget* copyWidget)
     : mMetaClass(copyWidget->mMetaClass)
-    , mName(copyWidget->mName)
+    , mId(copyWidget->mId)
     , mUserData()
     , mAnchors(copyWidget->mAnchors)
     , mTransform(copyWidget->mTransform)
@@ -88,12 +88,13 @@ void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
         return;
     }
 
-    mName = cxx::unique_string(documentNode.get_element_name());
-    if (mName.empty())
+    cxx::json_get_attribute(documentNode, "id", mId);
+
+    if (mId.empty())
     {
         // generate unique name
         const char* name = cxx::va("%s_%p", mMetaClass->mClassName.c_str(), this);
-        mName = cxx::unique_string(name);
+        mId = cxx::unique_string(name);
     }
 
     bool is_visible = false;
@@ -570,7 +571,7 @@ GuiWidget* GuiWidget::GetChild(const cxx::unique_string& name) const
     for (GuiWidget* currChild = mFirstChild; currChild; 
         currChild = currChild->mNextSibling)
     {
-        if (currChild->mName == name)
+        if (currChild->mId == name)
             return currChild;
     }
     return nullptr;
@@ -581,7 +582,7 @@ GuiWidget* GuiWidget::GetChild(const std::string& name) const
     for (GuiWidget* currChild = mFirstChild; currChild; 
         currChild = currChild->mNextSibling)
     {
-        if (currChild->mName == name)
+        if (currChild->mId == name)
             return currChild;
     }
     return nullptr;

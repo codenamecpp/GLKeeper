@@ -49,7 +49,7 @@ bool GuiHierarchy::LoadFromJson(const cxx::json_document& jsonDocument)
     // load widgets hierarchy
     if (cxx::json_node_object hierarchyNode = jsonRootNode["hierarchy"])
     {
-        if (!LoadHierarchy(hierarchyNode.first_child()))
+        if (!LoadHierarchy(hierarchyNode))
         {
             debug_assert(false);
 
@@ -124,7 +124,7 @@ GuiWidget* GuiHierarchy::GetWidgetByPath(const std::string& widgetPath) const
 
     if (!cxx::contains(widgetPath, '/'))
     {
-        if (mRootWidget->mName == widgetPath)
+        if (mRootWidget->mId == widgetPath)
             return mRootWidget;
 
         return nullptr;
@@ -139,7 +139,7 @@ GuiWidget* GuiHierarchy::GetWidgetByPath(const std::string& widgetPath) const
         return nullptr;
     }
 
-    if (mRootWidget->mName != currentName)
+    if (mRootWidget->mId != currentName)
         return nullptr;
 
     GuiWidget* currentWidget = mRootWidget;
@@ -170,7 +170,7 @@ GuiWidget* GuiHierarchy::SearchForWidget(const cxx::unique_string& name) const
         return nullptr;
     }
 
-    if (mRootWidget->mName == name)
+    if (mRootWidget->mId == name)
         return mRootWidget;
 
     return mRootWidget->SearchForChild(name);
@@ -184,7 +184,7 @@ GuiWidget* GuiHierarchy::SearchForWidget(const std::string& name) const
         return nullptr;
     }
 
-    if (mRootWidget->mName == name)
+    if (mRootWidget->mId == name)
         return mRootWidget;
 
     return mRootWidget->SearchForChild(name);
@@ -246,7 +246,7 @@ GuiWidget* GuiHierarchy::DeserializeWidgetWithChildren(cxx::json_node_object obj
         return widget;
 
     // deserialize childs
-    if (cxx::json_node_object childsNode = objectNode["children"])
+    if (cxx::json_node_array childsNode = objectNode["children"])
     {
         for (cxx::json_node_object currNode = childsNode.first_child(); currNode; 
             currNode = currNode.next_sibling())
@@ -288,7 +288,7 @@ GuiWidget* GuiHierarchy::DeserializeTemplateWidget(cxx::json_node_object objectN
     widget->LoadProperties(objectNode);
 
     // deserialize childs
-    if (cxx::json_node_object childsNode = objectNode["children"])
+    if (cxx::json_node_array childsNode = objectNode["children"])
     {
         for (cxx::json_node_object currNode = childsNode.first_child(); currNode; 
             currNode = currNode.next_sibling())

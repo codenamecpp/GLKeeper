@@ -16,7 +16,7 @@ public:
     
     static GuiWidgetMetaClass MetaClass; // base widget class
 
-    cxx::unique_string mName; // user-defined identifier for widget
+    cxx::unique_string mId; // user-defined identifier for widget
     GuiUserData mUserData; // user-defined data
 
     // custom events

@@ -97,31 +97,31 @@ void LayoutsEditGamestate::HandleInputEvent(KeyCharEvent& inputEvent)
 void LayoutsEditGamestate::HandleClick(GuiWidget* sender)
 {
     debug_assert(sender);
-    gConsole.LogMessage(eLogMessage_Debug, "on_click %s", sender->mName.c_str());
+    gConsole.LogMessage(eLogMessage_Debug, "on_click %s", sender->mId.c_str());
 }
 
 void LayoutsEditGamestate::HandleMouseEnter(GuiWidget* sender)
 {
     debug_assert(sender);
-    gConsole.LogMessage(eLogMessage_Debug, "on_mouse_enter %s", sender->mName.c_str());
+    gConsole.LogMessage(eLogMessage_Debug, "on_mouse_enter %s", sender->mId.c_str());
 }
 
 void LayoutsEditGamestate::HandleMouseLeave(GuiWidget* sender)
 {
     debug_assert(sender);
-    gConsole.LogMessage(eLogMessage_Debug, "on_mouse_leave %s", sender->mName.c_str());
+    gConsole.LogMessage(eLogMessage_Debug, "on_mouse_leave %s", sender->mId.c_str());
 }
 
 void LayoutsEditGamestate::HandleMouseDown(GuiWidget* sender, eMouseButton mbutton)
 {
     debug_assert(sender);
-    gConsole.LogMessage(eLogMessage_Debug, "on_mouse_down %s", sender->mName.c_str());
+    gConsole.LogMessage(eLogMessage_Debug, "on_mouse_down %s", sender->mId.c_str());
 }
 
 void LayoutsEditGamestate::HandleMouseUp(GuiWidget* sender, eMouseButton mbutton)
 {
     debug_assert(sender);
-    gConsole.LogMessage(eLogMessage_Debug, "on_mouse_up %s", sender->mName.c_str());
+    gConsole.LogMessage(eLogMessage_Debug, "on_mouse_up %s", sender->mId.c_str());
 }
 
 void LayoutsEditGamestate::HandleEvent(GuiWidget* sender, cxx::unique_string eventId)

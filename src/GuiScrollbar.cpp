@@ -97,17 +97,17 @@ void GuiScrollbar::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 void GuiScrollbar::HandleChildAttached(GuiWidget* childWidget)
 {
     bool doSubscribe = true;
-    if ((mSliderWidget == nullptr) && (childWidget->mName == "#slider"))
+    if ((mSliderWidget == nullptr) && (childWidget->mId == "#slider"))
     {
         mSliderWidget = childWidget;
         doSubscribe = true;
     }
-    if ((mDecPosWidget == nullptr) && (childWidget->mName == "#min"))
+    if ((mDecPosWidget == nullptr) && (childWidget->mId == "#min"))
     {
         mDecPosWidget = childWidget;
         doSubscribe = true;
     }
-    if ((mIncPosWidget == nullptr) && (childWidget->mName == "#max"))
+    if ((mIncPosWidget == nullptr) && (childWidget->mId == "#max"))
     {
         mIncPosWidget = childWidget;
         doSubscribe = true;
@@ -115,8 +115,8 @@ void GuiScrollbar::HandleChildAttached(GuiWidget* childWidget)
 
     if (doSubscribe)
     {
-        Subscribe(GuiEventId_OnMouseDown, childWidget->mName);
-        Subscribe(GuiEventId_OnMouseUp, childWidget->mName);
+        Subscribe(GuiEventId_OnMouseDown, childWidget->mId);
+        Subscribe(GuiEventId_OnMouseUp, childWidget->mId);
 
         SetupControlWidget(childWidget);
     }
@@ -145,8 +145,8 @@ void GuiScrollbar::HandleChildDetached(GuiWidget* childWidget)
 
     if (doUnSubscribe)
     {
-        Unsubscribe(GuiEventId_OnMouseDown, childWidget->mName);
-        Unsubscribe(GuiEventId_OnMouseUp, childWidget->mName);
+        Unsubscribe(GuiEventId_OnMouseDown, childWidget->mId);
+        Unsubscribe(GuiEventId_OnMouseUp, childWidget->mId);
     }
 }
 

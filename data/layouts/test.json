@@ -5,18 +5,16 @@
         {
             "class":"button", "pos":[200,200], "size":[100,100], "origin":["50%","50%"],
             "children":
-            {
-                "icon":
+            [
                 {
-                    "class":"picture_box", "size":["100%","100%"], "origin":["50%","50%"], "pos":["50%","50%"], "tint_color":"ffffffff",
+                    "id":"icon", "class":"picture_box", "size":["100%","100%"], "origin":["50%","50%"], "pos":["50%","50%"],
                     "texture":"GUI\\Rooms\\Bridge_Stone", "size_mode":"scale"
                 },
-                "hover_frame":
                 {
-                    "class":"picture_box", "size":["100%","100%"], "origin":["50%","50%"], "pos":["50%","50%"], "tint_color":"ffffffff",
+                    "id":"hover_frame", "class":"picture_box", "size":["100%","100%"], "origin":["50%","50%"], "pos":["50%","50%"],
                     "texture":"GUI\\Icons\\frame", "size_mode":"scale", "visible":false
                 }
-            },
+            ],
             "actions":
             {
                 "on_mouse_enter": 
@@ -44,12 +42,10 @@
         {
             "class":"scrollbar", "pos":[400,200], "size":[400,30], "anchors":"all",
             "children":
-            {
-                "#min" : {"class":"button", "draw_background":true},
-                "#max": {"class":"button", "draw_background":true},
-                "#slider": 
-                {
-                    "class":"button", "draw_background":true,
+            [
+                {"id":"#min", "class":"button", "draw_background":true},
+                {"id":"#max", "class":"button", "draw_background":true},
+                {"id":"#slider", "class":"button", "draw_background":true,
                     "actions":
                     {
                         "on_mouse_enter": 
@@ -63,54 +59,48 @@
                         ]
                     }
                 }
-            }
+            ]
         }
     },
 
     "hierarchy":
     {
-        "root":
-        {
-            "class":"widget", "size":["100%","100%"],
-            "children":
+        "id":"root", "class":"widget", "size":["100%","100%"],
+        "children":
+        [
             {
-                "button_0":
+                "id":"button_0", "template_class":"test_button", "pos":[200,200], "size":[100,100],
+                "events":
                 {
-                    "template_class":"test_button", "pos":[200,200], "size":[100,100],
-                    "events":
-                    {
-                        "on_click": "custom_on_click_event"
-                    }
-                },
-                "slider_0": {"template_class":"test_scrollbar", "pos":[400,200], "size":[400,30]},
-                "button_1": {"template_class":"test_button", "pos":[200,600], "size":[50,50]},
-                "sb_0": {"template_class":"test_scrollbar", "pos":[400,600], "size":[400,30]},
-
-                "buttons_container": 
-                {
-                    "class":"panel", "size":[700, 200], "draw_background":true, "pos":[200, 330], "anchors":"all",
-                    "layout":
-                    {
-                        "type":"simple_grid", "orientation":"vert", "num_rows":2, 
-                        "padding":{"left":3, "top":2},
-                        "spacing":{"horz":3, "vert":2}
-                    },
-                    "children":
-                    {
-                        "button_1":{"template_class":"test_button", "size":[64,64]},
-                        "button_2":{"template_class":"test_button", "size":[64,64]},
-                        "button_3":{"template_class":"test_button", "size":[64,64]},
-                        "button_4":{"template_class":"test_button", "size":[64,64]},
-                        "button_5":{"template_class":"test_button", "size":[64,64]},
-                        "button_6":{"template_class":"test_button", "size":[64,64]},
-                        "button_7":{"template_class":"test_button", "size":[64,64]},
-                        "button_8":{"template_class":"test_button", "size":[64,64]},
-                        "button_9":{"template_class":"test_button", "size":[64,64]},
-                        "button_10":{"template_class":"test_button", "size":[64,64]},
-                        "button_11":{"template_class":"test_button", "size":[64,64]}
-                    }
+                    "on_click": "custom_on_click_event"
                 }
+            },
+            {"id":"slider_0", "template_class":"test_scrollbar", "pos":[400,200], "size":[400,30]},
+            {"id":"button_1", "template_class":"test_button", "pos":[200,600], "size":[50,50]},
+            {"id":"sb_0", "template_class":"test_scrollbar", "pos":[400,600], "size":[400,30]},
+            {
+                "id":"container", "class":"panel", "size":[700, 200], "draw_background":true, "pos":[200, 330], "anchors":"all",
+                "layout":
+                {
+                    "type":"simple_grid", "orientation":"vert", "num_rows":2, 
+                    "padding":{"left":3, "top":2},
+                    "spacing":{"horz":3, "vert":2}
+                },
+                "children":
+                [
+                    {"template_class":"test_button", "size":[64,64]},
+                    {"template_class":"test_button", "size":[64,64]},
+                    {"template_class":"test_button", "size":[64,64]},
+                    {"template_class":"test_button", "size":[64,64]},
+                    {"template_class":"test_button", "size":[64,64]},
+                    {"template_class":"test_button", "size":[64,64]},
+                    {"template_class":"test_button", "size":[64,64]},
+                    {"template_class":"test_button", "size":[64,64]},
+                    {"template_class":"test_button", "size":[64,64]},
+                    {"template_class":"test_button", "size":[64,64]},
+                    {"template_class":"test_button", "size":[64,64]}
+                ]
             }
-        }
+        ]
     }
 }
