@@ -79,7 +79,7 @@
             {"id":"button_1", "template_class":"test_button", "pos":[200,600], "size":[50,50]},
             {"id":"sb_0", "template_class":"test_scrollbar", "pos":[400,600], "size":[400,30]},
             {
-                "id":"container", "class":"panel", "size":[700, 200], "draw_background":true, "pos":[200, 330], "anchors":"all",
+                "id":"container", "class":"panel", "size":[700, 200], "draw_background":true, "pos":[200, 330], "anchors":["left", "right", "bottom"],
                 "layout":
                 {
                     "type":"simple_grid", "orientation":"vert", "num_rows":2, 

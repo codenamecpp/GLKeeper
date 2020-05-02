@@ -417,7 +417,7 @@
     <Text Include="..\docs\terrains.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\data\layouts\test.json" />
+    <None Include="..\data\screens\gui_test.json" />
     <None Include="..\data\shaders\anim_blend_frames.glsl" />
     <None Include="..\data\shaders\debug.glsl" />
     <None Include="..\data\shaders\gui.glsl" />

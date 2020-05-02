@@ -803,7 +803,7 @@
     <None Include="..\data\shaders\water_lava.glsl">
       <Filter>Data\Shaders</Filter>
     </None>
-    <None Include="..\data\layouts\test.json">
+    <None Include="..\data\screens\gui_test.json">
       <Filter>Data\Screens</Filter>
     </None>
   </ItemGroup>
