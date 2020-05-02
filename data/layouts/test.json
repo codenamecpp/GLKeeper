@@ -91,7 +91,9 @@
                     "class":"panel", "size":[700, 200], "draw_background":true, "pos":[200, 330], "anchors":"all",
                     "layout":
                     {
-                        "orientation":"vert", "num_rows":2, "spacing_horz":3, "spacing_vert":2
+                        "type":"simple_grid", "orientation":"vert", "num_rows":2, 
+                        "padding":{"left":3, "top":2},
+                        "spacing":{"horz":3, "vert":2}
                     },
                     "children":
                     {

@@ -2,33 +2,25 @@
 #include "GuiLayout.h"
 #include "GuiWidget.h"
 
-GuiLayout::GuiLayout(GuiWidget* container)
-    : mContainer(container)
-    , mOrientation()
+GuiLayout::GuiLayout()
+    : mOrientation(eGuiLayoutOrientation_Horizontal)
     , mCols(1)
     , mRows(1)
     , mSpacingHorz()
     , mSpacingVert()
+    , mPaddingL()
+    , mPaddingT()
+    , mPaddingR()
+    , mPaddingB()
+    , mLayoutType(eGuiLayout_None)
 {
-    debug_assert(mContainer);
-}
-
-GuiLayout::~GuiLayout()
-{
-}
-
-void GuiLayout::CopyProperties(const GuiLayout& sourceLayout)
-{
-    mOrientation = sourceLayout.mOrientation;
-    mCols = sourceLayout.mCols;
-    mRows = sourceLayout.mRows;
-    mSpacingHorz = sourceLayout.mSpacingHorz;
-    mSpacingVert = sourceLayout.mSpacingVert;
 }
 
 void GuiLayout::LoadProperties(cxx::json_node_object documentNode)
 {
+    cxx::json_get_attribute(documentNode, "type", mLayoutType);
     cxx::json_get_attribute(documentNode, "orientation", mOrientation);
+
     if (cxx::json_get_attribute(documentNode, "num_cols", mCols))
     {
         if (mCols < 1)
@@ -45,8 +37,34 @@ void GuiLayout::LoadProperties(cxx::json_node_object documentNode)
             mRows = 1;
         }
     }
-    cxx::json_get_attribute(documentNode, "spacing_horz", mSpacingHorz);
-    cxx::json_get_attribute(documentNode, "spacing_vert", mSpacingVert);
+
+    if (cxx::json_node_object spacingNode = documentNode["spacing"])
+    {
+        cxx::json_get_attribute(spacingNode, "horz", mSpacingHorz);
+        cxx::json_get_attribute(spacingNode, "vert", mSpacingVert);
+    }
+
+    if (cxx::json_node_object paddingNode = documentNode["padding"])
+    {
+        cxx::json_get_attribute(paddingNode, "left", mPaddingL);
+        cxx::json_get_attribute(paddingNode, "top", mPaddingT);
+        cxx::json_get_attribute(paddingNode, "bottom", mPaddingB);
+        cxx::json_get_attribute(paddingNode, "right", mPaddingR);
+    }
+}
+
+void GuiLayout::Clear()
+{
+    mLayoutType = eGuiLayout_None;
+    mOrientation = eGuiLayoutOrientation_Horizontal;
+    mCols = 1;
+    mRows = 1;
+    mSpacingHorz = 0;
+    mSpacingVert = 0;
+    mPaddingL = 0;
+    mPaddingT = 0;
+    mPaddingR = 0;
+    mPaddingB = 0;
 }
 
 void GuiLayout::SetOrientation(eGuiLayoutOrientation orientation)
@@ -55,7 +73,6 @@ void GuiLayout::SetOrientation(eGuiLayoutOrientation orientation)
         return;
 
     mOrientation = orientation;
-    LayoutElements();
 }
 
 void GuiLayout::SetColsCount(int numCols)
@@ -67,7 +84,6 @@ void GuiLayout::SetColsCount(int numCols)
         return;
 
     mCols = numCols;
-    LayoutElements();
 }
 
 void GuiLayout::SetRowsCount(int numRows)
@@ -79,7 +95,6 @@ void GuiLayout::SetRowsCount(int numRows)
         return;
 
     mRows = numRows;
-    LayoutElements();
 }
 
 void GuiLayout::SetSpacing(int spacingHorz, int spacingVert)
@@ -89,25 +104,33 @@ void GuiLayout::SetSpacing(int spacingHorz, int spacingVert)
 
     mSpacingHorz = spacingHorz;
     mSpacingVert = spacingVert;
-    LayoutElements();
 }
 
-void GuiLayout::LayoutElements()
+void GuiLayout::SetPadding(int paddingL, int paddingT, int paddingR, int paddingB)
 {
-    if (mContainer == nullptr)
+    if (mPaddingB == paddingB && 
+        mPaddingL == paddingL && 
+        mPaddingR == paddingR && 
+        mPaddingT == paddingT)
     {
-        debug_assert(false);
         return;
     }
+    mPaddingB = paddingB;
+    mPaddingL = paddingL;
+    mPaddingR = paddingR; 
+    mPaddingT = paddingT;
+}
 
-    Point currPos(0, 0);
+void GuiLayout::LayoutSimpleGrid(GuiWidget* container)
+{
+    Point currPos(mPaddingL, mPaddingT);
     int currIndex = 0;
     int currLineMaxElementSize = 0;
 
     const int maxElementsInLine = mOrientation == eGuiLayoutOrientation_Horizontal ? mCols : mRows;
     debug_assert(maxElementsInLine > 0);
 
-    for (GuiWidget* curr_child = mContainer->GetChild(); curr_child; 
+    for (GuiWidget* curr_child = container->GetChild(); curr_child; 
         curr_child = curr_child->NextSibling())
     {
         curr_child->SetPosition(currPos);
@@ -129,16 +152,32 @@ void GuiLayout::LayoutElements()
         {
             if (mOrientation == eGuiLayoutOrientation_Horizontal)
             {
-                currPos.x = 0;
+                currPos.x = mPaddingL;
                 currPos.y += currLineMaxElementSize + mSpacingVert;
             }
             else // vertical
             {
                 currPos.x += currLineMaxElementSize + mSpacingHorz;
-                currPos.y = 0;
+                currPos.y = mPaddingT;
             }
             currLineMaxElementSize = 0;
             currIndex = 0;
         }
     } // for
+}
+
+void GuiLayout::LayoutElements(GuiWidget* container)
+{
+    if (container == nullptr)
+    {
+        debug_assert(false);
+        return;
+    }
+
+    switch (mLayoutType)
+    {
+        case eGuiLayout_SimpleGrid:
+            LayoutSimpleGrid(container);    
+        break;
+    }
 }

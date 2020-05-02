@@ -2,6 +2,7 @@
 
 #include "GuiDefs.h"
 #include "GuiAction.h"
+#include "GuiLayout.h"
 
 // basic gui element class
 class GuiWidget: public cxx::handled_object<GuiWidget>
@@ -263,7 +264,7 @@ protected:
     GuiWidget* mNextSibling = nullptr;
     GuiWidget* mPrevSibling = nullptr;
 
-    GuiLayout* mLayout = nullptr;
+    GuiLayout mLayout;
 
     // layout params
     GuiAnchors mAnchors;

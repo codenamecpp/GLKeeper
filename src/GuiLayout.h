@@ -2,19 +2,19 @@
 
 #include "GuiDefs.h"
 
-// simple grid layout implementation
-class GuiLayout: public cxx::noncopyable
+// layout implementation
+class GuiLayout
 {
 public:
-    GuiLayout(GuiWidget* container);
-    ~GuiLayout();
-    void CopyProperties(const GuiLayout& sourceLayout);
+    GuiLayout();
 
     // arrange widgets within container
-    void LayoutElements();
+    void LayoutElements(GuiWidget* container);
 
     // read layout properties from json document
     void LoadProperties(cxx::json_node_object documentNode);
+
+    void Clear();
 
     // set orientation mode for elements
     // @param orientation: Orientation mode
@@ -30,12 +30,24 @@ public:
     // @param spacingHorz, spacingVert: Distance
     void SetSpacing(int spacingHorz, int spacingVert);
 
+    // padding will reduce the inside of the container element without changing it‘s size
+    void SetPadding(int paddingL, int paddingT, int paddingR, int paddingB);
+
 private:
-    GuiWidget* mContainer;
-    // grid layout params
+    void LayoutSimpleGrid(GuiWidget* container);
+
+private:
+    eGuiLayout mLayoutType;
     eGuiLayoutOrientation mOrientation;
+
     int mCols;
     int mRows;
+
     int mSpacingHorz;
     int mSpacingVert;
+    
+    int mPaddingL; // left padding
+    int mPaddingT; // top padding
+    int mPaddingR; // right padding
+    int mPaddingB; // bottom padding
 };

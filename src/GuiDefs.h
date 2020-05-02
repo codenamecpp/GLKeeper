@@ -15,6 +15,13 @@ struct GuiEvent;
 
 using GuiUserData = void*; // widget custom data
 
+enum eGuiLayout
+{
+    eGuiLayout_None,
+    eGuiLayout_SimpleGrid,
+};
+decl_enum_strings(eGuiLayout);
+
 enum eGuiLayoutOrientation
 {
     eGuiLayoutOrientation_Horizontal,

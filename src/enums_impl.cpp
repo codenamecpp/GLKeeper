@@ -324,6 +324,12 @@ impl_enum_strings(eDirection)
     {eDirection_NW, "NW"},
 };
 
+impl_enum_strings(eGuiLayout)
+{
+    {eGuiLayout_None, "none"},
+    {eGuiLayout_SimpleGrid, "simple_grid"},
+};
+
 impl_enum_strings(eGuiLayoutOrientation)
 {
     {eGuiLayoutOrientation_Horizontal, "horz"},

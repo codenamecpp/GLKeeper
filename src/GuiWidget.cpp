@@ -73,16 +73,11 @@ GuiWidget::GuiWidget(GuiWidget* copyWidget)
     , mHasDrawBordersAttribute(copyWidget->mHasDrawBordersAttribute)
     , mBordersColor(copyWidget->mBordersColor)
     , mBackgroundColor(copyWidget->mBackgroundColor)
+    , mLayout(copyWidget->mLayout)
 {
     debug_assert(mMetaClass);
 
     mActions.CopyActions(copyWidget->mActions);
-
-    if (copyWidget->mLayout)
-    {
-        mLayout = new GuiLayout(this);
-        mLayout->CopyProperties(*copyWidget->mLayout);
-    }
 }
 
 void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
@@ -215,11 +210,7 @@ void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
     // layout
     if (cxx::json_node_object layoutNode = documentNode["layout"])
     {
-        debug_assert(mLayout == nullptr);
-
-        // deserialize layout
-        mLayout = new GuiLayout(this);
-        mLayout->LoadProperties(layoutNode);
+        mLayout.LoadProperties(layoutNode);
     }
 
     // actions
@@ -251,7 +242,7 @@ GuiWidget* GuiWidget::GetLastChild() const
 
 GuiWidget::~GuiWidget()
 {
-    SafeDelete(mLayout);
+    mLayout.Clear();
     if (mParent)
     {
         mParent->DetachChild(this);
@@ -1239,10 +1230,7 @@ void GuiWidget::SetupAnchorsOffsets()
 
 void GuiWidget::UpdateLayout()
 {
-    if (mLayout)
-    {
-        mLayout->LayoutElements();
-    }
+    mLayout.LayoutElements(this);
 }
 
 void GuiWidget::Deselect()
