@@ -33,7 +33,7 @@ void GuiManager::Deinit()
     ClearEventsQueue();
 
     UnregisterAllEventsHandlers();
-    SetSelectedWidget(nullptr);
+    SetMouseCapture(nullptr);
     DetachAllScreens();
 }
 
@@ -80,9 +80,9 @@ void GuiManager::UpdateFrame()
 
 void GuiManager::ProcessInputEvent(MouseButtonInputEvent& inputEvent)
 {
-    if (mSelectedWidget)
+    if (mMouseCaptureWidget)
     {
-        mSelectedWidget->ProcessEvent(inputEvent);
+        mMouseCaptureWidget->ProcessEvent(inputEvent);
 
         // skip hovered widget
         return;
@@ -98,9 +98,9 @@ void GuiManager::ProcessInputEvent(MouseMovedInputEvent& inputEvent)
 {
     UpdateHoveredWidget(); // do extra scan
 
-    if (mSelectedWidget)
+    if (mMouseCaptureWidget)
     {
-        mSelectedWidget->ProcessEvent(inputEvent);
+        mMouseCaptureWidget->ProcessEvent(inputEvent);
 
         // skip hovered widget
         return;
@@ -114,9 +114,9 @@ void GuiManager::ProcessInputEvent(MouseMovedInputEvent& inputEvent)
 
 void GuiManager::ProcessInputEvent(MouseScrollInputEvent& inputEvent)
 {
-    if (mSelectedWidget)
+    if (mMouseCaptureWidget)
     {
-        mSelectedWidget->ProcessEvent(inputEvent);
+        mMouseCaptureWidget->ProcessEvent(inputEvent);
 
         // skip hovered widget
         return;
@@ -138,6 +138,8 @@ void GuiManager::ProcessInputEvent(KeyCharEvent& inputEvent)
 
 void GuiManager::UpdateHoveredWidget()
 {
+    GuiWidget* newHovered = nullptr;
+
     if (mHoveredWidget)
     {
         if (!mHoveredWidget->IsVisibleWithParent() ||
@@ -148,11 +150,11 @@ void GuiManager::UpdateHoveredWidget()
         }
     }
 
-    GuiWidget* newHovered = nullptr;
+    UpdateMouseCaptureWidget();
 
-    if (mSelectedWidget)
+    if (mMouseCaptureWidget)
     {
-        newHovered = mSelectedWidget->PickWidget(gInputsManager.mCursorPosition);
+        newHovered = mMouseCaptureWidget->PickWidget(gInputsManager.mCursorPosition);
     }
 
     if (newHovered == nullptr)
@@ -186,6 +188,19 @@ void GuiManager::UpdateHoveredWidget()
     if (mHoveredWidget)
     {
         mHoveredWidget->NotifyHoverStateChange(true);
+    }
+}
+
+void GuiManager::UpdateMouseCaptureWidget()
+{
+    if (mMouseCaptureWidget)
+    {
+        if (!mMouseCaptureWidget->IsVisibleWithParent() ||
+            !mMouseCaptureWidget->IsEnabledWithParent())
+        {
+            mMouseCaptureWidget->NotifyMouseCaptureStateChange(false);
+            mMouseCaptureWidget.reset();
+        }
     }
 }
 
@@ -239,12 +254,30 @@ GuiWidget* GuiManager::CreateWidget(cxx::unique_string className) const
     return nullptr;
 }
 
-void GuiManager::SetSelectedWidget(GuiWidget* mouseListener)
+void GuiManager::SetMouseCapture(GuiWidget* widget)
 {
-    if (mSelectedWidget == mouseListener)
+    if (mMouseCaptureWidget == widget)
         return;
 
-    mSelectedWidget = mouseListener;
+    if (mMouseCaptureWidget)
+    {
+        mMouseCaptureWidget->NotifyMouseCaptureStateChange(false);
+    }
+    mMouseCaptureWidget = widget;
+    if (mMouseCaptureWidget)
+    {
+        mMouseCaptureWidget->NotifyMouseCaptureStateChange(true);
+    }
+}
+
+void GuiManager::ReleaseMouseCapture(GuiWidget* widget)
+{
+    debug_assert(widget);
+    if (mMouseCaptureWidget == widget && widget)
+    {
+        mMouseCaptureWidget->NotifyMouseCaptureStateChange(false);
+        mMouseCaptureWidget.reset();
+    }
 }
 
 void GuiManager::HandleScreenResolutionChanged()

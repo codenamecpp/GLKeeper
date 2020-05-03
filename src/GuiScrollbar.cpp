@@ -77,7 +77,7 @@ void GuiScrollbar::SetupControlWidget(GuiWidget* controlWidget)
 
 void GuiScrollbar::HandleUpdate(float deltaTime)
 {
-    if (mSliderWidget && mSliderWidget->IsSelected())
+    if (mSliderWidget && mSliderWidget->IsPressed())
     {
         Point pos = ScreenToLocal(gInputsManager.mCursorPosition);
         mSliderWidget->SetPositionX(pos.x);

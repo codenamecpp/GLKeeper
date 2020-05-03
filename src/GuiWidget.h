@@ -177,11 +177,8 @@ public:
     bool IsVisible() const { return mVisible; }
     bool IsEnabled() const { return mEnabled; }
     bool IsHovered() const { return mHovered; }
+    bool IsPressed() const { return mPressed; }
     bool IsClipChildren() const { return mClipChildren; }
-
-    // test whether widget is selected
-    bool IsSelected() const;
-    void Deselect();
 
     // set extended context for widget actions
     // @param context: Context or null
@@ -215,6 +212,7 @@ protected:
     void ShownStateChanged();
     void EnableStateChanged();
     void HoveredStateChanged();
+    void PressedStateChanged();
 
     Point ComputeOriginPixels() const;
     Point ComputePositionPixels() const;
@@ -222,6 +220,10 @@ protected:
 
     void SetDetached();
     void SetupAnchorsOffsets();
+
+    // mouse capture
+    void GetMouseCapture();
+    void ReleaseMouseCapture();
 
     // post widget event to gui system
     void PostEvent(const GuiEvent& eventData);
@@ -233,6 +235,7 @@ protected:
 
     // gui notifications
     void NotifyHoverStateChange(bool isHovered);
+    void NotifyMouseCaptureStateChange(bool isMouseCapture);
 
 protected:
     // overridables
@@ -253,6 +256,7 @@ protected:
     virtual void HandleShownStateChanged() {}
     virtual void HandleEnableStateChanged() {}
     virtual void HandleHoveredStateChanged() {}
+    virtual void HandlePressedStateChanged() {}
 
     virtual void HandleInputEvent(MouseButtonInputEvent& inputEvent) {}
     virtual void HandleInputEvent(MouseMovedInputEvent& inputEvent) {}
@@ -305,4 +309,5 @@ protected:
     // state flags
     bool mTransformInvalidated = true; // transformations matrix dirty
     bool mHovered = false;
+    bool mPressed = false;
 };

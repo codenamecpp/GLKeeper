@@ -366,24 +366,28 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
     }
     
     bool hasBeenClicked = false;
+    bool hasBeenPressed = false;
+
     // process clicks
     if (inputEvent.mButton == eMouseButton_Left)
     {
-        if (inputEvent.mPressed)
+        hasBeenPressed = inputEvent.mPressed;
+        if (!hasBeenPressed)
         {
-            if (IsHovered())
-            {
-                gGuiManager.SetSelectedWidget(this);
-            }
-        }
-        else
-        {
-            hasBeenClicked = IsHovered() && IsSelected();
-            Deselect();
+            ReleaseMouseCapture();
+            hasBeenClicked = IsHovered() && IsPressed();
         }
     }
 
     HandleInputEvent(inputEvent);
+
+    if (hasBeenPressed)
+    {
+        GetMouseCapture();
+
+        mPressed = true;
+        PressedStateChanged();
+    }
 
     if (hasBeenClicked)
     {
@@ -1023,8 +1027,6 @@ void GuiWidget::ShownStateChanged()
 {
     if (!IsVisibleWithParent()) 
     {
-        Deselect();
-
         GuiEvent eventData = GuiEvent::HideEvent(this);
         PostEvent(eventData);
     }
@@ -1047,8 +1049,6 @@ void GuiWidget::EnableStateChanged()
 {
     if (!IsEnabledWithParent())
     {
-        Deselect();
-
         GuiEvent eventData = GuiEvent::DisableEvent(this);
         PostEvent(eventData);
     }
@@ -1095,6 +1095,11 @@ void GuiWidget::HoveredStateChanged()
     }
 
     HandleHoveredStateChanged();
+}
+
+void GuiWidget::PressedStateChanged()
+{
+    HandlePressedStateChanged();
 }
 
 Point GuiWidget::ComputeOriginPixels() const
@@ -1189,6 +1194,16 @@ void GuiWidget::SetupAnchorsOffsets()
     mAnchorDistB = parentSize.y - (mAnchorDistT + mSize.y);
 }
 
+void GuiWidget::GetMouseCapture()
+{
+    gGuiManager.SetMouseCapture(this);
+}
+
+void GuiWidget::ReleaseMouseCapture()
+{
+    gGuiManager.ReleaseMouseCapture(this);
+}
+
 void GuiWidget::PostEvent(const GuiEvent& eventData)
 {
     // notify widget actions
@@ -1202,22 +1217,9 @@ void GuiWidget::UpdateLayout()
     mLayout.LayoutElements(this);
 }
 
-void GuiWidget::Deselect()
-{
-    if (IsSelected())
-    {
-        gGuiManager.SetSelectedWidget(nullptr);
-    }
-}
-
 void GuiWidget::SetActionsContext(GuiActionContext* context)
 {
     mActionsContext = context;
-}
-
-bool GuiWidget::IsSelected() const
-{
-    return gGuiManager.mSelectedWidget == this;
 }
 
 void GuiWidget::LoadActions(cxx::json_node_object actionsNode)
@@ -1253,6 +1255,19 @@ void GuiWidget::NotifyHoverStateChange(bool isHovered)
     HoveredStateChanged();
 }
 
+void GuiWidget::NotifyMouseCaptureStateChange(bool isMouseCapture)
+{
+    if (isMouseCapture)
+        return;
+
+    // cancel pressed state
+    if (IsPressed())
+    {
+        mPressed = false;
+        PressedStateChanged();
+    }
+}
+
 bool GuiWidget::ResolveCondition(const cxx::unique_string& name, bool& isTrue) const
 {
     if (HandleResolveCondition(name, isTrue))
@@ -1265,7 +1280,7 @@ bool GuiWidget::ResolveCondition(const cxx::unique_string& name, bool& isTrue) c
 
     if (name == id_pressed)
     {
-        isTrue = IsSelected();
+        isTrue = IsPressed();
         return true;
     }
 
