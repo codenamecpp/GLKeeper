@@ -174,8 +174,10 @@ public:
     void SetDrawBorders(bool isEnabled);
 
     // test whether widget is visible, enabled or hovered
-    bool IsVisible() const;
-    bool IsEnabled() const;
+    bool IsVisibleWithParent() const;
+    bool IsEnabledWithParent() const;
+    bool IsVisible() const { return mVisible; }
+    bool IsEnabled() const { return mEnabled; }
     bool IsHovered() const { return mHovered; }
     bool IsClipChildren() const { return mClipChildren; }
 
@@ -295,11 +297,11 @@ protected:
     bool mHasDrawBackgroundAttribute = false; // fill widget rectangle with background color
     bool mHasDrawBordersAttribute = false; // draw borders
 
-    // state flags
-    bool mSelfEnabled = true;
-    bool mSelfVisible = true;
+    bool mEnabled = true;
+    bool mVisible = true;
     bool mClipChildren = false;
 
+    // state flags
     bool mTransformInvalidated = true; // transformations matrix dirty
     bool mHovered = false;
 };

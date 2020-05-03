@@ -51,8 +51,8 @@ GuiWidget::GuiWidget(GuiWidget* copyWidget)
     , mSizeUnitsH(copyWidget->mSizeUnitsH)
     , mSizePercents(copyWidget->mSizePercents)
     , mSize(copyWidget->mSize)
-    , mSelfVisible(copyWidget->mSelfVisible)
-    , mSelfEnabled(copyWidget->mSelfEnabled)
+    , mVisible(copyWidget->mVisible)
+    , mEnabled(copyWidget->mEnabled)
     , mClipChildren(copyWidget->mClipChildren)
     , mTemplateClassName(copyWidget->mTemplateClassName)
     , mOnClickEvent(copyWidget->mOnClickEvent)
@@ -279,7 +279,7 @@ void GuiWidget::RenderFrame(GuiRenderer& renderContext)
 {
     ComputeTransform();
 
-    if (!IsVisible())
+    if (!IsVisibleWithParent())
         return;
 
     renderContext.SetCurrentTransform(&mTransform);
@@ -332,11 +332,11 @@ void GuiWidget::UpdateFrame(float deltaTime)
 
 void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
 {
-    if (!IsVisible() || !mHasInteractiveAttribute)
+    if (!IsVisibleWithParent() || !mHasInteractiveAttribute)
         return;
 
     inputEvent.SetConsumed(true);
-    if (!IsEnabled())
+    if (!IsEnabledWithParent())
         return;
 
     // post event
@@ -413,11 +413,11 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
 
 void GuiWidget::ProcessEvent(MouseMovedInputEvent& inputEvent)
 {
-    if (!IsVisible() || !mHasInteractiveAttribute)
+    if (!IsVisibleWithParent() || !mHasInteractiveAttribute)
         return;
 
     inputEvent.SetConsumed(true);
-    if (!IsEnabled())
+    if (!IsEnabledWithParent())
         return;
 
     HandleInputEvent(inputEvent);
@@ -425,11 +425,11 @@ void GuiWidget::ProcessEvent(MouseMovedInputEvent& inputEvent)
 
 void GuiWidget::ProcessEvent(MouseScrollInputEvent& inputEvent)
 {
-    if (!IsVisible() || !mHasInteractiveAttribute)
+    if (!IsVisibleWithParent() || !mHasInteractiveAttribute)
         return;
 
     inputEvent.SetConsumed(true);
-    if (!IsEnabled())
+    if (!IsEnabledWithParent())
         return;
 
     HandleInputEvent(inputEvent);
@@ -531,7 +531,7 @@ GuiWidget* GuiWidget::PickWidget(const Point& screenPosition)
 {
     GuiWidget* resultWidget = nullptr;
 
-    if (!IsVisible())
+    if (!IsVisibleWithParent())
         return nullptr;
 
     // pick child widgets only if not pick target
@@ -542,7 +542,7 @@ GuiWidget* GuiWidget::PickWidget(const Point& screenPosition)
             currChild = currChild->mPrevSibling)
         {
             // is point within widget and visible
-            if (!currChild->IsVisible() || !currChild->IsScreenPointInsideRect(screenPosition))
+            if (!currChild->IsVisibleWithParent() || !currChild->IsScreenPointInsideRect(screenPosition))
                 continue;
 
             GuiWidget* currPicked = currChild->PickWidget(screenPosition);
@@ -745,25 +745,25 @@ void GuiWidget::SetSize(const Point& size, eGuiUnits units_w, eGuiUnits units_h)
     }
 }
 
-bool GuiWidget::IsVisible() const
+bool GuiWidget::IsVisibleWithParent() const
 {
     if (mParent)
-        return mSelfVisible && mParent->IsVisible();
+        return mVisible && mParent->IsVisibleWithParent();
 
-    return mSelfVisible;
+    return mVisible;
 }
 
-bool GuiWidget::IsEnabled() const
+bool GuiWidget::IsEnabledWithParent() const
 {
     if (mParent)
-        return mSelfEnabled && mParent->IsEnabled();
+        return mEnabled && mParent->IsEnabledWithParent();
 
-    return mSelfEnabled;
+    return mEnabled;
 }
 
 void GuiWidget::SetHovered(bool isHovered)
 {
-    if (!IsEnabled() || !mHasInteractiveAttribute)
+    if (!IsEnabledWithParent() || !mHasInteractiveAttribute)
         return;
 
     if (mHovered == isHovered)
@@ -800,13 +800,13 @@ void GuiWidget::SetDrawBorders(bool isEnabled)
 
 void GuiWidget::SetVisible(bool isVisible)
 {
-    if (mSelfVisible == isVisible)
+    if (mVisible == isVisible)
         return;
 
-    mSelfVisible = isVisible;
+    mVisible = isVisible;
     if (mParent) // check inherited state
     {
-        if (!mParent->IsVisible())
+        if (!mParent->IsVisibleWithParent())
             return;
     }
     ShownStateChanged();
@@ -814,13 +814,13 @@ void GuiWidget::SetVisible(bool isVisible)
 
 void GuiWidget::SetEnabled(bool isEnabled)
 {
-    if (mSelfEnabled == isEnabled)
+    if (mEnabled == isEnabled)
         return;
 
-    mSelfEnabled = isEnabled;
+    mEnabled = isEnabled;
     if (mParent) // check inherited state
     {
-        if (!mParent->IsEnabled())
+        if (!mParent->IsEnabledWithParent())
             return;
     }
     EnableStateChanged();
@@ -983,7 +983,7 @@ void GuiWidget::ParentSizeChanged(const Point& prevParentSize, const Point& curr
 
 void GuiWidget::ParentShownStateChanged()
 {
-    if (!mSelfVisible)
+    if (!mVisible)
         return;
 
     ShownStateChanged();
@@ -991,7 +991,7 @@ void GuiWidget::ParentShownStateChanged()
 
 void GuiWidget::ParentEnableStateChanged()
 {
-    if (!mSelfEnabled)
+    if (!mEnabled)
         return;
 
     EnableStateChanged();
@@ -1040,7 +1040,7 @@ void GuiWidget::SizeChanged(const Point& prevSize, bool setAnchors)
 
 void GuiWidget::ShownStateChanged()
 {
-    if (!IsVisible()) 
+    if (!IsVisibleWithParent()) 
     {
         Deselect();
 
@@ -1072,7 +1072,7 @@ void GuiWidget::ShownStateChanged()
 
 void GuiWidget::EnableStateChanged()
 {
-    if (!IsEnabled())
+    if (!IsEnabledWithParent())
     {
         Deselect();
 
@@ -1299,13 +1299,13 @@ bool GuiWidget::ResolveCondition(const cxx::unique_string& name, bool& isTrue) c
 
     if (name == id_enabled)
     {
-        isTrue = IsEnabled();
+        isTrue = IsEnabledWithParent();
         return true;
     }
 
     if (name == id_visible)
     {
-        isTrue = IsVisible();
+        isTrue = IsVisibleWithParent();
         return true;
     }
 
