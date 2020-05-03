@@ -133,6 +133,9 @@ void GuiLayout::LayoutSimpleGrid(GuiWidget* container)
     for (GuiWidget* curr_child = container->GetChild(); curr_child; 
         curr_child = curr_child->NextSibling())
     {
+        if (!curr_child->IsVisible())
+            continue;
+
         curr_child->SetPosition(currPos);
 
         if (mOrientation == eGuiLayoutOrientation_Horizontal)
