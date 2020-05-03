@@ -58,6 +58,9 @@ public:
     // @param deltaTime: Time passed since previous update
     void UpdateFrame(float deltaTime);
 
+    // force update widget layout
+    void UpdateLayout();
+
     // read widget properties from json document
     void LoadProperties(cxx::json_node_object documentNode);
 
@@ -221,7 +224,8 @@ protected:
     void SetDetached();
     void SetupAnchorsOffsets();
 
-    void UpdateLayout();
+    // post widget event to gui system
+    void PostEvent(const GuiEvent& eventData);
 
     bool ResolveCondition(const cxx::unique_string& name, bool& isTrue) const;
 

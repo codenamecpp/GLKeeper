@@ -341,14 +341,12 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
     if (inputEvent.mPressed)
     {
         GuiEvent eventData = GuiEvent::MouseDownEvent(this, inputEvent.mButton, gInputsManager.mCursorPosition);
-        mActions.EmitEvent(eventData.mEventId);
-        gGuiManager.BroadcastEvent(eventData);
+        PostEvent(eventData);
     }
     else
     {
         GuiEvent eventData = GuiEvent::MouseUpEvent(this, inputEvent.mButton, gInputsManager.mCursorPosition);
-        mActions.EmitEvent(eventData.mEventId);
-        gGuiManager.BroadcastEvent(eventData);
+        PostEvent(eventData);
     }
 
     // custom event
@@ -363,8 +361,7 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
         if (!customEventId.empty())
         {
             GuiEvent customEvent = GuiEvent::CustomEvent(this, customEventId);
-            mActions.EmitEvent(customEvent.mEventId);
-            gGuiManager.BroadcastEvent(customEvent);
+            PostEvent(customEvent);
         }
     }
     
@@ -393,16 +390,14 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
         // post event
         {
             GuiEvent eventData = GuiEvent::ClickEvent(this, gInputsManager.mCursorPosition);
-            mActions.EmitEvent(eventData.mEventId);
-            gGuiManager.BroadcastEvent(eventData);
+            PostEvent(eventData);
         }
 
         // custom event
         if (!mOnClickEvent.empty())
         {
             GuiEvent customEvent = GuiEvent::CustomEvent(this, mOnClickEvent);
-            mActions.EmitEvent(customEvent.mEventId);
-            gGuiManager.BroadcastEvent(customEvent);
+            PostEvent(customEvent);
         }
 
         HandleClick();
@@ -1049,14 +1044,12 @@ void GuiWidget::ShownStateChanged()
         }
 
         GuiEvent eventData = GuiEvent::HideEvent(this);
-        mActions.EmitEvent(eventData.mEventId);
-        gGuiManager.BroadcastEvent(eventData);
+        PostEvent(eventData);
     }
     else
     {
         GuiEvent eventData = GuiEvent::ShowEvent(this);
-        mActions.EmitEvent(eventData.mEventId);
-        gGuiManager.BroadcastEvent(eventData);
+        PostEvent(eventData);
     }
 
     for (GuiWidget* currChild = mFirstChild; currChild; 
@@ -1081,14 +1074,12 @@ void GuiWidget::EnableStateChanged()
         }
 
         GuiEvent eventData = GuiEvent::DisableEvent(this);
-        mActions.EmitEvent(eventData.mEventId);
-        gGuiManager.BroadcastEvent(eventData);
+        PostEvent(eventData);
     }
     else
     {
         GuiEvent eventData = GuiEvent::EnableEvent(this);
-        mActions.EmitEvent(eventData.mEventId);
-        gGuiManager.BroadcastEvent(eventData);
+        PostEvent(eventData);
     }
 
     for (GuiWidget* currChild = mFirstChild; currChild; 
@@ -1105,29 +1096,25 @@ void GuiWidget::HoveredStateChanged()
     if (IsHovered())
     {
         GuiEvent eventData = GuiEvent::MouseEnterEvent(this, gInputsManager.mCursorPosition);
-        mActions.EmitEvent(eventData.mEventId);
-        gGuiManager.BroadcastEvent(eventData);
+        PostEvent(eventData);
 
         // custom event
         if (!mOnMouseEnterEvent.empty())
         {
             GuiEvent customEvent = GuiEvent::CustomEvent(this, mOnMouseEnterEvent);
-            mActions.EmitEvent(customEvent.mEventId);
-            gGuiManager.BroadcastEvent(customEvent);
+            PostEvent(customEvent);
         }
     }
     else
     {
         GuiEvent eventData = GuiEvent::MouseLeaveEvent(this, gInputsManager.mCursorPosition);
-        mActions.EmitEvent(eventData.mEventId);
-        gGuiManager.BroadcastEvent(eventData);
+        PostEvent(eventData);
 
         // custom event
         if (!mOnMouseLeaveEvent.empty())
         {
             GuiEvent customEvent = GuiEvent::CustomEvent(this, mOnMouseLeaveEvent);
-            mActions.EmitEvent(customEvent.mEventId);
-            gGuiManager.BroadcastEvent(customEvent);
+            PostEvent(customEvent);
         }
     }
 
@@ -1224,6 +1211,14 @@ void GuiWidget::SetupAnchorsOffsets()
     mAnchorDistT = mPosition.y - mOrigin.y;
     mAnchorDistR = parentSize.x - (mAnchorDistL + mSize.x);
     mAnchorDistB = parentSize.y - (mAnchorDistT + mSize.y);
+}
+
+void GuiWidget::PostEvent(const GuiEvent& eventData)
+{
+    // notify widget actions
+    mActions.EmitEvent(eventData.mEventId);
+
+    gGuiManager.BroadcastEvent(eventData);
 }
 
 void GuiWidget::UpdateLayout()
