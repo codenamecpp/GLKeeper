@@ -163,7 +163,6 @@ public:
     // set current state
     void SetVisible(bool isVisible);
     void SetEnabled(bool isEnabled);
-    void SetHovered(bool isHovered);
 
     // set clipping child widgets feature
     void SetClipChildren(bool isEnabled);
@@ -231,6 +230,9 @@ protected:
 
     // load widget actions from json document node
     void LoadActions(cxx::json_node_object actionsNode);
+
+    // gui notifications
+    void NotifyHoverStateChange(bool isHovered);
 
 protected:
     // overridables

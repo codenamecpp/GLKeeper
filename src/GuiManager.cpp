@@ -143,6 +143,7 @@ void GuiManager::UpdateHoveredWidget()
         if (!mHoveredWidget->IsVisibleWithParent() ||
             !mHoveredWidget->IsEnabledWithParent())
         {
+            mHoveredWidget->NotifyHoverStateChange(false);
             mHoveredWidget.reset();
         }
     }
@@ -179,13 +180,12 @@ void GuiManager::UpdateHoveredWidget()
 
     if (mHoveredWidget)
     {
-        mHoveredWidget->SetHovered(false);
+        mHoveredWidget->NotifyHoverStateChange(false);
     }
-
     mHoveredWidget = newHovered;
     if (mHoveredWidget)
     {
-        mHoveredWidget->SetHovered(true);
+        mHoveredWidget->NotifyHoverStateChange(true);
     }
 }
 

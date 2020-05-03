@@ -754,18 +754,6 @@ bool GuiWidget::IsEnabledWithParent() const
     return IsEnabled();
 }
 
-void GuiWidget::SetHovered(bool isHovered)
-{
-    if (!IsEnabledWithParent() || !mHasInteractiveAttribute)
-        return;
-
-    if (mHovered == isHovered)
-        return;
-
-    mHovered = isHovered;
-    HoveredStateChanged();
-}
-
 void GuiWidget::SetClipChildren(bool isEnabled)
 {
     mClipChildren = isEnabled;
@@ -1037,12 +1025,6 @@ void GuiWidget::ShownStateChanged()
     {
         Deselect();
 
-        if (IsHovered()) // force cancel hover
-        {
-            mHovered = false;
-            HoveredStateChanged();
-        }
-
         GuiEvent eventData = GuiEvent::HideEvent(this);
         PostEvent(eventData);
     }
@@ -1066,12 +1048,6 @@ void GuiWidget::EnableStateChanged()
     if (!IsEnabledWithParent())
     {
         Deselect();
-
-        if (IsHovered()) // force cancel hover
-        {
-            mHovered = false;
-            HoveredStateChanged();
-        }
 
         GuiEvent eventData = GuiEvent::DisableEvent(this);
         PostEvent(eventData);
@@ -1266,6 +1242,15 @@ void GuiWidget::LoadActions(cxx::json_node_object actionsNode)
             mActions.AddAction(eventId, widgetAction);
         }
     }    
+}
+
+void GuiWidget::NotifyHoverStateChange(bool isHovered)
+{
+    if (mHovered == isHovered)
+        return;
+
+    mHovered = isHovered;
+    HoveredStateChanged();
 }
 
 bool GuiWidget::ResolveCondition(const cxx::unique_string& name, bool& isTrue) const
