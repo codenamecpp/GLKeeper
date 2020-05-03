@@ -9,7 +9,7 @@
 
 // base widget class factory
 static GuiWidgetFactory<GuiWidget> _BaseWidgetsFactory;
-GuiWidgetMetaClass GuiWidget::MetaClass ( cxx::unique_string("widget"), &_BaseWidgetsFactory, nullptr );
+GuiWidgetMetaClass GuiWidget::MetaClass ( cxx::unique_string("panel"), &_BaseWidgetsFactory, nullptr );
 
 //////////////////////////////////////////////////////////////////////////
 

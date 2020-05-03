@@ -6,7 +6,6 @@
 #include "GuiPictureBox.h"
 #include "InputsManager.h"
 #include "GuiButton.h"
-#include "GuiPanel.h"
 #include "GuiScrollbar.h"
 #include "GuiHierarchy.h"
 #include "GraphicsDevice.h"
@@ -202,7 +201,6 @@ void GuiManager::RegisterWidgetsClasses()
     RegisterWidgetClass(&GuiWidget::MetaClass);
     RegisterWidgetClass(&GuiPictureBox::MetaClass);
     RegisterWidgetClass(&GuiButton::MetaClass);
-    RegisterWidgetClass(&GuiPanel::MetaClass);
     RegisterWidgetClass(&GuiScrollbar::MetaClass);
 }
 

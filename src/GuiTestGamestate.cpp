@@ -5,7 +5,6 @@
 #include "GuiButton.h"
 #include "GuiPictureBox.h"
 #include "GraphicsDevice.h"
-#include "GuiPanel.h"
 #include "GuiScrollbar.h"
 #include "TexturesManager.h"
 #include "ToolsUIManager.h"

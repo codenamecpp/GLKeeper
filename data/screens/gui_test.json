@@ -78,7 +78,7 @@
 
     "hierarchy":
     {
-        "id":"root", "class":"widget", "size":["100%","100%"],
+        "id":"root", "class":"panel", "size":["100%","100%"],
         "children":
         [
             {
@@ -92,13 +92,13 @@
             {"id":"button_1", "template_class":"test_button", "pos":[200,600], "size":[50,50]},
             {"id":"sb_0", "template_class":"test_scrollbar", "pos":[400,600], "size":[400,30]},
             {
-                "id":"container", "class":"panel", "size":[700, 200], "draw_background":true, "pos":[200,"100%"], "anchors":["left","right","bottom"],
-                "origin":[0,"100%"],
+                "id":"container", "class":"panel", "size":[700, 200], "draw_background":false, "pos":[200,"100%"], "anchors":["left","right","bottom"],
+                "origin":[0,"100%"], "draw_borders":true, "borders_color":"00ff00ff",
                 "layout":
                 {
                     "type":"simple_grid", "orientation":"vert", "num_rows":2, 
-                    "padding":{"left":3, "top":2},
-                    "spacing":{"horz":3, "vert":2}
+                    "padding":{"left":3, "top":3},
+                    "spacing":{"horz":3, "vert":3}
                 },
                 "children":
                 [

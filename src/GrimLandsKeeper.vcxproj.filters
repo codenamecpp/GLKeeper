@@ -444,9 +444,6 @@
     <ClInclude Include="GuiButton.h">
       <Filter>Game\GuiLibrary\Widgets</Filter>
     </ClInclude>
-    <ClInclude Include="GuiPanel.h">
-      <Filter>Game\GuiLibrary\Widgets</Filter>
-    </ClInclude>
     <ClInclude Include="GuiEvent.h">
       <Filter>Game\GuiLibrary</Filter>
     </ClInclude>
@@ -722,9 +719,6 @@
       <Filter>Game\GuiLibrary\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="GuiButton.cpp">
-      <Filter>Game\GuiLibrary\Widgets</Filter>
-    </ClCompile>
-    <ClCompile Include="GuiPanel.cpp">
       <Filter>Game\GuiLibrary\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="GuiEvent.cpp">
