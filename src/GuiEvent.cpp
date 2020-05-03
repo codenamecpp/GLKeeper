@@ -13,6 +13,37 @@ const cxx::unique_string GuiEventId_OnDisable("on_disable");
 const cxx::unique_string GuiEventId_OnShow("on_show");
 const cxx::unique_string GuiEventId_OnHide("on_hide");
 
+//////////////////////////////////////////////////////////////////////////
+
+bool GuiEvent::ResolveCondition(const cxx::unique_string& identifier, bool& isTrue) const
+{
+    static cxx::unique_string id_mbutton_left("#mouse_left");
+    static cxx::unique_string id_mbutton_right("#mouse_right");
+    static cxx::unique_string id_mbutton_middle("#mouse_middle");
+
+    if (mEventId == GuiEventId_OnMouseDown || mEventId == GuiEventId_OnMouseUp)
+    {
+        if (identifier == id_mbutton_left)
+        {
+            isTrue = (mMouseButton == eMouseButton_Left);
+            return true;
+        }
+        if (identifier == id_mbutton_right)
+        {
+            isTrue = (mMouseButton == eMouseButton_Right);
+            return true;
+        }
+        if (identifier == id_mbutton_middle)
+        {
+            isTrue = (mMouseButton == eMouseButton_Middle);
+            return true;
+        }
+    }
+    return false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+
 GuiEventsHandler::~GuiEventsHandler()
 {
     UnsubscribeAll();

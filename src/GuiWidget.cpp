@@ -1207,7 +1207,7 @@ void GuiWidget::ReleaseMouseCapture()
 void GuiWidget::PostEvent(const GuiEvent& eventData)
 {
     // notify widget actions
-    mActions.EmitEvent(eventData.mEventId);
+    mActions.EmitEvent(eventData);
 
     gGuiManager.BroadcastEvent(eventData);
 }

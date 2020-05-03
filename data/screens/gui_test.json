@@ -37,11 +37,11 @@
                 ],
                 "on_mouse_down":
                 [
-                    {"action":"size", "value":["96%","96%"], "target":"icon"}
+                    {"action":"size", "value":["96%","96%"], "target":"icon", "conditions":"#mouse_left"}
                 ],
                 "on_mouse_up":
                 [
-                    {"action":"size", "value":["100%","100%"], "target":"icon"}
+                    {"action":"size", "value":["100%","100%"], "target":"icon", "conditions":"#mouse_left"}
                 ],
                 "init":
                 [

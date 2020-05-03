@@ -15,9 +15,9 @@ GuiAction::GuiAction(const GuiAction* copyAction)
 {
 }
 
-void GuiAction::PerformAction(GuiWidget* parentWidget)
+void GuiAction::PerformAction(GuiWidget* parentWidget, const GuiEvent& eventData)
 {
-    bool isConditionsTrue = EvaluateConditions(parentWidget);
+    bool isConditionsTrue = EvaluateConditions(parentWidget, eventData);
 
     GuiWidget* target = parentWidget;
     if (!mTargetPath.empty())
@@ -63,16 +63,19 @@ GuiAction* GuiAction::CloneAction()
     return HandleCloneAction();
 }
 
-bool GuiAction::EvaluateConditions(GuiWidget* parentWidget) const
+bool GuiAction::EvaluateConditions(GuiWidget* parentWidget, const GuiEvent& eventData) const
 {
     debug_assert(parentWidget);
 
     bool isTrue = true;
     if (mConditions.non_null())
     {
-        isTrue = mConditions.evaluate_expression([parentWidget](const cxx::unique_string& name)
+        isTrue = mConditions.evaluate_expression([parentWidget, &eventData](const cxx::unique_string& name)
         {
             bool condition;
+            if (eventData.ResolveCondition(name, condition))
+                return condition;
+
             return parentWidget->ResolveCondition(name, condition) && condition;
         });
     }
@@ -207,7 +210,8 @@ public:
             debug_assert(false);
             return;
         }
-        targetWidget->mActions.EmitEvent(mEventId);
+        GuiEvent eventData = GuiEvent::CustomEvent(targetWidget, mEventId);
+        targetWidget->mActions.EmitEvent(eventData);
     }
     bool HandleDeserialize(cxx::json_node_object actionNode) override
     {
@@ -320,13 +324,13 @@ void GuiActionsHolder::ClearActions()
     mActionsList.clear();
 }
 
-void GuiActionsHolder::EmitEvent(cxx::unique_string eventId)
+void GuiActionsHolder::EmitEvent(const GuiEvent& eventData)
 {
     for (const EventActionStruct& curr: mActionsList)
     {
-        if (curr.mEventId == eventId)
+        if (curr.mEventId == eventData.mEventId)
         {
-            curr.mAction->PerformAction(mParentWidget);
+            curr.mAction->PerformAction(mParentWidget, eventData);
         }
     }
 }

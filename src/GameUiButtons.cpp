@@ -2,6 +2,7 @@
 #include "GameUiButtons.h"
 #include "GuiButton.h"
 #include "GuiWidget.h"
+#include "GuiEvent.h"
 
 // feature button custom events
 static cxx::unique_string EventId_FeatureButtonSetupState("init");
@@ -34,7 +35,7 @@ void GameUiFeatureButton::Bind(GuiButton* button)
 
     mBoundButton = button;
     mBoundButton->SetActionsContext(this);
-    mBoundButton->mActions.EmitEvent(EventId_FeatureButtonSetupState);
+    mBoundButton->mActions.EmitEvent(GuiEvent::CustomEvent(nullptr, EventId_FeatureButtonSetupState));
 }
 
 void GameUiFeatureButton::Unbind()
@@ -56,7 +57,7 @@ void GameUiFeatureButton::SetActiveState(bool isActive)
     mActiveState = isActive;
     if (mBoundButton)
     {
-        mBoundButton->mActions.EmitEvent(EventId_FeatureButtonSetupState);
+        mBoundButton->mActions.EmitEvent(GuiEvent::CustomEvent(nullptr, EventId_FeatureButtonSetupState));
     }
 }
 
@@ -68,7 +69,7 @@ void GameUiFeatureButton::SetAvailableState(bool isAvailable)
     mAvailableState = isAvailable;
     if (mBoundButton)
     {
-        mBoundButton->mActions.EmitEvent(EventId_FeatureButtonSetupState);
+        mBoundButton->mActions.EmitEvent(GuiEvent::CustomEvent(nullptr, EventId_FeatureButtonSetupState));
     }
 }
 

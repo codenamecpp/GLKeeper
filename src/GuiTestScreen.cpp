@@ -72,7 +72,7 @@ void GuiTestScreen::HandleMouseLeave(GuiWidget* sender)
 
 void GuiTestScreen::HandleMouseDown(GuiWidget* sender, eMouseButton mbutton)
 {
-    if (sender == mFeatureButtonController.mBoundButton)
+    if ((sender == mFeatureButtonController.mBoundButton) && mbutton == eMouseButton_Left)
     {
         mFeatureButtonController.ToggleActiveState();
     }

@@ -26,7 +26,7 @@ public:
 class GuiAction: public cxx::noncopyable
 {
 public:
-    void PerformAction(GuiWidget* parentWidget);
+    void PerformAction(GuiWidget* parentWidget, const GuiEvent& eventData);
     void ReleaseAction();
     bool Deserialize(cxx::json_node_object actionNode);
     GuiAction* CloneAction();
@@ -38,7 +38,7 @@ protected:
     {
     }
 
-    bool EvaluateConditions(GuiWidget* parentWidget) const;
+    bool EvaluateConditions(GuiWidget* parentWidget, const GuiEvent& eventData) const;
 
 protected:
     // overridables
@@ -75,7 +75,7 @@ public:
     void ClearActions();
 
     // invoke actions associated with event id
-    void EmitEvent(cxx::unique_string eventId);
+    void EmitEvent(const GuiEvent& eventData);
 
 private:
     struct EventActionStruct

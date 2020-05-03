@@ -96,6 +96,8 @@ public:
         return ev;
     }
 
+    bool ResolveCondition(const cxx::unique_string& identifier, bool& isTrue) const;
+
 private:
     // use helpers instead of direct construction
     GuiEvent(GuiWidget* eventSender, cxx::unique_string eventId)
