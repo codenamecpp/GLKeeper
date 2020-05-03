@@ -19,7 +19,6 @@ GuiButton::GuiButton(GuiWidgetMetaClass* widgetClass)
     : GuiWidget(widgetClass)
 {
     mHasInteractiveAttribute = true;
-    mHasSelectableAttribute = true;
 }
 
 GuiButton::GuiButton(GuiButton* copyWidget)

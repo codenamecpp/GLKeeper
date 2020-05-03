@@ -75,7 +75,7 @@ void GuiManager::UpdateFrame()
         cxx::erase_elements(mScreensList, nullptr);
     }
 
-    ScanHoveredWidget();
+    UpdateHoveredWidget();
 }
 
 void GuiManager::ProcessInputEvent(MouseButtonInputEvent& inputEvent)
@@ -96,7 +96,7 @@ void GuiManager::ProcessInputEvent(MouseButtonInputEvent& inputEvent)
 
 void GuiManager::ProcessInputEvent(MouseMovedInputEvent& inputEvent)
 {
-    ScanHoveredWidget(); // do extra scan
+    UpdateHoveredWidget(); // do extra scan
 
     if (mSelectedWidget)
     {
@@ -136,8 +136,17 @@ void GuiManager::ProcessInputEvent(KeyCharEvent& inputEvent)
 {
 }
 
-void GuiManager::ScanHoveredWidget()
+void GuiManager::UpdateHoveredWidget()
 {
+    if (mHoveredWidget)
+    {
+        if (!mHoveredWidget->IsVisibleWithParent() ||
+            !mHoveredWidget->IsEnabledWithParent())
+        {
+            mHoveredWidget.reset();
+        }
+    }
+
     GuiWidget* newHovered = nullptr;
 
     if (mSelectedWidget)

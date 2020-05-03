@@ -68,7 +68,7 @@ private:
     void RegisterWidgetsClasses();
     void UnregisterWidgetsClasses();
 
-    void ScanHoveredWidget();
+    void UpdateHoveredWidget();
     void ProcessEventsQueue();
     void ClearEventsQueue();
 

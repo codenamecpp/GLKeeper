@@ -288,7 +288,6 @@ protected:
 
     // attributes
     bool mHasInteractiveAttribute = false; // widget receiving mouse inputs and can be pressed or hovered
-    bool mHasSelectableAttribute = false; // // widget becomes selected on mouse left button pressed
     bool mHasDisablePickChildrenAttribute = false; // cannot pick child widgets
     bool mHasDrawBackgroundAttribute = false; // fill widget rectangle with background color
     bool mHasDrawBordersAttribute = false; // draw borders

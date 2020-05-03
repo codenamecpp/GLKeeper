@@ -67,7 +67,6 @@ GuiWidget::GuiWidget(GuiWidget* copyWidget)
     , mTintColor(copyWidget->mTintColor)
     , mActions(this)
     , mHasInteractiveAttribute(copyWidget->mHasInteractiveAttribute)
-    , mHasSelectableAttribute(copyWidget->mHasSelectableAttribute)
     , mHasDisablePickChildrenAttribute(copyWidget->mHasDisablePickChildrenAttribute)
     , mHasDrawBackgroundAttribute(copyWidget->mHasDrawBackgroundAttribute)
     , mHasDrawBordersAttribute(copyWidget->mHasDrawBordersAttribute)
@@ -221,7 +220,6 @@ void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
 
     // attributes
     cxx::json_get_attribute(documentNode, "interactive", mHasInteractiveAttribute);
-    cxx::json_get_attribute(documentNode, "selectable", mHasSelectableAttribute);
     cxx::json_get_attribute(documentNode, "disable_pick_children", mHasDisablePickChildrenAttribute);
     cxx::json_get_attribute(documentNode, "draw_background", mHasDrawBackgroundAttribute);
     cxx::json_get_attribute(documentNode, "draw_borders", mHasDrawBordersAttribute);
@@ -372,7 +370,7 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
     
     bool hasBeenClicked = false;
     // process clicks
-    if (inputEvent.mButton == eMouseButton_Left && mHasSelectableAttribute)
+    if (inputEvent.mButton == eMouseButton_Left)
     {
         if (inputEvent.mPressed)
         {
