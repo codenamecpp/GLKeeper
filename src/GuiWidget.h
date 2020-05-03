@@ -157,13 +157,9 @@ public:
     void SetMinSize(const Point& minSize);
     void SetMaxSize(const Point& maxSize);
 
-    // set current visibility state
+    // set current state
     void SetVisible(bool isVisible);
-
-    // set enabled or disabled state
     void SetEnabled(bool isEnabled);
-
-    // set current hovered state
     void SetHovered(bool isHovered);
 
     // set clipping child widgets feature

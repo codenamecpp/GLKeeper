@@ -748,17 +748,17 @@ void GuiWidget::SetSize(const Point& size, eGuiUnits units_w, eGuiUnits units_h)
 bool GuiWidget::IsVisibleWithParent() const
 {
     if (mParent)
-        return mVisible && mParent->IsVisibleWithParent();
+        return IsVisible() && mParent->IsVisibleWithParent();
 
-    return mVisible;
+    return IsVisible();
 }
 
 bool GuiWidget::IsEnabledWithParent() const
 {
     if (mParent)
-        return mEnabled && mParent->IsEnabledWithParent();
+        return IsEnabled() && mParent->IsEnabledWithParent();
 
-    return mEnabled;
+    return IsEnabled();
 }
 
 void GuiWidget::SetHovered(bool isHovered)
@@ -983,7 +983,7 @@ void GuiWidget::ParentSizeChanged(const Point& prevParentSize, const Point& curr
 
 void GuiWidget::ParentShownStateChanged()
 {
-    if (!mVisible)
+    if (!IsVisible())
         return;
 
     ShownStateChanged();
@@ -991,7 +991,7 @@ void GuiWidget::ParentShownStateChanged()
 
 void GuiWidget::ParentEnableStateChanged()
 {
-    if (!mEnabled)
+    if (!IsEnabled())
         return;
 
     EnableStateChanged();
