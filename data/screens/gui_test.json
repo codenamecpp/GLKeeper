@@ -46,14 +46,47 @@
         "id":"root", "class":"panel", "size":[1024,768], "anchors":"all",
         "children":
         [
-            {
-                "id":"container", "class":"panel", "size":[700, 200], "draw_background":false, "pos":[200,"100%"], "anchors":["left","right","bottom"],
-                "origin":[0,"100%"], "draw_borders":true, "borders_color":"00ff00ff",
+            {"id":"minimap", "class":"panel", "size":[174,178], "pos":[18,"100%"],
+                "anchors":["left","bottom"], "origin":[0,"100%"],
+                "children":
+                [
+                    {"class":"picture_box", "size":[128,128], "texture":"GUI\\Map\\Map-BG", "size_mode":"scale", "pos":[18,18], "visible":false},
+                    {"class":"picture_box", "size":["110%","110%"], "texture":"GUI\\Map\\map-2", "size_mode":"scale"}
+                ]
+            },
+
+            {"id":"tabs", "class":"panel", "size":[824,52], "anchors":["left","right","bottom"], "pos":[200,584], 
+                "draw_borders":false, "borders_color":"00ff00ff", "draw_background":true, "background_color":"44444488",
+                "layout":
+                {
+                    "type":"simple_grid", "orientation":"horz", "num_rows":1, "num_cols":12,
+                    "padding":{"left":4, "top":0}, "spacing":{"horz":3, "vert":3}
+                },
+                "children":
+                [
+                    {"template_class":"test_button"},
+                    {"template_class":"test_button"},
+                    {"template_class":"test_button"},
+                    {"template_class":"test_button"},
+                    {"template_class":"test_button"}
+                ]
+            },
+
+            {"id":"pages", "class":"panel", "size":[32,128], "draw_borders":false, "borders_color":"00ff00ff", "pos":[200,"100%"], "anchors":["left","bottom"],
+                "origin":[0,"100%"],
+                "children":
+                [
+                    {"class":"picture_box", "size":[26,53], "pos":[4,8], "texture":"GUI\\Pages\\page_back", "size_mode":"scale"},
+                    {"class":"picture_box", "size":[26,53], "pos":[4,62], "texture":"GUI\\Pages\\page_back", "size_mode":"scale"}
+                ]
+            },
+
+            {"id":"container", "class":"panel", "size":[792,128], "draw_background":true, "pos":[232,"100%"], "anchors":["left","right","bottom"],
+                "origin":[0,"100%"], "draw_borders":true, "borders_color":"00000088", "background_color":"66666666",
                 "layout":
                 {
                     "type":"simple_grid", "orientation":"vert", "num_rows":2, 
-                    "padding":{"left":3, "top":3},
-                    "spacing":{"horz":3, "vert":3}
+                    "padding":{"left":3, "top":8}, "spacing":{"horz":3, "vert":3}
                 },
                 "children":
                 [
