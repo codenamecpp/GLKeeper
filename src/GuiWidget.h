@@ -222,7 +222,7 @@ protected:
     bool ResolveCondition(const cxx::unique_string& name, bool& isTrue) const;
 
     // load widget actions from json document node
-    void LoadActions(cxx::json_node_object actionsNode);
+    void LoadActions(cxx::json_node_array actionsNode);
 
     // gui notifications
     void NotifyHoverStateChange(bool isHovered);

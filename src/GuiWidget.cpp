@@ -1162,27 +1162,28 @@ void GuiWidget::SetActionsContext(GuiActionContext* context)
     mActionsContext = context;
 }
 
-void GuiWidget::LoadActions(cxx::json_node_object actionsNode)
+void GuiWidget::LoadActions(cxx::json_node_array actionsNode)
 {
     // iterate events
-    for (cxx::json_node_array currNode = actionsNode.first_child(); currNode;
-        currNode = currNode.next_sibling())
+    for (cxx::json_node_object currActionNode = actionsNode.first_child(); currActionNode;
+        currActionNode = currActionNode.next_sibling())
     {
-        cxx::unique_string eventId = cxx::unique_string(currNode.get_element_name());
+        cxx::unique_string eventId;
+        cxx::json_get_attribute(currActionNode, "event", eventId);
 
-        // iterate actions
-        for (cxx::json_node_object currActionNode = currNode.first_child(); currActionNode;
-            currActionNode = currActionNode.next_sibling())
+        if (eventId.empty())
         {
-            GuiAction* widgetAction = gGuiActionsFactory.DeserializeAction(currActionNode);
-            if (widgetAction == nullptr)
-            {
-                debug_assert(false);
-                continue;
-            }
-
-            mActions.AddAction(eventId, widgetAction);
+            debug_assert(false);
+            continue;
         }
+
+        GuiAction* widgetAction = gGuiActionsFactory.DeserializeAction(currActionNode);
+        if (widgetAction)
+        {
+            mActions.AddAction(eventId, widgetAction);
+            continue;
+        }
+        debug_assert(widgetAction);
     }    
 }
 

@@ -24,31 +24,20 @@
                 }
             ],
             "actions":
-            {
-                "on_mouse_enter": 
-                [
-                    {"action":"show", "value":true, "target":"hover_frame"},
-                    {"action":"texture", "value":"GUI\\Options\\i-audio", "target":"icon"}
-                ],
-                "on_mouse_leave": 
-                [
-                    {"action":"show", "value":false, "target":"hover_frame"},
-                    {"action":"texture", "value":"GUI\\Rooms\\Bridge_Stone", "target":"icon"}
-                ],
-                "on_mouse_down":
-                [
-                    {"action":"size", "value":["96%","96%"], "target":"icon", "conditions":"#mouse_left"}
-                ],
-                "on_mouse_up":
-                [
-                    {"action":"size", "value":["100%","100%"], "target":"icon", "conditions":"#mouse_left"}
-                ],
-                "init":
-                [
-                    {"action":"visibility", "target":"unavailable_fill", "conditions":"!available"},
-                    {"action":"visibility", "target":"active_overlay", "conditions":"active"}
-                ]
-            }
+            [
+                {"event":"on_mouse_enter", "action":"show", "value":true, "target":"hover_frame"},
+                {"event":"on_mouse_enter", "action":"texture", "value":"GUI\\Options\\i-audio", "target":"icon"},
+
+                {"event":"on_mouse_leave", "action":"show", "value":false, "target":"hover_frame"},
+                {"event":"on_mouse_leave", "action":"texture", "value":"GUI\\Rooms\\Bridge_Stone", "target":"icon"},
+
+                {"event":"on_mouse_down", "action":"size", "value":["96%","96%"], "target":"icon", "conditions":"#button_left"},
+
+                {"event":"on_mouse_up", "action":"size", "value":["100%","100%"], "target":"icon", "conditions":"#button_left"},
+
+                {"event":"init", "action":"visibility", "target":"unavailable_fill", "conditions":"!available"},
+                {"event":"init", "action":"visibility", "target":"active_overlay", "conditions":"active"}
+            ]
         },
 
         "test_scrollbar":
@@ -60,17 +49,11 @@
                 {"id":"#max", "class":"button", "draw_background":true},
                 {"id":"#slider", "class":"button", "draw_background":true,
                     "actions":
-                    {
-                        "on_mouse_enter": 
-                        [
-                            {"action":"background_color", "value":"00ff00ff"}
-                        ],
+                    [
+                        {"event":"on_mouse_enter", "action":"background_color", "value":"00ff00ff"},
 
-                        "on_mouse_leave": 
-                        [
-                            {"action":"background_color", "value":"666666ff"}
-                        ]
-                    }
+                        {"event":"on_mouse_leave", "action":"background_color", "value":"666666ff"}
+                    ]
                 }
             ]
         }
@@ -100,12 +83,9 @@
                 [
                     {"id":"feature_button_id", "template_class":"test_button",
                         "actions":
-                        {
-                            "on_click":
-                            [
-                                {"action":"notify", "value":"custom_on_click_event"}
-                            ]
-                        }
+                        [
+                            {"event":"on_click", "action":"notify", "value":"custom_on_click_event"}
+                        ]
                     },
                     {"template_class":"test_button"},
                     {"template_class":"test_button"},

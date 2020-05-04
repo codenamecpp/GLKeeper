@@ -17,9 +17,9 @@ const cxx::unique_string GuiEventId_OnHide("on_hide");
 
 bool GuiEvent::ResolveCondition(const cxx::unique_string& identifier, bool& isTrue) const
 {
-    static cxx::unique_string id_mbutton_left("#mouse_left");
-    static cxx::unique_string id_mbutton_right("#mouse_right");
-    static cxx::unique_string id_mbutton_middle("#mouse_middle");
+    static cxx::unique_string id_mbutton_left("#button_left");
+    static cxx::unique_string id_mbutton_right("#button_right");
+    static cxx::unique_string id_mbutton_middle("#button_middle");
 
     if (mEventId == GuiEventId_OnMouseDown || mEventId == GuiEventId_OnMouseUp)
     {
