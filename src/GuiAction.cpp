@@ -4,6 +4,7 @@
 #include "GuiHelpers.h"
 #include "GuiEvent.h"
 #include "GuiPictureBox.h"
+#include "GuiManager.h"
 
 GuiActionsFactory gGuiActionsFactory;
 
@@ -229,6 +230,41 @@ private:
 
 //////////////////////////////////////////////////////////////////////////
 
+class GuiWidgetActionNotify: public GuiAction
+{
+public:
+    GuiWidgetActionNotify() = default;
+    GuiWidgetActionNotify(const GuiWidgetActionNotify* copyAction)
+        : GuiAction(copyAction)
+        , mEventId(copyAction->mEventId)
+    {
+    }
+    void HandlePerformAction(GuiWidget* targetWidget) override
+    {
+        if (mEventId.empty())
+        {
+            debug_assert(false);
+            return;
+        }
+        GuiEvent eventData(targetWidget, mEventId);
+        gGuiManager.BroadcastEvent(eventData);
+    }
+    bool HandleDeserialize(cxx::json_node_object actionNode) override
+    {
+        cxx::json_get_attribute(actionNode, "value", mEventId);
+        debug_assert(!mEventId.empty());
+        return true;
+    }
+    GuiWidgetActionNotify* HandleCloneAction() override
+    {
+        return new GuiWidgetActionNotify(this);
+    }
+private:
+    cxx::unique_string mEventId;
+};
+
+//////////////////////////////////////////////////////////////////////////
+
 class GuiWidgetActionBackgroundColor: public GuiAction
 {
 public:
@@ -376,6 +412,10 @@ GuiAction* GuiActionsFactory::DeserializeAction(cxx::json_node_object actionNode
     else if (actionId == "emit_event")
     {
         action = new GuiWidgetActionEmitEvent;
+    }
+    else if (actionId == "notify")
+    {
+        action = new GuiWidgetActionNotify;
     }
     else if (actionId == "background_color")
     {

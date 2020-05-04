@@ -55,15 +55,6 @@ GuiWidget::GuiWidget(GuiWidget* copyWidget)
     , mEnabled(copyWidget->mEnabled)
     , mClipChildren(copyWidget->mClipChildren)
     , mTemplateClassName(copyWidget->mTemplateClassName)
-    , mOnClickEvent(copyWidget->mOnClickEvent)
-    , mOnMouseEnterEvent(copyWidget->mOnMouseEnterEvent)
-    , mOnMouseLeaveEvent(copyWidget->mOnMouseLeaveEvent)
-    , mOnMouseLButtonDownEvent(copyWidget->mOnMouseLButtonDownEvent)
-    , mOnMouseRButtonDownEvent(copyWidget->mOnMouseRButtonDownEvent)
-    , mOnMouseMButtonDownEvent(copyWidget->mOnMouseMButtonDownEvent)
-    , mOnMouseLButtonUpEvent(copyWidget->mOnMouseLButtonUpEvent)
-    , mOnMouseRButtonUpEvent(copyWidget->mOnMouseRButtonUpEvent)
-    , mOnMouseMButtonUpEvent(copyWidget->mOnMouseMButtonUpEvent)
     , mTintColor(copyWidget->mTintColor)
     , mActions(this)
     , mHasInteractiveAttribute(copyWidget->mHasInteractiveAttribute)
@@ -185,20 +176,6 @@ void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
         {
             debug_assert(false);
         }
-    }
-
-    // custom events
-    if (cxx::json_node_object events_node = documentNode["events"])
-    {
-        cxx::json_get_attribute(events_node, "on_click", mOnClickEvent);
-        cxx::json_get_attribute(events_node, "on_mouse_enter", mOnMouseEnterEvent);
-        cxx::json_get_attribute(events_node, "on_mouse_leave", mOnMouseLeaveEvent);
-        cxx::json_get_attribute(events_node, "on_lbutton_down", mOnMouseLButtonDownEvent);
-        cxx::json_get_attribute(events_node, "on_rbutton_down", mOnMouseRButtonDownEvent);
-        cxx::json_get_attribute(events_node, "on_mbutton_down", mOnMouseMButtonDownEvent);
-        cxx::json_get_attribute(events_node, "on_lbutton_up", mOnMouseLButtonUpEvent);
-        cxx::json_get_attribute(events_node, "on_rbutton_up", mOnMouseRButtonUpEvent);
-        cxx::json_get_attribute(events_node, "on_mbutton_up", mOnMouseMButtonUpEvent);
     }
 
     // colors
@@ -348,22 +325,6 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
         GuiEvent eventData = GuiEvent::MouseUpEvent(this, inputEvent.mButton, gInputsManager.mCursorPosition);
         PostEvent(eventData);
     }
-
-    // custom event
-    {
-        cxx::unique_string customEventId;
-        switch (inputEvent.mButton)
-        {
-            case eMouseButton_Left: customEventId = inputEvent.mPressed ? mOnMouseLButtonDownEvent : mOnMouseLButtonUpEvent; break;
-            case eMouseButton_Right: customEventId = inputEvent.mPressed ? mOnMouseRButtonDownEvent : mOnMouseRButtonUpEvent; break;
-            case eMouseButton_Middle: customEventId = inputEvent.mPressed ? mOnMouseMButtonDownEvent : mOnMouseMButtonUpEvent; break;
-        }
-        if (!customEventId.empty())
-        {
-            GuiEvent customEvent(this, customEventId);
-            PostEvent(customEvent);
-        }
-    }
     
     bool hasBeenClicked = false;
     bool hasBeenPressed = false;
@@ -374,8 +335,8 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
         hasBeenPressed = inputEvent.mPressed;
         if (!hasBeenPressed)
         {
-            ReleaseMouseCapture();
             hasBeenClicked = IsHovered() && IsPressed();
+            ReleaseMouseCapture();
         }
     }
 
@@ -395,13 +356,6 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
         {
             GuiEvent eventData = GuiEvent::ClickEvent(this, gInputsManager.mCursorPosition);
             PostEvent(eventData);
-        }
-
-        // custom event
-        if (!mOnClickEvent.empty())
-        {
-            GuiEvent customEvent(this, mOnClickEvent);
-            PostEvent(customEvent);
         }
 
         HandleClick();
@@ -1073,25 +1027,11 @@ void GuiWidget::HoveredStateChanged()
     {
         GuiEvent eventData = GuiEvent::MouseEnterEvent(this, gInputsManager.mCursorPosition);
         PostEvent(eventData);
-
-        // custom event
-        if (!mOnMouseEnterEvent.empty())
-        {
-            GuiEvent customEvent(this, mOnMouseEnterEvent);
-            PostEvent(customEvent);
-        }
     }
     else
     {
         GuiEvent eventData = GuiEvent::MouseLeaveEvent(this, gInputsManager.mCursorPosition);
         PostEvent(eventData);
-
-        // custom event
-        if (!mOnMouseLeaveEvent.empty())
-        {
-            GuiEvent customEvent(this, mOnMouseLeaveEvent);
-            PostEvent(customEvent);
-        }
     }
 
     HandleHoveredStateChanged();

@@ -82,11 +82,7 @@
         "children":
         [
             {
-                "id":"button_0", "template_class":"test_button", "pos":[200,200],
-                "events":
-                {
-                    "on_click": "custom_on_click_event"
-                }
+                "id":"button_0", "template_class":"test_button", "pos":[200,200]
             },
             {"id":"slider_0", "template_class":"test_scrollbar", "pos":[400,200], "size":[400,30]},
             {"id":"button_1", "template_class":"test_button", "pos":[200,600], "size":[50,50]},
@@ -102,7 +98,15 @@
                 },
                 "children":
                 [
-                    {"template_class":"test_button"},
+                    {"id":"feature_button_id", "template_class":"test_button",
+                        "actions":
+                        {
+                            "on_click":
+                            [
+                                {"action":"notify", "value":"custom_on_click_event"}
+                            ]
+                        }
+                    },
                     {"template_class":"test_button"},
                     {"template_class":"test_button"},
                     {"template_class":"test_button"},
