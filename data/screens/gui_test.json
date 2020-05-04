@@ -38,38 +38,14 @@
                 {"event":"init", "action":"visibility", "target":"unavailable_fill", "conditions":"!available"},
                 {"event":"init", "action":"visibility", "target":"active_overlay", "conditions":"active"}
             ]
-        },
-
-        "test_scrollbar":
-        {
-            "class":"scrollbar", "pos":[400,200], "size":[400,30], "anchors":"all",
-            "children":
-            [
-                {"id":"#min", "class":"button", "draw_background":true},
-                {"id":"#max", "class":"button", "draw_background":true},
-                {"id":"#slider", "class":"button", "draw_background":true,
-                    "actions":
-                    [
-                        {"event":"on_mouse_enter", "action":"background_color", "value":"00ff00ff"},
-
-                        {"event":"on_mouse_leave", "action":"background_color", "value":"666666ff"}
-                    ]
-                }
-            ]
         }
     },
 
     "hierarchy":
     {
-        "id":"root", "class":"panel", "size":["100%","100%"],
+        "id":"root", "class":"panel", "size":[1024,768], "anchors":"all",
         "children":
         [
-            {
-                "id":"button_0", "template_class":"test_button", "pos":[200,200]
-            },
-            {"id":"slider_0", "template_class":"test_scrollbar", "pos":[400,200], "size":[400,30]},
-            {"id":"button_1", "template_class":"test_button", "pos":[200,600], "size":[50,50]},
-            {"id":"sb_0", "template_class":"test_scrollbar", "pos":[400,600], "size":[400,30]},
             {
                 "id":"container", "class":"panel", "size":[700, 200], "draw_background":false, "pos":[200,"100%"], "anchors":["left","right","bottom"],
                 "origin":[0,"100%"], "draw_borders":true, "borders_color":"00ff00ff",

@@ -2,6 +2,7 @@
 #include "GuiScreen.h"
 #include "GuiWidget.h"
 #include "GuiManager.h"
+#include "GraphicsDevice.h"
 
 GuiScreen::~GuiScreen()
 {
@@ -74,6 +75,7 @@ bool GuiScreen::ActivateScreen()
     }
 
     SetScreenAttached(true);
+    mHier.FitLayoutToScreen(gGraphicsDevice.mScreenResolution);
     HandleStartScreen();
 
     return true;

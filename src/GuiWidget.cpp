@@ -1070,7 +1070,7 @@ Point GuiWidget::ComputePositionPixels() const
         return outputPoint;
     }
 
-    const Point& parentSize = mParent ? mParent->mSize : gGraphicsDevice.mScreenResolution;
+    Point parentSize = mParent ? mParent->mSize : Point(0, 0);
 
     if (mPositionUnitsX == eGuiUnits_Percents)
     {
@@ -1096,7 +1096,7 @@ Point GuiWidget::ComputeSizePixels() const
         return outputSize;
     }
 
-    const Point& parentSize = mParent ? mParent->mSize : gGraphicsDevice.mScreenResolution;
+    Point parentSize = mParent ? mParent->mSize : Point(0, 0);
 
     if (mSizeUnitsW == eGuiUnits_Percents)
     {
@@ -1121,17 +1121,20 @@ GuiWidget* GuiWidget::CreateClone()
 
 void GuiWidget::SetupAnchorsOffsets()
 {
-    mAnchorDistL = 0;
-    mAnchorDistT = 0;
-    mAnchorDistR = 0;
-    mAnchorDistB = 0;
-
-    const Point& parentSize = mParent ? mParent->mSize : gGraphicsDevice.mScreenResolution;
-
-    mAnchorDistL = mPosition.x - mOrigin.x;
-    mAnchorDistT = mPosition.y - mOrigin.y;
-    mAnchorDistR = parentSize.x - (mAnchorDistL + mSize.x);
-    mAnchorDistB = parentSize.y - (mAnchorDistT + mSize.y);
+    if (mParent)
+    {
+        mAnchorDistL = mPosition.x - mOrigin.x;
+        mAnchorDistT = mPosition.y - mOrigin.y;
+        mAnchorDistR = mParent->mSize.x - (mAnchorDistL + mSize.x);
+        mAnchorDistB = mParent->mSize.y - (mAnchorDistT + mSize.y);
+    }
+    else
+    {
+        mAnchorDistL = 0;
+        mAnchorDistT = 0;
+        mAnchorDistR = 0;
+        mAnchorDistB = 0;
+    }
 }
 
 void GuiWidget::GetMouseCapture()
