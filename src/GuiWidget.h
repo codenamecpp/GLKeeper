@@ -11,6 +11,7 @@ class GuiWidget: public cxx::handled_object<GuiWidget>
     friend class GuiHierarchy;
     friend class GuiAction;
     friend class GuiLayout;
+    friend class GuiScreen;
 
 public:
     

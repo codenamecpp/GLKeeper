@@ -360,7 +360,7 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
         }
         if (!customEventId.empty())
         {
-            GuiEvent customEvent = GuiEvent::CustomEvent(this, customEventId);
+            GuiEvent customEvent(this, customEventId);
             PostEvent(customEvent);
         }
     }
@@ -400,7 +400,7 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
         // custom event
         if (!mOnClickEvent.empty())
         {
-            GuiEvent customEvent = GuiEvent::CustomEvent(this, mOnClickEvent);
+            GuiEvent customEvent(this, mOnClickEvent);
             PostEvent(customEvent);
         }
 
@@ -1027,12 +1027,12 @@ void GuiWidget::ShownStateChanged()
 {
     if (!IsVisibleWithParent()) 
     {
-        GuiEvent eventData = GuiEvent::HideEvent(this);
+        GuiEvent eventData(this, GuiEventId_OnHide);
         PostEvent(eventData);
     }
     else
     {
-        GuiEvent eventData = GuiEvent::ShowEvent(this);
+        GuiEvent eventData(this, GuiEventId_OnShow);
         PostEvent(eventData);
     }
 
@@ -1049,12 +1049,12 @@ void GuiWidget::EnableStateChanged()
 {
     if (!IsEnabledWithParent())
     {
-        GuiEvent eventData = GuiEvent::DisableEvent(this);
+        GuiEvent eventData(this, GuiEventId_OnDisable);
         PostEvent(eventData);
     }
     else
     {
-        GuiEvent eventData = GuiEvent::EnableEvent(this);
+        GuiEvent eventData(this, GuiEventId_OnEnable);
         PostEvent(eventData);
     }
 
@@ -1077,7 +1077,7 @@ void GuiWidget::HoveredStateChanged()
         // custom event
         if (!mOnMouseEnterEvent.empty())
         {
-            GuiEvent customEvent = GuiEvent::CustomEvent(this, mOnMouseEnterEvent);
+            GuiEvent customEvent(this, mOnMouseEnterEvent);
             PostEvent(customEvent);
         }
     }
@@ -1089,7 +1089,7 @@ void GuiWidget::HoveredStateChanged()
         // custom event
         if (!mOnMouseLeaveEvent.empty())
         {
-            GuiEvent customEvent = GuiEvent::CustomEvent(this, mOnMouseLeaveEvent);
+            GuiEvent customEvent(this, mOnMouseLeaveEvent);
             PostEvent(customEvent);
         }
     }

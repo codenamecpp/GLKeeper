@@ -35,7 +35,7 @@ void GameUiFeatureButton::Bind(GuiButton* button)
 
     mBoundButton = button;
     mBoundButton->SetActionsContext(this);
-    mBoundButton->mActions.EmitEvent(GuiEvent::CustomEvent(nullptr, EventId_FeatureButtonSetupState));
+    mBoundButton->mActions.EmitEvent(GuiEvent(nullptr, EventId_FeatureButtonSetupState));
 }
 
 void GameUiFeatureButton::Unbind()
@@ -57,7 +57,7 @@ void GameUiFeatureButton::SetActiveState(bool isActive)
     mActiveState = isActive;
     if (mBoundButton)
     {
-        mBoundButton->mActions.EmitEvent(GuiEvent::CustomEvent(nullptr, EventId_FeatureButtonSetupState));
+        mBoundButton->mActions.EmitEvent(GuiEvent(nullptr, EventId_FeatureButtonSetupState));
     }
 }
 
@@ -69,7 +69,7 @@ void GameUiFeatureButton::SetAvailableState(bool isAvailable)
     mAvailableState = isAvailable;
     if (mBoundButton)
     {
-        mBoundButton->mActions.EmitEvent(GuiEvent::CustomEvent(nullptr, EventId_FeatureButtonSetupState));
+        mBoundButton->mActions.EmitEvent(GuiEvent(nullptr, EventId_FeatureButtonSetupState));
     }
 }
 

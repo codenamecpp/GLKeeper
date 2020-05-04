@@ -26,14 +26,13 @@ public:
     Point mMouseScreenPosition; // eGuiEvent_MouseEnter, eGuiEvent_MouseLeave, eGuiEvent_MouseDown, eGuiEvent_MouseUp, eGuiEvent_Click
 
 public:
+    GuiEvent(GuiWidget* eventSender, cxx::unique_string eventId)
+        : mEventSender(eventSender)
+        , mEventId(eventId)
+    {
+    }
 
     // event construction helpers
-
-    static GuiEvent CustomEvent(GuiWidget* eventSender, cxx::unique_string eventId)
-    {
-        GuiEvent ev (eventSender, eventId);
-        return ev;
-    }
 
     static GuiEvent ClickEvent(GuiWidget* eventSender, const Point& screenPosition)
     {
@@ -72,39 +71,7 @@ public:
         return ev;
     }
 
-    static GuiEvent EnableEvent(GuiWidget* eventSender)
-    {
-        GuiEvent ev {eventSender, GuiEventId_OnEnable};
-        return ev;
-    }
-
-    static GuiEvent DisableEvent(GuiWidget* eventSender)
-    {
-        GuiEvent ev {eventSender, GuiEventId_OnDisable};
-        return ev;
-    }
-
-    static GuiEvent ShowEvent(GuiWidget* eventSender)
-    {
-        GuiEvent ev {eventSender, GuiEventId_OnShow};
-        return ev;
-    }
-
-    static GuiEvent HideEvent(GuiWidget* eventSender)
-    {
-        GuiEvent ev {eventSender, GuiEventId_OnHide};
-        return ev;
-    }
-
     bool ResolveCondition(const cxx::unique_string& identifier, bool& isTrue) const;
-
-private:
-    // use helpers instead of direct construction
-    GuiEvent(GuiWidget* eventSender, cxx::unique_string eventId)
-        : mEventSender(eventSender)
-        , mEventId(eventId)
-    {
-    }
 };
 
 // widget events handler

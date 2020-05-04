@@ -210,7 +210,7 @@ public:
             debug_assert(false);
             return;
         }
-        GuiEvent eventData = GuiEvent::CustomEvent(targetWidget, mEventId);
+        GuiEvent eventData(targetWidget, mEventId);
         targetWidget->mActions.EmitEvent(eventData);
     }
     bool HandleDeserialize(cxx::json_node_object actionNode) override
