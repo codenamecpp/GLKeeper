@@ -4,6 +4,8 @@
 #include "GuiWidget.h"
 
 // gui events
+extern const cxx::unique_string GuiEventId_OnPressStart;
+extern const cxx::unique_string GuiEventId_OnPressEnd;
 extern const cxx::unique_string GuiEventId_OnClick;
 extern const cxx::unique_string GuiEventId_OnMouseEnter;
 extern const cxx::unique_string GuiEventId_OnMouseLeave;
@@ -22,8 +24,8 @@ public:
     GuiWidgetHandle mEventSender; // sender widget handle
 
     // event args
-    eMouseButton mMouseButton; // eGuiEvent_MouseButtonDown, eGuiEvent_MouseButtonUp
-    Point mMouseScreenPosition; // eGuiEvent_MouseEnter, eGuiEvent_MouseLeave, eGuiEvent_MouseDown, eGuiEvent_MouseUp, eGuiEvent_Click
+    eMouseButton mMouseButton;
+    Point mMouseScreenPosition;
 
 public:
     GuiEvent(GuiWidget* eventSender, cxx::unique_string eventId)
@@ -34,10 +36,11 @@ public:
 
     // event construction helpers
 
-    static GuiEvent ClickEvent(GuiWidget* eventSender, const Point& screenPosition)
+    static GuiEvent ClickEvent(GuiWidget* eventSender, eMouseButton mouseButton, const Point& screenPosition)
     {
         GuiEvent ev (eventSender, GuiEventId_OnClick);
         ev.mMouseScreenPosition = screenPosition;
+        ev.mMouseButton = mouseButton;
         return ev;
     }
 
@@ -71,6 +74,22 @@ public:
         return ev;
     }
 
+    static GuiEvent PressStartEvent(GuiWidget* eventSender, eMouseButton mouseButton, const Point& screenPosition)
+    {
+        GuiEvent ev (eventSender, GuiEventId_OnPressStart);
+        ev.mMouseButton = mouseButton;
+        ev.mMouseScreenPosition = screenPosition;
+        return ev;
+    }
+
+    static GuiEvent PressEndEvent(GuiWidget* eventSender, eMouseButton mouseButton, const Point& screenPosition)
+    {
+        GuiEvent ev (eventSender, GuiEventId_OnPressEnd);
+        ev.mMouseButton = mouseButton;
+        ev.mMouseScreenPosition = screenPosition;
+        return ev;
+    }
+
     bool ResolveCondition(const cxx::unique_string& identifier, bool& isTrue) const;
 };
 
@@ -98,7 +117,9 @@ public:
 
 protected:
     // overridables
-    virtual void HandleClick(GuiWidget* sender) {}
+    virtual void HandleClick(GuiWidget* sender, eMouseButton mbutton) {}
+    virtual void HandlePressStart(GuiWidget* sender, eMouseButton mbutton) {}
+    virtual void HandlePressEnd(GuiWidget* sender, eMouseButton mbutton) {}
     virtual void HandleMouseEnter(GuiWidget* sender) {}
     virtual void HandleMouseLeave(GuiWidget* sender) {}
     virtual void HandleMouseDown(GuiWidget* sender, eMouseButton mbutton) {}

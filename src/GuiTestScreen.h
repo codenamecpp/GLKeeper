@@ -23,7 +23,9 @@ private:
     void HandleEndScreen() override;
 
     // override GuiEventsHandler
-    void HandleClick(GuiWidget* sender) override;
+    void HandleClick(GuiWidget* sender, eMouseButton mbuton) override;
+    void HandlePressStart(GuiWidget* sender, eMouseButton mbuton) override;
+    void HandlePressEnd(GuiWidget* sender, eMouseButton mbuton) override;
     void HandleMouseEnter(GuiWidget* sender) override;
     void HandleMouseLeave(GuiWidget* sender) override;
     void HandleMouseDown(GuiWidget* sender, eMouseButton mbutton) override;

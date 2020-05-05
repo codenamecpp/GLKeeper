@@ -253,7 +253,7 @@ protected:
     virtual void HandleInputEvent(MouseMovedInputEvent& inputEvent) {}
     virtual void HandleInputEvent(MouseScrollInputEvent& inputEvent) {}
 
-    virtual void HandleClick() {}
+    virtual void HandleClick(eMouseButton mouseButton) {}
 
     virtual GuiWidget* CreateClone();
 
@@ -301,4 +301,6 @@ protected:
     bool mTransformInvalidated = true; // transformations matrix dirty
     bool mHovered = false;
     bool mPressed = false;
+
+    eMouseButton mPressMouseButton = eMouseButton_null;
 };

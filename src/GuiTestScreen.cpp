@@ -49,6 +49,10 @@ void GuiTestScreen::HandleStartScreen()
         mFeatureButtonController.SetAvailableState(true);
         mFeatureButtonController.Bind(buttonWidget);
         Subscribe(GuiEventId_OnMouseDown, buttonWidget);
+        Subscribe(GuiEventId_OnMouseUp, buttonWidget);
+        Subscribe(GuiEventId_OnPressStart, buttonWidget);
+        Subscribe(GuiEventId_OnPressEnd, buttonWidget);
+        Subscribe(GuiEventId_OnClick, buttonWidget);
         Subscribe(cxx::unique_string("custom_on_click_event"), buttonWidget);
     }
 }
@@ -59,8 +63,19 @@ void GuiTestScreen::HandleEndScreen()
     mFeatureButtonController.Unbind();
 }
 
-void GuiTestScreen::HandleClick(GuiWidget* sender)
+void GuiTestScreen::HandleClick(GuiWidget* sender, eMouseButton mbuton)
 {
+    gConsole.LogMessage(eLogMessage_Debug, "event: click (%s)", cxx::enum_to_string(mbuton));
+}
+
+void GuiTestScreen::HandlePressStart(GuiWidget* sender, eMouseButton mbuton)
+{
+    gConsole.LogMessage(eLogMessage_Debug, "event: press start (%s)", cxx::enum_to_string(mbuton));
+}
+
+void GuiTestScreen::HandlePressEnd(GuiWidget* sender, eMouseButton mbuton)
+{
+    gConsole.LogMessage(eLogMessage_Debug, "event: press end (%s)", cxx::enum_to_string(mbuton));
 }
 
 void GuiTestScreen::HandleMouseEnter(GuiWidget* sender)

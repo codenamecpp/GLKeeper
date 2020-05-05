@@ -3,6 +3,8 @@
 #include "GuiWidget.h"
 #include "GuiManager.h"
 
+const cxx::unique_string GuiEventId_OnPressStart("on_press_start");
+const cxx::unique_string GuiEventId_OnPressEnd("on_press_end");
 const cxx::unique_string GuiEventId_OnClick("on_click");
 const cxx::unique_string GuiEventId_OnMouseEnter("on_mouse_enter");
 const cxx::unique_string GuiEventId_OnMouseLeave("on_mouse_leave");
@@ -16,28 +18,25 @@ const cxx::unique_string GuiEventId_OnHide("on_hide");
 //////////////////////////////////////////////////////////////////////////
 
 bool GuiEvent::ResolveCondition(const cxx::unique_string& identifier, bool& isTrue) const
-{
-    static cxx::unique_string id_mbutton_left("#button_left");
-    static cxx::unique_string id_mbutton_right("#button_right");
-    static cxx::unique_string id_mbutton_middle("#button_middle");
+{  
+    static cxx::unique_string id_mbutton_left("#btn_left");
+    static cxx::unique_string id_mbutton_right("#btn_right");
+    static cxx::unique_string id_mbutton_middle("#btn_middle");
 
-    if (mEventId == GuiEventId_OnMouseDown || mEventId == GuiEventId_OnMouseUp)
+    if (identifier == id_mbutton_left)
     {
-        if (identifier == id_mbutton_left)
-        {
-            isTrue = (mMouseButton == eMouseButton_Left);
-            return true;
-        }
-        if (identifier == id_mbutton_right)
-        {
-            isTrue = (mMouseButton == eMouseButton_Right);
-            return true;
-        }
-        if (identifier == id_mbutton_middle)
-        {
-            isTrue = (mMouseButton == eMouseButton_Middle);
-            return true;
-        }
+        isTrue = (mMouseButton == eMouseButton_Left);
+        return true;
+    }
+    if (identifier == id_mbutton_right)
+    {
+        isTrue = (mMouseButton == eMouseButton_Right);
+        return true;
+    }
+    if (identifier == id_mbutton_middle)
+    {
+        isTrue = (mMouseButton == eMouseButton_Middle);
+        return true;
     }
     return false;
 }
@@ -212,7 +211,19 @@ void GuiEventsHandler::ProcessEvent(GuiEvent* eventData)
 
     if (eventData->mEventId == GuiEventId_OnClick)
     {
-        HandleClick(eventData->mEventSender); 
+        HandleClick(eventData->mEventSender, eventData->mMouseButton); 
+        return;
+    }
+
+    if (eventData->mEventId == GuiEventId_OnPressStart)
+    {
+        HandlePressStart(eventData->mEventSender, eventData->mMouseButton);
+        return;
+    }
+
+    if (eventData->mEventId == GuiEventId_OnPressEnd)
+    {
+        HandlePressEnd(eventData->mEventSender, eventData->mMouseButton);
         return;
     }
 

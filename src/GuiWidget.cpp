@@ -327,38 +327,54 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
     }
     
     bool hasBeenClicked = false;
-    bool hasBeenPressed = false;
-
-    // process clicks
-    if (inputEvent.mButton == eMouseButton_Left)
+    if (inputEvent.mPressed) // mouse button pressed
     {
-        hasBeenPressed = inputEvent.mPressed;
-        if (!hasBeenPressed)
+        if (!IsPressed()) // start press
         {
-            hasBeenClicked = IsHovered() && IsPressed();
-            ReleaseMouseCapture();
+            GetMouseCapture();
+
+            mPressed = true;
+            mPressMouseButton = inputEvent.mButton;
+            PressedStateChanged();
+
+        }
+        else
+        {
+            // ignore
+        }
+    }
+    else // mouse button released
+    {
+        if (IsPressed())
+        {
+            if (mPressMouseButton == inputEvent.mButton)
+            {
+                ReleaseMouseCapture();
+                if (IsHovered()) // process click
+                {
+                    // post event
+                    {
+                        GuiEvent eventData = GuiEvent::ClickEvent(this, inputEvent.mButton, gInputsManager.mCursorPosition);
+                        PostEvent(eventData);
+                    }
+                    hasBeenClicked = true;
+                }
+            }
+            else
+            {
+                // ignore
+            }
+        }
+        else
+        {
+            // ignore
         }
     }
 
     HandleInputEvent(inputEvent);
-
-    if (hasBeenPressed)
-    {
-        GetMouseCapture();
-
-        mPressed = true;
-        PressedStateChanged();
-    }
-
     if (hasBeenClicked)
     {
-        // post event
-        {
-            GuiEvent eventData = GuiEvent::ClickEvent(this, gInputsManager.mCursorPosition);
-            PostEvent(eventData);
-        }
-
-        HandleClick();
+        HandleClick(inputEvent.mButton);
     }
 }
 
@@ -1039,6 +1055,19 @@ void GuiWidget::HoveredStateChanged()
 
 void GuiWidget::PressedStateChanged()
 {
+    if (IsPressed())
+    {
+        GuiEvent eventData = GuiEvent::PressStartEvent(this, mPressMouseButton, gInputsManager.mCursorPosition);
+        PostEvent(eventData);
+    }
+    else
+    {
+        GuiEvent eventData = GuiEvent::PressEndEvent(this, mPressMouseButton, gInputsManager.mCursorPosition);
+        PostEvent(eventData);
+
+        mPressMouseButton = eMouseButton_null;
+    }
+
     HandlePressedStateChanged();
 }
 
