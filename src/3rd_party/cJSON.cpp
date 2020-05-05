@@ -153,6 +153,8 @@ static void * CJSON_CDECL internal_realloc(void *pointer, size_t size)
 #define internal_realloc realloc
 #endif
 
+#define oneline_comment_prefix "//"
+
 /* strlen of character literals resolved at compile time */
 #define static_strlen(string_literal) (sizeof(string_literal) - sizeof(""))
 
@@ -977,6 +979,37 @@ static cJSON_bool print_array(const cJSON * const item, printbuffer * const outp
 static cJSON_bool parse_object(cJSON * const item, parse_buffer * const input_buffer);
 static cJSON_bool print_object(const cJSON * const item, printbuffer * const output_buffer);
 
+static parse_buffer *buffer_skip_whitespace(parse_buffer * const buffer);
+static parse_buffer* buffer_skip_oneline_comment(parse_buffer * const buffer)
+{
+    if ((buffer == NULL) || (buffer->content == NULL))
+    {
+        return NULL;
+    }
+
+    const int prefix_length = static_strlen(oneline_comment_prefix);
+    if (can_read(buffer, prefix_length) && 
+        (strncmp((const char*)buffer_at_offset(buffer), oneline_comment_prefix, prefix_length) == 0))
+    {
+        buffer->offset += prefix_length;
+        while (can_access_at_index(buffer, 0))
+        {
+            char current_char = buffer_at_offset(buffer)[0];
+            buffer->offset++;
+            if (current_char == '\n')
+                break;
+        }
+
+        if (buffer->offset == buffer->length)
+        {
+            buffer->offset--;
+        }
+        return buffer_skip_whitespace(buffer);
+    }
+
+    return buffer;
+}
+
 /* Utility to jump whitespace and cr/lf */
 static parse_buffer *buffer_skip_whitespace(parse_buffer * const buffer)
 {
@@ -995,7 +1028,7 @@ static parse_buffer *buffer_skip_whitespace(parse_buffer * const buffer)
         buffer->offset--;
     }
 
-    return buffer;
+    return buffer_skip_oneline_comment(buffer);
 }
 
 /* skip the UTF-8 BOM (byte order mark) if it is at the beginning of a buffer */
@@ -2669,7 +2702,7 @@ fail:
 
 static void skip_oneline_comment(char **input)
 {
-    *input += static_strlen("//");
+    *input += static_strlen(oneline_comment_prefix);
 
     for (; (*input)[0] != '\0'; ++(*input))
     {
