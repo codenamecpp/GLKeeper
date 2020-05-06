@@ -242,12 +242,16 @@ GuiWidget* GuiHierarchy::DeserializeWidgetWithChildren(cxx::json_node_object obj
 
     widget->LoadProperties(objectNode);
 
-    if (widgetIsTemplate) // dont deserialize children for template widgets
+    if (widgetIsTemplate) // just load properties for existing child widgets
+    {
+        LoadChildrenWidgetProperties(widget, objectNode);
         return widget;
+    }
 
-    // deserialize childs
+    // full deserialize childs
     if (cxx::json_node_array childsNode = objectNode["children"])
     {
+        
         for (cxx::json_node_object currNode = childsNode.first_child(); currNode; 
             currNode = currNode.next_sibling())
         {
@@ -261,6 +265,35 @@ GuiWidget* GuiHierarchy::DeserializeWidgetWithChildren(cxx::json_node_object obj
         }
     }
     return widget;
+}
+
+void GuiHierarchy::LoadChildrenWidgetProperties(GuiWidget* parentWidget, cxx::json_node_object objectNode)
+{
+    if (parentWidget == nullptr)
+    {
+        debug_assert(false);
+        return;
+    }
+
+    cxx::json_node_array childsNode = objectNode["children"];
+    for (cxx::json_node_object currNode = childsNode.first_child(); currNode; 
+        currNode = currNode.next_sibling())
+    {
+        std::string child_id;
+        if (!cxx::json_get_attribute(currNode, "id", child_id))
+        {
+            debug_assert(false);
+            return;
+        }
+        GuiWidget* child_widget = parentWidget->GetChild(child_id);
+        if (child_widget == nullptr)
+        {
+            debug_assert(false);
+            return;
+        }
+        child_widget->LoadProperties(currNode);
+        LoadChildrenWidgetProperties(child_widget, currNode);
+    }
 }
 
 GuiWidget* GuiHierarchy::DeserializeTemplateWidget(cxx::json_node_object objectNode)

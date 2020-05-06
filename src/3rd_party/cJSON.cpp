@@ -980,35 +980,6 @@ static cJSON_bool parse_object(cJSON * const item, parse_buffer * const input_bu
 static cJSON_bool print_object(const cJSON * const item, printbuffer * const output_buffer);
 
 static parse_buffer *buffer_skip_whitespace(parse_buffer * const buffer);
-static parse_buffer* buffer_skip_oneline_comment(parse_buffer * const buffer)
-{
-    if ((buffer == NULL) || (buffer->content == NULL))
-    {
-        return NULL;
-    }
-
-    const int prefix_length = static_strlen(oneline_comment_prefix);
-    if (can_read(buffer, prefix_length) && 
-        (strncmp((const char*)buffer_at_offset(buffer), oneline_comment_prefix, prefix_length) == 0))
-    {
-        buffer->offset += prefix_length;
-        while (can_access_at_index(buffer, 0))
-        {
-            char current_char = buffer_at_offset(buffer)[0];
-            buffer->offset++;
-            if (current_char == '\n')
-                break;
-        }
-
-        if (buffer->offset == buffer->length)
-        {
-            buffer->offset--;
-        }
-        return buffer_skip_whitespace(buffer);
-    }
-
-    return buffer;
-}
 
 /* Utility to jump whitespace and cr/lf */
 static parse_buffer *buffer_skip_whitespace(parse_buffer * const buffer)
@@ -1018,9 +989,30 @@ static parse_buffer *buffer_skip_whitespace(parse_buffer * const buffer)
         return NULL;
     }
 
-    while (can_access_at_index(buffer, 0) && (buffer_at_offset(buffer)[0] <= 32))
+    const int comment_prefix_length = static_strlen(oneline_comment_prefix);
+    for (;;)
     {
-        buffer->offset++;
+        while (can_access_at_index(buffer, 0) && (buffer_at_offset(buffer)[0] <= 32))
+        {
+            buffer->offset++;
+        }
+
+        // skip oneline comment
+        if (can_read(buffer, comment_prefix_length) && 
+            (strncmp((const char*)buffer_at_offset(buffer), oneline_comment_prefix, comment_prefix_length) == 0))
+        {
+            buffer->offset += comment_prefix_length;
+            while (can_access_at_index(buffer, 0))
+            {
+                char current_char = buffer_at_offset(buffer)[0];
+                buffer->offset++;
+                if (current_char == '\n')
+                    break;
+            }
+            continue; // repeat skip whitespaces
+        }
+
+        break; // all whitespaces are skipped
     }
 
     if (buffer->offset == buffer->length)
@@ -1028,7 +1020,7 @@ static parse_buffer *buffer_skip_whitespace(parse_buffer * const buffer)
         buffer->offset--;
     }
 
-    return buffer_skip_oneline_comment(buffer);
+    return buffer;
 }
 
 /* skip the UTF-8 BOM (byte order mark) if it is at the beginning of a buffer */

@@ -1,9 +1,10 @@
 {
+    // template widgets
     "templates":
     {
         "test_button":
         {
-            "class":"button", "pos":[200,200], "size":[52,52],
+            "class":"button", "size":[52,52],
             "children":
             [
                 // test oneline comment
@@ -30,6 +31,7 @@
             "actions":
             [
                 // mouse enter/ mouse leave
+                // mouse enter/ mouse leave
                 {"event":"on_mouse_enter", "action":"show", "value":true, "target":"hover_frame"},
                 {"event":"on_mouse_leave", "action":"show", "value":false, "target":"hover_frame"},
                 // mouse up/ mouse down
@@ -39,8 +41,9 @@
                 {"event":"init", "action":"visibility", "target":"unavailable_fill", "conditions":"!available"},
                 {"event":"init", "action":"visibility", "target":"active_overlay", "conditions":"active"}
             ]
-        }
-    },
+        } // test_button
+
+    }, // templates
 
     "hierarchy":
     {
@@ -65,7 +68,9 @@
                 },
                 "children":
                 [
-                    {"template_class":"test_button"},
+                    {"template_class":"test_button", "children": [
+                            {"id":"icon", "texture":"GUI\\Tabs\\t-creatures"}
+                        ]},
                     {"template_class":"test_button"},
                     {"template_class":"test_button"},
                     {"template_class":"test_button"},
@@ -73,6 +78,7 @@
                 ]
             },
 
+            // scroll features list buttons
             {"id":"pages", "class":"panel", "size":[32,128], "draw_borders":false, "borders_color":"00ff00ff", "pos":[200,"100%"], "anchors":["left","bottom"],
                 "origin":[0,"100%"],
                 "children":
@@ -111,5 +117,7 @@
                 ]
             }
         ]
-    }
+    } // hierarchy
 }
+
+// eof

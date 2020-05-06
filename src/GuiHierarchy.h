@@ -48,6 +48,7 @@ private:
 
     GuiWidget* DeserializeWidgetWithChildren(cxx::json_node_object objectNode);
     GuiWidget* DeserializeTemplateWidget(cxx::json_node_object objectNode);
+    void LoadChildrenWidgetProperties(GuiWidget* parentWidget, cxx::json_node_object objectNode);
 
     bool LoadTemplateWidgets(cxx::json_node_object objectNode);
     bool LoadHierarchy(cxx::json_node_object objectNode);
