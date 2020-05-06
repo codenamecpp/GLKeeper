@@ -10,11 +10,6 @@
 
 GameUiFeatureButton::~GameUiFeatureButton()
 {
-    SetNull();
-}
-
-void GameUiFeatureButton::SetNull()
-{
     SetControl(nullptr);
 }
 
@@ -56,27 +51,6 @@ void GameUiFeatureButton::SetControl(GuiWidget* button)
         mActiveOverlay = pictureBox->mTexture;
     }
     debug_assert(mActiveOverlay);
-}
-
-bool GameUiFeatureButton::NonNull() const
-{
-    return mControl != nullptr;
-}
-
-void GameUiFeatureButton::SetVisible(bool isShown)
-{
-    if (mControl == nullptr)
-    {
-        debug_assert(false);
-        return;
-    }
-    mControl->SetVisible(isShown);
-}
-
-bool GameUiFeatureButton::IsVisible() const
-{
-    debug_assert(mControl);
-    return mControl && mControl->IsVisible();
 }
 
 void GameUiFeatureButton::SetActiveState(bool isActive)
@@ -138,19 +112,11 @@ GuiPictureBox* GameUiFeatureButton::GetPictureBox(const std::string& name) const
     return nullptr;
 }
 
-void GameUiFeatureButton::SetIcon(const std::string& textureName)
-{
-    if (GuiPictureBox* pictureBox = GetPictureBox("icon"))
-    {
-        pictureBox->SetTexture(textureName);
-        mIcon = pictureBox->mTexture;
-        return;
-    }
-    debug_assert(false);
-}
-
 void GameUiFeatureButton::SetIcon(Texture2D* texture)
 {
+    if (mIcon == texture)
+        return;
+
     if (GuiPictureBox* pictureBox = GetPictureBox("icon"))
     {
         pictureBox->SetTexture(texture);
@@ -160,19 +126,11 @@ void GameUiFeatureButton::SetIcon(Texture2D* texture)
     debug_assert(false);
 }
 
-void GameUiFeatureButton::SetActiveOverlay(const std::string& textureName)
-{
-    if (GuiPictureBox* pictureBox = GetPictureBox("active_overlay"))
-    {
-        pictureBox->SetTexture(textureName);
-        mActiveOverlay = pictureBox->mTexture;
-        return;
-    }
-    debug_assert(false);
-}
-
 void GameUiFeatureButton::SetActiveOverlay(Texture2D* texture)
 {
+    if (mActiveOverlay == texture)
+        return;
+
     if (GuiPictureBox* pictureBox = GetPictureBox("active_overlay"))
     {
         pictureBox->SetTexture(texture);

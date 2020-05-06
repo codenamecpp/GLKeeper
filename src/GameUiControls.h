@@ -12,7 +12,6 @@ class GameUiFeatureButton: public GuiActionContext
 public:
     // readonly
     GuiWidget* mControl = nullptr;
-
     Texture2D* mIcon = nullptr;
     Texture2D* mActiveOverlay = nullptr;
 
@@ -20,38 +19,27 @@ public:
     GameUiFeatureButton() = default;
     ~GameUiFeatureButton();
 
-    // bind controller to specific button
+    // bind controller to specific widget or unbind if null
     void SetControl(GuiWidget* button);
-    void SetNull();
-    // test whether controller is bound to gui button
-    bool NonNull() const;
 
-    // set icon and overlay textures
-    // @param textureName, texture: Specific texture
-    void SetIcon(const std::string& textureName);
-    void SetIcon(Texture2D* texture);
-
-    // @param textureName, texture: Specific texture
-    void SetActiveOverlay(const std::string& textureName);
-    void SetActiveOverlay(Texture2D* texture);
-
-    // set active state
+    // set current active state
     void SetActiveState(bool isActive);
     bool IsActiveState() const { return mActiveState; }
     void ToggleActiveState()
     {
         SetActiveState(!IsActiveState());
     }
-    // set availability state
+
+    // set current available state
     void SetAvailableState(bool isAvailable);
     bool IsAvailableState() const { return mAvailableState; }
     void ToggleAvailableState()
     {
         SetAvailableState(!IsAvailableState());
     }
-    // show or hide button
-    void SetVisible(bool isShown);
-    bool IsVisible() const;
+    // set icon and overlay textures
+    void SetIcon(Texture2D* texture);
+    void SetActiveOverlay(Texture2D* texture);
 
 private:
     // override GuiActionContext
@@ -61,7 +49,6 @@ private:
 
     // get child picture widget
     GuiPictureBox* GetPictureBox(const std::string& name) const;
-
 private:
     // extended states
     bool mActiveState = false;
