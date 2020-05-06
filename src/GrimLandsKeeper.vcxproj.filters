@@ -495,7 +495,7 @@
     <ClInclude Include="GuiTestScreen.h">
       <Filter>Game\GameScreens</Filter>
     </ClInclude>
-    <ClInclude Include="GameUiButtons.h">
+    <ClInclude Include="GameUiControls.h">
       <Filter>Game\UserInterface</Filter>
     </ClInclude>
   </ItemGroup>
@@ -766,7 +766,7 @@
     <ClCompile Include="GuiTestScreen.cpp">
       <Filter>Game\GameScreens</Filter>
     </ClCompile>
-    <ClCompile Include="GameUiButtons.cpp">
+    <ClCompile Include="GameUiControls.cpp">
       <Filter>Game\UserInterface</Filter>
     </ClCompile>
   </ItemGroup>

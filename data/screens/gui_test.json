@@ -7,22 +7,18 @@
             "class":"button", "size":[52,52],
             "children":
             [
-                // test oneline comment
                 {
                     "id":"icon", "class":"picture_box", "size":["100%","100%"], "origin":["50%","50%"], "pos":["50%","50%"],
                     "texture":"GUI\\Rooms\\Bridge_Stone", "size_mode":"scale"
                 },
-                // test oneline comment
                 {
                     "id":"unavailable_fill", "class":"picture_box", "size":["100%","100%"], "texture":"white", "size_mode":"scale",
                     "tint_color":[0,0,0,153], "visible":false
                 },
-                // test oneline comment
                 {
                     "id":"active_overlay", "class":"picture_box", "size":["100%","100%"], 
                     "texture":"GUI\\Icons\\selected-door", "size_mode":"scale", "visible":false
                 },
-                // test oneline comment
                 {
                     "id":"hover_frame", "class":"picture_box", "size":["100%","100%"], "origin":["50%","50%"], "pos":["50%","50%"],
                     "texture":"GUI\\Icons\\frame", "size_mode":"scale", "visible":false
@@ -30,7 +26,6 @@
             ],
             "actions":
             [
-                // mouse enter/ mouse leave
                 // mouse enter/ mouse leave
                 {"event":"on_mouse_enter", "action":"show", "value":true, "target":"hover_frame"},
                 {"event":"on_mouse_leave", "action":"show", "value":false, "target":"hover_frame"},
@@ -50,8 +45,8 @@
         "id":"root", "class":"panel", "size":[1024,768], "anchors":"all",
         "children":
         [
-            {"id":"minimap", "class":"panel", "size":[174,178], "pos":[18,"100%"],
-                "anchors":["left","bottom"], "origin":[0,"100%"],
+            // minimap panel
+            {"id":"minimap", "class":"panel", "size":[174,178], "pos":[18,"100%"], "anchors":["left","bottom"], "origin":[0,"100%"],
                 "children":
                 [
                     {"class":"picture_box", "size":[128,128], "texture":"GUI\\Map\\Map-BG", "size_mode":"scale", "pos":[18,18], "visible":false},
@@ -59,26 +54,45 @@
                 ]
             },
 
+            // tabs panel with buttons
             {"id":"tabs", "class":"panel", "size":[824,52], "anchors":["left","right","bottom"], "pos":[200,584], 
                 "draw_borders":false, "borders_color":"00ff00ff", "draw_background":true, "background_color":"44444488",
                 "layout":
                 {
                     "type":"simple_grid", "orientation":"horz", "num_rows":1, "num_cols":12,
-                    "padding":{"left":4, "top":0}, "spacing":{"horz":3, "vert":3}
+                    "padding":{"left":4, "top":0}, 
+                    "spacing":{"horz":3, "vert":3}
                 },
                 "children":
                 [
-                    {"template_class":"test_button", "children": [
-                            {"id":"icon", "texture":"GUI\\Tabs\\t-creatures"}
+                    {"template_class":"test_button", "id":"creatures_button", "children": [
+                            {"id":"icon", "texture":"GUI\\Tabs\\t-creatures"},
+                            {"id":"active_overlay", "texture":"GUI\\Icons\\selected-creature"}
                         ]},
-                    {"template_class":"test_button"},
-                    {"template_class":"test_button"},
-                    {"template_class":"test_button"},
-                    {"template_class":"test_button"}
+                    {"template_class":"test_button", "id":"rooms_button", "children": [
+                            {"id":"icon", "texture":"GUI\\Tabs\\t-rooms"},
+                            {"id":"active_overlay", "texture":"GUI\\Icons\\selected-room"}
+                        ]},
+                    {"template_class":"test_button", "id":"spells_button", "children": [
+                            {"id":"icon", "texture":"GUI\\Tabs\\t-spells"},
+                            {"id":"active_overlay", "texture":"GUI\\Icons\\selected-spell"}
+                        ]},
+                    {"template_class":"test_button", "id":"traps_button", "children": [
+                            {"id":"icon", "texture":"GUI\\Tabs\\t-workshop"},
+                            {"id":"active_overlay", "texture":"GUI\\Icons\\selected-trap"}
+                        ]},
+                    {"template_class":"test_button", "id":"sell_button", "children": [
+                            {"id":"icon", "texture":"GUI\\Tabs\\T-Sell"},
+                            {"id":"active_overlay", "texture":"GUI\\Icons\\selected-door"}
+                        ]},
+                    {"template_class":"test_button", "id":"dig_button", "children": [
+                            {"id":"icon", "texture":"GUI\\Icons\\1st-person\\m-imp"},
+                            {"id":"active_overlay", "texture":"GUI\\Icons\\selected-door"}
+                        ]}
                 ]
             },
 
-            // scroll features list buttons
+            // scroll controls for feature buttons list
             {"id":"pages", "class":"panel", "size":[32,128], "draw_borders":false, "borders_color":"00ff00ff", "pos":[200,"100%"], "anchors":["left","bottom"],
                 "origin":[0,"100%"],
                 "children":
@@ -88,33 +102,15 @@
                 ]
             },
 
-            {"id":"container", "class":"panel", "size":[792,128], "draw_background":true, "pos":[232,"100%"], "anchors":["left","right","bottom"],
+            // feature buttons container
+            {"id":"feature_buttons_list", "class":"panel", "size":[792,128], "draw_background":true, "pos":[232,"100%"], "anchors":["left","right","bottom"],
                 "origin":[0,"100%"], "draw_borders":true, "borders_color":"00000088", "background_color":"66666666",
                 "layout":
                 {
                     "type":"simple_grid", "orientation":"vert", "num_rows":2, 
-                    "padding":{"left":3, "top":8}, "spacing":{"horz":3, "vert":3}
-                },
-                "children":
-                [
-                    {"id":"feature_button_id", "template_class":"test_button",
-                        "actions":
-                        [
-                            {"event":"on_click", "action":"notify", "value":"custom_on_left_click_event", "conditions":"#btn_left"},
-                            {"event":"on_click", "action":"notify", "value":"custom_on_right_click_event", "conditions":"#btn_right"}
-                        ]
-                    },
-                    {"template_class":"test_button"},
-                    {"template_class":"test_button"},
-                    {"template_class":"test_button"},
-                    {"template_class":"test_button"},
-                    {"template_class":"test_button"},
-                    {"template_class":"test_button"},
-                    {"template_class":"test_button"},
-                    {"template_class":"test_button"},
-                    {"template_class":"test_button"},
-                    {"template_class":"test_button"}
-                ]
+                    "padding":{"left":3, "top":8}, 
+                    "spacing":{"horz":3, "vert":3}
+                }
             }
         ]
     } // hierarchy

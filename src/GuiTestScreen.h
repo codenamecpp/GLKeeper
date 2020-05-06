@@ -4,7 +4,7 @@
 #include "GuiHierarchy.h"
 #include "GuiEvent.h"
 #include "GuiHelpers.h"
-#include "GameUiButtons.h"
+#include "GameUiControls.h"
 
 class GuiTestScreen: public GuiScreen
     , public GuiEventsHandler
@@ -36,5 +36,5 @@ private:
     bool ResolveCondition(const GuiWidget* source, const cxx::unique_string& name, bool& isTrue) override;
 
 private:
-    GameUiFeatureButton mFeatureButtonController;
+    std::vector<GameUiFeatureButton> mFeatureButtons;
 };

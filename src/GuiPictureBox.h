@@ -9,6 +9,10 @@ public:
 
     static GuiWidgetMetaClass MetaClass; // picturebox widget class
 
+    // readonly
+    Texture2D* mTexture = nullptr;
+    eGuiSizeMode mSizeMode = eGuiSizeMode_KeepCentered;
+
 public:
     GuiPictureBox();
 
@@ -36,8 +40,5 @@ protected:
     GuiPictureBox* CreateClone() override;
 
 protected:
-    Texture2D* mTexture = nullptr;
-    eGuiSizeMode mSizeMode = eGuiSizeMode_KeepCentered;
-
     std::vector<GuiQuadStruct> mQuadsCache;
 };

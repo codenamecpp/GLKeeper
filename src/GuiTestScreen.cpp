@@ -43,24 +43,35 @@ bool GuiTestScreen::HandleInitializeScreen()
 
 void GuiTestScreen::HandleStartScreen()
 {
-    GuiButton* buttonWidget = GuiCastWidgetClass<GuiButton>(mHier.SearchForWidget("feature_button_id"));
-    if (buttonWidget)
+    GuiWidget* featureButtonsLits = mHier.SearchForWidget("feature_buttons_list");
+    debug_assert(featureButtonsLits);
+
+    static cxx::unique_string featureButtonTemplateName("test_button");
+    if (featureButtonsLits)
     {
-        mFeatureButtonController.SetAvailableState(true);
-        mFeatureButtonController.Bind(buttonWidget);
-        Subscribe(GuiEventId_OnMouseDown, buttonWidget);
-        Subscribe(GuiEventId_OnMouseUp, buttonWidget);
-        Subscribe(GuiEventId_OnPressStart, buttonWidget);
-        Subscribe(GuiEventId_OnPressEnd, buttonWidget);
-        Subscribe(GuiEventId_OnClick, buttonWidget);
-        Subscribe(cxx::unique_string("custom_on_click_event"), buttonWidget);
+        int NumFeatureButtons = 12;
+        mFeatureButtons.resize(NumFeatureButtons);
+
+        for (int icurr = 0; icurr < NumFeatureButtons; ++icurr)
+        {
+            GuiWidget* featureButtonWidget = mHier.CreateTemplateWidget(featureButtonTemplateName);
+            debug_assert(featureButtonWidget);
+            featureButtonsLits->AttachChild(featureButtonWidget);
+
+            mFeatureButtons[icurr].SetActiveState(false);
+            mFeatureButtons[icurr].SetAvailableState(true);
+            mFeatureButtons[icurr].SetControl(featureButtonWidget);
+
+            Subscribe(GuiEventId_OnClick, featureButtonWidget);
+            Subscribe(GuiEventId_OnPressStart, featureButtonWidget);
+        }
     }
 }
 
 void GuiTestScreen::HandleEndScreen()
 {
     UnsubscribeAll();
-    mFeatureButtonController.Unbind();
+    mFeatureButtons.clear();
 }
 
 void GuiTestScreen::HandleClick(GuiWidget* sender, eMouseButton mbuton)
@@ -71,6 +82,14 @@ void GuiTestScreen::HandleClick(GuiWidget* sender, eMouseButton mbuton)
 void GuiTestScreen::HandlePressStart(GuiWidget* sender, eMouseButton mbuton)
 {
     gConsole.LogMessage(eLogMessage_Debug, "event: press start (%s)", cxx::enum_to_string(mbuton));
+
+    if (mbuton != eMouseButton_Left)
+        return;
+
+    for (GameUiFeatureButton& currFeatureButton: mFeatureButtons)
+    {
+        currFeatureButton.SetActiveState(sender == currFeatureButton.mControl);
+    }
 }
 
 void GuiTestScreen::HandlePressEnd(GuiWidget* sender, eMouseButton mbuton)
@@ -88,10 +107,6 @@ void GuiTestScreen::HandleMouseLeave(GuiWidget* sender)
 
 void GuiTestScreen::HandleMouseDown(GuiWidget* sender, eMouseButton mbutton)
 {
-    if ((sender == mFeatureButtonController.mBoundButton) && mbutton == eMouseButton_Left)
-    {
-        mFeatureButtonController.ToggleActiveState();
-    }
 }
 
 void GuiTestScreen::HandleMouseUp(GuiWidget* sender, eMouseButton mbutton)

@@ -8,7 +8,7 @@ class GuiActionsHolder;
 
 //////////////////////////////////////////////////////////////////////////
 
-class GuiActionContext: public cxx::noncopyable
+class GuiActionContext
 {
 public:
     virtual ~GuiActionContext()
