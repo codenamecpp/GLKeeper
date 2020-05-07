@@ -48,15 +48,13 @@ void GuiManager::RenderFrame(GuiRenderer& renderContext)
 
 void GuiManager::UpdateFrame()
 {
-    ProcessEventsQueue();
-
     // update screens and widgets
     for (GuiScreen* currScreen: mScreensList)
     {
         currScreen->UpdateFrame();
     }
-
     UpdateHoveredWidget();
+    ProcessEventsQueue();
 }
 
 void GuiManager::ProcessInputEvent(MouseButtonInputEvent& inputEvent)
