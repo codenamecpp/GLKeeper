@@ -4,95 +4,41 @@
 #include "GuiManager.h"
 #include "GraphicsDevice.h"
 
+GuiScreen::GuiScreen(const std::string& screenId, const std::string& contentPath)
+    : mScreenId(screenId)
+    , mContentPath(contentPath)
+{
+    debug_assert(!mContentPath.empty());
+}
+
 GuiScreen::~GuiScreen()
 {
-    if (IsScreenActive())
-    {
-        SetScreenAttached(false);
-    }
+    UnsubscribeAll();
+    SetScreenAttached(false);
     mHier.Cleanup();
 }
 
 void GuiScreen::RenderFrame(GuiRenderer& renderContext)
 {
-    if (!IsScreenInitialized())
-    {
-        debug_assert(false);
+    if (!IsScreenLoaded() || !IsScreenShown())
         return;
-    }
+
     mHier.RenderFrame(renderContext);
-    HandleRenderScreen(renderContext);
+    HandleScreenRender(renderContext);
 }
 
 void GuiScreen::UpdateFrame()
 {
-    if (!IsScreenInitialized())
-    {
-        debug_assert(false);
+    if (!IsScreenLoaded())
         return;
-    }
+
     mHier.UpdateFrame();
-    HandleUpdateScreen();
+    HandleScreenUpdate();
 }
 
-void GuiScreen::CleanupScreen()
+void GuiScreen::SetScreenAttached(bool isAttached)
 {
-    if (!IsScreenInitialized())
-        return;
-
-    DeactivateScreen();
-
-    HandleCleanupScreen();
-    mHier.Cleanup();
-    mIsInitialized = false;
-}
-
-bool GuiScreen::InitializeScreen()
-{
-    if (IsScreenInitialized())
-        return true;
-
-    mIsInitialized = HandleInitializeScreen();
-    debug_assert(mIsInitialized);
-
-    if (!mIsInitialized)
-    {
-        CleanupScreen();
-        return false;
-    }
-    return true;
-}
-
-bool GuiScreen::ActivateScreen()
-{
-    if (IsScreenActive())
-        return true;
-
-    if (!IsScreenInitialized() && !InitializeScreen())
-    {
-        debug_assert(false);
-        return false;
-    }
-
-    SetScreenAttached(true);
-    mHier.FitLayoutToScreen(gGraphicsDevice.mScreenResolution);
-    HandleStartScreen();
-
-    return true;
-}
-
-void GuiScreen::DeactivateScreen()
-{
-    if (!IsScreenActive())
-        return;
-
-    SetScreenAttached(false);
-    HandleEndScreen();
-}
-
-void GuiScreen::SetScreenAttached(bool isActive)
-{
-    if (isActive)
+    if (isAttached)
     {
         gGuiManager.AttachScreen(this);
     }
@@ -100,5 +46,72 @@ void GuiScreen::SetScreenAttached(bool isActive)
     {
         gGuiManager.DetachScreen(this);
     }
-    mIsActive = isActive;
+}
+
+void GuiScreen::CleanupScreen()
+{
+    if (!IsScreenLoaded())
+        return;
+
+    UnsubscribeAll();
+    SetScreenAttached(false);
+    HandleScreenCleanup();
+    mHier.Cleanup();
+}
+
+bool GuiScreen::LoadScreen()
+{
+    if (IsScreenLoaded())
+        return true;
+
+    bool isLoaded = mHier.LoadFromFile(mContentPath);
+    if (!isLoaded)
+    {
+        debug_assert(false);
+        return false;
+    }
+
+    mHier.FitLayoutToScreen(gGraphicsDevice.mScreenResolution);
+    mHier.SetVisible(false);
+
+    SetScreenAttached(true);   
+    HandleScreenLoad();
+    return true;
+}
+
+bool GuiScreen::ShowScreen()
+{
+    if (IsScreenShown())
+        return true;
+
+    if (!IsScreenLoaded() && !LoadScreen())
+    {
+        debug_assert(false);
+        return false;
+    }
+    mHier.SetVisible(true);
+    HandleScreenShow();
+    return true;
+}
+
+void GuiScreen::HideScreen()
+{
+    if (!IsScreenShown())
+        return;
+
+    mHier.SetVisible(false);
+    HandleScreenHide();
+}
+
+bool GuiScreen::IsScreenLoaded() const
+{
+    if (mHier.mRootWidget)
+        return true;
+
+    return false;
+}
+
+bool GuiScreen::IsScreenShown() const
+{
+    return mHier.mRootWidget && mHier.mRootWidget->IsVisible();
 }

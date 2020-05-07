@@ -16,7 +16,7 @@ GuiTestGamestate::GuiTestGamestate()
 
 void GuiTestGamestate::HandleGamestateEnter()
 {
-    if (!mScreen.ActivateScreen())
+    if (!mScreen.ShowScreen())
     {
         debug_assert(false);
     }
@@ -24,7 +24,7 @@ void GuiTestGamestate::HandleGamestateEnter()
 
 void GuiTestGamestate::HandleGamestateLeave()
 {
-    mScreen.DeactivateScreen();
+    mScreen.HideScreen();
 }
 
 void GuiTestGamestate::HandleUpdateFrame()

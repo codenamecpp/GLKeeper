@@ -4,44 +4,39 @@
 #include "Console.h"
 #include "GuiButton.h"
 
+GuiTestScreen::GuiTestScreen()
+    : GuiScreen("gui_test_screen", "screens/gui_test.json")
+{
+
+}
+
 bool GuiTestScreen::ReloadScreen()
 {
-    DeactivateScreen();
     CleanupScreen();
-    if (InitializeScreen())
-    {
-        ActivateScreen();
+    if (ShowScreen())
         return true;
-    }
 
     debug_assert(false);
     return false;
 }
 
-void GuiTestScreen::HandleRenderScreen(GuiRenderer& renderContext)
+void GuiTestScreen::HandleScreenRender(GuiRenderer& renderContext)
 {
 }
 
-void GuiTestScreen::HandleUpdateScreen()
+void GuiTestScreen::HandleScreenUpdate()
 {
 }
 
-void GuiTestScreen::HandleCleanupScreen()
+void GuiTestScreen::HandleScreenCleanup()
 {
-    UnsubscribeAll();
 }
 
-bool GuiTestScreen::HandleInitializeScreen()
+void GuiTestScreen::HandleScreenLoad()
 {
-    if (!mHier.LoadFromFile("screens/gui_test.json"))
-    {
-        debug_assert(false);
-        return false;
-    }
-    return true;
 }
 
-void GuiTestScreen::HandleStartScreen()
+void GuiTestScreen::HandleScreenShow()
 {
     GuiWidget* featureButtonsLits = mHier.SearchForWidget("feature_buttons_list");
     debug_assert(featureButtonsLits);
@@ -68,7 +63,7 @@ void GuiTestScreen::HandleStartScreen()
     }
 }
 
-void GuiTestScreen::HandleEndScreen()
+void GuiTestScreen::HandleScreenHide()
 {
     UnsubscribeAll();
     mFeatureButtons.clear();

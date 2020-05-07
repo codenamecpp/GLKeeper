@@ -7,20 +7,19 @@
 #include "GameUiControls.h"
 
 class GuiTestScreen: public GuiScreen
-    , public GuiEventsHandler
-    , public GuiActionContext
 {
 public:
+    GuiTestScreen();
     bool ReloadScreen();
 
 private:
     // override GuiScreen
-    void HandleRenderScreen(GuiRenderer& renderContext) override;
-    void HandleUpdateScreen() override;
-    void HandleCleanupScreen() override;
-    bool HandleInitializeScreen() override;
-    void HandleStartScreen() override;
-    void HandleEndScreen() override;
+    void HandleScreenRender(GuiRenderer& renderContext) override;
+    void HandleScreenUpdate() override;
+    void HandleScreenCleanup() override;
+    void HandleScreenLoad() override;
+    void HandleScreenShow() override;
+    void HandleScreenHide() override;
 
     // override GuiEventsHandler
     void HandleClick(GuiWidget* sender, eMouseButton mbuton) override;

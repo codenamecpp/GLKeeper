@@ -2,52 +2,55 @@
 
 #include "GuiDefs.h"
 #include "GuiHierarchy.h"
+#include "GuiAction.h"
+#include "GuiEvent.h"
 
 // interactive screen layer
 class GuiScreen: public cxx::noncopyable
+    , public GuiEventsHandler
+    , public GuiActionContext
 {
 public:
     // readonly
     GuiHierarchy mHier;
 
 public:
+    GuiScreen(const std::string& screenId, const std::string& contentPath);
     virtual ~GuiScreen();
 
-    // preload internal resources
-    bool InitializeScreen();
+    // load internal resources
+    bool LoadScreen();
 
     // cleanup internal resources
     void CleanupScreen();
 
-    // test whether screen layer is initialized 
-    bool IsScreenInitialized() const { return mIsInitialized; }
+    // activate or deacrivate screen layer, it will receive render and update events
+    bool ShowScreen();
+    void HideScreen();
 
-    // attach or detach screen layer to gui system, it will receive render and update events
-    bool ActivateScreen();
-    void DeactivateScreen();
-
-    // test whether screen layer is active now
-    bool IsScreenActive() const { return mIsActive; }
+    // test whether screen layer is initialized and active now
+    bool IsScreenLoaded() const;
+    bool IsScreenShown() const;
 
     // render screen layer
     void RenderFrame(GuiRenderer& renderContext);
 
     // process single frame logic
     void UpdateFrame();
-
-protected:
-    void SetScreenAttached(bool isAttached);
     
 protected:
     // overridables
-    virtual void HandleRenderScreen(GuiRenderer& renderContext) {}
-    virtual void HandleUpdateScreen() {}
-    virtual void HandleCleanupScreen() = 0;
-    virtual bool HandleInitializeScreen() = 0;
-    virtual void HandleStartScreen() {}
-    virtual void HandleEndScreen() {}
+    virtual void HandleScreenRender(GuiRenderer& renderContext) {}
+    virtual void HandleScreenUpdate() {}
+    virtual void HandleScreenCleanup() {}
+    virtual void HandleScreenLoad() {}
+    virtual void HandleScreenShow() {}
+    virtual void HandleScreenHide() {}
+
+private:
+    void SetScreenAttached(bool isAttached);
 
 protected:
-    bool mIsInitialized = false;
-    bool mIsActive = false;
+    std::string mScreenId;
+    std::string mContentPath;
 };

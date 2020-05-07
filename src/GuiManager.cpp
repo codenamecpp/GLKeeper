@@ -42,9 +42,6 @@ void GuiManager::RenderFrame(GuiRenderer& renderContext)
     // render screen layers
     for (GuiScreen* currScreen: mScreensList)
     {
-        if (currScreen == nullptr)
-            continue;
-
         currScreen->RenderFrame(renderContext);
     }
 }
@@ -53,26 +50,10 @@ void GuiManager::UpdateFrame()
 {
     ProcessEventsQueue();
 
-    // update widgets
-    bool doCleanupList = false;
-
-    for (size_t iCurrentScreen = 0, Num = mScreensList.size(); iCurrentScreen < Num; 
-        ++iCurrentScreen)
+    // update screens and widgets
+    for (GuiScreen* currScreen: mScreensList)
     {
-        if (mScreensList[iCurrentScreen])
-        {
-            mScreensList[iCurrentScreen]->UpdateFrame();
-        }
-
-        if (mScreensList[iCurrentScreen] == nullptr)
-        {
-            doCleanupList = true;
-        }
-    }
-
-    if (doCleanupList)
-    {
-        cxx::erase_elements(mScreensList, nullptr);
+        currScreen->UpdateFrame();
     }
 
     UpdateHoveredWidget();
@@ -284,9 +265,6 @@ void GuiManager::HandleScreenResolutionChanged()
 {
     for (GuiScreen* currScreen: mScreensList)
     {
-        if (currScreen == nullptr)
-            continue;
-
         currScreen->mHier.FitLayoutToScreen(gGraphicsDevice.mScreenResolution);
     }
 }
@@ -407,9 +385,6 @@ void GuiManager::AttachScreen(GuiScreen* screen)
     if (screen == nullptr)
         return;
 
-    debug_assert(screen->IsScreenInitialized());
-    debug_assert(!screen->IsScreenActive());
-
     if (cxx::contains(mScreensList, screen))
     {
         debug_assert(false);
@@ -421,18 +396,7 @@ void GuiManager::AttachScreen(GuiScreen* screen)
 void GuiManager::DetachScreen(GuiScreen* screen)
 {
     debug_assert(screen);
-    if (screen == nullptr)
-        return;
-
-    debug_assert(screen->IsScreenActive());
-    for (size_t iCurrentScreen = 0, Num = mScreensList.size(); iCurrentScreen < Num; 
-        ++iCurrentScreen)
-    {
-        if (mScreensList[iCurrentScreen] == screen)
-        {
-            mScreensList[iCurrentScreen] = nullptr;
-        }
-    }
+    cxx::erase_elements(mScreensList, screen);
 }
 
 void GuiManager::DetachAllScreens()
