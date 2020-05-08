@@ -8,13 +8,15 @@
 
 void GameplayGamestate::HandleGamestateEnter()
 {
-    gRenderScene.SetCameraController(&mGodModeCameraControl);
+    gRenderScene.SetCameraController(&mGodmodeCameraControl);
 
-    mGodModeCameraControl.SetFocusPoint(glm::vec3(0.0f));
+    mGodmodeCameraControl.SetFocusPoint(glm::vec3(0.0f));
 
     gGameMain.mFpsWindow.SetWindowShown(true);
 
     gGameWorld.EnterWorld();
+
+    mGameplayGameScreen.ShowScreen();
 }
 
 void GameplayGamestate::HandleGamestateLeave()
@@ -23,6 +25,8 @@ void GameplayGamestate::HandleGamestateLeave()
     gRenderScene.SetCameraController(nullptr);
 
     gGameMain.mFpsWindow.SetWindowShown(false);
+
+    mGameplayGameScreen.CleanupScreen();
 }
 
 void GameplayGamestate::HandleUpdateFrame()
@@ -56,5 +60,5 @@ void GameplayGamestate::HandleInputEvent(KeyCharEvent& inputEvent)
 
 void GameplayGamestate::HandleScreenResolutionChanged()
 {
-    mGodModeCameraControl.HandleScreenResolutionChanged();
+    mGodmodeCameraControl.HandleScreenResolutionChanged();
 }

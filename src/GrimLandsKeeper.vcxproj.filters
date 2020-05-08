@@ -417,9 +417,6 @@
     <ClInclude Include="CameraController.h">
       <Filter>Game\Scene\CameraControllers</Filter>
     </ClInclude>
-    <ClInclude Include="GodModeCameraController.h">
-      <Filter>Game\Scene\CameraControllers</Filter>
-    </ClInclude>
     <ClInclude Include="GameObjectComponentsFactory.h">
       <Filter>Game\GameObject\Components</Filter>
     </ClInclude>
@@ -497,6 +494,12 @@
     </ClInclude>
     <ClInclude Include="GameUiControls.h">
       <Filter>Game\UserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="GodmodeCameraController.h">
+      <Filter>Game\Scene\CameraControllers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameplayGameScreen.h">
+      <Filter>Game\GameScreens</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -700,9 +703,6 @@
     <ClCompile Include="OrbitCameraController.cpp">
       <Filter>Game\Scene\CameraControllers</Filter>
     </ClCompile>
-    <ClCompile Include="GodModeCameraController.cpp">
-      <Filter>Game\Scene\CameraControllers</Filter>
-    </ClCompile>
     <ClCompile Include="GameObjectComponentsFactory.cpp">
       <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
@@ -769,6 +769,12 @@
     <ClCompile Include="GameUiControls.cpp">
       <Filter>Game\UserInterface</Filter>
     </ClCompile>
+    <ClCompile Include="GodmodeCameraController.cpp">
+      <Filter>Game\Scene\CameraControllers</Filter>
+    </ClCompile>
+    <ClCompile Include="GameplayGameScreen.cpp">
+      <Filter>Game\GameScreens</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\docs\creatures_anims.txt">
@@ -807,6 +813,12 @@
       <Filter>Data\Shaders</Filter>
     </None>
     <None Include="..\data\screens\gui_test.json">
+      <Filter>Data\Screens</Filter>
+    </None>
+    <None Include="..\data\screens\gui_screens.json">
+      <Filter>Data\Screens</Filter>
+    </None>
+    <None Include="..\data\screens\gameplay_game_screen.json">
       <Filter>Data\Screens</Filter>
     </None>
   </ItemGroup>

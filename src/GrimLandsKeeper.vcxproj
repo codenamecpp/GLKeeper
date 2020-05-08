@@ -181,6 +181,7 @@
     <ClInclude Include="AABBTree.h" />
     <ClInclude Include="CreatureDefs.h" />
     <ClInclude Include="GameUiControls.h" />
+    <ClInclude Include="GameplayGameScreen.h" />
     <ClInclude Include="GuiButton.h" />
     <ClInclude Include="GuiEvent.h" />
     <ClInclude Include="GuiHelpers.h" />
@@ -200,7 +201,7 @@
     <ClInclude Include="GameObjectComponentsFactory.h" />
     <ClInclude Include="GameObjectsManager.h" />
     <ClInclude Include="GenericRoom.h" />
-    <ClInclude Include="GodModeCameraController.h" />
+    <ClInclude Include="GodmodeCameraController.h" />
     <ClInclude Include="MapTile.h" />
     <ClInclude Include="GameObjectsDefs.h" />
     <ClInclude Include="GameplayGamestate.h" />
@@ -315,6 +316,7 @@
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="ConsoleVariable.cpp" />
     <ClCompile Include="GameUiControls.cpp" />
+    <ClCompile Include="GameplayGameScreen.cpp" />
     <ClCompile Include="GuiHelpers.cpp" />
     <ClCompile Include="GuiHierarchy.cpp" />
     <ClCompile Include="GuiAction.cpp" />
@@ -334,7 +336,7 @@
     <ClCompile Include="GameObjectComponentsFactory.cpp" />
     <ClCompile Include="GameObjectsManager.cpp" />
     <ClCompile Include="GenericRoom.cpp" />
-    <ClCompile Include="GodModeCameraController.cpp" />
+    <ClCompile Include="GodmodeCameraController.cpp" />
     <ClCompile Include="MapTile.cpp" />
     <ClCompile Include="GameplayGamestate.cpp" />
     <ClCompile Include="GameWorld.cpp" />
@@ -417,7 +419,9 @@
     <Text Include="..\docs\terrains.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\data\screens\gameplay_game_screen.json" />
     <None Include="..\data\screens\gui_test.json" />
+    <None Include="..\data\screens\gui_screens.json" />
     <None Include="..\data\shaders\anim_blend_frames.glsl" />
     <None Include="..\data\shaders\debug.glsl" />
     <None Include="..\data\shaders\gui.glsl" />

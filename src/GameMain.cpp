@@ -31,14 +31,14 @@ bool GameMain::Initialize()
         return false;
     }
 
-    //gGameWorld.LoadScenario("temp");
+    gGameWorld.LoadScenario("devmap");
 
     // set initial gamestate
     //SwitchToGameState(&mMeshViewGamestate);
 
-    //SwitchToGameState(&mGameplayGamestate);
+    SwitchToGameState(&mGameplayGamestate);
 
-    SwitchToGameState(&mGuiTestGamestate);
+   // SwitchToGameState(&mGuiTestGamestate);
 
     return true;
 }

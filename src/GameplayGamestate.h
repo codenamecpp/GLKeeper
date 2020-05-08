@@ -1,7 +1,8 @@
 #pragma once
 
 #include "GenericGamestate.h"
-#include "GodModeCameraController.h"
+#include "GodmodeCameraController.h"
+#include "GameplayGameScreen.h"
 
 // in-game gamestate
 class GameplayGamestate: public GenericGamestate
@@ -28,5 +29,6 @@ public:
     void HandleScreenResolutionChanged() override;
 
 private:
-    GodModeCameraController mGodModeCameraControl;
+    GodmodeCameraController mGodmodeCameraControl;
+    GameplayGameScreen mGameplayGameScreen;
 };

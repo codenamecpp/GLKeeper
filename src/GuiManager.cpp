@@ -391,7 +391,7 @@ bool GuiManager::IsProcessingEvents() const
 void GuiManager::LoadScreenRecords()
 {
     std::string jsonDocumentContent;
-    if (!gFileSystem.ReadTextFile("screens/screens.json", jsonDocumentContent))
+    if (!gFileSystem.ReadTextFile("screens/gui_screens.json", jsonDocumentContent))
     {
         debug_assert(false);
         return;
