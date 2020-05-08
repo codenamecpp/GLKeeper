@@ -65,6 +65,9 @@ public:
     void DetachScreen(GuiScreen* screen);
     void DetachAllScreens();
 
+    // get content location for specific gui screen
+    bool GetScreenContentPath(cxx::unique_string screenId, std::string& contentPath);
+
 private:
     void RegisterWidgetsClasses();
     void UnregisterWidgetsClasses();
@@ -75,6 +78,9 @@ private:
     void ClearEventsQueue();
 
     bool IsProcessingEvents() const;
+    
+    void LoadScreenRecords();
+    void FreeScreenRecords();
 
 private:
     using GuiWidgetClassesMap = std::map<cxx::unique_string, GuiWidgetMetaClass*>;
@@ -83,7 +89,15 @@ private:
     std::vector<GuiEventsHandler*> mEventHandlers;
     std::vector<GuiEvent> mEventsQueue;
     std::vector<GuiEvent> mProcessingEventsQueue;
-    std::vector<GuiScreen*> mScreensList;
+
+    struct ScreenElement
+    {
+    public:
+        cxx::unique_string mScreenId;
+        std::string mContentPath;
+        GuiScreen* mInstance = nullptr;
+    };
+    std::vector<ScreenElement> mScreensList;
 };
 
 extern GuiManager gGuiManager;

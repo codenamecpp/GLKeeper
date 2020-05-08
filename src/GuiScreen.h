@@ -12,10 +12,11 @@ class GuiScreen: public cxx::noncopyable
 {
 public:
     // readonly
+    cxx::unique_string mScreenId; // unique identifier
     GuiHierarchy mHier;
 
 public:
-    GuiScreen(const std::string& screenId, const std::string& contentPath);
+    GuiScreen(cxx::unique_string screenId);
     virtual ~GuiScreen();
 
     // load internal resources
@@ -49,8 +50,4 @@ protected:
 
 private:
     void SetScreenAttached(bool isAttached);
-
-protected:
-    std::string mScreenId;
-    std::string mContentPath;
 };

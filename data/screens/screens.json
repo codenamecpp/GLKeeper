@@ -1,0 +1,8 @@
+
+// priority is determined by the order in the list - from highest to lowest
+{
+    "godmode_screen" : { "content_path":"screens/godmode_screen.json" },
+
+    // test screens
+    "gui_test_screen": { "content_path":"screens/gui_test.json" }
+}

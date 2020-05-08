@@ -5,9 +5,8 @@
 #include "GuiButton.h"
 
 GuiTestScreen::GuiTestScreen()
-    : GuiScreen("gui_test_screen", "screens/gui_test.json")
+    : GuiScreen(cxx::unique_string("gui_test_screen"))
 {
-
 }
 
 bool GuiTestScreen::ReloadScreen()

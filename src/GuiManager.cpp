@@ -23,36 +23,44 @@ GuiManager::GuiManager()
 bool GuiManager::Initialize()
 {
     RegisterWidgetsClasses();
+    LoadScreenRecords();
     return true;
 }
 
 void GuiManager::Deinit()
 {
     UnregisterWidgetsClasses();
-
     ClearEventsQueue();
-
     UnregisterAllEventsHandlers();
     SetMouseCapture(nullptr);
     DetachAllScreens();
+    FreeScreenRecords();
 }
 
 void GuiManager::RenderFrame(GuiRenderer& renderContext)
 {
-    // render screen layers
-    for (GuiScreen* currScreen: mScreensList)
+    // render screens from back to front
+    for (auto curr_iterator = mScreensList.rbegin(); 
+        curr_iterator != mScreensList.rend(); ++curr_iterator)
     {
-        currScreen->RenderFrame(renderContext);
+        if (curr_iterator->mInstance)
+        {
+            curr_iterator->mInstance->RenderFrame(renderContext);
+        }
     }
 }
 
 void GuiManager::UpdateFrame()
 {
-    // update screens and widgets
-    for (GuiScreen* currScreen: mScreensList)
+    // update screens
+    for (const ScreenElement& currElement: mScreensList)
     {
-        currScreen->UpdateFrame();
+        if (currElement.mInstance)
+        {
+            currElement.mInstance->UpdateFrame();
+        }
     }
+
     UpdateHoveredWidget();
     ProcessEventsQueue();
 }
@@ -138,10 +146,10 @@ void GuiManager::UpdateHoveredWidget()
 
     if (newHovered == nullptr)
     {
-        for (auto reverse_iter = mScreensList.rbegin(); reverse_iter != mScreensList.rend(); ++reverse_iter)
+        for (const ScreenElement& currElement: mScreensList)
         {
             GuiWidget* rootWidget = nullptr;
-            GuiScreen* currentScreen = *reverse_iter;
+            GuiScreen* currentScreen = currElement.mInstance;
             if (currentScreen)
             {
                 rootWidget = currentScreen->mHier.mRootWidget;
@@ -261,9 +269,12 @@ void GuiManager::ReleaseMouseCapture(GuiWidget* widget)
 
 void GuiManager::HandleScreenResolutionChanged()
 {
-    for (GuiScreen* currScreen: mScreensList)
-    {
-        currScreen->mHier.FitLayoutToScreen(gGraphicsDevice.mScreenResolution);
+    for (ScreenElement& currElement: mScreensList)
+    {   
+        if (GuiScreen* screen = currElement.mInstance)
+        {
+            screen->mHier.FitLayoutToScreen(gGraphicsDevice.mScreenResolution);
+        }
     }
 }
 
@@ -377,27 +388,94 @@ bool GuiManager::IsProcessingEvents() const
     return !mProcessingEventsQueue.empty();
 }
 
+void GuiManager::LoadScreenRecords()
+{
+    std::string jsonDocumentContent;
+    if (!gFileSystem.ReadTextFile("screens/screens.json", jsonDocumentContent))
+    {
+        debug_assert(false);
+        return;
+    }
+
+    cxx::json_document jsonDocument;
+    if (!jsonDocument.parse_document(jsonDocumentContent))
+    {
+        debug_assert(false);
+        return;
+    }
+
+    for (cxx::json_node_object currScreenNode = jsonDocument.get_root_node().first_child();
+        currScreenNode;
+        currScreenNode = currScreenNode.next_sibling())
+    {
+        mScreensList.emplace_back();
+        ScreenElement& screenElement = mScreensList.back();
+        screenElement.mScreenId = currScreenNode.get_element_name();
+        cxx::json_get_attribute(currScreenNode, "content_path", screenElement.mContentPath);
+        if (screenElement.mContentPath.empty())
+        {
+            debug_assert(false);
+            gConsole.LogMessage(eLogMessage_Debug, "Screen '%s' content path is missing", screenElement.mScreenId.c_str());
+        }
+    }
+}
+
+void GuiManager::FreeScreenRecords()
+{
+    mScreensList.clear();
+}
+
 void GuiManager::AttachScreen(GuiScreen* screen)
 {
     debug_assert(screen);
     if (screen == nullptr)
         return;
 
-    if (cxx::contains(mScreensList, screen))
+    for (ScreenElement& currElement: mScreensList)
     {
-        debug_assert(false);
-        return;
+        if (currElement.mScreenId == screen->mScreenId)
+        {
+            currElement.mInstance = screen;
+            return;
+        }
     }
-    mScreensList.push_back(screen);
+
+    debug_assert(false);
+    gConsole.LogMessage(eLogMessage_Warning, "Unknown screen id: '%s'", screen->mScreenId.c_str());
 }
 
 void GuiManager::DetachScreen(GuiScreen* screen)
 {
     debug_assert(screen);
-    cxx::erase_elements(mScreensList, screen);
+    for (ScreenElement& currElement: mScreensList)
+    {
+        if (currElement.mInstance == screen)
+        {
+            currElement.mInstance = nullptr;
+            break;
+        }
+    }
 }
 
 void GuiManager::DetachAllScreens()
 {
-    mScreensList.clear();
+    for (ScreenElement& currElement: mScreensList)
+    {
+        currElement.mInstance = nullptr;
+    }
+}
+
+bool GuiManager::GetScreenContentPath(cxx::unique_string screenId, std::string& contentPath)
+{
+    for (const ScreenElement& currElement: mScreensList)
+    {
+        if (currElement.mScreenId == screenId)
+        {
+            contentPath = currElement.mContentPath;
+            return true;
+        }
+    }
+    debug_assert(false);
+    gConsole.LogMessage(eLogMessage_Warning, "Unknown screen id: '%s'", screenId.c_str());
+    return false;
 }

@@ -3,12 +3,12 @@
 #include "GuiWidget.h"
 #include "GuiManager.h"
 #include "GraphicsDevice.h"
+#include "Console.h"
 
-GuiScreen::GuiScreen(const std::string& screenId, const std::string& contentPath)
+GuiScreen::GuiScreen(cxx::unique_string screenId)
     : mScreenId(screenId)
-    , mContentPath(contentPath)
 {
-    debug_assert(!mContentPath.empty());
+    debug_assert(!mScreenId.empty());
 }
 
 GuiScreen::~GuiScreen()
@@ -64,7 +64,14 @@ bool GuiScreen::LoadScreen()
     if (IsScreenLoaded())
         return true;
 
-    bool isLoaded = mHier.LoadFromFile(mContentPath);
+    std::string contentPath;
+    if (!gGuiManager.GetScreenContentPath(mScreenId, contentPath))
+    {
+        debug_assert(false);        
+        return false;
+    }
+
+    bool isLoaded = mHier.LoadFromFile(contentPath);
     if (!isLoaded)
     {
         debug_assert(false);
