@@ -501,6 +501,9 @@
     <ClInclude Include="GameplayGameScreen.h">
       <Filter>Game\GameScreens</Filter>
     </ClInclude>
+    <ClInclude Include="UserInterfaceDefs.h">
+      <Filter>Game\UserInterface</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

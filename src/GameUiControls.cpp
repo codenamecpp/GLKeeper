@@ -8,12 +8,16 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-GameUiFeatureButton::~GameUiFeatureButton()
+const cxx::unique_string GameUiCtlPanelIconTemplateId("ctl_panel_icon_template");
+
+//////////////////////////////////////////////////////////////////////////
+
+GameUiCtlPanelIcon::~GameUiCtlPanelIcon()
 {
     SetControl(nullptr);
 }
 
-void GameUiFeatureButton::SetControl(GuiWidget* button)
+void GameUiCtlPanelIcon::SetControl(GuiWidget* button)
 {
     if (mControl == button)
         return;
@@ -25,12 +29,14 @@ void GameUiFeatureButton::SetControl(GuiWidget* button)
 
         mControl->SetActionsContext(nullptr);
         mControl = nullptr;
-        mIcon = nullptr;
+        mPicture = nullptr;
         mActiveOverlay = nullptr;
     }
 
     if (button == nullptr)
         return;
+
+    debug_assert(button->mTemplateClassName == GameUiCtlPanelIconTemplateId);
 
     // bind
     mControl = button;
@@ -42,9 +48,9 @@ void GameUiFeatureButton::SetControl(GuiWidget* button)
     // get textures
     if (GuiPictureBox* pictureBox = GetPictureBox("icon"))
     {
-        mIcon = pictureBox->mTexture;
+        mPicture = pictureBox->mTexture;
     }
-    debug_assert(mIcon);
+    debug_assert(mPicture);
 
     if (GuiPictureBox* pictureBox = GetPictureBox("active_overlay"))
     {
@@ -53,7 +59,7 @@ void GameUiFeatureButton::SetControl(GuiWidget* button)
     debug_assert(mActiveOverlay);
 }
 
-void GameUiFeatureButton::SetActiveState(bool isActive)
+void GameUiCtlPanelIcon::SetActiveState(bool isActive)
 {
     if (mActiveState == isActive)
         return;
@@ -62,7 +68,7 @@ void GameUiFeatureButton::SetActiveState(bool isActive)
     UpdateState();
 }
 
-void GameUiFeatureButton::SetAvailableState(bool isAvailable)
+void GameUiCtlPanelIcon::SetAvailableState(bool isAvailable)
 {
     if (mAvailableState == isAvailable)
         return;
@@ -71,7 +77,7 @@ void GameUiFeatureButton::SetAvailableState(bool isAvailable)
     UpdateState();
 }
 
-bool GameUiFeatureButton::ResolveCondition(const GuiWidget* source, const cxx::unique_string& name, bool& isTrue)
+bool GameUiCtlPanelIcon::ResolveCondition(const GuiWidget* source, const cxx::unique_string& name, bool& isTrue)
 {
     static cxx::unique_string id_active("active");
     static cxx::unique_string id_available("available");
@@ -89,9 +95,9 @@ bool GameUiFeatureButton::ResolveCondition(const GuiWidget* source, const cxx::u
     return false;
 }
 
-void GameUiFeatureButton::UpdateState()
+void GameUiCtlPanelIcon::UpdateState()
 {
-    static cxx::unique_string id_FeatureButtonSetupState("init");
+    static cxx::unique_string id_FeatureButtonSetupState("on_change_state");
     if (mControl)
     {
         GuiEvent eventData(nullptr, id_FeatureButtonSetupState);
@@ -99,12 +105,12 @@ void GameUiFeatureButton::UpdateState()
     }
 }
 
-GuiPictureBox* GameUiFeatureButton::GetPictureBox(const std::string& name) const
+GuiPictureBox* GameUiCtlPanelIcon::GetPictureBox(const std::string& name) const
 {
     if (mControl == nullptr)
         return nullptr;
 
-    if (GuiWidget* target = mControl->SearchForChild("icon"))
+    if (GuiWidget* target = mControl->SearchForChild(name))
     {
         GuiPictureBox* pictureBox = GuiCastWidgetClass<GuiPictureBox>(target);
         return pictureBox;
@@ -112,21 +118,21 @@ GuiPictureBox* GameUiFeatureButton::GetPictureBox(const std::string& name) const
     return nullptr;
 }
 
-void GameUiFeatureButton::SetIcon(Texture2D* texture)
+void GameUiCtlPanelIcon::SetPicture(Texture2D* texture)
 {
-    if (mIcon == texture)
+    if (mPicture == texture)
         return;
 
     if (GuiPictureBox* pictureBox = GetPictureBox("icon"))
     {
         pictureBox->SetTexture(texture);
-        mIcon = pictureBox->mTexture;
+        mPicture = pictureBox->mTexture;
         return;
     }
     debug_assert(false);
 }
 
-void GameUiFeatureButton::SetActiveOverlay(Texture2D* texture)
+void GameUiCtlPanelIcon::SetActiveOverlay(Texture2D* texture)
 {
     if (mActiveOverlay == texture)
         return;

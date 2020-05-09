@@ -5,20 +5,22 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-// facture button
-// used in hud control panel for selecting rooms, spells, objects etc
-class GameUiFeatureButton: public GuiActionContext
+extern const cxx::unique_string GameUiCtlPanelIconTemplateId;
+
+//////////////////////////////////////////////////////////////////////////
+
+// control panel button
+// used for selecting rooms, spells, objects etc
+class GameUiCtlPanelIcon final: public GuiActionContext
 {
 public:
     // readonly
     GuiWidget* mControl = nullptr;
-    Texture2D* mIcon = nullptr;
+    Texture2D* mPicture = nullptr;
     Texture2D* mActiveOverlay = nullptr;
 
 public:
-    GameUiFeatureButton() = default;
-    ~GameUiFeatureButton();
-
+    ~GameUiCtlPanelIcon();
     // bind controller to specific widget or unbind if null
     void SetControl(GuiWidget* button);
 
@@ -37,8 +39,8 @@ public:
     {
         SetAvailableState(!IsAvailableState());
     }
-    // set icon and overlay textures
-    void SetIcon(Texture2D* texture);
+    // set picture and overlay textures
+    void SetPicture(Texture2D* texture);
     void SetActiveOverlay(Texture2D* texture);
 
 private:
@@ -46,13 +48,12 @@ private:
     bool ResolveCondition(const GuiWidget* source, const cxx::unique_string& name, bool& isTrue) override;
 
     void UpdateState();
-
     // get child picture widget
     GuiPictureBox* GetPictureBox(const std::string& name) const;
 private:
     // extended states
+    bool mAvailableState = true;
     bool mActiveState = false;
-    bool mAvailableState = false;
 };
 
 //////////////////////////////////////////////////////////////////////////

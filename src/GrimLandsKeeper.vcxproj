@@ -235,6 +235,7 @@
     <ClInclude Include="GuiManager.h" />
     <ClInclude Include="GuiRenderer.h" />
     <ClInclude Include="unique_string.h" />
+    <ClInclude Include="UserInterfaceDefs.h" />
     <ClInclude Include="WallSection.h" />
     <ClInclude Include="ScenarioDefs.h" />
     <ClInclude Include="ScenarioLoader.h" />

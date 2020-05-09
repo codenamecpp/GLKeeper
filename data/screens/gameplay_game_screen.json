@@ -3,7 +3,7 @@
     
     "templates":
     {
-        "feature_button_template":
+        "ctl_panel_icon_template":
         {
             "class":"button", "size":[52,52], 
             "children":
@@ -33,11 +33,11 @@
                 // mouse up/ mouse down
                 {"event":"on_press_start", "action":"size", "value":["96%","96%"], "target":"icon", "conditions":"#btn_left || #btn_right"},
                 {"event":"on_press_end", "action":"size", "value":["100%","100%"], "target":"icon", "conditions":"#btn_left || #btn_right"},
-                // init
-                {"event":"init", "action":"visibility", "target":"unavailable_fill", "conditions":"!available"},
-                {"event":"init", "action":"visibility", "target":"active_overlay", "conditions":"active"}
+                // update state
+                {"event":"on_change_state", "action":"visibility", "target":"unavailable_fill", "conditions":"!available"},
+                {"event":"on_change_state", "action":"visibility", "target":"active_overlay", "conditions":"active"}
             ]
-        } // feature_button_template
+        } // ctl_panel_icon_template
 
     }, // templates
 
@@ -66,34 +66,34 @@
                 },
                 "children":
                 [
-                    {"template_class":"feature_button_template", "id":"creatures_button", "children": [
+                    {"template_class":"ctl_panel_icon_template", "id":"ctl_panel_tab_creatures", "children": [
                             {"id":"icon", "texture":"GUI\\Tabs\\t-creatures"},
                             {"id":"active_overlay", "texture":"GUI\\Icons\\selected-creature"}
                         ]},
-                    {"template_class":"feature_button_template", "id":"rooms_button", "children": [
+                    {"template_class":"ctl_panel_icon_template", "id":"ctl_panel_tab_rooms", "children": [
                             {"id":"icon", "texture":"GUI\\Tabs\\t-rooms"},
                             {"id":"active_overlay", "texture":"GUI\\Icons\\selected-room"}
                         ]},
-                    {"template_class":"feature_button_template", "id":"spells_button", "children": [
+                    {"template_class":"ctl_panel_icon_template", "id":"ctl_panel_tab_spells", "children": [
                             {"id":"icon", "texture":"GUI\\Tabs\\t-spells"},
                             {"id":"active_overlay", "texture":"GUI\\Icons\\selected-spell"}
                         ]},
-                    {"template_class":"feature_button_template", "id":"traps_button", "children": [
+                    {"template_class":"ctl_panel_icon_template", "id":"ctl_panel_tab_traps", "children": [
                             {"id":"icon", "texture":"GUI\\Tabs\\t-workshop"},
                             {"id":"active_overlay", "texture":"GUI\\Icons\\selected-trap"}
                         ]},
-                    {"template_class":"feature_button_template", "id":"sell_button", "children": [
+                    {"template_class":"ctl_panel_icon_template", "id":"ctl_panel_sell_button", "children": [
                             {"id":"icon", "texture":"GUI\\Tabs\\T-Sell"},
                             {"id":"active_overlay", "texture":"GUI\\Icons\\selected-door"}
                         ]},
-                    {"template_class":"feature_button_template", "id":"dig_button", "children": [
+                    {"template_class":"ctl_panel_icon_template", "id":"ctl_panel_dig_button", "children": [
                             {"id":"icon", "texture":"GUI\\Icons\\1st-person\\m-imp"},
                             {"id":"active_overlay", "texture":"GUI\\Icons\\selected-door"}
                         ]}
                 ]
             },
 
-            // scroll controls for feature buttons list
+            // scroll controls for control panel buttons list
             {"id":"pages", "class":"panel", "size":[32,128], "draw_borders":false, "borders_color":"00ff00ff", "pos":[200,"100%"], "anchors":["left","bottom"],
                 "origin":[0,"100%"],
                 "children":
@@ -103,8 +103,8 @@
                 ]
             },
 
-            // feature buttons container
-            {"id":"feature_buttons_list", "class":"panel", "size":[792,128], "draw_background":true, "pos":[232,"100%"], "anchors":["left","right","bottom"],
+            // control panel buttons container
+            {"id":"control_panel_content", "class":"panel", "size":[792,128], "draw_background":true, "pos":[232,"100%"], "anchors":["left","right","bottom"],
                 "origin":[0,"100%"], "draw_borders":true, "borders_color":"00000088", "background_color":"66666666",
                 "layout":
                 {
