@@ -159,9 +159,14 @@ void GuiManager::UpdateHoveredWidget()
             {
                 continue;
             }
-            GuiHierarchy& hier = currentScreen->mHier;
-            newHovered = hier.PickWidget(gInputsManager.mCursorPosition);
-            if (newHovered)
+
+            if (currentScreen->IsScreenInteractable())
+            {
+                GuiHierarchy& hier = currentScreen->mHier;
+                newHovered = hier.PickWidget(gInputsManager.mCursorPosition);
+            }
+
+            if (newHovered || currentScreen->IsScreenModal())
             {
                 break;
             }

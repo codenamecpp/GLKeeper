@@ -32,6 +32,14 @@ public:
     // test whether screen layer is initialized and active now
     bool IsScreenLoaded() const;
     bool IsScreenShown() const;
+    bool IsScreenModal() const { return mIsScreenModal; }
+    bool IsScreenInteractable() const { return mIsScreenInteractable; }
+
+    // set screen modal flag
+    void SetScreenModal(bool isModal);
+
+    // enable or disable receive gui events
+    void SetScreenInteractable(bool isInteractable);
 
     // render screen layer
     void RenderFrame(GuiRenderer& renderContext);
@@ -50,4 +58,8 @@ protected:
 
 private:
     void SetScreenAttached(bool isAttached);
+
+private:
+    bool mIsScreenModal = false;
+    bool mIsScreenInteractable = true;
 };
