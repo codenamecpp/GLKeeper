@@ -7,7 +7,6 @@
 GuiTestScreen::GuiTestScreen()
     : GuiScreen(cxx::unique_string("gui_test_screen"))
 {
-    SetScreenInteractable(false);
     SetScreenModal(true);
 }
 

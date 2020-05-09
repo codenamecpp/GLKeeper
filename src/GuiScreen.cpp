@@ -23,11 +23,6 @@ void GuiScreen::SetScreenModal(bool isModal)
     mIsScreenModal = isModal;
 }
 
-void GuiScreen::SetScreenInteractable(bool isInteractable)
-{
-    mIsScreenInteractable = isInteractable;
-}
-
 void GuiScreen::RenderFrame(GuiRenderer& renderContext)
 {
     if (!IsScreenLoaded() || !IsScreenShown())
