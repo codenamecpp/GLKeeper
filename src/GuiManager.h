@@ -73,7 +73,6 @@ private:
     void UnregisterWidgetsClasses();
 
     void UpdateHoveredWidget();
-    void UpdateMouseCaptureWidget();
     void ProcessEventsQueue();
     void ClearEventsQueue();
 

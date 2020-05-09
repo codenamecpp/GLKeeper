@@ -35,5 +35,5 @@ private:
     bool ResolveCondition(const GuiWidget* source, const cxx::unique_string& name, bool& isTrue) override;
 
 private:
-    std::vector<GameUiFeatureButton> mFeatureButtons;
+
 };

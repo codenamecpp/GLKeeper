@@ -137,10 +137,16 @@ void GuiManager::UpdateHoveredWidget()
         }
     }
 
-    UpdateMouseCaptureWidget();
-
+    // update mouse capture widget
     if (mMouseCaptureWidget)
     {
+        if (!mMouseCaptureWidget->IsVisibleWithParent() ||
+            !mMouseCaptureWidget->IsEnabledWithParent())
+        {
+            mMouseCaptureWidget->NotifyMouseCaptureStateChange(false);
+            mMouseCaptureWidget.reset();
+        }
+
         newHovered = mMouseCaptureWidget->PickWidget(gInputsManager.mCursorPosition);
     }
 
@@ -175,19 +181,6 @@ void GuiManager::UpdateHoveredWidget()
     if (mHoveredWidget)
     {
         mHoveredWidget->NotifyHoverStateChange(true);
-    }
-}
-
-void GuiManager::UpdateMouseCaptureWidget()
-{
-    if (mMouseCaptureWidget)
-    {
-        if (!mMouseCaptureWidget->IsVisibleWithParent() ||
-            !mMouseCaptureWidget->IsEnabledWithParent())
-        {
-            mMouseCaptureWidget->NotifyMouseCaptureStateChange(false);
-            mMouseCaptureWidget.reset();
-        }
     }
 }
 
@@ -271,10 +264,11 @@ void GuiManager::HandleScreenResolutionChanged()
 {
     for (ScreenElement& currElement: mScreensList)
     {   
-        if (GuiScreen* screen = currElement.mInstance)
-        {
-            screen->mHier.FitLayoutToScreen(gGraphicsDevice.mScreenResolution);
-        }
+        GuiScreen* screen = currElement.mInstance;
+        if (screen == nullptr || !screen->IsScreenLoaded())
+            continue;
+
+        screen->mHier.FitLayoutToScreen(gGraphicsDevice.mScreenResolution);
     }
 }
 

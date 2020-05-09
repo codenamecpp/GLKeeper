@@ -36,9 +36,9 @@ bool GameMain::Initialize()
     // set initial gamestate
     //SwitchToGameState(&mMeshViewGamestate);
 
-    SwitchToGameState(&mGameplayGamestate);
+    //SwitchToGameState(&mGameplayGamestate);
 
-   // SwitchToGameState(&mGuiTestGamestate);
+    SwitchToGameState(&mGuiTestGamestate);
 
     return true;
 }
