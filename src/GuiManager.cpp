@@ -154,19 +154,17 @@ void GuiManager::UpdateHoveredWidget()
     {
         for (const ScreenElement& currElement: mScreensList)
         {
-            GuiWidget* rootWidget = nullptr;
             GuiScreen* currentScreen = currElement.mInstance;
-            if (currentScreen)
+            if (currentScreen == nullptr || !currentScreen->IsScreenShown())
             {
-                rootWidget = currentScreen->mHier.mRootWidget;
-            }
-
-            if (rootWidget == nullptr)
                 continue;
-
-            newHovered = rootWidget->PickWidget(gInputsManager.mCursorPosition);
+            }
+            GuiHierarchy& hier = currentScreen->mHier;
+            newHovered = hier.PickWidget(gInputsManager.mCursorPosition);
             if (newHovered)
+            {
                 break;
+            }
         }
     }
 

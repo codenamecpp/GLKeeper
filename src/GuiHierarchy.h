@@ -30,6 +30,10 @@ public:
     // handle screen resolution changed during runtime
     void FitLayoutToScreen(const Point& screenDimensions);
 
+    // pick visible and interactive widget at specified screen coordinate
+    // @param screenPosition: Screen coordinate
+    GuiWidget* PickWidget(const Point& screenPosition) const;
+
     // find widget by specific location within hierarchy
     // @param widgetPath: Path, includes root
     GuiWidget* GetWidgetByPath(const std::string& widgetPath) const;

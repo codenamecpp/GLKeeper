@@ -114,6 +114,15 @@ void GuiHierarchy::FitLayoutToScreen(const Point& screenDimensions)
     }
 }
 
+GuiWidget* GuiHierarchy::PickWidget(const Point& screenPosition) const
+{
+    if (mRootWidget)
+    {
+        return mRootWidget->PickWidget(screenPosition);
+    }
+    return nullptr;
+}
+
 GuiWidget* GuiHierarchy::GetWidgetByPath(const std::string& widgetPath) const
 {
     if (mRootWidget == nullptr)
