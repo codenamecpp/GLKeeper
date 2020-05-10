@@ -637,25 +637,25 @@ bool ScenarioLoader::ReadObjectDefinition(BinaryInputStream* fileStream, GameObj
         return false;
 
     // resources
-    if (!ReadArtResource(fileStream, objectDef.mResourceMesh))
+    if (!ReadArtResource(fileStream, objectDef.mMeshResource))
         return false;
 
-    if (!ReadArtResource(fileStream, objectDef.mResourceGuiIcon))
+    if (!ReadArtResource(fileStream, objectDef.mGuiIconResource))
         return false;
 
-    if (!ReadArtResource(fileStream, objectDef.mResourceInHandIcon))
+    if (!ReadArtResource(fileStream, objectDef.mInHandIconResource))
         return false;
 
-    if (!ReadArtResource(fileStream, objectDef.mResourceInHandMesh))
+    if (!ReadArtResource(fileStream, objectDef.mInHandMeshResource))
         return false;
 
-    if (!ReadArtResource(fileStream, objectDef.mResourceUnknown))
+    if (!ReadArtResource(fileStream, objectDef.mUnknownResource))
         return false;
 
     ArtResource additionalResources[4]; // not used
     for (ArtResource& additionalResource : additionalResources)
     {
-        if (!ReadArtResource(fileStream, objectDef.mResourceUnknown))
+        if (!ReadArtResource(fileStream, objectDef.mUnknownResource))
             return false;
     }
 
@@ -901,10 +901,10 @@ bool ScenarioLoader::ReadRoomDefinition(BinaryInputStream* fileStream, RoomDefin
         return false;
 
     // resources
-    if (!ReadArtResource(fileStream, roomDef.mGuiIcon))
+    if (!ReadArtResource(fileStream, roomDef.mGuiIconResource))
         return false;
 
-    if (!ReadArtResource(fileStream, roomDef.mEditorIcon))
+    if (!ReadArtResource(fileStream, roomDef.mEditorIconResource))
         return false;
 
     if (!ReadArtResource(fileStream, roomDef.mCompleteResource))

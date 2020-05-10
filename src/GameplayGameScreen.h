@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GuiScreen.h"
-#include "GameUiControls.h"
 #include "UserInterfaceDefs.h"
 
 class GameplayGameScreen: public GuiScreen
@@ -9,12 +8,10 @@ class GameplayGameScreen: public GuiScreen
 public:
     GameplayGameScreen();
 
-    // select control panel tab and setup its content
-    // @param ctlPanelTab: Tab identifier
-    void SelectCtlPanel(eGameUiCtlPanel ctlPanelTab);
-
     // synchronize hud controls with current logic state
     void UpdateUserInterfaceState();
+
+    void ReloadScreen();
     
 private:
     // override GuiScreen
@@ -38,16 +35,6 @@ private:
     // override GuiActionContext
     bool ResolveCondition(const GuiWidget* source, const cxx::unique_string& name, bool& isTrue) override;
 
-    void SetupCurrentCtlPanelContent();
-
 private:
-    
-    GuiWidget* mCtlPanelIconsContainer = nullptr;
 
-    // control panel bar
-    eGameUiCtlPanel mCurrentCtlPanel = eGameUiCtlPanel_Rooms;
-    std::vector<GameUiCtlPanelIcon> mCtlPanelTabsIcons;
-    std::vector<GameUiCtlPanelIcon> mCtlPanelIcons;
-    GameUiCtlPanelIcon mCtlPanelIconSell;
-    GameUiCtlPanelIcon mCtlPanelIconDig;
 };

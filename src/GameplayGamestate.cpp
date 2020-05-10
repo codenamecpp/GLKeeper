@@ -52,6 +52,11 @@ void GameplayGamestate::HandleInputEvent(KeyInputEvent& inputEvent)
         gRenderManager.ReloadRenderPrograms();
         inputEvent.SetConsumed(true);
     }
+    if (inputEvent.HasPressed(eKeycode_F5))
+    {
+        mGameplayGameScreen.ReloadScreen();
+        inputEvent.SetConsumed(true);
+    }
 }
 
 void GameplayGamestate::HandleInputEvent(KeyCharEvent& inputEvent)

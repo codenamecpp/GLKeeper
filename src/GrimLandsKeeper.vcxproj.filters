@@ -492,9 +492,6 @@
     <ClInclude Include="GuiTestScreen.h">
       <Filter>Game\GameScreens</Filter>
     </ClInclude>
-    <ClInclude Include="GameUiControls.h">
-      <Filter>Game\UserInterface</Filter>
-    </ClInclude>
     <ClInclude Include="GodmodeCameraController.h">
       <Filter>Game\Scene\CameraControllers</Filter>
     </ClInclude>
@@ -502,6 +499,12 @@
       <Filter>Game\GameScreens</Filter>
     </ClInclude>
     <ClInclude Include="UserInterfaceDefs.h">
+      <Filter>Game\UserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="UiCtlPanelIcon.h">
+      <Filter>Game\UserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="UiCtlPanelBar.h">
       <Filter>Game\UserInterface</Filter>
     </ClInclude>
   </ItemGroup>
@@ -769,14 +772,17 @@
     <ClCompile Include="GuiTestScreen.cpp">
       <Filter>Game\GameScreens</Filter>
     </ClCompile>
-    <ClCompile Include="GameUiControls.cpp">
-      <Filter>Game\UserInterface</Filter>
-    </ClCompile>
     <ClCompile Include="GodmodeCameraController.cpp">
       <Filter>Game\Scene\CameraControllers</Filter>
     </ClCompile>
     <ClCompile Include="GameplayGameScreen.cpp">
       <Filter>Game\GameScreens</Filter>
+    </ClCompile>
+    <ClCompile Include="UiCtlPanelIcon.cpp">
+      <Filter>Game\UserInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="UiCtlPanelBar.cpp">
+      <Filter>Game\UserInterface</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

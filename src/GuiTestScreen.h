@@ -4,7 +4,6 @@
 #include "GuiHierarchy.h"
 #include "GuiEvent.h"
 #include "GuiHelpers.h"
-#include "GameUiControls.h"
 
 class GuiTestScreen: public GuiScreen
 {
