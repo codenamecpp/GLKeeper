@@ -3,6 +3,7 @@
 #include "GameWorld.h"
 #include "ScenarioDefs.h"
 #include "TexturesManager.h"
+#include "UiCtlPanelBar.h"
 
 GameplayGameScreen::GameplayGameScreen() 
     : GuiScreen(cxx::unique_string("gameplay_screen"))
@@ -32,14 +33,24 @@ void GameplayGameScreen::HandleScreenUpdate()
 
 void GameplayGameScreen::HandleScreenCleanup()
 {
+    SafeDelete(mCtlPanelBar);
 }
 
 void GameplayGameScreen::HandleScreenLoad()
 {
+    GuiWidget* controlPanelBar = mHier.SearchForWidget("control_panel_bar");
+    debug_assert(controlPanelBar);
+
+    // bind control panel bar
+    mCtlPanelBar = new UiCtlPanelBar(controlPanelBar);
 }
 
 void GameplayGameScreen::HandleScreenShow()
 {
+    if (mCtlPanelBar)
+    {
+        mCtlPanelBar->SelectPanel(eUiCtlPanelId_Rooms);
+    }
 }
 
 void GameplayGameScreen::HandleScreenHide()

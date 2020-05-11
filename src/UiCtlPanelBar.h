@@ -23,6 +23,9 @@ public:
     // @param panel: Panel identifier
     void SelectPanel(eUiCtlPanelId panel);
 
+    // synchronize hud controls with current logic state
+    void UpdateUserInterfaceState();
+
 private:
     // override GuiActionContext
     bool ResolveCondition(const GuiWidget* source, const cxx::unique_string& name, bool& isTrue) override;
@@ -31,15 +34,16 @@ private:
     void HandlePressStart(GuiWidget* sender, eMouseButton mbutton) override;
     void HandlePressEnd(GuiWidget* sender, eMouseButton mbutton) override;
 
+    void Cleanup();
     void BindControls();
     void SetupCurrentPanelContent();
 
+    void UsePanelIcons(int numIcons);
     void UnusePanelIcons();
-    UiCtlPanelIcon* UsePanelIcon();
 
 private:
     GuiWidget* mPanelIconsContainer = nullptr;
-    eUiCtlPanelId mCurrentPanel = eUiCtlPanelId_Rooms;
+    eUiCtlPanelId mCurrentPanel = eUiCtlPanelId_COUNT;
     UiCtlPanelIcon* mIconCreatures = nullptr;
     UiCtlPanelIcon* mIconRooms = nullptr;
     UiCtlPanelIcon* mIconTraps = nullptr;

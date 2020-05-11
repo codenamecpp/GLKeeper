@@ -66,6 +66,7 @@ void UiCtlPanelIcon::SetContext(RoomDefinition* roomDefinition)
         mRoomDefinition->mGuiIconResource.IsDefined())
     {
         Texture2D* texture = gTexturesManager.GetTexture2D(mRoomDefinition->mGuiIconResource.mResourceName);
+        SetPicture(texture);
     }
     debug_assert(mRoomDefinition);
 }
@@ -78,6 +79,7 @@ void UiCtlPanelIcon::SetContext(GameObjectDefinition* objectDefinition)
         mObjectDefinition->mGuiIconResource.IsDefined())
     {
         Texture2D* texture = gTexturesManager.GetTexture2D(mObjectDefinition->mGuiIconResource.mResourceName);
+        SetPicture(texture);
     }
     debug_assert(mObjectDefinition);
 }
