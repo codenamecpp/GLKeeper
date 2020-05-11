@@ -180,6 +180,7 @@
     <ClInclude Include="3rd_party\stb_image.h" />
     <ClInclude Include="AABBTree.h" />
     <ClInclude Include="CreatureDefs.h" />
+    <ClInclude Include="MapInteractionController.h" />
     <ClInclude Include="UiCtlPanelBar.h" />
     <ClInclude Include="UiCtlPanelIcon.h" />
     <ClInclude Include="GameplayGameScreen.h" />
@@ -317,6 +318,7 @@
     <ClCompile Include="CommonTypes.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="ConsoleVariable.cpp" />
+    <ClCompile Include="MapInteractionController.cpp" />
     <ClCompile Include="UiCtlPanelBar.cpp" />
     <ClCompile Include="UiCtlPanelIcon.cpp" />
     <ClCompile Include="GameplayGameScreen.cpp" />

@@ -74,9 +74,9 @@ void GenericRoom::IncludeTiles(const TilesArray& mapTiles)
     {
         debug_assert(currTile->mIsRoomEntrance == false);
         debug_assert(currTile->mIsRoomInnerTile == false);
-        debug_assert(currTile->mRoom == nullptr);
+        debug_assert(currTile->mBuiltRoom == nullptr);
 
-        currTile->mRoom = this;
+        currTile->mBuiltRoom = this;
 #ifdef _DEBUG
         // check no room walls
         if (MapTile* neighTile = currTile->mNeighbours[eDirection_N]) { debug_assert(neighTile->mFaces[eTileFace_SideS].mWallSection == nullptr); }
@@ -257,7 +257,7 @@ void GenericRoom::ScanWallSectionImpl(MapTile* originTile, WallSection* section)
             MapTile* neighbourTile = currTile->mNeighbours[section->mFaceDirection];
             debug_assert(neighbourTile);
 
-            if (neighbourTile->mRoom != section->mRoom)
+            if (neighbourTile->mBuiltRoom != section->mRoom)
                 return;
 
             if (isHead)
@@ -604,7 +604,7 @@ void GenericRoom::ConstructTiles_Normal(DungeonBuilder& builder, const TilesArra
     {
         // todo: fix it
         // todo: what i had to fix here?
-        if (currTile->mRoom == this && currTile->mIsRoomInnerTile)
+        if (currTile->mBuiltRoom == this && currTile->mIsRoomInnerTile)
         {
             builder.ExtendTileMesh(currTile, eTileFace_Floor, geoInnerPart);
             continue;

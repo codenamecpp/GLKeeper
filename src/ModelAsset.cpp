@@ -284,7 +284,7 @@ void ModelAsset::ComputeBounds()
     for (int iAnimFrame = 0; iAnimFrame < mFramesCount; ++iAnimFrame)
     {
         cxx::aabbox& bounds = mFramesBounds[iAnimFrame];
-        bounds.reset();
+        bounds.clear();
         for (const SubMesh& subMesh: mMeshArray)
         {
             const glm::vec3* verticesPos = &subMesh.mVertexPositionArray[iAnimFrame * subMesh.mFrameVerticesCount];

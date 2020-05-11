@@ -61,15 +61,16 @@ public:
     TerrainDefinition* mBaseTerrain = nullptr; // used to determine base terrain type, cannot be null
     TerrainDefinition* mRoomTerrain = nullptr; // overrides base terrain with room specific terrain, optional
 
-    ePlayerID mOwnerId = ePlayerID_Null;
+    ePlayerID mOwnerId = ePlayerID_Null; // neutral maybe ?
 
-    GenericRoom* mRoom = nullptr; // room built on tile
+    GenericRoom* mBuiltRoom = nullptr; // room that built on tile
     TileFaceData mFaces[eTileFace_COUNT];
     MapTile* mNeighbours[eDirection_COUNT];
 
     unsigned int mRandomValue = 0; // effects on visuals only
     unsigned int mFloodFillCounter = 0; // increments on each flood fill operation
 
+    // current state flags
     bool mIsTagged;
     bool mIsRoomInnerTile; // tile is center of 3x3 square of room, flag is valid only if tile is a part of room
     bool mIsRoomEntrance; // flag is valid only if tile is a part of room

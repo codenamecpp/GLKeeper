@@ -507,6 +507,9 @@
     <ClInclude Include="UiCtlPanelBar.h">
       <Filter>Game\UserInterface</Filter>
     </ClInclude>
+    <ClInclude Include="MapInteractionController.h">
+      <Filter>Game\World</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -783,6 +786,9 @@
     </ClCompile>
     <ClCompile Include="UiCtlPanelBar.cpp">
       <Filter>Game\UserInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="MapInteractionController.cpp">
+      <Filter>Game\World</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

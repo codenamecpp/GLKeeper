@@ -3,10 +3,15 @@
 #include "GenericGamestate.h"
 #include "GodmodeCameraController.h"
 #include "GameplayGameScreen.h"
+#include "MapInteractionController.h"
 
 // in-game gamestate
 class GameplayGamestate: public GenericGamestate
 {
+public:
+    GameplayGameScreen mGameplayGameScreen;
+    MapInteractionController mMapInteractionControl;
+
 public:
     // enter game state
     void HandleGamestateEnter() override;
@@ -30,5 +35,4 @@ public:
 
 private:
     GodmodeCameraController mGodmodeCameraControl;
-    GameplayGameScreen mGameplayGameScreen;
 };

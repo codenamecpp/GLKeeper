@@ -39,6 +39,8 @@ void GameMap::Setup(const Point& mapDimensions, unsigned int randomSeed)
     {
         currTile.mRandomValue = randomize.generate_int();
     }
+
+    ComputeBounds();
 }
 
 void GameMap::Clear()
@@ -47,6 +49,7 @@ void GameMap::Clear()
     mDimensions.x = 0;
     mDimensions.y = 0;
     mTilesArray.clear();
+    mBounds.clear();
 }
 
 MapTile* GameMap::GetTileFromCoord3d(const glm::vec3& coord)
@@ -164,6 +167,15 @@ void GameMap::FloodFill4(TilesArray& outputTiles, MapTile* origin, const Rectang
 
         outputTiles.push_back(currentTile);
     }
+}
+
+void GameMap::ComputeBounds()
+{
+    cxx::aabbox minPosBounds;
+    cxx::aabbox maxPosBounds;
+    GetMapBlockBounds(Point(0, 0), minPosBounds);
+    GetMapBlockBounds(mDimensions - Point(1, 1), maxPosBounds);
+    mBounds = minPosBounds.union_with(maxPosBounds);
 }
 
 void GameMap::ClearFloodFillCounter()

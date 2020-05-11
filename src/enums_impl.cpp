@@ -374,3 +374,13 @@ impl_enum_strings(eGuiAnimationLoop)
     {eGuiAnimationLoop_PingPong, "ping_pong"},
     {eGuiAnimationLoop_FromStart, "from_start"},
 };
+
+impl_enum_strings(eMapInteractionMode)
+{
+    {eMapInteractionMode_Free, "free_mode"},
+    {eMapInteractionMode_CastSpells, "cast_spells"},
+    {eMapInteractionMode_ConstructRooms, "construct_rooms"},
+    {eMapInteractionMode_SellRooms, "sell_rooms"},
+    {eMapInteractionMode_ConstructTraps, "construct_traps"},
+    {eMapInteractionMode_DigTerrain, "dig_terrain"},
+};

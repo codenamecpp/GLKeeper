@@ -15,12 +15,14 @@ void GameplayGamestate::HandleGamestateEnter()
     gGameMain.mFpsWindow.SetWindowShown(true);
 
     gGameWorld.EnterWorld();
+    mMapInteractionControl.SetFreeModeInteraction();
 
     mGameplayGameScreen.ShowScreen();
 }
 
 void GameplayGamestate::HandleGamestateLeave()
 {
+    mMapInteractionControl.Cleanup();
     gGameWorld.ClearWorld();
     gRenderScene.SetCameraController(nullptr);
 
@@ -31,18 +33,22 @@ void GameplayGamestate::HandleGamestateLeave()
 
 void GameplayGamestate::HandleUpdateFrame()
 {
+    mMapInteractionControl.UpdateFrame();
 }
 
 void GameplayGamestate::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
+    mMapInteractionControl.ProcessInputEvent(inputEvent);
 }
 
 void GameplayGamestate::HandleInputEvent(MouseMovedInputEvent& inputEvent)
 {
+    mMapInteractionControl.ProcessInputEvent(inputEvent);
 }
 
 void GameplayGamestate::HandleInputEvent(MouseScrollInputEvent& inputEvent)
 {
+    mMapInteractionControl.ProcessInputEvent(inputEvent);
 }
 
 void GameplayGamestate::HandleInputEvent(KeyInputEvent& inputEvent)
@@ -57,10 +63,13 @@ void GameplayGamestate::HandleInputEvent(KeyInputEvent& inputEvent)
         mGameplayGameScreen.ReloadScreen();
         inputEvent.SetConsumed(true);
     }
+
+    mMapInteractionControl.ProcessInputEvent(inputEvent);
 }
 
 void GameplayGamestate::HandleInputEvent(KeyCharEvent& inputEvent)
 {
+    mMapInteractionControl.ProcessInputEvent(inputEvent);
 }
 
 void GameplayGamestate::HandleScreenResolutionChanged()

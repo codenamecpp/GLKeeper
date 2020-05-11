@@ -111,9 +111,9 @@ void TerrainManager::UpdateTerrainMesh()
     // build terrain tiles and collect invalidated rooms
     for (MapTile* currentTile: mInvalidatedTiles)
     {
-        if (currentTile->mRoom)
+        if (currentTile->mBuiltRoom)
         {
-            invalidateRooms.insert(currentTile->mRoom);
+            invalidateRooms.insert(currentTile->mBuiltRoom);
         }
 
         // traverse each invalidated tile face
