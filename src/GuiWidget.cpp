@@ -318,12 +318,12 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
     if (inputEvent.mPressed)
     {
         GuiEvent eventData = GuiEvent::MouseDownEvent(this, inputEvent.mButton, gInputsManager.mCursorPosition);
-        PostEvent(eventData);
+        DispatchEvent(eventData);
     }
     else
     {
         GuiEvent eventData = GuiEvent::MouseUpEvent(this, inputEvent.mButton, gInputsManager.mCursorPosition);
-        PostEvent(eventData);
+        DispatchEvent(eventData);
     }
     
     bool hasBeenClicked = false;
@@ -355,7 +355,7 @@ void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
                     // post event
                     {
                         GuiEvent eventData = GuiEvent::ClickEvent(this, inputEvent.mButton, gInputsManager.mCursorPosition);
-                        PostEvent(eventData);
+                        DispatchEvent(eventData);
                     }
                     hasBeenClicked = true;
                 }
@@ -998,12 +998,12 @@ void GuiWidget::ShownStateChanged()
     if (!IsVisibleWithParent()) 
     {
         GuiEvent eventData(this, GuiEventId_OnHide);
-        PostEvent(eventData);
+        DispatchEvent(eventData);
     }
     else
     {
         GuiEvent eventData(this, GuiEventId_OnShow);
-        PostEvent(eventData);
+        DispatchEvent(eventData);
     }
 
     for (GuiWidget* currChild = mFirstChild; currChild; 
@@ -1020,12 +1020,12 @@ void GuiWidget::EnableStateChanged()
     if (!IsEnabledWithParent())
     {
         GuiEvent eventData(this, GuiEventId_OnDisable);
-        PostEvent(eventData);
+        DispatchEvent(eventData);
     }
     else
     {
         GuiEvent eventData(this, GuiEventId_OnEnable);
-        PostEvent(eventData);
+        DispatchEvent(eventData);
     }
 
     for (GuiWidget* currChild = mFirstChild; currChild; 
@@ -1042,12 +1042,12 @@ void GuiWidget::HoveredStateChanged()
     if (IsHovered())
     {
         GuiEvent eventData = GuiEvent::MouseEnterEvent(this, gInputsManager.mCursorPosition);
-        PostEvent(eventData);
+        DispatchEvent(eventData);
     }
     else
     {
         GuiEvent eventData = GuiEvent::MouseLeaveEvent(this, gInputsManager.mCursorPosition);
-        PostEvent(eventData);
+        DispatchEvent(eventData);
     }
 
     HandleHoveredStateChanged();
@@ -1058,12 +1058,12 @@ void GuiWidget::PressedStateChanged()
     if (IsPressed())
     {
         GuiEvent eventData = GuiEvent::PressStartEvent(this, mPressMouseButton, gInputsManager.mCursorPosition);
-        PostEvent(eventData);
+        DispatchEvent(eventData);
     }
     else
     {
         GuiEvent eventData = GuiEvent::PressEndEvent(this, mPressMouseButton, gInputsManager.mCursorPosition);
-        PostEvent(eventData);
+        DispatchEvent(eventData);
 
         mPressMouseButton = eMouseButton_null;
     }
@@ -1176,10 +1176,10 @@ void GuiWidget::ReleaseMouseCapture()
     gGuiManager.ReleaseMouseCapture(this);
 }
 
-void GuiWidget::PostEvent(const GuiEvent& eventData)
+void GuiWidget::DispatchEvent(const GuiEvent& eventData)
 {
     // notify widget actions
-    mActions.EmitEvent(eventData);
+    mActions.PerformActions(eventData);
 
     gGuiManager.BroadcastEvent(eventData);
 }

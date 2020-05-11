@@ -126,7 +126,7 @@ void UiCtlPanelIcon::UpdateState()
     if (mControl)
     {
         GuiEvent eventData(mControl, id_change_state);
-        mControl->mActions.EmitEvent(eventData);
+        mControl->mActions.PerformActions(eventData);
     }
 }
 

@@ -217,7 +217,7 @@ protected:
     void ReleaseMouseCapture();
 
     // post widget event to gui system
-    void PostEvent(const GuiEvent& eventData);
+    void DispatchEvent(const GuiEvent& eventData);
 
     bool ResolveCondition(const cxx::unique_string& name, bool& isTrue) const;
 

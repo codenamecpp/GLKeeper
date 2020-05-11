@@ -212,7 +212,7 @@ public:
             return;
         }
         GuiEvent eventData(targetWidget, mEventId);
-        targetWidget->mActions.EmitEvent(eventData);
+        targetWidget->mActions.PerformActions(eventData);
     }
     bool HandleDeserialize(cxx::json_node_object actionNode) override
     {
@@ -360,7 +360,7 @@ void GuiActionsHolder::ClearActions()
     mActionsList.clear();
 }
 
-void GuiActionsHolder::EmitEvent(const GuiEvent& eventData)
+void GuiActionsHolder::PerformActions(const GuiEvent& eventData)
 {
     for (const EventActionStruct& curr: mActionsList)
     {

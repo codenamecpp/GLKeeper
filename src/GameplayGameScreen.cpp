@@ -12,7 +12,10 @@ GameplayGameScreen::GameplayGameScreen()
 
 void GameplayGameScreen::UpdateUserInterfaceState()
 {
-
+    if (mCtlPanelBar)
+    {
+        mCtlPanelBar->UpdateUserInterfaceState();
+    }
 }
 
 void GameplayGameScreen::ReloadScreen()

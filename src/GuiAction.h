@@ -75,7 +75,7 @@ public:
     void ClearActions();
 
     // invoke actions associated with event id
-    void EmitEvent(const GuiEvent& eventData);
+    void PerformActions(const GuiEvent& eventData);
 
 private:
     struct EventActionStruct
