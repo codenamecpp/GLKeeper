@@ -15,4 +15,4 @@ enum eUiCtlPanelId
 };
 
 // template widget identifiers
-extern const cxx::unique_string UiCtlPanelIconTemplateId;
+extern const cxx::unique_string UiTemplateId_CtlPanelIcon;

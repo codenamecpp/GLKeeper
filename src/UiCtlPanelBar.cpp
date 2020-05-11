@@ -2,6 +2,7 @@
 #include "UiCtlPanelBar.h"
 #include "UiCtlPanelIcon.h"
 #include "GameWorld.h"
+#include "GameMain.h"
 
 UiCtlPanelBar::UiCtlPanelBar(GuiWidget* control)
     : mControl(control)
@@ -32,6 +33,32 @@ void UiCtlPanelBar::UpdateUserInterfaceState()
     mIconRooms->SetActiveState(mCurrentPanel == eUiCtlPanelId_Rooms);
     mIconTraps->SetActiveState(mCurrentPanel == eUiCtlPanelId_Traps);
     mIconSpells->SetActiveState(mCurrentPanel == eUiCtlPanelId_Spells);
+
+    MapInteractionController& mapInteraction = gGameMain.mGameplayGamestate.mMapInteractionControl;
+
+    // sell & dig
+    mIconSell->SetActiveState(mapInteraction.mCurrentMode == eMapInteractionMode_SellRooms);
+    mIconDig->SetActiveState(mapInteraction.mCurrentMode == eMapInteractionMode_DigTerrain);
+
+    // panel icons
+    int numButtons = GetUsedPanelIconCount();
+    for (int icurr = 0; icurr < numButtons; ++icurr)
+    {
+        UiCtlPanelIcon* currIcon = mPanelIcons[icurr];
+
+        bool isActiveState = false;
+        if (mapInteraction.mCurrentMode == eMapInteractionMode_ConstructRooms && mCurrentPanel == eUiCtlPanelId_Rooms)
+        {
+            debug_assert(mapInteraction.mConstructRoomDef);
+            isActiveState = (mapInteraction.mConstructRoomDef == currIcon->mRoomDefinition);
+        }
+        if (mapInteraction.mCurrentMode == eMapInteractionMode_ConstructTraps && mCurrentPanel == eUiCtlPanelId_Traps)
+        {
+            debug_assert(mapInteraction.mConstructTrapDef);
+            isActiveState = (mapInteraction.mConstructTrapDef == currIcon->mObjectDefinition);
+        }
+        currIcon->SetActiveState(isActiveState);
+    }
 }
 
 void UiCtlPanelBar::SetupCurrentPanelContent()
@@ -73,14 +100,33 @@ void UiCtlPanelBar::SetupCurrentPanelContent()
         UnusePanelIcons();
     }
 
-    // set overlay texture same as tab overlay
-    //for (size_t icurr = 0; icurr < mCtlPanelIcons.size(); ++icurr)
-    //{
-    //    Texture2D* overlayTexture = mCtlPanelTabsIcons[mCurrentCtlPanel].mActiveOverlay;
-    //    mCtlPanelIcons[icurr].SetActiveOverlay(overlayTexture);
-    //}
-
+    SetupCurrentPanelIconsOverlay();
     UpdateUserInterfaceState();
+}
+
+void UiCtlPanelBar::SetupCurrentPanelIconsOverlay()
+{
+    // set overlay texture same as tab overlay
+    Texture2D* overlayTexture = nullptr;
+    switch (mCurrentPanel)
+    {
+    case eUiCtlPanelId_Creatures: overlayTexture = mIconCreatures->mActiveOverlay;
+        break;
+    case eUiCtlPanelId_Rooms: overlayTexture = mIconRooms->mActiveOverlay;
+        break;
+    case eUiCtlPanelId_Spells: overlayTexture = mIconSpells->mActiveOverlay;
+        break;
+    case eUiCtlPanelId_Traps: overlayTexture = mIconTraps->mActiveOverlay;
+        break;
+    }
+    debug_assert(overlayTexture);
+
+    int numIcons = GetUsedPanelIconCount();
+    for (int icurr = 0; icurr < numIcons; ++icurr)
+    {
+        UiCtlPanelIcon* currIcon = mPanelIcons[icurr];
+        currIcon->SetActiveOverlay(overlayTexture);
+    }
 }
 
 void UiCtlPanelBar::UsePanelIcons(int numIcons)
@@ -128,6 +174,58 @@ void UiCtlPanelBar::UnusePanelIcons()
     mPanelIconsContainer->UpdateLayout();
 }
 
+int UiCtlPanelBar::GetUsedPanelIconCount() const
+{
+    int counter = 0;
+    for (UiCtlPanelIcon* currIcon: mPanelIcons)
+    {
+        if (!currIcon->mControl->IsVisible())
+            break;
+
+        ++counter;
+    }
+    return counter;
+}
+
+void UiCtlPanelBar::OnPressPanelIcon(UiCtlPanelIcon* panelIcon, bool isPrimaryAction)
+{
+    debug_assert(panelIcon);
+    if (mCurrentPanel == eUiCtlPanelId_Rooms)
+    {
+        if (isPrimaryAction)
+        {
+            debug_assert(panelIcon->mRoomDefinition);
+            gGameMain.mGameplayGamestate.mMapInteractionControl.SetRoomsConstruction(panelIcon->mRoomDefinition);
+        }
+    }
+}
+
+void UiCtlPanelBar::OnPressSellIcon()
+{
+    MapInteractionController& mapInteraction = gGameMain.mGameplayGamestate.mMapInteractionControl;
+    if (mapInteraction.mCurrentMode == eMapInteractionMode_SellRooms)
+    {
+        mapInteraction.SetFreeModeInteraction();
+    }
+    else
+    {
+        mapInteraction.SetSellRoomsInteraction();
+    }
+}
+
+void UiCtlPanelBar::OnPressDigIcon()
+{
+    MapInteractionController& mapInteraction = gGameMain.mGameplayGamestate.mMapInteractionControl;
+    if (mapInteraction.mCurrentMode == eMapInteractionMode_DigTerrain)
+    {
+        mapInteraction.SetFreeModeInteraction();
+    }
+    else
+    {
+        mapInteraction.SetDigTerrainInteraction();
+    }
+}
+
 bool UiCtlPanelBar::ResolveCondition(const GuiWidget* source, const cxx::unique_string& name, bool& isTrue)
 {
     return false;
@@ -172,10 +270,18 @@ void UiCtlPanelBar::HandlePressStart(GuiWidget* sender, eMouseButton mbutton)
     }
     if (sender == mIconSell->mControl)
     {
+        if (primaryAction)
+        {
+            OnPressSellIcon();
+        }
         return;
     }
     if (sender == mIconDig->mControl)
     {
+        if (primaryAction)
+        {
+            OnPressDigIcon();
+        }
         return;
     }
     // check panel icons
@@ -183,6 +289,7 @@ void UiCtlPanelBar::HandlePressStart(GuiWidget* sender, eMouseButton mbutton)
     {
         if (sender == currIcon->mControl)
         {
+            OnPressPanelIcon(currIcon, primaryAction);
             return;
         }
     }

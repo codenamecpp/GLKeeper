@@ -37,9 +37,15 @@ private:
     void Cleanup();
     void BindControls();
     void SetupCurrentPanelContent();
+    void SetupCurrentPanelIconsOverlay();
 
     void UsePanelIcons(int numIcons);
     void UnusePanelIcons();
+    int GetUsedPanelIconCount() const;
+
+    void OnPressPanelIcon(UiCtlPanelIcon* panelIcon, bool isPrimaryAction);
+    void OnPressSellIcon();
+    void OnPressDigIcon();
 
 private:
     GuiWidget* mPanelIconsContainer = nullptr;

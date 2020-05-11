@@ -4,6 +4,7 @@
 #include "RenderScene.h"
 #include "GraphicsDevice.h"
 #include "GameWorld.h"
+#include "GameMain.h"
 
 const int MaxTilesSelectionRectWide = 9;
 
@@ -311,8 +312,9 @@ void MapInteractionController::EndMultitileSelection(bool success)
 
 void MapInteractionController::OnInteractionModeChanged()
 {
+    debug_assert(gGameMain.IsGameplayGamestate());
     // todo
-    //mSessionState->mHUDScreen.UpdateHUDState();
+    gGameMain.mGameplayGamestate.mGameplayGameScreen.UpdateUserInterfaceState();
 }
 
 bool MapInteractionController::ProcessTagTerrain(const Rectangle& area)

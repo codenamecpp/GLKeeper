@@ -387,6 +387,7 @@
     <ClCompile Include="GuiManager.cpp" />
     <ClCompile Include="GuiRenderer.cpp" />
     <ClCompile Include="unique_string.cpp" />
+    <ClCompile Include="UserInterface.cpp" />
     <ClCompile Include="WallSection.cpp" />
     <ClCompile Include="ScenarioLoader.cpp" />
     <ClCompile Include="SceneCamera.cpp" />

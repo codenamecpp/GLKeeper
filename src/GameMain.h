@@ -13,8 +13,9 @@ class GameMain: public cxx::noncopyable
     friend class GameplayGamestate;
 
 public:
-    // readonly
-    GenericGamestate* mCurrentGamestate = nullptr;
+    MeshViewGamestate mMeshViewGamestate;
+    GameplayGamestate mGameplayGamestate;
+    GuiTestGamestate mGuiTestGamestate;
 
 public:
 
@@ -36,7 +37,7 @@ public:
     void ProcessInputEvent(KeyInputEvent& inputEvent);
     void ProcessInputEvent(KeyCharEvent& inputEvent);
 
-    // determine current game state
+    // detect current active game gamestate
     bool IsMeshViewGamestate() const;
     bool IsGameplayGamestate() const;
     bool IsGuiTestGamestate() const;
@@ -47,10 +48,7 @@ private:
     void SwitchToGameState(GenericGamestate* gamestate);
 
 private:
-    MeshViewGamestate mMeshViewGamestate;
-    GameplayGamestate mGameplayGamestate;
-    GuiTestGamestate mGuiTestGamestate;
-
+    GenericGamestate* mCurrentGamestate = nullptr;
     ToolsUISceneStatisticsWindow mFpsWindow;
 };
 

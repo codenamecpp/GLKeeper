@@ -76,3 +76,8 @@ void GameplayGamestate::HandleScreenResolutionChanged()
 {
     mGodmodeCameraControl.HandleScreenResolutionChanged();
 }
+
+bool GameplayGamestate::IsMapInteractionActive() const
+{
+    return true;
+}

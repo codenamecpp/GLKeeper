@@ -8,8 +8,6 @@
 #include "TexturesManager.h"
 #include "ScenarioDefs.h"
 
-const cxx::unique_string UiCtlPanelIconTemplateId("ctl_panel_icon_template");
-
 UiCtlPanelIcon::UiCtlPanelIcon(GuiWidget* control)
     : mControl(control)
 {
@@ -17,7 +15,7 @@ UiCtlPanelIcon::UiCtlPanelIcon(GuiWidget* control)
     if (mControl == nullptr)
         return;
 
-    debug_assert(mControl->mTemplateClassName == UiCtlPanelIconTemplateId);
+    debug_assert(mControl->mTemplateClassName == UiTemplateId_CtlPanelIcon);
 
     // bind
     mControl->SetActionsContext(this);

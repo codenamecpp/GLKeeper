@@ -790,6 +790,9 @@
     <ClCompile Include="MapInteractionController.cpp">
       <Filter>Game\World</Filter>
     </ClCompile>
+    <ClCompile Include="UserInterface.cpp">
+      <Filter>Game\UserInterface</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\docs\creatures_anims.txt">

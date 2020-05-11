@@ -32,6 +32,9 @@ public:
     void HandleInputEvent(KeyCharEvent& inputEvent) override;
 
     void HandleScreenResolutionChanged() override;
+    
+    // test whether map interaction is active
+    bool IsMapInteractionActive() const;
 
 private:
     GodmodeCameraController mGodmodeCameraControl;
