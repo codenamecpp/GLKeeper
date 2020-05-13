@@ -12,7 +12,6 @@ struct enum_string_elem
 template<typename TEnum>
 struct enum_strings 
 {
-    static const enum_string_elem<TEnum> mEnumValueStrings[];
 };
 
 //////////////////////////////////////////////////////////////////////////
