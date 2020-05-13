@@ -4,7 +4,7 @@
 #include "GraphicsDevice.h"
 #include "GpuBuffer.h"
 #include "GameObjectComponent.h"
-#include "AnimModelComponent.h"
+#include "AnimatingModelComponent.h"
 #include "RenderScene.h"
 #include "VertexFormat.h"
 #include "ConsoleVariable.h"
@@ -60,7 +60,7 @@ void AnimatingModelsRenderer::Deinit()
     mModelsCache.clear();
 }
 
-void AnimatingModelsRenderer::Render(SceneRenderContext& renderContext, AnimModelComponent* component)
+void AnimatingModelsRenderer::Render(SceneRenderContext& renderContext, AnimatingModelComponent* component)
 {
     if (!gCVarRender_DrawModels.mValue)
         return;
@@ -82,7 +82,7 @@ void AnimatingModelsRenderer::Render(SceneRenderContext& renderContext, AnimMode
         }
     }
 
-    TransformComponent* transformComponent = component->mGameObject->GetTransformComponent();
+    TransformComponent* transformComponent = component->mGameObject->GetComponent<TransformComponent>();
 
     ModelsRenderData* renderData = component->mRenderData;
 

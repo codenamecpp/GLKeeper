@@ -399,9 +399,6 @@
     <ClInclude Include="TransformComponent.h">
       <Filter>Game\GameObject\Components</Filter>
     </ClInclude>
-    <ClInclude Include="AnimModelComponent.h">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClInclude>
     <ClInclude Include="TerrainMeshComponent.h">
       <Filter>Game\GameObject\Components</Filter>
     </ClInclude>
@@ -416,9 +413,6 @@
     </ClInclude>
     <ClInclude Include="CameraController.h">
       <Filter>Game\Scene\CameraControllers</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObjectComponentsFactory.h">
-      <Filter>Game\GameObject\Components</Filter>
     </ClInclude>
     <ClInclude Include="GuiRenderProgram.h">
       <Filter>Game\Render\Shaders</Filter>
@@ -509,6 +503,12 @@
     </ClInclude>
     <ClInclude Include="MapInteractionController.h">
       <Filter>Game\World</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticMeshComponent.h">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatingModelComponent.h">
+      <Filter>Game\GameObject\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -697,9 +697,6 @@
     <ClCompile Include="TransformComponent.cpp">
       <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
-    <ClCompile Include="AnimModelComponent.cpp">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClCompile>
     <ClCompile Include="TerrainMeshComponent.cpp">
       <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
@@ -711,9 +708,6 @@
     </ClCompile>
     <ClCompile Include="OrbitCameraController.cpp">
       <Filter>Game\Scene\CameraControllers</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObjectComponentsFactory.cpp">
-      <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
     <ClCompile Include="GuiManager.cpp">
       <Filter>Game\GuiLibrary</Filter>
@@ -792,6 +786,12 @@
     </ClCompile>
     <ClCompile Include="UserInterface.cpp">
       <Filter>Game\UserInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticMeshComponent.cpp">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatingModelComponent.cpp">
+      <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

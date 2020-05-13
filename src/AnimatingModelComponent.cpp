@@ -1,23 +1,23 @@
 #include "pch.h"
-#include "AnimModelComponent.h"
+#include "AnimatingModelComponent.h"
 #include "ModelAsset.h"
 #include "TexturesManager.h"
 #include "GameObject.h"
 #include "TransformComponent.h"
 #include "RenderManager.h"
 
-AnimModelComponent::AnimModelComponent(GameObject* gameObject)
-    : GameObjectComponent(eGameObjectComponent_AnimatingModel, gameObject)
+AnimatingModelComponent::AnimatingModelComponent(GameObject* gameObject)
+    : GameObjectComponent(GetComponentType(), gameObject)
 {
     debug_assert(mGameObject);
     mGameObject->mDebugColor = Color32_Green;
 }
 
-AnimModelComponent::~AnimModelComponent()
+AnimatingModelComponent::~AnimatingModelComponent()
 {
 }
 
-void AnimModelComponent::UpdateFrame(float deltaTime)
+void AnimatingModelComponent::UpdateFrame(float deltaTime)
 {
     if (!IsAnimationActive() || IsAnimationPaused())
         return;
@@ -25,13 +25,13 @@ void AnimModelComponent::UpdateFrame(float deltaTime)
     AdvanceAnimation(deltaTime);
 }
 
-void AnimModelComponent::RenderFrame(SceneRenderContext& renderContext)
+void AnimatingModelComponent::RenderFrame(SceneRenderContext& renderContext)
 {
     AnimatingModelsRenderer& renderer = gRenderManager.mAnimatingModelsRenderer;
     renderer.Render(renderContext, this);
 }
 
-void AnimModelComponent::SetModelAsset(ModelAsset* modelAsset)
+void AnimatingModelComponent::SetModelAsset(ModelAsset* modelAsset)
 {
     if (modelAsset == nullptr || !modelAsset->IsModelLoaded())
     {
@@ -97,7 +97,7 @@ void AnimModelComponent::SetModelAsset(ModelAsset* modelAsset)
     SetAnimationState();
 }
 
-void AnimModelComponent::SetModelAssetNull()
+void AnimatingModelComponent::SetModelAssetNull()
 {
     mModelAsset = nullptr;
     // reset current renderdata
@@ -112,7 +112,7 @@ void AnimModelComponent::SetModelAssetNull()
     SetAnimationState();
 }
 
-bool AnimModelComponent::StartAnimation(float animationSpeed, bool loop)
+bool AnimatingModelComponent::StartAnimation(float animationSpeed, bool loop)
 {
     if (IsStatic())
     {
@@ -133,7 +133,7 @@ bool AnimModelComponent::StartAnimation(float animationSpeed, bool loop)
     return true;
 }
 
-void AnimModelComponent::ClearAnimation()
+void AnimatingModelComponent::ClearAnimation()
 {
     mAnimState.mFrame0 = mAnimState.mStartFrame;
     mAnimState.mFrame1 = mAnimState.mStartFrame + 1;
@@ -153,17 +153,17 @@ void AnimModelComponent::ClearAnimation()
     SetLocalBounds();
 }
 
-void AnimModelComponent::RewindToStart()
+void AnimatingModelComponent::RewindToStart()
 {
     debug_assert(false); // todo
 }
 
-void AnimModelComponent::RewingToEnd()
+void AnimatingModelComponent::RewingToEnd()
 {
     debug_assert(false); // todo
 }
 
-void AnimModelComponent::AdvanceAnimation(float deltaTime)
+void AnimatingModelComponent::AdvanceAnimation(float deltaTime)
 {
     if (!IsAnimationActive())
     {
@@ -212,7 +212,7 @@ void AnimModelComponent::AdvanceAnimation(float deltaTime)
     }
 }
 
-void AnimModelComponent::SetAnimationPaused(bool isPaused)
+void AnimatingModelComponent::SetAnimationPaused(bool isPaused)
 {
     if (IsAnimationActive())
     {
@@ -220,37 +220,37 @@ void AnimModelComponent::SetAnimationPaused(bool isPaused)
     }
 }
 
-bool AnimModelComponent::IsAnimationLoop() const
+bool AnimatingModelComponent::IsAnimationLoop() const
 {
     return mAnimState.mIsAnimationLoop;
 }
 
-bool AnimModelComponent::IsAnimationActive() const
+bool AnimatingModelComponent::IsAnimationActive() const
 {
     return mAnimState.mIsAnimationActive;
 }
 
-bool AnimModelComponent::IsAnimationFinish() const
+bool AnimatingModelComponent::IsAnimationFinish() const
 {
     return !mAnimState.mIsAnimationActive && mAnimState.mCyclesCount > 0;
 }
 
-bool AnimModelComponent::IsAnimationPaused() const
+bool AnimatingModelComponent::IsAnimationPaused() const
 {
     return mAnimState.mIsAnimationPaused;
 }
 
-bool AnimModelComponent::IsStatic() const
+bool AnimatingModelComponent::IsStatic() const
 {
     return mAnimState.mStartFrame == mAnimState.mFinalFrame;
 }
 
-void AnimModelComponent::SetPreferredLOD(int lod)
+void AnimatingModelComponent::SetPreferredLOD(int lod)
 {
     mPreferredLOD = lod;
 }
 
-void AnimModelComponent::SetAnimationState()
+void AnimatingModelComponent::SetAnimationState()
 {   
     mAnimState = BlendFramesAnimState ();
 
@@ -265,7 +265,8 @@ void AnimModelComponent::SetAnimationState()
     SetLocalBounds();
 }
 
-void AnimModelComponent::SetLocalBounds()
+void AnimatingModelComponent::SetLocalBounds()
 {
-    mGameObject->GetTransformComponent()->SetLocalBoundingBox(mModelAsset->mFramesBounds[mAnimState.mFrame0]);
+    TransformComponent* transformComponent = mGameObject->GetComponent<TransformComponent>();
+    transformComponent->SetLocalBoundingBox(mModelAsset->mFramesBounds[mAnimState.mFrame0]);
 }

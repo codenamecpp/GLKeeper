@@ -1,59 +1,38 @@
 #pragma once
 
+//////////////////////////////////////////////////////////////////////////
+
+// put this macro inside each component class declaration
+#define GAMEOBJECT_COMPONENT(componentid) \
+    public: \
+        static eGameObjectComponent GetComponentType() \
+        { \
+            return componentid; \
+        }
+
+//////////////////////////////////////////////////////////////////////////
+
+// base class of any game object component
 class GameObjectComponent: public cxx::noncopyable
 {
 public:
     const eGameObjectComponent mComponentType;
-
-    GameObject* mGameObject;
+    GameObject* const mGameObject;
 
 public:
     virtual ~GameObjectComponent()
     {
     }
-
     // process scene update frame
     // @param deltaTime: Time since last update
-    virtual void UpdateFrame(float deltaTime) { }
-
+    virtual void UpdateFrame(float deltaTime) 
+    { 
+    }
     // issue draw call
     // @param renderContext: Scene render context
-    virtual void RenderFrame(SceneRenderContext& renderContext) { }
-
-    // whether component should update
-    inline bool IsUpdatableComponent() const
-    {
-        switch (mComponentType)
-        {
-            case eGameObjectComponent_Transform:
-            case eGameObjectComponent_TerrainMesh:
-                return false;
-
-            case eGameObjectComponent_WaterLavaMesh:
-            case eGameObjectComponent_AnimatingModel:
-                return true;
-        }
-        debug_assert(false);
-        return false;
+    virtual void RenderFrame(SceneRenderContext& renderContext) 
+    { 
     }
-
-    // whether component should render
-    inline bool IsRenderableComponent() const
-    {
-        switch (mComponentType)
-        {
-            case eGameObjectComponent_Transform:
-                return false;
-
-            case eGameObjectComponent_TerrainMesh:
-            case eGameObjectComponent_WaterLavaMesh:
-            case eGameObjectComponent_AnimatingModel:
-                return true;
-        }
-        debug_assert(false);
-        return false;
-    }
-
 protected:
     // base component does not meant to be instantiated directly
     GameObjectComponent(eGameObjectComponent componentType, GameObject* sceneObject)
@@ -61,5 +40,6 @@ protected:
         , mGameObject(sceneObject)
     {
         debug_assert(mComponentType < eGameObjectComponent_Count);
+        debug_assert(mGameObject);
     }
 };

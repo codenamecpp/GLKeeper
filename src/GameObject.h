@@ -1,10 +1,11 @@
 #pragma once
 
 #include "GameObjectComponent.h"
-#include "AnimModelComponent.h"
+#include "AnimatingModelComponent.h"
 #include "TransformComponent.h"
 #include "TerrainMeshComponent.h"
 #include "WaterLavaMeshComponent.h"
+#include "StaticMeshComponent.h"
 
 class GameObject: public cxx::noncopyable
 {
@@ -32,50 +33,29 @@ public:
 
     // destroy all components including transform
     void DeleteAllComponents();
-    void DeleteRenderableComponents();
+
+    // get component
+    template<typename TObjectComponent>
+    inline TObjectComponent* GetComponent() const
+    {
+        eGameObjectComponent componentId = TObjectComponent::GetComponentType();
+        return static_cast<TObjectComponent*>(mComponents[componentId]);
+    }
+
+    // get specific component by its identifier
+    inline GameObjectComponent* GetComponent(eGameObjectComponent componentId) const
+    {
+        debug_assert(componentId < eGameObjectComponent_Count);
+        return mComponents[componentId];
+    }
 
     // test whether object has specific component
     // @param componentId: Component type identifier
     bool HasComponent(eGameObjectComponent componentId) const;
-    bool HasUpdatableComponents() const;
-    bool HasRenderableComponents() const;
-
-    // get attached animating model component
-    // @returns null if object does not have component
-    inline AnimModelComponent* GetAnimatingModelComponent() const
-    {
-        return GetComponent<AnimModelComponent>(eGameObjectComponent_AnimatingModel);
-    }
-    // get attached transform and bounds component
-    // @returns null if object does not have component
-    inline TransformComponent* GetTransformComponent() const
-    {
-        return GetComponent<TransformComponent>(eGameObjectComponent_Transform);
-    }
-    // get attached terrain mesh component
-    // @returns null if object does not have component
-    inline TerrainMeshComponent* GetTerrainMeshComponent() const
-    {
-        return GetComponent<TerrainMeshComponent>(eGameObjectComponent_TerrainMesh);
-    }
-    // get attached water or lava mesh component
-    // @returns null if object does not have component
-    inline WaterLavaMeshComponent* GetWaterLavaMeshComponent() const
-    {
-        return GetComponent<WaterLavaMeshComponent>(eGameObjectComponent_WaterLavaMesh);
-    }
 
     // test whether game object is currently attached to scene and therefore may be rendered
     bool IsAttachedToScene() const;
     void SetAttachedToScene(bool isAttached);
-
-private:
-
-    template<typename TObjectComponent>
-    inline TObjectComponent* GetComponent(eGameObjectComponent componentId) const
-    {
-        return static_cast<TObjectComponent*>(mComponents[componentId]);
-    }
 
 private:
     GameObjectComponent* mComponents[eGameObjectComponent_Count];

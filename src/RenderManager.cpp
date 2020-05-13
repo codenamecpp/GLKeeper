@@ -73,7 +73,7 @@ void RenderManager::RegisterSceneObjectForRendering(GameObject* gameObject)
 {
     debug_assert(gameObject);
 
-    if (AnimModelComponent* component = gameObject->GetAnimatingModelComponent())
+    if (AnimatingModelComponent* component = gameObject->GetComponent<AnimatingModelComponent>())
     {
         bool hasOpaqueParts = false;
         bool hasTranslucentParts = false;
@@ -101,7 +101,7 @@ void RenderManager::RegisterSceneObjectForRendering(GameObject* gameObject)
         }
     }
 
-    if (TerrainMeshComponent* component = gameObject->GetTerrainMeshComponent())
+    if (TerrainMeshComponent* component = gameObject->GetComponent<TerrainMeshComponent>())
     {
         bool hasOpaqueParts = false;
         bool hasTranslucentParts = false;
@@ -129,7 +129,7 @@ void RenderManager::RegisterSceneObjectForRendering(GameObject* gameObject)
         }
     }
 
-    if (WaterLavaMeshComponent* component = gameObject->GetWaterLavaMeshComponent())
+    if (WaterLavaMeshComponent* component = gameObject->GetComponent<WaterLavaMeshComponent>())
     {
         bool hasOpaqueParts = false;
         bool hasTranslucentParts = false;
@@ -230,10 +230,7 @@ void RenderManager::DrawScene()
         for (int icurrentComponent = 0; icurrentComponent < currentList.mElementsCount; ++icurrentComponent)
         {
             GameObjectComponent* currentComponent = currentList.mElements[icurrentComponent];
-            if (currentComponent->IsRenderableComponent())
-            {
-                currentComponent->RenderFrame(renderContext);
-            }
+            currentComponent->RenderFrame(renderContext);
         }
     }
 

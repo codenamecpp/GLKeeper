@@ -220,6 +220,7 @@ impl_enum_strings(eGameObjectComponent)
     {eGameObjectComponent_TerrainMesh, "terrain_mesh"},
     {eGameObjectComponent_WaterLavaMesh, "water_lava_mesh"},
     {eGameObjectComponent_AnimatingModel, "animating_model"},
+    {eGameObjectComponent_StaticMesh, "static_mesh"},
 };
 
 impl_enum_strings(ePlayerID)

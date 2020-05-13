@@ -8,6 +8,8 @@ class TerrainMeshComponent: public GameObjectComponent
     friend class TerrainMeshRenderer;
     friend class RenderManager;
 
+    GAMEOBJECT_COMPONENT(eGameObjectComponent_TerrainMesh)
+
 public:
     // readonly
     Rectangle mMapTerrainRect;

@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "GameObject.h"
-#include "GameObjectComponentsFactory.h"
 
 GameObject::GameObject(GameObjectInstanceID instanceID)
     : mDebugColor(Color32_Green)
@@ -22,7 +21,7 @@ void GameObject::UpdateFrame(float deltaTime)
 {
     for (GameObjectComponent* currComponent: mComponents)
     {
-        if (currComponent && currComponent->IsUpdatableComponent())
+        if (currComponent)
         {
             currComponent->UpdateFrame(deltaTime);
         }
@@ -78,7 +77,7 @@ void GameObject::DeleteComponent(eGameObjectComponent componentId)
 
     if (mComponents[componentId])
     {
-        gComponentsFactory.DestroyComponent(mComponents[componentId]);
+        SafeDelete(mComponents[componentId]);
     }
 }
 
@@ -88,18 +87,7 @@ void GameObject::DeleteAllComponents()
     {
         if (mComponents[icurr])
         {
-            gComponentsFactory.DestroyComponent(mComponents[icurr]);
-        }
-    }
-}
-
-void GameObject::DeleteRenderableComponents()
-{
-    for (int icurr = 0; icurr < eGameObjectComponent_Count; ++icurr)
-    {
-        if (mComponents[icurr] && mComponents[icurr]->IsRenderableComponent())
-        {
-            gComponentsFactory.DestroyComponent(mComponents[icurr]);
+            SafeDelete(mComponents[icurr]);
         }
     }
 }
@@ -113,25 +101,5 @@ bool GameObject::HasComponent(eGameObjectComponent componentId) const
         return true;
     }
 
-    return false;
-}
-
-bool GameObject::HasUpdatableComponents() const
-{
-    for (GameObjectComponent* currComponent: mComponents)
-    {
-        if (currComponent && currComponent->IsUpdatableComponent())
-            return true;
-    }
-    return false;
-}
-
-bool GameObject::HasRenderableComponents() const
-{
-    for (GameObjectComponent* currComponent: mComponents)
-    {
-        if (currComponent && currComponent->IsRenderableComponent())
-            return true;
-    }
     return false;
 }

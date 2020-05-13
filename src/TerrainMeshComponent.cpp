@@ -60,7 +60,7 @@ inline void SplitMeshPieces(const TMeshPiecesContainer& meshPieces, PieceBucketC
 
 
 TerrainMeshComponent::TerrainMeshComponent(GameObject* gameObject) 
-    : GameObjectComponent(eGameObjectComponent_TerrainMesh, gameObject)
+    : GameObjectComponent(GetComponentType(), gameObject)
     , mMeshDirty()
 {
     debug_assert(mGameObject);
@@ -97,7 +97,8 @@ void TerrainMeshComponent::SetTerrainArea(const Rectangle& mapArea)
     sectorBox.mMax.y = 3.0f;
     sectorBox.mMax.z = sectorBox.mMin.z + (mMapTerrainRect.h * DUNGEON_CELL_SIZE);
 
-    mGameObject->GetTransformComponent()->SetLocalBoundingBox(sectorBox);
+    TransformComponent* transformComponent = mGameObject->GetComponent<TransformComponent>();
+    transformComponent->SetLocalBoundingBox(sectorBox);
 }
 
 void TerrainMeshComponent::InvalidateMesh()

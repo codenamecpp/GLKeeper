@@ -10,8 +10,9 @@ class GameMap;
 class MapTile;
 class GameObject;
 class GameObjectComponent;
-class AnimModelComponent;
+class AnimatingModelComponent;
 class TerrainMeshComponent;
+class StaticMeshComponent;
 class WaterLavaMeshComponent;
 class TransformComponent;
 
@@ -52,6 +53,7 @@ enum eGameObjectComponent
     eGameObjectComponent_TerrainMesh,
     eGameObjectComponent_WaterLavaMesh,
     eGameObjectComponent_AnimatingModel,
+    eGameObjectComponent_StaticMesh,
 
     eGameObjectComponent_Count,
 };

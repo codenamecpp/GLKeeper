@@ -26,8 +26,10 @@ public:
 };
 
 // animating model component of game object
-class AnimModelComponent: public GameObjectComponent
+class AnimatingModelComponent: public GameObjectComponent
 {
+    GAMEOBJECT_COMPONENT(eGameObjectComponent_AnimatingModel)
+
 public:
     // readonly
     ModelAsset* mModelAsset = nullptr;
@@ -41,8 +43,8 @@ public:
     ModelsRenderData* mRenderData = nullptr;
 
 public:
-    AnimModelComponent(GameObject* gameObject);
-    ~AnimModelComponent();
+    AnimatingModelComponent(GameObject* gameObject);
+    ~AnimatingModelComponent();
 
     // process component update frame
     // @param deltaTime: Time since last update

@@ -8,6 +8,8 @@ class WaterLavaMeshComponent: public GameObjectComponent
     friend class WaterLavaMeshRenderer;
     friend class RenderManager;
 
+    GAMEOBJECT_COMPONENT(eGameObjectComponent_WaterLavaMesh)
+
 public:
     // readonly
     float mTranslucency = 1.0f;

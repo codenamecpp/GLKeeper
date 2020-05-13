@@ -145,7 +145,7 @@ void MapInteractionController::ProcessInputEvent(MouseButtonInputEvent& inputEve
             }
 
             // cancel current mode
-            if (mCurrentMode != eMapInteractionMode_Free && mCurrentMode != eMapInteractionMode_DigTerrain)
+            if (mCurrentMode != eMapInteractionMode_DigTerrain)
             {
                 SetFreeModeInteraction();
                 return;

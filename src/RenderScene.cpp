@@ -56,7 +56,7 @@ void RenderScene::CollectObjectsForRendering()
     {
         gRenderManager.RegisterSceneObjectForRendering(sceneObject);
 
-        TransformComponent* transformComponent = sceneObject->GetTransformComponent();
+        TransformComponent* transformComponent = sceneObject->GetComponent<TransformComponent>();
         // update distance to camera
         sceneObject->mDistanceToCameraSquared = glm::length2(transformComponent->mPosition - mCamera.mPosition);
     });

@@ -11,7 +11,7 @@
 const int MaxWaterLavaMeshBufferSize = 1024 * 1024 * 2;
 
 WaterLavaMeshComponent::WaterLavaMeshComponent(GameObject* gameObject)
-    : GameObjectComponent(eGameObjectComponent_WaterLavaMesh, gameObject)
+    : GameObjectComponent(GetComponentType(), gameObject)
     , mVertexCount()
     , mTriangleCount()
     , mMeshDirty()
@@ -39,7 +39,8 @@ void WaterLavaMeshComponent::SetWaterLavaTiles(const TilesArray& tilesArray)
 
         bounds.extend(currentTileBounds);
     }
-    mGameObject->GetTransformComponent()->SetLocalBoundingBox(bounds);
+    TransformComponent* transformComponent = mGameObject->GetComponent<TransformComponent>();
+    transformComponent->SetLocalBoundingBox(bounds);
 
     mMeshDirty = true;
 }
