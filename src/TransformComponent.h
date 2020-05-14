@@ -5,8 +5,6 @@
 // transformation component of game object
 class TransformComponent: public GameObjectComponent
 {
-    GAMEOBJECT_COMPONENT(eGameObjectComponent_Transform)
-
 public:
     // readonly
     glm::vec3 mDirectionRight; // direction vector along x axis, should be normalized
@@ -75,3 +73,5 @@ private:
     bool mTransformDirty;
     bool mBoundingBoxDirty;
 };
+
+decl_gameobject_component(TransformComponent, eGameObjectComponent_Transform)

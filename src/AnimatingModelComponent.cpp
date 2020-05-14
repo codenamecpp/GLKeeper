@@ -7,7 +7,7 @@
 #include "RenderManager.h"
 
 AnimatingModelComponent::AnimatingModelComponent(GameObject* gameObject)
-    : GameObjectComponent(GetComponentType(), gameObject)
+    : GameObjectComponent(eGameObjectComponent_AnimatingModel, gameObject)
 {
     debug_assert(mGameObject);
     mGameObject->mDebugColor = Color32_Green;

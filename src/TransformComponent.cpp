@@ -4,7 +4,7 @@
 #include "RenderScene.h"
 
 TransformComponent::TransformComponent(GameObject* gameObject)
-    : GameObjectComponent(GetComponentType(), gameObject)
+    : GameObjectComponent(eGameObjectComponent_Transform, gameObject)
     , mTransformDirty()
     , mBoundingBoxDirty()
     , mTransformation(1.0f)

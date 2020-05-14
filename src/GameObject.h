@@ -38,7 +38,7 @@ public:
     template<typename TObjectComponent>
     inline TObjectComponent* GetComponent() const
     {
-        eGameObjectComponent componentId = TObjectComponent::GetComponentType();
+        eGameObjectComponent componentId = gameobject_component_typeid(TObjectComponent);
         return static_cast<TObjectComponent*>(mComponents[componentId]);
     }
 

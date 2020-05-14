@@ -60,7 +60,7 @@ inline void SplitMeshPieces(const TMeshPiecesContainer& meshPieces, PieceBucketC
 
 
 TerrainMeshComponent::TerrainMeshComponent(GameObject* gameObject) 
-    : GameObjectComponent(GetComponentType(), gameObject)
+    : GameObjectComponent(eGameObjectComponent_TerrainMesh, gameObject)
     , mMeshDirty()
 {
     debug_assert(mGameObject);

@@ -8,8 +8,6 @@ class WaterLavaMeshComponent: public GameObjectComponent
     friend class WaterLavaMeshRenderer;
     friend class RenderManager;
 
-    GAMEOBJECT_COMPONENT(eGameObjectComponent_WaterLavaMesh)
-
 public:
     // readonly
     float mTranslucency = 1.0f;
@@ -64,3 +62,5 @@ private:
 
     bool mMeshDirty; // dirty flag indicates that geometry is invalid and must be reuploaded
 };
+
+decl_gameobject_component(WaterLavaMeshComponent, eGameObjectComponent_WaterLavaMesh)

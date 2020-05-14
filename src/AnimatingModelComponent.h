@@ -6,8 +6,6 @@
 // animating model component of game object
 class AnimatingModelComponent: public GameObjectComponent
 {
-    GAMEOBJECT_COMPONENT(eGameObjectComponent_AnimatingModel)
-
 public:
     // readonly
     ModelAsset* mModelAsset = nullptr;
@@ -56,3 +54,5 @@ private:
     void SetAnimationState();
     void SetLocalBounds();
 };
+
+decl_gameobject_component(AnimatingModelComponent, eGameObjectComponent_AnimatingModel)

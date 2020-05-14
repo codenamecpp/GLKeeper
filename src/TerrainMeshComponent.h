@@ -8,8 +8,6 @@ class TerrainMeshComponent: public GameObjectComponent
     friend class TerrainMeshRenderer;
     friend class RenderManager;
 
-    GAMEOBJECT_COMPONENT(eGameObjectComponent_TerrainMesh)
-
 public:
     // readonly
     Rectangle mMapTerrainRect;
@@ -55,3 +53,5 @@ private:
 
     bool mMeshDirty; // dirty flag indicates that geometry is invalid and must be reuploaded
 };
+
+decl_gameobject_component(TerrainMeshComponent, eGameObjectComponent_TerrainMesh)

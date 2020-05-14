@@ -2,7 +2,7 @@
 #include "StaticMeshComponent.h"
 
 StaticMeshComponent::StaticMeshComponent(GameObject* gameObject)
-    : GameObjectComponent(GetComponentType(), gameObject)
+    : GameObjectComponent(eGameObjectComponent_StaticMesh, gameObject)
 {
 }
 

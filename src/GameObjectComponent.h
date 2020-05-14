@@ -2,13 +2,31 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-// put this macro inside each component class declaration
-#define GAMEOBJECT_COMPONENT(componentid) \
-    public: \
-        static eGameObjectComponent GetComponentType() \
+namespace details
+{
+    template<typename TGameObjectComponent>
+    struct gameobject_component_traits
+    {
+    };
+
+} // namespace details
+
+#define decl_gameobject_component(class_name, component_typeid) \
+    namespace details \
+    { \
+        template<> \
+        struct gameobject_component_traits<class_name> \
         { \
-            return componentid; \
-        }
+            inline static eGameObjectComponent GetComponentType() \
+            { \
+                return component_typeid; \
+            } \
+        }; \
+    }
+
+#define gameobject_component_typeid(class_name) \
+    \
+    details::gameobject_component_traits<class_name>::GetComponentType()
 
 //////////////////////////////////////////////////////////////////////////
 

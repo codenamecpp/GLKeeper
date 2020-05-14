@@ -11,7 +11,7 @@
 const int MaxWaterLavaMeshBufferSize = 1024 * 1024 * 2;
 
 WaterLavaMeshComponent::WaterLavaMeshComponent(GameObject* gameObject)
-    : GameObjectComponent(GetComponentType(), gameObject)
+    : GameObjectComponent(eGameObjectComponent_WaterLavaMesh, gameObject)
     , mVertexCount()
     , mTriangleCount()
     , mMeshDirty()
