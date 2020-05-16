@@ -10,6 +10,7 @@
 #include "ConsoleVariable.h"
 #include "cvars.h"
 #include "GameObject.h"
+#include "TransformComponent.h"
 
 // internal info
 class ModelsRenderData: public cxx::noncopyable

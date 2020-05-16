@@ -8,6 +8,8 @@
 #include "GameObject.h"
 #include "GameObjectsManager.h"
 #include "TexturesManager.h"
+#include "TerrainMeshComponent.h"
+#include "WaterLavaMeshComponent.h"
 
 const int TerrainMeshSizeTiles = 8; // 8x8 tiles per terrain mesh
 

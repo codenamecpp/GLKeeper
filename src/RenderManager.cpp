@@ -8,6 +8,9 @@
 #include "RenderScene.h"
 #include "GameObject.h"
 #include "GuiManager.h"
+#include "AnimatingModelComponent.h"
+#include "WaterLavaMeshComponent.h"
+#include "TerrainMeshComponent.h"
 
 //////////////////////////////////////////////////////////////////////////
 

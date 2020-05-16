@@ -1,11 +1,6 @@
 #pragma once
 
 #include "GameObjectComponent.h"
-#include "AnimatingModelComponent.h"
-#include "TransformComponent.h"
-#include "TerrainMeshComponent.h"
-#include "WaterLavaMeshComponent.h"
-#include "StaticMeshComponent.h"
 
 class GameObject: public cxx::noncopyable
 {

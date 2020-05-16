@@ -2,6 +2,7 @@
 #include "AABBTree.h"
 #include "DebugRenderer.h"
 #include "GameObject.h"
+#include "TransformComponent.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AABBTree implementation borrowed from here

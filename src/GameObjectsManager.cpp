@@ -2,6 +2,7 @@
 #include "GameObjectsManager.h"
 #include "GameObject.h"
 #include "TimeManager.h"
+#include "TransformComponent.h"
 
 GameObjectsManager gGameObjectsManager;
 

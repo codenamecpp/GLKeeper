@@ -9,6 +9,7 @@
 #include "SceneRenderList.h"
 #include "TexturesManager.h"
 #include "RenderManager.h"
+#include "TransformComponent.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -52,7 +53,7 @@ void RenderScene::UpdateFrame()
 void RenderScene::CollectObjectsForRendering()
 {
     mCamera.ComputeMatrices();
-    mAABBTree.QueryObjects(mCamera.mFrustum, [this](GameObject* sceneObject)
+    mAABBTree.QueryObjects(mCamera.mFrustum, [](GameObject* sceneObject)
     {
         gRenderManager.RegisterSceneObjectForRendering(sceneObject);
 
