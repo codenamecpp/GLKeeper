@@ -53,7 +53,7 @@ void RenderScene::UpdateFrame()
 void RenderScene::CollectObjectsForRendering()
 {
     mCamera.ComputeMatrices();
-    mAABBTree.QueryObjects(mCamera.mFrustum, [](GameObject* sceneObject)
+    mAABBTree.QueryObjects(mCamera.mFrustum, [this](GameObject* sceneObject)
     {
         gRenderManager.RegisterSceneObjectForRendering(sceneObject);
 
