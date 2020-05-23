@@ -29,10 +29,6 @@ public:
 
     // dump cvar value for console
     virtual void GetValueForConsole(std::string& outputString) = 0;
-
-protected:
-    // internal stuff
-    static unsigned int mTypeIDCounter;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -96,10 +92,6 @@ public:
 
     // test whether cvar value was changed
     inline bool IsValueChanged() const { return mValue != mDefaultValue; }
-
-private:
-    // internal
-    static unsigned int mUniqueTypeID;
 };
 
 #include "ConsoleVariable.inl"
