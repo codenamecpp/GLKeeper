@@ -1,10 +1,10 @@
 #include "pch.h"
-#include "AnimatingModelsRenderer.h"
+#include "AnimatingMeshRenderer.h"
 #include "ModelAsset.h"
 #include "GraphicsDevice.h"
 #include "GpuBuffer.h"
 #include "GameObjectComponent.h"
-#include "AnimatingModelComponent.h"
+#include "AnimatingMeshComponent.h"
 #include "RenderScene.h"
 #include "VertexFormat.h"
 #include "ConsoleVariable.h"
@@ -12,35 +12,7 @@
 #include "GameObject.h"
 #include "TransformComponent.h"
 
-// internal info
-class ModelsRenderData: public cxx::noncopyable
-{
-public:
-
-    struct SubsetLOD
-    {
-    public:
-        int mIndicesDataOffset = 0;
-    };
-
-    struct Subset
-    {
-    public:
-        std::vector<SubsetLOD> mSubsetLODs;
-        int mVerticesDataOffset = 0;
-        int mIndicesDataOffset = 0;
-    };
-
-public:
-    std::vector<Subset> mSubsets;
-
-    GpuBuffer* mVerticesBuffer = nullptr;
-    GpuBuffer* mIndicesBuffer = nullptr;
-};
-
-//////////////////////////////////////////////////////////////////////////
-
-bool AnimatingModelsRenderer::Initialize()
+bool AnimatingMeshRenderer::Initialize()
 {
     if (!mMorphAnimRenderProgram.LoadProgram())
     {
@@ -50,18 +22,18 @@ bool AnimatingModelsRenderer::Initialize()
     return true;
 }
 
-void AnimatingModelsRenderer::Deinit()
+void AnimatingMeshRenderer::Deinit()
 {
     mMorphAnimRenderProgram.FreeProgram();
     for (auto& curr_iterator : mModelsCache)
     {
-        DestroyRenderData(curr_iterator.second);
+        DestroyRenderData(&curr_iterator.second);
     }
 
     mModelsCache.clear();
 }
 
-void AnimatingModelsRenderer::Render(SceneRenderContext& renderContext, AnimatingModelComponent* component)
+void AnimatingMeshRenderer::Render(SceneRenderContext& renderContext, AnimatingMeshComponent* component)
 {
     if (!gCVarRender_DrawModels.mValue)
         return;
@@ -83,9 +55,9 @@ void AnimatingModelsRenderer::Render(SceneRenderContext& renderContext, Animatin
         }
     }
 
-    TransformComponent* transformComponent = component->mGameObject->GetComponent<TransformComponent>();
+    TransformComponent* transformComponent = component->mGameObject->mTransformComponent;
 
-    ModelsRenderData* renderData = component->mRenderData;
+    AnimModelRenderdata* renderData = component->mRenderData;
 
     mMorphAnimRenderProgram.SetViewProjectionMatrix(gRenderScene.mCamera.mViewProjectionMatrix);
     mMorphAnimRenderProgram.SetModelMatrix(transformComponent->mTransformation);
@@ -99,7 +71,7 @@ void AnimatingModelsRenderer::Render(SceneRenderContext& renderContext, Animatin
     mMorphAnimRenderProgram.ActivateProgram();
 
     // bind indices
-    gGraphicsDevice.BindIndexBuffer(renderData->mIndicesBuffer);
+    gGraphicsDevice.BindIndexBuffer(renderData->mIndexBuffer);
 
     // select level of details to render
     int selectLOD = component->mPreferredLOD;
@@ -128,15 +100,15 @@ void AnimatingModelsRenderer::Render(SceneRenderContext& renderContext, Animatin
         int frame1 = component->mAnimState.mFrame1;
 
         // prepare vertex streams definition
-        vertexDefs.Setup(renderData->mSubsets[icurrSubset].mVerticesDataOffset, currentSubMesh.mFrameVerticesCount, modelAsset->mFramesCount, frame0, frame1);
-        gGraphicsDevice.BindVertexBuffer(renderData->mVerticesBuffer, vertexDefs);
+        vertexDefs.Setup(renderData->mSubsets[icurrSubset].mVertexDataOffset, currentSubMesh.mFrameVerticesCount, modelAsset->mFramesCount, frame0, frame1);
+        gGraphicsDevice.BindVertexBuffer(renderData->mVertexBuffer, vertexDefs);
         gGraphicsDevice.RenderIndexedPrimitives(ePrimitiveType_Triangles, eIndicesType_i32,
-            renderData->mSubsets[icurrSubset].mSubsetLODs[selectLOD].mIndicesDataOffset,
+            renderData->mSubsets[icurrSubset].mSubsetLODs[selectLOD].mIndexDataOffset,
             currentSubMesh.mLODsArray[selectLOD].mTriangleArray.size() * 3);
     }
 }
 
-ModelsRenderData* AnimatingModelsRenderer::GetRenderData(ModelAsset* modelAsset)
+AnimModelRenderdata* AnimatingMeshRenderer::GetRenderData(ModelAsset* modelAsset)
 {
     if (modelAsset == nullptr || !modelAsset->IsModelLoaded())
     {
@@ -146,17 +118,16 @@ ModelsRenderData* AnimatingModelsRenderer::GetRenderData(ModelAsset* modelAsset)
 
     auto cache_iterator = mModelsCache.find(modelAsset);
     if (cache_iterator != mModelsCache.end())
-        return cache_iterator->second;
+        return &cache_iterator->second;
 
-    ModelsRenderData* renderdata = new ModelsRenderData;
-    mModelsCache[modelAsset] = renderdata;
+    AnimModelRenderdata* renderdata = &mModelsCache[modelAsset];
 
     // upload geometry
     InitRenderData(renderdata, modelAsset);
     return renderdata;
 }
 
-void AnimatingModelsRenderer::InvalidateRenderData(ModelAsset* modelAsset)
+void AnimatingMeshRenderer::InvalidateRenderData(ModelAsset* modelAsset)
 {
     if (modelAsset == nullptr || !modelAsset->IsModelLoaded())
     {
@@ -169,24 +140,24 @@ void AnimatingModelsRenderer::InvalidateRenderData(ModelAsset* modelAsset)
         return;
 
     // upload geometry
-    InitRenderData(cache_iterator->second, modelAsset);
+    InitRenderData(&cache_iterator->second, modelAsset);
 }
 
-void AnimatingModelsRenderer::DestroyRenderData(ModelsRenderData* renderdata)
+void AnimatingMeshRenderer::DestroyRenderData(AnimModelRenderdata* renderdata)
 {
     debug_assert(renderdata);
-    if (renderdata->mVerticesBuffer)
+    if (renderdata->mVertexBuffer)
     {
-        gGraphicsDevice.DestroyBuffer(renderdata->mVerticesBuffer);
+        gGraphicsDevice.DestroyBuffer(renderdata->mVertexBuffer);
     }
-    if (renderdata->mIndicesBuffer)
+    if (renderdata->mIndexBuffer)
     {
-        gGraphicsDevice.DestroyBuffer(renderdata->mIndicesBuffer);
+        gGraphicsDevice.DestroyBuffer(renderdata->mIndexBuffer);
     }
-    SafeDelete(renderdata);
+    renderdata->Clear();
 }
 
-void AnimatingModelsRenderer::InitRenderData(ModelsRenderData* renderdata, ModelAsset* modelAsset)
+void AnimatingMeshRenderer::InitRenderData(AnimModelRenderdata* renderdata, ModelAsset* modelAsset)
 {
     debug_assert(renderdata);
     debug_assert(modelAsset);
@@ -216,11 +187,11 @@ void AnimatingModelsRenderer::InitRenderData(ModelsRenderData* renderdata, Model
 
     debug_assert(vbufferLengthBytes > 0);
 
-    renderdata->mVerticesBuffer = gGraphicsDevice.CreateBuffer(eBufferContent_Vertices, eBufferUsage_Static, vbufferLengthBytes, nullptr);
-    debug_assert(renderdata->mVerticesBuffer);
+    renderdata->mVertexBuffer = gGraphicsDevice.CreateBuffer(eBufferContent_Vertices, eBufferUsage_Static, vbufferLengthBytes, nullptr);
+    debug_assert(renderdata->mVertexBuffer);
 
     // upload vertex attributes
-    unsigned char* vbufferptr = (unsigned char*)renderdata->mVerticesBuffer->Lock(BufferAccess_UnsynchronizedWrite);
+    unsigned char* vbufferptr = (unsigned char*)renderdata->mVertexBuffer->Lock(BufferAccess_UnsynchronizedWrite);
     debug_assert(vbufferptr);
     if (vbufferptr)
     {
@@ -233,7 +204,7 @@ void AnimatingModelsRenderer::InitRenderData(ModelsRenderData* renderdata, Model
         for (size_t icurrSubset = 0; icurrSubset < modelAsset->mMeshArray.size(); ++icurrSubset)
         {
             ModelAsset::SubMesh& currentSubMesh = modelAsset->mMeshArray[icurrSubset];
-            renderdata->mSubsets[icurrSubset].mVerticesDataOffset = currentBufferOffset;
+            renderdata->mSubsets[icurrSubset].mVertexDataOffset = currentBufferOffset;
 
             int texcoordsDataLength = currentSubMesh.mVertexTexCoordArray.size() * sizeof(glm::vec2);
             ::memcpy(vbufferptr + currentBufferOffset, currentSubMesh.mVertexTexCoordArray.data(), texcoordsDataLength);
@@ -248,7 +219,7 @@ void AnimatingModelsRenderer::InitRenderData(ModelsRenderData* renderdata, Model
             currentBufferOffset += normalsDataLength;
         }
 
-        if (!renderdata->mVerticesBuffer->Unlock())
+        if (!renderdata->mVertexBuffer->Unlock())
         {
             debug_assert(false);
         }
@@ -257,11 +228,11 @@ void AnimatingModelsRenderer::InitRenderData(ModelsRenderData* renderdata, Model
     int ibufferLengthByets = numTriangles * sizeof(glm::ivec3);
     debug_assert(ibufferLengthByets > 0);
 
-    renderdata->mIndicesBuffer = gGraphicsDevice.CreateBuffer(eBufferContent_Indices, eBufferUsage_Static, ibufferLengthByets, nullptr);
-    debug_assert(renderdata->mIndicesBuffer);
+    renderdata->mIndexBuffer = gGraphicsDevice.CreateBuffer(eBufferContent_Indices, eBufferUsage_Static, ibufferLengthByets, nullptr);
+    debug_assert(renderdata->mIndexBuffer);
 
     // upload index data
-    unsigned char* ibufferptr = (unsigned char*)renderdata->mIndicesBuffer->Lock(BufferAccess_UnsynchronizedWrite);
+    unsigned char* ibufferptr = (unsigned char*)renderdata->mIndexBuffer->Lock(BufferAccess_UnsynchronizedWrite);
     debug_assert(ibufferptr);
     if (ibufferptr)
     {
@@ -269,11 +240,11 @@ void AnimatingModelsRenderer::InitRenderData(ModelsRenderData* renderdata, Model
         for (size_t icurrSubset = 0; icurrSubset < modelAsset->mMeshArray.size(); ++icurrSubset)
         {
             ModelAsset::SubMesh& currentSubMesh = modelAsset->mMeshArray[icurrSubset];
-            renderdata->mSubsets[icurrSubset].mIndicesDataOffset = currentBufferOffset;
+            renderdata->mSubsets[icurrSubset].mIndexDataOffset = currentBufferOffset;
             for (size_t icurrLOD = 0; icurrLOD < currentSubMesh.mLODsArray.size(); ++icurrLOD)
             {
                 ModelAsset::SubMeshLOD& currentLOD = currentSubMesh.mLODsArray[icurrLOD];
-                renderdata->mSubsets[icurrSubset].mSubsetLODs[icurrLOD].mIndicesDataOffset = currentBufferOffset;
+                renderdata->mSubsets[icurrSubset].mSubsetLODs[icurrLOD].mIndexDataOffset = currentBufferOffset;
                 int currentLODDataLength = currentLOD.mTriangleArray.size() * sizeof(glm::ivec3);
                 if (currentLODDataLength < 1)
                     continue;
@@ -283,7 +254,7 @@ void AnimatingModelsRenderer::InitRenderData(ModelsRenderData* renderdata, Model
             }
         }
 
-        if (!renderdata->mIndicesBuffer->Unlock())
+        if (!renderdata->mIndexBuffer->Unlock())
         {
             debug_assert(false);
         }

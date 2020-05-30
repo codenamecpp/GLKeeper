@@ -8,7 +8,7 @@
 #include "RenderScene.h"
 #include "GameObject.h"
 #include "GuiManager.h"
-#include "AnimatingModelComponent.h"
+#include "AnimatingMeshComponent.h"
 #include "WaterLavaMeshComponent.h"
 #include "TerrainMeshComponent.h"
 
@@ -29,7 +29,7 @@ RenderManager gRenderManager;
 
 bool RenderManager::Initialize()
 {
-    if (!mAnimatingModelsRenderer.Initialize() ||  !mTerrainMeshRenderer.Initialize() || 
+    if (!mAnimatingMeshRenderer.Initialize() ||  !mTerrainMeshRenderer.Initialize() || 
         !mWaterLavaMeshRenderer.Initialize() || !mGuiRenderer.Initialize())
     {
         gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize render manager");
@@ -64,7 +64,7 @@ void RenderManager::Deinit()
 
     mGuiRenderer.Deinit();
     mWaterLavaMeshRenderer.Deinit();
-    mAnimatingModelsRenderer.Deinit();
+    mAnimatingMeshRenderer.Deinit();
     mTerrainMeshRenderer.Deinit();
     mDebugRenderer.Deinit();
     mSceneRenderList.Clear();
@@ -76,85 +76,9 @@ void RenderManager::RegisterSceneObjectForRendering(GameObject* gameObject)
 {
     debug_assert(gameObject);
 
-    if (AnimatingModelComponent* component = gameObject->GetComponent<AnimatingModelComponent>())
+    if (RenderableComponent* renderableComponent = gameObject->mRenderableComponent)
     {
-        bool hasOpaqueParts = false;
-        bool hasTranslucentParts = false;
-
-        for (const MeshMaterial& currMaterial: component->mSubmeshMaterials)
-        {
-            if (currMaterial.IsTransparent())
-            {
-                hasTranslucentParts = true;
-            }
-            else
-            {
-                hasOpaqueParts = true;
-            }
-        }
-
-        if (hasTranslucentParts)
-        {
-            mSceneRenderList.RegisterRenderableComponent(eRenderPass_Translucent, component);
-        }
-
-        if (hasOpaqueParts)
-        {
-            mSceneRenderList.RegisterRenderableComponent(eRenderPass_Opaque, component);
-        }
-    }
-
-    if (TerrainMeshComponent* component = gameObject->GetComponent<TerrainMeshComponent>())
-    {
-        bool hasOpaqueParts = false;
-        bool hasTranslucentParts = false;
-
-        for (const auto& currBatch: component->mBatchArray)
-        {
-            if (currBatch.mMaterial.IsTransparent())
-            {
-                hasTranslucentParts = true;
-            }
-            else
-            {
-                hasOpaqueParts = true;
-            }
-        }
-
-        if (hasTranslucentParts)
-        {
-            mSceneRenderList.RegisterRenderableComponent(eRenderPass_Translucent, component);
-        }
-
-        if (hasOpaqueParts)
-        {
-            mSceneRenderList.RegisterRenderableComponent(eRenderPass_Opaque, component);
-        }
-    }
-
-    if (WaterLavaMeshComponent* component = gameObject->GetComponent<WaterLavaMeshComponent>())
-    {
-        bool hasOpaqueParts = false;
-        bool hasTranslucentParts = false;
-
-        if (component->mMaterial.IsTransparent())
-        {
-            hasTranslucentParts = true;
-        }
-        else
-        {
-            hasOpaqueParts = true;
-        }
-
-        if (hasTranslucentParts)
-        {
-            mSceneRenderList.RegisterRenderableComponent(eRenderPass_Translucent, component);
-        }
-
-        if (hasOpaqueParts)
-        {
-            mSceneRenderList.RegisterRenderableComponent(eRenderPass_Opaque, component);
-        }
+        renderableComponent->RegisterForRendering(mSceneRenderList);
     }
 }
 
@@ -232,7 +156,7 @@ void RenderManager::DrawScene()
         const auto& currentList = mSceneRenderList.mComponentsForRenderPass[currRenderPass];
         for (int icurrentComponent = 0; icurrentComponent < currentList.mElementsCount; ++icurrentComponent)
         {
-            GameObjectComponent* currentComponent = currentList.mElements[icurrentComponent];
+            RenderableComponent* currentComponent = currentList.mElements[icurrentComponent];
             currentComponent->RenderFrame(renderContext);
         }
     }

@@ -56,9 +56,8 @@ void RenderScene::CollectObjectsForRendering()
     mAABBTree.QueryObjects(mCamera.mFrustum, [this](GameObject* sceneObject)
     {
         gRenderManager.RegisterSceneObjectForRendering(sceneObject);
-
-        TransformComponent* transformComponent = sceneObject->GetComponent<TransformComponent>();
         // update distance to camera
+        TransformComponent* transformComponent = sceneObject->mTransformComponent; 
         sceneObject->mDistanceToCameraSquared = glm::length2(transformComponent->mPosition - mCamera.mPosition);
     });
 }

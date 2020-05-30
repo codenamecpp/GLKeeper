@@ -3,10 +3,11 @@
 // forwards
 class BinaryInputStream;
 
-// kmf model data container
+// kmf model data and properties container
 class ModelAsset: public cxx::noncopyable
 {
 public:
+    // readonly data
 
     // defines mesh level of details
     struct SubMeshLOD
@@ -20,15 +21,20 @@ public:
     {
     public:
         std::string mInternalName;
+        // set of textures, it could be animation frames or alternatives
         std::vector<std::string> mTextures;
         std::string mEnvMappingTexture;
+        // light params
         float mBrightness;
         float mGamma;
         // material flags
-        bool mFlagHasAlpha : 1;
-        bool mFlagShinyness : 1;
-        bool mFlagAlphaAdditive : 1;
-        bool mFlagEnvironmentMapped : 1;
+        struct  
+        {
+            bool mFlagHasAlpha : 1;
+            bool mFlagShinyness : 1;
+            bool mFlagAlphaAdditive : 1;
+            bool mFlagEnvironmentMapped : 1;
+        };
     };
 
     // defines single piece of model
@@ -53,7 +59,8 @@ public:
 
     float mScale = 1.0f; // base scale
     float mCubeScale = 1.0f;
-    int mFramesCount = 0; // num animation frames, 1 for static models
+
+    int mFramesCount = 0; // num animation frames, 1 is for static models, 0 is for empty models
 
 public:
     ModelAsset(const std::string& resourceName);
@@ -116,6 +123,9 @@ public:
 
     // test whether model geometry data is loaded
     inline bool IsModelLoaded() const { return mFramesCount > 0; }
+
+    // test whether model has animation frames
+    inline bool IsModelStatic() const { return mFramesCount == 1; }
 
 private:
     bool LoadFromStream(BinaryInputStream* theStream);

@@ -1,11 +1,13 @@
 #pragma once
 
-#include "GameObjectComponent.h"
 #include "SceneDefs.h"
+#include "RenderableComponent.h"
 
 // animating model component of game object
-class AnimatingModelComponent: public GameObjectComponent
+class AnimatingMeshComponent: public RenderableComponent
 {
+    decl_rtti(AnimatingMeshComponent, RenderableComponent)
+
 public:
     // readonly
     ModelAsset* mModelAsset = nullptr;
@@ -19,12 +21,11 @@ public:
     ModelsRenderData* mRenderData = nullptr;
 
 public:
-    AnimatingModelComponent(GameObject* gameObject);
-    ~AnimatingModelComponent();
+    AnimatingMeshComponent(GameObject* gameObject);
 
     // process component update frame
     // @param deltaTime: Time since last update
-    void UpdateFrame(float deltaTime) override;
+    void UpdateComponent(float deltaTime) override;
 
     // process render frame
     void RenderFrame(SceneRenderContext& renderContext) override;
@@ -54,5 +55,3 @@ private:
     void SetAnimationState();
     void SetLocalBounds();
 };
-
-decl_gameobject_component(AnimatingModelComponent, eGameObjectComponent_AnimatingModel)

@@ -41,9 +41,6 @@
     <Filter Include="Application\Resources">
       <UniqueIdentifier>{da58dec7-37a5-4133-a053-5fdd4ea0ad7f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Render">
-      <UniqueIdentifier>{e607d4ee-67e8-4d5f-b41f-1bfc554959f7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\Scene">
       <UniqueIdentifier>{5d7e5c39-c126-4d85-af00-6cd205e2a863}</UniqueIdentifier>
     </Filter>
@@ -61,9 +58,6 @@
     </Filter>
     <Filter Include="Data\Shaders">
       <UniqueIdentifier>{8b0aa962-d3ec-4c9f-a33f-afa0b1fe407e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Render\Shaders">
-      <UniqueIdentifier>{cfb6657e-5426-4871-9802-c0f6ab065078}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game\World">
       <UniqueIdentifier>{407424f7-127b-475d-ba67-a7cf395d1fd5}</UniqueIdentifier>
@@ -103,6 +97,18 @@
     </Filter>
     <Filter Include="Game\GuiLibrary\Widgets">
       <UniqueIdentifier>{75816ac9-2884-4e8b-b301-5a900ad8cfda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Rendering">
+      <UniqueIdentifier>{e607d4ee-67e8-4d5f-b41f-1bfc554959f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Rendering\Shaders">
+      <UniqueIdentifier>{cfb6657e-5426-4871-9802-c0f6ab065078}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Rendering\_REWORK">
+      <UniqueIdentifier>{479e3199-e170-4579-b3c7-56785211e9bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\GameObject\Components\_REWORK">
+      <UniqueIdentifier>{5bc4d5b1-4c83-4977-8fed-79b71ebd208e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -237,16 +243,16 @@
       <Filter>Lib</Filter>
     </ClInclude>
     <ClInclude Include="RenderManager.h">
-      <Filter>Game\Render</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="RenderDefs.h">
-      <Filter>Game\Render</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="TimeManager.h">
       <Filter>Application</Filter>
     </ClInclude>
     <ClInclude Include="RenderProgram.h">
-      <Filter>Game\Render</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="BinaryOutputStream.h">
       <Filter>Application\FileIO</Filter>
@@ -276,7 +282,7 @@
       <Filter>Game\Scene\BVH</Filter>
     </ClInclude>
     <ClInclude Include="DebugRenderer.h">
-      <Filter>Game\Render</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Texture2DAnimation.h">
       <Filter>Application\Resources</Filter>
@@ -300,7 +306,7 @@
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="DebugDrawRenderProgram.h">
-      <Filter>Game\Render\Shaders</Filter>
+      <Filter>Game\Rendering\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="MeshViewGamestate.h">
       <Filter>Game\GameStates</Filter>
@@ -322,7 +328,7 @@
       <Filter>Application\Resources</Filter>
     </ClInclude>
     <ClInclude Include="MorphAnimRenderProgram.h">
-      <Filter>Game\Render\Shaders</Filter>
+      <Filter>Game\Rendering\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="SceneRenderList.h">
       <Filter>Game\Scene</Filter>
@@ -349,7 +355,7 @@
       <Filter>Game\World</Filter>
     </ClInclude>
     <ClInclude Include="TerrainRenderProgram.h">
-      <Filter>Game\Render\Shaders</Filter>
+      <Filter>Game\Rendering\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="TerrainManager.h">
       <Filter>Game\World</Filter>
@@ -360,17 +366,8 @@
     <ClInclude Include="GameMap.h">
       <Filter>Game\World</Filter>
     </ClInclude>
-    <ClInclude Include="TerrainMeshRenderer.h">
-      <Filter>Game\Render</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimatingModelsRenderer.h">
-      <Filter>Game\Render</Filter>
-    </ClInclude>
     <ClInclude Include="WaterLavaRenderProgram.h">
-      <Filter>Game\Render\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="WaterLavaMeshRenderer.h">
-      <Filter>Game\Render</Filter>
+      <Filter>Game\Rendering\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="RoomsDefs.h">
       <Filter>Game\World\Rooms</Filter>
@@ -399,14 +396,8 @@
     <ClInclude Include="TransformComponent.h">
       <Filter>Game\GameObject\Components</Filter>
     </ClInclude>
-    <ClInclude Include="TerrainMeshComponent.h">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="WaterLavaMeshComponent.h">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClInclude>
     <ClInclude Include="MeshMaterial.h">
-      <Filter>Game\Render</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="OrbitCameraController.h">
       <Filter>Game\Scene\CameraControllers</Filter>
@@ -415,7 +406,7 @@
       <Filter>Game\Scene\CameraControllers</Filter>
     </ClInclude>
     <ClInclude Include="GuiRenderProgram.h">
-      <Filter>Game\Render\Shaders</Filter>
+      <Filter>Game\Rendering\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="GuiDefs.h">
       <Filter>Game\GuiLibrary</Filter>
@@ -504,10 +495,31 @@
     <ClInclude Include="MapInteractionController.h">
       <Filter>Game\World</Filter>
     </ClInclude>
-    <ClInclude Include="StaticMeshComponent.h">
+    <ClInclude Include="RenderableComponent.h">
       <Filter>Game\GameObject\Components</Filter>
     </ClInclude>
-    <ClInclude Include="AnimatingModelComponent.h">
+    <ClInclude Include="TerrainMeshComponent.h">
+      <Filter>Game\GameObject\Components\_REWORK</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainMeshRenderer.h">
+      <Filter>Game\Rendering\_REWORK</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatingMeshComponent.h">
+      <Filter>Game\GameObject\Components\_REWORK</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatingMeshRenderer.h">
+      <Filter>Game\Rendering\_REWORK</Filter>
+    </ClInclude>
+    <ClInclude Include="rtti.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="WaterLavaMeshRenderer.h">
+      <Filter>Game\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="WaterLavaMeshComponent.h">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicMeshComponent.h">
       <Filter>Game\GameObject\Components</Filter>
     </ClInclude>
   </ItemGroup>
@@ -584,13 +596,13 @@
       <Filter>Lib</Filter>
     </ClCompile>
     <ClCompile Include="RenderManager.cpp">
-      <Filter>Game\Render</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="TimeManager.cpp">
       <Filter>Application</Filter>
     </ClCompile>
     <ClCompile Include="RenderProgram.cpp">
-      <Filter>Game\Render</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="BinaryOutputStream.cpp">
       <Filter>Application\FileIO</Filter>
@@ -614,7 +626,7 @@
       <Filter>Game\Scene\BVH</Filter>
     </ClCompile>
     <ClCompile Include="DebugRenderer.cpp">
-      <Filter>Game\Render</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Texture2DAnimation.cpp">
       <Filter>Application\Resources</Filter>
@@ -664,15 +676,6 @@
     <ClCompile Include="GameMap.cpp">
       <Filter>Game\World</Filter>
     </ClCompile>
-    <ClCompile Include="TerrainMeshRenderer.cpp">
-      <Filter>Game\Render</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimatingModelsRenderer.cpp">
-      <Filter>Game\Render</Filter>
-    </ClCompile>
-    <ClCompile Include="WaterLavaMeshRenderer.cpp">
-      <Filter>Game\Render</Filter>
-    </ClCompile>
     <ClCompile Include="GenericRoom.cpp">
       <Filter>Game\World\Rooms</Filter>
     </ClCompile>
@@ -697,14 +700,8 @@
     <ClCompile Include="TransformComponent.cpp">
       <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
-    <ClCompile Include="TerrainMeshComponent.cpp">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="WaterLavaMeshComponent.cpp">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClCompile>
     <ClCompile Include="MeshMaterial.cpp">
-      <Filter>Game\Render</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="OrbitCameraController.cpp">
       <Filter>Game\Scene\CameraControllers</Filter>
@@ -787,10 +784,28 @@
     <ClCompile Include="UserInterface.cpp">
       <Filter>Game\UserInterface</Filter>
     </ClCompile>
-    <ClCompile Include="StaticMeshComponent.cpp">
+    <ClCompile Include="RenderableComponent.cpp">
       <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
-    <ClCompile Include="AnimatingModelComponent.cpp">
+    <ClCompile Include="TerrainMeshComponent.cpp">
+      <Filter>Game\GameObject\Components\_REWORK</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainMeshRenderer.cpp">
+      <Filter>Game\Rendering\_REWORK</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatingMeshComponent.cpp">
+      <Filter>Game\GameObject\Components\_REWORK</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatingMeshRenderer.cpp">
+      <Filter>Game\Rendering\_REWORK</Filter>
+    </ClCompile>
+    <ClCompile Include="WaterLavaMeshRenderer.cpp">
+      <Filter>Game\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="WaterLavaMeshComponent.cpp">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="DynamicMeshComponent.cpp">
       <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
   </ItemGroup>

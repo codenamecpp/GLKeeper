@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "SceneRenderList.h"
 #include "GameObject.h"
+#include "RenderableComponent.h"
 
 void SceneRenderList::SortOpaqueComponents()
 {
@@ -9,9 +10,9 @@ void SceneRenderList::SortOpaqueComponents()
     if (renderPassList.mElementsCount > 2)
     {
         std::sort(renderPassList.mElements, renderPassList.mElements + renderPassList.mElementsCount, 
-            [](const GameObjectComponent* lhs, const GameObjectComponent* rhs)
+            [](const RenderableComponent* lhs, const RenderableComponent* rhs)
         {
-            return lhs->mComponentType < rhs->mComponentType;
+            return lhs->mRenderProgram < rhs->mRenderProgram;
         });
     }
 }
@@ -23,7 +24,7 @@ void SceneRenderList::SortTranslucentComponents()
     if (renderPassList.mElementsCount > 2)
     {
         std::sort(renderPassList.mElements, renderPassList.mElements + renderPassList.mElementsCount, 
-            [](const GameObjectComponent* lhs, const GameObjectComponent* rhs)
+            [](const RenderableComponent* lhs, const RenderableComponent* rhs)
         {
             return lhs->mGameObject->mDistanceToCameraSquared < rhs->mGameObject->mDistanceToCameraSquared;
         });
