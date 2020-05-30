@@ -213,11 +213,14 @@ void WaterLavaMeshRenderer::PrepareRenderdata(WaterLavaMeshComponent* component)
     {
         debug_assert(false);
     }
+    
+    component->mRenderProgram = &mWaterLavaRenderProgram;
 }
 
 void WaterLavaMeshRenderer::ReleaseRenderdata(WaterLavaMeshComponent* component)
 {
     debug_assert(component);
+    component->mRenderProgram = nullptr;
     if (component->mVertexBuffer)
     {
         gGraphicsDevice.DestroyBuffer(component->mVertexBuffer);

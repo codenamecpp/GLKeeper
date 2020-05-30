@@ -121,7 +121,7 @@ void TerrainMeshRenderer::Render(SceneRenderContext& renderContext, TerrainMeshC
 void TerrainMeshRenderer::ReleaseRenderdata(TerrainMeshComponent* component)
 {
     debug_assert(component);
-
+    component->mRenderProgram = nullptr;
     if (component->mVertexBuffer)
     {
         gGraphicsDevice.DestroyBuffer(component->mVertexBuffer);
@@ -133,7 +133,6 @@ void TerrainMeshRenderer::ReleaseRenderdata(TerrainMeshComponent* component)
         gGraphicsDevice.DestroyBuffer(component->mIndexBuffer);
         component->mIndexBuffer = nullptr;
     }
-
     component->ClearMeshParts();
     component->ClearMeshMaterials();
 }
@@ -287,4 +286,6 @@ void TerrainMeshRenderer::PrepareRenderdata(TerrainMeshComponent* component)
     {
         debug_assert(false);
     }
+
+    component->mRenderProgram = &mTerrainRenderProgram;
 }

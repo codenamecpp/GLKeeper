@@ -284,6 +284,7 @@ void AnimatingMeshRenderer::PrepareRenderdata(AnimatingMeshComponent* component)
 
     component->mIndexBuffer = renderdata->mIndexBuffer;
     component->mVertexBuffer = renderdata->mVertexBuffer;
+    component->mRenderProgram = &mMorphAnimRenderProgram;
 }
 
 void AnimatingMeshRenderer::ReleaseRenderdata(AnimatingMeshComponent* component)
@@ -293,6 +294,7 @@ void AnimatingMeshRenderer::ReleaseRenderdata(AnimatingMeshComponent* component)
     // don't destroy buffers, just reset pointers
     component->mIndexBuffer = nullptr;
     component->mVertexBuffer = nullptr;
+    component->mRenderProgram = nullptr;
 
     component->ClearMeshParts();
 }

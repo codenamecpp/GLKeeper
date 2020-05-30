@@ -101,7 +101,7 @@
     <Filter Include="Game\Rendering">
       <UniqueIdentifier>{e607d4ee-67e8-4d5f-b41f-1bfc554959f7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Rendering\Shaders">
+    <Filter Include="Game\Rendering\ShaderPrograms">
       <UniqueIdentifier>{cfb6657e-5426-4871-9802-c0f6ab065078}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -300,7 +300,7 @@
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="DebugDrawRenderProgram.h">
-      <Filter>Game\Rendering\Shaders</Filter>
+      <Filter>Game\Rendering\ShaderPrograms</Filter>
     </ClInclude>
     <ClInclude Include="MeshViewGamestate.h">
       <Filter>Game\GameStates</Filter>
@@ -322,7 +322,7 @@
       <Filter>Application\Resources</Filter>
     </ClInclude>
     <ClInclude Include="MorphAnimRenderProgram.h">
-      <Filter>Game\Rendering\Shaders</Filter>
+      <Filter>Game\Rendering\ShaderPrograms</Filter>
     </ClInclude>
     <ClInclude Include="SceneRenderList.h">
       <Filter>Game\Scene</Filter>
@@ -349,7 +349,7 @@
       <Filter>Game\World</Filter>
     </ClInclude>
     <ClInclude Include="TerrainRenderProgram.h">
-      <Filter>Game\Rendering\Shaders</Filter>
+      <Filter>Game\Rendering\ShaderPrograms</Filter>
     </ClInclude>
     <ClInclude Include="TerrainManager.h">
       <Filter>Game\World</Filter>
@@ -361,7 +361,7 @@
       <Filter>Game\World</Filter>
     </ClInclude>
     <ClInclude Include="WaterLavaRenderProgram.h">
-      <Filter>Game\Rendering\Shaders</Filter>
+      <Filter>Game\Rendering\ShaderPrograms</Filter>
     </ClInclude>
     <ClInclude Include="RoomsDefs.h">
       <Filter>Game\World\Rooms</Filter>
@@ -400,7 +400,7 @@
       <Filter>Game\Scene\CameraControllers</Filter>
     </ClInclude>
     <ClInclude Include="GuiRenderProgram.h">
-      <Filter>Game\Rendering\Shaders</Filter>
+      <Filter>Game\Rendering\ShaderPrograms</Filter>
     </ClInclude>
     <ClInclude Include="GuiDefs.h">
       <Filter>Game\GuiLibrary</Filter>

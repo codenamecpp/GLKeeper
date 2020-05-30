@@ -11,12 +11,6 @@ public:
     {
     }
 
-    void SetViewProjectionMatrix(const glm::mat4& viewProjectionMatrix)
-    {
-        debug_assert(IsProgramLoaded());
-        mGpuProgram->SetUniformParam(mUniformID_view_projection_matrix, viewProjectionMatrix);
-    }
-
     void SetTranslucency(float translucency)
     {
         debug_assert(IsProgramLoaded());
@@ -32,11 +26,9 @@ public:
     }
 
 private:
-    void OnProgramLoad() override
-    {
-        mUniformID_view_projection_matrix = mGpuProgram->QueryUniformLocation("view_projection_matrix");
-        debug_assert(mUniformID_view_projection_matrix != GpuVariable_NULL);
 
+    void HandleProgramLoad() override
+    {
         mUniformID_translucency = mGpuProgram->QueryUniformLocation("translucency");
         debug_assert(mUniformID_translucency != GpuVariable_NULL);
 
@@ -48,16 +40,14 @@ private:
         mGpuProgram->BindAttribute(eVertexAttribute_Texcoord0, "in_texcoord");
     }
 
-    void OnProgramFree() override
+    void HandleProgramFree() override
     {
-        mUniformID_view_projection_matrix = GpuVariable_NULL;
         mUniformID_translucency = GpuVariable_NULL;
         mUniformID_wave_params = GpuVariable_NULL;
     }
 
 private:
     // render constants
-    GpuVariableLocation mUniformID_view_projection_matrix = GpuVariable_NULL;
     GpuVariableLocation mUniformID_translucency = GpuVariable_NULL;
     GpuVariableLocation mUniformID_wave_params = GpuVariable_NULL;
 };
