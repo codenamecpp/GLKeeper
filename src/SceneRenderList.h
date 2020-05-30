@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GameObjectComponent.h"
+#include "GameDefs.h"
 
 // list for collecting scene entities which will be rendered on current frame
 class SceneRenderList
@@ -11,7 +11,7 @@ private:
 public:
     SceneRenderList() = default;
 
-    inline void RegisterRenderableComponent(eRenderPass renderPass, GameObjectComponent* component)
+    inline void RegisterRenderableComponent(eRenderPass renderPass, RenderableComponent* component)
     {
         debug_assert(component);
 
@@ -43,7 +43,7 @@ public:
     {
         int mElementsCount = 0;
 
-        GameObjectComponent* mElements[MaxElements];
+        RenderableComponent* mElements[MaxElements];
     };
 
     ComponentsList mComponentsForRenderPass[eRenderPass_Count];

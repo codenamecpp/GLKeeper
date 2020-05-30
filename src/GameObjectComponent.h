@@ -1,63 +1,34 @@
 #pragma once
 
-//////////////////////////////////////////////////////////////////////////
-
-namespace details
-{
-    template<typename TGameObjectComponent>
-    struct gameobject_component_traits
-    {
-    };
-
-} // namespace details
-
-#define decl_gameobject_component(class_name, component_typeid) \
-    namespace details \
-    { \
-        template<> \
-        struct gameobject_component_traits<class_name> \
-        { \
-            inline static eGameObjectComponent GetComponentType() \
-            { \
-                return component_typeid; \
-            } \
-        }; \
-    }
-
-#define gameobject_component_typeid(class_name) \
-    \
-    details::gameobject_component_traits<class_name>::GetComponentType()
-
-//////////////////////////////////////////////////////////////////////////
-
-// base class of any game object component
+// base class of all gameobject components
 class GameObjectComponent: public cxx::noncopyable
 {
+    decl_rtti_base(GameObjectComponent) // enable rtti for components
+
 public:
-    const eGameObjectComponent mComponentType;
-    GameObject* const mGameObject;
+    // readonly
+    GameObject* mGameObject;
 
 public:
     virtual ~GameObjectComponent()
     {
     }
-    // process scene update frame
+    // process update
     // @param deltaTime: Time since last update
-    virtual void UpdateFrame(float deltaTime) 
-    { 
+    virtual void UpdateComponent(float deltaTime)
+    {
+        // do nothing
     }
-    // issue draw call
-    // @param renderContext: Scene render context
-    virtual void RenderFrame(SceneRenderContext& renderContext) 
-    { 
+    // destroy gameobject component instance
+    virtual void DestroyComponent()
+    {
+        delete this;
     }
 protected:
     // base component does not meant to be instantiated directly
-    GameObjectComponent(eGameObjectComponent componentType, GameObject* sceneObject)
-        : mComponentType(componentType)
-        , mGameObject(sceneObject)
+    GameObjectComponent(GameObject* sceneObject)
+        : mGameObject(sceneObject)
     {
-        debug_assert(mComponentType < eGameObjectComponent_Count);
         debug_assert(mGameObject);
     }
 };

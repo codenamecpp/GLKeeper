@@ -1,23 +1,19 @@
 #include "pch.h"
-#include "AnimatingModelComponent.h"
+#include "AnimatingMeshComponent.h"
 #include "ModelAsset.h"
 #include "TexturesManager.h"
 #include "GameObject.h"
 #include "TransformComponent.h"
 #include "RenderManager.h"
 
-AnimatingModelComponent::AnimatingModelComponent(GameObject* gameObject)
-    : GameObjectComponent(eGameObjectComponent_AnimatingModel, gameObject)
+AnimatingMeshComponent::AnimatingMeshComponent(GameObject* gameObject)
+    : RenderableComponent(gameObject)
 {
     debug_assert(mGameObject);
     mGameObject->mDebugColor = Color32_Green;
 }
 
-AnimatingModelComponent::~AnimatingModelComponent()
-{
-}
-
-void AnimatingModelComponent::UpdateFrame(float deltaTime)
+void AnimatingMeshComponent::UpdateComponent(float deltaTime)
 {
     if (!IsAnimationActive() || IsAnimationPaused())
         return;
@@ -25,13 +21,25 @@ void AnimatingModelComponent::UpdateFrame(float deltaTime)
     AdvanceAnimation(deltaTime);
 }
 
-void AnimatingModelComponent::RenderFrame(SceneRenderContext& renderContext)
+void AnimatingMeshComponent::PrepareRenderResources()
 {
-    AnimatingModelsRenderer& renderer = gRenderManager.mAnimatingModelsRenderer;
+    AnimatingMeshRenderer& renderer = gRenderManager.mAnimatingMeshRenderer;
+    renderer.PrepareRenderdata(this);
+}
+
+void AnimatingMeshComponent::ReleaseRenderResources()
+{
+    AnimatingMeshRenderer& renderer = gRenderManager.mAnimatingMeshRenderer;
+    renderer.ReleaseRenderdata(this);
+}
+
+void AnimatingMeshComponent::RenderFrame(SceneRenderContext& renderContext)
+{
+    AnimatingMeshRenderer& renderer = gRenderManager.mAnimatingMeshRenderer;
     renderer.Render(renderContext, this);
 }
 
-void AnimatingModelComponent::SetModelAsset(ModelAsset* modelAsset)
+void AnimatingMeshComponent::SetModelAsset(ModelAsset* modelAsset)
 {
     if (modelAsset == nullptr || !modelAsset->IsModelLoaded())
     {
@@ -42,77 +50,67 @@ void AnimatingModelComponent::SetModelAsset(ModelAsset* modelAsset)
     if (mModelAsset == modelAsset) // same asset, ignore
         return;
 
+    SetModelAssetNull();
+
     mModelAsset = modelAsset;
 
-    // reset current renderdata
-    if (mRenderData)
-    {
-        mRenderData = nullptr;
-    }
+    const int NumMaterials = (int) modelAsset->mMaterialsArray.size();
+    SetMeshMaterialsCount(NumMaterials);
 
     // setup materials
-    mSubmeshMaterials.clear();
-    mSubmeshMaterials.reserve(modelAsset->mMaterialsArray.size());
-
     mSubmeshTextures.clear();
-    mSubmeshTextures.resize(modelAsset->mMaterialsArray.size());
+    mSubmeshTextures.resize(NumMaterials);
 
     int iCurrentMaterial = 0;
-    for (const ModelAsset::SubMeshMaterial& currentSourceMaterial: modelAsset->mMaterialsArray)
+    for (const ModelAsset::SubMeshMaterial& srcMaterial: modelAsset->mMaterialsArray)
     {
-        MeshMaterial material;
-        if (currentSourceMaterial.mTextures.empty())
-        {
-            debug_assert(false);
+        MeshMaterial* material = GetMeshMaterial(iCurrentMaterial);
+        debug_assert(material);
 
-            mSubmeshMaterials.push_back(material); // dummy material
-            continue;
-        }
-        material.mDiffuseTexture = gTexturesManager.GetTexture2D(currentSourceMaterial.mTextures[0]);
-        if (currentSourceMaterial.mEnvMappingTexture.length())
+        debug_assert(!srcMaterial.mTextures.empty());
+
+        material->mDiffuseTexture = gTexturesManager.GetTexture2D(srcMaterial.mTextures[0]);
+        if (srcMaterial.mEnvMappingTexture.length())
         {
-            material.mEnvMappingTexture = gTexturesManager.GetTexture2D(currentSourceMaterial.mEnvMappingTexture);
+            material->mEnvMappingTexture = gTexturesManager.GetTexture2D(srcMaterial.mEnvMappingTexture);
         }
 
-        if (currentSourceMaterial.mFlagHasAlpha)
+        if (srcMaterial.mFlagHasAlpha)
         {
-            material.mRenderStates.mIsAlphaBlendEnabled = true;
-            material.mRenderStates.mBlendingMode = eBlendingMode_Alpha;
+            material->mRenderStates.mIsAlphaBlendEnabled = true;
+            material->mRenderStates.mBlendingMode = eBlendingMode_Alpha;
         }
 
-        if (currentSourceMaterial.mFlagAlphaAdditive)
+        if (srcMaterial.mFlagAlphaAdditive)
         {
-            material.mRenderStates.mIsAlphaBlendEnabled = true;
-            material.mRenderStates.mBlendingMode = eBlendingMode_AlphaAdditive;
-            material.mRenderStates.mIsDepthWriteEnabled = false;
+            material->mRenderStates.mIsAlphaBlendEnabled = true;
+            material->mRenderStates.mBlendingMode = eBlendingMode_AlphaAdditive;
+            material->mRenderStates.mIsDepthWriteEnabled = false;
         }
-        for (const std::string& sourceTexture: currentSourceMaterial.mTextures)
+
+        for (const std::string& sourceTexture: srcMaterial.mTextures)
         {
             mSubmeshTextures[iCurrentMaterial].push_back(gTexturesManager.GetTexture2D(sourceTexture));
         }
-        mSubmeshMaterials.push_back(material);
         ++iCurrentMaterial;
     }
 
+    PrepareRenderResources();
     SetAnimationState();
 }
 
-void AnimatingModelComponent::SetModelAssetNull()
+void AnimatingMeshComponent::SetModelAssetNull()
 {
     mModelAsset = nullptr;
-    // reset current renderdata
-    if (mRenderData)
-    {
-        mRenderData = nullptr;
-    }
+    ReleaseRenderResources();
+    ClearMeshMaterials();
 
-    mSubmeshMaterials.clear();
     mSubmeshTextures.clear();
 
     SetAnimationState();
 }
 
-bool AnimatingModelComponent::StartAnimation(float animationSpeed, bool loop)
+bool AnimatingMeshComponent::StartAnimation(float animationSpeed, bool loop)
 {
     if (IsStatic())
     {
@@ -133,7 +131,7 @@ bool AnimatingModelComponent::StartAnimation(float animationSpeed, bool loop)
     return true;
 }
 
-void AnimatingModelComponent::ClearAnimation()
+void AnimatingMeshComponent::ClearAnimation()
 {
     mAnimState.mFrame0 = mAnimState.mStartFrame;
     mAnimState.mFrame1 = mAnimState.mStartFrame + 1;
@@ -153,17 +151,17 @@ void AnimatingModelComponent::ClearAnimation()
     SetLocalBounds();
 }
 
-void AnimatingModelComponent::RewindToStart()
+void AnimatingMeshComponent::RewindToStart()
 {
     debug_assert(false); // todo
 }
 
-void AnimatingModelComponent::RewingToEnd()
+void AnimatingMeshComponent::RewingToEnd()
 {
     debug_assert(false); // todo
 }
 
-void AnimatingModelComponent::AdvanceAnimation(float deltaTime)
+void AnimatingMeshComponent::AdvanceAnimation(float deltaTime)
 {
     if (!IsAnimationActive())
     {
@@ -212,7 +210,7 @@ void AnimatingModelComponent::AdvanceAnimation(float deltaTime)
     }
 }
 
-void AnimatingModelComponent::SetAnimationPaused(bool isPaused)
+void AnimatingMeshComponent::SetAnimationPaused(bool isPaused)
 {
     if (IsAnimationActive())
     {
@@ -220,37 +218,41 @@ void AnimatingModelComponent::SetAnimationPaused(bool isPaused)
     }
 }
 
-bool AnimatingModelComponent::IsAnimationLoop() const
+bool AnimatingMeshComponent::IsAnimationLoop() const
 {
     return mAnimState.mIsAnimationLoop;
 }
 
-bool AnimatingModelComponent::IsAnimationActive() const
+bool AnimatingMeshComponent::IsAnimationActive() const
 {
     return mAnimState.mIsAnimationActive;
 }
 
-bool AnimatingModelComponent::IsAnimationFinish() const
+bool AnimatingMeshComponent::IsAnimationFinish() const
 {
     return !mAnimState.mIsAnimationActive && mAnimState.mCyclesCount > 0;
 }
 
-bool AnimatingModelComponent::IsAnimationPaused() const
+bool AnimatingMeshComponent::IsAnimationPaused() const
 {
     return mAnimState.mIsAnimationPaused;
 }
 
-bool AnimatingModelComponent::IsStatic() const
+bool AnimatingMeshComponent::IsStatic() const
 {
     return mAnimState.mStartFrame == mAnimState.mFinalFrame;
 }
 
-void AnimatingModelComponent::SetPreferredLOD(int lod)
+void AnimatingMeshComponent::SetPreferredLOD(int lod)
 {
+    if (mPreferredLOD == lod)
+        return;
+
     mPreferredLOD = lod;
+    // todo
 }
 
-void AnimatingModelComponent::SetAnimationState()
+void AnimatingMeshComponent::SetAnimationState()
 {   
     mAnimState = BlendFramesAnimState ();
 
@@ -265,8 +267,8 @@ void AnimatingModelComponent::SetAnimationState()
     SetLocalBounds();
 }
 
-void AnimatingModelComponent::SetLocalBounds()
+void AnimatingMeshComponent::SetLocalBounds()
 {
-    TransformComponent* transformComponent = mGameObject->GetComponent<TransformComponent>();
+    TransformComponent* transformComponent = mGameObject->mTransformComponent;
     transformComponent->SetLocalBoundingBox(mModelAsset->mFramesBounds[mAnimState.mFrame0]);
 }

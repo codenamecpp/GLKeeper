@@ -1,33 +1,25 @@
 #pragma once
 
-#include "GameObjectComponent.h"
 #include "SceneDefs.h"
+#include "RenderableComponent.h"
 
 // animating model component of game object
-class AnimatingModelComponent: public GameObjectComponent
+class AnimatingMeshComponent: public RenderableComponent
 {
+    decl_rtti(AnimatingMeshComponent, RenderableComponent)
+
+    friend class AnimatingMeshRenderer;
 public:
     // readonly
     ModelAsset* mModelAsset = nullptr;
 
-    std::vector<MeshMaterial> mSubmeshMaterials;
     std::vector<std::vector<Texture2D*>> mSubmeshTextures; // additional textures
     BlendFramesAnimState mAnimState;
 
     int mPreferredLOD = 0;
 
-    ModelsRenderData* mRenderData = nullptr;
-
 public:
-    AnimatingModelComponent(GameObject* gameObject);
-    ~AnimatingModelComponent();
-
-    // process component update frame
-    // @param deltaTime: Time since last update
-    void UpdateFrame(float deltaTime) override;
-
-    // process render frame
-    void RenderFrame(SceneRenderContext& renderContext) override;
+    AnimatingMeshComponent(GameObject* gameObject);
 
     // change model asset, setup bounds and materials
     // @param modelAsset: Source model data
@@ -50,9 +42,16 @@ public:
 
     void SetPreferredLOD(int lod);
 
+    // process component update frame
+    // @param deltaTime: Time since last update
+    void UpdateComponent(float deltaTime) override;
+
+    // override RenderableComponent methods
+    void PrepareRenderResources() override;
+    void ReleaseRenderResources() override;
+    void RenderFrame(SceneRenderContext& renderContext) override;
+
 private:
     void SetAnimationState();
     void SetLocalBounds();
 };
-
-decl_gameobject_component(AnimatingModelComponent, eGameObjectComponent_AnimatingModel)

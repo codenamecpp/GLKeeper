@@ -181,7 +181,9 @@
     <ClInclude Include="AABBTree.h" />
     <ClInclude Include="CreatureDefs.h" />
     <ClInclude Include="MapInteractionController.h" />
-    <ClInclude Include="StaticMeshComponent.h" />
+    <ClInclude Include="RenderableComponent.h" />
+    <ClInclude Include="DynamicMeshComponent.h" />
+    <ClInclude Include="rtti.h" />
     <ClInclude Include="UiCtlPanelBar.h" />
     <ClInclude Include="UiCtlPanelIcon.h" />
     <ClInclude Include="GameplayGameScreen.h" />
@@ -209,7 +211,7 @@
     <ClInclude Include="GameplayGamestate.h" />
     <ClInclude Include="GameWorld.h" />
     <ClInclude Include="ToolsUIMeshViewWindow.h" />
-    <ClInclude Include="AnimatingModelComponent.h" />
+    <ClInclude Include="AnimatingMeshComponent.h" />
     <ClInclude Include="MorphAnimRenderProgram.h" />
     <ClInclude Include="BinaryInputStream.h" />
     <ClInclude Include="BinaryOutputStream.h" />
@@ -224,7 +226,7 @@
     <ClInclude Include="ModelAsset.h" />
     <ClInclude Include="MeshViewGamestate.h" />
     <ClInclude Include="ModelAssetsManager.h" />
-    <ClInclude Include="AnimatingModelsRenderer.h" />
+    <ClInclude Include="AnimatingMeshRenderer.h" />
     <ClInclude Include="OrbitCameraController.h" />
     <ClInclude Include="MeshMaterial.h" />
     <ClInclude Include="ResourceDefs.h" />
@@ -312,14 +314,15 @@
     <ClCompile Include="3rd_party\imgui_widgets.cpp" />
     <ClCompile Include="3rd_party\stb_rect_pack.cpp" />
     <ClCompile Include="AABBTree.cpp" />
-    <ClCompile Include="AnimatingModelComponent.cpp" />
+    <ClCompile Include="AnimatingMeshComponent.cpp" />
     <ClCompile Include="BinaryInputStream.cpp" />
     <ClCompile Include="BinaryOutputStream.cpp" />
     <ClCompile Include="CommonTypes.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="ConsoleVariable.cpp" />
     <ClCompile Include="MapInteractionController.cpp" />
-    <ClCompile Include="StaticMeshComponent.cpp" />
+    <ClCompile Include="RenderableComponent.cpp" />
+    <ClCompile Include="DynamicMeshComponent.cpp" />
     <ClCompile Include="UiCtlPanelBar.cpp" />
     <ClCompile Include="UiCtlPanelIcon.cpp" />
     <ClCompile Include="GameplayGameScreen.cpp" />
@@ -368,7 +371,7 @@
     <ClCompile Include="MeshViewGamestate.cpp" />
     <ClCompile Include="micropather.cpp" />
     <ClCompile Include="ModelAssetsManager.cpp" />
-    <ClCompile Include="AnimatingModelsRenderer.cpp" />
+    <ClCompile Include="AnimatingMeshRenderer.cpp" />
     <ClCompile Include="OrbitCameraController.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

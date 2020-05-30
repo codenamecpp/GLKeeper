@@ -91,7 +91,7 @@ GameObject* GameObjectsManager::CreateGameObject(const glm::vec3& position, cons
     GameObject* gameObject = CreateGameObject();
     debug_assert(gameObject);
 
-    TransformComponent* transformComponent = gameObject->GetComponent<TransformComponent>();
+    TransformComponent* transformComponent = gameObject->mTransformComponent;
     debug_assert(transformComponent);
 
     transformComponent->SetPosition(position);
@@ -106,9 +106,6 @@ GameObject* GameObjectsManager::CreateGameObject()
 
     GameObject* gameObject = mGameObjectsPool.create(instanceID);
     mObjectsList.push_back(gameObject);
-
-    TransformComponent* transformComponent = new TransformComponent(gameObject);
-    gameObject->AddComponent(transformComponent);
 
     return gameObject;
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "DebugRenderer.h"
-#include "AnimatingModelsRenderer.h"
+#include "AnimatingMeshRenderer.h"
 #include "SceneRenderList.h"
 #include "TerrainMeshRenderer.h"
 #include "WaterLavaMeshRenderer.h"
@@ -14,7 +14,7 @@ class RenderManager: public cxx::noncopyable
 
 public:
     // readonly
-    AnimatingModelsRenderer mAnimatingModelsRenderer;
+    AnimatingMeshRenderer mAnimatingMeshRenderer;
     TerrainMeshRenderer mTerrainMeshRenderer;
     WaterLavaMeshRenderer mWaterLavaMeshRenderer;
 
