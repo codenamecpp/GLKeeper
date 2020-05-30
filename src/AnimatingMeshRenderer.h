@@ -24,12 +24,12 @@ public:
 private:
     // create renderdata for model asset and put it in internal cache
     // @param modelAsset: Model data
-    AnimModelRenderdata* GetRenderData(ModelAsset* modelAsset);
+    ModelAssetRenderdata* GetRenderdata(ModelAsset* modelAsset);
 
-    void InitRenderData(AnimModelRenderdata* renderdata, ModelAsset* modelAsset);
-    void DestroyRenderData(AnimModelRenderdata* renderdata);
+    void PrepareRenderdata(ModelAssetRenderdata* renderdata, ModelAsset* modelAsset);
+    void ReleaseRenderdata(ModelAssetRenderdata* renderdata);
 
 private:
     MorphAnimRenderProgram mMorphAnimRenderProgram;
-    std::map<ModelAsset*, AnimModelRenderdata> mModelsCache;
+    std::map<ModelAsset*, ModelAssetRenderdata> mModelsCache;
 };

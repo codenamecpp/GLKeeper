@@ -27,7 +27,7 @@ void AnimatingMeshRenderer::Deinit()
     mMorphAnimRenderProgram.FreeProgram();
     for (auto& curr_iterator : mModelsCache)
     {
-        DestroyRenderData(&curr_iterator.second);
+        ReleaseRenderdata(&curr_iterator.second);
     }
 
     mModelsCache.clear();
@@ -98,7 +98,7 @@ void AnimatingMeshRenderer::Render(SceneRenderContext& renderContext, AnimatingM
     }
 }
 
-AnimModelRenderdata* AnimatingMeshRenderer::GetRenderData(ModelAsset* modelAsset)
+ModelAssetRenderdata* AnimatingMeshRenderer::GetRenderdata(ModelAsset* modelAsset)
 {
     if (modelAsset == nullptr || !modelAsset->IsModelLoaded())
     {
@@ -110,10 +110,10 @@ AnimModelRenderdata* AnimatingMeshRenderer::GetRenderData(ModelAsset* modelAsset
     if (cache_iterator != mModelsCache.end())
         return &cache_iterator->second;
 
-    AnimModelRenderdata* renderdata = &mModelsCache[modelAsset];
+    ModelAssetRenderdata* renderdata = &mModelsCache[modelAsset];
 
     // upload geometry
-    InitRenderData(renderdata, modelAsset);
+    PrepareRenderdata(renderdata, modelAsset);
     return renderdata;
 }
 
@@ -130,10 +130,10 @@ void AnimatingMeshRenderer::InvalidateRenderData(ModelAsset* modelAsset)
         return;
 
     // upload geometry
-    InitRenderData(&cache_iterator->second, modelAsset);
+    PrepareRenderdata(&cache_iterator->second, modelAsset);
 }
 
-void AnimatingMeshRenderer::DestroyRenderData(AnimModelRenderdata* renderdata)
+void AnimatingMeshRenderer::ReleaseRenderdata(ModelAssetRenderdata* renderdata)
 {
     debug_assert(renderdata);
     if (renderdata->mVertexBuffer)
@@ -147,7 +147,7 @@ void AnimatingMeshRenderer::DestroyRenderData(AnimModelRenderdata* renderdata)
     renderdata->Clear();
 }
 
-void AnimatingMeshRenderer::InitRenderData(AnimModelRenderdata* renderdata, ModelAsset* modelAsset)
+void AnimatingMeshRenderer::PrepareRenderdata(ModelAssetRenderdata* renderdata, ModelAsset* modelAsset)
 {
     debug_assert(renderdata);
     debug_assert(modelAsset);

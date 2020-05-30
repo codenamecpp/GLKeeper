@@ -27,13 +27,12 @@ public:
 };
 
 // anim model cached render data, it is managed by AnimModelsRenderer
-class AnimModelRenderdata
+class ModelAssetRenderdata
 {
 public:
-    AnimModelRenderdata() = default;
+    ModelAssetRenderdata() = default;
 
     // reset renderdata to initial state
-    // will not deallocate vertex/index buffers
     inline void Clear()
     {
         mVertexBuffer = nullptr;

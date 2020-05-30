@@ -157,6 +157,7 @@ void RenderManager::DrawScene()
         for (int icurrentComponent = 0; icurrentComponent < currentList.mElementsCount; ++icurrentComponent)
         {
             RenderableComponent* currentComponent = currentList.mElements[icurrentComponent];
+            renderContext.mCurrentPass = currRenderPass;
             currentComponent->RenderFrame(renderContext);
         }
     }

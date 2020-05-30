@@ -55,31 +55,34 @@ void AnimatingMeshComponent::SetModelAsset(ModelAsset* modelAsset)
     mModelAsset = modelAsset;
 
     AnimatingMeshRenderer& renderer = gRenderManager.mAnimatingMeshRenderer;
-    AnimModelRenderdata* renderdata = renderer.GetRenderData(modelAsset);
+    ModelAssetRenderdata* renderdata = renderer.GetRenderdata(modelAsset);
     if (renderdata == nullptr)
     {
         debug_assert(false);
         return;
     }
 
-    // setup materials
-    int numParts = (int) modelAsset->mMaterialsArray.size();
-    SetMeshMaterialsCount(numParts);
+    mIndexBuffer = renderdata->mIndexBuffer;
+    mVertexBuffer = renderdata->mVertexBuffer;
 
+    const int NumParts = (int) modelAsset->mMeshArray.size();
+    SetMeshPartsCount(NumParts);
+
+    const int NumMaterials = (int) modelAsset->mMaterialsArray.size();
+    SetMeshMaterialsCount(NumMaterials);
+
+    // setup materials
     mSubmeshTextures.clear();
-    mSubmeshTextures.resize(numParts);
+    mSubmeshTextures.resize(NumMaterials);
 
     int iCurrentMaterial = 0;
     for (const ModelAsset::SubMeshMaterial& srcMaterial: modelAsset->mMaterialsArray)
     {
-        MeshMaterial* material = GetMeshMaterial(iCurrentMaterial++);
+        MeshMaterial* material = GetMeshMaterial(iCurrentMaterial);
         debug_assert(material);
 
-        if (srcMaterial.mTextures.empty())
-        {
-            debug_assert(false);
-            continue;
-        }
+        debug_assert(!srcMaterial.mTextures.empty());
+
         material->mDiffuseTexture = gTexturesManager.GetTexture2D(srcMaterial.mTextures[0]);
         if (srcMaterial.mEnvMappingTexture.length())
         {
@@ -98,10 +101,25 @@ void AnimatingMeshComponent::SetModelAsset(ModelAsset* modelAsset)
             material->mRenderStates.mBlendingMode = eBlendingMode_AlphaAdditive;
             material->mRenderStates.mIsDepthWriteEnabled = false;
         }
+
         for (const std::string& sourceTexture: srcMaterial.mTextures)
         {
             mSubmeshTextures[iCurrentMaterial].push_back(gTexturesManager.GetTexture2D(sourceTexture));
         }
+        ++iCurrentMaterial;
+    }
+
+    // setup mesh parts
+    int iCurrentMeshPart = 0;
+    for (const ModelAsset::SubMesh& srcSubMesh: modelAsset->mMeshArray)
+    {
+        AnimatingMeshComponent::MeshPartStruct& currMeshPart = mMeshParts[iCurrentMeshPart];
+        currMeshPart.mMaterialIndex = srcSubMesh.mMaterialIndex;
+        currMeshPart.mIndexDataOffset = renderdata->mSubsets[iCurrentMeshPart].mIndexDataOffset;
+        currMeshPart.mVertexDataOffset = renderdata->mSubsets[iCurrentMeshPart].mVertexDataOffset;
+        currMeshPart.mTriangleCount = (int) srcSubMesh.mLODsArray[0].mTriangleArray.size();
+        currMeshPart.mVertexCount = srcSubMesh.mFrameVerticesCount;
+        ++iCurrentMeshPart;
     }
 
     SetAnimationState();
