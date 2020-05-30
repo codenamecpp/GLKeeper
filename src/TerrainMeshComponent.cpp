@@ -62,8 +62,19 @@ bool TerrainMeshComponent::IsMeshInvalidated() const
 
 void TerrainMeshComponent::PrepareRenderResources()
 {
+    if (!IsMeshInvalidated())
+        return;
+
+    mMeshInvalidated = false;
+
+    TerrainMeshRenderer& renderer = gRenderManager.mTerrainMeshRenderer;
+    renderer.PrepareRenderdata(this);
 }
 
 void TerrainMeshComponent::ReleaseRenderResources()
 {
+    TerrainMeshRenderer& renderer = gRenderManager.mTerrainMeshRenderer;
+    renderer.ReleaseRenderdata(this);
+
+    InvalidateMesh();
 }

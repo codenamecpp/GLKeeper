@@ -498,12 +498,6 @@
     <ClInclude Include="RenderableComponent.h">
       <Filter>Game\GameObject\Components</Filter>
     </ClInclude>
-    <ClInclude Include="TerrainMeshComponent.h">
-      <Filter>Game\GameObject\Components\_REWORK</Filter>
-    </ClInclude>
-    <ClInclude Include="TerrainMeshRenderer.h">
-      <Filter>Game\Rendering\_REWORK</Filter>
-    </ClInclude>
     <ClInclude Include="AnimatingMeshComponent.h">
       <Filter>Game\GameObject\Components\_REWORK</Filter>
     </ClInclude>
@@ -520,6 +514,12 @@
       <Filter>Game\GameObject\Components</Filter>
     </ClInclude>
     <ClInclude Include="DynamicMeshComponent.h">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainMeshRenderer.h">
+      <Filter>Game\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainMeshComponent.h">
       <Filter>Game\GameObject\Components</Filter>
     </ClInclude>
   </ItemGroup>
@@ -787,12 +787,6 @@
     <ClCompile Include="RenderableComponent.cpp">
       <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
-    <ClCompile Include="TerrainMeshComponent.cpp">
-      <Filter>Game\GameObject\Components\_REWORK</Filter>
-    </ClCompile>
-    <ClCompile Include="TerrainMeshRenderer.cpp">
-      <Filter>Game\Rendering\_REWORK</Filter>
-    </ClCompile>
     <ClCompile Include="AnimatingMeshComponent.cpp">
       <Filter>Game\GameObject\Components\_REWORK</Filter>
     </ClCompile>
@@ -806,6 +800,12 @@
       <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
     <ClCompile Include="DynamicMeshComponent.cpp">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainMeshRenderer.cpp">
+      <Filter>Game\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainMeshComponent.cpp">
       <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
   </ItemGroup>

@@ -32,6 +32,8 @@ void WaterLavaMeshComponent::ReleaseRenderResources()
 {
     WaterLavaMeshRenderer& renderer = gRenderManager.mWaterLavaMeshRenderer;
     renderer.ReleaseRenderdata(this);
+
+    InvalidateMesh();
 }
 
 void WaterLavaMeshComponent::SetWaterLavaTiles(const TilesArray& tilesArray)
@@ -103,7 +105,7 @@ void WaterLavaMeshComponent::RenderFrame(SceneRenderContext& renderContext)
 
 void WaterLavaMeshComponent::PrepareRenderResources()
 {
-    if (!mMeshInvalidated)
+    if (!IsMeshInvalidated())
         return;
 
     mMeshInvalidated = false;

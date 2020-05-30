@@ -46,7 +46,7 @@ void WaterLavaMeshRenderer::Render(SceneRenderContext& renderContext, WaterLavaM
     gGraphicsDevice.BindIndexBuffer(component->mIndexBuffer);
     gGraphicsDevice.BindVertexBuffer(component->mVertexBuffer, Vertex3D_WaterLava_Format::Get());
 
-    for (RenderableComponent::MeshPartStruct& currPart: component->mMeshParts)
+    for (WaterLavaMeshComponent::MeshPartStruct& currPart: component->mMeshParts)
     {
         if (currPart.mVertexCount == 0)
         {
@@ -231,5 +231,4 @@ void WaterLavaMeshRenderer::ReleaseRenderdata(WaterLavaMeshComponent* component)
     }
 
     component->ClearMeshParts();
-    component->InvalidateMesh();
 }

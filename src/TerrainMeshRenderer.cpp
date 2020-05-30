@@ -5,6 +5,8 @@
 #include "TerrainMeshComponent.h"
 #include "cvars.h"
 #include "MapTile.h"
+#include "GameWorld.h"
+#include "GpuBuffer.h"
 
 // limits
 const int MaxTerrainMeshBufferSize = 1024 * 1024 * 2;
@@ -74,85 +76,89 @@ void TerrainMeshRenderer::Render(SceneRenderContext& renderContext, TerrainMeshC
     if (!gCVarRender_DrawTerrain.mValue)
         return;
 
-    if (component == nullptr || component->mBatchArray.empty())
+    debug_assert(component);
+    if (component->mMeshParts.empty())
     {
         debug_assert(false);
         return;
     }
-
-    static glm::mat4 identyMatrix {1.0f};
 
     mTerrainRenderProgram.SetViewProjectionMatrix(gRenderScene.mCamera.mViewProjectionMatrix);
     mTerrainRenderProgram.SetModelMatrix(SceneIdentyMatrix);
     mTerrainRenderProgram.ActivateProgram();
 
     // bind indices
-    gGraphicsDevice.BindIndexBuffer(component->mIndicesBuffer);
-    gGraphicsDevice.BindVertexBuffer(component->mVerticesBuffer, Vertex3D_Terrain_Format::Get());
+    gGraphicsDevice.BindIndexBuffer(component->mIndexBuffer);
+    gGraphicsDevice.BindVertexBuffer(component->mVertexBuffer, Vertex3D_Terrain_Format::Get());
 
-    for (TerrainMeshComponent::MeshBatch& currBatch: component->mBatchArray)
+    for (TerrainMeshComponent::MeshPartStruct& currBatch: component->mMeshParts)
     {
+        if (currBatch.mVertexCount == 0)
+        {
+            debug_assert(false);
+            continue;
+        }
+        MeshMaterial* currMaterial = component->GetMeshMaterial(currBatch.mMaterialIndex);
+        if (currMaterial == nullptr)
+        {
+            debug_assert(false);
+            continue;
+        }
         // filter out submeshes depending on current render pass
-        if (renderContext.mCurrentPass == eRenderPass_Translucent && !currBatch.mMaterial.IsTransparent())
+        if (renderContext.mCurrentPass == eRenderPass_Translucent && !currMaterial->IsTransparent())
             continue;
 
-        if (renderContext.mCurrentPass == eRenderPass_Opaque && currBatch.mMaterial.IsTransparent())
+        if (renderContext.mCurrentPass == eRenderPass_Opaque && currMaterial->IsTransparent())
             continue;
 
-        currBatch.mMaterial.ActivateMaterial();
-
+        currMaterial->ActivateMaterial();
         gGraphicsDevice.RenderIndexedPrimitives(ePrimitiveType_Triangles, eIndicesType_i32,
-            currBatch.mTriangleStart * sizeof(glm::ivec3), 
+            currBatch.mIndexDataOffset, 
             currBatch.mTriangleCount * 3);
     }
 }
 
-void TerrainMeshRenderer::PrepareRenderdata(TerrainMeshComponent* component)
-{
-
-}
-
 void TerrainMeshRenderer::ReleaseRenderdata(TerrainMeshComponent* component)
 {
+    debug_assert(component);
 
-}
-
-void TerrainMeshComponent::DestroyRenderData()
-{
-    mBatchArray.clear();
-
-    if (mVerticesBuffer)
+    if (component->mVertexBuffer)
     {
-        gGraphicsDevice.DestroyBuffer(mVerticesBuffer);
-        mVerticesBuffer = nullptr;
+        gGraphicsDevice.DestroyBuffer(component->mVertexBuffer);
+        component->mVertexBuffer = nullptr;
     }
 
-    if (mIndicesBuffer)
+    if (component->mIndexBuffer)
     {
-        gGraphicsDevice.DestroyBuffer(mIndicesBuffer);
-        mIndicesBuffer = nullptr;
+        gGraphicsDevice.DestroyBuffer(component->mIndexBuffer);
+        component->mIndexBuffer = nullptr;
     }
 
-    mMeshDirty = false;
+    component->ClearMeshParts();
+    component->ClearMeshMaterials();
 }
 
-void TerrainMeshComponent::PrepareRenderData()
+void TerrainMeshRenderer::PrepareRenderdata(TerrainMeshComponent* component)
 {
-    if (mMapTerrainRect.w < 1 || mMapTerrainRect.h < 1)
+    debug_assert(component);
+
+    const Rectangle& rcMapTerrain = component->mMapTerrainRect;
+    if (rcMapTerrain.w < 1 || rcMapTerrain.h < 1)
     {
         debug_assert(false);
         return;
     }
 
-    mBatchArray.clear();
+    component->ClearMeshMaterials();
+    component->ClearMeshParts();
 
     GameMap& gamemap = gGameWorld.mMapData;
     
     // prepare data for batching
     PieceBucketContainer pieceBucketContainer;
 
-    for (int tiley = mMapTerrainRect.y; tiley < (mMapTerrainRect.y + mMapTerrainRect.h); ++tiley)
-    for (int tilex = mMapTerrainRect.x; tilex < (mMapTerrainRect.x + mMapTerrainRect.w); ++tilex)
+    for (int tiley = rcMapTerrain.y; tiley < (rcMapTerrain.y + rcMapTerrain.h); ++tiley)
+    for (int tilex = rcMapTerrain.x; tilex < (rcMapTerrain.x + rcMapTerrain.w); ++tilex)
     {
         const Point tileLocation (tilex, tiley);
         if (!gamemap.IsWithinMap(tileLocation))
@@ -187,10 +193,10 @@ void TerrainMeshComponent::PrepareRenderData()
     }
 
     // allocate vertex buffer object
-    if (mVerticesBuffer == nullptr)
+    if (component->mVertexBuffer == nullptr)
     {
-        mVerticesBuffer = gGraphicsDevice.CreateBuffer(eBufferContent_Vertices);
-        if (mVerticesBuffer == nullptr)
+        component->mVertexBuffer = gGraphicsDevice.CreateBuffer(eBufferContent_Vertices);
+        if (component->mVertexBuffer == nullptr)
         {
             debug_assert(false);
             return;
@@ -198,32 +204,37 @@ void TerrainMeshComponent::PrepareRenderData()
     }
 
     // allocate index buffer object
-    if (mIndicesBuffer == nullptr)
+    if (component->mIndexBuffer == nullptr)
     {
-        mIndicesBuffer = gGraphicsDevice.CreateBuffer(eBufferContent_Indices);
-        if (mIndicesBuffer == nullptr)
+        component->mIndexBuffer = gGraphicsDevice.CreateBuffer(eBufferContent_Indices);
+        if (component->mIndexBuffer == nullptr)
         {
             debug_assert(false);
             return;
         }
     }
 
+    GpuBuffer* vertBuffer = component->mVertexBuffer;
+    GpuBuffer* indexBuffer = component->mIndexBuffer;
+
     // setup buffers
-    if (!mVerticesBuffer->Setup(eBufferUsage_Static, actualVBufferLength, nullptr) ||
-        !mIndicesBuffer->Setup(eBufferUsage_Static, actualIBufferLength, nullptr))
+    if (!vertBuffer->Setup(eBufferUsage_Static, actualVBufferLength, nullptr) ||
+        !indexBuffer->Setup(eBufferUsage_Static, actualIBufferLength, nullptr))
     {
         debug_assert(false);
         return;
     }
 
-
-    mBatchArray.resize(pieceBucketContainer.mPieceBucketMap.size());
+    int numPieces = (int) pieceBucketContainer.mPieceBucketMap.size();
+    debug_assert(numPieces > 0);
+    component->SetMeshPartsCount(numPieces);
+    component->SetMeshMaterialsCount(numPieces);
 
     // compile geometries
-    Vertex3D_Terrain* vbufferPtr = mVerticesBuffer->LockData<Vertex3D_Terrain>(BufferAccess_UnsynchronizedWrite, 0, actualVBufferLength);
+    Vertex3D_Terrain* vbufferPtr = vertBuffer->LockData<Vertex3D_Terrain>(BufferAccess_UnsynchronizedWrite, 0, actualVBufferLength);
     debug_assert(vbufferPtr);
 
-    glm::ivec3* ibufferPtr = mIndicesBuffer->LockData<glm::ivec3>(BufferAccess_UnsynchronizedWrite, 0, actualIBufferLength);
+    glm::ivec3* ibufferPtr = indexBuffer->LockData<glm::ivec3>(BufferAccess_UnsynchronizedWrite, 0, actualIBufferLength);
     debug_assert(ibufferPtr);
 
     unsigned int imaterial = 0;
@@ -232,12 +243,14 @@ void TerrainMeshComponent::PrepareRenderData()
 
     for (const auto& ebucket : pieceBucketContainer.mPieceBucketMap)
     {
-        MeshBatch& meshBatch = mBatchArray[imaterial];
-        meshBatch.mMaterial = ebucket.first;
+        component->SetMeshMaterial(imaterial, ebucket.first);
+
+        RenderableComponent::MeshPartStruct& meshBatch = component->mMeshParts[imaterial];
+        meshBatch.mMaterialIndex = imaterial;
         meshBatch.mTriangleCount = ebucket.second.mTriangleCount;
         meshBatch.mVertexCount = ebucket.second.mVertexCount;
-        meshBatch.mTriangleStart = startTriangle;
-        meshBatch.mVertexStart = startVertex;
+        meshBatch.mIndexDataOffset = startTriangle * sizeof(glm::ivec3);
+        meshBatch.mVertexDataOffset = startVertex * sizeof(Vertex3D_Terrain);
 
         // copy geometry data
         unsigned int vertexoffset = 0;
@@ -265,12 +278,12 @@ void TerrainMeshComponent::PrepareRenderData()
         ++imaterial;
     }
 
-    if (!mIndicesBuffer->Unlock())
+    if (!indexBuffer->Unlock())
     {
         debug_assert(false);
     }
 
-    if (!mVerticesBuffer->Unlock())
+    if (!vertBuffer->Unlock())
     {
         debug_assert(false);
     }
