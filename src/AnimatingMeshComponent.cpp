@@ -23,14 +23,14 @@ void AnimatingMeshComponent::UpdateComponent(float deltaTime)
 
 void AnimatingMeshComponent::PrepareRenderResources()
 {
-    // do nothing
+    AnimatingMeshRenderer& renderer = gRenderManager.mAnimatingMeshRenderer;
+    renderer.PrepareRenderdata(this);
 }
 
 void AnimatingMeshComponent::ReleaseRenderResources()
 {
-    mIndexBuffer = nullptr;
-    mVertexBuffer = nullptr;
-    ClearMeshParts();
+    AnimatingMeshRenderer& renderer = gRenderManager.mAnimatingMeshRenderer;
+    renderer.ReleaseRenderdata(this);
 }
 
 void AnimatingMeshComponent::RenderFrame(SceneRenderContext& renderContext)
@@ -53,20 +53,6 @@ void AnimatingMeshComponent::SetModelAsset(ModelAsset* modelAsset)
     SetModelAssetNull();
 
     mModelAsset = modelAsset;
-
-    AnimatingMeshRenderer& renderer = gRenderManager.mAnimatingMeshRenderer;
-    ModelAssetRenderdata* renderdata = renderer.GetRenderdata(modelAsset);
-    if (renderdata == nullptr)
-    {
-        debug_assert(false);
-        return;
-    }
-
-    mIndexBuffer = renderdata->mIndexBuffer;
-    mVertexBuffer = renderdata->mVertexBuffer;
-
-    const int NumParts = (int) modelAsset->mMeshArray.size();
-    SetMeshPartsCount(NumParts);
 
     const int NumMaterials = (int) modelAsset->mMaterialsArray.size();
     SetMeshMaterialsCount(NumMaterials);
@@ -109,19 +95,7 @@ void AnimatingMeshComponent::SetModelAsset(ModelAsset* modelAsset)
         ++iCurrentMaterial;
     }
 
-    // setup mesh parts
-    int iCurrentMeshPart = 0;
-    for (const ModelAsset::SubMesh& srcSubMesh: modelAsset->mMeshArray)
-    {
-        AnimatingMeshComponent::MeshPartStruct& currMeshPart = mMeshParts[iCurrentMeshPart];
-        currMeshPart.mMaterialIndex = srcSubMesh.mMaterialIndex;
-        currMeshPart.mIndexDataOffset = renderdata->mSubsets[iCurrentMeshPart].mIndexDataOffset;
-        currMeshPart.mVertexDataOffset = renderdata->mSubsets[iCurrentMeshPart].mVertexDataOffset;
-        currMeshPart.mTriangleCount = (int) srcSubMesh.mLODsArray[0].mTriangleArray.size();
-        currMeshPart.mVertexCount = srcSubMesh.mFrameVerticesCount;
-        ++iCurrentMeshPart;
-    }
-
+    PrepareRenderResources();
     SetAnimationState();
 }
 

@@ -250,3 +250,49 @@ void AnimatingMeshRenderer::PrepareRenderdata(ModelAssetRenderdata* renderdata, 
         }
     } // if
 }
+
+void AnimatingMeshRenderer::PrepareRenderdata(AnimatingMeshComponent* component)
+{
+    debug_assert(component);
+
+    ModelAsset* modelAsset = component->mModelAsset;
+    if (modelAsset == nullptr)
+        return;
+
+    ModelAssetRenderdata* renderdata = GetRenderdata(modelAsset);
+    if (renderdata == nullptr)
+    {
+        debug_assert(false);
+        return;
+    }
+
+    const int NumParts = (int) modelAsset->mMeshArray.size();
+    component->SetMeshPartsCount(NumParts);
+
+    // setup mesh parts
+    int iCurrentMeshPart = 0;
+    for (const ModelAsset::SubMesh& srcSubMesh: modelAsset->mMeshArray)
+    {
+        AnimatingMeshComponent::MeshPartStruct& currMeshPart = component->mMeshParts[iCurrentMeshPart];
+        currMeshPart.mMaterialIndex = srcSubMesh.mMaterialIndex;
+        currMeshPart.mIndexDataOffset = renderdata->mSubsets[iCurrentMeshPart].mIndexDataOffset;
+        currMeshPart.mVertexDataOffset = renderdata->mSubsets[iCurrentMeshPart].mVertexDataOffset;
+        currMeshPart.mTriangleCount = (int) srcSubMesh.mLODsArray[0].mTriangleArray.size();
+        currMeshPart.mVertexCount = srcSubMesh.mFrameVerticesCount;
+        ++iCurrentMeshPart;
+    }
+
+    component->mIndexBuffer = renderdata->mIndexBuffer;
+    component->mVertexBuffer = renderdata->mVertexBuffer;
+}
+
+void AnimatingMeshRenderer::ReleaseRenderdata(AnimatingMeshComponent* component)
+{
+    debug_assert(component);
+
+    // don't destroy buffers, just reset pointers
+    component->mIndexBuffer = nullptr;
+    component->mVertexBuffer = nullptr;
+
+    component->ClearMeshParts();
+}

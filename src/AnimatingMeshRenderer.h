@@ -22,6 +22,10 @@ public:
     void InvalidateRenderData(ModelAsset* modelAsset);
 
 private:
+    // setup component renderdata
+    void PrepareRenderdata(AnimatingMeshComponent* component);
+    void ReleaseRenderdata(AnimatingMeshComponent* component);
+
     // create renderdata for model asset and put it in internal cache
     // @param modelAsset: Model data
     ModelAssetRenderdata* GetRenderdata(ModelAsset* modelAsset);
