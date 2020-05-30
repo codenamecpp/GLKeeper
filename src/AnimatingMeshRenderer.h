@@ -5,6 +5,8 @@
 // animating models visualization manager
 class AnimatingMeshRenderer: public cxx::noncopyable
 {
+    friend class AnimatingMeshComponent;
+
 public:
     // setup renderer internal resources
     bool Initialize();

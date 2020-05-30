@@ -21,6 +21,18 @@ void AnimatingMeshComponent::UpdateComponent(float deltaTime)
     AdvanceAnimation(deltaTime);
 }
 
+void AnimatingMeshComponent::PrepareRenderResources()
+{
+    // do nothing
+}
+
+void AnimatingMeshComponent::ReleaseRenderResources()
+{
+    mIndexBuffer = nullptr;
+    mVertexBuffer = nullptr;
+    ClearMeshParts();
+}
+
 void AnimatingMeshComponent::RenderFrame(SceneRenderContext& renderContext)
 {
     AnimatingMeshRenderer& renderer = gRenderManager.mAnimatingMeshRenderer;
@@ -38,56 +50,58 @@ void AnimatingMeshComponent::SetModelAsset(ModelAsset* modelAsset)
     if (mModelAsset == modelAsset) // same asset, ignore
         return;
 
+    SetModelAssetNull();
+
     mModelAsset = modelAsset;
 
-    // reset current renderdata
-    if (mRenderData)
+    AnimatingMeshRenderer& renderer = gRenderManager.mAnimatingMeshRenderer;
+    AnimModelRenderdata* renderdata = renderer.GetRenderData(modelAsset);
+    if (renderdata == nullptr)
     {
-        mRenderData = nullptr;
+        debug_assert(false);
+        return;
     }
 
     // setup materials
-    mSubmeshMaterials.clear();
-    mSubmeshMaterials.reserve(modelAsset->mMaterialsArray.size());
+    int numParts = (int) modelAsset->mMaterialsArray.size();
+    SetMeshMaterialsCount(numParts);
 
     mSubmeshTextures.clear();
-    mSubmeshTextures.resize(modelAsset->mMaterialsArray.size());
+    mSubmeshTextures.resize(numParts);
 
     int iCurrentMaterial = 0;
-    for (const ModelAsset::SubMeshMaterial& currentSourceMaterial: modelAsset->mMaterialsArray)
+    for (const ModelAsset::SubMeshMaterial& srcMaterial: modelAsset->mMaterialsArray)
     {
-        MeshMaterial material;
-        if (currentSourceMaterial.mTextures.empty())
+        MeshMaterial* material = GetMeshMaterial(iCurrentMaterial++);
+        debug_assert(material);
+
+        if (srcMaterial.mTextures.empty())
         {
             debug_assert(false);
-
-            mSubmeshMaterials.push_back(material); // dummy material
             continue;
         }
-        material.mDiffuseTexture = gTexturesManager.GetTexture2D(currentSourceMaterial.mTextures[0]);
-        if (currentSourceMaterial.mEnvMappingTexture.length())
+        material->mDiffuseTexture = gTexturesManager.GetTexture2D(srcMaterial.mTextures[0]);
+        if (srcMaterial.mEnvMappingTexture.length())
         {
-            material.mEnvMappingTexture = gTexturesManager.GetTexture2D(currentSourceMaterial.mEnvMappingTexture);
+            material->mEnvMappingTexture = gTexturesManager.GetTexture2D(srcMaterial.mEnvMappingTexture);
         }
 
-        if (currentSourceMaterial.mFlagHasAlpha)
+        if (srcMaterial.mFlagHasAlpha)
         {
-            material.mRenderStates.mIsAlphaBlendEnabled = true;
-            material.mRenderStates.mBlendingMode = eBlendingMode_Alpha;
+            material->mRenderStates.mIsAlphaBlendEnabled = true;
+            material->mRenderStates.mBlendingMode = eBlendingMode_Alpha;
         }
 
-        if (currentSourceMaterial.mFlagAlphaAdditive)
+        if (srcMaterial.mFlagAlphaAdditive)
         {
-            material.mRenderStates.mIsAlphaBlendEnabled = true;
-            material.mRenderStates.mBlendingMode = eBlendingMode_AlphaAdditive;
-            material.mRenderStates.mIsDepthWriteEnabled = false;
+            material->mRenderStates.mIsAlphaBlendEnabled = true;
+            material->mRenderStates.mBlendingMode = eBlendingMode_AlphaAdditive;
+            material->mRenderStates.mIsDepthWriteEnabled = false;
         }
-        for (const std::string& sourceTexture: currentSourceMaterial.mTextures)
+        for (const std::string& sourceTexture: srcMaterial.mTextures)
         {
             mSubmeshTextures[iCurrentMaterial].push_back(gTexturesManager.GetTexture2D(sourceTexture));
         }
-        mSubmeshMaterials.push_back(material);
-        ++iCurrentMaterial;
     }
 
     SetAnimationState();
@@ -96,13 +110,9 @@ void AnimatingMeshComponent::SetModelAsset(ModelAsset* modelAsset)
 void AnimatingMeshComponent::SetModelAssetNull()
 {
     mModelAsset = nullptr;
-    // reset current renderdata
-    if (mRenderData)
-    {
-        mRenderData = nullptr;
-    }
+    ReleaseRenderResources();
+    ClearMeshMaterials();
 
-    mSubmeshMaterials.clear();
     mSubmeshTextures.clear();
 
     SetAnimationState();
@@ -243,7 +253,11 @@ bool AnimatingMeshComponent::IsStatic() const
 
 void AnimatingMeshComponent::SetPreferredLOD(int lod)
 {
+    if (mPreferredLOD == lod)
+        return;
+
     mPreferredLOD = lod;
+    // todo
 }
 
 void AnimatingMeshComponent::SetAnimationState()

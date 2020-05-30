@@ -104,12 +104,6 @@
     <Filter Include="Game\Rendering\Shaders">
       <UniqueIdentifier>{cfb6657e-5426-4871-9802-c0f6ab065078}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Rendering\_REWORK">
-      <UniqueIdentifier>{479e3199-e170-4579-b3c7-56785211e9bc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\GameObject\Components\_REWORK">
-      <UniqueIdentifier>{5bc4d5b1-4c83-4977-8fed-79b71ebd208e}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -498,12 +492,6 @@
     <ClInclude Include="RenderableComponent.h">
       <Filter>Game\GameObject\Components</Filter>
     </ClInclude>
-    <ClInclude Include="AnimatingMeshComponent.h">
-      <Filter>Game\GameObject\Components\_REWORK</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimatingMeshRenderer.h">
-      <Filter>Game\Rendering\_REWORK</Filter>
-    </ClInclude>
     <ClInclude Include="rtti.h">
       <Filter>Lib</Filter>
     </ClInclude>
@@ -520,6 +508,12 @@
       <Filter>Game\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="TerrainMeshComponent.h">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatingMeshRenderer.h">
+      <Filter>Game\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatingMeshComponent.h">
       <Filter>Game\GameObject\Components</Filter>
     </ClInclude>
   </ItemGroup>
@@ -787,12 +781,6 @@
     <ClCompile Include="RenderableComponent.cpp">
       <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
-    <ClCompile Include="AnimatingMeshComponent.cpp">
-      <Filter>Game\GameObject\Components\_REWORK</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimatingMeshRenderer.cpp">
-      <Filter>Game\Rendering\_REWORK</Filter>
-    </ClCompile>
     <ClCompile Include="WaterLavaMeshRenderer.cpp">
       <Filter>Game\Rendering</Filter>
     </ClCompile>
@@ -806,6 +794,12 @@
       <Filter>Game\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="TerrainMeshComponent.cpp">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatingMeshRenderer.cpp">
+      <Filter>Game\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatingMeshComponent.cpp">
       <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
   </ItemGroup>

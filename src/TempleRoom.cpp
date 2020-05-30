@@ -40,8 +40,6 @@ void TempleRoom::OnReconfigure()
 
             WaterLavaMeshComponent* component = mWaterPoolObject->GetComponent<WaterLavaMeshComponent>();
             debug_assert(component);
-
-            component->ClearMesh();
         }
         return;
     }

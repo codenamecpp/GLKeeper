@@ -38,26 +38,22 @@ void AnimatingMeshRenderer::Render(SceneRenderContext& renderContext, AnimatingM
     if (!gCVarRender_DrawModels.mValue)
         return;
 
-    if (component == nullptr || component->mModelAsset == nullptr)
+    debug_assert(component);
+
+    ModelAsset* modelAsset = component->mModelAsset;
+    if (modelAsset == nullptr)
     {
         debug_assert(false);
         return;
-
     }
-    ModelAsset* modelAsset = component->mModelAsset;
-    if (component->mRenderData == nullptr)
+
+    if (component->mVertexBuffer == nullptr || component->mIndexBuffer == nullptr)
     {
-        component->mRenderData = GetRenderData(modelAsset);
-        if (component->mRenderData == nullptr)
-        {
-            debug_assert(false);
-            return;
-        }
+        debug_assert(false);
+        return;
     }
 
     TransformComponent* transformComponent = component->mGameObject->mTransformComponent;
-
-    AnimModelRenderdata* renderData = component->mRenderData;
 
     mMorphAnimRenderProgram.SetViewProjectionMatrix(gRenderScene.mCamera.mViewProjectionMatrix);
     mMorphAnimRenderProgram.SetModelMatrix(transformComponent->mTransformation);
@@ -71,40 +67,34 @@ void AnimatingMeshRenderer::Render(SceneRenderContext& renderContext, AnimatingM
     mMorphAnimRenderProgram.ActivateProgram();
 
     // bind indices
-    gGraphicsDevice.BindIndexBuffer(renderData->mIndexBuffer);
-
-    // select level of details to render
-    int selectLOD = component->mPreferredLOD;
+    gGraphicsDevice.BindIndexBuffer(component->mIndexBuffer);
 
     Vertex3D_Anim_Format vertexDefs;
-
     for (size_t icurrSubset = 0, Count = modelAsset->mMeshArray.size(); 
         icurrSubset < Count; ++icurrSubset)
     {
         const ModelAsset::SubMesh& currentSubMesh = modelAsset->mMeshArray[icurrSubset];
-        // if submesh does not have geoemtry for selected lod, then dont draw it
-        if (selectLOD >= (int)currentSubMesh.mLODsArray.size())
-            continue;
 
-        MeshMaterial& renderMaterial = component->mSubmeshMaterials[currentSubMesh.mMaterialIndex];
+        MeshMaterial* meshMaterial = component->GetMeshMaterial(currentSubMesh.mMaterialIndex);
         // filter out submeshes depending on current render pass
-        if (renderContext.mCurrentPass == eRenderPass_Translucent && !renderMaterial.IsTransparent())
+        if (renderContext.mCurrentPass == eRenderPass_Translucent && !meshMaterial->IsTransparent())
             continue;
 
-        if (renderContext.mCurrentPass == eRenderPass_Opaque && renderMaterial.IsTransparent())
+        if (renderContext.mCurrentPass == eRenderPass_Opaque && meshMaterial->IsTransparent())
             continue;
 
-        renderMaterial.ActivateMaterial();
+        meshMaterial->ActivateMaterial();
 
         int frame0 = component->mAnimState.mFrame0;
         int frame1 = component->mAnimState.mFrame1;
 
+        AnimatingMeshComponent::MeshPartStruct& currMeshPart = component->mMeshParts[icurrSubset];
+
         // prepare vertex streams definition
-        vertexDefs.Setup(renderData->mSubsets[icurrSubset].mVertexDataOffset, currentSubMesh.mFrameVerticesCount, modelAsset->mFramesCount, frame0, frame1);
-        gGraphicsDevice.BindVertexBuffer(renderData->mVertexBuffer, vertexDefs);
+        vertexDefs.Setup(currMeshPart.mVertexDataOffset, currentSubMesh.mFrameVerticesCount, modelAsset->mFramesCount, frame0, frame1);
+        gGraphicsDevice.BindVertexBuffer(component->mVertexBuffer, vertexDefs);
         gGraphicsDevice.RenderIndexedPrimitives(ePrimitiveType_Triangles, eIndicesType_i32,
-            renderData->mSubsets[icurrSubset].mSubsetLODs[selectLOD].mIndexDataOffset,
-            currentSubMesh.mLODsArray[selectLOD].mTriangleArray.size() * 3);
+            currMeshPart.mIndexDataOffset, currMeshPart.mTriangleCount * 3);
     }
 }
 

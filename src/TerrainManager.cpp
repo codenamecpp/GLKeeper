@@ -162,7 +162,7 @@ void TerrainManager::UpdateTerrainMesh()
         TerrainMeshComponent* meshComponent = currTerrainMesh->GetComponent<TerrainMeshComponent>();
         debug_assert(meshComponent);
 
-        meshComponent->UpdateMesh();
+        meshComponent->PrepareRenderResources();
     }
 
     mInvalidatedTiles.clear();
@@ -221,7 +221,7 @@ void TerrainManager::BuildFullTerrainMesh()
         TerrainMeshComponent* meshComponent = currTerrainMesh->GetComponent<TerrainMeshComponent>();
         debug_assert(meshComponent);
 
-        meshComponent->UpdateMesh();
+        meshComponent->PrepareRenderResources();
     }
 }
 
@@ -308,7 +308,7 @@ void TerrainManager::CreateWaterLavaMeshList()
         WaterLavaMeshComponent* meshComponent = currMesh->GetComponent<WaterLavaMeshComponent>();
         debug_assert(meshComponent);
 
-        meshComponent->UpdateMesh();
+        meshComponent->PrepareRenderResources();
     }
 }
 

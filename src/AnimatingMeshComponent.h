@@ -8,27 +8,18 @@ class AnimatingMeshComponent: public RenderableComponent
 {
     decl_rtti(AnimatingMeshComponent, RenderableComponent)
 
+    friend class AnimatingMeshRenderer;
 public:
     // readonly
     ModelAsset* mModelAsset = nullptr;
 
-    std::vector<MeshMaterial> mSubmeshMaterials;
     std::vector<std::vector<Texture2D*>> mSubmeshTextures; // additional textures
     BlendFramesAnimState mAnimState;
 
     int mPreferredLOD = 0;
 
-    ModelsRenderData* mRenderData = nullptr;
-
 public:
     AnimatingMeshComponent(GameObject* gameObject);
-
-    // process component update frame
-    // @param deltaTime: Time since last update
-    void UpdateComponent(float deltaTime) override;
-
-    // process render frame
-    void RenderFrame(SceneRenderContext& renderContext) override;
 
     // change model asset, setup bounds and materials
     // @param modelAsset: Source model data
@@ -50,6 +41,15 @@ public:
     bool IsStatic() const;
 
     void SetPreferredLOD(int lod);
+
+    // process component update frame
+    // @param deltaTime: Time since last update
+    void UpdateComponent(float deltaTime) override;
+
+    // override RenderableComponent methods
+    void PrepareRenderResources() override;
+    void ReleaseRenderResources() override;
+    void RenderFrame(SceneRenderContext& renderContext) override;
 
 private:
     void SetAnimationState();
