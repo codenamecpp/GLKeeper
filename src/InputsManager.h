@@ -18,11 +18,11 @@ public:
 
     // process input event
     // @param inputEvent: Event data
-    void HandleInputEvent(MouseButtonInputEvent& inputEvent);
-    void HandleInputEvent(MouseMovedInputEvent& inputEvent);
-    void HandleInputEvent(MouseScrollInputEvent& inputEvent);
-    void HandleInputEvent(KeyInputEvent& inputEvent);
-    void HandleInputEvent(KeyCharEvent& inputEvent);
+    void ProcessInputEvent(MouseButtonInputEvent& inputEvent);
+    void ProcessInputEvent(MouseMovedInputEvent& inputEvent);
+    void ProcessInputEvent(MouseScrollInputEvent& inputEvent);
+    void ProcessInputEvent(KeyInputEvent& inputEvent);
+    void ProcessInputEvent(KeyCharEvent& inputEvent);
 
     // reset all keys and mouse buttons state
     void Clear();

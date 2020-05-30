@@ -1,29 +1,39 @@
 #include "pch.h"
 #include "WaterLavaMeshComponent.h"
-#include "GraphicsDevice.h"
-#include "GpuBuffer.h"
-#include "MapTile.h"
 #include "TransformComponent.h"
 #include "WaterLavaMeshRenderer.h"
 #include "RenderManager.h"
 #include "GameObject.h"
-
-const int MaxWaterLavaMeshBufferSize = 1024 * 1024 * 2;
+#include "MapTile.h"
 
 WaterLavaMeshComponent::WaterLavaMeshComponent(GameObject* gameObject)
-    : GameObjectComponent(eGameObjectComponent_WaterLavaMesh, gameObject)
-    , mVertexCount()
-    , mTriangleCount()
-    , mMeshDirty()
+    : RenderableComponent(gameObject)
+    , mWaveWidth()
+    , mWaveHeight()
+    , mWaveFreq()
     , mWaveTime()
+    , mMeshInvalidated()
 {
     debug_assert(mGameObject);
     mGameObject->mDebugColor = Color32_Cyan;
 }
 
-WaterLavaMeshComponent::~WaterLavaMeshComponent()
+void WaterLavaMeshComponent::InvalidateMesh()
 {
-    DestroyRenderData();
+    mMeshInvalidated = true;
+}
+
+bool WaterLavaMeshComponent::IsMeshInvalidated() const
+{
+    return mMeshInvalidated;
+}
+
+void WaterLavaMeshComponent::ReleaseRenderResources()
+{
+    WaterLavaMeshRenderer& renderer = gRenderManager.mWaterLavaMeshRenderer;
+    renderer.ReleaseRenderdata(this);
+
+    InvalidateMesh();
 }
 
 void WaterLavaMeshComponent::SetWaterLavaTiles(const TilesArray& tilesArray)
@@ -39,213 +49,67 @@ void WaterLavaMeshComponent::SetWaterLavaTiles(const TilesArray& tilesArray)
 
         bounds.extend(currentTileBounds);
     }
-    mGameObject->GetTransformComponent()->SetLocalBoundingBox(bounds);
+    TransformComponent* transformComponent = mGameObject->mTransformComponent;
+    transformComponent->SetLocalBoundingBox(bounds);
 
-    mMeshDirty = true;
+    InvalidateMesh();
 }
 
 void WaterLavaMeshComponent::SetSurfaceParams(float translucency, float waveWidth, float waveHeight, float waveFreq, float waterlineHeight)
 {
+    // setup params
     mTranslucency = translucency;
     mWaveWidth = waveWidth;
     mWaveHeight = waveHeight;
     mWaveFreq = waveFreq;
     mWaterlineHeight = waterlineHeight;
 
+    // setup material
+    SetMeshMaterialsCount(1);
+
+    MeshMaterial* meshMaterial = GetMeshMaterial();
     if (translucency < 1.0f)
     {
-        mMaterial.mRenderStates.mIsAlphaBlendEnabled = true;
-        mMaterial.mRenderStates.mBlendingMode = eBlendingMode_Alpha;
+        meshMaterial->mRenderStates.mIsAlphaBlendEnabled = true;
+        meshMaterial->mRenderStates.mBlendingMode = eBlendingMode_Alpha;
     }
     else
     {
-        mMaterial.mRenderStates.mIsAlphaBlendEnabled = false;
+        meshMaterial->mRenderStates.mIsAlphaBlendEnabled = false;
     }
 }
 
 void WaterLavaMeshComponent::SetSurfaceTexture(Texture2D* diffuseTexture)
 {
-    mMaterial.mDiffuseTexture = diffuseTexture;
+    SetMeshMaterialsCount(1);
+
+    MeshMaterial* meshMaterial = GetMeshMaterial();
+    meshMaterial->mDiffuseTexture = diffuseTexture;
 }
 
-void WaterLavaMeshComponent::UpdateMesh()
-{
-    if (!mMeshDirty)
-        return;
-
-    PrepareRenderData();
-
-    mMeshDirty = false;
-}
-
-void WaterLavaMeshComponent::ClearMesh()
-{
-
-}
-
-void WaterLavaMeshComponent::UpdateFrame(float deltaTime)
+void WaterLavaMeshComponent::UpdateComponent(float deltaTime)
 {
     mWaveTime += mWaveFreq * deltaTime;
 }
 
 void WaterLavaMeshComponent::RenderFrame(SceneRenderContext& renderContext)
 {
+    if (IsMeshInvalidated())
+    {
+        PrepareRenderResources();
+    }
+
     WaterLavaMeshRenderer& renderer = gRenderManager.mWaterLavaMeshRenderer;
     renderer.Render(renderContext, this);
 }
 
-void WaterLavaMeshComponent::PrepareRenderData()
+void WaterLavaMeshComponent::PrepareRenderResources()
 {
-    if (mWaterLavaTiles.empty())
-    {
-        debug_assert(false);
+    if (!IsMeshInvalidated())
         return;
-    }
 
-    const int NumVerticesPerTile = 9;
-    const int NumTrianglesPerTile = 8;
+    mMeshInvalidated = false;
 
-    mVertexCount = mWaterLavaTiles.size() * NumVerticesPerTile;
-    mTriangleCount = mWaterLavaTiles.size() * NumTrianglesPerTile;
-
-    int actualVBufferLength = mVertexCount * Sizeof_Vertex3D_WaterLava;
-    int actualIBufferLength = mTriangleCount * sizeof(glm::ivec3);
-    if (actualVBufferLength > MaxWaterLavaMeshBufferSize || actualIBufferLength > MaxWaterLavaMeshBufferSize)
-    {
-        debug_assert(false);
-        return;
-    }
-
-    // allocate vertex buffer object
-    if (mVerticesBuffer == nullptr)
-    {
-        mVerticesBuffer = gGraphicsDevice.CreateBuffer(eBufferContent_Vertices);
-        if (mVerticesBuffer == nullptr)
-        {
-            debug_assert(false);
-            return;
-        }
-    }
-
-    // allocate index buffer object
-    if (mIndicesBuffer == nullptr)
-    {
-        mIndicesBuffer = gGraphicsDevice.CreateBuffer(eBufferContent_Indices);
-        if (mIndicesBuffer == nullptr)
-        {
-            debug_assert(false);
-            return;
-        }
-    }
-
-    // setup buffers
-    if (!mVerticesBuffer->Setup(eBufferUsage_Static, actualVBufferLength, nullptr) ||
-        !mIndicesBuffer->Setup(eBufferUsage_Static, actualIBufferLength, nullptr))
-    {
-        debug_assert(false);
-        return;
-    }
-
-    Vertex3D_WaterLava* vbufferPtr = mVerticesBuffer->LockData<Vertex3D_WaterLava>(BufferAccess_UnsynchronizedWrite, 0, actualVBufferLength);
-    debug_assert(vbufferPtr);
-
-    glm::ivec3* ibufferPtr = mIndicesBuffer->LockData<glm::ivec3>(BufferAccess_UnsynchronizedWrite, 0, actualIBufferLength);
-    debug_assert(ibufferPtr);
-
-    // upload data
-    int vertices_counter = 0;
-    for (MapTile* currTile: mWaterLavaTiles)
-    {
-        // setup indices
-        const glm::ivec3 pointindices[NumTrianglesPerTile] = {
-            {3, 4, 0}, {4, 1, 0}, // 1
-            {4, 2, 1}, {4, 5, 2}, // 2
-            {6, 4, 3}, {6, 7, 4}, // 3
-            {7, 8, 4}, {8, 5, 4}, // 4
-        };
-
-        for (const glm::ivec3& pointindex : pointindices)
-        {
-            ibufferPtr->x = vertices_counter + pointindex.x;
-            ibufferPtr->y = vertices_counter + pointindex.y;
-            ibufferPtr->z = vertices_counter + pointindex.z;
-            ++ibufferPtr;
-        }
-
-        // setup vertices
-        const glm::vec3 middlep = 
-        {
-            currTile->mTileLocation.x * 1.0f, 0.0f, 
-            currTile->mTileLocation.y * 1.0f
-        };
-
-        const glm::vec3 positions[NumVerticesPerTile] = 
-        {
-            {middlep.x - DUNGEON_CELL_HALF_SIZE, middlep.y, middlep.z - DUNGEON_CELL_HALF_SIZE},
-            {middlep.x,                          middlep.y, middlep.z - DUNGEON_CELL_HALF_SIZE},
-            {middlep.x + DUNGEON_CELL_HALF_SIZE, middlep.y, middlep.z - DUNGEON_CELL_HALF_SIZE},
-            {middlep.x - DUNGEON_CELL_HALF_SIZE, middlep.y, middlep.z},
-            middlep,
-            {middlep.x + DUNGEON_CELL_HALF_SIZE, middlep.y, middlep.z},
-            {middlep.x - DUNGEON_CELL_HALF_SIZE, middlep.y, middlep.z + DUNGEON_CELL_HALF_SIZE},
-            {middlep.x,                          middlep.y, middlep.z + DUNGEON_CELL_HALF_SIZE},
-            {middlep.x + DUNGEON_CELL_HALF_SIZE, middlep.y, middlep.z + DUNGEON_CELL_HALF_SIZE},
-        };
-
-        const glm::vec2 tcoordsp = {
-            currTile->mTileLocation.x * 1.0f,
-            currTile->mTileLocation.y * 1.0f
-        };
-
-        const glm::vec2 texturecoords[NumVerticesPerTile] = {
-            tcoordsp,
-            {tcoordsp.x + 0.5f, tcoordsp.y},
-            {tcoordsp.x + 1.0f, tcoordsp.y},
-            {tcoordsp.x, tcoordsp.y + 0.5f},
-            {tcoordsp.x + 0.5f, tcoordsp.y + 0.5f},
-            {tcoordsp.x + 1.0, tcoordsp.y + 0.5f},
-            {tcoordsp.x, tcoordsp.y + 1.0f},
-            {tcoordsp.x + 0.5f, tcoordsp.y + 1.0f},
-            {tcoordsp.x + 1.0f, tcoordsp.y + 1.0f},
-        };
-
-        // process vertices
-        for (int ipoint = 0; ipoint < NumVerticesPerTile; ++ipoint)
-        {
-            vbufferPtr->mPosition = positions[ipoint];
-            vbufferPtr->mTexcoord = texturecoords[ipoint];
-            ++vbufferPtr;
-        }
-
-        vertices_counter += NumVerticesPerTile;
-    }
-
-    if (!mIndicesBuffer->Unlock())
-    {
-        debug_assert(false);
-    }
-
-    if (!mVerticesBuffer->Unlock())
-    {
-        debug_assert(false);
-    }
-}
-
-void WaterLavaMeshComponent::DestroyRenderData()
-{
-    if (mVerticesBuffer)
-    {
-        gGraphicsDevice.DestroyBuffer(mVerticesBuffer);
-        mVerticesBuffer = nullptr;
-        mVertexCount = 0;
-    }
-
-    if (mIndicesBuffer)
-    {
-        gGraphicsDevice.DestroyBuffer(mIndicesBuffer);
-        mIndicesBuffer = nullptr;
-        mTriangleCount = 0;
-    }
-
-    mMeshDirty = false;
+    WaterLavaMeshRenderer& renderer = gRenderManager.mWaterLavaMeshRenderer;
+    renderer.PrepareRenderdata(this);
 }

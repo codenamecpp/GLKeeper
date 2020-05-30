@@ -84,7 +84,7 @@ bool GuiParseAnchors(cxx::json_document_node node, GuiAnchors& output_anchors)
             }
             if (string_value == "bottom")
             {
-                output_anchors.mL = true;
+                output_anchors.mB = true;
                 continue;
             }
             debug_assert(false);

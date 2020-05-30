@@ -1,0 +1,8 @@
+
+// priority is determined by the order in the list - from highest to lowest
+{
+    "gameplay_screen" : { "content_path":"screens/gameplay_game_screen.json" },
+
+    // test screens
+    "gui_test_screen": { "content_path":"screens/gui_test.json" }
+}

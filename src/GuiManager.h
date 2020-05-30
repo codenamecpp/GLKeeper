@@ -7,7 +7,7 @@ class GuiManager: public cxx::noncopyable
 {
 public:
     // readonly
-    cxx::handle<GuiWidget> mSelectedWidget; // mouse captured
+    cxx::handle<GuiWidget> mMouseCaptureWidget;
     cxx::handle<GuiWidget> mHoveredWidget;
 
 public:
@@ -25,11 +25,11 @@ public:
 
     // process input event
     // @param inputEvent: Event data
-    void HandleInputEvent(MouseButtonInputEvent& inputEvent);
-    void HandleInputEvent(MouseMovedInputEvent& inputEvent);
-    void HandleInputEvent(MouseScrollInputEvent& inputEvent);
-    void HandleInputEvent(KeyInputEvent& inputEvent);
-    void HandleInputEvent(KeyCharEvent& inputEvent);
+    void ProcessInputEvent(MouseButtonInputEvent& inputEvent);
+    void ProcessInputEvent(MouseMovedInputEvent& inputEvent);
+    void ProcessInputEvent(MouseScrollInputEvent& inputEvent);
+    void ProcessInputEvent(KeyInputEvent& inputEvent);
+    void ProcessInputEvent(KeyCharEvent& inputEvent);
 
     // register specific widget class in gui system
     // @returns false if class name is not unique or factory does not specified for this class
@@ -44,7 +44,8 @@ public:
     GuiWidget* CreateWidget(cxx::unique_string className) const;
 
     // start listen mouse events
-    void SetSelectedWidget(GuiWidget* widget);
+    void SetMouseCapture(GuiWidget* widget);
+    void ReleaseMouseCapture(GuiWidget* widget);
     
     // process screen resolution changed event
     void HandleScreenResolutionChanged();
@@ -59,21 +60,26 @@ public:
     void UnregisterEventsHandler(GuiEventsHandler* eventsHandler);
     void UnregisterAllEventsHandlers();
 
-    // attach/detach widgets
-    // @param hierarchy: Hierarchy
-    void AttachWidgets(GuiHierarchy* hierarchy);
-    void DetachWidgets(GuiHierarchy* hierarchy);
-    void DetachAllWidgets();
+    // attach/detach screen layers
+    void AttachScreen(GuiScreen* screen);
+    void DetachScreen(GuiScreen* screen);
+    void DetachAllScreens();
+
+    // get content location for specific gui screen
+    bool GetScreenContentPath(cxx::unique_string screenId, std::string& contentPath);
 
 private:
     void RegisterWidgetsClasses();
     void UnregisterWidgetsClasses();
 
-    void ScanHoveredWidget();
+    void UpdateHoveredWidget();
     void ProcessEventsQueue();
     void ClearEventsQueue();
 
     bool IsProcessingEvents() const;
+    
+    void LoadScreenRecords();
+    void FreeScreenRecords();
 
 private:
     using GuiWidgetClassesMap = std::map<cxx::unique_string, GuiWidgetMetaClass*>;
@@ -82,7 +88,15 @@ private:
     std::vector<GuiEventsHandler*> mEventHandlers;
     std::vector<GuiEvent> mEventsQueue;
     std::vector<GuiEvent> mProcessingEventsQueue;
-    std::vector<GuiHierarchy*> mHiersList;
+
+    struct ScreenElement
+    {
+    public:
+        cxx::unique_string mScreenId;
+        std::string mContentPath;
+        GuiScreen* mInstance = nullptr;
+    };
+    std::vector<ScreenElement> mScreensList;
 };
 
 extern GuiManager gGuiManager;

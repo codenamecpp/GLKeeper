@@ -1,12 +1,13 @@
 #pragma once
 
-#include "GameObjectComponent.h"
+#include "RenderableComponent.h"
 
 // water lava mesh component of game object
-class WaterLavaMeshComponent: public GameObjectComponent
+class WaterLavaMeshComponent: public RenderableComponent
 {
+    decl_rtti(WaterLavaMeshComponent, RenderableComponent)
+
     friend class WaterLavaMeshRenderer;
-    friend class RenderManager;
 
 public:
     // readonly
@@ -21,14 +22,6 @@ public:
 
 public:
     WaterLavaMeshComponent(GameObject* gameObject);
-    ~WaterLavaMeshComponent();
-
-    // process game object update frame
-    // @param deltaTime: Time since last update
-    void UpdateFrame(float deltaTime) override;
-
-    // process render frame
-    void RenderFrame(SceneRenderContext& renderContext) override;
 
     // set water or lava surface tiles
     // @param tilesArray: List of map tiles
@@ -37,28 +30,23 @@ public:
     // setup water or lava surface parameters
     void SetSurfaceParams(float translucency, float waveWidth, float waveHeight, float waveFreq, float waterlineHeight);
 
+    void InvalidateMesh();
+    bool IsMeshInvalidated() const;
+
     // setup water or lava surface texture
     // @param diffuseTexture: Texture 2d
     void SetSurfaceTexture(Texture2D* diffuseTexture);
 
-    // rebuild water lava mesh and upload data to video memory
-    void UpdateMesh();
+    // process update
+    // @param deltaTime: Time since last update
+    void UpdateComponent(float deltaTime) override;
 
-    void ClearMesh();
+    // override RenderableComponent methods
+    void PrepareRenderResources() override;
+    void ReleaseRenderResources() override;
+    void RenderFrame(SceneRenderContext& renderContext) override;
 
 private:
-    void PrepareRenderData();
-    void DestroyRenderData();
-
-private:
-    // render data
-    MeshMaterial mMaterial;
-
-    GpuBuffer* mVerticesBuffer = nullptr;
-    GpuBuffer* mIndicesBuffer = nullptr;
-
-    int mVertexCount;
-    int mTriangleCount;
-
-    bool mMeshDirty; // dirty flag indicates that geometry is invalid and must be reuploaded
+    // dirty flag indicates that geometry is invalid and must be reuploaded
+    bool mMeshInvalidated; 
 };

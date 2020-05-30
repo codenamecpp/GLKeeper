@@ -30,6 +30,10 @@ public:
     // handle screen resolution changed during runtime
     void FitLayoutToScreen(const Point& screenDimensions);
 
+    // pick visible and interactive widget at specified screen coordinate
+    // @param screenPosition: Screen coordinate
+    GuiWidget* PickWidget(const Point& screenPosition) const;
+
     // find widget by specific location within hierarchy
     // @param widgetPath: Path, includes root
     GuiWidget* GetWidgetByPath(const std::string& widgetPath) const;
@@ -38,16 +42,17 @@ public:
     GuiWidget* SearchForWidget(const cxx::unique_string& name) const;
     GuiWidget* SearchForWidget(const std::string& name) const;
 
-private:
     // construct new template widget of specified class
     // @param className: Template widget class name
     GuiWidget* CreateTemplateWidget(cxx::unique_string className) const;
 
+private:
     // destroy template widgets
     void FreeTemplateWidgets();
 
     GuiWidget* DeserializeWidgetWithChildren(cxx::json_node_object objectNode);
     GuiWidget* DeserializeTemplateWidget(cxx::json_node_object objectNode);
+    void LoadChildrenWidgetProperties(GuiWidget* parentWidget, cxx::json_node_object objectNode);
 
     bool LoadTemplateWidgets(cxx::json_node_object objectNode);
     bool LoadHierarchy(cxx::json_node_object objectNode);

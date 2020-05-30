@@ -54,8 +54,9 @@
 // physics
 
 // lib
-#include "enum_utils.h"
 #include "noncopyable.h"
+#include "rtti.h"
+#include "enum_utils.h"
 #include "object_pool.h"
 #include "string_utils.h"
 #include "math_defs.h"

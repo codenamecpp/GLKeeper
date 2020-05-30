@@ -174,7 +174,7 @@ bool GraphicsDevice::Initialize()
         if (mbuttonNative != eMouseButton_null)
         {
             MouseButtonInputEvent ev { mbuttonNative, mods, action == GLFW_PRESS };
-            gInputsManager.HandleInputEvent(ev);
+            gInputsManager.ProcessInputEvent(ev);
         }
     });
     ::glfwSetKeyCallback(graphicsWindow, [](GLFWwindow*, int keycode, int scancode, int action, int mods)
@@ -200,7 +200,7 @@ bool GraphicsDevice::Initialize()
             }
 
             KeyInputEvent ev { keycodeNative, scancode, nativeMods, action == GLFW_PRESS };
-            gInputsManager.HandleInputEvent(ev);
+            gInputsManager.ProcessInputEvent(ev);
         }
     });
     ::glfwSetWindowSizeCallback(graphicsWindow, [](GLFWwindow*, int sizex, int sizey)
@@ -210,7 +210,7 @@ bool GraphicsDevice::Initialize()
     ::glfwSetCharCallback(graphicsWindow, [](GLFWwindow*, unsigned int unicodechar)
     {
         KeyCharEvent ev ( unicodechar );
-        gInputsManager.HandleInputEvent(ev);
+        gInputsManager.ProcessInputEvent(ev);
     });
     ::glfwSetScrollCallback(graphicsWindow, [](GLFWwindow*, double xscroll, double yscroll)
     {
@@ -219,7 +219,7 @@ bool GraphicsDevice::Initialize()
             static_cast<int>(xscroll), 
             static_cast<int>(yscroll) 
         };
-        gInputsManager.HandleInputEvent(ev);
+        gInputsManager.ProcessInputEvent(ev);
     });
     ::glfwSetCursorPosCallback(graphicsWindow, [](GLFWwindow*, double xposition, double yposition)
     {
@@ -228,7 +228,7 @@ bool GraphicsDevice::Initialize()
             static_cast<int>(xposition),
             static_cast<int>(yposition),
         };
-        gInputsManager.HandleInputEvent(ev);
+        gInputsManager.ProcessInputEvent(ev);
     });
 
     gGLFW_WindowHandle = graphicsWindow;

@@ -22,6 +22,7 @@ class GameMap
 public:
     // readonly
     Point mDimensions;
+    cxx::aabbox mBounds;
 
 public:
     // setup map tiles
@@ -56,6 +57,8 @@ public:
     // @param floodFillFlags: Flags
     void FloodFill4(TilesArray& outputTiles, MapTile* origin, MapFloodFillFlags flags);
     void FloodFill4(TilesArray& outputTiles, MapTile* origin, const Rectangle& scanArea, MapFloodFillFlags flags);
+
+    void ComputeBounds();
 
 private:
     void ClearFloodFillCounter();

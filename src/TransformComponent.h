@@ -5,6 +5,8 @@
 // transformation component of game object
 class TransformComponent: public GameObjectComponent
 {
+    decl_rtti(TransformComponent, GameObjectComponent)
+
 public:
     // readonly
     glm::vec3 mDirectionRight; // direction vector along x axis, should be normalized

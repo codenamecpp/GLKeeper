@@ -179,9 +179,9 @@ namespace cxx
                 {
                     return; // success
                 }
+                // fail
+                debug_assert(false);
             }
-            // fail
-            debug_assert(false);
             set_null();            
         }
 

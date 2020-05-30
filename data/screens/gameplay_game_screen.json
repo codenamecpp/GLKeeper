@@ -1,0 +1,130 @@
+{
+    // template widgets
+    
+    "templates":
+    {
+        "ctl_panel_icon_template":
+        {
+            "class":"button", "size":[52,52], 
+            "children":
+            [
+                {
+                    "id":"icon", "class":"picture_box", "size":["100%","100%"], "origin":["50%","50%"], "pos":["50%","50%"],
+                    "texture":"GUI\\Rooms\\Bridge_Stone", "size_mode":"scale"
+                },
+                {
+                    "id":"unavailable_fill", "class":"picture_box", "size":["100%","100%"], "texture":"white", "size_mode":"scale",
+                    "tint_color":[0,0,0,153], "visible":false
+                },
+                {
+                    "id":"active_overlay", "class":"picture_box", "size":["100%","100%"], 
+                    "texture":"GUI\\Icons\\selected-door", "size_mode":"scale", "visible":false
+                },
+                {
+                    "id":"hover_frame", "class":"picture_box", "size":["100%","100%"], "origin":["50%","50%"], "pos":["50%","50%"],
+                    "texture":"GUI\\Icons\\frame", "size_mode":"scale", "visible":false
+                }
+            ],
+            "actions":
+            [
+                // mouse enter/ mouse leave
+                {"event":"on_mouse_enter", "action":"show", "value":true, "target":"hover_frame"},
+                {"event":"on_mouse_leave", "action":"show", "value":false, "target":"hover_frame"},
+                // mouse up/ mouse down
+                {"event":"on_press_start", "action":"size", "value":["96%","96%"], "target":"icon", "conditions":"#btn_left || #btn_right"},
+                {"event":"on_press_end", "action":"size", "value":["100%","100%"], "target":"icon", "conditions":"#btn_left || #btn_right"},
+                // update state
+                {"event":"on_change_state", "action":"visibility", "target":"unavailable_fill", "conditions":"!available"},
+                {"event":"on_change_state", "action":"visibility", "target":"active_overlay", "conditions":"active"}
+            ]
+        } // ctl_panel_icon_template
+
+    }, // templates
+
+    "hierarchy":
+    {
+        "id":"root", "class":"panel", "size":[1024,768], "anchors":"all", 
+        "children":
+        [
+            // minimap panel
+            {"id":"minimap", "class":"panel", "size":[174,178], "pos":[18,"100%"], "anchors":["left","bottom"], "origin":[0,"100%"],
+                "children":
+                [
+                    {"class":"picture_box", "size":[128,128], "texture":"GUI\\Map\\Map-BG", "size_mode":"scale", "pos":[18,18], "visible":false},
+                    {"class":"picture_box", "size":["110%","110%"], "texture":"GUI\\Map\\map-2", "size_mode":"scale"}
+                ]
+            }, // minimap panel
+
+            // control panel bar
+            {"id":"control_panel_bar", "class":"panel", "pos":[200,584], "size":[820,180], "anchors":["left","right","bottom"],
+                "children":
+                [
+                    // tabs icons
+                    {"id":"control_panel_tabs", "class":"panel", "size":["100%",52], 
+                        "layout": 
+                        {
+                            "type":"simple_grid", "orientation":"horz", "num_rows":1, "num_cols":12,
+                            "padding":{"left":4, "top":0}, 
+                            "spacing":{"horz":3, "vert":3}
+                        },
+                        "children":
+                        [
+                            {"template_class":"ctl_panel_icon_template", "id":"ctl_panel_tab_creatures", "children": [
+                                    {"id":"icon", "texture":"GUI\\Tabs\\t-creatures"},
+                                    {"id":"active_overlay", "texture":"GUI\\Icons\\selected-creature"}
+                                ]},
+                            {"template_class":"ctl_panel_icon_template", "id":"ctl_panel_tab_rooms", "children": [
+                                    {"id":"icon", "texture":"GUI\\Tabs\\t-rooms"},
+                                    {"id":"active_overlay", "texture":"GUI\\Icons\\selected-room"}
+                                ]},
+                            {"template_class":"ctl_panel_icon_template", "id":"ctl_panel_tab_spells", "children": [
+                                    {"id":"icon", "texture":"GUI\\Tabs\\t-spells"},
+                                    {"id":"active_overlay", "texture":"GUI\\Icons\\selected-spell"}
+                                ]},
+                            {"template_class":"ctl_panel_icon_template", "id":"ctl_panel_tab_traps", "children": [
+                                    {"id":"icon", "texture":"GUI\\Tabs\\t-workshop"},
+                                    {"id":"active_overlay", "texture":"GUI\\Icons\\selected-trap"}
+                                ]},
+                            {"template_class":"ctl_panel_icon_template", "id":"ctl_panel_sell_button", "children": [
+                                    {"id":"icon", "texture":"GUI\\Tabs\\T-Sell"},
+                                    {"id":"active_overlay", "texture":"GUI\\Icons\\selected-door"}
+                                ]},
+                            {"template_class":"ctl_panel_icon_template", "id":"ctl_panel_dig_button", "children": [
+                                    {"id":"icon", "texture":"GUI\\Icons\\1st-person\\m-imp"},
+                                    {"id":"active_overlay", "texture":"GUI\\Icons\\selected-door"}
+                                ]}
+                        ]
+                    }, // tabs
+
+                    // panel background
+                    {"id":"control_panel_back", "class":"panel", "size":["100%",124], "pos":[0,"100%"], "origin":[0,"100%"], 
+                        "draw_borders":true, "borders_color":"00000099", "draw_background":true, "background_color":"00000077"},
+
+                    // scroll pages
+                    {"id":"control_panel_scroll_pages", "class":"panel", "size":[32,124], "pos":[0,"100%"], "origin":[0,"100%"],
+                        "children":
+                        [
+                            {"class":"picture_box", "size":[26,53], "pos":[4,8], "texture":"GUI\\Pages\\page_back", "size_mode":"scale"},
+                            {"class":"picture_box", "size":[26,53], "pos":[4,62], "texture":"GUI\\Pages\\page_back", "size_mode":"scale"}
+                        ]
+                    }, // scroll pages
+
+                    // control panel icons container
+                    {"id":"control_panel_content", "class":"panel", "size":[600,124],"pos":[32,"100%"], "anchors":["left","right"], "origin":[0,"100%"], 
+                        "layout":
+                        {
+                            "type":"simple_grid", "orientation":"vert", "num_rows":2, 
+                            "padding":{"left":3, "top":8}, 
+                            "spacing":{"horz":3, "vert":3}
+                        },
+                        "children":
+                        [
+                            {"template_class":"ctl_panel_icon_template", "id":"item"} // will be cloned
+                        ]
+                    } // control panel icons container
+
+                ]
+            } // control panel bar
+        ]
+    } // hierarchy
+}

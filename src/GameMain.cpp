@@ -31,14 +31,12 @@ bool GameMain::Initialize()
         return false;
     }
 
-    //gGameWorld.LoadScenario("temp");
-
     // set initial gamestate
     //SwitchToGameState(&mMeshViewGamestate);
+    gGameWorld.LoadScenario("devmap");
+    SwitchToGameState(&mGameplayGamestate);
 
-    //SwitchToGameState(&mGameplayGamestate);
-
-    SwitchToGameState(&mLayoutsEditGamestate);
+    //SwitchToGameState(&mGuiTestGamestate);
 
     return true;
 }
@@ -70,34 +68,34 @@ void GameMain::DebugRenderFrame(DebugRenderer& renderer)
     gRenderScene.DebugRenderFrame(renderer);
 }
 
-void GameMain::HandleInputEvent(MouseButtonInputEvent& inputEvent)
+void GameMain::ProcessInputEvent(MouseButtonInputEvent& inputEvent)
 {
     if (mCurrentGamestate)
     {
         mCurrentGamestate->HandleInputEvent(inputEvent);
     }
-    gRenderScene.HandleInputEvent(inputEvent);
+    gRenderScene.ProcessInputEvent(inputEvent);
 }
 
-void GameMain::HandleInputEvent(MouseMovedInputEvent& inputEvent)
+void GameMain::ProcessInputEvent(MouseMovedInputEvent& inputEvent)
 {
     if (mCurrentGamestate)
     {
         mCurrentGamestate->HandleInputEvent(inputEvent);
     }
-    gRenderScene.HandleInputEvent(inputEvent);
+    gRenderScene.ProcessInputEvent(inputEvent);
 }
 
-void GameMain::HandleInputEvent(MouseScrollInputEvent& inputEvent)
+void GameMain::ProcessInputEvent(MouseScrollInputEvent& inputEvent)
 {
     if (mCurrentGamestate)
     {
         mCurrentGamestate->HandleInputEvent(inputEvent);
     }
-    gRenderScene.HandleInputEvent(inputEvent);
+    gRenderScene.ProcessInputEvent(inputEvent);
 }
 
-void GameMain::HandleInputEvent(KeyInputEvent& inputEvent)
+void GameMain::ProcessInputEvent(KeyInputEvent& inputEvent)
 {
     // show console
     if (inputEvent.HasPressed(eKeycode_TILDE))
@@ -121,16 +119,16 @@ void GameMain::HandleInputEvent(KeyInputEvent& inputEvent)
     {
         mCurrentGamestate->HandleInputEvent(inputEvent);
     }
-    gRenderScene.HandleInputEvent(inputEvent);
+    gRenderScene.ProcessInputEvent(inputEvent);
 }
 
-void GameMain::HandleInputEvent(KeyCharEvent& inputEvent)
+void GameMain::ProcessInputEvent(KeyCharEvent& inputEvent)
 {
     if (mCurrentGamestate)
     {
         mCurrentGamestate->HandleInputEvent(inputEvent);
     }
-    gRenderScene.HandleInputEvent(inputEvent);
+    gRenderScene.ProcessInputEvent(inputEvent);
 }
 
 bool GameMain::IsMeshViewGamestate() const
@@ -143,9 +141,9 @@ bool GameMain::IsGameplayGamestate() const
     return mCurrentGamestate == &mGameplayGamestate;
 }
 
-bool GameMain::IsLayoutsEditGamestate() const
+bool GameMain::IsGuiTestGamestate() const
 {
-    return mCurrentGamestate == &mLayoutsEditGamestate;
+    return mCurrentGamestate == &mGuiTestGamestate;
 }
 
 void GameMain::HandleScreenResolutionChanged()

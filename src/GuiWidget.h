@@ -2,6 +2,7 @@
 
 #include "GuiDefs.h"
 #include "GuiAction.h"
+#include "GuiLayout.h"
 
 // basic gui element class
 class GuiWidget: public cxx::handled_object<GuiWidget>
@@ -9,25 +10,17 @@ class GuiWidget: public cxx::handled_object<GuiWidget>
     friend class GuiManager;
     friend class GuiHierarchy;
     friend class GuiAction;
+    friend class GuiLayout;
+    friend class GuiScreen;
 
 public:
     
     static GuiWidgetMetaClass MetaClass; // base widget class
 
-    cxx::unique_string mName; // user-defined identifier for widget
+    cxx::unique_string mId; // user-defined identifier for widget
     GuiUserData mUserData; // user-defined data
 
-    // custom events
-    cxx::unique_string mOnClickEvent;
-    cxx::unique_string mOnMouseEnterEvent;
-    cxx::unique_string mOnMouseLeaveEvent;
-    cxx::unique_string mOnMouseLButtonDownEvent;
-    cxx::unique_string mOnMouseRButtonDownEvent;
-    cxx::unique_string mOnMouseMButtonDownEvent;
-    cxx::unique_string mOnMouseLButtonUpEvent;
-    cxx::unique_string mOnMouseRButtonUpEvent;
-    cxx::unique_string mOnMouseMButtonUpEvent;
-
+    // colors
     Color32 mTintColor = Color32_White;
     Color32 mBackgroundColor = Color32_Gray;
     Color32 mBordersColor = Color32_White;
@@ -55,6 +48,9 @@ public:
     // process widget logic and all children
     // @param deltaTime: Time passed since previous update
     void UpdateFrame(float deltaTime);
+
+    // force update widget layout
+    void UpdateLayout();
 
     // read widget properties from json document
     void LoadProperties(cxx::json_node_object documentNode);
@@ -98,6 +94,7 @@ public:
 
     // setup widget anchors
     void SetAnchors(const GuiAnchors& anchors);
+    bool HasAnchors() const;
 
     // test whether screen space point is within widget rect
     // @param screenPosition: Test point
@@ -154,14 +151,9 @@ public:
     void SetMinSize(const Point& minSize);
     void SetMaxSize(const Point& maxSize);
 
-    // set current visibility state
+    // set current state
     void SetVisible(bool isVisible);
-
-    // set enabled or disabled state
     void SetEnabled(bool isEnabled);
-
-    // set current hovered state
-    void SetHovered(bool isHovered);
 
     // set clipping child widgets feature
     void SetClipChildren(bool isEnabled);
@@ -171,14 +163,13 @@ public:
     void SetDrawBorders(bool isEnabled);
 
     // test whether widget is visible, enabled or hovered
-    bool IsVisible() const;
-    bool IsEnabled() const;
+    bool IsVisibleWithParent() const;
+    bool IsEnabledWithParent() const;
+    bool IsVisible() const { return mVisible; }
+    bool IsEnabled() const { return mEnabled; }
     bool IsHovered() const { return mHovered; }
+    bool IsPressed() const { return mPressed; }
     bool IsClipChildren() const { return mClipChildren; }
-
-    // test whether widget is selected
-    bool IsSelected() const;
-    void Deselect();
 
     // set extended context for widget actions
     // @param context: Context or null
@@ -212,6 +203,7 @@ protected:
     void ShownStateChanged();
     void EnableStateChanged();
     void HoveredStateChanged();
+    void PressedStateChanged();
 
     Point ComputeOriginPixels() const;
     Point ComputePositionPixels() const;
@@ -220,10 +212,21 @@ protected:
     void SetDetached();
     void SetupAnchorsOffsets();
 
+    // mouse capture
+    void GetMouseCapture();
+    void ReleaseMouseCapture();
+
+    // post widget event to gui system
+    void DispatchEvent(const GuiEvent& eventData);
+
     bool ResolveCondition(const cxx::unique_string& name, bool& isTrue) const;
 
     // load widget actions from json document node
-    void LoadActions(cxx::json_node_object actionsNode);
+    void LoadActions(cxx::json_node_array actionsNode);
+
+    // gui notifications
+    void NotifyHoverStateChange(bool isHovered);
+    void NotifyMouseCaptureStateChange(bool isMouseCapture);
 
 protected:
     // overridables
@@ -244,12 +247,13 @@ protected:
     virtual void HandleShownStateChanged() {}
     virtual void HandleEnableStateChanged() {}
     virtual void HandleHoveredStateChanged() {}
+    virtual void HandlePressedStateChanged() {}
 
     virtual void HandleInputEvent(MouseButtonInputEvent& inputEvent) {}
     virtual void HandleInputEvent(MouseMovedInputEvent& inputEvent) {}
     virtual void HandleInputEvent(MouseScrollInputEvent& inputEvent) {}
 
-    virtual void HandleClick() {}
+    virtual void HandleClick(eMouseButton mouseButton) {}
 
     virtual GuiWidget* CreateClone();
 
@@ -258,6 +262,8 @@ protected:
     GuiWidget* mFirstChild = nullptr;
     GuiWidget* mNextSibling = nullptr;
     GuiWidget* mPrevSibling = nullptr;
+
+    GuiLayout mLayout;
 
     // layout params
     GuiAnchors mAnchors;
@@ -283,16 +289,18 @@ protected:
 
     // attributes
     bool mHasInteractiveAttribute = false; // widget receiving mouse inputs and can be pressed or hovered
-    bool mHasSelectableAttribute = false; // // widget becomes selected on mouse left button pressed
     bool mHasDisablePickChildrenAttribute = false; // cannot pick child widgets
     bool mHasDrawBackgroundAttribute = false; // fill widget rectangle with background color
     bool mHasDrawBordersAttribute = false; // draw borders
 
-    // state flags
-    bool mSelfEnabled = true;
-    bool mSelfVisible = true;
+    bool mEnabled = true;
+    bool mVisible = true;
     bool mClipChildren = false;
 
+    // state flags
     bool mTransformInvalidated = true; // transformations matrix dirty
     bool mHovered = false;
+    bool mPressed = false;
+
+    eMouseButton mPressMouseButton = eMouseButton_null;
 };

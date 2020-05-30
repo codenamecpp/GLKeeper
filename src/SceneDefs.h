@@ -40,3 +40,26 @@ const glm::vec3 SceneAxisY (0.0f, 1.0f, 0.0f);
 const glm::vec3 SceneAxisZ (0.0f, 0.0f, 1.0f);
 
 const glm::mat4 SceneIdentyMatrix (1.0f);
+
+// vertex animation state
+struct BlendFramesAnimState
+{
+public:
+    // current animation params and state
+    int mStartFrame = 0;
+    int mFinalFrame = 0;
+
+    int mFrame0 = 0; // base blend frame
+    int mFrame1 = 0; // next blend frame
+
+    int mCyclesCount = 0; // number of full animation cycles
+
+    float mMixFrames = 0.0f; // blend frames value in range [0..1]
+    float mAnimationTime = 0.0f; // current time progress
+    float mAnimationEndTime = 0.0f;
+    float mFramesPerSecond = 0.0f;  // speed
+
+    bool mIsAnimationActive = false;
+    bool mIsAnimationLoop = false;
+    bool mIsAnimationPaused = false;
+};

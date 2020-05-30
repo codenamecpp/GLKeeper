@@ -144,7 +144,7 @@ void GameWorld::ConstructStartupRooms()
         const Point currTileLocation (tilex, tiley);
 
         MapTile* currTile = mMapData.GetMapTile(currTileLocation);
-        if (currTile->mRoom)
+        if (currTile->mBuiltRoom)
         {
             // room is already constructed on this tile
             continue;

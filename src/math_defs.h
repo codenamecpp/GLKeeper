@@ -34,7 +34,7 @@ namespace cxx
             if (theZ < mMin.z) mMin.z = theZ; else if (theZ > mMax.z) mMax.z = theZ;
         }
 
-        inline void reset()
+        inline void clear()
         {
             mMin = {9999.0f,9999.0f,9999.0f};
             mMax = {-9999.0f,-9999.0f,-9999.0f};

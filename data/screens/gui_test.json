@@ -1,0 +1,14 @@
+{
+    // template widgets
+    "templates":
+    {
+
+    }, // templates
+
+    "hierarchy":
+    {
+        "id":"root", "class":"panel", "size":[1024,768], "anchors":"all"
+    } // hierarchy
+}
+
+// eof

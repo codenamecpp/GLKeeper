@@ -2,12 +2,6 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-// each cvar type should have its own unique typeid
-template<typename TCvarValue, typename TCvarValueHandler>
-unsigned int ConsoleVariable<TCvarValue, TCvarValueHandler>::mUniqueTypeID = ++CVarBase::mTypeIDCounter;
-
-//////////////////////////////////////////////////////////////////////////
-
 class CvarBooleanValueHandler
 {
 public:

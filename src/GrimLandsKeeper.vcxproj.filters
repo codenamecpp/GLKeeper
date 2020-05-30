@@ -41,14 +41,8 @@
     <Filter Include="Application\Resources">
       <UniqueIdentifier>{da58dec7-37a5-4133-a053-5fdd4ea0ad7f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Render">
-      <UniqueIdentifier>{e607d4ee-67e8-4d5f-b41f-1bfc554959f7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\Scene">
       <UniqueIdentifier>{5d7e5c39-c126-4d85-af00-6cd205e2a863}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\GUI">
-      <UniqueIdentifier>{29e877b2-cd75-42db-97e8-6988bfc8e0c9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Third_Party\micropather">
       <UniqueIdentifier>{587d3ed4-1e6f-4f29-a0f0-70825ca6bc5e}</UniqueIdentifier>
@@ -64,9 +58,6 @@
     </Filter>
     <Filter Include="Data\Shaders">
       <UniqueIdentifier>{8b0aa962-d3ec-4c9f-a33f-afa0b1fe407e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Render\Shaders">
-      <UniqueIdentifier>{cfb6657e-5426-4871-9802-c0f6ab065078}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game\World">
       <UniqueIdentifier>{407424f7-127b-475d-ba67-a7cf395d1fd5}</UniqueIdentifier>
@@ -86,17 +77,32 @@
     <Filter Include="Game\Scene\CameraControllers">
       <UniqueIdentifier>{23269d5d-8ec3-4467-95fb-43902adf5c8d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\GUI\WidgetsLibrary">
-      <UniqueIdentifier>{75816ac9-2884-4e8b-b301-5a900ad8cfda}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Application\ToolsUI">
       <UniqueIdentifier>{cab02080-9d94-428b-9fe1-8cc097e21510}</UniqueIdentifier>
     </Filter>
     <Filter Include="Application\ToolsUI\Windows">
       <UniqueIdentifier>{22d845d7-589e-4583-bc6e-5ee20689b6bb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Data\Layouts">
+    <Filter Include="Game\GameScreens">
+      <UniqueIdentifier>{eeceb5ec-b352-4d41-9d41-2f221ceeb14d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\Screens">
       <UniqueIdentifier>{28665352-7ac3-458c-84da-6979357bfcc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\UserInterface">
+      <UniqueIdentifier>{e2362277-13a2-4543-8c28-1d5e46d9f263}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\GuiLibrary">
+      <UniqueIdentifier>{29e877b2-cd75-42db-97e8-6988bfc8e0c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\GuiLibrary\Widgets">
+      <UniqueIdentifier>{75816ac9-2884-4e8b-b301-5a900ad8cfda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Rendering">
+      <UniqueIdentifier>{e607d4ee-67e8-4d5f-b41f-1bfc554959f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Rendering\Shaders">
+      <UniqueIdentifier>{cfb6657e-5426-4871-9802-c0f6ab065078}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -231,16 +237,16 @@
       <Filter>Lib</Filter>
     </ClInclude>
     <ClInclude Include="RenderManager.h">
-      <Filter>Game\Render</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="RenderDefs.h">
-      <Filter>Game\Render</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="TimeManager.h">
       <Filter>Application</Filter>
     </ClInclude>
     <ClInclude Include="RenderProgram.h">
-      <Filter>Game\Render</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="BinaryOutputStream.h">
       <Filter>Application\FileIO</Filter>
@@ -270,7 +276,7 @@
       <Filter>Game\Scene\BVH</Filter>
     </ClInclude>
     <ClInclude Include="DebugRenderer.h">
-      <Filter>Game\Render</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Texture2DAnimation.h">
       <Filter>Application\Resources</Filter>
@@ -294,7 +300,7 @@
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="DebugDrawRenderProgram.h">
-      <Filter>Game\Render\Shaders</Filter>
+      <Filter>Game\Rendering\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="MeshViewGamestate.h">
       <Filter>Game\GameStates</Filter>
@@ -316,7 +322,7 @@
       <Filter>Application\Resources</Filter>
     </ClInclude>
     <ClInclude Include="MorphAnimRenderProgram.h">
-      <Filter>Game\Render\Shaders</Filter>
+      <Filter>Game\Rendering\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="SceneRenderList.h">
       <Filter>Game\Scene</Filter>
@@ -343,7 +349,7 @@
       <Filter>Game\World</Filter>
     </ClInclude>
     <ClInclude Include="TerrainRenderProgram.h">
-      <Filter>Game\Render\Shaders</Filter>
+      <Filter>Game\Rendering\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="TerrainManager.h">
       <Filter>Game\World</Filter>
@@ -354,17 +360,8 @@
     <ClInclude Include="GameMap.h">
       <Filter>Game\World</Filter>
     </ClInclude>
-    <ClInclude Include="TerrainMeshRenderer.h">
-      <Filter>Game\Render</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimatingModelsRenderer.h">
-      <Filter>Game\Render</Filter>
-    </ClInclude>
     <ClInclude Include="WaterLavaRenderProgram.h">
-      <Filter>Game\Render\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="WaterLavaMeshRenderer.h">
-      <Filter>Game\Render</Filter>
+      <Filter>Game\Rendering\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="RoomsDefs.h">
       <Filter>Game\World\Rooms</Filter>
@@ -393,17 +390,8 @@
     <ClInclude Include="TransformComponent.h">
       <Filter>Game\GameObject\Components</Filter>
     </ClInclude>
-    <ClInclude Include="AnimModelComponent.h">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="TerrainMeshComponent.h">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="WaterLavaMeshComponent.h">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClInclude>
     <ClInclude Include="MeshMaterial.h">
-      <Filter>Game\Render</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="OrbitCameraController.h">
       <Filter>Game\Scene\CameraControllers</Filter>
@@ -411,44 +399,32 @@
     <ClInclude Include="CameraController.h">
       <Filter>Game\Scene\CameraControllers</Filter>
     </ClInclude>
-    <ClInclude Include="GodModeCameraController.h">
-      <Filter>Game\Scene\CameraControllers</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObjectComponentsFactory.h">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClInclude>
     <ClInclude Include="GuiRenderProgram.h">
-      <Filter>Game\Render\Shaders</Filter>
+      <Filter>Game\Rendering\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="GuiDefs.h">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClInclude>
     <ClInclude Include="GuiManager.h">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClInclude>
     <ClInclude Include="GuiWidget.h">
-      <Filter>Game\GUI\WidgetsLibrary</Filter>
+      <Filter>Game\GuiLibrary\Widgets</Filter>
     </ClInclude>
     <ClInclude Include="GuiRenderer.h">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClInclude>
     <ClInclude Include="GuiPictureBox.h">
-      <Filter>Game\GUI\WidgetsLibrary</Filter>
+      <Filter>Game\GuiLibrary\Widgets</Filter>
     </ClInclude>
     <ClInclude Include="GuiButton.h">
-      <Filter>Game\GUI\WidgetsLibrary</Filter>
-    </ClInclude>
-    <ClInclude Include="GuiPanel.h">
-      <Filter>Game\GUI\WidgetsLibrary</Filter>
+      <Filter>Game\GuiLibrary\Widgets</Filter>
     </ClInclude>
     <ClInclude Include="GuiEvent.h">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClInclude>
     <ClInclude Include="3rd_party\stb_image.h">
       <Filter>Third_Party\stb</Filter>
-    </ClInclude>
-    <ClInclude Include="LayoutsEditGamestate.h">
-      <Filter>Game\GameStates</Filter>
     </ClInclude>
     <ClInclude Include="ToolsUIWindow.h">
       <Filter>Application\ToolsUI</Filter>
@@ -462,29 +438,83 @@
     <ClInclude Include="ToolsUIMeshViewWindow.h">
       <Filter>Application\ToolsUI\Windows</Filter>
     </ClInclude>
-    <ClInclude Include="ToolsUILayoutsEditWindow.h">
-      <Filter>Application\ToolsUI\Windows</Filter>
-    </ClInclude>
     <ClInclude Include="ToolsUISceneStatisticsWindow.h">
       <Filter>Application\ToolsUI\Windows</Filter>
     </ClInclude>
     <ClInclude Include="GuiHierarchy.h">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClInclude>
     <ClInclude Include="GuiScrollbar.h">
-      <Filter>Game\GUI\WidgetsLibrary</Filter>
+      <Filter>Game\GuiLibrary\Widgets</Filter>
     </ClInclude>
     <ClInclude Include="unique_string.h">
       <Filter>Lib</Filter>
     </ClInclude>
     <ClInclude Include="GuiHelpers.h">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClInclude>
     <ClInclude Include="logical_expression.h">
       <Filter>Lib</Filter>
     </ClInclude>
     <ClInclude Include="GuiAction.h">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="GuiLayout.h">
+      <Filter>Game\GuiLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="GuiScreen.h">
+      <Filter>Game\GuiLibrary</Filter>
+    </ClInclude>
+    <ClInclude Include="GuiTestGamestate.h">
+      <Filter>Game\GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="GuiTestScreen.h">
+      <Filter>Game\GameScreens</Filter>
+    </ClInclude>
+    <ClInclude Include="GodmodeCameraController.h">
+      <Filter>Game\Scene\CameraControllers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameplayGameScreen.h">
+      <Filter>Game\GameScreens</Filter>
+    </ClInclude>
+    <ClInclude Include="UserInterfaceDefs.h">
+      <Filter>Game\UserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="UiCtlPanelIcon.h">
+      <Filter>Game\UserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="UiCtlPanelBar.h">
+      <Filter>Game\UserInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="MapInteractionController.h">
+      <Filter>Game\World</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderableComponent.h">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="rtti.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="WaterLavaMeshRenderer.h">
+      <Filter>Game\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="WaterLavaMeshComponent.h">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicMeshComponent.h">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainMeshRenderer.h">
+      <Filter>Game\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainMeshComponent.h">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatingMeshRenderer.h">
+      <Filter>Game\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatingMeshComponent.h">
+      <Filter>Game\GameObject\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -560,13 +590,13 @@
       <Filter>Lib</Filter>
     </ClCompile>
     <ClCompile Include="RenderManager.cpp">
-      <Filter>Game\Render</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="TimeManager.cpp">
       <Filter>Application</Filter>
     </ClCompile>
     <ClCompile Include="RenderProgram.cpp">
-      <Filter>Game\Render</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="BinaryOutputStream.cpp">
       <Filter>Application\FileIO</Filter>
@@ -590,7 +620,7 @@
       <Filter>Game\Scene\BVH</Filter>
     </ClCompile>
     <ClCompile Include="DebugRenderer.cpp">
-      <Filter>Game\Render</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Texture2DAnimation.cpp">
       <Filter>Application\Resources</Filter>
@@ -640,15 +670,6 @@
     <ClCompile Include="GameMap.cpp">
       <Filter>Game\World</Filter>
     </ClCompile>
-    <ClCompile Include="TerrainMeshRenderer.cpp">
-      <Filter>Game\Render</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimatingModelsRenderer.cpp">
-      <Filter>Game\Render</Filter>
-    </ClCompile>
-    <ClCompile Include="WaterLavaMeshRenderer.cpp">
-      <Filter>Game\Render</Filter>
-    </ClCompile>
     <ClCompile Include="GenericRoom.cpp">
       <Filter>Game\World\Rooms</Filter>
     </ClCompile>
@@ -673,50 +694,29 @@
     <ClCompile Include="TransformComponent.cpp">
       <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
-    <ClCompile Include="AnimModelComponent.cpp">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="TerrainMeshComponent.cpp">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="WaterLavaMeshComponent.cpp">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClCompile>
     <ClCompile Include="MeshMaterial.cpp">
-      <Filter>Game\Render</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="OrbitCameraController.cpp">
       <Filter>Game\Scene\CameraControllers</Filter>
     </ClCompile>
-    <ClCompile Include="GodModeCameraController.cpp">
-      <Filter>Game\Scene\CameraControllers</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObjectComponentsFactory.cpp">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClCompile>
     <ClCompile Include="GuiManager.cpp">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClCompile>
     <ClCompile Include="GuiWidget.cpp">
-      <Filter>Game\GUI\WidgetsLibrary</Filter>
+      <Filter>Game\GuiLibrary\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="GuiRenderer.cpp">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClCompile>
     <ClCompile Include="GuiPictureBox.cpp">
-      <Filter>Game\GUI\WidgetsLibrary</Filter>
+      <Filter>Game\GuiLibrary\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="GuiButton.cpp">
-      <Filter>Game\GUI\WidgetsLibrary</Filter>
-    </ClCompile>
-    <ClCompile Include="GuiPanel.cpp">
-      <Filter>Game\GUI\WidgetsLibrary</Filter>
+      <Filter>Game\GuiLibrary\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="GuiEvent.cpp">
-      <Filter>Game\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="LayoutsEditGamestate.cpp">
-      <Filter>Game\GameStates</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClCompile>
     <ClCompile Include="ToolsUIWindow.cpp">
       <Filter>Application\ToolsUI</Filter>
@@ -730,26 +730,77 @@
     <ClCompile Include="ToolsUIMeshViewWindow.cpp">
       <Filter>Application\ToolsUI\Windows</Filter>
     </ClCompile>
-    <ClCompile Include="ToolsUILayoutsEditWindow.cpp">
-      <Filter>Application\ToolsUI\Windows</Filter>
-    </ClCompile>
     <ClCompile Include="ToolsUISceneStatisticsWindow.cpp">
       <Filter>Application\ToolsUI\Windows</Filter>
     </ClCompile>
     <ClCompile Include="GuiHierarchy.cpp">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClCompile>
     <ClCompile Include="GuiScrollbar.cpp">
-      <Filter>Game\GUI\WidgetsLibrary</Filter>
+      <Filter>Game\GuiLibrary\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="unique_string.cpp">
       <Filter>Lib</Filter>
     </ClCompile>
     <ClCompile Include="GuiHelpers.cpp">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
     </ClCompile>
     <ClCompile Include="GuiAction.cpp">
-      <Filter>Game\GUI</Filter>
+      <Filter>Game\GuiLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiLayout.cpp">
+      <Filter>Game\GuiLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiScreen.cpp">
+      <Filter>Game\GuiLibrary</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiTestGamestate.cpp">
+      <Filter>Game\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="GuiTestScreen.cpp">
+      <Filter>Game\GameScreens</Filter>
+    </ClCompile>
+    <ClCompile Include="GodmodeCameraController.cpp">
+      <Filter>Game\Scene\CameraControllers</Filter>
+    </ClCompile>
+    <ClCompile Include="GameplayGameScreen.cpp">
+      <Filter>Game\GameScreens</Filter>
+    </ClCompile>
+    <ClCompile Include="UiCtlPanelIcon.cpp">
+      <Filter>Game\UserInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="UiCtlPanelBar.cpp">
+      <Filter>Game\UserInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="MapInteractionController.cpp">
+      <Filter>Game\World</Filter>
+    </ClCompile>
+    <ClCompile Include="UserInterface.cpp">
+      <Filter>Game\UserInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderableComponent.cpp">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="WaterLavaMeshRenderer.cpp">
+      <Filter>Game\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="WaterLavaMeshComponent.cpp">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="DynamicMeshComponent.cpp">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainMeshRenderer.cpp">
+      <Filter>Game\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainMeshComponent.cpp">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatingMeshRenderer.cpp">
+      <Filter>Game\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatingMeshComponent.cpp">
+      <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -788,8 +839,14 @@
     <None Include="..\data\shaders\water_lava.glsl">
       <Filter>Data\Shaders</Filter>
     </None>
-    <None Include="..\data\layouts\test.json">
-      <Filter>Data\Layouts</Filter>
+    <None Include="..\data\screens\gui_test.json">
+      <Filter>Data\Screens</Filter>
+    </None>
+    <None Include="..\data\screens\gui_screens.json">
+      <Filter>Data\Screens</Filter>
+    </None>
+    <None Include="..\data\screens\gameplay_game_screen.json">
+      <Filter>Data\Screens</Filter>
     </None>
   </ItemGroup>
 </Project>

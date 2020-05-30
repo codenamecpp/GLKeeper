@@ -5,10 +5,11 @@
 #include "InputsManager.h"
 #include "GraphicsDevice.h"
 #include "GuiHelpers.h"
+#include "GuiLayout.h"
 
 // base widget class factory
 static GuiWidgetFactory<GuiWidget> _BaseWidgetsFactory;
-GuiWidgetMetaClass GuiWidget::MetaClass ( cxx::unique_string("widget"), &_BaseWidgetsFactory, nullptr );
+GuiWidgetMetaClass GuiWidget::MetaClass ( cxx::unique_string("panel"), &_BaseWidgetsFactory, nullptr );
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -33,7 +34,7 @@ GuiWidget::GuiWidget(GuiWidgetMetaClass* widgetClass)
 
 GuiWidget::GuiWidget(GuiWidget* copyWidget)
     : mMetaClass(copyWidget->mMetaClass)
-    , mName(copyWidget->mName)
+    , mId(copyWidget->mId)
     , mUserData()
     , mAnchors(copyWidget->mAnchors)
     , mTransform(copyWidget->mTransform)
@@ -50,28 +51,19 @@ GuiWidget::GuiWidget(GuiWidget* copyWidget)
     , mSizeUnitsH(copyWidget->mSizeUnitsH)
     , mSizePercents(copyWidget->mSizePercents)
     , mSize(copyWidget->mSize)
-    , mSelfVisible(copyWidget->mSelfVisible)
-    , mSelfEnabled(copyWidget->mSelfEnabled)
+    , mVisible(copyWidget->mVisible)
+    , mEnabled(copyWidget->mEnabled)
     , mClipChildren(copyWidget->mClipChildren)
     , mTemplateClassName(copyWidget->mTemplateClassName)
-    , mOnClickEvent(copyWidget->mOnClickEvent)
-    , mOnMouseEnterEvent(copyWidget->mOnMouseEnterEvent)
-    , mOnMouseLeaveEvent(copyWidget->mOnMouseLeaveEvent)
-    , mOnMouseLButtonDownEvent(copyWidget->mOnMouseLButtonDownEvent)
-    , mOnMouseRButtonDownEvent(copyWidget->mOnMouseRButtonDownEvent)
-    , mOnMouseMButtonDownEvent(copyWidget->mOnMouseMButtonDownEvent)
-    , mOnMouseLButtonUpEvent(copyWidget->mOnMouseLButtonUpEvent)
-    , mOnMouseRButtonUpEvent(copyWidget->mOnMouseRButtonUpEvent)
-    , mOnMouseMButtonUpEvent(copyWidget->mOnMouseMButtonUpEvent)
     , mTintColor(copyWidget->mTintColor)
     , mActions(this)
     , mHasInteractiveAttribute(copyWidget->mHasInteractiveAttribute)
-    , mHasSelectableAttribute(copyWidget->mHasSelectableAttribute)
     , mHasDisablePickChildrenAttribute(copyWidget->mHasDisablePickChildrenAttribute)
     , mHasDrawBackgroundAttribute(copyWidget->mHasDrawBackgroundAttribute)
     , mHasDrawBordersAttribute(copyWidget->mHasDrawBordersAttribute)
     , mBordersColor(copyWidget->mBordersColor)
     , mBackgroundColor(copyWidget->mBackgroundColor)
+    , mLayout(copyWidget->mLayout)
 {
     debug_assert(mMetaClass);
 
@@ -86,12 +78,13 @@ void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
         return;
     }
 
-    mName = cxx::unique_string(documentNode.get_element_name());
-    if (mName.empty())
+    cxx::json_get_attribute(documentNode, "id", mId);
+
+    if (mId.empty())
     {
         // generate unique name
         const char* name = cxx::va("%s_%p", mMetaClass->mClassName.c_str(), this);
-        mName = cxx::unique_string(name);
+        mId = cxx::unique_string(name);
     }
 
     bool is_visible = false;
@@ -128,49 +121,48 @@ void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
     }    
     // origin
     {
-        Point origin(0, 0);
-        eGuiUnits unitsX = eGuiUnits_Pixels;
-        eGuiUnits unitsY = eGuiUnits_Pixels;
-
         if (cxx::json_node_array prop_position = documentNode["origin"])
         {
+            Point origin(0, 0);
+            eGuiUnits unitsX = eGuiUnits_Pixels;
+            eGuiUnits unitsY = eGuiUnits_Pixels;
             if (!GuiParsePixelsOrPercents(prop_position[0], unitsX, origin.x) ||
                 !GuiParsePixelsOrPercents(prop_position[1], unitsY, origin.y))
             {
                 debug_assert(false);
             }
+            SetOrigin(origin, unitsX, unitsY);
         }
-        SetOrigin(origin, unitsX, unitsY);
     }
     // position
     {
-        Point position(0, 0);
-        eGuiUnits unitsX = eGuiUnits_Pixels;
-        eGuiUnits unitsY = eGuiUnits_Pixels;
         if (cxx::json_node_array prop_position = documentNode["pos"])
         {
+            Point position(0, 0);
+            eGuiUnits unitsX = eGuiUnits_Pixels;
+            eGuiUnits unitsY = eGuiUnits_Pixels;
             if (!GuiParsePixelsOrPercents(prop_position[0], unitsX, position.x) ||
                 !GuiParsePixelsOrPercents(prop_position[1], unitsY, position.y))
             {
                 debug_assert(false);
             }
+            SetPosition(position, unitsX, unitsY);
         }
-        SetPosition(position, unitsX, unitsY);
     }
     // size
     {
-        Point size(0, 0);
-        eGuiUnits unitsW = eGuiUnits_Pixels;
-        eGuiUnits unitsH = eGuiUnits_Pixels;
         if (cxx::json_node_array prop_size = documentNode["size"])
         {
+            Point size(0, 0);
+            eGuiUnits unitsW = eGuiUnits_Pixels;
+            eGuiUnits unitsH = eGuiUnits_Pixels;
             if (!GuiParsePixelsOrPercents(prop_size[0], unitsW, size.x) ||
                 !GuiParsePixelsOrPercents(prop_size[1], unitsH, size.y))
             {
                 debug_assert(false);
             }
+            SetSize(size, unitsW, unitsH);
         }
-        SetSize(size, unitsW, unitsH);
     }
     // anchors
     if (cxx::json_document_node prop_anchors = documentNode["anchors"])
@@ -186,24 +178,16 @@ void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
         }
     }
 
-    // custom events
-    if (cxx::json_node_object events_node = documentNode["events"])
-    {
-        cxx::json_get_attribute(events_node, "on_click", mOnClickEvent);
-        cxx::json_get_attribute(events_node, "on_mouse_enter", mOnMouseEnterEvent);
-        cxx::json_get_attribute(events_node, "on_mouse_leave", mOnMouseLeaveEvent);
-        cxx::json_get_attribute(events_node, "on_lbutton_down", mOnMouseLButtonDownEvent);
-        cxx::json_get_attribute(events_node, "on_rbutton_down", mOnMouseRButtonDownEvent);
-        cxx::json_get_attribute(events_node, "on_mbutton_down", mOnMouseMButtonDownEvent);
-        cxx::json_get_attribute(events_node, "on_lbutton_up", mOnMouseLButtonUpEvent);
-        cxx::json_get_attribute(events_node, "on_rbutton_up", mOnMouseRButtonUpEvent);
-        cxx::json_get_attribute(events_node, "on_mbutton_up", mOnMouseMButtonUpEvent);
-    }
-
     // colors
     GuiParseColor(documentNode["tint_color"], mTintColor);
     GuiParseColor(documentNode["background_color"], mBackgroundColor);
     GuiParseColor(documentNode["borders_color"], mBordersColor);
+
+    // layout
+    if (cxx::json_node_object layoutNode = documentNode["layout"])
+    {
+        mLayout.LoadProperties(layoutNode);
+    }
 
     // actions
     if (cxx::json_document_node actions_node = documentNode["actions"])
@@ -213,7 +197,6 @@ void GuiWidget::LoadProperties(cxx::json_node_object documentNode)
 
     // attributes
     cxx::json_get_attribute(documentNode, "interactive", mHasInteractiveAttribute);
-    cxx::json_get_attribute(documentNode, "selectable", mHasSelectableAttribute);
     cxx::json_get_attribute(documentNode, "disable_pick_children", mHasDisablePickChildrenAttribute);
     cxx::json_get_attribute(documentNode, "draw_background", mHasDrawBackgroundAttribute);
     cxx::json_get_attribute(documentNode, "draw_borders", mHasDrawBordersAttribute);
@@ -234,6 +217,7 @@ GuiWidget* GuiWidget::GetLastChild() const
 
 GuiWidget::~GuiWidget()
 {
+    mLayout.Clear();
     if (mParent)
     {
         mParent->DetachChild(this);
@@ -270,7 +254,7 @@ void GuiWidget::RenderFrame(GuiRenderer& renderContext)
 {
     ComputeTransform();
 
-    if (!IsVisible())
+    if (!IsVisibleWithParent())
         return;
 
     renderContext.SetCurrentTransform(&mTransform);
@@ -323,92 +307,84 @@ void GuiWidget::UpdateFrame(float deltaTime)
 
 void GuiWidget::ProcessEvent(MouseButtonInputEvent& inputEvent)
 {
-    if (!IsVisible() || !mHasInteractiveAttribute)
+    if (!IsVisibleWithParent() || !mHasInteractiveAttribute)
         return;
 
     inputEvent.SetConsumed(true);
-    if (!IsEnabled())
+    if (!IsEnabledWithParent())
         return;
 
     // post event
     if (inputEvent.mPressed)
     {
         GuiEvent eventData = GuiEvent::MouseDownEvent(this, inputEvent.mButton, gInputsManager.mCursorPosition);
-        mActions.EmitEvent(eventData.mEventId);
-        gGuiManager.BroadcastEvent(eventData);
+        DispatchEvent(eventData);
     }
     else
     {
         GuiEvent eventData = GuiEvent::MouseUpEvent(this, inputEvent.mButton, gInputsManager.mCursorPosition);
-        mActions.EmitEvent(eventData.mEventId);
-        gGuiManager.BroadcastEvent(eventData);
-    }
-
-    // custom event
-    {
-        cxx::unique_string customEventId;
-        switch (inputEvent.mButton)
-        {
-            case eMouseButton_Left: customEventId = inputEvent.mPressed ? mOnMouseLButtonDownEvent : mOnMouseLButtonUpEvent; break;
-            case eMouseButton_Right: customEventId = inputEvent.mPressed ? mOnMouseRButtonDownEvent : mOnMouseRButtonUpEvent; break;
-            case eMouseButton_Middle: customEventId = inputEvent.mPressed ? mOnMouseMButtonDownEvent : mOnMouseMButtonUpEvent; break;
-        }
-        if (!customEventId.empty())
-        {
-            GuiEvent customEvent = GuiEvent::CustomEvent(this, customEventId);
-            mActions.EmitEvent(customEvent.mEventId);
-            gGuiManager.BroadcastEvent(customEvent);
-        }
+        DispatchEvent(eventData);
     }
     
     bool hasBeenClicked = false;
-    // process clicks
-    if (inputEvent.mButton == eMouseButton_Left && mHasSelectableAttribute)
+    if (inputEvent.mPressed) // mouse button pressed
     {
-        if (inputEvent.mPressed)
+        if (!IsPressed()) // start press
         {
-            if (IsHovered())
+            GetMouseCapture();
+
+            mPressed = true;
+            mPressMouseButton = inputEvent.mButton;
+            PressedStateChanged();
+
+        }
+        else
+        {
+            // ignore
+        }
+    }
+    else // mouse button released
+    {
+        if (IsPressed())
+        {
+            if (mPressMouseButton == inputEvent.mButton)
             {
-                gGuiManager.SetSelectedWidget(this);
+                ReleaseMouseCapture();
+                if (IsHovered()) // process click
+                {
+                    // post event
+                    {
+                        GuiEvent eventData = GuiEvent::ClickEvent(this, inputEvent.mButton, gInputsManager.mCursorPosition);
+                        DispatchEvent(eventData);
+                    }
+                    hasBeenClicked = true;
+                }
+            }
+            else
+            {
+                // ignore
             }
         }
         else
         {
-            hasBeenClicked = IsHovered() && IsSelected();
-            Deselect();
+            // ignore
         }
     }
 
     HandleInputEvent(inputEvent);
-
     if (hasBeenClicked)
     {
-        // post event
-        {
-            GuiEvent eventData = GuiEvent::ClickEvent(this, gInputsManager.mCursorPosition);
-            mActions.EmitEvent(eventData.mEventId);
-            gGuiManager.BroadcastEvent(eventData);
-        }
-
-        // custom event
-        if (!mOnClickEvent.empty())
-        {
-            GuiEvent customEvent = GuiEvent::CustomEvent(this, mOnClickEvent);
-            mActions.EmitEvent(customEvent.mEventId);
-            gGuiManager.BroadcastEvent(customEvent);
-        }
-
-        HandleClick();
+        HandleClick(inputEvent.mButton);
     }
 }
 
 void GuiWidget::ProcessEvent(MouseMovedInputEvent& inputEvent)
 {
-    if (!IsVisible() || !mHasInteractiveAttribute)
+    if (!IsVisibleWithParent() || !mHasInteractiveAttribute)
         return;
 
     inputEvent.SetConsumed(true);
-    if (!IsEnabled())
+    if (!IsEnabledWithParent())
         return;
 
     HandleInputEvent(inputEvent);
@@ -416,11 +392,11 @@ void GuiWidget::ProcessEvent(MouseMovedInputEvent& inputEvent)
 
 void GuiWidget::ProcessEvent(MouseScrollInputEvent& inputEvent)
 {
-    if (!IsVisible() || !mHasInteractiveAttribute)
+    if (!IsVisibleWithParent() || !mHasInteractiveAttribute)
         return;
 
     inputEvent.SetConsumed(true);
-    if (!IsEnabled())
+    if (!IsEnabledWithParent())
         return;
 
     HandleInputEvent(inputEvent);
@@ -463,7 +439,8 @@ bool GuiWidget::AttachChild(GuiWidget* widget)
     widget->mParent = this;
     widget->InvalidateTransform();
     widget->SetupAnchorsOffsets();
-    widget->ParentSizeChanged(mSize, mSize); // force update layout
+    widget->ParentSizeChanged(mSize, mSize);
+    UpdateLayout();
     HandleChildAttached(widget);
     return true;
 }
@@ -478,6 +455,7 @@ bool GuiWidget::DetachChild(GuiWidget* widget)
 
     widget->SetDetached();
 
+    UpdateLayout();
     HandleChildDetached(widget);
     return true;
 }
@@ -520,7 +498,7 @@ GuiWidget* GuiWidget::PickWidget(const Point& screenPosition)
 {
     GuiWidget* resultWidget = nullptr;
 
-    if (!IsVisible())
+    if (!IsVisibleWithParent())
         return nullptr;
 
     // pick child widgets only if not pick target
@@ -531,7 +509,7 @@ GuiWidget* GuiWidget::PickWidget(const Point& screenPosition)
             currChild = currChild->mPrevSibling)
         {
             // is point within widget and visible
-            if (!currChild->IsVisible() || !currChild->IsScreenPointInsideRect(screenPosition))
+            if (!currChild->IsVisibleWithParent() || !currChild->IsScreenPointInsideRect(screenPosition))
                 continue;
 
             GuiWidget* currPicked = currChild->PickWidget(screenPosition);
@@ -559,7 +537,7 @@ GuiWidget* GuiWidget::GetChild(const cxx::unique_string& name) const
     for (GuiWidget* currChild = mFirstChild; currChild; 
         currChild = currChild->mNextSibling)
     {
-        if (currChild->mName == name)
+        if (currChild->mId == name)
             return currChild;
     }
     return nullptr;
@@ -570,7 +548,7 @@ GuiWidget* GuiWidget::GetChild(const std::string& name) const
     for (GuiWidget* currChild = mFirstChild; currChild; 
         currChild = currChild->mNextSibling)
     {
-        if (currChild->mName == name)
+        if (currChild->mId == name)
             return currChild;
     }
     return nullptr;
@@ -639,6 +617,11 @@ void GuiWidget::SetAnchors(const GuiAnchors& anchors)
     SetupAnchorsOffsets();
 
     InvalidateTransform();
+}
+
+bool GuiWidget::HasAnchors() const
+{
+    return mAnchors.mB || mAnchors.mL || mAnchors.mR || mAnchors.mT;
 }
 
 void GuiWidget::SetOriginX(int posx, eGuiUnits units_x)
@@ -729,32 +712,20 @@ void GuiWidget::SetSize(const Point& size, eGuiUnits units_w, eGuiUnits units_h)
     }
 }
 
-bool GuiWidget::IsVisible() const
+bool GuiWidget::IsVisibleWithParent() const
 {
     if (mParent)
-        return mSelfVisible && mParent->IsVisible();
+        return IsVisible() && mParent->IsVisibleWithParent();
 
-    return mSelfVisible;
+    return IsVisible();
 }
 
-bool GuiWidget::IsEnabled() const
+bool GuiWidget::IsEnabledWithParent() const
 {
     if (mParent)
-        return mSelfEnabled && mParent->IsEnabled();
+        return IsEnabled() && mParent->IsEnabledWithParent();
 
-    return mSelfEnabled;
-}
-
-void GuiWidget::SetHovered(bool isHovered)
-{
-    if (!IsEnabled() || !mHasInteractiveAttribute)
-        return;
-
-    if (mHovered == isHovered)
-        return;
-
-    mHovered = isHovered;
-    HoveredStateChanged();
+    return IsEnabled();
 }
 
 void GuiWidget::SetClipChildren(bool isEnabled)
@@ -784,13 +755,13 @@ void GuiWidget::SetDrawBorders(bool isEnabled)
 
 void GuiWidget::SetVisible(bool isVisible)
 {
-    if (mSelfVisible == isVisible)
+    if (mVisible == isVisible)
         return;
 
-    mSelfVisible = isVisible;
+    mVisible = isVisible;
     if (mParent) // check inherited state
     {
-        if (!mParent->IsVisible())
+        if (!mParent->IsVisibleWithParent())
             return;
     }
     ShownStateChanged();
@@ -798,13 +769,13 @@ void GuiWidget::SetVisible(bool isVisible)
 
 void GuiWidget::SetEnabled(bool isEnabled)
 {
-    if (mSelfEnabled == isEnabled)
+    if (mEnabled == isEnabled)
         return;
 
-    mSelfEnabled = isEnabled;
+    mEnabled = isEnabled;
     if (mParent) // check inherited state
     {
-        if (!mParent->IsEnabled())
+        if (!mParent->IsEnabledWithParent())
             return;
     }
     EnableStateChanged();
@@ -876,14 +847,14 @@ void GuiWidget::ParentPositionChanged(const Point& prevPosition)
     InvalidateTransform();
 }
 
-void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
+void GuiWidget::ParentSizeChanged(const Point& prevParentSize, const Point& currParentSize)
 {
     Point newPosition = mPosition;
     Point newSize = mSize;
 
     if (mAnchors.mL && mAnchors.mR)
     {
-        newSize.x = currSize.x - (mAnchorDistL + mAnchorDistR);
+        newSize.x = currParentSize.x - (mAnchorDistL + mAnchorDistR);
         if (newSize.x < 0)
         {
             newSize.x = 0;
@@ -893,17 +864,17 @@ void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
     {
         if (mAnchors.mR)
         {
-            newPosition.x = currSize.x - mAnchorDistR;
+            newPosition.x = currParentSize.x - (mAnchorDistR + mSize.x);
         }
         else if (!mAnchors.mL)
         {
-            newPosition.x = (currSize.x - (mAnchorDistL + mAnchorDistR)) / 2;
+            newPosition.x = (currParentSize.x - (mAnchorDistL + mAnchorDistR)) / 2;
         }
     }
 
     if (mAnchors.mT && mAnchors.mB)
     {
-        newSize.y = currSize.y - (mAnchorDistB + mAnchorDistT);
+        newSize.y = currParentSize.y - (mAnchorDistB + mAnchorDistT);
         if (newSize.y < 0)
         {
             newSize.y = 0;
@@ -913,11 +884,11 @@ void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
     {
         if (mAnchors.mB)
         {
-            newPosition.y = currSize.y - mAnchorDistB;
+            newPosition.y = currParentSize.y - (mAnchorDistB + mSize.y);
         }
         else if (!mAnchors.mT)
         {
-            newPosition.y = (currSize.y - (mAnchorDistT + mAnchorDistB)) / 2;
+            newPosition.y = (currParentSize.y - (mAnchorDistT + mAnchorDistB)) / 2;
         }
     }
 
@@ -967,7 +938,7 @@ void GuiWidget::ParentSizeChanged(const Point& prevSize, const Point& currSize)
 
 void GuiWidget::ParentShownStateChanged()
 {
-    if (!mSelfVisible)
+    if (!IsVisible())
         return;
 
     ShownStateChanged();
@@ -975,7 +946,7 @@ void GuiWidget::ParentShownStateChanged()
 
 void GuiWidget::ParentEnableStateChanged()
 {
-    if (!mSelfEnabled)
+    if (!IsEnabled())
         return;
 
     EnableStateChanged();
@@ -1018,31 +989,21 @@ void GuiWidget::SizeChanged(const Point& prevSize, bool setAnchors)
     {
         SetupAnchorsOffsets();
     }
-
+    UpdateLayout();
     HandleSizeChanged(prevSize);
 }
 
 void GuiWidget::ShownStateChanged()
 {
-    if (!IsVisible()) 
+    if (!IsVisibleWithParent()) 
     {
-        Deselect();
-
-        if (IsHovered()) // force cancel hover
-        {
-            mHovered = false;
-            HoveredStateChanged();
-        }
-
-        GuiEvent eventData = GuiEvent::HideEvent(this);
-        mActions.EmitEvent(eventData.mEventId);
-        gGuiManager.BroadcastEvent(eventData);
+        GuiEvent eventData(this, GuiEventId_OnHide);
+        DispatchEvent(eventData);
     }
     else
     {
-        GuiEvent eventData = GuiEvent::ShowEvent(this);
-        mActions.EmitEvent(eventData.mEventId);
-        gGuiManager.BroadcastEvent(eventData);
+        GuiEvent eventData(this, GuiEventId_OnShow);
+        DispatchEvent(eventData);
     }
 
     for (GuiWidget* currChild = mFirstChild; currChild; 
@@ -1056,25 +1017,15 @@ void GuiWidget::ShownStateChanged()
 
 void GuiWidget::EnableStateChanged()
 {
-    if (!IsEnabled())
+    if (!IsEnabledWithParent())
     {
-        Deselect();
-
-        if (IsHovered()) // force cancel hover
-        {
-            mHovered = false;
-            HoveredStateChanged();
-        }
-
-        GuiEvent eventData = GuiEvent::DisableEvent(this);
-        mActions.EmitEvent(eventData.mEventId);
-        gGuiManager.BroadcastEvent(eventData);
+        GuiEvent eventData(this, GuiEventId_OnDisable);
+        DispatchEvent(eventData);
     }
     else
     {
-        GuiEvent eventData = GuiEvent::EnableEvent(this);
-        mActions.EmitEvent(eventData.mEventId);
-        gGuiManager.BroadcastEvent(eventData);
+        GuiEvent eventData(this, GuiEventId_OnEnable);
+        DispatchEvent(eventData);
     }
 
     for (GuiWidget* currChild = mFirstChild; currChild; 
@@ -1091,33 +1042,33 @@ void GuiWidget::HoveredStateChanged()
     if (IsHovered())
     {
         GuiEvent eventData = GuiEvent::MouseEnterEvent(this, gInputsManager.mCursorPosition);
-        mActions.EmitEvent(eventData.mEventId);
-        gGuiManager.BroadcastEvent(eventData);
-
-        // custom event
-        if (!mOnMouseEnterEvent.empty())
-        {
-            GuiEvent customEvent = GuiEvent::CustomEvent(this, mOnMouseEnterEvent);
-            mActions.EmitEvent(customEvent.mEventId);
-            gGuiManager.BroadcastEvent(customEvent);
-        }
+        DispatchEvent(eventData);
     }
     else
     {
         GuiEvent eventData = GuiEvent::MouseLeaveEvent(this, gInputsManager.mCursorPosition);
-        mActions.EmitEvent(eventData.mEventId);
-        gGuiManager.BroadcastEvent(eventData);
-
-        // custom event
-        if (!mOnMouseLeaveEvent.empty())
-        {
-            GuiEvent customEvent = GuiEvent::CustomEvent(this, mOnMouseLeaveEvent);
-            mActions.EmitEvent(customEvent.mEventId);
-            gGuiManager.BroadcastEvent(customEvent);
-        }
+        DispatchEvent(eventData);
     }
 
     HandleHoveredStateChanged();
+}
+
+void GuiWidget::PressedStateChanged()
+{
+    if (IsPressed())
+    {
+        GuiEvent eventData = GuiEvent::PressStartEvent(this, mPressMouseButton, gInputsManager.mCursorPosition);
+        DispatchEvent(eventData);
+    }
+    else
+    {
+        GuiEvent eventData = GuiEvent::PressEndEvent(this, mPressMouseButton, gInputsManager.mCursorPosition);
+        DispatchEvent(eventData);
+
+        mPressMouseButton = eMouseButton_null;
+    }
+
+    HandlePressedStateChanged();
 }
 
 Point GuiWidget::ComputeOriginPixels() const
@@ -1148,7 +1099,7 @@ Point GuiWidget::ComputePositionPixels() const
         return outputPoint;
     }
 
-    const Point& parentSize = mParent ? mParent->mSize : gGraphicsDevice.mScreenResolution;
+    Point parentSize = mParent ? mParent->mSize : Point(0, 0);
 
     if (mPositionUnitsX == eGuiUnits_Percents)
     {
@@ -1174,7 +1125,7 @@ Point GuiWidget::ComputeSizePixels() const
         return outputSize;
     }
 
-    const Point& parentSize = mParent ? mParent->mSize : gGraphicsDevice.mScreenResolution;
+    Point parentSize = mParent ? mParent->mSize : Point(0, 0);
 
     if (mSizeUnitsW == eGuiUnits_Percents)
     {
@@ -1199,25 +1150,43 @@ GuiWidget* GuiWidget::CreateClone()
 
 void GuiWidget::SetupAnchorsOffsets()
 {
-    mAnchorDistL = 0;
-    mAnchorDistT = 0;
-    mAnchorDistR = 0;
-    mAnchorDistB = 0;
-
-    const Point& parentSize = mParent ? mParent->mSize : gGraphicsDevice.mScreenResolution;
-
-    mAnchorDistL = mPosition.x - mOrigin.x;
-    mAnchorDistT = mPosition.y - mOrigin.y;
-    mAnchorDistR = parentSize.x - (mAnchorDistL + mSize.x);
-    mAnchorDistB = parentSize.y - (mAnchorDistT + mSize.y);
+    if (mParent)
+    {
+        mAnchorDistL = mPosition.x - mOrigin.x;
+        mAnchorDistT = mPosition.y - mOrigin.y;
+        mAnchorDistR = mParent->mSize.x - (mAnchorDistL + mSize.x);
+        mAnchorDistB = mParent->mSize.y - (mAnchorDistT + mSize.y);
+    }
+    else
+    {
+        mAnchorDistL = 0;
+        mAnchorDistT = 0;
+        mAnchorDistR = 0;
+        mAnchorDistB = 0;
+    }
 }
 
-void GuiWidget::Deselect()
+void GuiWidget::GetMouseCapture()
 {
-    if (IsSelected())
-    {
-        gGuiManager.SetSelectedWidget(nullptr);
-    }
+    gGuiManager.SetMouseCapture(this);
+}
+
+void GuiWidget::ReleaseMouseCapture()
+{
+    gGuiManager.ReleaseMouseCapture(this);
+}
+
+void GuiWidget::DispatchEvent(const GuiEvent& eventData)
+{
+    // notify widget actions
+    mActions.PerformActions(eventData);
+
+    gGuiManager.BroadcastEvent(eventData);
+}
+
+void GuiWidget::UpdateLayout()
+{
+    mLayout.LayoutElements(this);
 }
 
 void GuiWidget::SetActionsContext(GuiActionContext* context)
@@ -1225,33 +1194,51 @@ void GuiWidget::SetActionsContext(GuiActionContext* context)
     mActionsContext = context;
 }
 
-bool GuiWidget::IsSelected() const
-{
-    return gGuiManager.mSelectedWidget == this;
-}
-
-void GuiWidget::LoadActions(cxx::json_node_object actionsNode)
+void GuiWidget::LoadActions(cxx::json_node_array actionsNode)
 {
     // iterate events
-    for (cxx::json_node_array currNode = actionsNode.first_child(); currNode;
-        currNode = currNode.next_sibling())
+    for (cxx::json_node_object currActionNode = actionsNode.first_child(); currActionNode;
+        currActionNode = currActionNode.next_sibling())
     {
-        cxx::unique_string eventId = cxx::unique_string(currNode.get_element_name());
+        cxx::unique_string eventId;
+        cxx::json_get_attribute(currActionNode, "event", eventId);
 
-        // iterate actions
-        for (cxx::json_node_object currActionNode = currNode.first_child(); currActionNode;
-            currActionNode = currActionNode.next_sibling())
+        if (eventId.empty())
         {
-            GuiAction* widgetAction = gGuiActionsFactory.DeserializeAction(currActionNode);
-            if (widgetAction == nullptr)
-            {
-                debug_assert(false);
-                continue;
-            }
-
-            mActions.AddAction(eventId, widgetAction);
+            debug_assert(false);
+            continue;
         }
+
+        GuiAction* widgetAction = gGuiActionsFactory.DeserializeAction(currActionNode);
+        if (widgetAction)
+        {
+            mActions.AddAction(eventId, widgetAction);
+            continue;
+        }
+        debug_assert(widgetAction);
     }    
+}
+
+void GuiWidget::NotifyHoverStateChange(bool isHovered)
+{
+    if (mHovered == isHovered)
+        return;
+
+    mHovered = isHovered;
+    HoveredStateChanged();
+}
+
+void GuiWidget::NotifyMouseCaptureStateChange(bool isMouseCapture)
+{
+    if (isMouseCapture)
+        return;
+
+    // cancel pressed state
+    if (IsPressed())
+    {
+        mPressed = false;
+        PressedStateChanged();
+    }
 }
 
 bool GuiWidget::ResolveCondition(const cxx::unique_string& name, bool& isTrue) const
@@ -1266,7 +1253,7 @@ bool GuiWidget::ResolveCondition(const cxx::unique_string& name, bool& isTrue) c
 
     if (name == id_pressed)
     {
-        isTrue = IsSelected();
+        isTrue = IsPressed();
         return true;
     }
 
@@ -1278,13 +1265,13 @@ bool GuiWidget::ResolveCondition(const cxx::unique_string& name, bool& isTrue) c
 
     if (name == id_enabled)
     {
-        isTrue = IsEnabled();
+        isTrue = IsEnabledWithParent();
         return true;
     }
 
     if (name == id_visible)
     {
-        isTrue = IsVisible();
+        isTrue = IsVisibleWithParent();
         return true;
     }
 

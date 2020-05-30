@@ -1,10 +1,7 @@
 #pragma once
 
 #include "GameObjectComponent.h"
-#include "AnimModelComponent.h"
-#include "TransformComponent.h"
-#include "TerrainMeshComponent.h"
-#include "WaterLavaMeshComponent.h"
+#include "GameDefs.h"
 
 class GameObject: public cxx::noncopyable
 {
@@ -12,9 +9,13 @@ public:
     Color32 mDebugColor; // color used for debug draw
 
     float mDistanceToCameraSquared; // this value gets updated during scene rendition
-    
+
     // readonly
-    GameObjectInstanceID mInstanceID;
+    const GameObjectInstanceID mInstanceID;
+
+    // components cache
+    TransformComponent* mTransformComponent = nullptr;
+    RenderableComponent* mRenderableComponent = nullptr;
 
 public:
     GameObject(GameObjectInstanceID instanceID);
@@ -28,41 +29,48 @@ public:
     // @param component: Component instance
     bool AddComponent(GameObjectComponent* component);
     void DeleteComponent(GameObjectComponent* component);
-    void DeleteComponent(eGameObjectComponent componentId);
+
+    template<typename TComponent>
+    inline void DeleteComponent()
+    {
+        GameObjectComponent* componentWithType = nullptr;
+        for (GameObjectComponent* currComponent: mComponents)
+        {
+            if (cxx::rtti_cast<TComponent>(currComponent))
+            {
+                componentWithType = currComponent;
+                break;
+            }
+        }
+        if (componentWithType)
+        {
+            DeleteComponent(currComponent);
+        }
+    }
 
     // destroy all components including transform
     void DeleteAllComponents();
-    void DeleteRenderableComponents();
+
+    // get component by type
+    template<typename TComponent>
+    inline TComponent* GetComponent() const
+    {
+        for (GameObjectComponent* currComponent: mComponents)
+        {
+            if (TComponent* componentWithType = cxx::rtti_cast<TComponent>(currComponent))
+                return componentWithType;
+        }
+        return nullptr;
+    }
 
     // test whether object has specific component
-    // @param componentId: Component type identifier
-    bool HasComponent(eGameObjectComponent componentId) const;
-    bool HasUpdatableComponents() const;
-    bool HasRenderableComponents() const;
+    template<typename TComponent>
+    inline bool HasComponent() const
+    {
+        if (TComponent* componentWithType = GetComponent<TComponent>())
+            return true;
 
-    // get attached animating model component
-    // @returns null if object does not have component
-    inline AnimModelComponent* GetAnimatingModelComponent() const
-    {
-        return GetComponent<AnimModelComponent>(eGameObjectComponent_AnimatingModel);
-    }
-    // get attached transform and bounds component
-    // @returns null if object does not have component
-    inline TransformComponent* GetTransformComponent() const
-    {
-        return GetComponent<TransformComponent>(eGameObjectComponent_Transform);
-    }
-    // get attached terrain mesh component
-    // @returns null if object does not have component
-    inline TerrainMeshComponent* GetTerrainMeshComponent() const
-    {
-        return GetComponent<TerrainMeshComponent>(eGameObjectComponent_TerrainMesh);
-    }
-    // get attached water or lava mesh component
-    // @returns null if object does not have component
-    inline WaterLavaMeshComponent* GetWaterLavaMeshComponent() const
-    {
-        return GetComponent<WaterLavaMeshComponent>(eGameObjectComponent_WaterLavaMesh);
+        return false;
     }
 
     // test whether game object is currently attached to scene and therefore may be rendered
@@ -70,14 +78,19 @@ public:
     void SetAttachedToScene(bool isAttached);
 
 private:
-
-    template<typename TObjectComponent>
-    inline TObjectComponent* GetComponent(eGameObjectComponent componentId) const
+    inline GameObjectComponent* GetComponentByRttiType(const cxx::rtti_type* rttiType) const
     {
-        return static_cast<TObjectComponent*>(mComponents[componentId]);
+        for (GameObjectComponent* currComponent: mComponents)
+        {
+            if (rttiType == currComponent->get_rtti_type())
+                return currComponent;
+        }
+        return nullptr;
     }
 
+    void UpdateComponentsCache();
+
 private:
-    GameObjectComponent* mComponents[eGameObjectComponent_Count];
+    std::vector<GameObjectComponent*> mComponents;
     bool mIsAttachedToScene;
 };

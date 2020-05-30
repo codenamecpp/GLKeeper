@@ -214,14 +214,6 @@ impl_enum_strings(eSceneCameraMode)
     {eSceneCameraMode_Orthographic, "orthographic"},
 };
 
-impl_enum_strings(eGameObjectComponent)
-{
-    {eGameObjectComponent_Transform, "transform"},
-    {eGameObjectComponent_TerrainMesh, "terrain_mesh"},
-    {eGameObjectComponent_WaterLavaMesh, "water_lava_mesh"},
-    {eGameObjectComponent_AnimatingModel, "animating_model"},
-};
-
 impl_enum_strings(ePlayerID)
 {
     {ePlayerID_Null, "null"},
@@ -324,6 +316,18 @@ impl_enum_strings(eDirection)
     {eDirection_NW, "NW"},
 };
 
+impl_enum_strings(eGuiLayout)
+{
+    {eGuiLayout_None, "none"},
+    {eGuiLayout_SimpleGrid, "simple_grid"},
+};
+
+impl_enum_strings(eGuiLayoutOrientation)
+{
+    {eGuiLayoutOrientation_Horizontal, "horz"},
+    {eGuiLayoutOrientation_Vertical, "vert"},
+};
+
 impl_enum_strings(eGuiVertAlignment)
 {
     {eGuiVertAlignment_None, "none"},
@@ -361,4 +365,14 @@ impl_enum_strings(eGuiAnimationLoop)
     {eGuiAnimationLoop_None, "none"},
     {eGuiAnimationLoop_PingPong, "ping_pong"},
     {eGuiAnimationLoop_FromStart, "from_start"},
+};
+
+impl_enum_strings(eMapInteractionMode)
+{
+    {eMapInteractionMode_Free, "free_mode"},
+    {eMapInteractionMode_CastSpells, "cast_spells"},
+    {eMapInteractionMode_ConstructRooms, "construct_rooms"},
+    {eMapInteractionMode_SellRooms, "sell_rooms"},
+    {eMapInteractionMode_ConstructTraps, "construct_traps"},
+    {eMapInteractionMode_DigTerrain, "dig_terrain"},
 };

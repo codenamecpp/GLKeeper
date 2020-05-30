@@ -116,7 +116,27 @@ void GuiRenderer::FillRect(const Rectangle& rect, Color32 fillColor)
 
 void GuiRenderer::DrawRect(const Rectangle& rect, Color32 lineColor, int lineWidth)
 {
-    // todo
+    Rectangle rc;
+    // left
+    rc.x = rect.x;
+    rc.y = rect.y;
+    rc.w = lineWidth;
+    rc.h = rect.h;
+    FillRect(rc, lineColor);
+
+    // right
+    rc.x = (rect.x + rect.w) - lineWidth;
+    FillRect(rc, lineColor);
+
+    // top
+    rc.x = rect.x + lineWidth;
+    rc.w = rect.w - (lineWidth * 2);
+    rc.h = lineWidth;
+    FillRect(rc, lineColor);
+
+    // bottom
+    rc.y = (rect.y + rect.h) - lineWidth;
+    FillRect(rc, lineColor);
 }
 
 void GuiRenderer::DrawQuads(Texture2D* texture, const GuiQuadStruct* quads, int quadsCount)

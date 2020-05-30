@@ -298,8 +298,8 @@ public:
 public:
     RoomTypeID mRoomType;
     std::string mRoomName;
-    ArtResource mGuiIcon;
-    ArtResource mEditorIcon;
+    ArtResource mGuiIconResource;
+    ArtResource mEditorIconResource;
     ArtResource mCompleteResource;
     ArtResource mStraightResource;
     ArtResource mInsideCornerResource;
@@ -376,11 +376,11 @@ public:
 public:
     GameObjectTypeID mObjectClass;
     std::string mObjectName; 
-    ArtResource mResourceMesh; 
-    ArtResource mResourceGuiIcon;
-    ArtResource mResourceInHandIcon; 
-    ArtResource mResourceInHandMesh;
-    ArtResource mResourceUnknown;
+    ArtResource mMeshResource; 
+    ArtResource mGuiIconResource;
+    ArtResource mInHandIconResource; 
+    ArtResource mInHandMeshResource;
+    ArtResource mUnknownResource;
     float mWidth;
     float mHeight;
     float mPhysicsMass;

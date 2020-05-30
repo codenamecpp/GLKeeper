@@ -4,6 +4,7 @@
 #include "GuiHelpers.h"
 #include "GuiEvent.h"
 #include "GuiPictureBox.h"
+#include "GuiManager.h"
 
 GuiActionsFactory gGuiActionsFactory;
 
@@ -15,10 +16,9 @@ GuiAction::GuiAction(const GuiAction* copyAction)
 {
 }
 
-void GuiAction::PerformAction(GuiWidget* parentWidget)
+void GuiAction::PerformAction(GuiWidget* parentWidget, const GuiEvent& eventData)
 {
-    if (!EvaluateConditions(parentWidget))
-        return;
+    bool isConditionsTrue = EvaluateConditions(parentWidget, eventData);
 
     GuiWidget* target = parentWidget;
     if (!mTargetPath.empty())
@@ -28,7 +28,14 @@ void GuiAction::PerformAction(GuiWidget* parentWidget)
     debug_assert(target);
     if (target)
     {
-        HandlePerformAction(target);
+        if (isConditionsTrue)
+        {
+            HandlePerformAction(target);
+        }
+        else
+        {
+            HandlePerformActionOnConditionsFail(target);
+        }
     }
 }
 
@@ -57,16 +64,19 @@ GuiAction* GuiAction::CloneAction()
     return HandleCloneAction();
 }
 
-bool GuiAction::EvaluateConditions(GuiWidget* parentWidget) const
+bool GuiAction::EvaluateConditions(GuiWidget* parentWidget, const GuiEvent& eventData) const
 {
     debug_assert(parentWidget);
 
     bool isTrue = true;
     if (mConditions.non_null())
     {
-        isTrue = mConditions.evaluate_expression([parentWidget](const cxx::unique_string& name)
+        isTrue = mConditions.evaluate_expression([parentWidget, &eventData](const cxx::unique_string& name)
         {
             bool condition;
+            if (eventData.ResolveCondition(name, condition))
+                return condition;
+
             return parentWidget->ResolveCondition(name, condition) && condition;
         });
     }
@@ -201,7 +211,8 @@ public:
             debug_assert(false);
             return;
         }
-        targetWidget->mActions.EmitEvent(mEventId);
+        GuiEvent eventData(targetWidget, mEventId);
+        targetWidget->mActions.PerformActions(eventData);
     }
     bool HandleDeserialize(cxx::json_node_object actionNode) override
     {
@@ -212,6 +223,41 @@ public:
     GuiWidgetActionEmitEvent* HandleCloneAction() override
     {
         return new GuiWidgetActionEmitEvent(this);
+    }
+private:
+    cxx::unique_string mEventId;
+};
+
+//////////////////////////////////////////////////////////////////////////
+
+class GuiWidgetActionNotify: public GuiAction
+{
+public:
+    GuiWidgetActionNotify() = default;
+    GuiWidgetActionNotify(const GuiWidgetActionNotify* copyAction)
+        : GuiAction(copyAction)
+        , mEventId(copyAction->mEventId)
+    {
+    }
+    void HandlePerformAction(GuiWidget* targetWidget) override
+    {
+        if (mEventId.empty())
+        {
+            debug_assert(false);
+            return;
+        }
+        GuiEvent eventData(targetWidget, mEventId);
+        gGuiManager.BroadcastEvent(eventData);
+    }
+    bool HandleDeserialize(cxx::json_node_object actionNode) override
+    {
+        cxx::json_get_attribute(actionNode, "value", mEventId);
+        debug_assert(!mEventId.empty());
+        return true;
+    }
+    GuiWidgetActionNotify* HandleCloneAction() override
+    {
+        return new GuiWidgetActionNotify(this);
     }
 private:
     cxx::unique_string mEventId;
@@ -245,6 +291,34 @@ public:
     }
 private:
     Color32 mBackgroundColor = Color32_Gray;
+};
+
+//////////////////////////////////////////////////////////////////////////
+
+class GuiWidgetActionVisibility: public GuiAction
+{
+public:
+    GuiWidgetActionVisibility() = default;
+    GuiWidgetActionVisibility(const GuiWidgetActionVisibility* copyAction)
+        : GuiAction(copyAction)
+    {
+    }
+    void HandlePerformAction(GuiWidget* targetWidget) override
+    {
+        targetWidget->SetVisible(true);
+    }
+    void HandlePerformActionOnConditionsFail(GuiWidget* targetWidget) override
+    {
+        targetWidget->SetVisible(false);
+    }
+    bool HandleDeserialize(cxx::json_node_object actionNode) override
+    {
+        return true;
+    }
+    GuiWidgetActionVisibility* HandleCloneAction() override
+    {
+        return new GuiWidgetActionVisibility(this);
+    }
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -286,13 +360,13 @@ void GuiActionsHolder::ClearActions()
     mActionsList.clear();
 }
 
-void GuiActionsHolder::EmitEvent(cxx::unique_string eventId)
+void GuiActionsHolder::PerformActions(const GuiEvent& eventData)
 {
     for (const EventActionStruct& curr: mActionsList)
     {
-        if (curr.mEventId == eventId)
+        if (curr.mEventId == eventData.mEventId)
         {
-            curr.mAction->PerformAction(mParentWidget);
+            curr.mAction->PerformAction(mParentWidget, eventData);
         }
     }
 }
@@ -339,9 +413,17 @@ GuiAction* GuiActionsFactory::DeserializeAction(cxx::json_node_object actionNode
     {
         action = new GuiWidgetActionEmitEvent;
     }
+    else if (actionId == "notify")
+    {
+        action = new GuiWidgetActionNotify;
+    }
     else if (actionId == "background_color")
     {
         action = new GuiWidgetActionBackgroundColor;
+    }
+    else if (actionId == "visibility")
+    {
+        action = new GuiWidgetActionVisibility;
     }
 
     debug_assert(action);

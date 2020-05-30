@@ -2,7 +2,7 @@
 
 #include "MeshViewGamestate.h"
 #include "GameplayGamestate.h"
-#include "LayoutsEditGamestate.h"
+#include "GuiTestGamestate.h"
 #include "ToolsUISceneStatisticsWindow.h"
 
 // game core
@@ -13,8 +13,9 @@ class GameMain: public cxx::noncopyable
     friend class GameplayGamestate;
 
 public:
-    // readonly
-    GenericGamestate* mCurrentGamestate = nullptr;
+    MeshViewGamestate mMeshViewGamestate;
+    GameplayGamestate mGameplayGamestate;
+    GuiTestGamestate mGuiTestGamestate;
 
 public:
 
@@ -30,16 +31,16 @@ public:
 
     // process input event
     // @param inputEvent: Event data
-    void HandleInputEvent(MouseButtonInputEvent& inputEvent);
-    void HandleInputEvent(MouseMovedInputEvent& inputEvent);
-    void HandleInputEvent(MouseScrollInputEvent& inputEvent);
-    void HandleInputEvent(KeyInputEvent& inputEvent);
-    void HandleInputEvent(KeyCharEvent& inputEvent);
+    void ProcessInputEvent(MouseButtonInputEvent& inputEvent);
+    void ProcessInputEvent(MouseMovedInputEvent& inputEvent);
+    void ProcessInputEvent(MouseScrollInputEvent& inputEvent);
+    void ProcessInputEvent(KeyInputEvent& inputEvent);
+    void ProcessInputEvent(KeyCharEvent& inputEvent);
 
-    // determine current game state
+    // detect current active game gamestate
     bool IsMeshViewGamestate() const;
     bool IsGameplayGamestate() const;
-    bool IsLayoutsEditGamestate() const;
+    bool IsGuiTestGamestate() const;
 
     void HandleScreenResolutionChanged();
 
@@ -47,10 +48,7 @@ private:
     void SwitchToGameState(GenericGamestate* gamestate);
 
 private:
-    MeshViewGamestate mMeshViewGamestate;
-    GameplayGamestate mGameplayGamestate;
-    LayoutsEditGamestate mLayoutsEditGamestate;
-
+    GenericGamestate* mCurrentGamestate = nullptr;
     ToolsUISceneStatisticsWindow mFpsWindow;
 };
 

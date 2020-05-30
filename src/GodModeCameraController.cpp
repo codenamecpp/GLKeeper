@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "GodModeCameraController.h"
+#include "GodmodeCameraController.h"
 #include "System.h"
 #include "RenderScene.h"
 #include "GraphicsDevice.h"
@@ -15,7 +15,7 @@
 #define CAM_MAX_DISTANCE            100.0f
 #define CAM_MIN_DISTANCE            0.5f
 
-GodModeCameraController::GodModeCameraController()
+GodmodeCameraController::GodmodeCameraController()
     : mFocusPoint()
     , mDegYaw(CAM_DEFAULT_YAW_ANGLE)
     , mDegPitch(CAM_DEFAULT_PITCH_ANGLE)
@@ -35,7 +35,7 @@ GodModeCameraController::GodModeCameraController()
 {
 }
 
-void GodModeCameraController::Set3rdPersonParams(float yawDegrees, float pitchDegrees, float distance)
+void GodmodeCameraController::Set3rdPersonParams(float yawDegrees, float pitchDegrees, float distance)
 {
     mDegYaw = yawDegrees;
     mDegPitch = pitchDegrees;
@@ -44,14 +44,14 @@ void GodModeCameraController::Set3rdPersonParams(float yawDegrees, float pitchDe
     SetupCameraView();
 }
 
-void GodModeCameraController::SetFocusPoint(const glm::vec3& position)
+void GodmodeCameraController::SetFocusPoint(const glm::vec3& position)
 {
     mFocusPoint = position;
 
     SetupCameraView();
 }
 
-void GodModeCameraController::StopCameraActivity()
+void GodmodeCameraController::StopCameraActivity()
 {
     mIncreasingFov = false;
     mDecreasingFov = false;
@@ -69,7 +69,7 @@ void GodModeCameraController::StopCameraActivity()
     mMovingAltMode = false;
 }
 
-void GodModeCameraController::HandleUpdateFrame(float dtseconds)
+void GodmodeCameraController::HandleUpdateFrame(float dtseconds)
 {
     glm::vec3 moveDirection {};
     float elevation = 0.0f;
@@ -145,30 +145,30 @@ void GodModeCameraController::HandleUpdateFrame(float dtseconds)
     SetupCameraView();
 }
 
-void GodModeCameraController::HandleSceneAttach()
+void GodmodeCameraController::HandleSceneAttach()
 {
     SetupCameraProjection();
     SetupCameraView();
     StopCameraActivity();
 }
 
-void GodModeCameraController::HandleSceneDetach()
+void GodmodeCameraController::HandleSceneDetach()
 {
 }
 
-void GodModeCameraController::HandleInputEvent(MouseButtonInputEvent& inputEvent)
+void GodmodeCameraController::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
 }
 
-void GodModeCameraController::HandleInputEvent(MouseMovedInputEvent& inputEvent)
+void GodmodeCameraController::HandleInputEvent(MouseMovedInputEvent& inputEvent)
 {
 }
 
-void GodModeCameraController::HandleInputEvent(MouseScrollInputEvent& inputEvent)
+void GodmodeCameraController::HandleInputEvent(MouseScrollInputEvent& inputEvent)
 {
 }
 
-void GodModeCameraController::HandleInputEvent(KeyInputEvent& inputEvent)
+void GodmodeCameraController::HandleInputEvent(KeyInputEvent& inputEvent)
 {
     if (inputEvent.mKeycode == eKeycode_0)
     {
@@ -213,16 +213,16 @@ void GodModeCameraController::HandleInputEvent(KeyInputEvent& inputEvent)
     }
 }
 
-void GodModeCameraController::HandleInputEvent(KeyCharEvent& inputEvent)
+void GodmodeCameraController::HandleInputEvent(KeyCharEvent& inputEvent)
 {
 }
 
-void GodModeCameraController::HandleScreenResolutionChanged()
+void GodmodeCameraController::HandleScreenResolutionChanged()
 {
     SetupCameraProjection();
 }
 
-void GodModeCameraController::SetupCameraView()
+void GodmodeCameraController::SetupCameraView()
 {
     if (mSceneCamera == nullptr)
         return;
@@ -240,7 +240,7 @@ void GodModeCameraController::SetupCameraView()
     mSceneCamera->FocusAt(mFocusPoint);
 }
 
-void GodModeCameraController::SetupCameraProjection()
+void GodmodeCameraController::SetupCameraProjection()
 {
     if (mSceneCamera == nullptr)
         return;

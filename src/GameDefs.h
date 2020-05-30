@@ -10,10 +10,12 @@ class GameMap;
 class MapTile;
 class GameObject;
 class GameObjectComponent;
-class AnimModelComponent;
-class TerrainMeshComponent;
-class WaterLavaMeshComponent;
+class RenderableComponent;
 class TransformComponent;
+class AnimatingMeshComponent;
+class TerrainMeshComponent;
+class DynamicMeshComponent;
+class WaterLavaMeshComponent;
 
 // terrain type identifier
 enum TerrainTypeID: unsigned int // for sake of flexibility, do not rely on specific id
@@ -44,19 +46,6 @@ using GameObjectHandle = cxx::handle<GameObject>;
 
 // game object instance unique identifier
 using GameObjectInstanceID = unsigned long long;
-
-// scene object component type
-enum eGameObjectComponent
-{
-    eGameObjectComponent_Transform,
-    eGameObjectComponent_TerrainMesh,
-    eGameObjectComponent_WaterLavaMesh,
-    eGameObjectComponent_AnimatingModel,
-
-    eGameObjectComponent_Count,
-};
-
-decl_enum_strings(eGameObjectComponent);
 
 // array of map tiles
 using TilesArray = std::vector<MapTile*>;
@@ -331,7 +320,7 @@ inline bool IsDiagonalDirection(eDirection direction)
 // @param outputBounds: Output bounds
 inline void GetMapBlockBounds(const Point& blockLocation, cxx::aabbox& outputBounds)
 {
-    outputBounds.reset();
+    outputBounds.clear();
     // min
     outputBounds.mMin.x = (blockLocation.x * DUNGEON_CELL_SIZE) - DUNGEON_CELL_HALF_SIZE;
     outputBounds.mMin.y = 0.0f;
@@ -349,3 +338,14 @@ inline void GetMapBlockCenter(const Point& blockLocation, glm::vec3& outputCoord
     outputCoord.y = 1.0f;
     outputCoord.z = blockLocation.y * DUNGEON_CELL_SIZE;
 }
+
+enum eMapInteractionMode
+{
+    eMapInteractionMode_Free, // can tag terrain, pick creatures, interact with objects
+    eMapInteractionMode_CastSpells, // can cast spells
+    eMapInteractionMode_ConstructRooms, // can tag terrain, construct rooms
+    eMapInteractionMode_SellRooms, // can sell rooms
+    eMapInteractionMode_ConstructTraps, // can place traps
+    eMapInteractionMode_DigTerrain, // can claim or destroy terrain tiles
+};
+decl_enum_strings(eMapInteractionMode);

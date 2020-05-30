@@ -8,7 +8,7 @@ class GuiActionsHolder;
 
 //////////////////////////////////////////////////////////////////////////
 
-class GuiActionContext: public cxx::noncopyable
+class GuiActionContext
 {
 public:
     virtual ~GuiActionContext()
@@ -26,7 +26,7 @@ public:
 class GuiAction: public cxx::noncopyable
 {
 public:
-    void PerformAction(GuiWidget* parentWidget);
+    void PerformAction(GuiWidget* parentWidget, const GuiEvent& eventData);
     void ReleaseAction();
     bool Deserialize(cxx::json_node_object actionNode);
     GuiAction* CloneAction();
@@ -38,11 +38,12 @@ protected:
     {
     }
 
-    bool EvaluateConditions(GuiWidget* parentWidget) const;
+    bool EvaluateConditions(GuiWidget* parentWidget, const GuiEvent& eventData) const;
 
 protected:
     // overridables
     virtual void HandlePerformAction(GuiWidget* targetWidget) = 0;
+    virtual void HandlePerformActionOnConditionsFail(GuiWidget* targetWidget) {}
     virtual bool HandleDeserialize(cxx::json_node_object actionNode)
     {
         return true;
@@ -67,14 +68,14 @@ public:
 public:
     GuiActionsHolder(GuiWidget* actionsParentWidget);
     ~GuiActionsHolder();
+    void CopyActions(const GuiActionsHolder& source);
 
     // add action to controller
     void AddAction(cxx::unique_string eventId, GuiAction* action);
     void ClearActions();
-    void CopyActions(const GuiActionsHolder& source);
 
     // invoke actions associated with event id
-    void EmitEvent(cxx::unique_string eventId);
+    void PerformActions(const GuiEvent& eventData);
 
 private:
     struct EventActionStruct

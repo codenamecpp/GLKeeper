@@ -6,11 +6,11 @@
 #include "GuiPictureBox.h"
 #include "InputsManager.h"
 #include "GuiButton.h"
-#include "GuiPanel.h"
 #include "GuiScrollbar.h"
 #include "GuiHierarchy.h"
 #include "GraphicsDevice.h"
 #include "FileSystem.h"
+#include "GuiScreen.h"
 
 GuiManager gGuiManager;
 
@@ -23,47 +23,53 @@ GuiManager::GuiManager()
 bool GuiManager::Initialize()
 {
     RegisterWidgetsClasses();
+    LoadScreenRecords();
     return true;
 }
 
 void GuiManager::Deinit()
 {
     UnregisterWidgetsClasses();
-
     ClearEventsQueue();
-
     UnregisterAllEventsHandlers();
-    SetSelectedWidget(nullptr);
-    DetachAllWidgets();
+    SetMouseCapture(nullptr);
+    DetachAllScreens();
+    FreeScreenRecords();
 }
 
 void GuiManager::RenderFrame(GuiRenderer& renderContext)
 {
-    // render widgets
-    for (GuiHierarchy* currHier: mHiersList)
+    // render screens from back to front
+    for (auto curr_iterator = mScreensList.rbegin(); 
+        curr_iterator != mScreensList.rend(); ++curr_iterator)
     {
-        currHier->RenderFrame(renderContext);
+        if (curr_iterator->mInstance)
+        {
+            curr_iterator->mInstance->RenderFrame(renderContext);
+        }
     }
 }
 
 void GuiManager::UpdateFrame()
 {
+    // update screens
+    for (const ScreenElement& currElement: mScreensList)
+    {
+        if (currElement.mInstance)
+        {
+            currElement.mInstance->UpdateFrame();
+        }
+    }
+
+    UpdateHoveredWidget();
     ProcessEventsQueue();
-
-    // update widgets
-    for (GuiHierarchy* currHier: mHiersList)
-    {
-        currHier->UpdateFrame();
-    }
-
-    ScanHoveredWidget();
 }
 
-void GuiManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
+void GuiManager::ProcessInputEvent(MouseButtonInputEvent& inputEvent)
 {
-    if (mSelectedWidget)
+    if (mMouseCaptureWidget)
     {
-        mSelectedWidget->ProcessEvent(inputEvent);
+        mMouseCaptureWidget->ProcessEvent(inputEvent);
 
         // skip hovered widget
         return;
@@ -75,13 +81,13 @@ void GuiManager::HandleInputEvent(MouseButtonInputEvent& inputEvent)
     }
 }
 
-void GuiManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
+void GuiManager::ProcessInputEvent(MouseMovedInputEvent& inputEvent)
 {
-    ScanHoveredWidget(); // do extra scan
+    UpdateHoveredWidget(); // do extra scan
 
-    if (mSelectedWidget)
+    if (mMouseCaptureWidget)
     {
-        mSelectedWidget->ProcessEvent(inputEvent);
+        mMouseCaptureWidget->ProcessEvent(inputEvent);
 
         // skip hovered widget
         return;
@@ -93,11 +99,11 @@ void GuiManager::HandleInputEvent(MouseMovedInputEvent& inputEvent)
     }
 }
 
-void GuiManager::HandleInputEvent(MouseScrollInputEvent& inputEvent)
+void GuiManager::ProcessInputEvent(MouseScrollInputEvent& inputEvent)
 {
-    if (mSelectedWidget)
+    if (mMouseCaptureWidget)
     {
-        mSelectedWidget->ProcessEvent(inputEvent);
+        mMouseCaptureWidget->ProcessEvent(inputEvent);
 
         // skip hovered widget
         return;
@@ -109,34 +115,58 @@ void GuiManager::HandleInputEvent(MouseScrollInputEvent& inputEvent)
     }
 }
 
-void GuiManager::HandleInputEvent(KeyInputEvent& inputEvent)
+void GuiManager::ProcessInputEvent(KeyInputEvent& inputEvent)
 {
 }
 
-void GuiManager::HandleInputEvent(KeyCharEvent& inputEvent)
+void GuiManager::ProcessInputEvent(KeyCharEvent& inputEvent)
 {
 }
 
-void GuiManager::ScanHoveredWidget()
+void GuiManager::UpdateHoveredWidget()
 {
     GuiWidget* newHovered = nullptr;
 
-    if (mSelectedWidget)
+    if (mHoveredWidget)
     {
-        newHovered = mSelectedWidget->PickWidget(gInputsManager.mCursorPosition);
+        if (!mHoveredWidget->IsVisibleWithParent() ||
+            !mHoveredWidget->IsEnabledWithParent())
+        {
+            mHoveredWidget->NotifyHoverStateChange(false);
+            mHoveredWidget.reset();
+        }
+    }
+
+    // update mouse capture widget
+    if (mMouseCaptureWidget)
+    {
+        if (!mMouseCaptureWidget->IsVisibleWithParent() ||
+            !mMouseCaptureWidget->IsEnabledWithParent())
+        {
+            mMouseCaptureWidget->NotifyMouseCaptureStateChange(false);
+            mMouseCaptureWidget.reset();
+        }
+
+        newHovered = mMouseCaptureWidget->PickWidget(gInputsManager.mCursorPosition);
     }
 
     if (newHovered == nullptr)
     {
-        for (auto reverse_iter = mHiersList.rbegin(); reverse_iter != mHiersList.rend(); ++reverse_iter)
+        for (const ScreenElement& currElement: mScreensList)
         {
-            GuiHierarchy* currentHier = *reverse_iter;
-            if (currentHier->mRootWidget == nullptr)
+            GuiScreen* currentScreen = currElement.mInstance;
+            if (currentScreen == nullptr || !currentScreen->IsScreenShown())
+            {
                 continue;
+            }
 
-            newHovered = currentHier->mRootWidget->PickWidget(gInputsManager.mCursorPosition);
-            if (newHovered)
+            GuiHierarchy& hier = currentScreen->mHier;
+            newHovered = hier.PickWidget(gInputsManager.mCursorPosition);
+
+            if (newHovered || currentScreen->IsScreenModal())
+            {
                 break;
+            }
         }
     }
 
@@ -145,13 +175,12 @@ void GuiManager::ScanHoveredWidget()
 
     if (mHoveredWidget)
     {
-        mHoveredWidget->SetHovered(false);
+        mHoveredWidget->NotifyHoverStateChange(false);
     }
-
     mHoveredWidget = newHovered;
     if (mHoveredWidget)
     {
-        mHoveredWidget->SetHovered(true);
+        mHoveredWidget->NotifyHoverStateChange(true);
     }
 }
 
@@ -176,7 +205,6 @@ void GuiManager::RegisterWidgetsClasses()
     RegisterWidgetClass(&GuiWidget::MetaClass);
     RegisterWidgetClass(&GuiPictureBox::MetaClass);
     RegisterWidgetClass(&GuiButton::MetaClass);
-    RegisterWidgetClass(&GuiPanel::MetaClass);
     RegisterWidgetClass(&GuiScrollbar::MetaClass);
 }
 
@@ -206,19 +234,41 @@ GuiWidget* GuiManager::CreateWidget(cxx::unique_string className) const
     return nullptr;
 }
 
-void GuiManager::SetSelectedWidget(GuiWidget* mouseListener)
+void GuiManager::SetMouseCapture(GuiWidget* widget)
 {
-    if (mSelectedWidget == mouseListener)
+    if (mMouseCaptureWidget == widget)
         return;
 
-    mSelectedWidget = mouseListener;
+    if (mMouseCaptureWidget)
+    {
+        mMouseCaptureWidget->NotifyMouseCaptureStateChange(false);
+    }
+    mMouseCaptureWidget = widget;
+    if (mMouseCaptureWidget)
+    {
+        mMouseCaptureWidget->NotifyMouseCaptureStateChange(true);
+    }
+}
+
+void GuiManager::ReleaseMouseCapture(GuiWidget* widget)
+{
+    debug_assert(widget);
+    if (mMouseCaptureWidget == widget && widget)
+    {
+        mMouseCaptureWidget->NotifyMouseCaptureStateChange(false);
+        mMouseCaptureWidget.reset();
+    }
 }
 
 void GuiManager::HandleScreenResolutionChanged()
 {
-    for (GuiHierarchy* currHier: mHiersList)
-    {
-        currHier->FitLayoutToScreen(gGraphicsDevice.mScreenResolution);
+    for (ScreenElement& currElement: mScreensList)
+    {   
+        GuiScreen* screen = currElement.mInstance;
+        if (screen == nullptr || !screen->IsScreenLoaded())
+            continue;
+
+        screen->mHier.FitLayoutToScreen(gGraphicsDevice.mScreenResolution);
     }
 }
 
@@ -332,23 +382,94 @@ bool GuiManager::IsProcessingEvents() const
     return !mProcessingEventsQueue.empty();
 }
 
-void GuiManager::AttachWidgets(GuiHierarchy* hierarchy)
+void GuiManager::LoadScreenRecords()
 {
-    if (hierarchy == nullptr)
+    std::string jsonDocumentContent;
+    if (!gFileSystem.ReadTextFile("screens/gui_screens.json", jsonDocumentContent))
     {
         debug_assert(false);
         return;
     }
 
-    cxx::push_back_if_unique(mHiersList, hierarchy);
+    cxx::json_document jsonDocument;
+    if (!jsonDocument.parse_document(jsonDocumentContent))
+    {
+        debug_assert(false);
+        return;
+    }
+
+    for (cxx::json_node_object currScreenNode = jsonDocument.get_root_node().first_child();
+        currScreenNode;
+        currScreenNode = currScreenNode.next_sibling())
+    {
+        mScreensList.emplace_back();
+        ScreenElement& screenElement = mScreensList.back();
+        screenElement.mScreenId = currScreenNode.get_element_name();
+        cxx::json_get_attribute(currScreenNode, "content_path", screenElement.mContentPath);
+        if (screenElement.mContentPath.empty())
+        {
+            debug_assert(false);
+            gConsole.LogMessage(eLogMessage_Debug, "Screen '%s' content path is missing", screenElement.mScreenId.c_str());
+        }
+    }
 }
 
-void GuiManager::DetachWidgets(GuiHierarchy* hierarchy)
+void GuiManager::FreeScreenRecords()
 {
-    cxx::erase_elements(mHiersList, hierarchy);
+    mScreensList.clear();
 }
 
-void GuiManager::DetachAllWidgets()
+void GuiManager::AttachScreen(GuiScreen* screen)
 {
-    mHiersList.clear();
+    debug_assert(screen);
+    if (screen == nullptr)
+        return;
+
+    for (ScreenElement& currElement: mScreensList)
+    {
+        if (currElement.mScreenId == screen->mScreenId)
+        {
+            currElement.mInstance = screen;
+            return;
+        }
+    }
+
+    debug_assert(false);
+    gConsole.LogMessage(eLogMessage_Warning, "Unknown screen id: '%s'", screen->mScreenId.c_str());
+}
+
+void GuiManager::DetachScreen(GuiScreen* screen)
+{
+    debug_assert(screen);
+    for (ScreenElement& currElement: mScreensList)
+    {
+        if (currElement.mInstance == screen)
+        {
+            currElement.mInstance = nullptr;
+            break;
+        }
+    }
+}
+
+void GuiManager::DetachAllScreens()
+{
+    for (ScreenElement& currElement: mScreensList)
+    {
+        currElement.mInstance = nullptr;
+    }
+}
+
+bool GuiManager::GetScreenContentPath(cxx::unique_string screenId, std::string& contentPath)
+{
+    for (const ScreenElement& currElement: mScreensList)
+    {
+        if (currElement.mScreenId == screenId)
+        {
+            contentPath = currElement.mContentPath;
+            return true;
+        }
+    }
+    debug_assert(false);
+    gConsole.LogMessage(eLogMessage_Warning, "Unknown screen id: '%s'", screenId.c_str());
+    return false;
 }
