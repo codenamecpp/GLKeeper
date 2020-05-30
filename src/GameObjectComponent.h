@@ -1,11 +1,16 @@
 #pragma once
 
+// unique gameobject component identifier
+using GameObjectComponentID = unsigned int;
+
 // base class of all gameobject components
 class GameObjectComponent: public cxx::noncopyable
 {
     decl_rtti_base(GameObjectComponent) // enable rtti for components
 
 public:
+    const GameObjectComponentID mComponentID;
+
     // readonly
     GameObject* mGameObject;
 
@@ -28,7 +33,15 @@ protected:
     // base component does not meant to be instantiated directly
     GameObjectComponent(GameObject* sceneObject)
         : mGameObject(sceneObject)
+        , mComponentID(NextUniqueID())
     {
         debug_assert(mGameObject);
+    }
+
+private:
+    static GameObjectComponentID NextUniqueID()
+    {
+        static GameObjectComponentID IDsCounter = 0;
+        return IDsCounter++;
     }
 };

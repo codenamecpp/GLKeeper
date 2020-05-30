@@ -54,7 +54,14 @@ void GameObject::UpdateComponentsCache()
         if (mRenderableComponent)
             break;
     }
+}
 
+bool GameObject::HasComponentWithID(GameObjectComponentID componentID) const
+{
+    if (GameObjectComponent* component = GetComponentByID(componentID))
+        return true;
+
+    return false;
 }
 
 bool GameObject::IsAttachedToScene() const
@@ -70,17 +77,13 @@ bool GameObject::AddComponent(GameObjectComponent* component)
         return false;
     }
 
-    // check if exists
-    GameObjectComponent* currComponent = GetComponentByRttiType(component->get_rtti_type());
-    if (currComponent)
+    // check if component already added to gameobject
+    if (HasComponentWithID(component->mComponentID))
     {
-        if (currComponent == component)
-            return true;
-
         debug_assert(false);
-        // destroy current component
-        DeleteComponent(currComponent);
+        return true;
     }
+
     mComponents.push_back(component);
     UpdateComponentsCache();
     return true;
@@ -98,6 +101,14 @@ void GameObject::DeleteComponent(GameObjectComponent* component)
     debug_assert(component);
 }
 
+void GameObject::DeleteComponentByID(GameObjectComponentID componentID)
+{
+    if (GameObjectComponent* component = GetComponentByID(componentID))
+    {
+        DeleteComponent(component);
+    }
+}
+
 void GameObject::DeleteAllComponents()
 {
     for (GameObjectComponent* currComponent: mComponents)
@@ -106,4 +117,15 @@ void GameObject::DeleteAllComponents()
     }
     mComponents.clear();
     UpdateComponentsCache();
+}
+
+GameObjectComponent* GameObject::GetComponentByID(GameObjectComponentID componentID) const
+{
+    for (GameObjectComponent* currComponent: mComponents)
+    {
+        if (currComponent->mComponentID == componentID)
+            return currComponent;
+    }
+
+    return nullptr;
 }

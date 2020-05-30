@@ -29,6 +29,7 @@ public:
     // @param component: Component instance
     bool AddComponent(GameObjectComponent* component);
     void DeleteComponent(GameObjectComponent* component);
+    void DeleteComponentByID(GameObjectComponentID componentID);
 
     template<typename TComponent>
     inline void DeleteComponent()
@@ -48,6 +49,16 @@ public:
         }
     }
 
+    // iterate all gameobject components    
+    template<typename TProc>
+    inline void ForEachComponent(TProc proc) const
+    {
+        for (GameObjectComponent* currComponent: mComponents)
+        {
+            proc(currComponent);
+        }
+    }
+
     // destroy all components including transform
     void DeleteAllComponents();
 
@@ -63,6 +74,9 @@ public:
         return nullptr;
     }
 
+    // get gameobject component by its unique identifier
+    GameObjectComponent* GetComponentByID(GameObjectComponentID componentID) const;
+
     // test whether object has specific component
     template<typename TComponent>
     inline bool HasComponent() const
@@ -72,6 +86,8 @@ public:
 
         return false;
     }
+
+    bool HasComponentWithID(GameObjectComponentID componentID) const;
 
     // test whether game object is currently attached to scene and therefore may be rendered
     bool IsAttachedToScene() const;
