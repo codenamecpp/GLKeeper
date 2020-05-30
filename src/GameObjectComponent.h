@@ -24,7 +24,11 @@ public:
     {
         // do nothing
     }
-    // destroy gameobject component instance
+    // component post construction
+    virtual void InitializeComponent()
+    {
+    }
+    // destroy component instance
     virtual void DestroyComponent()
     {
         delete this;

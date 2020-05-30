@@ -124,13 +124,11 @@ void RenderScene::AttachObject(GameObject* sceneEntity)
 {
     debug_assert(sceneEntity);
     // already attached to scene
-    if (sceneEntity->IsAttachedToScene())
+    if (cxx::contains(mSceneObjects, sceneEntity))
     {
         debug_assert(false);
         return;
     }
-
-    sceneEntity->SetAttachedToScene(true);
     mSceneObjects.push_back(sceneEntity);
 
     // refresh aabbtree node
@@ -140,10 +138,8 @@ void RenderScene::AttachObject(GameObject* sceneEntity)
 void RenderScene::DetachObject(GameObject* sceneEntity)
 {
     debug_assert(sceneEntity);
-    if (sceneEntity->IsAttachedToScene())
+    if (cxx::contains(mSceneObjects, sceneEntity))
     {
-        sceneEntity->SetAttachedToScene(false);
-
         cxx::erase_elements(mSceneObjects, sceneEntity);
         cxx::erase_elements(mTransformObjects, sceneEntity);
     }

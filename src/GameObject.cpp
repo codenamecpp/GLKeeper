@@ -5,20 +5,15 @@
 
 GameObject::GameObject(GameObjectInstanceID instanceID)
     : mDebugColor(Color32_Green)
-    , mIsAttachedToScene()
     , mComponents()
     , mInstanceID(instanceID)
 {
     // add automatically transform component
-    TransformComponent* transformComponent = new TransformComponent(this);
-    AddComponent(transformComponent);
+    AddComponent<TransformComponent>();
 }
 
 GameObject::~GameObject()
 {
-    // entity must be detached from scene before destroy
-    debug_assert(IsAttachedToScene() == false);
-
     DeleteAllComponents();
 }
 
@@ -29,11 +24,6 @@ void GameObject::UpdateFrame(float deltaTime)
         currComponent->UpdateComponent(deltaTime);
     }
 }
-
-void GameObject::SetAttachedToScene(bool isAttached)
-{
-    mIsAttachedToScene = isAttached;
-}   
 
 void GameObject::UpdateComponentsCache()
 {
@@ -64,29 +54,14 @@ bool GameObject::HasComponentWithID(GameObjectComponentID componentID) const
     return false;
 }
 
-bool GameObject::IsAttachedToScene() const
+void GameObject::AttachComponent(GameObjectComponent* component)
 {
-    return mIsAttachedToScene;
-}
-
-bool GameObject::AddComponent(GameObjectComponent* component)
-{
-    if (component == nullptr)
-    {
-        debug_assert(false);
-        return false;
-    }
-
-    // check if component already added to gameobject
-    if (HasComponentWithID(component->mComponentID))
-    {
-        debug_assert(false);
-        return true;
-    }
+    debug_assert(component);
 
     mComponents.push_back(component);
     UpdateComponentsCache();
-    return true;
+
+    component->InitializeComponent();
 }
 
 void GameObject::DeleteComponent(GameObjectComponent* component)

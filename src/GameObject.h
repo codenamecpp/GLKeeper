@@ -27,7 +27,14 @@ public:
 
     // add or remove object component, object takes ownership on pointer
     // @param component: Component instance
-    bool AddComponent(GameObjectComponent* component);
+    template<typename TComponent, typename... TArgs>
+    inline TComponent* AddComponent(const TArgs &&...  constructionArgs)
+    {
+        TComponent* newComponent = new TComponent(this, std::forward<TArgs>(constructionArgs)...);
+        AttachComponent(newComponent);
+        return newComponent;
+    }
+
     void DeleteComponent(GameObjectComponent* component);
     void DeleteComponentByID(GameObjectComponentID componentID);
 
@@ -89,10 +96,6 @@ public:
 
     bool HasComponentWithID(GameObjectComponentID componentID) const;
 
-    // test whether game object is currently attached to scene and therefore may be rendered
-    bool IsAttachedToScene() const;
-    void SetAttachedToScene(bool isAttached);
-
 private:
     inline GameObjectComponent* GetComponentByRttiType(const cxx::rtti_type* rttiType) const
     {
@@ -104,9 +107,9 @@ private:
         return nullptr;
     }
 
+    void AttachComponent(GameObjectComponent* component);
     void UpdateComponentsCache();
 
 private:
     std::vector<GameObjectComponent*> mComponents;
-    bool mIsAttachedToScene;
 };

@@ -16,6 +16,17 @@ TransformComponent::TransformComponent(GameObject* gameObject)
 {
 }
 
+void TransformComponent::InitializeComponent()
+{
+    gRenderScene.AttachObject(mGameObject);  
+}
+
+void TransformComponent::DestroyComponent()
+{
+    gRenderScene.DetachObject(mGameObject);
+    delete this;
+}
+
 void TransformComponent::ComputeTransformation()
 {
     // refresh transformations matrix
@@ -131,10 +142,7 @@ void TransformComponent::InvalidateTransform()
     mTransformDirty = true;
     mBoundingBoxDirty = true; // force refresh world space bounds 
 
-    if (mGameObject->IsAttachedToScene())
-    {
-        gRenderScene.HandleTransformChange(mGameObject);
-    }
+    gRenderScene.HandleTransformChange(mGameObject);
 }
 
 void TransformComponent::InvalidateBounds()
@@ -143,10 +151,7 @@ void TransformComponent::InvalidateBounds()
         return;
 
     mBoundingBoxDirty = true;
-    if (mGameObject->IsAttachedToScene())
-    {
-        gRenderScene.HandleTransformChange(mGameObject);
-    }
+    gRenderScene.HandleTransformChange(mGameObject);
 }
 
 void TransformComponent::ResetOrientation()

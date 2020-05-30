@@ -22,7 +22,6 @@ TempleRoom::~TempleRoom()
 {
     if (mWaterPoolObject)
     {
-        gRenderScene.DetachObject(mWaterPoolObject);
         gGameObjectsManager.DestroyGameObject(mWaterPoolObject);
     }
 }
@@ -36,8 +35,6 @@ void TempleRoom::OnReconfigure()
     {
         if (mWaterPoolObject)
         {
-            gRenderScene.DetachObject(mWaterPoolObject);
-
             WaterLavaMeshComponent* component = mWaterPoolObject->GetComponent<WaterLavaMeshComponent>();
             debug_assert(component);
         }
@@ -49,15 +46,11 @@ void TempleRoom::OnReconfigure()
     {
         mWaterPoolObject = gGameObjectsManager.CreateGameObject();
 
-        WaterLavaMeshComponent* meshComponent = new WaterLavaMeshComponent(mWaterPoolObject);
-        mWaterPoolObject->AddComponent(meshComponent);
-
+        WaterLavaMeshComponent* meshComponent = mWaterPoolObject->AddComponent<WaterLavaMeshComponent>();
         meshComponent->SetWaterLavaTiles(waterTiles);
         meshComponent->SetSurfaceTexture(gTexturesManager.mWaterTexture);
         meshComponent->SetSurfaceParams(TEMPLE_WATER_POOL_TRANSLUCENCY, TEMPLE_WATER_POOL_WAVE_WIDTH, 
             TEMPLE_WATER_POOL_WAVE_HEIGHT, TEMPLE_WATER_POOL_WAVE_FREQ, TEMPLE_WATER_POOL_WATERLINE);
-        gRenderScene.AttachObject(mWaterPoolObject);
-
         return;
     }
 
@@ -67,11 +60,6 @@ void TempleRoom::OnReconfigure()
     if (!cxx::collections_equals(waterTiles, meshComponent->mWaterLavaTiles))
     {
         meshComponent->SetWaterLavaTiles(waterTiles);
-    }
-
-    if (!mWaterPoolObject->IsAttachedToScene())
-    {
-        gRenderScene.AttachObject(mWaterPoolObject);
     }
 }
 
