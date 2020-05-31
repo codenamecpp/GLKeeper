@@ -6,7 +6,7 @@ template<typename TVertexFormat>
 class SimpleTriMesh
 {
 public:
-    using TVertexType = TVertexFormat::TVertexType;
+    using VertexType = typename TVertexFormat::TVertexType;
 
     // ctor
     SimpleTriMesh() = default;
@@ -29,7 +29,7 @@ public:
 
     // enlarge allocated triangles count to the required size
     // @param triangleCount: Required number of triangles
-    inline void EnsureVertexCount(int triangleCount)
+    inline void EnsureTriangleCount(int triangleCount)
     {
         int triangleCount = (int) mTriangles.size();
         if (triangleCount < triangleCount)
@@ -41,7 +41,7 @@ public:
     // set vertex data
     // @param vertexData: Source
     // @param vertexCount: Number of vertices in source array
-    inline void SetVertices(const TVertexType* vertexData, int vertexCount)
+    inline void SetVertices(const VertexType* vertexData, int vertexCount)
     {
         debug_assert(vertexData);
         debug_assert(vertexCount > 0);
@@ -74,17 +74,30 @@ public:
         mTriangles.resize(triangleCount);
     }
 
+    // refresh bounding box of triangle mesh
+    inline void ComputeBounds()
+    {
+        mBoundingBox.clear();
+        for (const VertexType& currVertex: mVertices)
+        {
+            mBoundingBox.extend(currVertex.mPosition);
+        }
+    }
+
     // clear all vertices and triangles
     inline void Clear()
     {
         mTriangles.clear();
         mVertices.clear();
+        mBoundingBox.clear();
     }
 
 public:
     using TrianglesArray = std::vector<glm::ivec3>;
     TrianglesArray mTriangles;
 
-    using VerticesArray = std::vector<TVertexType>;
+    using VerticesArray = std::vector<VertexType>;
     VerticesArray mVertices;
+
+    cxx::aabbox mBoundingBox;
 };

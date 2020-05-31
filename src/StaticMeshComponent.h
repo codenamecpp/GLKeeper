@@ -1,5 +1,7 @@
 #pragma once
 
+#include "SimpleTriMesh.h"
+#include "VertexFormat.h"
 #include "RenderableComponent.h"
 
 // procedural static mesh component of game object
@@ -10,17 +12,29 @@ class StaticMeshComponent: public RenderableComponent
     friend class StaticMeshComponentRenderer;
 
 public:
+    // mesh data, available for both read and write
+    // after making modifications you need invalidate and update bounds manually
+    using TriMeshPart = SimpleTriMesh<Vertex3D_Format>;
+    std::vector<TriMeshPart> mTriMeshParts;
+
+public:
     StaticMeshComponent(GameObject* gameObject);
 
     void InvalidateMesh();
     bool IsMeshInvalidated() const;
 
-    // clear mesh vertices
+    // clear all triangle mesh parts and materials
     void ClearMesh();
 
-    // process render frame
+    // compute bounding box for current mesh
+    void UpdateBounds();
+
+    // override RenderableComponent methods
+    void PrepareRenderResources() override;
+    void ReleaseRenderResources() override;
     void RenderFrame(SceneRenderContext& renderContext) override;
 
 private:
-    
+    // dirty flag indicates that geometry is invalid and must be reuploaded
+    bool mMeshInvalidated;
 };
