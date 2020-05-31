@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "TerrainMeshRenderer.h"
+#include "TerrainMeshComponentRenderer.h"
 #include "RenderScene.h"
 #include "GraphicsDevice.h"
 #include "TerrainMeshComponent.h"
@@ -57,7 +57,7 @@ inline void SplitMeshPieces(const TMeshPiecesContainer& meshPieces, PieceBucketC
 
 //////////////////////////////////////////////////////////////////////////
 
-bool TerrainMeshRenderer::Initialize()
+bool TerrainMeshComponentRenderer::Initialize()
 {
     if (!mTerrainRenderProgram.LoadProgram())
     {
@@ -66,12 +66,12 @@ bool TerrainMeshRenderer::Initialize()
     return true;
 }
 
-void TerrainMeshRenderer::Deinit()
+void TerrainMeshComponentRenderer::Deinit()
 {
     mTerrainRenderProgram.FreeProgram();
 }
 
-void TerrainMeshRenderer::Render(SceneRenderContext& renderContext, TerrainMeshComponent* component)
+void TerrainMeshComponentRenderer::Render(SceneRenderContext& renderContext, TerrainMeshComponent* component)
 {
     if (!gCVarRender_DrawTerrain.mValue)
         return;
@@ -118,7 +118,7 @@ void TerrainMeshRenderer::Render(SceneRenderContext& renderContext, TerrainMeshC
     }
 }
 
-void TerrainMeshRenderer::ReleaseRenderdata(TerrainMeshComponent* component)
+void TerrainMeshComponentRenderer::ReleaseRenderdata(TerrainMeshComponent* component)
 {
     debug_assert(component);
     component->mRenderProgram = nullptr;
@@ -137,7 +137,7 @@ void TerrainMeshRenderer::ReleaseRenderdata(TerrainMeshComponent* component)
     component->ClearMeshMaterials();
 }
 
-void TerrainMeshRenderer::PrepareRenderdata(TerrainMeshComponent* component)
+void TerrainMeshComponentRenderer::PrepareRenderdata(TerrainMeshComponent* component)
 {
     debug_assert(component);
 

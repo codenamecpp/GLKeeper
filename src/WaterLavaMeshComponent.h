@@ -7,7 +7,7 @@ class WaterLavaMeshComponent: public RenderableComponent
 {
     decl_rtti(WaterLavaMeshComponent, RenderableComponent)
 
-    friend class WaterLavaMeshRenderer;
+    friend class WaterLavaMeshComponentRenderer;
 
 public:
     // readonly

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "WaterLavaMeshComponent.h"
 #include "TransformComponent.h"
-#include "WaterLavaMeshRenderer.h"
+#include "WaterLavaMeshComponentRenderer.h"
 #include "RenderManager.h"
 #include "GameObject.h"
 #include "MapTile.h"
@@ -30,7 +30,7 @@ bool WaterLavaMeshComponent::IsMeshInvalidated() const
 
 void WaterLavaMeshComponent::ReleaseRenderResources()
 {
-    WaterLavaMeshRenderer& renderer = gRenderManager.mWaterLavaMeshRenderer;
+    WaterLavaMeshComponentRenderer& renderer = gRenderManager.mWaterLavaMeshRenderer;
     renderer.ReleaseRenderdata(this);
 
     InvalidateMesh();
@@ -99,7 +99,7 @@ void WaterLavaMeshComponent::RenderFrame(SceneRenderContext& renderContext)
         PrepareRenderResources();
     }
 
-    WaterLavaMeshRenderer& renderer = gRenderManager.mWaterLavaMeshRenderer;
+    WaterLavaMeshComponentRenderer& renderer = gRenderManager.mWaterLavaMeshRenderer;
     renderer.Render(renderContext, this);
 }
 
@@ -110,6 +110,6 @@ void WaterLavaMeshComponent::PrepareRenderResources()
 
     mMeshInvalidated = false;
 
-    WaterLavaMeshRenderer& renderer = gRenderManager.mWaterLavaMeshRenderer;
+    WaterLavaMeshComponentRenderer& renderer = gRenderManager.mWaterLavaMeshRenderer;
     renderer.PrepareRenderdata(this);
 }

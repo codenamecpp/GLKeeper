@@ -1,10 +1,10 @@
 #pragma once
 
 #include "DebugRenderer.h"
-#include "AnimatingMeshRenderer.h"
+#include "AnimatingMeshComponentRenderer.h"
 #include "SceneRenderList.h"
-#include "TerrainMeshRenderer.h"
-#include "WaterLavaMeshRenderer.h"
+#include "TerrainMeshComponentRenderer.h"
+#include "WaterLavaMeshComponentRenderer.h"
 #include "GuiRenderer.h"
 
 // master render system, it is intended to manage rendering pipeline of the game
@@ -14,9 +14,9 @@ class RenderManager: public cxx::noncopyable
 
 public:
     // readonly
-    AnimatingMeshRenderer mAnimatingMeshRenderer;
-    TerrainMeshRenderer mTerrainMeshRenderer;
-    WaterLavaMeshRenderer mWaterLavaMeshRenderer;
+    AnimatingMeshComponentRenderer mAnimatingMeshRenderer;
+    TerrainMeshComponentRenderer mTerrainMeshRenderer;
+    WaterLavaMeshComponentRenderer mWaterLavaMeshRenderer;
 
 public:
     // setup rendering system internal resources

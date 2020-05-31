@@ -98,11 +98,11 @@
     <Filter Include="Game\GuiLibrary\Widgets">
       <UniqueIdentifier>{75816ac9-2884-4e8b-b301-5a900ad8cfda}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Rendering">
+    <Filter Include="Game\Draw">
       <UniqueIdentifier>{e607d4ee-67e8-4d5f-b41f-1bfc554959f7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Rendering\ShaderPrograms">
-      <UniqueIdentifier>{cfb6657e-5426-4871-9802-c0f6ab065078}</UniqueIdentifier>
+    <Filter Include="Game\Draw\ComponentsRendering">
+      <UniqueIdentifier>{e905e4dd-483b-4b32-a64b-395a319f6206}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -237,16 +237,16 @@
       <Filter>Lib</Filter>
     </ClInclude>
     <ClInclude Include="RenderManager.h">
-      <Filter>Game\Rendering</Filter>
+      <Filter>Game\Draw</Filter>
     </ClInclude>
     <ClInclude Include="RenderDefs.h">
-      <Filter>Game\Rendering</Filter>
+      <Filter>Game\Draw</Filter>
     </ClInclude>
     <ClInclude Include="TimeManager.h">
       <Filter>Application</Filter>
     </ClInclude>
     <ClInclude Include="RenderProgram.h">
-      <Filter>Game\Rendering</Filter>
+      <Filter>Game\Draw</Filter>
     </ClInclude>
     <ClInclude Include="BinaryOutputStream.h">
       <Filter>Application\FileIO</Filter>
@@ -276,7 +276,7 @@
       <Filter>Game\Scene\BVH</Filter>
     </ClInclude>
     <ClInclude Include="DebugRenderer.h">
-      <Filter>Game\Rendering</Filter>
+      <Filter>Game\Draw</Filter>
     </ClInclude>
     <ClInclude Include="Texture2DAnimation.h">
       <Filter>Application\Resources</Filter>
@@ -299,9 +299,6 @@
     <ClInclude Include="GameMain.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="DebugDrawRenderProgram.h">
-      <Filter>Game\Rendering\ShaderPrograms</Filter>
-    </ClInclude>
     <ClInclude Include="MeshViewGamestate.h">
       <Filter>Game\GameStates</Filter>
     </ClInclude>
@@ -320,9 +317,6 @@
     </ClInclude>
     <ClInclude Include="ResourceDefs.h">
       <Filter>Application\Resources</Filter>
-    </ClInclude>
-    <ClInclude Include="MorphAnimRenderProgram.h">
-      <Filter>Game\Rendering\ShaderPrograms</Filter>
     </ClInclude>
     <ClInclude Include="SceneRenderList.h">
       <Filter>Game\Scene</Filter>
@@ -348,9 +342,6 @@
     <ClInclude Include="MapTile.h">
       <Filter>Game\World</Filter>
     </ClInclude>
-    <ClInclude Include="TerrainRenderProgram.h">
-      <Filter>Game\Rendering\ShaderPrograms</Filter>
-    </ClInclude>
     <ClInclude Include="TerrainManager.h">
       <Filter>Game\World</Filter>
     </ClInclude>
@@ -359,9 +350,6 @@
     </ClInclude>
     <ClInclude Include="GameMap.h">
       <Filter>Game\World</Filter>
-    </ClInclude>
-    <ClInclude Include="WaterLavaRenderProgram.h">
-      <Filter>Game\Rendering\ShaderPrograms</Filter>
     </ClInclude>
     <ClInclude Include="RoomsDefs.h">
       <Filter>Game\World\Rooms</Filter>
@@ -391,16 +379,13 @@
       <Filter>Game\GameObject\Components</Filter>
     </ClInclude>
     <ClInclude Include="MeshMaterial.h">
-      <Filter>Game\Rendering</Filter>
+      <Filter>Game\Draw</Filter>
     </ClInclude>
     <ClInclude Include="OrbitCameraController.h">
       <Filter>Game\Scene\CameraControllers</Filter>
     </ClInclude>
     <ClInclude Include="CameraController.h">
       <Filter>Game\Scene\CameraControllers</Filter>
-    </ClInclude>
-    <ClInclude Include="GuiRenderProgram.h">
-      <Filter>Game\Rendering\ShaderPrograms</Filter>
     </ClInclude>
     <ClInclude Include="GuiDefs.h">
       <Filter>Game\GuiLibrary</Filter>
@@ -495,26 +480,32 @@
     <ClInclude Include="rtti.h">
       <Filter>Lib</Filter>
     </ClInclude>
-    <ClInclude Include="WaterLavaMeshRenderer.h">
-      <Filter>Game\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="WaterLavaMeshComponent.h">
       <Filter>Game\GameObject\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="DynamicMeshComponent.h">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="TerrainMeshRenderer.h">
-      <Filter>Game\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="TerrainMeshComponent.h">
       <Filter>Game\GameObject\Components</Filter>
     </ClInclude>
-    <ClInclude Include="AnimatingMeshRenderer.h">
-      <Filter>Game\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="AnimatingMeshComponent.h">
       <Filter>Game\GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatingMeshComponentRenderer.h">
+      <Filter>Game\Draw\ComponentsRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainMeshComponentRenderer.h">
+      <Filter>Game\Draw\ComponentsRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="WaterLavaMeshComponentRenderer.h">
+      <Filter>Game\Draw\ComponentsRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="UnlitMeshComponentRenderer.h">
+      <Filter>Game\Draw\ComponentsRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="UnlitMeshComponent.h">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Shaders.h">
+      <Filter>Game\Draw</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -590,13 +581,13 @@
       <Filter>Lib</Filter>
     </ClCompile>
     <ClCompile Include="RenderManager.cpp">
-      <Filter>Game\Rendering</Filter>
+      <Filter>Game\Draw</Filter>
     </ClCompile>
     <ClCompile Include="TimeManager.cpp">
       <Filter>Application</Filter>
     </ClCompile>
     <ClCompile Include="RenderProgram.cpp">
-      <Filter>Game\Rendering</Filter>
+      <Filter>Game\Draw</Filter>
     </ClCompile>
     <ClCompile Include="BinaryOutputStream.cpp">
       <Filter>Application\FileIO</Filter>
@@ -620,7 +611,7 @@
       <Filter>Game\Scene\BVH</Filter>
     </ClCompile>
     <ClCompile Include="DebugRenderer.cpp">
-      <Filter>Game\Rendering</Filter>
+      <Filter>Game\Draw</Filter>
     </ClCompile>
     <ClCompile Include="Texture2DAnimation.cpp">
       <Filter>Application\Resources</Filter>
@@ -695,7 +686,7 @@
       <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
     <ClCompile Include="MeshMaterial.cpp">
-      <Filter>Game\Rendering</Filter>
+      <Filter>Game\Draw</Filter>
     </ClCompile>
     <ClCompile Include="OrbitCameraController.cpp">
       <Filter>Game\Scene\CameraControllers</Filter>
@@ -781,26 +772,32 @@
     <ClCompile Include="RenderableComponent.cpp">
       <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
-    <ClCompile Include="WaterLavaMeshRenderer.cpp">
-      <Filter>Game\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="WaterLavaMeshComponent.cpp">
       <Filter>Game\GameObject\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="DynamicMeshComponent.cpp">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="TerrainMeshRenderer.cpp">
-      <Filter>Game\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="TerrainMeshComponent.cpp">
       <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
-    <ClCompile Include="AnimatingMeshRenderer.cpp">
-      <Filter>Game\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="AnimatingMeshComponent.cpp">
       <Filter>Game\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatingMeshComponentRenderer.cpp">
+      <Filter>Game\Draw\ComponentsRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainMeshComponentRenderer.cpp">
+      <Filter>Game\Draw\ComponentsRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="WaterLavaMeshComponentRenderer.cpp">
+      <Filter>Game\Draw\ComponentsRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="UnlitMeshComponentRenderer.cpp">
+      <Filter>Game\Draw\ComponentsRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="UnlitMeshComponent.cpp">
+      <Filter>Game\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Shaders.cpp">
+      <Filter>Game\Draw</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -847,6 +844,9 @@
     </None>
     <None Include="..\data\screens\gameplay_game_screen.json">
       <Filter>Data\Screens</Filter>
+    </None>
+    <None Include="..\data\shaders\unlit_mesh.glsl">
+      <Filter>Data\Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>

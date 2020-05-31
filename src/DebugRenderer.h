@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DebugDrawRenderProgram.h"
+#include "Shaders.h"
 
 // debug geometry visualization manager
 class DebugRenderer: public cxx::noncopyable

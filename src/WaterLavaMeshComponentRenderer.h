@@ -1,9 +1,9 @@
 #pragma once
 
-#include "WaterLavaRenderProgram.h"
+#include "Shaders.h"
 
 // water and lava visualization manager
-class WaterLavaMeshRenderer: public cxx::noncopyable
+class WaterLavaMeshComponentRenderer: public cxx::noncopyable
 {
     friend class WaterLavaMeshComponent;
 

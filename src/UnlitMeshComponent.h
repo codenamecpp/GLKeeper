@@ -3,12 +3,12 @@
 #include "RenderableComponent.h"
 
 // procedural static mesh component of game object
-class DynamicMeshComponent: public RenderableComponent
+class UnlitMeshComponent: public RenderableComponent
 {
-    decl_rtti(DynamicMeshComponent, RenderableComponent)
+    decl_rtti(UnlitMeshComponent, RenderableComponent)
 
 public:
-    DynamicMeshComponent(GameObject* gameObject);
+    UnlitMeshComponent(GameObject* gameObject);
 
     // process render frame
     void RenderFrame(SceneRenderContext& renderContext) override;

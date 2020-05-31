@@ -1,9 +1,9 @@
 #pragma once
 
-#include "TerrainRenderProgram.h"
+#include "Shaders.h"
 
 // terrain visualization manager
-class TerrainMeshRenderer: public cxx::noncopyable
+class TerrainMeshComponentRenderer: public cxx::noncopyable
 {
     friend class TerrainMeshComponent;
 

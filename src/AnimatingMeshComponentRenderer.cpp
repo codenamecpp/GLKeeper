@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "AnimatingMeshRenderer.h"
+#include "AnimatingMeshComponentRenderer.h"
 #include "ModelAsset.h"
 #include "GraphicsDevice.h"
 #include "GpuBuffer.h"
@@ -12,7 +12,7 @@
 #include "GameObject.h"
 #include "TransformComponent.h"
 
-bool AnimatingMeshRenderer::Initialize()
+bool AnimatingMeshComponentRenderer::Initialize()
 {
     if (!mMorphAnimRenderProgram.LoadProgram())
     {
@@ -22,7 +22,7 @@ bool AnimatingMeshRenderer::Initialize()
     return true;
 }
 
-void AnimatingMeshRenderer::Deinit()
+void AnimatingMeshComponentRenderer::Deinit()
 {
     mMorphAnimRenderProgram.FreeProgram();
     for (auto& curr_iterator : mModelsCache)
@@ -33,7 +33,7 @@ void AnimatingMeshRenderer::Deinit()
     mModelsCache.clear();
 }
 
-void AnimatingMeshRenderer::Render(SceneRenderContext& renderContext, AnimatingMeshComponent* component)
+void AnimatingMeshComponentRenderer::Render(SceneRenderContext& renderContext, AnimatingMeshComponent* component)
 {
     if (!gCVarRender_DrawModels.mValue)
         return;
@@ -98,7 +98,7 @@ void AnimatingMeshRenderer::Render(SceneRenderContext& renderContext, AnimatingM
     }
 }
 
-ModelAssetRenderdata* AnimatingMeshRenderer::GetRenderdata(ModelAsset* modelAsset)
+ModelAssetRenderdata* AnimatingMeshComponentRenderer::GetRenderdata(ModelAsset* modelAsset)
 {
     if (modelAsset == nullptr || !modelAsset->IsModelLoaded())
     {
@@ -117,7 +117,7 @@ ModelAssetRenderdata* AnimatingMeshRenderer::GetRenderdata(ModelAsset* modelAsse
     return renderdata;
 }
 
-void AnimatingMeshRenderer::InvalidateRenderData(ModelAsset* modelAsset)
+void AnimatingMeshComponentRenderer::InvalidateRenderData(ModelAsset* modelAsset)
 {
     if (modelAsset == nullptr || !modelAsset->IsModelLoaded())
     {
@@ -133,7 +133,7 @@ void AnimatingMeshRenderer::InvalidateRenderData(ModelAsset* modelAsset)
     PrepareRenderdata(&cache_iterator->second, modelAsset);
 }
 
-void AnimatingMeshRenderer::ReleaseRenderdata(ModelAssetRenderdata* renderdata)
+void AnimatingMeshComponentRenderer::ReleaseRenderdata(ModelAssetRenderdata* renderdata)
 {
     debug_assert(renderdata);
     if (renderdata->mVertexBuffer)
@@ -147,7 +147,7 @@ void AnimatingMeshRenderer::ReleaseRenderdata(ModelAssetRenderdata* renderdata)
     renderdata->Clear();
 }
 
-void AnimatingMeshRenderer::PrepareRenderdata(ModelAssetRenderdata* renderdata, ModelAsset* modelAsset)
+void AnimatingMeshComponentRenderer::PrepareRenderdata(ModelAssetRenderdata* renderdata, ModelAsset* modelAsset)
 {
     debug_assert(renderdata);
     debug_assert(modelAsset);
@@ -251,7 +251,7 @@ void AnimatingMeshRenderer::PrepareRenderdata(ModelAssetRenderdata* renderdata, 
     } // if
 }
 
-void AnimatingMeshRenderer::PrepareRenderdata(AnimatingMeshComponent* component)
+void AnimatingMeshComponentRenderer::PrepareRenderdata(AnimatingMeshComponent* component)
 {
     debug_assert(component);
 
@@ -287,7 +287,7 @@ void AnimatingMeshRenderer::PrepareRenderdata(AnimatingMeshComponent* component)
     component->mRenderProgram = &mMorphAnimRenderProgram;
 }
 
-void AnimatingMeshRenderer::ReleaseRenderdata(AnimatingMeshComponent* component)
+void AnimatingMeshComponentRenderer::ReleaseRenderdata(AnimatingMeshComponent* component)
 {
     debug_assert(component);
 

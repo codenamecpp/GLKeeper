@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "WaterLavaMeshRenderer.h"
+#include "WaterLavaMeshComponentRenderer.h"
 #include "RenderScene.h"
 #include "GraphicsDevice.h"
 #include "WaterLavaMeshComponent.h"
@@ -10,7 +10,7 @@
 
 const int MaxWaterLavaMeshBufferSize = 1024 * 1024 * 2;
 
-bool WaterLavaMeshRenderer::Initialize()
+bool WaterLavaMeshComponentRenderer::Initialize()
 {
     if (!mWaterLavaRenderProgram.LoadProgram())
     {
@@ -19,12 +19,12 @@ bool WaterLavaMeshRenderer::Initialize()
     return true;
 }
 
-void WaterLavaMeshRenderer::Deinit()
+void WaterLavaMeshComponentRenderer::Deinit()
 {
     mWaterLavaRenderProgram.FreeProgram();
 }
 
-void WaterLavaMeshRenderer::Render(SceneRenderContext& renderContext, WaterLavaMeshComponent* component)
+void WaterLavaMeshComponentRenderer::Render(SceneRenderContext& renderContext, WaterLavaMeshComponent* component)
 {
     if (!gCVarRender_DrawWaterAndLava.mValue)
         return;
@@ -71,7 +71,7 @@ void WaterLavaMeshRenderer::Render(SceneRenderContext& renderContext, WaterLavaM
     }    
 }
 
-void WaterLavaMeshRenderer::PrepareRenderdata(WaterLavaMeshComponent* component)
+void WaterLavaMeshComponentRenderer::PrepareRenderdata(WaterLavaMeshComponent* component)
 {
     debug_assert(component);
     if (component->mWaterLavaTiles.empty())
@@ -217,7 +217,7 @@ void WaterLavaMeshRenderer::PrepareRenderdata(WaterLavaMeshComponent* component)
     component->mRenderProgram = &mWaterLavaRenderProgram;
 }
 
-void WaterLavaMeshRenderer::ReleaseRenderdata(WaterLavaMeshComponent* component)
+void WaterLavaMeshComponentRenderer::ReleaseRenderdata(WaterLavaMeshComponent* component)
 {
     debug_assert(component);
     component->mRenderProgram = nullptr;

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "MorphAnimRenderProgram.h"
+#include "Shaders.h"
 
 // animating models visualization manager
-class AnimatingMeshRenderer: public cxx::noncopyable
+class AnimatingMeshComponentRenderer: public cxx::noncopyable
 {
     friend class AnimatingMeshComponent;
 

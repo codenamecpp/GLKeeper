@@ -8,7 +8,7 @@ class AnimatingMeshComponent: public RenderableComponent
 {
     decl_rtti(AnimatingMeshComponent, RenderableComponent)
 
-    friend class AnimatingMeshRenderer;
+    friend class AnimatingMeshComponentRenderer;
 public:
     // readonly
     ModelAsset* mModelAsset = nullptr;
