@@ -14,7 +14,7 @@ class RenderableComponent;
 class TransformComponent;
 class AnimatingMeshComponent;
 class TerrainMeshComponent;
-class UnlitMeshComponent;
+class StaticMeshComponent;
 class WaterLavaMeshComponent;
 
 // terrain type identifier

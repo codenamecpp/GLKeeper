@@ -29,11 +29,11 @@ private:
 
 //////////////////////////////////////////////////////////////////////////
 
-// unlit procedural mesh shader
-class UnlitMeshRenderProgram: public RenderProgram
+// procedural mesh shader
+class StaticMeshRenderProgram: public RenderProgram
 {
 public:
-    UnlitMeshRenderProgram();
+    StaticMeshRenderProgram();
 
 private:
     void HandleProgramLoad() override;

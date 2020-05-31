@@ -498,14 +498,17 @@
     <ClInclude Include="WaterLavaMeshComponentRenderer.h">
       <Filter>Game\Draw\ComponentsRendering</Filter>
     </ClInclude>
-    <ClInclude Include="UnlitMeshComponentRenderer.h">
-      <Filter>Game\Draw\ComponentsRendering</Filter>
-    </ClInclude>
-    <ClInclude Include="UnlitMeshComponent.h">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClInclude>
     <ClInclude Include="Shaders.h">
       <Filter>Game\Draw</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleTriMesh.h">
+      <Filter>Application\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticMeshComponentRenderer.h">
+      <Filter>Game\Draw\ComponentsRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticMeshComponent.h">
+      <Filter>Game\GameObject\Components</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -790,14 +793,14 @@
     <ClCompile Include="WaterLavaMeshComponentRenderer.cpp">
       <Filter>Game\Draw\ComponentsRendering</Filter>
     </ClCompile>
-    <ClCompile Include="UnlitMeshComponentRenderer.cpp">
-      <Filter>Game\Draw\ComponentsRendering</Filter>
-    </ClCompile>
-    <ClCompile Include="UnlitMeshComponent.cpp">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClCompile>
     <ClCompile Include="Shaders.cpp">
       <Filter>Game\Draw</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticMeshComponentRenderer.cpp">
+      <Filter>Game\Draw\ComponentsRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticMeshComponent.cpp">
+      <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -845,7 +848,7 @@
     <None Include="..\data\screens\gameplay_game_screen.json">
       <Filter>Data\Screens</Filter>
     </None>
-    <None Include="..\data\shaders\unlit_mesh.glsl">
+    <None Include="..\data\shaders\mesh.glsl">
       <Filter>Data\Shaders</Filter>
     </None>
   </ItemGroup>

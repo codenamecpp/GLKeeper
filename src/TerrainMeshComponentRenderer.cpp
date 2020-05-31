@@ -77,7 +77,7 @@ void TerrainMeshComponentRenderer::Render(SceneRenderContext& renderContext, Ter
         return;
 
     debug_assert(component);
-    if (component->mMeshParts.empty())
+    if (component->mDrawCalls.empty())
     {
         debug_assert(false);
         return;
@@ -91,7 +91,7 @@ void TerrainMeshComponentRenderer::Render(SceneRenderContext& renderContext, Ter
     gGraphicsDevice.BindIndexBuffer(component->mIndexBuffer);
     gGraphicsDevice.BindVertexBuffer(component->mVertexBuffer, Vertex3D_Terrain_Format::Get());
 
-    for (TerrainMeshComponent::MeshPartStruct& currBatch: component->mMeshParts)
+    for (TerrainMeshComponent::DrawCall& currBatch: component->mDrawCalls)
     {
         if (currBatch.mVertexCount == 0)
         {
@@ -133,7 +133,7 @@ void TerrainMeshComponentRenderer::ReleaseRenderdata(TerrainMeshComponent* compo
         gGraphicsDevice.DestroyBuffer(component->mIndexBuffer);
         component->mIndexBuffer = nullptr;
     }
-    component->ClearMeshParts();
+    component->ClearDrawCalls();
     component->ClearMeshMaterials();
 }
 
@@ -149,7 +149,7 @@ void TerrainMeshComponentRenderer::PrepareRenderdata(TerrainMeshComponent* compo
     }
 
     component->ClearMeshMaterials();
-    component->ClearMeshParts();
+    component->ClearDrawCalls();
 
     GameMap& gamemap = gGameWorld.mMapData;
     
@@ -226,7 +226,7 @@ void TerrainMeshComponentRenderer::PrepareRenderdata(TerrainMeshComponent* compo
 
     int numPieces = (int) pieceBucketContainer.mPieceBucketMap.size();
     debug_assert(numPieces > 0);
-    component->SetMeshPartsCount(numPieces);
+    component->SetDrawCallsCount(numPieces);
     component->SetMeshMaterialsCount(numPieces);
 
     // compile geometries
@@ -244,7 +244,7 @@ void TerrainMeshComponentRenderer::PrepareRenderdata(TerrainMeshComponent* compo
     {
         component->SetMeshMaterial(imaterial, ebucket.first);
 
-        RenderableComponent::MeshPartStruct& meshBatch = component->mMeshParts[imaterial];
+        RenderableComponent::DrawCall& meshBatch = component->mDrawCalls[imaterial];
         meshBatch.mMaterialIndex = imaterial;
         meshBatch.mTriangleCount = ebucket.second.mTriangleCount;
         meshBatch.mVertexCount = ebucket.second.mVertexCount;

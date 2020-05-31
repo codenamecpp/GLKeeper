@@ -46,7 +46,7 @@ void WaterLavaMeshComponentRenderer::Render(SceneRenderContext& renderContext, W
     gGraphicsDevice.BindIndexBuffer(component->mIndexBuffer);
     gGraphicsDevice.BindVertexBuffer(component->mVertexBuffer, Vertex3D_WaterLava_Format::Get());
 
-    for (WaterLavaMeshComponent::MeshPartStruct& currPart: component->mMeshParts)
+    for (WaterLavaMeshComponent::DrawCall& currPart: component->mDrawCalls)
     {
         if (currPart.mVertexCount == 0)
         {
@@ -86,8 +86,8 @@ void WaterLavaMeshComponentRenderer::PrepareRenderdata(WaterLavaMeshComponent* c
     int vertexCount = component->mWaterLavaTiles.size() * NumVerticesPerTile;
     int triangleCount = component->mWaterLavaTiles.size() * NumTrianglesPerTile;
 
-    component->SetMeshPartsCount(1);
-    component->SetMeshPart(0, 0, 0, 0, vertexCount, triangleCount);
+    component->SetDrawCallsCount(1);
+    component->SetDrawCall(0, 0, 0, 0, vertexCount, triangleCount);
 
     int actualVBufferLength = vertexCount * Sizeof_Vertex3D_WaterLava;
     int actualIBufferLength = triangleCount * sizeof(glm::ivec3);
@@ -233,5 +233,5 @@ void WaterLavaMeshComponentRenderer::ReleaseRenderdata(WaterLavaMeshComponent* c
         component->mIndexBuffer = nullptr;
     }
 
-    component->ClearMeshParts();
+    component->ClearDrawCalls();
 }

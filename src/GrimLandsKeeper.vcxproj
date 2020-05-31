@@ -181,10 +181,11 @@
     <ClInclude Include="AABBTree.h" />
     <ClInclude Include="CreatureDefs.h" />
     <ClInclude Include="Shaders.h" />
-    <ClInclude Include="UnlitMeshComponentRenderer.h" />
+    <ClInclude Include="SimpleTriMesh.h" />
+    <ClInclude Include="StaticMeshComponentRenderer.h" />
     <ClInclude Include="MapInteractionController.h" />
     <ClInclude Include="RenderableComponent.h" />
-    <ClInclude Include="UnlitMeshComponent.h" />
+    <ClInclude Include="StaticMeshComponent.h" />
     <ClInclude Include="rtti.h" />
     <ClInclude Include="UiCtlPanelBar.h" />
     <ClInclude Include="UiCtlPanelIcon.h" />
@@ -318,10 +319,10 @@
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="ConsoleVariable.cpp" />
     <ClCompile Include="Shaders.cpp" />
-    <ClCompile Include="UnlitMeshComponentRenderer.cpp" />
+    <ClCompile Include="StaticMeshComponentRenderer.cpp" />
     <ClCompile Include="MapInteractionController.cpp" />
     <ClCompile Include="RenderableComponent.cpp" />
-    <ClCompile Include="UnlitMeshComponent.cpp" />
+    <ClCompile Include="StaticMeshComponent.cpp" />
     <ClCompile Include="UiCtlPanelBar.cpp" />
     <ClCompile Include="UiCtlPanelIcon.cpp" />
     <ClCompile Include="GameplayGameScreen.cpp" />
@@ -434,7 +435,7 @@
     <None Include="..\data\shaders\debug.glsl" />
     <None Include="..\data\shaders\gui.glsl" />
     <None Include="..\data\shaders\terrain.glsl" />
-    <None Include="..\data\shaders\unlit_mesh.glsl" />
+    <None Include="..\data\shaders\mesh.glsl" />
     <None Include="..\data\shaders\water_lava.glsl" />
     <None Include="AABBTree.inl" />
   </ItemGroup>

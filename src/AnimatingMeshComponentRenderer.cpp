@@ -88,7 +88,7 @@ void AnimatingMeshComponentRenderer::Render(SceneRenderContext& renderContext, A
         int frame0 = component->mAnimState.mFrame0;
         int frame1 = component->mAnimState.mFrame1;
 
-        AnimatingMeshComponent::MeshPartStruct& currMeshPart = component->mMeshParts[icurrSubset];
+        AnimatingMeshComponent::DrawCall& currMeshPart = component->mDrawCalls[icurrSubset];
 
         // prepare vertex streams definition
         vertexDefs.Setup(currMeshPart.mVertexDataOffset, currentSubMesh.mFrameVerticesCount, modelAsset->mFramesCount, frame0, frame1);
@@ -267,13 +267,13 @@ void AnimatingMeshComponentRenderer::PrepareRenderdata(AnimatingMeshComponent* c
     }
 
     const int NumParts = (int) modelAsset->mMeshArray.size();
-    component->SetMeshPartsCount(NumParts);
+    component->SetDrawCallsCount(NumParts);
 
     // setup mesh parts
     int iCurrentMeshPart = 0;
     for (const ModelAsset::SubMesh& srcSubMesh: modelAsset->mMeshArray)
     {
-        AnimatingMeshComponent::MeshPartStruct& currMeshPart = component->mMeshParts[iCurrentMeshPart];
+        AnimatingMeshComponent::DrawCall& currMeshPart = component->mDrawCalls[iCurrentMeshPart];
         currMeshPart.mMaterialIndex = srcSubMesh.mMaterialIndex;
         currMeshPart.mIndexDataOffset = renderdata->mSubsets[iCurrentMeshPart].mIndexDataOffset;
         currMeshPart.mVertexDataOffset = renderdata->mSubsets[iCurrentMeshPart].mVertexDataOffset;
@@ -296,5 +296,5 @@ void AnimatingMeshComponentRenderer::ReleaseRenderdata(AnimatingMeshComponent* c
     component->mVertexBuffer = nullptr;
     component->mRenderProgram = nullptr;
 
-    component->ClearMeshParts();
+    component->ClearDrawCalls();
 }

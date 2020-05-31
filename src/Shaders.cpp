@@ -38,18 +38,18 @@ void TerrainRenderProgram::HandleProgramFree()
 
 //////////////////////////////////////////////////////////////////////////
 
-UnlitMeshRenderProgram::UnlitMeshRenderProgram(): RenderProgram("shaders/unlit_mesh.glsl")
+StaticMeshRenderProgram::StaticMeshRenderProgram(): RenderProgram("shaders/mesh.glsl")
 {
 }
 
-void UnlitMeshRenderProgram::HandleProgramLoad()
+void StaticMeshRenderProgram::HandleProgramLoad()
 {
     // configure input layout
     mGpuProgram->BindAttribute(eVertexAttribute_Position0, "in_pos");
     mGpuProgram->BindAttribute(eVertexAttribute_Texcoord0, "in_texcoord");
 }
 
-void UnlitMeshRenderProgram::HandleProgramFree()
+void StaticMeshRenderProgram::HandleProgramFree()
 {
 }
 
