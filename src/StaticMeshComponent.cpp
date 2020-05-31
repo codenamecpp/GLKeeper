@@ -15,6 +15,13 @@ void StaticMeshComponent::InvalidateMesh()
         return;
 
     mMeshInvalidated = true;
+
+    const int NumMeshParts = (int) mTriMeshParts.size();
+    if (NumMeshParts > GetMaterialsCount())
+    {
+        debug_assert(false);
+        SetMeshMaterialsCount(NumMeshParts);
+    }
 }
 
 bool StaticMeshComponent::IsMeshInvalidated() const

@@ -119,18 +119,18 @@ void WaterLavaMeshComponentRenderer::PrepareRenderdata(WaterLavaMeshComponent* c
         }
     }
 
-    GpuBuffer* vertBuffer = component->mVertexBuffer;
+    GpuBuffer* vertexBuffer = component->mVertexBuffer;
     GpuBuffer* indexBuffer = component->mIndexBuffer;
 
     // setup buffers
-    if (!vertBuffer->Setup(eBufferUsage_Static, actualVBufferLength, nullptr) ||
+    if (!vertexBuffer->Setup(eBufferUsage_Static, actualVBufferLength, nullptr) ||
         !indexBuffer->Setup(eBufferUsage_Static, actualIBufferLength, nullptr))
     {
         debug_assert(false);
         return;
     }
 
-    Vertex3D_WaterLava* vbufferPtr = vertBuffer->LockData<Vertex3D_WaterLava>(BufferAccess_UnsynchronizedWrite, 0, actualVBufferLength);
+    Vertex3D_WaterLava* vbufferPtr = vertexBuffer->LockData<Vertex3D_WaterLava>(BufferAccess_UnsynchronizedWrite, 0, actualVBufferLength);
     debug_assert(vbufferPtr);
 
     glm::ivec3* ibufferPtr = indexBuffer->LockData<glm::ivec3>(BufferAccess_UnsynchronizedWrite, 0, actualIBufferLength);
@@ -209,7 +209,7 @@ void WaterLavaMeshComponentRenderer::PrepareRenderdata(WaterLavaMeshComponent* c
         debug_assert(false);
     }
 
-    if (!vertBuffer->Unlock())
+    if (!vertexBuffer->Unlock())
     {
         debug_assert(false);
     }

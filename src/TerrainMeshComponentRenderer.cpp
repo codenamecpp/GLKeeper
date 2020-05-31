@@ -213,11 +213,11 @@ void TerrainMeshComponentRenderer::PrepareRenderdata(TerrainMeshComponent* compo
         }
     }
 
-    GpuBuffer* vertBuffer = component->mVertexBuffer;
+    GpuBuffer* vertexBuffer = component->mVertexBuffer;
     GpuBuffer* indexBuffer = component->mIndexBuffer;
 
     // setup buffers
-    if (!vertBuffer->Setup(eBufferUsage_Static, actualVBufferLength, nullptr) ||
+    if (!vertexBuffer->Setup(eBufferUsage_Static, actualVBufferLength, nullptr) ||
         !indexBuffer->Setup(eBufferUsage_Static, actualIBufferLength, nullptr))
     {
         debug_assert(false);
@@ -230,7 +230,7 @@ void TerrainMeshComponentRenderer::PrepareRenderdata(TerrainMeshComponent* compo
     component->SetMeshMaterialsCount(numPieces);
 
     // compile geometries
-    Vertex3D_Terrain* vbufferPtr = vertBuffer->LockData<Vertex3D_Terrain>(BufferAccess_UnsynchronizedWrite, 0, actualVBufferLength);
+    Vertex3D_Terrain* vbufferPtr = vertexBuffer->LockData<Vertex3D_Terrain>(BufferAccess_UnsynchronizedWrite, 0, actualVBufferLength);
     debug_assert(vbufferPtr);
 
     glm::ivec3* ibufferPtr = indexBuffer->LockData<glm::ivec3>(BufferAccess_UnsynchronizedWrite, 0, actualIBufferLength);
@@ -244,12 +244,12 @@ void TerrainMeshComponentRenderer::PrepareRenderdata(TerrainMeshComponent* compo
     {
         component->SetMeshMaterial(imaterial, ebucket.first);
 
-        RenderableComponent::DrawCall& meshBatch = component->mDrawCalls[imaterial];
-        meshBatch.mMaterialIndex = imaterial;
-        meshBatch.mTriangleCount = ebucket.second.mTriangleCount;
-        meshBatch.mVertexCount = ebucket.second.mVertexCount;
-        meshBatch.mIndexDataOffset = startTriangle * sizeof(glm::ivec3);
-        meshBatch.mVertexDataOffset = startVertex * sizeof(Vertex3D_Terrain);
+        RenderableComponent::DrawCall& drawCall = component->mDrawCalls[imaterial];
+        drawCall.mMaterialIndex = imaterial;
+        drawCall.mTriangleCount = ebucket.second.mTriangleCount;
+        drawCall.mVertexCount = ebucket.second.mVertexCount;
+        drawCall.mIndexDataOffset = startTriangle * sizeof(glm::ivec3);
+        drawCall.mVertexDataOffset = startVertex * Sizeof_Vertex3D_Terrain;
 
         // copy geometry data
         unsigned int vertexoffset = 0;
@@ -272,8 +272,8 @@ void TerrainMeshComponentRenderer::PrepareRenderdata(TerrainMeshComponent* compo
             vbufferPtr += groupNumVertices;
         }
 
-        startTriangle += meshBatch.mTriangleCount;
-        startVertex += meshBatch.mVertexCount;
+        startTriangle += drawCall.mTriangleCount;
+        startVertex += drawCall.mVertexCount;
         ++imaterial;
     }
 
@@ -282,7 +282,7 @@ void TerrainMeshComponentRenderer::PrepareRenderdata(TerrainMeshComponent* compo
         debug_assert(false);
     }
 
-    if (!vertBuffer->Unlock())
+    if (!vertexBuffer->Unlock())
     {
         debug_assert(false);
     }
