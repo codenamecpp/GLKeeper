@@ -181,12 +181,13 @@
     <ClInclude Include="AABBTree.h" />
     <ClInclude Include="CreatureDefs.h" />
     <ClInclude Include="Shaders.h" />
-    <ClInclude Include="SimpleTriMesh.h" />
+    <ClInclude Include="SimpleTriangleMesh.h" />
     <ClInclude Include="StaticMeshComponentRenderer.h" />
     <ClInclude Include="MapInteractionController.h" />
     <ClInclude Include="RenderableComponent.h" />
     <ClInclude Include="StaticMeshComponent.h" />
     <ClInclude Include="rtti.h" />
+    <ClInclude Include="SimpleTriangleMeshUtils.h" />
     <ClInclude Include="UiCtlPanelBar.h" />
     <ClInclude Include="UiCtlPanelIcon.h" />
     <ClInclude Include="GameplayGameScreen.h" />

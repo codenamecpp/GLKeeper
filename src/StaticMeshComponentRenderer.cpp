@@ -3,6 +3,7 @@
 #include "GpuBuffer.h"
 #include "StaticMeshComponent.h"
 #include "GraphicsDevice.h"
+#include "RenderScene.h"
 
 bool StaticMeshComponentRenderer::Initialize()
 {
@@ -22,6 +23,44 @@ void StaticMeshComponentRenderer::Deinit()
 void StaticMeshComponentRenderer::Render(SceneRenderContext& renderContext, StaticMeshComponent* component)
 {
     debug_assert(component);
+    if (component->mDrawCalls.empty())
+    {
+        debug_assert(false);
+        return;
+    }
+
+    mStaticMeshRenderProgram.SetViewProjectionMatrix(gRenderScene.mCamera.mViewProjectionMatrix);
+    mStaticMeshRenderProgram.ActivateProgram();
+
+    // bind indices
+    gGraphicsDevice.BindIndexBuffer(component->mIndexBuffer);
+    gGraphicsDevice.BindVertexBuffer(component->mVertexBuffer, Vertex3D_Format::Get());
+
+    for (StaticMeshComponent::DrawCall& currDrawCall: component->mDrawCalls)
+    {
+        if (currDrawCall.mVertexCount == 0)
+        {
+            debug_assert(false);
+            continue;
+        }
+        MeshMaterial* currMaterial = component->GetMeshMaterial(currDrawCall.mMaterialIndex);
+        if (currMaterial == nullptr)
+        {
+            debug_assert(false);
+            continue;
+        }
+        // filter out submeshes depending on current render pass
+        if (renderContext.mCurrentPass == eRenderPass_Translucent && !currMaterial->IsTransparent())
+            continue;
+
+        if (renderContext.mCurrentPass == eRenderPass_Opaque && currMaterial->IsTransparent())
+            continue;
+
+        currMaterial->ActivateMaterial();
+        gGraphicsDevice.RenderIndexedPrimitives(ePrimitiveType_Triangles, eIndicesType_i32,
+            currDrawCall.mIndexDataOffset, 
+            currDrawCall.mTriangleCount * 3);
+    }
 }
 
 void StaticMeshComponentRenderer::PrepareRenderdata(StaticMeshComponent* component)

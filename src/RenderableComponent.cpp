@@ -25,7 +25,10 @@ void RenderableComponent::RenderFrame(SceneRenderContext& renderContext)
 void RenderableComponent::RegisterForRendering(SceneRenderList& renderList)
 {
     if (mDrawCalls.empty())
+    {
+        debug_assert(false);
         return;
+    }
 
     bool hasOpaqueParts = false;
     bool hasTransparentParts = false;

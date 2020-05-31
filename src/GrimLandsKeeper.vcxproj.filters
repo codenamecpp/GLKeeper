@@ -501,14 +501,17 @@
     <ClInclude Include="Shaders.h">
       <Filter>Game\Draw</Filter>
     </ClInclude>
-    <ClInclude Include="SimpleTriMesh.h">
-      <Filter>Application\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="StaticMeshComponentRenderer.h">
       <Filter>Game\Draw\ComponentsRendering</Filter>
     </ClInclude>
     <ClInclude Include="StaticMeshComponent.h">
       <Filter>Game\GameObject\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleTriangleMesh.h">
+      <Filter>Application\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleTriangleMeshUtils.h">
+      <Filter>Application\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

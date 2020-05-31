@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SimpleTriMesh.h"
+#include "SimpleTriangleMesh.h"
 #include "VertexFormat.h"
 #include "RenderableComponent.h"
 
@@ -14,7 +14,7 @@ class StaticMeshComponent: public RenderableComponent
 public:
     // mesh data, available for both read and write
     // after making modifications you need invalidate and update bounds manually
-    using TriMeshPart = SimpleTriMesh<Vertex3D_Format>;
+    using TriMeshPart = SimpleTriangleMesh<Vertex3D_Format>;
     std::vector<TriMeshPart> mTriMeshParts;
 
 public:

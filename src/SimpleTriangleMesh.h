@@ -3,14 +3,14 @@
 // simple triangle mesh
 
 template<typename TVertexFormat>
-class SimpleTriMesh
+class SimpleTriangleMesh
 {
 public:
     using VertexType = typename TVertexFormat::TVertexType;
 
     // ctor
-    SimpleTriMesh() = default;
-    SimpleTriMesh(int vertexCount, int triangleCount)
+    SimpleTriangleMesh() = default;
+    SimpleTriangleMesh(int vertexCount, int triangleCount)
     {
         mTriangles.resize(triangleCount);
         mVertices.resize(vertexCount);
