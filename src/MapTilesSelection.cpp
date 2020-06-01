@@ -98,47 +98,69 @@ void MapTilesSelection::UpdateSelectionMesh()
     glm::vec3 edges[8];
     areaBounds.get_edges(edges);
 
-    auto PushUpQuad = [](StaticMeshComponent::TriMeshPart& trimesh, 
-        const glm::vec3& point_start, 
-        const glm::vec3& point_end)
+    float displacement = 0.06f;
+    // offset
+    glm::vec3 center = areaBounds.get_center();
+    for (glm::vec3& curr_edge: edges)
     {
-        float lineWidth = 0.05f;
-        float heightModifier = 0.03f; // to prevent z-fighting
+        glm::vec3 direction = glm::normalize(curr_edge - center) * displacement;
+        direction.y = displacement;
+        curr_edge += direction;
+    }
 
-        glm::vec3 direction = point_end - point_start;
-        glm::vec3 side_cw  = glm::normalize(glm::vec3( direction.z, direction.y + heightModifier, -direction.x)) * lineWidth;
-        glm::vec3 side_ccw = glm::normalize(glm::vec3(-direction.z, direction.y + heightModifier,  direction.x)) * lineWidth;
+    auto PushSelectionLine = [&center](StaticMeshComponent::TriMeshPart& trimesh, 
+        const glm::vec3& point_start, 
+        const glm::vec3& point_end, bool isDiagonal)
+    {
+        float lineWidth = 0.025f;
+        glm::vec3 direction = isDiagonal ? (point_start - center) : (point_end - point_start);
 
-        Color32 verticesColor = Color32_Blue;
-        verticesColor.mA = 255;
-
-        // setup vertices
-        Vertex3D quad_vertices[4];
-        quad_vertices[0].mPosition = point_start + side_cw;  quad_vertices[0].mColor = verticesColor;
-        quad_vertices[1].mPosition = point_end   + side_cw;  quad_vertices[1].mColor = verticesColor;
-        quad_vertices[2].mPosition = point_start + side_ccw; quad_vertices[2].mColor = verticesColor;
-        quad_vertices[3].mPosition = point_end   + side_ccw; quad_vertices[3].mColor = verticesColor;
-
-        // setup triangles
-        int indexStart = (int) trimesh.mVertices.size();
-        glm::ivec3 quad_triangles[2] =
+        glm::vec3 sides[2] =
         {
-            glm::ivec3(indexStart + 2, indexStart + 0, indexStart + 1),
-            glm::ivec3(indexStart + 1, indexStart + 3, indexStart + 2),
+            isDiagonal ? glm::vec3(direction.y, 0.0f, -direction.x) : glm::vec3( direction.z, 0.0f, -direction.x),
+            isDiagonal ? glm::vec3(direction.x, 0.0f,  direction.y) : glm::vec3( 0.0f, direction.z,  direction.x)
         };
 
-        trimesh.AppendVertices(quad_vertices, 4);
-        trimesh.AppendTriangles(quad_triangles, 2);
+        for (const glm::vec3& currSide: sides)
+        {
+            glm::vec3 side_cw  = glm::normalize(currSide) * lineWidth;
+            glm::vec3 side_ccw = glm::normalize(currSide * -1.0f) * lineWidth;
+
+            Color32 verticesColor = Color32_Blue;
+            // setup vertices
+            Vertex3D quad_vertices[4];
+            quad_vertices[0].mPosition = point_start + side_cw;  quad_vertices[0].mColor = verticesColor;
+            quad_vertices[1].mPosition = point_end   + side_cw;  quad_vertices[1].mColor = verticesColor;
+            quad_vertices[2].mPosition = point_start + side_ccw; quad_vertices[2].mColor = verticesColor;
+            quad_vertices[3].mPosition = point_end   + side_ccw; quad_vertices[3].mColor = verticesColor;
+
+            // setup triangles
+            int indexStart = (int) trimesh.mVertices.size();
+            glm::ivec3 quad_triangles[2] =
+            {
+                glm::ivec3(indexStart + 2, indexStart + 0, indexStart + 1),
+                glm::ivec3(indexStart + 1, indexStart + 3, indexStart + 2),
+            };
+
+            trimesh.AppendVertices(quad_vertices, 4);
+            trimesh.AppendTriangles(quad_triangles, 2);
+        }
     };
 
-    PushUpQuad(triMesh, edges[5], edges[7]);
-    PushUpQuad(triMesh, edges[5], edges[1]);
-    PushUpQuad(triMesh, edges[1], edges[3]);
-    PushUpQuad(triMesh, edges[7], edges[3]);
-    PushUpQuad(triMesh, edges[0], edges[2]);
-    PushUpQuad(triMesh, edges[0], edges[4]);
-    PushUpQuad(triMesh, edges[4], edges[6]);
-    PushUpQuad(triMesh, edges[2], edges[6]);
+    PushSelectionLine(triMesh, edges[5], edges[7], false);
+    PushSelectionLine(triMesh, edges[5], edges[1], false);
+    PushSelectionLine(triMesh, edges[1], edges[3], false);
+    PushSelectionLine(triMesh, edges[7], edges[3], false);
+    PushSelectionLine(triMesh, edges[0], edges[2], false);
+    PushSelectionLine(triMesh, edges[0], edges[4], false);
+    PushSelectionLine(triMesh, edges[4], edges[6], false);
+    PushSelectionLine(triMesh, edges[2], edges[6], false);
+
+    // diagonals
+    PushSelectionLine(triMesh, edges[1], edges[0], true);
+    PushSelectionLine(triMesh, edges[5], edges[4], true);
+    PushSelectionLine(triMesh, edges[7], edges[6], true);
+    PushSelectionLine(triMesh, edges[3], edges[2], true);
 
     // setup selection trimesh materials
     MeshMaterial material;
