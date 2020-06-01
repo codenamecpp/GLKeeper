@@ -18,6 +18,14 @@ public:
     virtual ~GameObjectComponent()
     {
     }
+
+    // try to cast base component type to derived
+    template<typename TComponent>
+    inline TComponent* CastComponent()
+    {
+        return cxx::rtti_cast<TComponent>(this);
+    }
+
     // process update
     // @param deltaTime: Time since last update
     virtual void UpdateComponent(float deltaTime)

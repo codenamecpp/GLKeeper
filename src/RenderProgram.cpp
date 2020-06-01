@@ -132,7 +132,10 @@ void RenderProgram::SetViewProjectionMatrix(const glm::mat4& viewProjectionMatri
         return;
     }
 
-    mGpuProgram->SetUniformParam(mUniformID_view_projection_matrix, viewProjectionMatrix);
+    if (mUniformID_view_projection_matrix != GpuVariable_NULL)
+    {
+        mGpuProgram->SetUniformParam(mUniformID_view_projection_matrix, viewProjectionMatrix);
+    }
 }
 
 void RenderProgram::SetModelMatrix(const glm::mat4& modelMatrix)
@@ -143,7 +146,24 @@ void RenderProgram::SetModelMatrix(const glm::mat4& modelMatrix)
         return;
     }
 
-    mGpuProgram->SetUniformParam(mUniformID_model_matrix, modelMatrix);
+    if (mUniformID_model_matrix != GpuVariable_NULL)
+    {
+        mGpuProgram->SetUniformParam(mUniformID_model_matrix, modelMatrix);
+    }
+}
+
+void RenderProgram::SetMaterialColorMode(eMaterialColorMode colorMode)
+{
+    if (!IsProgramLoaded())
+    {
+        debug_assert(false);
+        return;
+    }
+
+    if (mUniformID_material_color_mode != GpuVariable_NULL)
+    {
+        mGpuProgram->SetUniformParam(mUniformID_material_color_mode, colorMode);
+    }
 }
 
 void RenderProgram::HandleScreenResolutionChanged()
@@ -174,10 +194,17 @@ void RenderProgram::SetupCommonConstants()
     {
         mUniformID_model_matrix = mGpuProgram->QueryUniformLocation("model_matrix");
     }
+
+    // material colormode
+    if (mUniformID_material_color_mode == GpuVariable_NULL)
+    {
+        mUniformID_material_color_mode = mGpuProgram->QueryUniformLocation("material_color_mode");
+    }
 }
 
 void RenderProgram::ClearCommonConstants()
 {
     mUniformID_view_projection_matrix = GpuVariable_NULL;
     mUniformID_model_matrix = GpuVariable_NULL;
+    mUniformID_material_color_mode = GpuVariable_NULL;
 }

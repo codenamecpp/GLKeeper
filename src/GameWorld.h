@@ -2,6 +2,7 @@
 
 #include "GameMap.h"
 #include "DungeonBuilder.h"
+#include "MapTilesSelection.h"
 
 // game world state
 class GameWorld: public cxx::noncopyable
@@ -11,6 +12,8 @@ public:
     ScenarioData mScenarioData;
     GameMap mMapData;
     DungeonBuilder mDungeonBuilder;
+
+    MapTilesSelection mTilesSelection;
 
 public:
 

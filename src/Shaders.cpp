@@ -47,6 +47,7 @@ void StaticMeshRenderProgram::HandleProgramLoad()
     // configure input layout
     mGpuProgram->BindAttribute(eVertexAttribute_Position0, "in_pos");
     mGpuProgram->BindAttribute(eVertexAttribute_Texcoord0, "in_texcoord");
+    mGpuProgram->BindAttribute(eVertexAttribute_Color0, "in_color");
 }
 
 void StaticMeshRenderProgram::HandleProgramFree()

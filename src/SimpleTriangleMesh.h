@@ -38,6 +38,32 @@ public:
         }
     }
 
+    // add vertex data
+    // @param vertexData: Source
+    // @param vertexCount: Number of vertices in source array
+    inline void AppendVertices(const VertexType* vertexData, int vertexCount)
+    {
+        debug_assert(vertexData);
+        mVertices.reserve(vertexCount + mVertices.size());
+        for (int ivert = 0; ivert < vertexCount; ++ivert)
+        {
+            mVertices.push_back(vertexData[ivert]);
+        }
+    }
+
+    // add triangle data
+    // @param vertexData: Source
+    // @param vertexCount: Number of vertices in source array
+    inline void AppendTriangles(const glm::ivec3* triangleData, int triangleCount)
+    {
+        debug_assert(triangleData);
+        mTriangles.reserve(triangleCount + mTriangles.size());
+        for (int itri = 0; itri < triangleCount; ++itri)
+        {
+            mTriangles.push_back(triangleData[itri]);
+        }
+    }
+
     // set vertex data
     // @param vertexData: Source
     // @param vertexCount: Number of vertices in source array

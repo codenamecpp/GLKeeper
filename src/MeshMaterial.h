@@ -1,5 +1,12 @@
 #pragma once
 
+enum eMaterialColorMode
+{
+    eMaterialColorMode_Texture, // diffuse texture * vertex color
+    eMaterialColorMode_Mix,     // diffuse texture + vertex color
+    eMaterialColorMode_Vertex,  // vertex color
+};
+
 // various render properties of drawable object
 class MeshMaterial
 {
@@ -26,5 +33,6 @@ public:
 public:
     Texture2D* mDiffuseTexture = nullptr;
     Texture2D* mEnvMappingTexture = nullptr;
-    RenderStates mRenderStates;    
+    RenderStates mRenderStates;
+    eMaterialColorMode mColorMode = eMaterialColorMode_Texture;
 };

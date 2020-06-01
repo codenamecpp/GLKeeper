@@ -33,12 +33,13 @@ bool GameWorld::Initialize()
         gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize rooms manager");
         return false;
     }
-
+    mTilesSelection.Initialize();
     return true;
 }
 
 void GameWorld::Deinit()
 {
+    mTilesSelection.Deinit();
     gRoomsManager.Deinit();
     gTerrainManager.Deinit();
     gGameObjectsManager.Deinit();

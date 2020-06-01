@@ -23,7 +23,7 @@ void MapInteractionController::UpdateFrame()
     }
 }
 
-void MapInteractionController::Cleanup()
+void MapInteractionController::ResetState()
 {
     mCurrentMode = eMapInteractionMode_Free;
     mHoveredTile = nullptr;
@@ -226,13 +226,11 @@ void MapInteractionController::OnSelectionChanged()
     Rectangle selectionArea;
     if (NeedToShowSelection() && GetTerrainSelectionArea(selectionArea))
     {
-        // todo
-        //gRenderSystem.mTerrainSelectionRender.UpdateSelection(selectionArea);
+        gGameWorld.mTilesSelection.UpdateSelection(selectionArea);
     }
     else
     {
-        // todo
-        //gRenderSystem.mTerrainSelectionRender.ClearSelection();
+        gGameWorld.mTilesSelection.ClearSelection();
     }
 }
 

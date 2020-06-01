@@ -22,7 +22,7 @@ void GameplayGamestate::HandleGamestateEnter()
 
 void GameplayGamestate::HandleGamestateLeave()
 {
-    mMapInteractionControl.Cleanup();
+    mMapInteractionControl.ResetState();
     gGameWorld.ClearWorld();
     gRenderScene.SetCameraController(nullptr);
 

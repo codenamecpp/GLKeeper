@@ -10,10 +10,8 @@ enum eRenderPass
 {
     eRenderPass_Opaque,
     eRenderPass_Translucent,
-
     eRenderPass_Count,
 };
-
 decl_enum_strings(eRenderPass);
 
 // render context

@@ -315,27 +315,39 @@ inline bool IsDiagonalDirection(eDirection direction)
     return direction == eDirection_NE || direction == eDirection_SE || direction == eDirection_SW || direction == eDirection_NW;
 }
 
-// compute game map block bounding box
-// @param blockLocation: Logical position
-// @param outputBounds: Output bounds
+// compute gamemap block bounding box
 inline void GetMapBlockBounds(const Point& blockLocation, cxx::aabbox& outputBounds)
 {
     outputBounds.clear();
     // min
     outputBounds.mMin.x = (blockLocation.x * DUNGEON_CELL_SIZE) - DUNGEON_CELL_HALF_SIZE;
-    outputBounds.mMin.y = 0.0f;
+    outputBounds.mMin.y = TERRAIN_FLOOR_LEVEL;
     outputBounds.mMin.z = (blockLocation.y * DUNGEON_CELL_SIZE) - DUNGEON_CELL_HALF_SIZE;
     // max
     outputBounds.mMax.x = outputBounds.mMin.x + DUNGEON_CELL_SIZE;
-    outputBounds.mMax.y = 3.0f;
+    outputBounds.mMax.y = TERRAIN_FLOOR_LEVEL + DUNGEON_CELL_SIZE;
     outputBounds.mMax.z = outputBounds.mMin.z + DUNGEON_CELL_SIZE;
+}
+
+// compute gamemap area bounding box
+inline void GetMapAreaBounds(const Rectangle& blocksArea, cxx::aabbox& outputBounds)
+{
+    outputBounds.clear();
+    // min
+    outputBounds.mMin.x = (blocksArea.x * DUNGEON_CELL_SIZE) - DUNGEON_CELL_HALF_SIZE;
+    outputBounds.mMin.y = TERRAIN_FLOOR_LEVEL;
+    outputBounds.mMin.z = (blocksArea.y * DUNGEON_CELL_SIZE) - DUNGEON_CELL_HALF_SIZE;
+    // max
+    outputBounds.mMax.x = outputBounds.mMin.x + (blocksArea.w * DUNGEON_CELL_SIZE);
+    outputBounds.mMax.y = TERRAIN_FLOOR_LEVEL + DUNGEON_CELL_SIZE;
+    outputBounds.mMax.z = outputBounds.mMin.z + (blocksArea.h * DUNGEON_CELL_SIZE);
 }
 
 // compute game map block center in world coordinates
 inline void GetMapBlockCenter(const Point& blockLocation, glm::vec3& outputCoord)
 {
     outputCoord.x = blockLocation.x * DUNGEON_CELL_SIZE;
-    outputCoord.y = 1.0f;
+    outputCoord.y = TERRAIN_FLOOR_LEVEL + DUNGEON_CELL_SIZE;
     outputCoord.z = blockLocation.y * DUNGEON_CELL_SIZE;
 }
 

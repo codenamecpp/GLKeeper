@@ -2,6 +2,7 @@
 #include "MeshMaterial.h"
 #include "GraphicsDevice.h"
 #include "Texture2D.h"
+#include "RenderManager.h"
 
 MeshMaterial::MeshMaterial()
 {
@@ -11,7 +12,7 @@ void MeshMaterial::Clear()
 {
     mRenderStates = RenderStates();
 
-    // reset textures
+    mColorMode = eMaterialColorMode_Texture;
     mDiffuseTexture = nullptr;
     mEnvMappingTexture = nullptr;
 }
@@ -19,7 +20,6 @@ void MeshMaterial::Clear()
 void MeshMaterial::ActivateMaterial()
 {
     gGraphicsDevice.SetRenderStates(mRenderStates);
-
     if (mDiffuseTexture)
     {
         if (!mDiffuseTexture->ActivateTexture(eTextureUnit_0))
@@ -27,6 +27,8 @@ void MeshMaterial::ActivateMaterial()
             debug_assert(false);
         }
     }
+
+    gRenderManager.HandleMaterialActivate(this);
 }
 
 void MeshMaterial::PreloadTextures()
@@ -46,7 +48,8 @@ bool MeshMaterial::operator == (const MeshMaterial& other) const
 {
     return mRenderStates == other.mRenderStates && 
         mDiffuseTexture == other.mDiffuseTexture && 
-        mEnvMappingTexture == other.mEnvMappingTexture; 
+        mEnvMappingTexture == other.mEnvMappingTexture &&
+        mColorMode == other.mColorMode; 
 }
 
 bool MeshMaterial::operator != (const MeshMaterial& other) const
@@ -64,6 +67,9 @@ bool MeshMaterial::operator < (const MeshMaterial& other) const
 
     if (mRenderStates != other.mRenderStates)
         return mRenderStates < other.mRenderStates;
+
+    if (mColorMode != other.mColorMode)
+        return mColorMode < other.mColorMode;
 
     return false;
 }

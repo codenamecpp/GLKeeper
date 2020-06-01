@@ -195,3 +195,13 @@ void RenderManager::HandleRenderProgramFree(RenderProgram* renderProgram)
         debug_assert(false);
     }
 }
+
+void RenderManager::HandleMaterialActivate(MeshMaterial* material)
+{
+    debug_assert(material);
+
+    if (mActiveRenderProgram)
+    {
+        mActiveRenderProgram->SetMaterialColorMode(material->mColorMode);
+    }
+}

@@ -11,7 +11,8 @@
 // master render system, it is intended to manage rendering pipeline of the game
 class RenderManager: public cxx::noncopyable
 {
-    friend RenderProgram;
+    friend class RenderProgram;
+    friend class MeshMaterial;
 
 public:
     // readonly
@@ -46,6 +47,8 @@ private:
 
     void HandleRenderProgramLoad(RenderProgram* renderProgram);
     void HandleRenderProgramFree(RenderProgram* renderProgram);
+
+    void HandleMaterialActivate(MeshMaterial* material);
 
 private:
     DebugRenderer mDebugRenderer;

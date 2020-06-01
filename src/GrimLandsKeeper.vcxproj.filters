@@ -513,6 +513,9 @@
     <ClInclude Include="SimpleTriangleMeshUtils.h">
       <Filter>Application\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="MapTilesSelection.h">
+      <Filter>Game\World</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -804,6 +807,9 @@
     </ClCompile>
     <ClCompile Include="StaticMeshComponent.cpp">
       <Filter>Game\GameObject\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="MapTilesSelection.cpp">
+      <Filter>Game\World</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

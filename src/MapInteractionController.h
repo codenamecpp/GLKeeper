@@ -24,7 +24,7 @@ public:
     void UpdateFrame();
 
     // reset controller state
-    void Cleanup();
+    void ResetState();
 
     // change current interaction mode to room construction
     // @param roomDefinition: Specific room construction type
