@@ -12,6 +12,7 @@ void MapTilesSelection::Initialize()
     if (mSelectionObject)
     {
         mSelectionObject->AddComponent<StaticMeshComponent>();
+        mSelectionObject->mDebugColor.mA = 0; // hide
     }
     debug_assert(mSelectionObject);
 }
@@ -112,7 +113,7 @@ void MapTilesSelection::UpdateSelectionMesh()
         const glm::vec3& point_start, 
         const glm::vec3& point_end, bool isDiagonal)
     {
-        float lineWidth = 0.025f;
+        float lineWidth = 0.02f;
         glm::vec3 direction = isDiagonal ? (point_start - center) : (point_end - point_start);
 
         glm::vec3 sides[2] =
@@ -126,7 +127,7 @@ void MapTilesSelection::UpdateSelectionMesh()
             glm::vec3 side_cw  = glm::normalize(currSide) * lineWidth;
             glm::vec3 side_ccw = glm::normalize(currSide * -1.0f) * lineWidth;
 
-            Color32 verticesColor = Color32_Blue;
+            Color32 verticesColor = Color32::MakeRGBA(80, 80, 255, 250);
             // setup vertices
             Vertex3D quad_vertices[4];
             quad_vertices[0].mPosition = point_start + side_cw;  quad_vertices[0].mColor = verticesColor;
@@ -166,12 +167,11 @@ void MapTilesSelection::UpdateSelectionMesh()
     MeshMaterial material;
     material.mRenderStates.mIsAlphaBlendEnabled = true;
     material.mRenderStates.mIsFaceCullingEnabled = false;
-    material.mRenderStates.mBlendingMode = eBlendingMode_AlphaAdditive;
+    material.mRenderStates.mBlendingMode = eBlendingMode_Alpha;
     material.mDiffuseTexture = gTexturesManager.mWhiteTexture;
     material.mColorMode = eMaterialColorMode_Vertex;
     renderable->SetMeshMaterialsCount(1);
     renderable->SetMeshMaterial(0, material);
-
     renderable->InvalidateMesh();
     renderable->UpdateBounds();
 }
