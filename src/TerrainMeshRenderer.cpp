@@ -1,12 +1,14 @@
 #include "pch.h"
-#include "TerrainMeshComponentRenderer.h"
+#include "TerrainMeshRenderer.h"
 #include "RenderScene.h"
 #include "GraphicsDevice.h"
 #include "TerrainMeshComponent.h"
 #include "cvars.h"
-#include "MapTile.h"
+#include "TerrainTile.h"
 #include "GameWorld.h"
 #include "GpuBuffer.h"
+#include "TerrainManager.h"
+#include "Texture2D.h"
 
 // limits
 const int MaxTerrainMeshBufferSize = 1024 * 1024 * 2;
@@ -57,7 +59,7 @@ inline void SplitMeshPieces(const TMeshPiecesContainer& meshPieces, PieceBucketC
 
 //////////////////////////////////////////////////////////////////////////
 
-bool TerrainMeshComponentRenderer::Initialize()
+bool TerrainMeshRenderer::Initialize()
 {
     if (!mTerrainRenderProgram.LoadProgram())
     {
@@ -66,12 +68,12 @@ bool TerrainMeshComponentRenderer::Initialize()
     return true;
 }
 
-void TerrainMeshComponentRenderer::Deinit()
+void TerrainMeshRenderer::Deinit()
 {
     mTerrainRenderProgram.FreeProgram();
 }
 
-void TerrainMeshComponentRenderer::Render(SceneRenderContext& renderContext, TerrainMeshComponent* component)
+void TerrainMeshRenderer::Render(SceneRenderContext& renderContext, TerrainMeshComponent* component)
 {
     if (!gCVarRender_DrawTerrain.mValue)
         return;
@@ -86,6 +88,12 @@ void TerrainMeshComponentRenderer::Render(SceneRenderContext& renderContext, Ter
     mTerrainRenderProgram.SetViewProjectionMatrix(gRenderScene.mCamera.mViewProjectionMatrix);
     mTerrainRenderProgram.SetModelMatrix(SceneIdentyMatrix);
     mTerrainRenderProgram.ActivateProgram();
+
+    // bind additional highlight tiles texture
+    if (gTerrainManager.mHighlightTilesTexture)
+    {
+        gTerrainManager.mHighlightTilesTexture->ActivateTexture(eTextureUnit_1);
+    }
 
     // bind indices
     gGraphicsDevice.BindIndexBuffer(component->mIndexBuffer);
@@ -118,7 +126,7 @@ void TerrainMeshComponentRenderer::Render(SceneRenderContext& renderContext, Ter
     }
 }
 
-void TerrainMeshComponentRenderer::ReleaseRenderdata(TerrainMeshComponent* component)
+void TerrainMeshRenderer::ReleaseRenderdata(TerrainMeshComponent* component)
 {
     debug_assert(component);
     component->mRenderProgram = nullptr;
@@ -137,7 +145,7 @@ void TerrainMeshComponentRenderer::ReleaseRenderdata(TerrainMeshComponent* compo
     component->ClearMeshMaterials();
 }
 
-void TerrainMeshComponentRenderer::PrepareRenderdata(TerrainMeshComponent* component)
+void TerrainMeshRenderer::PrepareRenderdata(TerrainMeshComponent* component)
 {
     debug_assert(component);
 
@@ -160,14 +168,14 @@ void TerrainMeshComponentRenderer::PrepareRenderdata(TerrainMeshComponent* compo
     for (int tilex = rcMapTerrain.x; tilex < (rcMapTerrain.x + rcMapTerrain.w); ++tilex)
     {
         const Point tileLocation (tilex, tiley);
-        if (!gamemap.IsWithinMap(tileLocation))
+        const TerrainTile* currTile = gamemap.GetMapTile(tileLocation);
+
+        if (currTile == nullptr)
         {
             debug_assert(false);
             continue;
         }
 
-        const MapTile* currTile = gamemap.GetMapTile(tileLocation);
-        debug_assert(currTile);
         for (const TileFaceData& tileFace: currTile->mFaces)
         {
             SplitMeshPieces(tileFace.mMeshArray, pieceBucketContainer);

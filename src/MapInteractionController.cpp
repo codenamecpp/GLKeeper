@@ -14,7 +14,7 @@ MapInteractionController::MapInteractionController()
 
 void MapInteractionController::UpdateFrame()
 {
-    MapTile* prevHoveredTile = mHoveredTile;
+    TerrainTile* prevHoveredTile = mHoveredTile;
     ScanHoveredTile();
 
     if (prevHoveredTile != mHoveredTile)
@@ -322,13 +322,11 @@ bool MapInteractionController::ProcessTagTerrain(const Rectangle& area)
     {
         if (mSelectionStartTile->mIsTagged)
         {
-            // todo
-            //gWorldState.UnTagTerrain(area);
+            gGameWorld.UnTagTerrain(area);
         }
         else
         {
-            // todo
-            //gWorldState.TagTerrain(area);
+            gGameWorld.TagTerrain(area);
         }
         return true;
     }

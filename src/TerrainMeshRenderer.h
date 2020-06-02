@@ -3,7 +3,7 @@
 #include "Shaders.h"
 
 // terrain visualization manager
-class TerrainMeshComponentRenderer: public cxx::noncopyable
+class TerrainMeshRenderer: public cxx::noncopyable
 {
     friend class TerrainMeshComponent;
 

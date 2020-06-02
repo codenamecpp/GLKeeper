@@ -2,7 +2,7 @@
 #include "TempleRoom.h"
 #include "RenderScene.h"
 #include "WaterLavaMeshComponent.h"
-#include "MapTile.h"
+#include "TerrainTile.h"
 #include "GameObject.h"
 #include "GameObjectsManager.h"
 #include "TexturesManager.h"
@@ -66,7 +66,7 @@ void TempleRoom::OnReconfigure()
 void TempleRoom::ScanWaterPoolTiles(TilesArray& poolTiles)
 {
     poolTiles = mInnerTiles;
-    for (MapTile* currentTile: mRoomTiles)
+    for (TerrainTile* currentTile: mRoomTiles)
     {
         if (currentTile->mIsRoomInnerTile)
             continue;

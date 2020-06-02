@@ -3,7 +3,7 @@
 #include "Shaders.h"
 
 // animating models visualization manager
-class AnimatingMeshComponentRenderer: public cxx::noncopyable
+class AnimatingMeshRenderer: public cxx::noncopyable
 {
     friend class AnimatingMeshComponent;
 

@@ -63,15 +63,7 @@ public:
     glm::vec3 mNormal; // 12 bytes
     glm::vec2 mTexcoord; // 8 bytes
                          // terrain tile logical coordinate
-    union // 4 bytes
-    {
-        unsigned int mTileCoord;
-        struct
-        {
-            unsigned short mTileX;
-            unsigned short mTileY;
-        };
-    };
+    unsigned short mTileCoord[2]; // x/y tile coordinate
 };
 
 const unsigned int Sizeof_Vertex3D_Terrain = sizeof(Vertex3D_Terrain);

@@ -3,7 +3,7 @@
 #include "Shaders.h"
 
 // water and lava visualization manager
-class WaterLavaMeshComponentRenderer: public cxx::noncopyable
+class WaterLavaMeshRenderer: public cxx::noncopyable
 {
     friend class WaterLavaMeshComponent;
 

@@ -10,8 +10,11 @@
 #include "TexturesManager.h"
 #include "TerrainMeshComponent.h"
 #include "WaterLavaMeshComponent.h"
+#include "Texture2D.h"
 
 const int TerrainMeshSizeTiles = 8; // 8x8 tiles per terrain mesh
+                                    
+const Color32 TILE_TAGGED_COLOR = Color32::MakeRGBA(64, 64, 255, 0); // color constants
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -19,13 +22,12 @@ TerrainManager gTerrainManager;
 
 bool TerrainManager::Initialize()
 {
-
     return true;
 }
 
 void TerrainManager::Deinit()
 {
-
+    FreeHighhlightTilesTexture();
 }
 
 void TerrainManager::EnterWorld()
@@ -39,19 +41,31 @@ void TerrainManager::EnterWorld()
         return;
     }
 
-    CreateTerrainMeshList();    
-    CreateWaterLavaMeshList();
+    InitTerrainMeshList();    
+    InitWaterLavaMeshList();
+    InitHighhlightTilesTexture();
 }
 
 void TerrainManager::ClearWorld()
 {
-    DestroyWaterLavaMeshList();
-    DestroyTerrainMeshList();
+    FreeHighhlightTilesTexture();
+    FreeWaterLavaMeshList();
+    FreeTerrainMeshList();
 
-    mInvalidatedTiles.clear();
+    mMeshInvalidatedTiles.clear();
+    mHighlightTiles.clear();
 }
 
-void TerrainManager::CreateTerrainMeshList()
+void TerrainManager::PreRenderScene()
+{
+    if (!mHighlightTiles.empty())
+    {
+        UpdateHighhlightTilesTexture();
+        mHighlightTiles.clear();
+    }
+}
+
+void TerrainManager::InitTerrainMeshList()
 {
     debug_assert(mTerrainMeshArray.empty());
 
@@ -92,7 +106,7 @@ void TerrainManager::CreateTerrainMeshList()
     }
 }
 
-void TerrainManager::DestroyTerrainMeshList()
+void TerrainManager::FreeTerrainMeshList()
 {
     for (GameObject* currTerrainMesh: mTerrainMeshArray)
     {
@@ -103,13 +117,13 @@ void TerrainManager::DestroyTerrainMeshList()
 
 void TerrainManager::UpdateTerrainMesh()
 {
-    if (mInvalidatedTiles.empty())
+    if (mMeshInvalidatedTiles.empty())
         return;
 
     std::set<GenericRoom*> invalidateRooms;
 
     // build terrain tiles and collect invalidated rooms
-    for (MapTile* currentTile: mInvalidatedTiles)
+    for (TerrainTile* currentTile: mMeshInvalidatedTiles)
     {
         if (currentTile->mBuiltRoom)
         {
@@ -150,7 +164,7 @@ void TerrainManager::UpdateTerrainMesh()
     //}
 
     // reset invalidated flag
-    for (MapTile* currentTile: mInvalidatedTiles)
+    for (TerrainTile* currentTile: mMeshInvalidatedTiles)
     {
         currentTile->mIsMeshInvalidated = false;
     }
@@ -164,36 +178,48 @@ void TerrainManager::UpdateTerrainMesh()
         meshComponent->PrepareRenderResources();
     }
 
-    mInvalidatedTiles.clear();
+    mMeshInvalidatedTiles.clear();
 }
 
-void TerrainManager::InvalidateTileMesh(MapTile* mapTile)
+void TerrainManager::InvalidateTileMesh(TerrainTile* mapTile)
 {
-    if (mapTile == nullptr)
+    if (mapTile && !mapTile->mIsMeshInvalidated)
     {
-        debug_assert(false);
-        return;
+        if (cxx::contains(mMeshInvalidatedTiles, mapTile))
+        {
+            debug_assert(false);
+        }
+        mMeshInvalidatedTiles.push_back(mapTile);
+        mapTile->mIsMeshInvalidated = true;
     }
+    debug_assert(mapTile);
+}
 
-    if (mapTile->mIsMeshInvalidated)
-        return;
-
-    cxx::push_back_if_unique(mInvalidatedTiles, mapTile);
-    mapTile->mIsMeshInvalidated = true;
+void TerrainManager::InvalidateTileNeighboursMesh(TerrainTile* mapTile)
+{
+    debug_assert(mapTile);
+    if (mapTile)
+    {
+        for (TerrainTile* currTile: mapTile->mNeighbours)
+        {
+            InvalidateTileMesh(currTile);
+        }
+    }
+    debug_assert(mapTile);
 }
 
 void TerrainManager::ClearInvalidatedTiles()
 {
-    for (MapTile* currTile: mInvalidatedTiles)
+    for (TerrainTile* currTile: mMeshInvalidatedTiles)
     {
         currTile->mIsMeshInvalidated = false;
     }
-    mInvalidatedTiles.clear();
+    mMeshInvalidatedTiles.clear();
 }
 
 void TerrainManager::BuildFullTerrainMesh()
 {
-    mInvalidatedTiles.clear();
+    mMeshInvalidatedTiles.clear();
 
     int dimsx = gGameWorld.mMapData.mDimensions.x;
     int dimsy = gGameWorld.mMapData.mDimensions.y;
@@ -204,7 +230,7 @@ void TerrainManager::BuildFullTerrainMesh()
     {
         Point currTilePosition (tilex, tiley);
 
-        MapTile* currentTile = gGameWorld.mMapData.GetMapTile(currTilePosition);
+        TerrainTile* currentTile = gGameWorld.mMapData.GetMapTile(currTilePosition);
         debug_assert(currentTile);
 
         gGameWorld.mDungeonBuilder.BuildTerrainMesh(currentTile);
@@ -228,7 +254,7 @@ void TerrainManager::BuildFullTerrainMesh()
     }
 }
 
-void TerrainManager::CreateWaterLavaMeshList()
+void TerrainManager::InitWaterLavaMeshList()
 {
     TilesArray lavaTiles;
     TilesArray waterTiles;
@@ -242,7 +268,7 @@ void TerrainManager::CreateWaterLavaMeshList()
     {
         Point currTilePosition (tilex, tiley);
 
-        MapTile* currMapTile = gGameWorld.mMapData.GetMapTile(currTilePosition);
+        TerrainTile* currMapTile = gGameWorld.mMapData.GetMapTile(currTilePosition);
 
         // collect lava tile
         if (currMapTile->mBaseTerrain->mIsLava)
@@ -266,7 +292,7 @@ void TerrainManager::CreateWaterLavaMeshList()
     // create lava surfaces
     while (!lavaTiles.empty())
     {
-        MapTile* originTile = lavaTiles.back();
+        TerrainTile* originTile = lavaTiles.back();
         lavaTiles.pop_back();
 
         tempTilesArray.clear();
@@ -287,7 +313,7 @@ void TerrainManager::CreateWaterLavaMeshList()
     // create water surfaces
     while (!waterTiles.empty())
     {
-        MapTile* originTile = waterTiles.back();
+        TerrainTile* originTile = waterTiles.back();
         waterTiles.pop_back();
 
         tempTilesArray.clear();
@@ -315,13 +341,82 @@ void TerrainManager::CreateWaterLavaMeshList()
     }
 }
 
-void TerrainManager::DestroyWaterLavaMeshList()
+void TerrainManager::FreeWaterLavaMeshList()
 {
     for (GameObject* currWaterLavaMesh: mWaterLavaMeshArray)
     {
         gGameObjectsManager.DestroyGameObject(currWaterLavaMesh);
     }
     mWaterLavaMeshArray.clear();
+}
+
+void TerrainManager::InitHighhlightTilesTexture()
+{
+    // allocate highlight tiles texture
+    Point highlightImageSize = gGameWorld.mMapData.mDimensions;
+    if (highlightImageSize.x > 0 && highlightImageSize.y > 0)
+    {
+        highlightImageSize.x = cxx::get_next_pot(highlightImageSize.x);
+        highlightImageSize.y = cxx::get_next_pot(highlightImageSize.y);
+
+        if (!mHighlightTilesImage.CreateImage(eTextureFormat_RGB8, highlightImageSize, 0, false))
+        {
+            debug_assert(false);
+
+            gConsole.LogMessage(eLogMessage_Warning, "Cannot allocate tiles highhlight texture");
+            return;
+        }
+        mHighlightTilesImage.FillWithColor(Color32_Black);
+
+        // allocate hardware texture
+        mHighlightTilesTexture = new Texture2D("highlight_terrain");
+        if (mHighlightTilesTexture->CreateTexture(mHighlightTilesImage))
+            return; // success
+
+        // failed
+        FreeHighhlightTilesTexture();
+
+        debug_assert(false);
+        gConsole.LogMessage(eLogMessage_Warning, "Cannot allocate tiles highhlight texture");
+        return;
+    }
+    else
+    {
+        debug_assert(false);
+    }
+}
+
+void TerrainManager::FreeHighhlightTilesTexture()
+{
+    SafeDelete(mHighlightTilesTexture);
+
+    mHighlightTilesImage.Clear();
+}
+
+void TerrainManager::UpdateHighhlightTilesTexture()
+{
+    if (mHighlightTilesTexture == nullptr)
+        return;
+
+    unsigned char* pixels = mHighlightTilesImage.GetImageDataBuffer();
+
+    for (TerrainTile* currentTile: mHighlightTiles)
+    {
+        int offset = currentTile->mTileLocation.y * mHighlightTilesImage.mTextureDesc.mDimensions.x + currentTile->mTileLocation.x;
+        if (currentTile->mIsTagged)
+        {
+            pixels[offset * 3 + 0] = TILE_TAGGED_COLOR.mR;
+            pixels[offset * 3 + 1] = TILE_TAGGED_COLOR.mG;
+            pixels[offset * 3 + 2] = TILE_TAGGED_COLOR.mB;
+        }
+        else
+        {
+            pixels[offset * 3 + 0] = 0;
+            pixels[offset * 3 + 1] = 0;
+            pixels[offset * 3 + 2] = 0;
+        }
+    }
+    mHighlightTilesTexture->UpdateTexture(0, pixels);
 }
 
 GameObject* TerrainManager::CreateObjectTerrain(const Rectangle& mapArea)
@@ -362,4 +457,14 @@ GameObject* TerrainManager::CreateObjectWater(const TilesArray& tilesArray)
     meshComponent->SetSurfaceParams(DEFAULT_WATER_TRANSLUCENCY, DEFAULT_WATER_WAVE_WIDTH, DEFAULT_WATER_WAVE_HEIGHT, DEFAULT_WATER_WAVE_FREQ, DEFAULT_WATER_LEVEL);
 
     return gameObject;
+}
+
+void TerrainManager::HighhlightTile(TerrainTile* mapTile, bool isHighlighted)
+{
+    if (mapTile && mapTile->mIsTagged != isHighlighted)
+    {
+        cxx::push_back_if_unique(mHighlightTiles, mapTile);
+        mapTile->mIsTagged = isHighlighted;
+    }
+    debug_assert(mapTile);
 }

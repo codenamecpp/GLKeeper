@@ -933,11 +933,21 @@ void GraphicsDevice::SetupVertexAttributes(const VertexFormat& streamDefinition)
         }
 
         GLenum dataType = GetAttributeDataTypeGL(attribute.mFormat);
-        // set attribute location
-        ::glVertexAttribPointer(currentProgram->mAttributes[iattribute], numComponents, dataType, 
-            attribute.mNormalized ? GL_TRUE : GL_FALSE, 
-            streamDefinition.mDataStride, BUFFER_OFFSET(attribute.mDataOffset + streamDefinition.mBaseOffset));
-        glCheckError();
+
+        if (dataType == GL_FLOAT || attribute.mNormalized)
+        {
+            // set attribute location
+            ::glVertexAttribPointer(currentProgram->mAttributes[iattribute], numComponents, dataType, 
+                attribute.mNormalized ? GL_TRUE : GL_FALSE, 
+                streamDefinition.mDataStride, BUFFER_OFFSET(attribute.mDataOffset + streamDefinition.mBaseOffset));
+            glCheckError();
+        }
+        else
+        {
+            ::glVertexAttribIPointer(currentProgram->mAttributes[iattribute], numComponents, dataType, 
+                streamDefinition.mDataStride, BUFFER_OFFSET(attribute.mDataOffset + streamDefinition.mBaseOffset));
+            glCheckError();
+        }
     }
 }
 

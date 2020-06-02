@@ -1,10 +1,10 @@
 #include "pch.h"
 #include "WaterLavaMeshComponent.h"
 #include "TransformComponent.h"
-#include "WaterLavaMeshComponentRenderer.h"
+#include "WaterLavaMeshRenderer.h"
 #include "RenderManager.h"
 #include "GameObject.h"
-#include "MapTile.h"
+#include "TerrainTile.h"
 
 WaterLavaMeshComponent::WaterLavaMeshComponent(GameObject* gameObject)
     : RenderableComponent(gameObject)
@@ -30,7 +30,7 @@ bool WaterLavaMeshComponent::IsMeshInvalidated() const
 
 void WaterLavaMeshComponent::ReleaseRenderResources()
 {
-    WaterLavaMeshComponentRenderer& renderer = gRenderManager.mWaterLavaMeshRenderer;
+    WaterLavaMeshRenderer& renderer = gRenderManager.mWaterLavaMeshRenderer;
     renderer.ReleaseRenderdata(this);
 
     InvalidateMesh();
@@ -42,7 +42,7 @@ void WaterLavaMeshComponent::SetWaterLavaTiles(const TilesArray& tilesArray)
 
     // setup bounds
     cxx::aabbox bounds;
-    for (MapTile* currentTile: tilesArray)
+    for (TerrainTile* currentTile: tilesArray)
     {
         cxx::aabbox currentTileBounds;
         GetMapBlockBounds(currentTile->mTileLocation, currentTileBounds);
@@ -99,7 +99,7 @@ void WaterLavaMeshComponent::RenderFrame(SceneRenderContext& renderContext)
         PrepareRenderResources();
     }
 
-    WaterLavaMeshComponentRenderer& renderer = gRenderManager.mWaterLavaMeshRenderer;
+    WaterLavaMeshRenderer& renderer = gRenderManager.mWaterLavaMeshRenderer;
     renderer.Render(renderContext, this);
 }
 
@@ -110,6 +110,6 @@ void WaterLavaMeshComponent::PrepareRenderResources()
 
     mMeshInvalidated = false;
 
-    WaterLavaMeshComponentRenderer& renderer = gRenderManager.mWaterLavaMeshRenderer;
+    WaterLavaMeshRenderer& renderer = gRenderManager.mWaterLavaMeshRenderer;
     renderer.PrepareRenderdata(this);
 }

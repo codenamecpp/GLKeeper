@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "WallSection.h"
-#include "MapTile.h"
+#include "TerrainTile.h"
 
 WallSection::WallSection(GenericRoom* room)
     : mRoom(room)
@@ -21,7 +21,7 @@ void WallSection::Setup(eTileFace faceId)
     mFaceId = faceId;
 }
 
-void WallSection::RemoveTile(MapTile* mapTile)
+void WallSection::RemoveTile(TerrainTile* mapTile)
 {
     if (mapTile)
     {
@@ -33,7 +33,7 @@ void WallSection::RemoveTile(MapTile* mapTile)
     }
 }
 
-void WallSection::InsertTileHead(MapTile* mapTile)
+void WallSection::InsertTileHead(TerrainTile* mapTile)
 {
     if (mapTile)
     {
@@ -46,7 +46,7 @@ void WallSection::InsertTileHead(MapTile* mapTile)
     }
 }
 
-void WallSection::InsertTileTail(MapTile* mapTile)
+void WallSection::InsertTileTail(TerrainTile* mapTile)
 {
     if (mapTile)
     {
@@ -64,7 +64,7 @@ void WallSection::RemoveTiles()
     mMapTiles.clear();
 }
 
-bool WallSection::ContainsTile(MapTile* mapTile) const
+bool WallSection::ContainsTile(TerrainTile* mapTile) const
 {
     return cxx::contains(mMapTiles, mapTile);
 }
@@ -74,7 +74,7 @@ bool WallSection::ContainsTiles() const
     return !mMapTiles.empty();
 }
 
-bool WallSection::IsInnerTile(MapTile* mapTile) const
+bool WallSection::IsInnerTile(TerrainTile* mapTile) const
 {
     debug_assert(mapTile);
     if (IsHeadTile(mapTile) || IsTailTile(mapTile))
@@ -83,7 +83,7 @@ bool WallSection::IsInnerTile(MapTile* mapTile) const
     return true;
 }
 
-bool WallSection::IsOuterTile(MapTile* mapTile) const
+bool WallSection::IsOuterTile(TerrainTile* mapTile) const
 {
     debug_assert(mapTile);
     if (IsHeadTile(mapTile) || IsTailTile(mapTile))
@@ -92,7 +92,7 @@ bool WallSection::IsOuterTile(MapTile* mapTile) const
     return false;
 }
 
-bool WallSection::IsHeadTile(MapTile* mapTile) const
+bool WallSection::IsHeadTile(TerrainTile* mapTile) const
 {
     if (mMapTiles.empty())
     {
@@ -111,7 +111,7 @@ bool WallSection::IsHeadTile(MapTile* mapTile) const
     return false;
 }
 
-bool WallSection::IsTailTile(MapTile* mapTile) const
+bool WallSection::IsTailTile(TerrainTile* mapTile) const
 {
     if (mMapTiles.empty())
     {
@@ -130,7 +130,7 @@ bool WallSection::IsTailTile(MapTile* mapTile) const
     return false;
 }
 
-bool WallSection::IsEvenTile(MapTile* mapTile) const
+bool WallSection::IsEvenTile(TerrainTile* mapTile) const
 {
     bool isEven = false;
     if (mapTile)

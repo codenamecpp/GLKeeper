@@ -1,16 +1,16 @@
 #include "pch.h"
-#include "WaterLavaMeshComponentRenderer.h"
+#include "WaterLavaMeshRenderer.h"
 #include "RenderScene.h"
 #include "GraphicsDevice.h"
 #include "WaterLavaMeshComponent.h"
 #include "Cvars.h"
 #include "GraphicsDevice.h"
 #include "GpuBuffer.h"
-#include "MapTile.h"
+#include "TerrainTile.h"
 
 const int MaxWaterLavaMeshBufferSize = 1024 * 1024 * 2;
 
-bool WaterLavaMeshComponentRenderer::Initialize()
+bool WaterLavaMeshRenderer::Initialize()
 {
     if (!mWaterLavaRenderProgram.LoadProgram())
     {
@@ -19,12 +19,12 @@ bool WaterLavaMeshComponentRenderer::Initialize()
     return true;
 }
 
-void WaterLavaMeshComponentRenderer::Deinit()
+void WaterLavaMeshRenderer::Deinit()
 {
     mWaterLavaRenderProgram.FreeProgram();
 }
 
-void WaterLavaMeshComponentRenderer::Render(SceneRenderContext& renderContext, WaterLavaMeshComponent* component)
+void WaterLavaMeshRenderer::Render(SceneRenderContext& renderContext, WaterLavaMeshComponent* component)
 {
     if (!gCVarRender_DrawWaterAndLava.mValue)
         return;
@@ -71,7 +71,7 @@ void WaterLavaMeshComponentRenderer::Render(SceneRenderContext& renderContext, W
     }    
 }
 
-void WaterLavaMeshComponentRenderer::PrepareRenderdata(WaterLavaMeshComponent* component)
+void WaterLavaMeshRenderer::PrepareRenderdata(WaterLavaMeshComponent* component)
 {
     debug_assert(component);
     if (component->mWaterLavaTiles.empty())
@@ -138,7 +138,7 @@ void WaterLavaMeshComponentRenderer::PrepareRenderdata(WaterLavaMeshComponent* c
 
     // upload data
     int vertices_counter = 0;
-    for (MapTile* currTile: component->mWaterLavaTiles)
+    for (TerrainTile* currTile: component->mWaterLavaTiles)
     {
         // setup indices
         const glm::ivec3 pointindices[NumTrianglesPerTile] = {
@@ -217,7 +217,7 @@ void WaterLavaMeshComponentRenderer::PrepareRenderdata(WaterLavaMeshComponent* c
     component->mRenderProgram = &mWaterLavaRenderProgram;
 }
 
-void WaterLavaMeshComponentRenderer::ReleaseRenderdata(WaterLavaMeshComponent* component)
+void WaterLavaMeshRenderer::ReleaseRenderdata(WaterLavaMeshComponent* component)
 {
     debug_assert(component);
     component->mRenderProgram = nullptr;

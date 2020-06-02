@@ -1,11 +1,11 @@
 #include "pch.h"
-#include "StaticMeshComponentRenderer.h"
+#include "StaticMeshRenderer.h"
 #include "GpuBuffer.h"
 #include "StaticMeshComponent.h"
 #include "GraphicsDevice.h"
 #include "RenderScene.h"
 
-bool StaticMeshComponentRenderer::Initialize()
+bool StaticMeshRenderer::Initialize()
 {
     if (!mStaticMeshRenderProgram.LoadProgram())
     {
@@ -15,12 +15,12 @@ bool StaticMeshComponentRenderer::Initialize()
     return true;
 }
 
-void StaticMeshComponentRenderer::Deinit()
+void StaticMeshRenderer::Deinit()
 {
     mStaticMeshRenderProgram.FreeProgram();
 }
 
-void StaticMeshComponentRenderer::Render(SceneRenderContext& renderContext, StaticMeshComponent* component)
+void StaticMeshRenderer::Render(SceneRenderContext& renderContext, StaticMeshComponent* component)
 {
     debug_assert(component);
     if (component->mDrawCalls.empty())
@@ -63,7 +63,7 @@ void StaticMeshComponentRenderer::Render(SceneRenderContext& renderContext, Stat
     }
 }
 
-void StaticMeshComponentRenderer::PrepareRenderdata(StaticMeshComponent* component)
+void StaticMeshRenderer::PrepareRenderdata(StaticMeshComponent* component)
 {
     debug_assert(component);
     if (component->mTriMeshParts.empty())
@@ -165,7 +165,7 @@ void StaticMeshComponentRenderer::PrepareRenderdata(StaticMeshComponent* compone
     component->mRenderProgram = &mStaticMeshRenderProgram;
 }
 
-void StaticMeshComponentRenderer::ReleaseRenderdata(StaticMeshComponent* component)
+void StaticMeshRenderer::ReleaseRenderdata(StaticMeshComponent* component)
 {
     debug_assert(component);
     component->mRenderProgram = nullptr;

@@ -85,6 +85,58 @@ void GameWorld::UpdateFrame()
     gGameObjectsManager.UpdateFrame();
 }
 
+void GameWorld::TagTerrain(const Rectangle& tilesArea)
+{
+    Point currTilePoint;
+    for (currTilePoint.y = tilesArea.y; currTilePoint.y < (tilesArea.y + tilesArea.h); ++currTilePoint.y)
+    for (currTilePoint.x = tilesArea.x; currTilePoint.x < (tilesArea.x + tilesArea.w); ++currTilePoint.x)
+    {
+        if (TerrainTile* currTile = mMapData.GetMapTile(currTilePoint))
+        {
+            TagTerrain(currTile);
+        }
+    }
+}
+
+void GameWorld::UnTagTerrain(const Rectangle& tilesArea)
+{
+    Point currTilePoint;
+    for (currTilePoint.y = tilesArea.y; currTilePoint.y < (tilesArea.y + tilesArea.h); ++currTilePoint.y)
+    for (currTilePoint.x = tilesArea.x; currTilePoint.x < (tilesArea.x + tilesArea.w); ++currTilePoint.x)
+    {
+        if (TerrainTile* currTile = mMapData.GetMapTile(currTilePoint))
+        {
+            UnTagTerrain(currTile);
+        }
+    }
+}
+
+void GameWorld::TagTerrain(TerrainTile* terrainTile)
+{
+    if (terrainTile)
+    {
+        TerrainDefinition* terrainDef = terrainTile->GetTerrain();
+        if (!terrainTile->mIsTagged && terrainDef->mIsTaggable)
+        {
+            terrainTile->SetTagged(true);
+        }
+    }
+    debug_assert(terrainTile);
+}
+
+void GameWorld::UnTagTerrain(TerrainTile* terrainTile)
+{
+    if (terrainTile)
+    {
+        TerrainDefinition* terrainDef = terrainTile->GetTerrain();
+        if (terrainTile->mIsTagged && terrainDef->mIsTaggable)
+        {
+            terrainTile->SetTagged(false);
+        }
+    }
+    debug_assert(terrainTile);
+}
+
 void GameWorld::SetupMapData(unsigned int seed)
 {
     Point mapDimensions (mScenarioData.mLevelDimensionX, mScenarioData.mLevelDimensionY);
@@ -94,7 +146,7 @@ void GameWorld::SetupMapData(unsigned int seed)
     for (int tiley = 0; tiley < mScenarioData.mLevelDimensionY; ++tiley)
     for (int tilex = 0; tilex < mScenarioData.mLevelDimensionX; ++tilex)
     {
-        MapTile* currentTile = mMapData.GetMapTile(Point(tilex, tiley));
+        TerrainTile* currentTile = mMapData.GetMapTile(Point(tilex, tiley));
         debug_assert(currentTile);
 
         TerrainTypeID tileTerrainType = mScenarioData.mMapTiles[currentTileIndex].mTerrainType;
@@ -144,7 +196,7 @@ void GameWorld::ConstructStartupRooms()
     {
         const Point currTileLocation (tilex, tiley);
 
-        MapTile* currTile = mMapData.GetMapTile(currTileLocation);
+        TerrainTile* currTile = mMapData.GetMapTile(currTileLocation);
         if (currTile->mBuiltRoom)
         {
             // room is already constructed on this tile
@@ -159,7 +211,7 @@ void GameWorld::ConstructStartupRooms()
     }
 }
 
-void GameWorld::ConstructStartupRoom(MapTile* initialTile)
+void GameWorld::ConstructStartupRoom(TerrainTile* initialTile)
 {
     debug_assert(initialTile);
 

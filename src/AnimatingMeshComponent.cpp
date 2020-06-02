@@ -23,19 +23,19 @@ void AnimatingMeshComponent::UpdateComponent(float deltaTime)
 
 void AnimatingMeshComponent::PrepareRenderResources()
 {
-    AnimatingMeshComponentRenderer& renderer = gRenderManager.mAnimatingMeshRenderer;
+    AnimatingMeshRenderer& renderer = gRenderManager.mAnimatingMeshRenderer;
     renderer.PrepareRenderdata(this);
 }
 
 void AnimatingMeshComponent::ReleaseRenderResources()
 {
-    AnimatingMeshComponentRenderer& renderer = gRenderManager.mAnimatingMeshRenderer;
+    AnimatingMeshRenderer& renderer = gRenderManager.mAnimatingMeshRenderer;
     renderer.ReleaseRenderdata(this);
 }
 
 void AnimatingMeshComponent::RenderFrame(SceneRenderContext& renderContext)
 {
-    AnimatingMeshComponentRenderer& renderer = gRenderManager.mAnimatingMeshRenderer;
+    AnimatingMeshRenderer& renderer = gRenderManager.mAnimatingMeshRenderer;
     renderer.Render(renderContext, this);
 }
 

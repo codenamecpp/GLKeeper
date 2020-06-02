@@ -7,7 +7,7 @@ class TerrainMeshComponent: public RenderableComponent
 {
     decl_rtti(TerrainMeshComponent, RenderableComponent)
 
-    friend class TerrainMeshComponentRenderer;
+    friend class TerrainMeshRenderer;
 
 public:
     // readonly

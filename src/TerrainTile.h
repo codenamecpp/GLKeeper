@@ -37,10 +37,10 @@ public:
 };
 
 // gamemap block data
-class MapTile
+class TerrainTile
 {
 public:
-    MapTile();
+    TerrainTile();
 
     // reset mesh geometries for specific tile face
     // @param faceid: Face index
@@ -50,6 +50,9 @@ public:
     // mark tile mesh invalidated
     void InvalidateTileMesh();
     void InvalidateNeighbourTilesMesh();
+
+    // mark tile tagged
+    void SetTagged(bool isTagged);
 
     // get current terrain type for tile
     inline TerrainDefinition* GetTerrain() const { return mRoomTerrain ? mRoomTerrain : mBaseTerrain; }
@@ -65,7 +68,7 @@ public:
 
     GenericRoom* mBuiltRoom = nullptr; // room that built on tile
     TileFaceData mFaces[eTileFace_COUNT];
-    MapTile* mNeighbours[eDirection_COUNT];
+    TerrainTile* mNeighbours[eDirection_COUNT];
 
     unsigned int mRandomValue = 0; // effects on visuals only
     unsigned int mFloodFillCounter = 0; // increments on each flood fill operation

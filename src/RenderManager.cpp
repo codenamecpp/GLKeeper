@@ -11,6 +11,7 @@
 #include "AnimatingMeshComponent.h"
 #include "WaterLavaMeshComponent.h"
 #include "TerrainMeshComponent.h"
+#include "TerrainManager.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -91,6 +92,8 @@ void RenderManager::RenderFrame()
     gGraphicsDevice.SetScissorRect(viewportRect);
 
     gGraphicsDevice.ClearScreen();
+
+    gTerrainManager.PreRenderScene();
     
     // draw objects
     DrawScene();

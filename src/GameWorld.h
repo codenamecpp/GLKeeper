@@ -29,6 +29,16 @@ public:
     // process single frame logic
     void UpdateFrame();
 
+    // set or clear terrain tile tagged state
+    // @param tilesArea: Tiles in specific area
+    void TagTerrain(const Rectangle& tilesArea);
+    void UnTagTerrain(const Rectangle& tilesArea);
+
+    // set or clear terrain tile tagged state
+    // @param terrainTile: Target tile
+    void TagTerrain(TerrainTile* terrainTile);
+    void UnTagTerrain(TerrainTile* terrainTile);
+
     // get terrain definition by type name or type identifier
     // @param typeName: Type name
     // @param typeID: Type identifier
@@ -71,7 +81,7 @@ public:
 private:
     void SetupMapData(unsigned int seed);
     void ConstructStartupRooms();
-    void ConstructStartupRoom(MapTile* initialTile);
+    void ConstructStartupRoom(TerrainTile* initialTile);
 };
 
 extern GameWorld gGameWorld;

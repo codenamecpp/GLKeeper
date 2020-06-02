@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "GenericRoom.h"
-#include "MapTile.h"
+#include "TerrainTile.h"
 #include "ModelAssetsManager.h"
 #include "DungeonBuilder.h"
 #include "GameWorld.h"
@@ -70,7 +70,7 @@ void GenericRoom::UpdateTilesMesh()
 void GenericRoom::IncludeTiles(const TilesArray& mapTiles)
 {
     // first scan all good tiles and assign room instance to them
-    for (MapTile* currTile: mapTiles)
+    for (TerrainTile* currTile: mapTiles)
     {
         debug_assert(currTile->mIsRoomEntrance == false);
         debug_assert(currTile->mIsRoomInnerTile == false);
@@ -79,10 +79,10 @@ void GenericRoom::IncludeTiles(const TilesArray& mapTiles)
         currTile->mBuiltRoom = this;
 #ifdef _DEBUG
         // check no room walls
-        if (MapTile* neighTile = currTile->mNeighbours[eDirection_N]) { debug_assert(neighTile->mFaces[eTileFace_SideS].mWallSection == nullptr); }
-        if (MapTile* neighTile = currTile->mNeighbours[eDirection_E]) { debug_assert(neighTile->mFaces[eTileFace_SideW].mWallSection == nullptr); }
-        if (MapTile* neighTile = currTile->mNeighbours[eDirection_S]) { debug_assert(neighTile->mFaces[eTileFace_SideN].mWallSection == nullptr); }
-        if (MapTile* neighTile = currTile->mNeighbours[eDirection_W]) { debug_assert(neighTile->mFaces[eTileFace_SideE].mWallSection == nullptr); }
+        if (TerrainTile* neighTile = currTile->mNeighbours[eDirection_N]) { debug_assert(neighTile->mFaces[eTileFace_SideS].mWallSection == nullptr); }
+        if (TerrainTile* neighTile = currTile->mNeighbours[eDirection_E]) { debug_assert(neighTile->mFaces[eTileFace_SideW].mWallSection == nullptr); }
+        if (TerrainTile* neighTile = currTile->mNeighbours[eDirection_S]) { debug_assert(neighTile->mFaces[eTileFace_SideN].mWallSection == nullptr); }
+        if (TerrainTile* neighTile = currTile->mNeighbours[eDirection_W]) { debug_assert(neighTile->mFaces[eTileFace_SideE].mWallSection == nullptr); }
 #endif
         // invalidate tiles
         currTile->InvalidateTileMesh();
@@ -104,7 +104,7 @@ void GenericRoom::ReevaluateOccupationArea()
     Point rightBottomPoint = mRoomTiles[0]->mTileLocation;
     Point leftTopPoint = mRoomTiles[0]->mTileLocation;
 
-    for (MapTile* tile : mRoomTiles)
+    for (TerrainTile* tile : mRoomTiles)
     {
         if (tile->mTileLocation.x < leftTopPoint.x) leftTopPoint.x = tile->mTileLocation.x;
         else rightBottomPoint.x = tile->mTileLocation.x;
@@ -121,7 +121,7 @@ void GenericRoom::ReevaluateOccupationArea()
 
 void GenericRoom::ReevaluateInnerSquares()
 {
-    auto CheckIsInnerTile = [this](DungeonBuilder& builder, MapTile* currTile) -> bool
+    auto CheckIsInnerTile = [this](DungeonBuilder& builder, TerrainTile* currTile) -> bool
     {
         int numPassed = 0;
         for (eDirection direction: gDirectionsCW)
@@ -138,7 +138,7 @@ void GenericRoom::ReevaluateInnerSquares()
 
     mInnerTiles.clear();
 
-    for (MapTile* currTile : mRoomTiles)
+    for (TerrainTile* currTile : mRoomTiles)
     {
         bool isInnerTile = CheckIsInnerTile(gGameWorld.mDungeonBuilder, currTile);
         if (isInnerTile != currTile->mIsRoomInnerTile)
@@ -164,14 +164,14 @@ void GenericRoom::ReevaluateWallSections()
     ReleaseWallSections();
 
     // scan wall sections
-    for (MapTile* roomTile: mRoomTiles)
+    for (TerrainTile* roomTile: mRoomTiles)
     {
         if (roomTile->mIsRoomInnerTile) // keep looking edge tiles
             continue;
 
         for (eDirection outOfRoomDirection: gStraightDirections)
         {
-            MapTile* neighbourTile = roomTile->mNeighbours[outOfRoomDirection];
+            TerrainTile* neighbourTile = roomTile->mNeighbours[outOfRoomDirection];
             if (neighbourTile == nullptr)
             {
                 debug_assert(false); // something is wrong here - rooms cannot be built on map boundaries
@@ -203,7 +203,7 @@ void GenericRoom::ReevaluateWallSections()
     } // for
 }
 
-void GenericRoom::ScanWallSection(MapTile* mapTile, eDirection faceDirection, WallSection* section)
+void GenericRoom::ScanWallSection(TerrainTile* mapTile, eDirection faceDirection, WallSection* section)
 {
     section->Setup(faceDirection);
     section->RemoveTiles();
@@ -211,7 +211,7 @@ void GenericRoom::ScanWallSection(MapTile* mapTile, eDirection faceDirection, Wa
     ScanWallSectionImpl(mapTile, section);
 }
 
-void GenericRoom::ScanWallSection(MapTile* mapTile, eTileFace faceId, WallSection* section)
+void GenericRoom::ScanWallSection(TerrainTile* mapTile, eTileFace faceId, WallSection* section)
 {
     section->Setup(faceId);
     section->RemoveTiles();
@@ -219,7 +219,7 @@ void GenericRoom::ScanWallSection(MapTile* mapTile, eTileFace faceId, WallSectio
     ScanWallSectionImpl(mapTile, section);
 }
 
-void GenericRoom::ScanWallSectionImpl(MapTile* originTile, WallSection* section)
+void GenericRoom::ScanWallSectionImpl(TerrainTile* originTile, WallSection* section)
 {
     debug_assert(originTile);
     debug_assert(section);
@@ -246,7 +246,7 @@ void GenericRoom::ScanWallSectionImpl(MapTile* originTile, WallSection* section)
 
     auto ScanLine = [originTile, section](eDirection scanDirection, bool isHead)
     {
-        for (MapTile* currTile = originTile->mNeighbours[scanDirection]; 
+        for (TerrainTile* currTile = originTile->mNeighbours[scanDirection]; 
             currTile; currTile = currTile->mNeighbours[scanDirection])
         {
             TerrainDefinition* currTerrain = currTile->GetTerrain();
@@ -254,7 +254,7 @@ void GenericRoom::ScanWallSectionImpl(MapTile* originTile, WallSection* section)
             if (!currTerrain->mIsSolid || !currTerrain->mAllowRoomWalls)
                 return;
 
-            MapTile* neighbourTile = currTile->mNeighbours[section->mFaceDirection];
+            TerrainTile* neighbourTile = currTile->mNeighbours[section->mFaceDirection];
             debug_assert(neighbourTile);
 
             if (neighbourTile->mBuiltRoom != section->mRoom)
@@ -280,7 +280,7 @@ void GenericRoom::FinalizeWallSection(WallSection* section)
     debug_assert(section);
     mWallSections.push_back(section);
 
-    for (MapTile* currTile: section->mMapTiles)
+    for (TerrainTile* currTile: section->mMapTiles)
     {
         TileFaceData& face = currTile->mFaces[section->mFaceId];
         debug_assert(face.mWallSection == nullptr);
@@ -295,7 +295,7 @@ void GenericRoom::ReleaseWallSections()
     for (WallSection* currentSection: mWallSections)
     {
         // update tiles face
-        for (MapTile* currentTile: currentSection->mMapTiles)
+        for (TerrainTile* currentTile: currentSection->mMapTiles)
         {
             TileFaceData& face = currentTile->mFaces[currentSection->mFaceId];
             if (face.mWallSection == currentSection)
@@ -357,7 +357,7 @@ void GenericRoom::ConstructWalls(DungeonBuilder& builder, bool forceConstructAll
                 break;
         }
 
-        for (MapTile* currTile: currSection->mMapTiles)
+        for (TerrainTile* currTile: currSection->mMapTiles)
         {
             if (!currTile->mIsMeshInvalidated && !forceConstructAll)
                 continue;
@@ -494,7 +494,7 @@ void GenericRoom::ConstructTiles_3x3(DungeonBuilder& builder, const TilesArray& 
         gModelsManager.LoadModelAsset(mDefinition->mCompleteResource.mResourceName + "8"),
     };
 
-    for (MapTile* currTile : mapTiles)
+    for (TerrainTile* currTile : mapTiles)
     {
         const int ioffsetx = currTile->mTileLocation.x - mOccupationArea.x;
         const int ioffsety = currTile->mTileLocation.y - mOccupationArea.y;
@@ -535,7 +535,7 @@ void GenericRoom::ConstructTiles_Quad(DungeonBuilder& builder, const TilesArray&
         geoPiece0, geoPiece2, geoPiece0, geoPiece0
     };
 
-    for (MapTile* currTile : mapTiles)
+    for (TerrainTile* currTile : mapTiles)
     {
         int subTiles[] = 
         {
@@ -600,7 +600,7 @@ void GenericRoom::ConstructTiles_Normal(DungeonBuilder& builder, const TilesArra
         {NegPi, NegPi, NegPi, NegPi, Pos90, Nullp, Pos90, Pos90}
     };
 
-    for (MapTile* currTile : mapTiles) 
+    for (TerrainTile* currTile : mapTiles) 
     {
         // todo: fix it
         // todo: what i had to fix here?
@@ -641,7 +641,7 @@ void GenericRoom::ConstructTiles_Normal(DungeonBuilder& builder, const TilesArra
 void GenericRoom::ConstructTiles_HeroGateFrontEnd(DungeonBuilder& builder, const TilesArray& mapTiles)
 {    
     const std::string& meshName = mDefinition->mCompleteResource.mResourceName;
-    for (MapTile* currTile: mapTiles)
+    for (TerrainTile* currTile: mapTiles)
     {
         int tilex = currTile->mTileLocation.x - mOccupationArea.x;
         int tiley = currTile->mTileLocation.y - mOccupationArea.y;
@@ -723,7 +723,7 @@ void GenericRoom::ConstructTiles_DoubleQuad(DungeonBuilder& builder, const Tiles
         {Nullp, Neg90, Nullp, Neg90, Nullp, NegPi, Nullp, NegPi}
     };
 
-    for (MapTile* currTile : mapTiles)
+    for (TerrainTile* currTile : mapTiles)
     {
         // entrance
         if (currTile->mIsRoomEntrance)
@@ -743,7 +743,7 @@ void GenericRoom::ConstructTiles_DoubleQuad(DungeonBuilder& builder, const Tiles
             continue;
         }
 
-        MapTile* neighbours[eDirection_COUNT] = {};
+        TerrainTile* neighbours[eDirection_COUNT] = {};
         for (eDirection direction: gDirectionsCW)
         {
             if (builder.NeighbourHasSameRoom(currTile, direction))
@@ -790,7 +790,7 @@ void GenericRoom::ConstructTiles_DoubleQuad(DungeonBuilder& builder, const Tiles
 void GenericRoom::ConstructTiles_5x5Rotated(DungeonBuilder& builder, const TilesArray& mapTiles)
 {
     const std::string& meshName = mDefinition->mCompleteResource.mResourceName;
-    for (MapTile* currTile : mapTiles)
+    for (TerrainTile* currTile : mapTiles)
     {
         const glm::mat3* rotation = nullptr;
 

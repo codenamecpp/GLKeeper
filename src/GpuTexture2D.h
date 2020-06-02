@@ -21,13 +21,12 @@ public:
     void FreeTextureObject();
 
     // uploads pixels data
-    // @param mipmapLevel: Specifies the level-of-detail number; level 0 is the base image level
-    // @param offset: Specifies a texel offset within the texture array
-    // @param dimensions: Specifies the dimensions of the texture subimage
+    // @param mipmap: Specifies the level-of-detail index; level 0 is the base image level
+    // @param textureRect: Specifies a texel offset within the texture array
     // @param sourceData: Specifies a pointer to the source data
-    bool TexSubImage(int mipmapLevel, const Rectangle& textureRect, const void* sourceData);
-    bool TexSubImage(int mipmapLevel, const Point& dimensions, const void* sourceData);
-    bool TexSubImage(int mipmapLevel, const void* sourceData);
+    bool TexSubImage(int mipmap, const Rectangle& textureRect, const void* sourceData);
+    bool TexSubImage(int mipmap, const Point& textureOffset, const Point& textureSize, const void* sourceData);
+    bool TexSubImage(int mipmap, const void* sourceData);
 
     // set texture filter and wrap parameters
     // @param samplerState: Params

@@ -27,6 +27,10 @@ public:
     bool CreateTexture(const Texture2D_Image& sourceImage);
     bool CreateTexture(const Texture2D_Desc& sourceDesc, const void* textureData);
 
+    // update image, does not work with proxy texture
+    bool UpdateTexture(int mipmap, const Rectangle& textureRect, const void* textureData);
+    bool UpdateTexture(int mipmap, const void* textureData);
+
     void SetProxyTexture(Texture2D* proxyTexture);
 
     // set texture filtering and repeating modes

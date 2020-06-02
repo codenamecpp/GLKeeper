@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "MapTile.h"
+#include "TerrainTile.h"
 #include "TerrainManager.h"
 
 // Rotations Y
@@ -21,7 +21,7 @@ const glm::vec3 g_SubTileTranslations[4] =
     {-DUNGEON_CELL_HALF_SIZE * 0.5f, 0.0f,  DUNGEON_CELL_HALF_SIZE * 0.5f}, // BOTTOM-LEFT (SW)
 };
 
-MapTile::MapTile()
+TerrainTile::TerrainTile()
     : mIsTagged()
     , mIsRoomInnerTile()
     , mIsRoomEntrance()
@@ -30,7 +30,7 @@ MapTile::MapTile()
 {
 }
 
-void MapTile::ClearTileMesh()
+void TerrainTile::ClearTileMesh()
 {
     for (TileFaceData& currFace: mFaces)
     {
@@ -38,7 +38,7 @@ void MapTile::ClearTileMesh()
     }
 }
 
-void MapTile::ClearTileMesh(eTileFace meshFace)
+void TerrainTile::ClearTileMesh(eTileFace meshFace)
 {
     debug_assert(meshFace < eTileFace_COUNT);
     if (meshFace < eTileFace_COUNT)
@@ -47,15 +47,20 @@ void MapTile::ClearTileMesh(eTileFace meshFace)
     }
 }
 
-void MapTile::InvalidateTileMesh()
+void TerrainTile::InvalidateTileMesh()
 {
     gTerrainManager.InvalidateTileMesh(this);
 }
 
-void MapTile::InvalidateNeighbourTilesMesh()
+void TerrainTile::InvalidateNeighbourTilesMesh()
 {
-    for (MapTile* currentTile: mNeighbours)
+    for (TerrainTile* currentTile: mNeighbours)
     {
         currentTile->InvalidateTileMesh();
     }
+}
+
+void TerrainTile::SetTagged(bool isTagged)
+{
+    gTerrainManager.HighhlightTile(this, isTagged);
 }

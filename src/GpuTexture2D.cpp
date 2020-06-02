@@ -217,7 +217,7 @@ bool GpuTexture2D::TexSubImage(int mipmapLevel, const Rectangle& rc, const void*
     return true;
 }
 
-bool GpuTexture2D::TexSubImage(int mipmapLevel, const Point& dimensions, const void* sourceData)
+bool GpuTexture2D::TexSubImage(int mipmapLevel, const Point& offset, const Point& dimension, const void* sourceData)
 {
     if (!IsInitialized())
     {
@@ -229,14 +229,14 @@ bool GpuTexture2D::TexSubImage(int mipmapLevel, const Point& dimensions, const v
     {
         Rectangle textureRect 
         {
-            0,
-            0,
-            dimensions.x,
-            dimensions.y
+            offset.x,
+            offset.y,
+            dimension.x,
+            dimension.y,
         };
         return TexSubImage(mipmapLevel, textureRect, sourceData);
     }
-    return true;
+    return true; 
 }
 
 bool GpuTexture2D::TexSubImage(int mipmapLevel, const void* sourceData)

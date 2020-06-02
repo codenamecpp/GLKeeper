@@ -2,11 +2,11 @@
 #include "TerrainMeshComponent.h"
 #include "GameObject.h"
 #include "GraphicsDevice.h"
-#include "MapTile.h"
+#include "TerrainTile.h"
 #include "GameWorld.h"
 #include "GpuBuffer.h"
 #include "TransformComponent.h"
-#include "TerrainMeshComponentRenderer.h"
+#include "TerrainMeshRenderer.h"
 #include "RenderManager.h"
 
 TerrainMeshComponent::TerrainMeshComponent(GameObject* gameObject) 
@@ -23,7 +23,7 @@ void TerrainMeshComponent::RenderFrame(SceneRenderContext& renderContext)
     {
         PrepareRenderResources();
     }
-    TerrainMeshComponentRenderer& renderer = gRenderManager.mTerrainMeshRenderer;
+    TerrainMeshRenderer& renderer = gRenderManager.mTerrainMeshRenderer;
     renderer.Render(renderContext, this);
 }
 
@@ -67,13 +67,13 @@ void TerrainMeshComponent::PrepareRenderResources()
 
     mMeshInvalidated = false;
 
-    TerrainMeshComponentRenderer& renderer = gRenderManager.mTerrainMeshRenderer;
+    TerrainMeshRenderer& renderer = gRenderManager.mTerrainMeshRenderer;
     renderer.PrepareRenderdata(this);
 }
 
 void TerrainMeshComponent::ReleaseRenderResources()
 {
-    TerrainMeshComponentRenderer& renderer = gRenderManager.mTerrainMeshRenderer;
+    TerrainMeshRenderer& renderer = gRenderManager.mTerrainMeshRenderer;
     renderer.ReleaseRenderdata(this);
 
     InvalidateMesh();

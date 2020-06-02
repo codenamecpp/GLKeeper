@@ -98,11 +98,8 @@
     <Filter Include="Game\GuiLibrary\Widgets">
       <UniqueIdentifier>{75816ac9-2884-4e8b-b301-5a900ad8cfda}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\Draw">
+    <Filter Include="Game\Rendering">
       <UniqueIdentifier>{e607d4ee-67e8-4d5f-b41f-1bfc554959f7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\Draw\ComponentsRendering">
-      <UniqueIdentifier>{e905e4dd-483b-4b32-a64b-395a319f6206}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -237,16 +234,16 @@
       <Filter>Lib</Filter>
     </ClInclude>
     <ClInclude Include="RenderManager.h">
-      <Filter>Game\Draw</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="RenderDefs.h">
-      <Filter>Game\Draw</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="TimeManager.h">
       <Filter>Application</Filter>
     </ClInclude>
     <ClInclude Include="RenderProgram.h">
-      <Filter>Game\Draw</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="BinaryOutputStream.h">
       <Filter>Application\FileIO</Filter>
@@ -276,7 +273,7 @@
       <Filter>Game\Scene\BVH</Filter>
     </ClInclude>
     <ClInclude Include="DebugRenderer.h">
-      <Filter>Game\Draw</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Texture2DAnimation.h">
       <Filter>Application\Resources</Filter>
@@ -339,9 +336,6 @@
     <ClInclude Include="ScenarioLoader.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="MapTile.h">
-      <Filter>Game\World</Filter>
-    </ClInclude>
     <ClInclude Include="TerrainManager.h">
       <Filter>Game\World</Filter>
     </ClInclude>
@@ -379,7 +373,7 @@
       <Filter>Game\GameObject\Components</Filter>
     </ClInclude>
     <ClInclude Include="MeshMaterial.h">
-      <Filter>Game\Draw</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="OrbitCameraController.h">
       <Filter>Game\Scene\CameraControllers</Filter>
@@ -489,20 +483,8 @@
     <ClInclude Include="AnimatingMeshComponent.h">
       <Filter>Game\GameObject\Components</Filter>
     </ClInclude>
-    <ClInclude Include="AnimatingMeshComponentRenderer.h">
-      <Filter>Game\Draw\ComponentsRendering</Filter>
-    </ClInclude>
-    <ClInclude Include="TerrainMeshComponentRenderer.h">
-      <Filter>Game\Draw\ComponentsRendering</Filter>
-    </ClInclude>
-    <ClInclude Include="WaterLavaMeshComponentRenderer.h">
-      <Filter>Game\Draw\ComponentsRendering</Filter>
-    </ClInclude>
     <ClInclude Include="Shaders.h">
-      <Filter>Game\Draw</Filter>
-    </ClInclude>
-    <ClInclude Include="StaticMeshComponentRenderer.h">
-      <Filter>Game\Draw\ComponentsRendering</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="StaticMeshComponent.h">
       <Filter>Game\GameObject\Components</Filter>
@@ -514,6 +496,21 @@
       <Filter>Application\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="MapTilesSelection.h">
+      <Filter>Game\World</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatingMeshRenderer.h">
+      <Filter>Game\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticMeshRenderer.h">
+      <Filter>Game\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainMeshRenderer.h">
+      <Filter>Game\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="WaterLavaMeshRenderer.h">
+      <Filter>Game\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainTile.h">
       <Filter>Game\World</Filter>
     </ClInclude>
   </ItemGroup>
@@ -590,13 +587,13 @@
       <Filter>Lib</Filter>
     </ClCompile>
     <ClCompile Include="RenderManager.cpp">
-      <Filter>Game\Draw</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="TimeManager.cpp">
       <Filter>Application</Filter>
     </ClCompile>
     <ClCompile Include="RenderProgram.cpp">
-      <Filter>Game\Draw</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="BinaryOutputStream.cpp">
       <Filter>Application\FileIO</Filter>
@@ -620,7 +617,7 @@
       <Filter>Game\Scene\BVH</Filter>
     </ClCompile>
     <ClCompile Include="DebugRenderer.cpp">
-      <Filter>Game\Draw</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Texture2DAnimation.cpp">
       <Filter>Application\Resources</Filter>
@@ -658,9 +655,6 @@
     <ClCompile Include="string_utils.cpp">
       <Filter>Lib</Filter>
     </ClCompile>
-    <ClCompile Include="MapTile.cpp">
-      <Filter>Game\World</Filter>
-    </ClCompile>
     <ClCompile Include="TerrainManager.cpp">
       <Filter>Game\World</Filter>
     </ClCompile>
@@ -695,7 +689,7 @@
       <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
     <ClCompile Include="MeshMaterial.cpp">
-      <Filter>Game\Draw</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="OrbitCameraController.cpp">
       <Filter>Game\Scene\CameraControllers</Filter>
@@ -790,25 +784,28 @@
     <ClCompile Include="AnimatingMeshComponent.cpp">
       <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
-    <ClCompile Include="AnimatingMeshComponentRenderer.cpp">
-      <Filter>Game\Draw\ComponentsRendering</Filter>
-    </ClCompile>
-    <ClCompile Include="TerrainMeshComponentRenderer.cpp">
-      <Filter>Game\Draw\ComponentsRendering</Filter>
-    </ClCompile>
-    <ClCompile Include="WaterLavaMeshComponentRenderer.cpp">
-      <Filter>Game\Draw\ComponentsRendering</Filter>
-    </ClCompile>
     <ClCompile Include="Shaders.cpp">
-      <Filter>Game\Draw</Filter>
-    </ClCompile>
-    <ClCompile Include="StaticMeshComponentRenderer.cpp">
-      <Filter>Game\Draw\ComponentsRendering</Filter>
+      <Filter>Game\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="StaticMeshComponent.cpp">
       <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
     <ClCompile Include="MapTilesSelection.cpp">
+      <Filter>Game\World</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatingMeshRenderer.cpp">
+      <Filter>Game\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticMeshRenderer.cpp">
+      <Filter>Game\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainMeshRenderer.cpp">
+      <Filter>Game\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="WaterLavaMeshRenderer.cpp">
+      <Filter>Game\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainTile.cpp">
       <Filter>Game\World</Filter>
     </ClCompile>
   </ItemGroup>

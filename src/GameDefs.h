@@ -7,7 +7,7 @@
 
 // forwards
 class GameMap;
-class MapTile;
+class TerrainTile;
 class GameObject;
 class GameObjectComponent;
 class RenderableComponent;
@@ -48,7 +48,7 @@ using GameObjectHandle = cxx::handle<GameObject>;
 using GameObjectInstanceID = unsigned long long;
 
 // array of map tiles
-using TilesArray = std::vector<MapTile*>;
+using TilesArray = std::vector<TerrainTile*>;
 
 // possible player identifiers
 enum ePlayerID

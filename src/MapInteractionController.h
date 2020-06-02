@@ -8,8 +8,8 @@ class MapInteractionController: public cxx::noncopyable
 public:
     // readonly
     eMapInteractionMode mCurrentMode = eMapInteractionMode_Free;
-    MapTile* mHoveredTile = nullptr;
-    MapTile* mSelectionStartTile = nullptr;
+    TerrainTile* mHoveredTile = nullptr;
+    TerrainTile* mSelectionStartTile = nullptr;
 
     // specified if mode eMapInteractionMode_ConstructRooms
     RoomDefinition* mConstructRoomDef = nullptr;

@@ -27,7 +27,7 @@ void main()
 	Texcoord = in_texcoord;
     InPos = in_pos;
 
-    FragColor = texelFetch(colorsTex, in_tile_coord, 0);
+	FragColor = texelFetch(colorsTex, in_tile_coord, 0);
 
     vec4 vertexPosition = view_projection_matrix * model_matrix * vec4(in_pos, 1.0f);
     gl_Position = vertexPosition;

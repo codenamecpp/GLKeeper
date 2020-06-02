@@ -2,7 +2,7 @@
 
 #include "Shaders.h"
 
-class StaticMeshComponentRenderer: public cxx::noncopyable
+class StaticMeshRenderer: public cxx::noncopyable
 {
     friend class StaticMeshComponent;
 

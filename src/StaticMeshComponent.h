@@ -9,7 +9,7 @@ class StaticMeshComponent: public RenderableComponent
 {
     decl_rtti(StaticMeshComponent, RenderableComponent)
 
-    friend class StaticMeshComponentRenderer;
+    friend class StaticMeshRenderer;
 
 public:
     // mesh data, available for both read and write

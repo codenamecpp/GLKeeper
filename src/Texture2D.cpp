@@ -205,6 +205,28 @@ bool Texture2D::CreateTexture(const Texture2D_Image& imageData)
     return true;
 }
 
+bool Texture2D::UpdateTexture(int mipmap, const Rectangle& textureRect, const void* textureData)
+{
+    if (HasProxyTexture() || !IsTextureLoaded())
+    {
+        debug_assert(false);
+        return false;
+    }
+
+    return mGpuTextureObject->TexSubImage(mipmap, textureRect, textureData);
+}
+
+bool Texture2D::UpdateTexture(int mipmap, const void* textureData)
+{
+    if (HasProxyTexture() || !IsTextureLoaded())
+    {
+        debug_assert(false);
+        return false;
+    }
+
+    return mGpuTextureObject->TexSubImage(mipmap, textureData);
+}
+
 bool Texture2D::CreateTexture(const Texture2D_Desc& sourceDesc, const void* textureData)
 {
     if (sourceDesc.mTextureFormat == eTextureFormat_Null || sourceDesc.mDimensions.x == 0 || sourceDesc.mDimensions.y == 0 ||
@@ -223,7 +245,7 @@ bool Texture2D::CreateTexture(const Texture2D_Desc& sourceDesc, const void* text
         return false;
     }
 
-    if (mProxyTexture)
+    if (HasProxyTexture())
     {
         mProxyTexture = nullptr;
     }

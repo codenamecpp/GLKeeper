@@ -1,8 +1,12 @@
 #pragma once
 
+#include "Texture2D_Image.h"
+
 // dungeon terrain manager
 class TerrainManager: public cxx::noncopyable
 {
+    friend class TerrainMeshRenderer;
+
 public:
     // setup terrain manager internal resources
     bool Initialize();
@@ -11,21 +15,31 @@ public:
     void EnterWorld();
     void ClearWorld();
 
+    void PreRenderScene();
+
     // rebuild only invalidated tiles or full terrain mesh
     void UpdateTerrainMesh();
     void BuildFullTerrainMesh();
 
     // tile mesh is invalidated and will be regenerated
-    void InvalidateTileMesh(MapTile* mapTile);
+    void InvalidateTileMesh(TerrainTile* mapTile);
+    void InvalidateTileNeighboursMesh(TerrainTile* mapTile);
 
     void ClearInvalidatedTiles();
 
+    // enable or disable highhlight for tile
+    void HighhlightTile(TerrainTile* mapTile, bool isHighlighted);
+
 private:
-    void CreateTerrainMeshList();
-    void DestroyTerrainMeshList();
+    void InitTerrainMeshList();
+    void FreeTerrainMeshList();
     
-    void CreateWaterLavaMeshList();
-    void DestroyWaterLavaMeshList();
+    void InitWaterLavaMeshList();
+    void FreeWaterLavaMeshList();
+
+    void InitHighhlightTilesTexture();
+    void FreeHighhlightTilesTexture();
+    void UpdateHighhlightTilesTexture();
 
     GameObject* CreateObjectTerrain(const Rectangle& mapArea);
     GameObject* CreateObjectLava(const TilesArray& tilesArray);
@@ -35,7 +49,11 @@ private:
     std::vector<GameObject*> mWaterLavaMeshArray;
     std::vector<GameObject*> mTerrainMeshArray;
 
-    TilesArray mInvalidatedTiles;
+    TilesArray mMeshInvalidatedTiles;
+    TilesArray mHighlightTiles;
+
+    Texture2D_Image mHighlightTilesImage;
+    Texture2D* mHighlightTilesTexture = nullptr;
 };
 
 extern TerrainManager gTerrainManager;

@@ -59,7 +59,7 @@ void StaticMeshComponent::RenderFrame(SceneRenderContext& renderContext)
         PrepareRenderResources();
     }
 
-    StaticMeshComponentRenderer& renderer = gRenderManager.mStaticMeshRenderer;
+    StaticMeshRenderer& renderer = gRenderManager.mStaticMeshRenderer;
     renderer.Render(renderContext, this);
 }
 
@@ -70,13 +70,13 @@ void StaticMeshComponent::PrepareRenderResources()
 
     mMeshInvalidated = false;
 
-    StaticMeshComponentRenderer& renderer = gRenderManager.mStaticMeshRenderer;
+    StaticMeshRenderer& renderer = gRenderManager.mStaticMeshRenderer;
     renderer.PrepareRenderdata(this);
 }
 
 void StaticMeshComponent::ReleaseRenderResources()
 {
-    StaticMeshComponentRenderer& renderer = gRenderManager.mStaticMeshRenderer;
+    StaticMeshRenderer& renderer = gRenderManager.mStaticMeshRenderer;
     renderer.ReleaseRenderdata(this);
 
     InvalidateMesh();
