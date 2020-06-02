@@ -98,14 +98,14 @@ void MapTilesSelection::UpdateSelectionMesh()
     glm::vec3 edges[8];
     areaBounds.get_edges(edges);
 
-    float displacement = 0.06f;
+    float displacement = 0.04f;
     // offset
     glm::vec3 center = areaBounds.get_center();
     for (glm::vec3& curr_edge: edges)
     {
-        glm::vec3 direction = glm::normalize(curr_edge - center) * displacement;
-        direction.y = displacement;
-        curr_edge += direction;
+        curr_edge.x += (curr_edge.x > center.x) ? displacement : -displacement;
+        curr_edge.y += displacement;
+        curr_edge.z += (curr_edge.z > center.z) ? displacement : -displacement;
     }
 
     auto PushSelectionLine = [&center](StaticMeshComponent::TriMeshPart& trimesh, 
