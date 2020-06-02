@@ -49,11 +49,7 @@ void MapTile::ClearTileMesh(eTileFace meshFace)
 
 void MapTile::InvalidateTileMesh()
 {
-    if (mIsMeshInvalidated)
-        return;
-
-    mIsMeshInvalidated = true;
-    gTerrainManager.HandleTileMeshInvalidated(this);
+    gTerrainManager.InvalidateTileMesh(this);
 }
 
 void MapTile::InvalidateNeighbourTilesMesh()

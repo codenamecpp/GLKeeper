@@ -167,7 +167,7 @@ void TerrainManager::UpdateTerrainMesh()
     mInvalidatedTiles.clear();
 }
 
-void TerrainManager::HandleTileMeshInvalidated(MapTile* mapTile)
+void TerrainManager::InvalidateTileMesh(MapTile* mapTile)
 {
     if (mapTile == nullptr)
     {
@@ -175,10 +175,14 @@ void TerrainManager::HandleTileMeshInvalidated(MapTile* mapTile)
         return;
     }
 
+    if (mapTile->mIsMeshInvalidated)
+        return;
+
     cxx::push_back_if_unique(mInvalidatedTiles, mapTile);
+    mapTile->mIsMeshInvalidated = true;
 }
 
-void TerrainManager::ClearInvalidated()
+void TerrainManager::ClearInvalidatedTiles()
 {
     for (MapTile* currTile: mInvalidatedTiles)
     {
@@ -212,7 +216,7 @@ void TerrainManager::BuildFullTerrainMesh()
         currentRoom->BuildTilesMesh();
     }
 
-    ClearInvalidated();
+    ClearInvalidatedTiles();
 
     // update terrain mesh objects
     for (GameObject* currTerrainMesh: mTerrainMeshArray)

@@ -4,7 +4,6 @@
 class TerrainManager: public cxx::noncopyable
 {
 public:
-    
     // setup terrain manager internal resources
     bool Initialize();
     void Deinit();
@@ -12,17 +11,14 @@ public:
     void EnterWorld();
     void ClearWorld();
 
-    // rebuild only invalidated tiles terrain mesh
+    // rebuild only invalidated tiles or full terrain mesh
     void UpdateTerrainMesh();
-
-    // force rebuild all terrain mesh
     void BuildFullTerrainMesh();
 
     // tile mesh is invalidated and will be regenerated
-    void HandleTileMeshInvalidated(MapTile* mapTile);
+    void InvalidateTileMesh(MapTile* mapTile);
 
-    // reset invalidated flag for all queued tiles
-    void ClearInvalidated();
+    void ClearInvalidatedTiles();
 
 private:
     void CreateTerrainMeshList();
