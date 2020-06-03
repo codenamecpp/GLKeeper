@@ -18,14 +18,14 @@ public:
     float mWaveTime;
     float mWaterlineHeight = 1.0;
 
-    TilesArray mWaterLavaTiles;
+    TilesList mWaterLavaTiles;
 
 public:
     WaterLavaMeshComponent(GameObject* gameObject);
 
     // set water or lava surface tiles
     // @param tilesArray: List of map tiles
-    void SetWaterLavaTiles(const TilesArray& tilesArray);
+    void SetWaterLavaTiles(const TilesList& tilesArray);
 
     // setup water or lava surface parameters
     void SetSurfaceParams(float translucency, float waveWidth, float waveHeight, float waveFreq, float waterlineHeight);

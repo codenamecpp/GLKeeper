@@ -14,7 +14,7 @@ private:
     void OnReconfigure() override;
 
     // get room tiles for water pool
-    void ScanWaterPoolTiles(TilesArray& poolTiles);
+    void ScanWaterPoolTiles(TilesList& poolTiles);
 
 private:
     GameObject* mWaterPoolObject = nullptr;

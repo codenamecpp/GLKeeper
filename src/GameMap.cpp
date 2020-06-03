@@ -86,13 +86,13 @@ bool GameMap::IsWithinMap(const Point& tileLocation, eDirection direction) const
         (nextTilePosition.y < mDimensions.y); 
 }
 
-void GameMap::FloodFill4(TilesArray& outputTiles, TerrainTile* origin, MapFloodFillFlags flags)
+void GameMap::FloodFill4(TilesList& outputTiles, TerrainTile* origin, MapFloodFillFlags flags)
 {
     Rectangle scanArea(0, 0, mDimensions.x, mDimensions.y);
     FloodFill4(outputTiles, origin, scanArea, flags);
 }
 
-void GameMap::FloodFill4(TilesArray& outputTiles, TerrainTile* origin, const Rectangle& scanArea, MapFloodFillFlags flags)
+void GameMap::FloodFill4(TilesList& outputTiles, TerrainTile* origin, const Rectangle& scanArea, MapFloodFillFlags flags)
 {
     // check conditions
     if (origin == nullptr || scanArea.w < 1 || scanArea.h < 1)

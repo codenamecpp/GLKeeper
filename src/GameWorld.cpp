@@ -224,7 +224,7 @@ void GameWorld::ConstructStartupRoom(TerrainTile* initialTile)
         return;
     }
 
-    TilesArray floodTiles;
+    TilesList floodTiles;
 
     MapFloodFillFlags floodFillFlags;
     floodFillFlags.mSameBaseTerrain = false;

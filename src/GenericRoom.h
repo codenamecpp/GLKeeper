@@ -12,7 +12,7 @@ public:
     // readonly
     RoomDefinition* mDefinition; // cannot be null
     RoomInstanceID mInstanceID; // instance unique identifier
-    TilesArray mRoomTiles;
+    TilesList mRoomTiles;
     Rectangle mOccupationArea; // approximate size in tiles
     ePlayerID mOwnerIdentifier;
 
@@ -24,11 +24,11 @@ public:
     void UpdateFrame();
 
     // remove specific tiles from room, this will lead to reevaluation of remaining tiles
-    void ReleaseTiles(const TilesArray& mapTiles);
+    void ReleaseTiles(const TilesList& terrainTiles);
     void ReleaseTiles();
 
     // expand room with new tiles
-    void EnlargeRoom(const TilesArray& mapTiles);
+    void EnlargeRoom(const TilesList& terrainTiles);
 
     // force construct geometries of all room tiles and wall sections
     void BuildTilesMesh();
@@ -37,7 +37,7 @@ public:
     void UpdateTilesMesh();
 
 protected:
-    void IncludeTiles(const TilesArray& mapTiles);
+    void IncludeTiles(const TilesList& terrainTiles);
 
     void ReevaluateOccupationArea();
     void ReevaluateInnerSquares();
@@ -45,9 +45,9 @@ protected:
     
     void ReleaseWallSections();
 
-    static void ScanWallSection(TerrainTile* mapTile, eTileFace faceId, WallSection* section);
-    static void ScanWallSection(TerrainTile* mapTile, eDirection faceDirection, WallSection* section);
-    static void ScanWallSectionImpl(TerrainTile* mapTile, WallSection* section);
+    static void ScanWallSection(TerrainTile* terrainTile, eTileFace faceId, WallSection* section);
+    static void ScanWallSection(TerrainTile* terrainTile, eDirection faceDirection, WallSection* section);
+    static void ScanWallSectionImpl(TerrainTile* terrainTile, WallSection* section);
 
     void FinalizeWallSection(WallSection* section);
 
@@ -62,18 +62,18 @@ protected:
     void ConstructWalls(DungeonBuilder& builder, bool forceConstructAll);
 
     // construct floor tiles mesh
-    void ConstructFloorTiles(DungeonBuilder& builder, const TilesArray& mapTiles);
+    void ConstructFloorTiles(DungeonBuilder& builder, const TilesList& terrainTiles);
 
     // tile mesh construction procs
-    void ConstructTiles_DoubleQuad      (DungeonBuilder& builder, const TilesArray& mapTiles);
-    void ConstructTiles_5x5Rotated      (DungeonBuilder& builder, const TilesArray& mapTiles);
-    void ConstructTiles_3x3             (DungeonBuilder& builder, const TilesArray& mapTiles);
-    void ConstructTiles_Quad            (DungeonBuilder& builder, const TilesArray& mapTiles);
-    void ConstructTiles_Normal          (DungeonBuilder& builder, const TilesArray& mapTiles);
-    void ConstructTiles_HeroGateFrontEnd(DungeonBuilder& builder, const TilesArray& mapTiles);
-    void ConstructTiles_HeroGate3x1     (DungeonBuilder& builder, const TilesArray& mapTiles);
+    void ConstructTiles_DoubleQuad      (DungeonBuilder& builder, const TilesList& terrainTiles);
+    void ConstructTiles_5x5Rotated      (DungeonBuilder& builder, const TilesList& terrainTiles);
+    void ConstructTiles_3x3             (DungeonBuilder& builder, const TilesList& terrainTiles);
+    void ConstructTiles_Quad            (DungeonBuilder& builder, const TilesList& terrainTiles);
+    void ConstructTiles_Normal          (DungeonBuilder& builder, const TilesList& terrainTiles);
+    void ConstructTiles_HeroGateFrontEnd(DungeonBuilder& builder, const TilesList& terrainTiles);
+    void ConstructTiles_HeroGate3x1     (DungeonBuilder& builder, const TilesList& terrainTiles);
 
 protected:
     std::vector<WallSection*> mWallSections;
-    TilesArray mInnerTiles;
+    TilesList mInnerTiles;
 };

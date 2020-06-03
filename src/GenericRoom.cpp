@@ -33,7 +33,7 @@ void GenericRoom::UpdateFrame()
 
 }
 
-void GenericRoom::ReleaseTiles(const TilesArray& mapTiles)
+void GenericRoom::ReleaseTiles(const TilesList& terrainTiles)
 {
 
     OnReconfigure();
@@ -45,9 +45,9 @@ void GenericRoom::ReleaseTiles()
     OnReconfigure();
 }
 
-void GenericRoom::EnlargeRoom(const TilesArray& mapTiles)
+void GenericRoom::EnlargeRoom(const TilesList& terrainTiles)
 {
-    IncludeTiles(mapTiles);
+    IncludeTiles(terrainTiles);
 
     ReevaluateOccupationArea();
     ReevaluateInnerSquares();
@@ -67,10 +67,10 @@ void GenericRoom::UpdateTilesMesh()
     ConstructWalls(gGameWorld.mDungeonBuilder, false);
 }
 
-void GenericRoom::IncludeTiles(const TilesArray& mapTiles)
+void GenericRoom::IncludeTiles(const TilesList& terrainTiles)
 {
     // first scan all good tiles and assign room instance to them
-    for (TerrainTile* currTile: mapTiles)
+    for (TerrainTile* currTile: terrainTiles)
     {
         debug_assert(currTile->mIsRoomEntrance == false);
         debug_assert(currTile->mIsRoomInnerTile == false);
@@ -203,20 +203,20 @@ void GenericRoom::ReevaluateWallSections()
     } // for
 }
 
-void GenericRoom::ScanWallSection(TerrainTile* mapTile, eDirection faceDirection, WallSection* section)
+void GenericRoom::ScanWallSection(TerrainTile* terrainTile, eDirection faceDirection, WallSection* section)
 {
     section->Setup(faceDirection);
     section->RemoveTiles();
 
-    ScanWallSectionImpl(mapTile, section);
+    ScanWallSectionImpl(terrainTile, section);
 }
 
-void GenericRoom::ScanWallSection(TerrainTile* mapTile, eTileFace faceId, WallSection* section)
+void GenericRoom::ScanWallSection(TerrainTile* terrainTile, eTileFace faceId, WallSection* section)
 {
     section->Setup(faceId);
     section->RemoveTiles();
 
-    ScanWallSectionImpl(mapTile, section);
+    ScanWallSectionImpl(terrainTile, section);
 }
 
 void GenericRoom::ScanWallSectionImpl(TerrainTile* originTile, WallSection* section)
@@ -409,32 +409,32 @@ void GenericRoom::ConstructWalls(DungeonBuilder& builder, bool forceConstructAll
     }
 }
 
-void GenericRoom::ConstructFloorTiles(DungeonBuilder& builder, const TilesArray& mapTiles)
+void GenericRoom::ConstructFloorTiles(DungeonBuilder& builder, const TilesList& terrainTiles)
 {
     switch (mDefinition->mTileConstruction)
     {
         case eRoomTileConstruction_5_by_5_Rotated:
-            ConstructTiles_5x5Rotated(builder, mapTiles); 
+            ConstructTiles_5x5Rotated(builder, terrainTiles); 
         break;
 
         case eRoomTileConstruction_3_by_3:
-            ConstructTiles_3x3(builder, mapTiles); 
+            ConstructTiles_3x3(builder, terrainTiles); 
         break;
 
         case eRoomTileConstruction_Quad:
-            ConstructTiles_Quad(builder, mapTiles); 
+            ConstructTiles_Quad(builder, terrainTiles); 
         break;
 
         case eRoomTileConstruction_Normal:
-            ConstructTiles_Normal(builder, mapTiles); 
+            ConstructTiles_Normal(builder, terrainTiles); 
         break;
 
         case eRoomTileConstruction_DoubleQuad:
-            ConstructTiles_DoubleQuad(builder, mapTiles); 
+            ConstructTiles_DoubleQuad(builder, terrainTiles); 
         break;
 
         case eRoomTileConstruction_HeroGateFrontEnd:
-            ConstructTiles_HeroGateFrontEnd(builder, mapTiles);
+            ConstructTiles_HeroGateFrontEnd(builder, terrainTiles);
         break;
 
         case eRoomTileConstruction_Complete:
@@ -474,12 +474,12 @@ void GenericRoom::ConstructFloorTiles(DungeonBuilder& builder, const TilesArray&
         break;
 
         case eRoomTileConstruction_HeroGate_3_by_1:
-            ConstructTiles_HeroGate3x1(builder, mapTiles);
+            ConstructTiles_HeroGate3x1(builder, terrainTiles);
         break;
     }
 }
 
-void GenericRoom::ConstructTiles_3x3(DungeonBuilder& builder, const TilesArray& mapTiles)
+void GenericRoom::ConstructTiles_3x3(DungeonBuilder& builder, const TilesList& terrainTiles)
 {
     ModelAsset* pieces[] = 
     {
@@ -494,7 +494,7 @@ void GenericRoom::ConstructTiles_3x3(DungeonBuilder& builder, const TilesArray& 
         gModelsManager.LoadModelAsset(mDefinition->mCompleteResource.mResourceName + "8"),
     };
 
-    for (TerrainTile* currTile : mapTiles)
+    for (TerrainTile* currTile : terrainTiles)
     {
         const int ioffsetx = currTile->mTileLocation.x - mOccupationArea.x;
         const int ioffsety = currTile->mTileLocation.y - mOccupationArea.y;
@@ -508,7 +508,7 @@ void GenericRoom::ConstructTiles_3x3(DungeonBuilder& builder, const TilesArray& 
     }
 }
 
-void GenericRoom::ConstructTiles_Quad(DungeonBuilder& builder, const TilesArray& mapTiles)
+void GenericRoom::ConstructTiles_Quad(DungeonBuilder& builder, const TilesList& terrainTiles)
 {
     const std::string& meshName = mDefinition->mCompleteResource.mResourceName;
 
@@ -535,7 +535,7 @@ void GenericRoom::ConstructTiles_Quad(DungeonBuilder& builder, const TilesArray&
         geoPiece0, geoPiece2, geoPiece0, geoPiece0
     };
 
-    for (TerrainTile* currTile : mapTiles)
+    for (TerrainTile* currTile : terrainTiles)
     {
         int subTiles[] = 
         {
@@ -565,7 +565,7 @@ void GenericRoom::ConstructTiles_Quad(DungeonBuilder& builder, const TilesArray&
     }
 }
 
-void GenericRoom::ConstructTiles_Normal(DungeonBuilder& builder, const TilesArray& mapTiles)
+void GenericRoom::ConstructTiles_Normal(DungeonBuilder& builder, const TilesList& terrainTiles)
 {
     const std::string& meshName = mDefinition->mCompleteResource.mResourceName;
 
@@ -600,7 +600,7 @@ void GenericRoom::ConstructTiles_Normal(DungeonBuilder& builder, const TilesArra
         {NegPi, NegPi, NegPi, NegPi, Pos90, Nullp, Pos90, Pos90}
     };
 
-    for (TerrainTile* currTile : mapTiles) 
+    for (TerrainTile* currTile : terrainTiles) 
     {
         // todo: fix it
         // todo: what i had to fix here?
@@ -638,10 +638,10 @@ void GenericRoom::ConstructTiles_Normal(DungeonBuilder& builder, const TilesArra
     }
 }
 
-void GenericRoom::ConstructTiles_HeroGateFrontEnd(DungeonBuilder& builder, const TilesArray& mapTiles)
+void GenericRoom::ConstructTiles_HeroGateFrontEnd(DungeonBuilder& builder, const TilesList& terrainTiles)
 {    
     const std::string& meshName = mDefinition->mCompleteResource.mResourceName;
-    for (TerrainTile* currTile: mapTiles)
+    for (TerrainTile* currTile: terrainTiles)
     {
         int tilex = currTile->mTileLocation.x - mOccupationArea.x;
         int tiley = currTile->mTileLocation.y - mOccupationArea.y;
@@ -660,12 +660,12 @@ void GenericRoom::ConstructTiles_HeroGateFrontEnd(DungeonBuilder& builder, const
     }
 }
 
-void GenericRoom::ConstructTiles_HeroGate3x1(DungeonBuilder& builder, const TilesArray& mapTiles)
+void GenericRoom::ConstructTiles_HeroGate3x1(DungeonBuilder& builder, const TilesList& terrainTiles)
 {
     // cannot build until things will be parsed, need info about direction
 }
 
-void GenericRoom::ConstructTiles_DoubleQuad(DungeonBuilder& builder, const TilesArray& mapTiles)
+void GenericRoom::ConstructTiles_DoubleQuad(DungeonBuilder& builder, const TilesList& terrainTiles)
 {
     const std::string& meshName = mDefinition->mCompleteResource.mResourceName;
 
@@ -723,7 +723,7 @@ void GenericRoom::ConstructTiles_DoubleQuad(DungeonBuilder& builder, const Tiles
         {Nullp, Neg90, Nullp, Neg90, Nullp, NegPi, Nullp, NegPi}
     };
 
-    for (TerrainTile* currTile : mapTiles)
+    for (TerrainTile* currTile : terrainTiles)
     {
         // entrance
         if (currTile->mIsRoomEntrance)
@@ -787,10 +787,10 @@ void GenericRoom::ConstructTiles_DoubleQuad(DungeonBuilder& builder, const Tiles
     }
 }
 
-void GenericRoom::ConstructTiles_5x5Rotated(DungeonBuilder& builder, const TilesArray& mapTiles)
+void GenericRoom::ConstructTiles_5x5Rotated(DungeonBuilder& builder, const TilesList& terrainTiles)
 {
     const std::string& meshName = mDefinition->mCompleteResource.mResourceName;
-    for (TerrainTile* currTile : mapTiles)
+    for (TerrainTile* currTile : terrainTiles)
     {
         const glm::mat3* rotation = nullptr;
 
@@ -888,5 +888,5 @@ void GenericRoom::ConstructTiles_5x5Rotated(DungeonBuilder& builder, const Tiles
             builder.ExtendTileMesh(currTile, eTileFace_Floor, geometry, rotation);
             continue;
         }
-    } // for mapTile
+    } // for terrainTile
 }

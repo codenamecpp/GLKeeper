@@ -22,13 +22,13 @@ public:
     void BuildFullTerrainMesh();
 
     // tile mesh is invalidated and will be regenerated
-    void InvalidateTileMesh(TerrainTile* mapTile);
-    void InvalidateTileNeighboursMesh(TerrainTile* mapTile);
+    void InvalidateTileMesh(TerrainTile* terrainTile);
+    void InvalidateTileNeighboursMesh(TerrainTile* terrainTile);
 
     void ClearInvalidatedTiles();
 
     // enable or disable highhlight for tile
-    void HighhlightTile(TerrainTile* mapTile, bool isHighlighted);
+    void HighhlightTile(TerrainTile* terrainTile, bool isHighlighted);
 
 private:
     void InitTerrainMeshList();
@@ -42,15 +42,15 @@ private:
     void UpdateHighhlightTilesTexture();
 
     GameObject* CreateObjectTerrain(const Rectangle& mapArea);
-    GameObject* CreateObjectLava(const TilesArray& tilesArray);
-    GameObject* CreateObjectWater(const TilesArray& tilesArray);
+    GameObject* CreateObjectLava(const TilesList& tilesArray);
+    GameObject* CreateObjectWater(const TilesList& tilesArray);
 
 private:
     std::vector<GameObject*> mWaterLavaMeshArray;
     std::vector<GameObject*> mTerrainMeshArray;
 
-    TilesArray mMeshInvalidatedTiles;
-    TilesArray mHighlightTiles;
+    TilesList mMeshInvalidatedTiles;
+    TilesList mHighlightTiles;
 
     Texture2D_Image mHighlightTilesImage;
     Texture2D* mHighlightTilesTexture = nullptr;

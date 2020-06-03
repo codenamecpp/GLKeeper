@@ -31,7 +31,7 @@ public:
 
     // create new room instance
     GenericRoom* CreateRoomInstance(RoomDefinition* definition, ePlayerID owner);
-    GenericRoom* CreateRoomInstance(RoomDefinition* definition, ePlayerID owner, const TilesArray& roomTiles);
+    GenericRoom* CreateRoomInstance(RoomDefinition* definition, ePlayerID owner, const TilesList& roomTiles);
 
 private:
     void DestroyRoomsList();

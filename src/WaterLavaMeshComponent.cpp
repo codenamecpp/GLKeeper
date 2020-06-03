@@ -36,7 +36,7 @@ void WaterLavaMeshComponent::ReleaseRenderResources()
     InvalidateMesh();
 }
 
-void WaterLavaMeshComponent::SetWaterLavaTiles(const TilesArray& tilesArray)
+void WaterLavaMeshComponent::SetWaterLavaTiles(const TilesList& tilesArray)
 {
     mWaterLavaTiles = tilesArray;
 

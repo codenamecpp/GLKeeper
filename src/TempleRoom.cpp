@@ -28,7 +28,7 @@ TempleRoom::~TempleRoom()
 
 void TempleRoom::OnReconfigure()
 {
-    TilesArray waterTiles;
+    TilesList waterTiles;
     ScanWaterPoolTiles(waterTiles);
 
     if (waterTiles.empty())
@@ -63,7 +63,7 @@ void TempleRoom::OnReconfigure()
     }
 }
 
-void TempleRoom::ScanWaterPoolTiles(TilesArray& poolTiles)
+void TempleRoom::ScanWaterPoolTiles(TilesList& poolTiles)
 {
     poolTiles = mInnerTiles;
     for (TerrainTile* currentTile: mRoomTiles)

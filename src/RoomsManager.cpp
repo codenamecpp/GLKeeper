@@ -109,7 +109,7 @@ GenericRoom* RoomsManager::CreateRoomInstance(RoomDefinition* definition, ePlaye
     return genericRoom;
 }
 
-GenericRoom* RoomsManager::CreateRoomInstance(RoomDefinition* definition, ePlayerID owner, const TilesArray& roomTiles)
+GenericRoom* RoomsManager::CreateRoomInstance(RoomDefinition* definition, ePlayerID owner, const TilesList& roomTiles)
 {
     debug_assert(definition);
     if (definition == nullptr)

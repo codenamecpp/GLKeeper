@@ -55,8 +55,8 @@ public:
     // @param origin: Initial tile
     // @param scanArea: Scanning bounds
     // @param floodFillFlags: Flags
-    void FloodFill4(TilesArray& outputTiles, TerrainTile* origin, MapFloodFillFlags flags);
-    void FloodFill4(TilesArray& outputTiles, TerrainTile* origin, const Rectangle& scanArea, MapFloodFillFlags flags);
+    void FloodFill4(TilesList& outputTiles, TerrainTile* origin, MapFloodFillFlags flags);
+    void FloodFill4(TilesList& outputTiles, TerrainTile* origin, const Rectangle& scanArea, MapFloodFillFlags flags);
 
     void ComputeBounds();
 

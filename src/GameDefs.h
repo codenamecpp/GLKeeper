@@ -48,7 +48,7 @@ using GameObjectHandle = cxx::handle<GameObject>;
 using GameObjectInstanceID = unsigned long long;
 
 // array of map tiles
-using TilesArray = std::vector<TerrainTile*>;
+using TilesList = std::vector<TerrainTile*>;
 
 // possible player identifiers
 enum ePlayerID

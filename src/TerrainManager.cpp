@@ -181,31 +181,31 @@ void TerrainManager::UpdateTerrainMesh()
     mMeshInvalidatedTiles.clear();
 }
 
-void TerrainManager::InvalidateTileMesh(TerrainTile* mapTile)
+void TerrainManager::InvalidateTileMesh(TerrainTile* terrainTile)
 {
-    if (mapTile && !mapTile->mIsMeshInvalidated)
+    if (terrainTile && !terrainTile->mIsMeshInvalidated)
     {
-        if (cxx::contains(mMeshInvalidatedTiles, mapTile))
+        if (cxx::contains(mMeshInvalidatedTiles, terrainTile))
         {
             debug_assert(false);
         }
-        mMeshInvalidatedTiles.push_back(mapTile);
-        mapTile->mIsMeshInvalidated = true;
+        mMeshInvalidatedTiles.push_back(terrainTile);
+        terrainTile->mIsMeshInvalidated = true;
     }
-    debug_assert(mapTile);
+    debug_assert(terrainTile);
 }
 
-void TerrainManager::InvalidateTileNeighboursMesh(TerrainTile* mapTile)
+void TerrainManager::InvalidateTileNeighboursMesh(TerrainTile* terrainTile)
 {
-    debug_assert(mapTile);
-    if (mapTile)
+    debug_assert(terrainTile);
+    if (terrainTile)
     {
-        for (TerrainTile* currTile: mapTile->mNeighbours)
+        for (TerrainTile* currTile: terrainTile->mNeighbours)
         {
             InvalidateTileMesh(currTile);
         }
     }
-    debug_assert(mapTile);
+    debug_assert(terrainTile);
 }
 
 void TerrainManager::ClearInvalidatedTiles()
@@ -256,8 +256,8 @@ void TerrainManager::BuildFullTerrainMesh()
 
 void TerrainManager::InitWaterLavaMeshList()
 {
-    TilesArray lavaTiles;
-    TilesArray waterTiles;
+    TilesList lavaTiles;
+    TilesList waterTiles;
 
     lavaTiles.reserve(128);
     waterTiles.reserve(128);
@@ -287,7 +287,7 @@ void TerrainManager::InitWaterLavaMeshList()
     floodfillFlags.mSameBaseTerrain = true;
     floodfillFlags.mSameOwner = false;
 
-    TilesArray tempTilesArray;
+    TilesList tempTilesArray;
 
     // create lava surfaces
     while (!lavaTiles.empty())
@@ -431,7 +431,7 @@ GameObject* TerrainManager::CreateObjectTerrain(const Rectangle& mapArea)
     return gameObject;
 }
 
-GameObject* TerrainManager::CreateObjectLava(const TilesArray& tilesArray)
+GameObject* TerrainManager::CreateObjectLava(const TilesList& tilesArray)
 {
     GameObject* gameObject = gGameObjectsManager.CreateGameObject();
     debug_assert(gameObject);
@@ -445,7 +445,7 @@ GameObject* TerrainManager::CreateObjectLava(const TilesArray& tilesArray)
     return gameObject;
 }
 
-GameObject* TerrainManager::CreateObjectWater(const TilesArray& tilesArray)
+GameObject* TerrainManager::CreateObjectWater(const TilesList& tilesArray)
 {
     GameObject* gameObject = gGameObjectsManager.CreateGameObject();
     debug_assert(gameObject);
@@ -459,12 +459,12 @@ GameObject* TerrainManager::CreateObjectWater(const TilesArray& tilesArray)
     return gameObject;
 }
 
-void TerrainManager::HighhlightTile(TerrainTile* mapTile, bool isHighlighted)
+void TerrainManager::HighhlightTile(TerrainTile* terrainTile, bool isHighlighted)
 {
-    if (mapTile && mapTile->mIsTagged != isHighlighted)
+    if (terrainTile && terrainTile->mIsTagged != isHighlighted)
     {
-        cxx::push_back_if_unique(mHighlightTiles, mapTile);
-        mapTile->mIsTagged = isHighlighted;
+        cxx::push_back_if_unique(mHighlightTiles, terrainTile);
+        terrainTile->mIsTagged = isHighlighted;
     }
-    debug_assert(mapTile);
+    debug_assert(terrainTile);
 }
