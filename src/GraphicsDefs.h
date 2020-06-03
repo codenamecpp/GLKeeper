@@ -448,6 +448,7 @@ union RenderStates
 public:
     RenderStates()
         : mIsColorWriteEnabled(true)
+        , mIsAlphaWriteEnabled() // disabled
         , mIsDepthWriteEnabled(true)
         , mIsDepthTestEnabled(true)
         , mIsFaceCullingEnabled(true)
@@ -486,6 +487,7 @@ public:
         // render state flags
         bool mIsAlphaBlendEnabled : 1;
         bool mIsColorWriteEnabled : 1;
+        bool mIsAlphaWriteEnabled : 1;
         bool mIsDepthWriteEnabled : 1;
         bool mIsDepthTestEnabled : 1;
         bool mIsFaceCullingEnabled : 1;
