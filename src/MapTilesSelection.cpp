@@ -113,7 +113,7 @@ void MapTilesSelection::UpdateSelectionMesh()
         const glm::vec3& point_start, 
         const glm::vec3& point_end, bool isDiagonal)
     {
-        float lineWidth = 0.02f;
+        float lineWidth = 0.03f;
         glm::vec3 direction = isDiagonal ? (point_start - center) : (point_end - point_start);
 
         glm::vec3 sides[2] =
@@ -127,13 +127,13 @@ void MapTilesSelection::UpdateSelectionMesh()
             glm::vec3 side_cw  = glm::normalize(currSide) * lineWidth;
             glm::vec3 side_ccw = glm::normalize(currSide * -1.0f) * lineWidth;
 
-            Color32 verticesColor = Color32::MakeRGBA(80, 80, 255, 250);
+            Color32 verticesColor = Color32_Blue;
             // setup vertices
             Vertex3D quad_vertices[4];
-            quad_vertices[0].mPosition = point_start + side_cw;  quad_vertices[0].mColor = verticesColor;
-            quad_vertices[1].mPosition = point_end   + side_cw;  quad_vertices[1].mColor = verticesColor;
-            quad_vertices[2].mPosition = point_start + side_ccw; quad_vertices[2].mColor = verticesColor;
-            quad_vertices[3].mPosition = point_end   + side_ccw; quad_vertices[3].mColor = verticesColor;
+            quad_vertices[0].mPosition = point_start + side_cw;  quad_vertices[0].mColor = verticesColor; quad_vertices[0].mTexcoord = {0.0f, 1.0f};
+            quad_vertices[1].mPosition = point_end   + side_cw;  quad_vertices[1].mColor = verticesColor; quad_vertices[1].mTexcoord = {1.0f, 1.0f};
+            quad_vertices[2].mPosition = point_start + side_ccw; quad_vertices[2].mColor = verticesColor; quad_vertices[2].mTexcoord = {0.0f, 0.0f};
+            quad_vertices[3].mPosition = point_end   + side_ccw; quad_vertices[3].mColor = verticesColor; quad_vertices[3].mTexcoord = {1.0f, 0.0f};
 
             // setup triangles
             int indexStart = (int) trimesh.mVertices.size();
@@ -167,9 +167,9 @@ void MapTilesSelection::UpdateSelectionMesh()
     MeshMaterial material;
     material.mRenderStates.mIsAlphaBlendEnabled = true;
     material.mRenderStates.mIsFaceCullingEnabled = false;
-    material.mRenderStates.mBlendingMode = eBlendingMode_Alpha;
-    material.mDiffuseTexture = gTexturesManager.mWhiteTexture;
-    material.mColorMode = eMaterialColorMode_Vertex;
+    material.mRenderStates.mBlendingMode = eBlendingMode_Additive;
+    material.mDiffuseTexture = gTexturesManager.mCursorTexture;
+    material.mColorMode = eMaterialColorMode_Texture;
     renderable->SetMeshMaterialsCount(1);
     renderable->SetMeshMaterial(0, material);
     renderable->InvalidateMesh();

@@ -151,6 +151,12 @@ void TexturesManager::InitStandardTextures()
     mWaterTexture = new Texture2D { "Water" };
     mWaterTexture->SetPersistent(true);
 
+    mCursorTexture = new Texture2D { "Cursor" };
+    mCursorTexture->SetPersistent(true);
+
+    mBlueTexture = new Texture2D { "BlueTexture" };
+    mBlueTexture->SetPersistent(true);
+
     InitWaterLavaTextureAnimations();
 }
 
@@ -161,6 +167,8 @@ void TexturesManager::FreeStandardTextures()
     SafeDelete(mMissingTexture);
     SafeDelete(mWaterTexture);
     SafeDelete(mLavaTexture);
+    SafeDelete(mBlueTexture);
+    SafeDelete(mCursorTexture);
 }
 
 void TexturesManager::FreeTextures()

@@ -14,9 +14,10 @@ public:
     // standard game textures
     Texture2D* mLavaTexture = nullptr;
     Texture2D* mWaterTexture = nullptr;
+    Texture2D* mCursorTexture = nullptr;
+    Texture2D* mBlueTexture = nullptr;
 
 public:
-
     // setup manager internal resources, returns false on error
     bool Initialize();
     void Deinit();
