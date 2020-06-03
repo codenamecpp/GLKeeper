@@ -205,7 +205,7 @@ void TerrainTilesCursor::SetupCursorMeshMaterial()
     material->mRenderStates.mIsDepthWriteEnabled = false;
     material->mRenderStates.mIsAlphaBlendEnabled = true;
     material->mRenderStates.mIsFaceCullingEnabled = false;
-    material->mRenderStates.mBlendingMode = eBlendingMode_Premultiplied;
+    material->mRenderStates.mBlendingMode = eBlendingMode_Additive;
     material->mDiffuseTexture = gTexturesManager.mCursorTexture;
     material->mMaterialColor = Color32_NULL;
 }
