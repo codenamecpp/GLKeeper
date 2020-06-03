@@ -167,7 +167,7 @@ void MapTilesSelection::UpdateSelectionMesh()
     MeshMaterial material;
     material.mRenderStates.mIsAlphaBlendEnabled = true;
     material.mRenderStates.mIsFaceCullingEnabled = false;
-    material.mRenderStates.mBlendingMode = eBlendingMode_Additive;
+    material.mRenderStates.mBlendingMode = eBlendingMode_AlphaAdditive;
     material.mDiffuseTexture = gTexturesManager.mCursorTexture;
     material.mColorMode = eMaterialColorMode_Texture;
     renderable->SetMeshMaterialsCount(1);
