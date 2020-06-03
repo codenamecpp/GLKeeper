@@ -35,6 +35,7 @@ void StaticMeshComponent::ClearMesh()
         return;
 
     mTriMeshParts.clear();
+    ClearDrawCalls();
     InvalidateMesh();
 }
 

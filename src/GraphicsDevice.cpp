@@ -485,6 +485,9 @@ void GraphicsDevice::InternalSetRenderStates(const RenderStates& renderStates, b
             case eBlendingMode_AlphaAdditive:
                 ::glBlendFunc(GL_SRC_ALPHA, GL_ONE);
             break;
+            case eBlendingMode_Additive:
+                ::glBlendFunc(GL_ONE, GL_ONE);
+            break;
             case eBlendingMode_Multiply:
                 ::glBlendFunc(GL_DST_COLOR, GL_ZERO);
             break;

@@ -63,10 +63,11 @@ void StaticMeshRenderer::Render(SceneRenderContext& renderContext, StaticMeshCom
 void StaticMeshRenderer::PrepareRenderdata(StaticMeshComponent* component)
 {
     debug_assert(component);
-    if (component->mTriMeshParts.empty())
-        return;
 
     component->ClearDrawCalls();
+
+    if (component->mTriMeshParts.empty())
+        return;
 
     int overallVertexCount = 0;
     int overallTriangleCount = 0;

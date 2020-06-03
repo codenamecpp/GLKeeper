@@ -405,6 +405,7 @@ enum eBlendingMode : unsigned char
 {
     eBlendingMode_Alpha,
     eBlendingMode_AlphaAdditive,
+    eBlendingMode_Additive,
     eBlendingMode_Multiply,
     eBlendingMode_Premultiplied,
     eBlendingMode_Screen

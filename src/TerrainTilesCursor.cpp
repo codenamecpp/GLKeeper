@@ -92,7 +92,7 @@ void TerrainTilesCursor::SetupCursorMesh()
 
     if (mSelectionRect.w == 0 || mSelectionRect.h == 0)
     {
-        //renderable->UpdateBounds();
+        renderable->UpdateBounds();
         return;
     }
 
