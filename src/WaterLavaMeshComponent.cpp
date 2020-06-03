@@ -77,6 +77,7 @@ void WaterLavaMeshComponent::SetSurfaceParams(float translucency, float waveWidt
     {
         meshMaterial->mRenderStates.mIsAlphaBlendEnabled = false;
     }
+    meshMaterial->mMaterialColor.mA = (unsigned char)(mTranslucency * 255);
 }
 
 void WaterLavaMeshComponent::SetSurfaceTexture(Texture2D* diffuseTexture)

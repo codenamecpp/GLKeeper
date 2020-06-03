@@ -48,7 +48,7 @@ void main()
 #ifdef FRAGMENT_SHADER
 
 uniform sampler2D tex_0;
-uniform float translucency;
+uniform vec4 material_color;
 
 // passed from vertex shader
 in vec2 Texcoord;
@@ -59,7 +59,7 @@ out vec4 FinalColor;
 // entry point
 void main() 
 {
-	FinalColor = vec4(texture(tex_0, Texcoord).rgb, translucency); 
+	FinalColor = vec4(texture(tex_0, Texcoord).rgb, material_color.a); 
 }
 
 #endif
