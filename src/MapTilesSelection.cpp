@@ -99,7 +99,7 @@ void MapTilesSelection::UpdateSelectionMesh()
     glm::vec3 edges[8];
     areaBounds.get_edges(edges);
 
-    float displacement = 0.04f;
+    float displacement = 0.03f;
     // offset
     glm::vec3 center = areaBounds.get_center();
     for (glm::vec3& curr_edge: edges)
