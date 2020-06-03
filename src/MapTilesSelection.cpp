@@ -128,6 +128,7 @@ void MapTilesSelection::UpdateSelectionMesh()
             glm::vec3 side_ccw = glm::normalize(currSide * -1.0f) * lineWidth;
 
             Color32 verticesColor = Color32_Blue;
+            verticesColor.mA = 0;
             // setup vertices
             Vertex3D quad_vertices[4];
             quad_vertices[0].mPosition = point_start + side_cw;  quad_vertices[0].mColor = verticesColor; quad_vertices[0].mTexcoord = {0.0f, 1.0f};
@@ -165,9 +166,10 @@ void MapTilesSelection::UpdateSelectionMesh()
 
     // setup selection trimesh materials
     MeshMaterial material;
+    material.mRenderStates.mIsDepthWriteEnabled = false;
     material.mRenderStates.mIsAlphaBlendEnabled = true;
     material.mRenderStates.mIsFaceCullingEnabled = false;
-    material.mRenderStates.mBlendingMode = eBlendingMode_AlphaAdditive;
+    material.mRenderStates.mBlendingMode = eBlendingMode_Premultiplied;
     material.mDiffuseTexture = gTexturesManager.mCursorTexture;
     material.mColorMode = eMaterialColorMode_Texture;
     renderable->SetMeshMaterialsCount(1);

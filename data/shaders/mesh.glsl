@@ -49,7 +49,7 @@ vec4 fetch_color(vec2 uv)
 	}
 	if (material_color_mode == 1) // mix
 	{
-		return clamp(texelColor + FragColor, 0.0f, 1.0f);
+		return texelColor + FragColor;
 	}
 	if (material_color_mode == 2) // vertex
 	{

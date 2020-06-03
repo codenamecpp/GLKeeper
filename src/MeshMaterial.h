@@ -2,9 +2,9 @@
 
 enum eMaterialColorMode
 {
-    eMaterialColorMode_Texture, // diffuse texture * vertex color
-    eMaterialColorMode_Mix,     // diffuse texture + vertex color
-    eMaterialColorMode_Vertex,  // vertex color
+    eMaterialColorMode_Texture,     // diffuse texture * vertex color
+    eMaterialColorMode_TextureAdd,  // diffuse texture + vertex color
+    eMaterialColorMode_Vertex,      // vertex color
 };
 
 // various render properties of drawable object
