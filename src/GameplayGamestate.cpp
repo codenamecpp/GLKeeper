@@ -10,7 +10,12 @@ void GameplayGamestate::HandleGamestateEnter()
 {
     gRenderScene.SetCameraController(&mGodmodeCameraControl);
 
-    mGodmodeCameraControl.SetFocusPoint(glm::vec3(0.0f));
+    // setup camera
+    PlayerDefinition& playerDefinition = gGameWorld.mScenarioData.mPlayerDefs[ePlayerID_Keeper1];
+    glm::vec3 cameraTileCoord;
+    Point cameraTilePosition(playerDefinition.mStartCameraX, playerDefinition.mStartCameraY);
+    GetMapBlockCenter(cameraTilePosition, cameraTileCoord);
+    mGodmodeCameraControl.SetFocusPoint(cameraTileCoord);
 
     gGameMain.mFpsWindow.SetWindowShown(true);
 

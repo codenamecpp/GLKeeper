@@ -39,7 +39,7 @@ void TerrainTilesCursor::UpdateFrame()
         MeshMaterial* material = mMeshObject->mRenderableComponent->GetMeshMaterial();
         debug_assert(material);
 
-        float translucency = cxx::ping_pong(mCursorEffectTime, 0.4f);
+        float translucency = cxx::ping_pong(mCursorEffectTime, 0.3f);
         material->mMaterialColor.mR = 20 + (unsigned char)(235 * translucency);
         material->mMaterialColor.mG = material->mMaterialColor.mR;
         material->mMaterialColor.mB = material->mMaterialColor.mR;
