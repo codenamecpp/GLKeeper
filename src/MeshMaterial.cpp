@@ -4,7 +4,7 @@
 #include "Texture2D.h"
 #include "RenderManager.h"
 
-MeshMaterial::MeshMaterial()
+MeshMaterial::MeshMaterial() : mMaterialColor(Color32_White)
 {
 }
 
@@ -12,9 +12,9 @@ void MeshMaterial::Clear()
 {
     mRenderStates = RenderStates();
 
-    mColorMode = eMaterialColorMode_Texture;
     mDiffuseTexture = nullptr;
     mEnvMappingTexture = nullptr;
+    mMaterialColor = Color32_White;
 }
 
 void MeshMaterial::ActivateMaterial()
@@ -46,10 +46,8 @@ void MeshMaterial::PreloadTextures()
 
 bool MeshMaterial::operator == (const MeshMaterial& other) const
 {
-    return mRenderStates == other.mRenderStates && 
-        mDiffuseTexture == other.mDiffuseTexture && 
-        mEnvMappingTexture == other.mEnvMappingTexture &&
-        mColorMode == other.mColorMode; 
+    return (mRenderStates == other.mRenderStates) && (mDiffuseTexture == other.mDiffuseTexture) && 
+        (mEnvMappingTexture == other.mEnvMappingTexture) && (mMaterialColor == other.mMaterialColor);
 }
 
 bool MeshMaterial::operator != (const MeshMaterial& other) const
@@ -68,8 +66,8 @@ bool MeshMaterial::operator < (const MeshMaterial& other) const
     if (mRenderStates != other.mRenderStates)
         return mRenderStates < other.mRenderStates;
 
-    if (mColorMode != other.mColorMode)
-        return mColorMode < other.mColorMode;
+    if (mMaterialColor != other.mMaterialColor)
+        return mMaterialColor < other.mMaterialColor;
 
     return false;
 }

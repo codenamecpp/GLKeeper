@@ -33,13 +33,13 @@ bool GameWorld::Initialize()
         gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize rooms manager");
         return false;
     }
-    mTilesSelection.Initialize();
+    mTerrainCursor.Initialize();
     return true;
 }
 
 void GameWorld::Deinit()
 {
-    mTilesSelection.Deinit();
+    mTerrainCursor.Deinit();
     gRoomsManager.Deinit();
     gTerrainManager.Deinit();
     gGameObjectsManager.Deinit();
@@ -83,6 +83,7 @@ void GameWorld::UpdateFrame()
     gRoomsManager.UpdateFrame();
     gTerrainManager.UpdateTerrainMesh();
     gGameObjectsManager.UpdateFrame();
+    mTerrainCursor.UpdateFrame();
 }
 
 void GameWorld::TagTerrain(const Rectangle& tilesArea)

@@ -226,11 +226,11 @@ void MapInteractionController::OnSelectionChanged()
     Rectangle selectionArea;
     if (NeedToShowSelection() && GetTerrainSelectionArea(selectionArea))
     {
-        gGameWorld.mTilesSelection.UpdateSelection(selectionArea);
+        gGameWorld.mTerrainCursor.UpdateCursor(selectionArea);
     }
     else
     {
-        gGameWorld.mTilesSelection.ClearSelection();
+        gGameWorld.mTerrainCursor.ClearCursor();
     }
 }
 

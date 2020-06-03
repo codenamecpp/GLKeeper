@@ -38,7 +38,6 @@ void WaterLavaMeshRenderer::Render(SceneRenderContext& renderContext, WaterLavaM
     }
 
     mWaterLavaRenderProgram.SetViewProjectionMatrix(gRenderScene.mCamera.mViewProjectionMatrix);
-    mWaterLavaRenderProgram.SetTranslucency(component->mTranslucency);
     mWaterLavaRenderProgram.SetWaveParams(component->mWaveTime, component->mWaveWidth, component->mWaveHeight, component->mWaterlineHeight);
     mWaterLavaRenderProgram.ActivateProgram();
 

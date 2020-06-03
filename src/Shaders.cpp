@@ -60,12 +60,6 @@ WaterLavaRenderProgram::WaterLavaRenderProgram(): RenderProgram("shaders/water_l
 {
 }
 
-void WaterLavaRenderProgram::SetTranslucency(float translucency)
-{
-    debug_assert(IsProgramLoaded());
-    mGpuProgram->SetUniformParam(mUniformID_translucency, translucency);
-}
-
 void WaterLavaRenderProgram::SetWaveParams(float waveTime, float waveWidth, float waveHeight, float waterLine)
 {
     debug_assert(IsProgramLoaded());
@@ -77,9 +71,6 @@ void WaterLavaRenderProgram::SetWaveParams(float waveTime, float waveWidth, floa
 
 void WaterLavaRenderProgram::HandleProgramLoad()
 {
-    mUniformID_translucency = mGpuProgram->QueryUniformLocation("translucency");
-    debug_assert(mUniformID_translucency != GpuVariable_NULL);
-
     mUniformID_wave_params = mGpuProgram->QueryUniformLocation("wave_params");
     debug_assert(mUniformID_wave_params != GpuVariable_NULL);
 
@@ -90,7 +81,6 @@ void WaterLavaRenderProgram::HandleProgramLoad()
 
 void WaterLavaRenderProgram::HandleProgramFree()
 {
-    mUniformID_translucency = GpuVariable_NULL;
     mUniformID_wave_params = GpuVariable_NULL;
 }
 

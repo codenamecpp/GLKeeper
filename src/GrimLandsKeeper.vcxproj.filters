@@ -495,9 +495,6 @@
     <ClInclude Include="SimpleTriangleMeshUtils.h">
       <Filter>Application\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="MapTilesSelection.h">
-      <Filter>Game\World</Filter>
-    </ClInclude>
     <ClInclude Include="AnimatingMeshRenderer.h">
       <Filter>Game\Rendering</Filter>
     </ClInclude>
@@ -511,6 +508,9 @@
       <Filter>Game\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="TerrainTile.h">
+      <Filter>Game\World</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainTilesCursor.h">
       <Filter>Game\World</Filter>
     </ClInclude>
   </ItemGroup>
@@ -790,9 +790,6 @@
     <ClCompile Include="StaticMeshComponent.cpp">
       <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
-    <ClCompile Include="MapTilesSelection.cpp">
-      <Filter>Game\World</Filter>
-    </ClCompile>
     <ClCompile Include="AnimatingMeshRenderer.cpp">
       <Filter>Game\Rendering</Filter>
     </ClCompile>
@@ -806,6 +803,9 @@
       <Filter>Game\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="TerrainTile.cpp">
+      <Filter>Game\World</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainTilesCursor.cpp">
       <Filter>Game\World</Filter>
     </ClCompile>
   </ItemGroup>

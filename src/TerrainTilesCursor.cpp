@@ -1,69 +1,87 @@
 #include "pch.h"
-#include "MapTilesSelection.h"
+#include "TerrainTilesCursor.h"
 #include "GameObject.h"
 #include "StaticMeshComponent.h"
 #include "GameObjectsManager.h"
 #include "TexturesManager.h"
+#include "TimeManager.h"
 
-void MapTilesSelection::Initialize()
+void TerrainTilesCursor::Initialize()
 {
-    debug_assert(mSelectionObject == nullptr);
-    mSelectionObject = gGameObjectsManager.CreateGameObject();
-    if (mSelectionObject)
+    debug_assert(mMeshObject == nullptr);
+    mMeshObject = gGameObjectsManager.CreateGameObject();
+    if (mMeshObject)
     {
-        mSelectionObject->AddComponent<StaticMeshComponent>();
-        mSelectionObject->mDebugColor.mA = 0; // hide
+        mMeshObject->AddComponent<StaticMeshComponent>();
+        mMeshObject->mDebugColor.mA = 0; // hide debug box
+        SetupCursorMeshMaterial();
     }
-    debug_assert(mSelectionObject);
+    debug_assert(mMeshObject);
 }
 
-void MapTilesSelection::Deinit()
+void TerrainTilesCursor::Deinit()
 {
-    if (mSelectionObject)
+    if (mMeshObject)
     {
-        gGameObjectsManager.DestroyGameObject(mSelectionObject);
-        mSelectionObject = nullptr;
+        gGameObjectsManager.DestroyGameObject(mMeshObject);
+        mMeshObject = nullptr;
     }
     mSelectionRect.w = 0;
     mSelectionRect.h = 0;
 }
 
-void MapTilesSelection::UpdateSelection(const Rectangle& selectionRect)
+void TerrainTilesCursor::UpdateFrame()
+{
+    float deltaTime = (float) gTimeManager.GetRealtimeFrameDelta();
+    mCursorEffectTime += deltaTime;
+    if (mMeshObject)
+    {
+        MeshMaterial* material = mMeshObject->mRenderableComponent->GetMeshMaterial();
+        debug_assert(material);
+
+        float translucency = cxx::ping_pong(mCursorEffectTime, 0.4f);
+        material->mMaterialColor.mR = 20 + (unsigned char)(235 * translucency);
+        material->mMaterialColor.mG = material->mMaterialColor.mR;
+        material->mMaterialColor.mB = material->mMaterialColor.mR;
+    }
+}
+
+void TerrainTilesCursor::UpdateCursor(const Rectangle& selectionRect)
 {
     if (selectionRect == mSelectionRect)
         return;
 
     mSelectionRect = selectionRect;
-    UpdateSelectionMesh();
+    SetupCursorMesh();
 }
 
-void MapTilesSelection::UpdateSelection(const Point& selectionPoint)
+void TerrainTilesCursor::UpdateCursor(const Point& selectionPoint)
 {
     Rectangle rcSelection;
         rcSelection.x = selectionPoint.x;
         rcSelection.y = selectionPoint.y;
         rcSelection.w = 1;
         rcSelection.h = 1;
-    UpdateSelection(rcSelection);
+    UpdateCursor(rcSelection);
 }
 
-void MapTilesSelection::ClearSelection()
+void TerrainTilesCursor::ClearCursor()
 {
     mSelectionRect.w = 0;
     mSelectionRect.h = 0;
-    UpdateSelectionMesh();
+    SetupCursorMesh();
 }
 
-void MapTilesSelection::UpdateSelectionMesh()
+void TerrainTilesCursor::SetupCursorMesh()
 {
-    if (mSelectionObject == nullptr)
+    if (mMeshObject == nullptr)
     {
         debug_assert(false);
         return;
     }
 
     // it is possible to cache mesh component
-    StaticMeshComponent* renderable = mSelectionObject->mRenderableComponent->CastComponent<StaticMeshComponent>();
+    StaticMeshComponent* renderable = mMeshObject->mRenderableComponent->CastComponent<StaticMeshComponent>();
     if (renderable == nullptr)
     {
         debug_assert(false);
@@ -164,16 +182,30 @@ void MapTilesSelection::UpdateSelectionMesh()
     PushSelectionLine(triMesh, edges[7], edges[6], true);
     PushSelectionLine(triMesh, edges[3], edges[2], true);
 
-    // setup selection trimesh materials
-    MeshMaterial material;
-    material.mRenderStates.mIsDepthWriteEnabled = false;
-    material.mRenderStates.mIsAlphaBlendEnabled = true;
-    material.mRenderStates.mIsFaceCullingEnabled = false;
-    material.mRenderStates.mBlendingMode = eBlendingMode_Premultiplied;
-    material.mDiffuseTexture = gTexturesManager.mCursorTexture;
-    material.mColorMode = eMaterialColorMode_Texture;
-    renderable->SetMeshMaterialsCount(1);
-    renderable->SetMeshMaterial(0, material);
     renderable->InvalidateMesh();
     renderable->UpdateBounds();
+}
+
+void TerrainTilesCursor::SetupCursorMeshMaterial()
+{
+    debug_assert(mMeshObject);
+
+    StaticMeshComponent* renderable = mMeshObject->mRenderableComponent->CastComponent<StaticMeshComponent>();
+    if (renderable == nullptr)
+    {
+        debug_assert(false);
+        return;
+    }
+
+    renderable->SetMeshMaterialsCount(1);
+
+    MeshMaterial* material = renderable->GetMeshMaterial();
+    debug_assert(material);
+
+    material->mRenderStates.mIsDepthWriteEnabled = false;
+    material->mRenderStates.mIsAlphaBlendEnabled = true;
+    material->mRenderStates.mIsFaceCullingEnabled = false;
+    material->mRenderStates.mBlendingMode = eBlendingMode_Premultiplied;
+    material->mDiffuseTexture = gTexturesManager.mCursorTexture;
+    material->mMaterialColor = Color32_NULL;
 }

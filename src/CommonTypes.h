@@ -89,6 +89,7 @@ extern const Color32 Color32_Gray;
 extern const Color32 Color32_Black;
 extern const Color32 Color32_Cyan;
 extern const Color32 Color32_Yellow;
+extern const Color32 Color32_NULL;
 
 // defines array of bytes
 using ByteArray = std::vector<unsigned char>;

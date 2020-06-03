@@ -2,7 +2,7 @@
 
 #include "GameMap.h"
 #include "DungeonBuilder.h"
-#include "MapTilesSelection.h"
+#include "TerrainTilesCursor.h"
 
 // game world state
 class GameWorld: public cxx::noncopyable
@@ -13,7 +13,7 @@ public:
     GameMap mMapData;
     DungeonBuilder mDungeonBuilder;
 
-    MapTilesSelection mTilesSelection;
+    TerrainTilesCursor mTerrainCursor;
 
 public:
 

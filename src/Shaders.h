@@ -48,7 +48,6 @@ class WaterLavaRenderProgram: public RenderProgram
 public:
     WaterLavaRenderProgram();
 
-    void SetTranslucency(float translucency);
     void SetWaveParams(float waveTime, float waveWidth, float waveHeight, float waterLine);
 
 private:
@@ -56,7 +55,6 @@ private:
     void HandleProgramFree() override;
 
 private:
-    GpuVariableLocation mUniformID_translucency = GpuVariable_NULL;
     GpuVariableLocation mUniformID_wave_params = GpuVariable_NULL;
 };
 

@@ -24,10 +24,7 @@ void StaticMeshRenderer::Render(SceneRenderContext& renderContext, StaticMeshCom
 {
     debug_assert(component);
     if (component->mDrawCalls.empty())
-    {
-        debug_assert(false);
         return;
-    }
 
     mStaticMeshRenderProgram.SetViewProjectionMatrix(gRenderScene.mCamera.mViewProjectionMatrix);
     mStaticMeshRenderProgram.ActivateProgram();

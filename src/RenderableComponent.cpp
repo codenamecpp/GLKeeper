@@ -62,6 +62,21 @@ int RenderableComponent::GetMaterialsCount() const
     return numMaterials;
 }
 
+const MeshMaterial* RenderableComponent::GetMeshMaterial(int materialIndex) const
+{
+    int numMaterials = GetMaterialsCount();
+    if (materialIndex < numMaterials)
+        return &mMeshMaterials[materialIndex];
+
+    debug_assert(false);
+    return nullptr;
+}
+
+const MeshMaterial* RenderableComponent::GetMeshMaterial() const
+{
+    return GetMeshMaterial(0);
+}
+
 MeshMaterial* RenderableComponent::GetMeshMaterial(int materialIndex)
 {
     int numMaterials = GetMaterialsCount();

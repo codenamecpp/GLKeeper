@@ -36,7 +36,7 @@ public:
     // set common constants
     void SetViewProjectionMatrix(const glm::mat4& viewProjectionMatrix);
     void SetModelMatrix(const glm::mat4& modelMatrix);
-    void SetMaterialColorMode(eMaterialColorMode colorMode);
+    void SetMaterialColor(Color32 materialColor);
 
     virtual void HandleScreenResolutionChanged();
 
@@ -53,5 +53,5 @@ protected:
     // common constants
     GpuVariableLocation mUniformID_view_projection_matrix = GpuVariable_NULL;
     GpuVariableLocation mUniformID_model_matrix = GpuVariable_NULL;
-    GpuVariableLocation mUniformID_material_color_mode = GpuVariable_NULL;
+    GpuVariableLocation mUniformID_material_color = GpuVariable_NULL;
 };

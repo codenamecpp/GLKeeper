@@ -36,8 +36,6 @@ void StaticMeshComponent::ClearMesh()
 
     mTriMeshParts.clear();
     InvalidateMesh();
-
-    ClearMeshMaterials();
 }
 
 void StaticMeshComponent::UpdateBounds()

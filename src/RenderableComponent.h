@@ -25,15 +25,16 @@ public:
     int GetMaterialsCount() const;
     MeshMaterial* GetMeshMaterial(int materialIndex);
     MeshMaterial* GetMeshMaterial();
+    // readonly acceess to materials by index
+    const MeshMaterial* GetMeshMaterial(int materialIndex) const;
+    const MeshMaterial* GetMeshMaterial() const;
 
     // test whether renderable component mesh has opaque or transparent parts
     bool HasOpaqueMeshParts() const;
     bool HasTransparentMeshParts() const;
 
-    // prepare renderable component mesh for rendering
+    // prepare/unload renderable component mesh for rendering
     virtual void PrepareRenderResources();
-
-    // unload graphical resources (renderdata)
     virtual void ReleaseRenderResources();
 
     // issue draw on specific render pass

@@ -31,7 +31,7 @@ void main()
 #ifdef FRAGMENT_SHADER
 
 uniform sampler2D tex_0;
-uniform int material_color_mode;
+uniform vec4 material_color;
 
 // passed from vertex shader
 in vec2 Texcoord;
@@ -40,29 +40,12 @@ in vec4 FragColor;
 // result
 out vec4 FinalColor;
 
-vec4 fetch_color(vec2 uv)
-{
-	vec4 texelColor = texture(tex_0, uv);
-	if (material_color_mode == 0) // default
-	{
-		return texelColor * FragColor;
-	}
-	if (material_color_mode == 1) // mix
-	{
-		return texelColor + FragColor;
-	}
-	if (material_color_mode == 2) // vertex
-	{
-		return FragColor;
-	}
-
-	return texelColor;
-}
-
 // entry point
 void main() 
 {
-	vec4 texelColor = fetch_color(Texcoord);
+	vec4 texelColor = texture(tex_0, Texcoord);
+	texelColor *= FragColor;
+	texelColor *= material_color;
     FinalColor = texelColor;
 }
 
