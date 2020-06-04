@@ -384,18 +384,7 @@ enum BufferAccessBits : unsigned short
     BufferAccess_InvalidateBuffer = (1 << 4), // orphan whole buffer
 };
 
-inline BufferAccessBits operator | (BufferAccessBits lhs, BufferAccessBits rhs)
-{
-    return static_cast<BufferAccessBits>(static_cast<unsigned short>(lhs) | static_cast<unsigned short>(rhs));
-}
-inline BufferAccessBits operator & (BufferAccessBits lhs, BufferAccessBits rhs)
-{
-    return static_cast<BufferAccessBits>(static_cast<unsigned short>(lhs) & static_cast<unsigned short>(rhs));
-}
-inline BufferAccessBits operator ^ (BufferAccessBits lhs, BufferAccessBits rhs)
-{
-    return static_cast<BufferAccessBits>(static_cast<unsigned short>(lhs) ^ static_cast<unsigned short>(rhs));
-}
+decl_enum_bitwise_operators(BufferAccessBits)
 
 const BufferAccessBits BufferAccess_UnsynchronizedWrite = BufferAccess_Unsynchronized | BufferAccess_Write;
 
