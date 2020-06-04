@@ -262,7 +262,7 @@ void DungeonBuilder::ConstructTerrainQuad(TerrainTile* terrainTile, ArtResource*
     TerrainDefinition* tileTerrainDef = terrainTile->GetTerrain();
     if (tileTerrainDef->mPlayerColouredPath || tileTerrainDef->mPlayerColouredWall) 
     {
-        const char* suffix = cxx::va("%d_", (terrainTile->mOwnerId == ePlayerID_Null) ? 0 : terrainTile->mOwnerId - 1);
+        const char* suffix = cxx::va("%d_", (terrainTile->mOwnerID == ePlayerID_Null) ? 0 : terrainTile->mOwnerID - 1);
         meshName.append(suffix);
     }
 

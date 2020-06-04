@@ -221,19 +221,12 @@ void TerrainManager::BuildFullTerrainMesh()
 {
     mMeshInvalidatedTiles.clear();
 
-    int dimsx = gGameWorld.mMapData.mDimensions.x;
-    int dimsy = gGameWorld.mMapData.mDimensions.y;
-
     // build terrain tiles
-    for (int tiley = 0; tiley < dimsy; ++tiley)
-    for (int tilex = 0; tilex < dimsx; ++tilex)
+    MapTilesIterator tilesIterator = gGameWorld.mMapData.IterateTiles(Point(), gGameWorld.mMapData.mDimensions);
+    for (TerrainTile* currMapTile = tilesIterator.NextTile(); currMapTile; 
+        currMapTile = tilesIterator.NextTile())
     {
-        Point currTilePosition (tilex, tiley);
-
-        TerrainTile* currentTile = gGameWorld.mMapData.GetMapTile(currTilePosition);
-        debug_assert(currentTile);
-
-        gGameWorld.mDungeonBuilder.BuildTerrainMesh(currentTile);
+        gGameWorld.mDungeonBuilder.BuildTerrainMesh(currMapTile);
     }
 
     // ask rooms to build its tiles
@@ -256,6 +249,7 @@ void TerrainManager::BuildFullTerrainMesh()
 
 void TerrainManager::InitWaterLavaMeshList()
 {
+    GameMap& gameMap = gGameWorld.mMapData;
     TilesList lavaTiles;
     TilesList waterTiles;
 
@@ -263,19 +257,15 @@ void TerrainManager::InitWaterLavaMeshList()
     waterTiles.reserve(128);
 
     // find water and lava tiles
-    for (int tiley = 0; tiley < gGameWorld.mMapData.mDimensions.y; ++tiley)
-    for (int tilex = 0; tilex < gGameWorld.mMapData.mDimensions.x; ++tilex)
+    MapTilesIterator tilesIterator = gameMap.IterateTiles(Point(), gameMap.mDimensions);
+    for (TerrainTile* currMapTile = tilesIterator.NextTile(); currMapTile; 
+        currMapTile = tilesIterator.NextTile())
     {
-        Point currTilePosition (tilex, tiley);
-
-        TerrainTile* currMapTile = gGameWorld.mMapData.GetMapTile(currTilePosition);
-
         // collect lava tile
         if (currMapTile->mBaseTerrain->mIsLava)
         {
             lavaTiles.push_back(currMapTile);
         }
-
         // collect water tile
         if (currMapTile->mBaseTerrain->mIsWater)
         {
@@ -296,7 +286,7 @@ void TerrainManager::InitWaterLavaMeshList()
         lavaTiles.pop_back();
 
         tempTilesArray.clear();
-        gGameWorld.mMapData.FloodFill4(tempTilesArray, originTile, floodfillFlags);
+        gameMap.FloodFill4(tempTilesArray, originTile, floodfillFlags);
         if (tempTilesArray.empty())
         {
             debug_assert(false);
@@ -317,7 +307,7 @@ void TerrainManager::InitWaterLavaMeshList()
         waterTiles.pop_back();
 
         tempTilesArray.clear();
-        gGameWorld.mMapData.FloodFill4(tempTilesArray, originTile, floodfillFlags);
+        gameMap.FloodFill4(tempTilesArray, originTile, floodfillFlags);
         if (tempTilesArray.empty())
         {
             debug_assert(false);

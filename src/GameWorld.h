@@ -12,11 +12,10 @@ public:
     ScenarioData mScenarioData;
     GameMap mMapData;
     DungeonBuilder mDungeonBuilder;
-
     TerrainTilesCursor mTerrainCursor;
 
 public:
-
+    // setup game world internal resources
     bool Initialize();
     void Deinit();
 
@@ -29,15 +28,27 @@ public:
     // process single frame logic
     void UpdateFrame();
 
-    // set or clear terrain tile tagged state
+    // set or clear tagged state of terrain tiles
     // @param tilesArea: Tiles in specific area
     void TagTerrain(const Rectangle& tilesArea);
     void UnTagTerrain(const Rectangle& tilesArea);
 
-    // set or clear terrain tile tagged state
-    // @param terrainTile: Target tile
-    void TagTerrain(TerrainTile* terrainTile);
-    void UnTagTerrain(TerrainTile* terrainTile);
+    // build room within specified area, will merge contiguous rooms
+    // @param ownerID: Owner player identifier
+    // @param roomDefinition: Room class definition
+    // @param tilesArea: Target area
+    void ConstructRoom(ePlayerID ownerID, RoomDefinition* roomDefinition, const Rectangle& tilesArea);
+
+    // sell rooms within specified area, will split rooms
+    // @param ownerID: Initiator of sell operation
+    // @param tilesRect: Target area
+    void SellRooms(ePlayerID ownerID, const Rectangle& tilesRect);
+
+    // test whether room is buildable on specific terrain spot
+    // @param mapTile: Target tile
+    // @param playerIdentifier: Owner
+    // @param roomDefinition: Room definition
+    bool CanPlaceRoomOnLocation(TerrainTile* terrainTile, ePlayerID playerIdentifier, RoomDefinition* roomDefinition) const;
 
     // get terrain definition by type name or type identifier
     // @param typeName: Type name
@@ -79,6 +90,9 @@ public:
     bool IsRoomTypeTerrain(TerrainTypeID typeID) const;
 
 private:
+    template<typename TEnumProc>
+    void EnumAdjacentRooms(const TilesList& tilesToScan, ePlayerID ownerID, TEnumProc enumProc);
+
     void SetupMapData(unsigned int seed);
     void ConstructStartupRooms();
     void ConstructStartupRoom(TerrainTile* initialTile);

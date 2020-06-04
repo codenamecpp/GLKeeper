@@ -3,6 +3,45 @@
 #include "randomizer.h"
 #include <stack>
 
+TerrainTile* MapTilesIterator::NextTile()
+{
+    debug_assert(mInitialTile);
+    TerrainTile* resultTile = mCurrentTile;
+
+    // advance
+    if (mCurrentTile)
+    {
+        // proceed to the next tile on current row
+        mCurrentTile = mCurrentTile->mNeighbours[eDirection_E];
+        if (mCurrentTile && mCurrentTile->mTileLocation.x < (mMapArea.x + mMapArea.w))
+        {
+            // done
+        }
+        else // proceed to the next row
+        {
+            mFromRowTile = mFromRowTile->mNeighbours[eDirection_S];
+            if (mFromRowTile && mFromRowTile->mTileLocation.y < (mMapArea.y + mMapArea.h))
+            {
+                mCurrentTile = mFromRowTile;
+            }
+            else
+            {
+                mCurrentTile = nullptr;
+            }
+        }
+    }
+
+    return resultTile;
+}
+
+void MapTilesIterator::Reset()
+{
+    mCurrentTile = mInitialTile;
+    mFromRowTile = mInitialTile;
+}
+
+//////////////////////////////////////////////////////////////////////////
+
 void GameMap::Setup(const Point& mapDimensions, unsigned int randomSeed)
 {
     Clear();
@@ -74,6 +113,24 @@ TerrainTile* GameMap::GetMapTile(const Point& tileLocation, eDirection direction
     Point directionVector = GetDirectionVector(direction);
 
     return GetMapTile(tileLocation + directionVector);
+}
+
+MapTilesIterator GameMap::IterateTiles(const Rectangle& mapArea)
+{
+    if (mapArea.w < 1 || mapArea.h < 1)
+    {
+        return MapTilesIterator(nullptr, mapArea);
+    }
+
+    Point initialTileLocation (mapArea.x, mapArea.y);
+    TerrainTile* initialTile = GetMapTile(initialTileLocation);
+    return MapTilesIterator(initialTile, mapArea);
+}
+
+MapTilesIterator GameMap::IterateTiles(const Point& startTile, const Point& areaSize)
+{
+    Rectangle rc ( startTile.x, startTile.y, areaSize.x, areaSize.y );
+    return IterateTiles(rc);
 }
 
 bool GameMap::IsWithinMap(const Point& tileLocation, eDirection direction) const
@@ -155,7 +212,7 @@ void GameMap::FloodFill4(TilesList& outputTiles, TerrainTile* origin, const Rect
                 TerrainDefinition* terrainDefinition = flags.mSameBaseTerrain ? tile->GetBaseTerrain() : tile->GetTerrain();
                 if (terrainDefinition->mIsOwnable)
                 {
-                    acceptableTile = tile->mOwnerId == origin->mOwnerId;
+                    acceptableTile = tile->mOwnerID == origin->mOwnerID;
                 }
             }
 

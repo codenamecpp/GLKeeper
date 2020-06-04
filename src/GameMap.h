@@ -16,8 +16,28 @@ public:
     bool mSameBaseTerrain : 1; // ignore room terrain type
 };
 
+// iterate over map tiles within specified rectangular area
+struct MapTilesIterator
+{
+public:
+    MapTilesIterator(TerrainTile* initialTile, const Rectangle& mapArea)
+        : mInitialTile(initialTile)
+        , mCurrentTile(initialTile)
+        , mFromRowTile(initialTile)
+        , mMapArea(mapArea)
+    {
+    }
+    TerrainTile* NextTile();
+    void Reset();
+public:
+    TerrainTile* mInitialTile = nullptr;
+    TerrainTile* mFromRowTile = nullptr;
+    TerrainTile* mCurrentTile = nullptr;
+    Rectangle mMapArea;
+};
+
 // game map data
-class GameMap
+class GameMap: public cxx::noncopyable
 {
 public:
     // readonly
@@ -37,6 +57,10 @@ public:
     // @param tileLocation: Tile logical position
     TerrainTile* GetMapTile(const Point& tileLocation);
     TerrainTile* GetMapTile(const Point& tileLocation, eDirection direction);
+
+    // iterate over map tiles within specified rectangular area
+    MapTilesIterator IterateTiles(const Rectangle& mapArea);
+    MapTilesIterator IterateTiles(const Point& startTile, const Point& areaSize);
 
     // test whether tile position is within map
     // @param tileLocation: Tile logical position

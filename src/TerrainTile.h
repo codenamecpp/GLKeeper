@@ -64,7 +64,7 @@ public:
     TerrainDefinition* mBaseTerrain = nullptr; // used to determine base terrain type, cannot be null
     TerrainDefinition* mRoomTerrain = nullptr; // overrides base terrain with room specific terrain, optional
 
-    ePlayerID mOwnerId = ePlayerID_Null; // neutral maybe ?
+    ePlayerID mOwnerID = ePlayerID_Null; // neutral maybe ?
 
     GenericRoom* mBuiltRoom = nullptr; // room that built on tile
     TileFaceData mFaces[eTileFace_COUNT];

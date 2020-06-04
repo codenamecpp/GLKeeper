@@ -5,6 +5,7 @@
 #include "TerrainManager.h"
 #include "RoomsManager.h"
 #include "GameObjectsManager.h"
+#include "GenericRoom.h"
 
 GameWorld gGameWorld;
 
@@ -88,54 +89,129 @@ void GameWorld::UpdateFrame()
 
 void GameWorld::TagTerrain(const Rectangle& tilesArea)
 {
-    Point currTilePoint;
-    for (currTilePoint.y = tilesArea.y; currTilePoint.y < (tilesArea.y + tilesArea.h); ++currTilePoint.y)
-    for (currTilePoint.x = tilesArea.x; currTilePoint.x < (tilesArea.x + tilesArea.w); ++currTilePoint.x)
+    MapTilesIterator tilesIterator = mMapData.IterateTiles(tilesArea);
+    for (TerrainTile* currMapTile = tilesIterator.NextTile(); currMapTile; 
+        currMapTile = tilesIterator.NextTile())
     {
-        if (TerrainTile* currTile = mMapData.GetMapTile(currTilePoint))
+        TerrainDefinition* terrainDef = currMapTile->GetTerrain();
+        if (!currMapTile->mIsTagged && terrainDef->mIsTaggable)
         {
-            TagTerrain(currTile);
+            currMapTile->SetTagged(true);
         }
     }
 }
 
 void GameWorld::UnTagTerrain(const Rectangle& tilesArea)
 {
-    Point currTilePoint;
-    for (currTilePoint.y = tilesArea.y; currTilePoint.y < (tilesArea.y + tilesArea.h); ++currTilePoint.y)
-    for (currTilePoint.x = tilesArea.x; currTilePoint.x < (tilesArea.x + tilesArea.w); ++currTilePoint.x)
+    MapTilesIterator tilesIterator = mMapData.IterateTiles(tilesArea);
+    for (TerrainTile* currMapTile = tilesIterator.NextTile(); currMapTile; 
+        currMapTile = tilesIterator.NextTile())
     {
-        if (TerrainTile* currTile = mMapData.GetMapTile(currTilePoint))
+        TerrainDefinition* terrainDef = currMapTile->GetTerrain();
+        if (currMapTile->mIsTagged && terrainDef->mIsTaggable)
         {
-            UnTagTerrain(currTile);
+            currMapTile->SetTagged(false);
         }
     }
 }
 
-void GameWorld::TagTerrain(TerrainTile* terrainTile)
+void GameWorld::ConstructRoom(ePlayerID ownerID, RoomDefinition* roomDefinition, const Rectangle& tilesArea)
 {
-    if (terrainTile)
-    {
-        TerrainDefinition* terrainDef = terrainTile->GetTerrain();
-        if (!terrainTile->mIsTagged && terrainDef->mIsTaggable)
-        {
-            terrainTile->SetTagged(true);
-        }
-    }
-    debug_assert(terrainTile);
+    //// collect all tiles available to construction, output array is sorted
+    //TilesList tilesArray;
+    //tilesArray.reserve(tilesArea.w * tilesArea.h);
+    //for (int tiley = 0; tiley < tilesArea.h; ++tiley)
+    //for (int tilex = 0; tilex < tilesArea.w; ++tilex)
+    //{
+    //    Point tileLocation (tilex + tilesArea.x, tiley + tilesArea.y);
+
+    //    TerrainTile* currTile = mMapData.GetMapTile(tileLocation);
+    //    if (currTile == nullptr)
+    //        continue;
+
+    //    if (CanPlaceRoomOnLocation(currTile, ownerID, roomDefinition))
+    //    {
+    //        tilesArray.push_back(currTile);
+    //    }
+    //}
+    //
+    //if (tilesArray.empty()) // nothing to construct
+    //    return;
+
+    //std::set<TerrainTile*> processedTiles;
+    //// scan for contiguous segments
+    //for (TerrainTile* currentTile: tilesArray)
+    //{
+    //    // is processed already ?
+    //    if (processedTiles.find(currentTile) != processedTiles.end())
+    //        continue;
+
+    //    TilesList segmentTiles;
+    //    MapFloodFillFlags floodfillFlags; // leave default
+    //    mMapData.FloodFill4(segmentTiles, currentTile, tilesArea, floodfillFlags);
+    //    // put into processed set
+    //    for (TerrainTile* processedTile: segmentTiles)
+    //    {
+    //        processedTiles.insert(processedTile);
+    //    }
+    //    
+    //    // find rooms that contacting with current segment and merge them all
+    //    GenericRoom* receivingRoom = nullptr;
+    //    EnumAdjacentRooms(segmentTiles, ownerID, [this, &receivingRoom, roomDefinition](GenericRoom* inspectRoom)
+    //    {
+    //        if (roomDefinition == inspectRoom->mDefinition)
+    //        {
+    //            if (!receivingRoom)
+    //            {
+    //                receivingRoom = inspectRoom;
+    //                return;
+    //            }
+    //            receivingRoom->AbsorbRoom(inspectRoom);
+    //        }
+    //    });
+
+    //    if (!receivingRoom)
+    //    {
+    //        receivingRoom = gRoomsManager.CreateRoomInstance(roomDefinition, ownerID);
+    //    }
+
+    //    // add segment tiles to room
+    //    for (TerrainTile* processedTile: segmentTiles)
+    //    {
+    //        debug_assert(processedTile->mRoomInstance == nullptr);
+    //        processedTile->mTerrain = &mScenarioData.mTerrainDefs[roomDefinition->mTerrainType];
+    //        processedTile->mOwnerIdentifier = ownerID;
+    //    }
+    //    receivingRoom->EnlargeRoom(segmentTiles);
+    //}
 }
 
-void GameWorld::UnTagTerrain(TerrainTile* terrainTile)
+void GameWorld::SellRooms(ePlayerID ownerID, const Rectangle& tilesRect)
 {
-    if (terrainTile)
-    {
-        TerrainDefinition* terrainDef = terrainTile->GetTerrain();
-        if (terrainTile->mIsTagged && terrainDef->mIsTaggable)
-        {
-            terrainTile->SetTagged(false);
-        }
-    }
+
+}
+
+bool GameWorld::CanPlaceRoomOnLocation(TerrainTile* terrainTile, ePlayerID ownerID, RoomDefinition* roomDefinition) const
+{
     debug_assert(terrainTile);
+
+    TerrainDefinition* tileTerrain = terrainTile->GetTerrain();
+    if (IsRoomTypeTerrain(tileTerrain))
+        return false;
+
+    if (roomDefinition->mPlaceableOnLand)
+    {
+        if (!tileTerrain->mIsSolid && tileTerrain->mIsOwnable && (terrainTile->mOwnerID == ownerID))
+            return true;
+    }
+
+    if (roomDefinition->mPlaceableOnLava && tileTerrain->mIsLava)
+        return true;
+
+    if (roomDefinition->mPlaceableOnWater && tileTerrain->mIsWater)
+        return true;
+
+    return false;
 }
 
 void GameWorld::SetupMapData(unsigned int seed)
@@ -183,7 +259,7 @@ void GameWorld::SetupMapData(unsigned int seed)
 
         debug_assert(currentTile->mBaseTerrain);
         // set additional tile params
-        currentTile->mOwnerId = mScenarioData.mMapTiles[currentTileIndex].mOwnerIdentifier;
+        currentTile->mOwnerID = mScenarioData.mMapTiles[currentTileIndex].mOwnerIdentifier;
 
         ++currentTileIndex;
     }
@@ -192,22 +268,20 @@ void GameWorld::SetupMapData(unsigned int seed)
 void GameWorld::ConstructStartupRooms()
 {
     // create rooms
-    for (int tiley = 0; tiley < mMapData.mDimensions.y; ++tiley)
-    for (int tilex = 0; tilex < mMapData.mDimensions.x; ++tilex)
+    MapTilesIterator tilesIterator = mMapData.IterateTiles(Point(), mMapData.mDimensions);
+    for (TerrainTile* currMapTile = tilesIterator.NextTile(); currMapTile; 
+        currMapTile = tilesIterator.NextTile())
     {
-        const Point currTileLocation (tilex, tiley);
-
-        TerrainTile* currTile = mMapData.GetMapTile(currTileLocation);
-        if (currTile->mBuiltRoom)
+        if (currMapTile->mBuiltRoom)
         {
             // room is already constructed on this tile
             continue;
         }
 
-        TerrainDefinition* terrainDef = currTile->GetTerrain();
+        TerrainDefinition* terrainDef = currMapTile->GetTerrain();
         if (IsRoomTypeTerrain(terrainDef))
         {
-            ConstructStartupRoom(currTile);
+            ConstructStartupRoom(currMapTile);
         }
     }
 }
@@ -233,7 +307,7 @@ void GameWorld::ConstructStartupRoom(TerrainTile* initialTile)
     mMapData.FloodFill4(floodTiles, initialTile,floodFillFlags);
 
     // create room instance
-    GenericRoom* roomInstance = gRoomsManager.CreateRoomInstance(roomDefinition, initialTile->mOwnerId, floodTiles);
+    GenericRoom* roomInstance = gRoomsManager.CreateRoomInstance(roomDefinition, initialTile->mOwnerID, floodTiles);
     debug_assert(roomInstance);
 }
 
@@ -361,4 +435,32 @@ bool GameWorld::IsRoomTypeTerrain(TerrainDefinition* terrainDefinition) const
 bool GameWorld::IsRoomTypeTerrain(TerrainTypeID typeID) const
 {
     return mScenarioData.mRoomByTerrainType[typeID] != RoomType_Null;
+}
+
+template<typename TEnumProc>
+void GameWorld::EnumAdjacentRooms(const TilesList& tilesToScan, ePlayerID ownerID, TEnumProc enumProc)
+{
+    std::set<GenericRoom*> processedRooms;
+    for (TerrainTile* currentTile: tilesToScan)
+    {
+#define SCAN_NEIGHBOUR_ROOM(neigh_direction)\
+    if (TerrainTile* neighbourTile = currentTile->mNeighbours[neigh_direction])\
+    {\
+        if (neighbourTile->mOwnerIdentifier == ownerID && neighbourTile->mRoomInstance)\
+        {\
+            if (processedRooms.find(neighbourTile->mRoomInstance) == processedRooms.end())\
+            {\
+                enumProc(neighbourTile->mRoomInstance);\
+                processedRooms.insert(neighbourTile->mRoomInstance);\
+            }\
+        }\
+    }
+
+        SCAN_NEIGHBOUR_ROOM(eDirection_N);
+        SCAN_NEIGHBOUR_ROOM(eDirection_E);
+        SCAN_NEIGHBOUR_ROOM(eDirection_S);
+        SCAN_NEIGHBOUR_ROOM(eDirection_W);
+    }
+
+#undef SCAN_NEIGHBOUR_ROOM
 }
