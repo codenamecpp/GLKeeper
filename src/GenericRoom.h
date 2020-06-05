@@ -45,6 +45,11 @@ public:
     // test whether room does own some tiles 
     bool HasTiles() const;
 
+    // handle situation when adjacent solid tils is reinforced or destroyed, so room must reevaluate
+    // its walls and add or demove objects
+    // @param targetTile: Target tile
+    void NeighbourTileChange(TerrainTile* targetTile);
+
 protected:
     void AttachTiles(const TilesList& terrainTiles);
     void DetachTiles(const TilesList& terrainTiles);

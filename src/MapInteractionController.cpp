@@ -366,8 +366,7 @@ void MapInteractionController::ProcessSingleTileInteraction()
 
     if (mCurrentMode == eMapInteractionMode_DigTerrain)
     {
-        // todo
-        //gWorldState.RepairTerrainTile(mHoveredTile, ePlayerID_Keeper1, 999999);
+        gGameWorld.RepairTerrainTile(mHoveredTile, ePlayerID_Keeper1, 999999);
         return;
     }
 }
@@ -379,8 +378,7 @@ void MapInteractionController::ProcessSingleTileInteractionAlt()
 
     if (mCurrentMode == eMapInteractionMode_DigTerrain)
     {
-        // todo
-        //gWorldState.DamageTerrainTile(mHoveredTile, ePlayerID_Keeper1, 999999);
+        gGameWorld.DamageTerrainTile(mHoveredTile, ePlayerID_Keeper1, 999999);
         return;
     }
 }

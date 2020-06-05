@@ -238,6 +238,90 @@ bool GameWorld::CanSellRoomOnLocation(TerrainTile* terrainTile, ePlayerID ownerI
     return (roomInstance->mDefinition->mBuildable == true);
 }
 
+void GameWorld::DamageTerrainTile(TerrainTile* mapTile, ePlayerID playerIdentifier, int hitPoints)
+{
+    debug_assert(mapTile);
+    debug_assert(hitPoints > 0);
+
+    if (mapTile->mBuiltRoom)
+    {
+        ReleaseRoomTiles(mapTile->mBuiltRoom, {mapTile});
+    }
+
+    TerrainDefinition* terrain = mapTile->GetTerrain();
+    if (terrain->mIsLava || terrain->mIsWater || terrain->mIsImpenetrable)
+        return;
+
+    // todo: tile hp
+
+    TerrainTypeID newTerrainType = terrain->mBecomesTerrainTypeWhenDestroyed;
+    if (terrain->mTerrainType == newTerrainType)
+        return;
+
+    TerrainDefinition* newTerrain = &mScenarioData.mTerrainDefs[newTerrainType];
+    mapTile->SetTagged(false);
+    mapTile->SetTerrain(newTerrain);
+
+    std::set<GenericRoom*> rooms;
+    for (eDirection direction: gStraightDirections)
+    {
+        TerrainTile* neighbourTile = mapTile->mNeighbours[direction];
+        if (neighbourTile && neighbourTile->mBuiltRoom)
+        {
+            rooms.insert(neighbourTile->mBuiltRoom);
+        }
+    }
+
+    for (GenericRoom* genericRoom: rooms)
+    {
+        genericRoom->NeighbourTileChange(mapTile);
+    }
+
+    mapTile->InvalidateTileMesh();
+    mapTile->InvalidateNeighbourTilesMesh();
+}
+
+void GameWorld::RepairTerrainTile(TerrainTile* mapTile, ePlayerID playerIdentifier, int hitPoints)
+{
+    debug_assert(mapTile);
+    debug_assert(hitPoints > 0);
+
+    TerrainDefinition* terrain = mapTile->GetTerrain();
+    if (terrain->mIsLava || terrain->mIsWater || terrain->mIsImpenetrable)
+        return;
+
+    // todo: tile hp
+
+    if (mapTile->mBuiltRoom)
+        return;
+
+    TerrainTypeID newTerrainType = terrain->mBecomesTerrainTypeWhenMaxHealth;
+    if (terrain->mTerrainType == newTerrainType)
+        return;
+
+    TerrainDefinition* newTerrain = &mScenarioData.mTerrainDefs[newTerrainType];
+    mapTile->SetTerrain(newTerrain);
+    mapTile->mOwnerID = playerIdentifier;
+
+    std::set<GenericRoom*> rooms;
+    for (eDirection direction: gStraightDirections)
+    {
+        TerrainTile* neighbourTile = mapTile->mNeighbours[direction];
+        if (neighbourTile && neighbourTile->mBuiltRoom)
+        {
+            rooms.insert(neighbourTile->mBuiltRoom);
+        }
+    }
+
+    for (GenericRoom* genericRoom: rooms)
+    {
+        genericRoom->NeighbourTileChange(mapTile);
+    }
+
+    mapTile->InvalidateTileMesh();
+    mapTile->InvalidateNeighbourTilesMesh();
+}
+
 void GameWorld::SetupMapData(unsigned int seed)
 {
     Point mapDimensions (mScenarioData.mLevelDimensionX, mScenarioData.mLevelDimensionY);

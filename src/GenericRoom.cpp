@@ -121,6 +121,26 @@ bool GenericRoom::HasTiles() const
     return !mRoomTiles.empty();
 }
 
+void GenericRoom::NeighbourTileChange(TerrainTile* targetTile)
+{
+    debug_assert(targetTile);
+    bool isNeighbour = false;
+    for (eDirection direction: gStraightDirections)
+    {
+        if (targetTile->mNeighbours[direction] && targetTile->mNeighbours[direction]->mBuiltRoom == this)
+        {
+            isNeighbour = true;
+            break;
+        }
+    }
+    debug_assert(isNeighbour);
+    if (isNeighbour)
+    {
+        // todo: optimize
+        ReevaluateWallSections();
+    }
+}
+
 void GenericRoom::AttachTiles(const TilesList& terrainTiles)
 {
     // first scan all good tiles and assign room instance to them

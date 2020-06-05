@@ -55,6 +55,18 @@ public:
     // @param playerIdentifier: Owner
     bool CanSellRoomOnLocation(TerrainTile* mapTile, ePlayerID playerIdentifier) const;
 
+    // do damage terrain tile, it will also damage room at this location
+    // @param mapTile: Target
+    // @param playerIdentifier: Owner
+    // @param hitPoints: Damage points
+    void DamageTerrainTile(TerrainTile* mapTile, ePlayerID playerIdentifier, int hitPoints);
+
+    // repair or claim terrain tile, it will also fix walls of surrounding rooms
+    // @param mapTile: Target
+    // @param playerIdentifier: Owner
+    // @param hitPoints: Damage points
+    void RepairTerrainTile(TerrainTile* mapTile, ePlayerID playerIdentifier, int hitPoints);
+
     // get terrain definition by type name or type identifier
     // @param typeName: Type name
     // @param typeID: Type identifier
