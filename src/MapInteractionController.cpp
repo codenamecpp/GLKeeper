@@ -348,15 +348,13 @@ void MapInteractionController::ProcessInteractionOnArea(const Rectangle& area)
         if (ProcessTagTerrain(area))
             return;
 
-        // todo
         gGameWorld.ConstructRoom(ePlayerID_Keeper1, mConstructRoomDef, area);
         return;
     }
 
     if (mCurrentMode == eMapInteractionMode_SellRooms)
     {
-        // todo
-        //gWorldState.SellEntities(ePlayerID_Keeper1, area);
+        gGameWorld.SellRooms(ePlayerID_Keeper1, area);
         return;
     }
 }

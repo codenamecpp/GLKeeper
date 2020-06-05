@@ -590,11 +590,10 @@ bool DungeonBuilder::RoomHandlesWalls(TerrainTile* terrainTile) const
 
 bool DungeonBuilder::NeighbourHasSameRoom(TerrainTile* terrainTile, eDirection direction) const
 {
+    debug_assert(terrainTile);
     if (terrainTile == nullptr || terrainTile->mBuiltRoom == nullptr)
-    {
-        debug_assert(false);
         return false;
-    }
+
     if (TerrainTile* neighbourTile = terrainTile->mNeighbours[direction])
     {
         return terrainTile->mBuiltRoom == neighbourTile->mBuiltRoom;

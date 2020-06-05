@@ -50,6 +50,11 @@ public:
     // @param roomDefinition: Room definition
     bool CanPlaceRoomOnLocation(TerrainTile* terrainTile, ePlayerID playerIdentifier, RoomDefinition* roomDefinition) const;
 
+    // test whether room is sellable on specific terrain spot
+    // @param mapTile: Target tile
+    // @param playerIdentifier: Owner
+    bool CanSellRoomOnLocation(TerrainTile* mapTile, ePlayerID playerIdentifier) const;
+
     // get terrain definition by type name or type identifier
     // @param typeName: Type name
     // @param typeID: Type identifier
@@ -93,9 +98,18 @@ private:
     template<typename TEnumProc>
     void EnumAdjacentRooms(const TilesList& tilesToScan, ePlayerID ownerID, TEnumProc enumProc);
 
+    template<typename TEnumProc>
+    void EnumRoomSegments(GenericRoom* roomInstance, TEnumProc enumProc);
+
     void SetupMapData(unsigned int seed);
     void ConstructStartupRooms();
     void ConstructStartupRoom(TerrainTile* initialTile);
+
+    // tiles will be no more part of specified room instance
+    // Will create additional rooms for separated parts of original room
+    // @param roomInstance: Room
+    // @param roomTiles: Note that all tiles must be part of same room instance
+    void ReleaseRoomTiles(GenericRoom* roomInstance, const TilesList& roomTiles);
 };
 
 extern GameWorld gGameWorld;
