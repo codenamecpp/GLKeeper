@@ -1,5 +1,7 @@
 #pragma once
 
+#include "GraphicsDefs.h"
+
 // shader program
 class RenderProgram: public cxx::noncopyable
 {
@@ -31,12 +33,25 @@ public:
     void ActivateProgram();
     void DeactivateProgram();
 
+    // set common constants
+    void SetViewProjectionMatrix(const glm::mat4& viewProjectionMatrix);
+    void SetModelMatrix(const glm::mat4& modelMatrix);
+    void SetMaterialColor(Color32 materialColor);
+
     virtual void HandleScreenResolutionChanged();
 
 protected:
-    // overridable
-    virtual void OnProgramActivated();
-    virtual void OnProgramDeactivated();
-    virtual void OnProgramLoad();
-    virtual void OnProgramFree();
+    // overridables
+    virtual void HandleProgramLoad();
+    virtual void HandleProgramFree();
+
+protected:
+    void SetupCommonConstants();
+    void ClearCommonConstants();
+
+protected:
+    // common constants
+    GpuVariableLocation mUniformID_view_projection_matrix = GpuVariable_NULL;
+    GpuVariableLocation mUniformID_model_matrix = GpuVariable_NULL;
+    GpuVariableLocation mUniformID_material_color = GpuVariable_NULL;
 };

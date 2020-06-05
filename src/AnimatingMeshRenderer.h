@@ -1,6 +1,6 @@
 #pragma once
 
-#include "MorphAnimRenderProgram.h"
+#include "Shaders.h"
 
 // animating models visualization manager
 class AnimatingMeshRenderer: public cxx::noncopyable

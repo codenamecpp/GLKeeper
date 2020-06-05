@@ -37,12 +37,9 @@ void MeshViewGamestate::HandleGamestateEnter()
     mModelObject = gGameObjectsManager.CreateGameObject();
     debug_assert(mModelObject);
 
-    AnimatingMeshComponent* animComponent = new AnimatingMeshComponent(mModelObject);
-    mModelObject->AddComponent(animComponent);
-
+    AnimatingMeshComponent* animComponent = mModelObject->AddComponent<AnimatingMeshComponent>();
     animComponent->SetModelAsset(modelAsset);
     animComponent->StartAnimation(24.0f, true);
-    gRenderScene.AttachObject(mModelObject);
 
     gToolsUIManager.AttachWindow(&mMeshViewWindow);
     mMeshViewWindow.SetWindowShown(true);
@@ -54,7 +51,6 @@ void MeshViewGamestate::HandleGamestateLeave()
     gRenderScene.SetCameraController(nullptr);
     if (mModelObject)
     {
-        gRenderScene.DetachObject(mModelObject);
         gGameObjectsManager.DestroyGameObject(mModelObject);
         mModelObject = nullptr;
     }

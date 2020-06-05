@@ -14,7 +14,7 @@ MapInteractionController::MapInteractionController()
 
 void MapInteractionController::UpdateFrame()
 {
-    MapTile* prevHoveredTile = mHoveredTile;
+    TerrainTile* prevHoveredTile = mHoveredTile;
     ScanHoveredTile();
 
     if (prevHoveredTile != mHoveredTile)
@@ -23,7 +23,7 @@ void MapInteractionController::UpdateFrame()
     }
 }
 
-void MapInteractionController::Cleanup()
+void MapInteractionController::ResetState()
 {
     mCurrentMode = eMapInteractionMode_Free;
     mHoveredTile = nullptr;
@@ -226,13 +226,11 @@ void MapInteractionController::OnSelectionChanged()
     Rectangle selectionArea;
     if (NeedToShowSelection() && GetTerrainSelectionArea(selectionArea))
     {
-        // todo
-        //gRenderSystem.mTerrainSelectionRender.UpdateSelection(selectionArea);
+        gGameWorld.mTerrainCursor.UpdateCursor(selectionArea);
     }
     else
     {
-        // todo
-        //gRenderSystem.mTerrainSelectionRender.ClearSelection();
+        gGameWorld.mTerrainCursor.ClearCursor();
     }
 }
 
@@ -324,13 +322,11 @@ bool MapInteractionController::ProcessTagTerrain(const Rectangle& area)
     {
         if (mSelectionStartTile->mIsTagged)
         {
-            // todo
-            //gWorldState.UnTagTerrain(area);
+            gGameWorld.UnTagTerrain(area);
         }
         else
         {
-            // todo
-            //gWorldState.TagTerrain(area);
+            gGameWorld.TagTerrain(area);
         }
         return true;
     }
@@ -352,15 +348,13 @@ void MapInteractionController::ProcessInteractionOnArea(const Rectangle& area)
         if (ProcessTagTerrain(area))
             return;
 
-        // todo
-        //gWorldState.ConstructRoom(ePlayerID_Keeper1, mConstructRoomDef, area);
+        gGameWorld.ConstructRoom(ePlayerID_Keeper1, mConstructRoomDef, area);
         return;
     }
 
     if (mCurrentMode == eMapInteractionMode_SellRooms)
     {
-        // todo
-        //gWorldState.SellEntities(ePlayerID_Keeper1, area);
+        gGameWorld.SellRooms(ePlayerID_Keeper1, area);
         return;
     }
 }
@@ -372,8 +366,7 @@ void MapInteractionController::ProcessSingleTileInteraction()
 
     if (mCurrentMode == eMapInteractionMode_DigTerrain)
     {
-        // todo
-        //gWorldState.RepairTerrainTile(mHoveredTile, ePlayerID_Keeper1, 999999);
+        gGameWorld.RepairTerrainTile(mHoveredTile, ePlayerID_Keeper1, 999999);
         return;
     }
 }
@@ -385,8 +378,7 @@ void MapInteractionController::ProcessSingleTileInteractionAlt()
 
     if (mCurrentMode == eMapInteractionMode_DigTerrain)
     {
-        // todo
-        //gWorldState.DamageTerrainTile(mHoveredTile, ePlayerID_Keeper1, 999999);
+        gGameWorld.DamageTerrainTile(mHoveredTile, ePlayerID_Keeper1, 999999);
         return;
     }
 }

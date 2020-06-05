@@ -7,7 +7,6 @@ public:
     std::vector<GenericRoom*> mRoomsList;
 
 public:
-
     // setup rooms manager internal resources
     bool Initialize();
     void Deinit();
@@ -31,7 +30,11 @@ public:
 
     // create new room instance
     GenericRoom* CreateRoomInstance(RoomDefinition* definition, ePlayerID owner);
-    GenericRoom* CreateRoomInstance(RoomDefinition* definition, ePlayerID owner, const TilesArray& roomTiles);
+    GenericRoom* CreateRoomInstance(RoomDefinition* definition, ePlayerID owner, const TilesList& roomTiles);
+
+    // immediately destroy room object, pointer becomes invalid
+    // @param roomInstance: Room instance
+    void DestroyRoomInstance(GenericRoom* roomInstance);
 
 private:
     void DestroyRoomsList();

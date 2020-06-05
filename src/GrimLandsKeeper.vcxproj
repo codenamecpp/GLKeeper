@@ -180,10 +180,15 @@
     <ClInclude Include="3rd_party\stb_image.h" />
     <ClInclude Include="AABBTree.h" />
     <ClInclude Include="CreatureDefs.h" />
+    <ClInclude Include="TerrainTilesCursor.h" />
+    <ClInclude Include="Shaders.h" />
+    <ClInclude Include="SimpleTriangleMesh.h" />
+    <ClInclude Include="StaticMeshRenderer.h" />
     <ClInclude Include="MapInteractionController.h" />
     <ClInclude Include="RenderableComponent.h" />
-    <ClInclude Include="DynamicMeshComponent.h" />
+    <ClInclude Include="StaticMeshComponent.h" />
     <ClInclude Include="rtti.h" />
+    <ClInclude Include="SimpleTriangleMeshUtils.h" />
     <ClInclude Include="UiCtlPanelBar.h" />
     <ClInclude Include="UiCtlPanelIcon.h" />
     <ClInclude Include="GameplayGameScreen.h" />
@@ -206,13 +211,12 @@
     <ClInclude Include="GameObjectsManager.h" />
     <ClInclude Include="GenericRoom.h" />
     <ClInclude Include="GodmodeCameraController.h" />
-    <ClInclude Include="MapTile.h" />
+    <ClInclude Include="TerrainTile.h" />
     <ClInclude Include="GameObjectsDefs.h" />
     <ClInclude Include="GameplayGamestate.h" />
     <ClInclude Include="GameWorld.h" />
     <ClInclude Include="ToolsUIMeshViewWindow.h" />
     <ClInclude Include="AnimatingMeshComponent.h" />
-    <ClInclude Include="MorphAnimRenderProgram.h" />
     <ClInclude Include="BinaryInputStream.h" />
     <ClInclude Include="BinaryOutputStream.h" />
     <ClInclude Include="CameraController.h" />
@@ -220,7 +224,6 @@
     <ClInclude Include="ConsoleVariable.h" />
     <ClInclude Include="ConsoleVariable.inl" />
     <ClInclude Include="cvars.h" />
-    <ClInclude Include="DebugDrawRenderProgram.h" />
     <ClInclude Include="GuiTestGamestate.h" />
     <ClInclude Include="RenderScene.h" />
     <ClInclude Include="ModelAsset.h" />
@@ -251,7 +254,6 @@
     <ClInclude Include="DebugRenderer.h" />
     <ClInclude Include="GameDefs.h" />
     <ClInclude Include="GenericGamestate.h" />
-    <ClInclude Include="GuiRenderProgram.h" />
     <ClInclude Include="ToolsUIManager.h" />
     <ClInclude Include="EngineTexturesProvider.h" />
     <ClInclude Include="enum_utils.h" />
@@ -294,7 +296,6 @@
     <ClInclude Include="TerrainManager.h" />
     <ClInclude Include="DungeonBuilder.h" />
     <ClInclude Include="TerrainMeshRenderer.h" />
-    <ClInclude Include="TerrainRenderProgram.h" />
     <ClInclude Include="Texture2D.h" />
     <ClInclude Include="Texture2DAnimation.h" />
     <ClInclude Include="Texture2D_Image.h" />
@@ -304,7 +305,6 @@
     <ClInclude Include="VertexFormat.h" />
     <ClInclude Include="WaterLavaMeshComponent.h" />
     <ClInclude Include="WaterLavaMeshRenderer.h" />
-    <ClInclude Include="WaterLavaRenderProgram.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3rd_party\cJSON.cpp" />
@@ -320,9 +320,12 @@
     <ClCompile Include="CommonTypes.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="ConsoleVariable.cpp" />
+    <ClCompile Include="TerrainTilesCursor.cpp" />
+    <ClCompile Include="Shaders.cpp" />
+    <ClCompile Include="StaticMeshRenderer.cpp" />
     <ClCompile Include="MapInteractionController.cpp" />
     <ClCompile Include="RenderableComponent.cpp" />
-    <ClCompile Include="DynamicMeshComponent.cpp" />
+    <ClCompile Include="StaticMeshComponent.cpp" />
     <ClCompile Include="UiCtlPanelBar.cpp" />
     <ClCompile Include="UiCtlPanelIcon.cpp" />
     <ClCompile Include="GameplayGameScreen.cpp" />
@@ -345,7 +348,7 @@
     <ClCompile Include="GameObjectsManager.cpp" />
     <ClCompile Include="GenericRoom.cpp" />
     <ClCompile Include="GodmodeCameraController.cpp" />
-    <ClCompile Include="MapTile.cpp" />
+    <ClCompile Include="TerrainTile.cpp" />
     <ClCompile Include="GameplayGamestate.cpp" />
     <ClCompile Include="GameWorld.cpp" />
     <ClCompile Include="ToolsUIMeshViewWindow.cpp" />
@@ -435,6 +438,7 @@
     <None Include="..\data\shaders\debug.glsl" />
     <None Include="..\data\shaders\gui.glsl" />
     <None Include="..\data\shaders\terrain.glsl" />
+    <None Include="..\data\shaders\mesh.glsl" />
     <None Include="..\data\shaders\water_lava.glsl" />
     <None Include="AABBTree.inl" />
   </ItemGroup>

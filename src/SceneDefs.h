@@ -30,15 +30,10 @@ enum eSceneCameraMode
 
 decl_enum_strings(eSceneCameraMode);
 
-// get scene global space right direction vector
+// global constants
 const glm::vec3 SceneAxisX (1.0f, 0.0f, 0.0f);
-
-// get scene global space up direction vector
 const glm::vec3 SceneAxisY (0.0f, 1.0f, 0.0f);
-
-// get scene global space forward direction vector
 const glm::vec3 SceneAxisZ (0.0f, 0.0f, 1.0f);
-
 const glm::mat4 SceneIdentyMatrix (1.0f);
 
 // vertex animation state

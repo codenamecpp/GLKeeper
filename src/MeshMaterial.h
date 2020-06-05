@@ -26,5 +26,6 @@ public:
 public:
     Texture2D* mDiffuseTexture = nullptr;
     Texture2D* mEnvMappingTexture = nullptr;
-    RenderStates mRenderStates;    
+    RenderStates mRenderStates;
+    Color32 mMaterialColor; // tint, translucency
 };

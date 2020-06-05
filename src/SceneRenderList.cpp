@@ -9,6 +9,12 @@ void SceneRenderList::SortOpaqueComponents()
 
     if (renderPassList.mElementsCount > 2)
     {
+        // dbg
+        for (int iElement = 0; iElement < renderPassList.mElementsCount; ++iElement)
+        {
+            debug_assert(renderPassList.mElements[iElement]->mRenderProgram);
+        }
+
         std::sort(renderPassList.mElements, renderPassList.mElements + renderPassList.mElementsCount, 
             [](const RenderableComponent* lhs, const RenderableComponent* rhs)
         {

@@ -5,20 +5,15 @@
 
 GameObject::GameObject(GameObjectInstanceID instanceID)
     : mDebugColor(Color32_Green)
-    , mIsAttachedToScene()
     , mComponents()
     , mInstanceID(instanceID)
 {
     // add automatically transform component
-    TransformComponent* transformComponent = new TransformComponent(this);
-    AddComponent(transformComponent);
+    AddComponent<TransformComponent>();
 }
 
 GameObject::~GameObject()
 {
-    // entity must be detached from scene before destroy
-    debug_assert(IsAttachedToScene() == false);
-
     DeleteAllComponents();
 }
 
@@ -29,11 +24,6 @@ void GameObject::UpdateFrame(float deltaTime)
         currComponent->UpdateComponent(deltaTime);
     }
 }
-
-void GameObject::SetAttachedToScene(bool isAttached)
-{
-    mIsAttachedToScene = isAttached;
-}   
 
 void GameObject::UpdateComponentsCache()
 {
@@ -54,36 +44,24 @@ void GameObject::UpdateComponentsCache()
         if (mRenderableComponent)
             break;
     }
-
 }
 
-bool GameObject::IsAttachedToScene() const
+bool GameObject::HasComponentWithID(GameObjectComponentID componentID) const
 {
-    return mIsAttachedToScene;
+    if (GameObjectComponent* component = GetComponentByID(componentID))
+        return true;
+
+    return false;
 }
 
-bool GameObject::AddComponent(GameObjectComponent* component)
+void GameObject::AttachComponent(GameObjectComponent* component)
 {
-    if (component == nullptr)
-    {
-        debug_assert(false);
-        return false;
-    }
+    debug_assert(component);
 
-    // check if exists
-    GameObjectComponent* currComponent = GetComponentByRttiType(component->get_rtti_type());
-    if (currComponent)
-    {
-        if (currComponent == component)
-            return true;
-
-        debug_assert(false);
-        // destroy current component
-        DeleteComponent(currComponent);
-    }
     mComponents.push_back(component);
     UpdateComponentsCache();
-    return true;
+
+    component->InitializeComponent();
 }
 
 void GameObject::DeleteComponent(GameObjectComponent* component)
@@ -98,6 +76,14 @@ void GameObject::DeleteComponent(GameObjectComponent* component)
     debug_assert(component);
 }
 
+void GameObject::DeleteComponentByID(GameObjectComponentID componentID)
+{
+    if (GameObjectComponent* component = GetComponentByID(componentID))
+    {
+        DeleteComponent(component);
+    }
+}
+
 void GameObject::DeleteAllComponents()
 {
     for (GameObjectComponent* currComponent: mComponents)
@@ -106,4 +92,15 @@ void GameObject::DeleteAllComponents()
     }
     mComponents.clear();
     UpdateComponentsCache();
+}
+
+GameObjectComponent* GameObject::GetComponentByID(GameObjectComponentID componentID) const
+{
+    for (GameObjectComponent* currComponent: mComponents)
+    {
+        if (currComponent->mComponentID == componentID)
+            return currComponent;
+    }
+
+    return nullptr;
 }

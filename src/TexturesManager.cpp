@@ -151,6 +151,21 @@ void TexturesManager::InitStandardTextures()
     mWaterTexture = new Texture2D { "Water" };
     mWaterTexture->SetPersistent(true);
 
+    mCursorTexture = new Texture2D { "Cursor" };
+    mCursorTexture->SetPersistent(true);
+
+    mBlueTexture = new Texture2D { "BlueTexture" };
+    mBlueTexture->SetPersistent(true);
+
+    mEngineTestCross = new Texture2D { "EngineTestCross" };
+    mEngineTestCross->SetPersistent(true);
+
+    mEngineTestLight = new Texture2D { "EngineTestLight" };
+    mEngineTestLight->SetPersistent(true);
+
+    mRedTexture = new Texture2D { "RedTexture" };
+    mRedTexture->SetPersistent(true);
+
     InitWaterLavaTextureAnimations();
 }
 
@@ -161,6 +176,11 @@ void TexturesManager::FreeStandardTextures()
     SafeDelete(mMissingTexture);
     SafeDelete(mWaterTexture);
     SafeDelete(mLavaTexture);
+    SafeDelete(mBlueTexture);
+    SafeDelete(mRedTexture);
+    SafeDelete(mEngineTestLight);
+    SafeDelete(mEngineTestCross);
+    SafeDelete(mCursorTexture);
 }
 
 void TexturesManager::FreeTextures()

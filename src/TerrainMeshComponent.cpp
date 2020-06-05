@@ -2,7 +2,7 @@
 #include "TerrainMeshComponent.h"
 #include "GameObject.h"
 #include "GraphicsDevice.h"
-#include "MapTile.h"
+#include "TerrainTile.h"
 #include "GameWorld.h"
 #include "GpuBuffer.h"
 #include "TransformComponent.h"

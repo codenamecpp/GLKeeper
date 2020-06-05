@@ -40,7 +40,8 @@ void RenderProgram::FreeProgram()
     {
         DeactivateProgram();
         gGraphicsDevice.DestroyProgram(mGpuProgram);
-        OnProgramFree();
+        HandleProgramFree();
+        ClearCommonConstants();
 
         mGpuProgram = nullptr;
     }
@@ -69,7 +70,8 @@ bool RenderProgram::ReloadProgram()
     bool isCompiled = mGpuProgram->CompileSourceCode(shaderSourceCode.c_str());
     if (isCompiled)
     {
-        OnProgramLoad();
+        HandleProgramLoad();
+        SetupCommonConstants();
         gConsole.LogMessage(eLogMessage_Debug, "Render program loaded %s", mProgramName.c_str());
     }
     else
@@ -104,7 +106,6 @@ void RenderProgram::ActivateProgram()
     gRenderManager.mActiveRenderProgram = this;
 
     gGraphicsDevice.BindRenderProgram(mGpuProgram);
-    OnProgramActivated();
 }
 
 void RenderProgram::DeactivateProgram()
@@ -121,7 +122,53 @@ void RenderProgram::DeactivateProgram()
     }
 
     gGraphicsDevice.BindRenderProgram(nullptr);
-    OnProgramDeactivated();
+}
+
+void RenderProgram::SetViewProjectionMatrix(const glm::mat4& viewProjectionMatrix)
+{
+    if (!IsProgramLoaded())
+    {
+        debug_assert(false);
+        return;
+    }
+
+    if (mUniformID_view_projection_matrix != GpuVariable_NULL)
+    {
+        mGpuProgram->SetUniformParam(mUniformID_view_projection_matrix, viewProjectionMatrix);
+    }
+}
+
+void RenderProgram::SetModelMatrix(const glm::mat4& modelMatrix)
+{
+    if (!IsProgramLoaded())
+    {
+        debug_assert(false);
+        return;
+    }
+
+    if (mUniformID_model_matrix != GpuVariable_NULL)
+    {
+        mGpuProgram->SetUniformParam(mUniformID_model_matrix, modelMatrix);
+    }
+}
+
+void RenderProgram::SetMaterialColor(Color32 materialColor)
+{
+    if (!IsProgramLoaded())
+    {
+        debug_assert(false);
+        return;
+    }
+
+    if (mUniformID_material_color != GpuVariable_NULL)
+    {
+        const glm::vec4 color {
+            (materialColor.mR / 255.0f), 
+            (materialColor.mG / 255.0f), 
+            (materialColor.mB / 255.0f), 
+            (materialColor.mA / 255.0f) };
+        mGpuProgram->SetUniformParam(mUniformID_material_color, color);
+    }
 }
 
 void RenderProgram::HandleScreenResolutionChanged()
@@ -129,22 +176,40 @@ void RenderProgram::HandleScreenResolutionChanged()
     // do nothing
 }
 
-void RenderProgram::OnProgramActivated()
+void RenderProgram::HandleProgramLoad()
 {
     // do nothing
 }
 
-void RenderProgram::OnProgramDeactivated()
+void RenderProgram::HandleProgramFree()
 {
     // do nothing
 }
 
-void RenderProgram::OnProgramLoad()
+void RenderProgram::SetupCommonConstants()
 {
-    // do nothing
+    // viewprojectionmatrix
+    if (mUniformID_view_projection_matrix == GpuVariable_NULL) 
+    {
+        mUniformID_view_projection_matrix = mGpuProgram->QueryUniformLocation("view_projection_matrix");
+    }
+
+    // modelmatrix
+    if (mUniformID_model_matrix == GpuVariable_NULL)
+    {
+        mUniformID_model_matrix = mGpuProgram->QueryUniformLocation("model_matrix");
+    }
+
+    // material color
+    if (mUniformID_material_color == GpuVariable_NULL)
+    {
+        mUniformID_material_color = mGpuProgram->QueryUniformLocation("material_color");
+    }
 }
 
-void RenderProgram::OnProgramFree()
+void RenderProgram::ClearCommonConstants()
 {
-    // do nothing
+    mUniformID_view_projection_matrix = GpuVariable_NULL;
+    mUniformID_model_matrix = GpuVariable_NULL;
+    mUniformID_material_color = GpuVariable_NULL;
 }

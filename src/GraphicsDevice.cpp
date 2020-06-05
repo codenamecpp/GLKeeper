@@ -450,10 +450,14 @@ void GraphicsDevice::InternalSetRenderStates(const RenderStates& renderStates, b
         glCheckError();
     }
 
-    if (forceState || (mCurrentStates.mIsColorWriteEnabled != renderStates.mIsColorWriteEnabled))
+    if (forceState || (mCurrentStates.mIsColorWriteEnabled != renderStates.mIsColorWriteEnabled) ||
+        (mCurrentStates.mIsAlphaWriteEnabled != renderStates.mIsAlphaWriteEnabled))
     {
-        const GLboolean isEnabled = renderStates.mIsColorWriteEnabled ? GL_TRUE : GL_FALSE;
-        ::glColorMask(isEnabled, isEnabled, isEnabled, isEnabled);
+        ::glColorMask(
+            renderStates.mIsColorWriteEnabled ? GL_TRUE : GL_FALSE, 
+            renderStates.mIsColorWriteEnabled ? GL_TRUE : GL_FALSE, 
+            renderStates.mIsColorWriteEnabled ? GL_TRUE : GL_FALSE, 
+            renderStates.mIsAlphaWriteEnabled ? GL_TRUE : GL_FALSE);
         glCheckError();
     }
 
@@ -473,37 +477,30 @@ void GraphicsDevice::InternalSetRenderStates(const RenderStates& renderStates, b
 
     if (forceState || (mCurrentStates.mBlendingMode != renderStates.mBlendingMode))
     {
-        GLenum srcFactor = GL_ZERO;
-        GLenum dstFactor = GL_ZERO;
-
         switch (renderStates.mBlendingMode)
         {
             case eBlendingMode_Alpha:
-                srcFactor = GL_SRC_ALPHA;
-                dstFactor = GL_ONE_MINUS_SRC_ALPHA;
+                ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             break;
             case eBlendingMode_AlphaAdditive:
-                srcFactor = GL_SRC_ALPHA;
-                dstFactor = GL_ONE;
+                ::glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+            break;
+            case eBlendingMode_Additive:
+                ::glBlendFunc(GL_ONE, GL_ONE);
             break;
             case eBlendingMode_Multiply:
-                srcFactor = GL_DST_COLOR;
-                dstFactor = GL_ZERO;
+                ::glBlendFunc(GL_DST_COLOR, GL_ZERO);
             break;
             case eBlendingMode_Premultiplied:
-                srcFactor = GL_ONE;
-                dstFactor = GL_ONE_MINUS_SRC_ALPHA;
+                ::glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
             break;
             case eBlendingMode_Screen:
-                srcFactor = GL_ONE_MINUS_DST_COLOR;
-                dstFactor = GL_ONE;
+                ::glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE);
             break;
             default:
                 debug_assert(false);
             break;
         }
-
-        ::glBlendFunc(srcFactor, dstFactor);
         glCheckError();
     }
 
@@ -933,11 +930,21 @@ void GraphicsDevice::SetupVertexAttributes(const VertexFormat& streamDefinition)
         }
 
         GLenum dataType = GetAttributeDataTypeGL(attribute.mFormat);
-        // set attribute location
-        ::glVertexAttribPointer(currentProgram->mAttributes[iattribute], numComponents, dataType, 
-            attribute.mNormalized ? GL_TRUE : GL_FALSE, 
-            streamDefinition.mDataStride, BUFFER_OFFSET(attribute.mDataOffset + streamDefinition.mBaseOffset));
-        glCheckError();
+
+        if (dataType == GL_FLOAT || attribute.mNormalized)
+        {
+            // set attribute location
+            ::glVertexAttribPointer(currentProgram->mAttributes[iattribute], numComponents, dataType, 
+                attribute.mNormalized ? GL_TRUE : GL_FALSE, 
+                streamDefinition.mDataStride, BUFFER_OFFSET(attribute.mDataOffset + streamDefinition.mBaseOffset));
+            glCheckError();
+        }
+        else
+        {
+            ::glVertexAttribIPointer(currentProgram->mAttributes[iattribute], numComponents, dataType, 
+                streamDefinition.mDataStride, BUFFER_OFFSET(attribute.mDataOffset + streamDefinition.mBaseOffset));
+            glCheckError();
+        }
     }
 }
 

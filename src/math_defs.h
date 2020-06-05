@@ -83,8 +83,8 @@ namespace cxx
 	    //! \param edges: Pointer to array of 8 edges
         inline void get_edges(glm::vec3* edges) const
 	    {
-		    const glm::vec3 middle = (mMin + mMax) / 2.0f;
-		    const glm::vec3 diag = (middle - mMax);
+		    glm::vec3 center = get_center();
+		    glm::vec3 corner_delta = (mMax - center);
 
 		    /*
 			    Edges are stored in this way:
@@ -98,14 +98,14 @@ namespace cxx
                 4---------6/ 
 		    */
 
-		    edges[0] = {middle.x + diag.x, middle.y + diag.y, middle.z + diag.z};
-		    edges[1] = {middle.x + diag.x, middle.y - diag.y, middle.z + diag.z};
-		    edges[2] = {middle.x + diag.x, middle.y + diag.y, middle.z - diag.z};
-		    edges[3] = {middle.x + diag.x, middle.y - diag.y, middle.z - diag.z};
-		    edges[4] = {middle.x - diag.x, middle.y + diag.y, middle.z + diag.z};
-		    edges[5] = {middle.x - diag.x, middle.y - diag.y, middle.z + diag.z};
-		    edges[6] = {middle.x - diag.x, middle.y + diag.y, middle.z - diag.z};
-		    edges[7] = {middle.x - diag.x, middle.y - diag.y, middle.z - diag.z};
+		    edges[0] = {center.x - corner_delta.x, center.y - corner_delta.y, center.z - corner_delta.z};
+		    edges[1] = {center.x - corner_delta.x, center.y + corner_delta.y, center.z - corner_delta.z};
+		    edges[2] = {center.x + corner_delta.x, center.y - corner_delta.y, center.z - corner_delta.z};
+		    edges[3] = {center.x + corner_delta.x, center.y + corner_delta.y, center.z - corner_delta.z};
+		    edges[4] = {center.x - corner_delta.x, center.y - corner_delta.y, center.z + corner_delta.z};
+		    edges[5] = {center.x - corner_delta.x, center.y + corner_delta.y, center.z + corner_delta.z};
+		    edges[6] = {center.x + corner_delta.x, center.y - corner_delta.y, center.z + corner_delta.z};
+		    edges[7] = {center.x + corner_delta.x, center.y + corner_delta.y, center.z + corner_delta.z};
 	    }
 
         // get box center point

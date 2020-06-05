@@ -6,7 +6,7 @@
 #include "Cvars.h"
 #include "GraphicsDevice.h"
 #include "GpuBuffer.h"
-#include "MapTile.h"
+#include "TerrainTile.h"
 
 const int MaxWaterLavaMeshBufferSize = 1024 * 1024 * 2;
 
@@ -38,7 +38,6 @@ void WaterLavaMeshRenderer::Render(SceneRenderContext& renderContext, WaterLavaM
     }
 
     mWaterLavaRenderProgram.SetViewProjectionMatrix(gRenderScene.mCamera.mViewProjectionMatrix);
-    mWaterLavaRenderProgram.SetTranslucency(component->mTranslucency);
     mWaterLavaRenderProgram.SetWaveParams(component->mWaveTime, component->mWaveWidth, component->mWaveHeight, component->mWaterlineHeight);
     mWaterLavaRenderProgram.ActivateProgram();
 
@@ -46,7 +45,7 @@ void WaterLavaMeshRenderer::Render(SceneRenderContext& renderContext, WaterLavaM
     gGraphicsDevice.BindIndexBuffer(component->mIndexBuffer);
     gGraphicsDevice.BindVertexBuffer(component->mVertexBuffer, Vertex3D_WaterLava_Format::Get());
 
-    for (WaterLavaMeshComponent::MeshPartStruct& currPart: component->mMeshParts)
+    for (WaterLavaMeshComponent::DrawCall& currPart: component->mDrawCalls)
     {
         if (currPart.mVertexCount == 0)
         {
@@ -86,8 +85,8 @@ void WaterLavaMeshRenderer::PrepareRenderdata(WaterLavaMeshComponent* component)
     int vertexCount = component->mWaterLavaTiles.size() * NumVerticesPerTile;
     int triangleCount = component->mWaterLavaTiles.size() * NumTrianglesPerTile;
 
-    component->SetMeshPartsCount(1);
-    component->SetMeshPart(0, 0, 0, 0, vertexCount, triangleCount);
+    component->SetDrawCallsCount(1);
+    component->SetDrawCall(0, 0, 0, 0, vertexCount, triangleCount);
 
     int actualVBufferLength = vertexCount * Sizeof_Vertex3D_WaterLava;
     int actualIBufferLength = triangleCount * sizeof(glm::ivec3);
@@ -119,18 +118,18 @@ void WaterLavaMeshRenderer::PrepareRenderdata(WaterLavaMeshComponent* component)
         }
     }
 
-    GpuBuffer* vertBuffer = component->mVertexBuffer;
+    GpuBuffer* vertexBuffer = component->mVertexBuffer;
     GpuBuffer* indexBuffer = component->mIndexBuffer;
 
     // setup buffers
-    if (!vertBuffer->Setup(eBufferUsage_Static, actualVBufferLength, nullptr) ||
+    if (!vertexBuffer->Setup(eBufferUsage_Static, actualVBufferLength, nullptr) ||
         !indexBuffer->Setup(eBufferUsage_Static, actualIBufferLength, nullptr))
     {
         debug_assert(false);
         return;
     }
 
-    Vertex3D_WaterLava* vbufferPtr = vertBuffer->LockData<Vertex3D_WaterLava>(BufferAccess_UnsynchronizedWrite, 0, actualVBufferLength);
+    Vertex3D_WaterLava* vbufferPtr = vertexBuffer->LockData<Vertex3D_WaterLava>(BufferAccess_UnsynchronizedWrite, 0, actualVBufferLength);
     debug_assert(vbufferPtr);
 
     glm::ivec3* ibufferPtr = indexBuffer->LockData<glm::ivec3>(BufferAccess_UnsynchronizedWrite, 0, actualIBufferLength);
@@ -138,7 +137,7 @@ void WaterLavaMeshRenderer::PrepareRenderdata(WaterLavaMeshComponent* component)
 
     // upload data
     int vertices_counter = 0;
-    for (MapTile* currTile: component->mWaterLavaTiles)
+    for (TerrainTile* currTile: component->mWaterLavaTiles)
     {
         // setup indices
         const glm::ivec3 pointindices[NumTrianglesPerTile] = {
@@ -209,15 +208,18 @@ void WaterLavaMeshRenderer::PrepareRenderdata(WaterLavaMeshComponent* component)
         debug_assert(false);
     }
 
-    if (!vertBuffer->Unlock())
+    if (!vertexBuffer->Unlock())
     {
         debug_assert(false);
     }
+    
+    component->mRenderProgram = &mWaterLavaRenderProgram;
 }
 
 void WaterLavaMeshRenderer::ReleaseRenderdata(WaterLavaMeshComponent* component)
 {
     debug_assert(component);
+    component->mRenderProgram = nullptr;
     if (component->mVertexBuffer)
     {
         gGraphicsDevice.DestroyBuffer(component->mVertexBuffer);
@@ -230,5 +232,5 @@ void WaterLavaMeshRenderer::ReleaseRenderdata(WaterLavaMeshComponent* component)
         component->mIndexBuffer = nullptr;
     }
 
-    component->ClearMeshParts();
+    component->ClearDrawCalls();
 }

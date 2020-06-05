@@ -1,6 +1,7 @@
 #include "pch.h"
-#include "MapTile.h"
+#include "TerrainTile.h"
 #include "TerrainManager.h"
+#include "GameWorld.h"
 
 // Rotations Y
 const glm::mat3 g_TileRotations[5] = 
@@ -21,7 +22,7 @@ const glm::vec3 g_SubTileTranslations[4] =
     {-DUNGEON_CELL_HALF_SIZE * 0.5f, 0.0f,  DUNGEON_CELL_HALF_SIZE * 0.5f}, // BOTTOM-LEFT (SW)
 };
 
-MapTile::MapTile()
+TerrainTile::TerrainTile()
     : mIsTagged()
     , mIsRoomInnerTile()
     , mIsRoomEntrance()
@@ -30,7 +31,7 @@ MapTile::MapTile()
 {
 }
 
-void MapTile::ClearTileMesh()
+void TerrainTile::ClearTileMesh()
 {
     for (TileFaceData& currFace: mFaces)
     {
@@ -38,7 +39,7 @@ void MapTile::ClearTileMesh()
     }
 }
 
-void MapTile::ClearTileMesh(eTileFace meshFace)
+void TerrainTile::ClearTileMesh(eTileFace meshFace)
 {
     debug_assert(meshFace < eTileFace_COUNT);
     if (meshFace < eTileFace_COUNT)
@@ -47,19 +48,37 @@ void MapTile::ClearTileMesh(eTileFace meshFace)
     }
 }
 
-void MapTile::InvalidateTileMesh()
+void TerrainTile::InvalidateTileMesh()
 {
-    if (mIsMeshInvalidated)
-        return;
-
-    mIsMeshInvalidated = true;
-    gTerrainManager.HandleTileMeshInvalidated(this);
+    gTerrainManager.InvalidateTileMesh(this);
 }
 
-void MapTile::InvalidateNeighbourTilesMesh()
+void TerrainTile::InvalidateNeighbourTilesMesh()
 {
-    for (MapTile* currentTile: mNeighbours)
+    for (TerrainTile* currentTile: mNeighbours)
     {
         currentTile->InvalidateTileMesh();
     }
+}
+
+void TerrainTile::SetTerrain(TerrainDefinition* terrainDefinition)
+{
+    if (terrainDefinition == nullptr)
+    {
+        mRoomTerrain = nullptr;
+        return;
+    }
+
+    if (gGameWorld.IsRoomTypeTerrain(terrainDefinition))
+    {
+        mRoomTerrain = terrainDefinition;
+        return;
+    }
+
+    mBaseTerrain = terrainDefinition;
+}
+
+void TerrainTile::SetTagged(bool isTagged)
+{
+    gTerrainManager.HighhlightTile(this, isTagged);
 }

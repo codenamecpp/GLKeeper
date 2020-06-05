@@ -1,5 +1,7 @@
 #pragma once
 
+#include "GraphicsDefs.h"
+
 // defines vertex attributes streams
 struct VertexFormat
 {
@@ -163,8 +165,10 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 
+// water or lava vertex definition
 struct Vertex3D_WaterLava_Format: public VertexFormat
 {
+public:
     Vertex3D_WaterLava_Format()
     {
         Setup();

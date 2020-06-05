@@ -24,9 +24,6 @@ void RenderableComponent::RenderFrame(SceneRenderContext& renderContext)
 
 void RenderableComponent::RegisterForRendering(SceneRenderList& renderList)
 {
-    if (mMeshParts.empty())
-        return;
-
     bool hasOpaqueParts = false;
     bool hasTransparentParts = false;
 
@@ -65,6 +62,21 @@ int RenderableComponent::GetMaterialsCount() const
     return numMaterials;
 }
 
+const MeshMaterial* RenderableComponent::GetMeshMaterial(int materialIndex) const
+{
+    int numMaterials = GetMaterialsCount();
+    if (materialIndex < numMaterials)
+        return &mMeshMaterials[materialIndex];
+
+    debug_assert(false);
+    return nullptr;
+}
+
+const MeshMaterial* RenderableComponent::GetMeshMaterial() const
+{
+    return GetMeshMaterial(0);
+}
+
 MeshMaterial* RenderableComponent::GetMeshMaterial(int materialIndex)
 {
     int numMaterials = GetMaterialsCount();
@@ -78,24 +90,6 @@ MeshMaterial* RenderableComponent::GetMeshMaterial(int materialIndex)
 MeshMaterial* RenderableComponent::GetMeshMaterial() 
 {
     return GetMeshMaterial(0);
-}
-
-int RenderableComponent::GetMeshPartsCount() const
-{
-    int numMeshParts = (int) mMeshParts.size();
-    return numMeshParts;
-}
-
-MeshMaterial* RenderableComponent::GetMeshPartMaterial(int meshPartIndex)
-{
-    int numMeshParts = GetMeshPartsCount();
-    if (numMeshParts < meshPartIndex)
-    {
-        int materialIndex = mMeshParts[meshPartIndex].mMaterialIndex;
-        return GetMeshMaterial(materialIndex);
-    }
-    debug_assert(false);
-    return nullptr;
 }
 
 void RenderableComponent::SetMeshMaterialsCount(int numMaterials)
@@ -119,37 +113,37 @@ void RenderableComponent::ClearMeshMaterials()
     mMeshMaterials.clear();
 }
 
-void RenderableComponent::SetMeshPartsCount(int numMeshParts)
+void RenderableComponent::SetDrawCallsCount(int numMeshParts)
 {
-    mMeshParts.resize(numMeshParts);
+    mDrawCalls.resize(numMeshParts);
 }
 
-void RenderableComponent::SetMeshPart(int meshPartIndex, int materialIndex, int vertexOffset, int indexOffset, int vertexCount, int triangleCount)
+void RenderableComponent::SetDrawCall(int drawCall, int materialIndex, int vertexOffset, int indexOffset, int vertexCount, int triangleCount)
 {
-    int numMeshParts = GetMeshPartsCount();
-    if (meshPartIndex < numMeshParts)
+    int numDrawCalls = (int) mDrawCalls.size();
+    if (drawCall < numDrawCalls)
     {
         debug_assert(vertexCount > 0);
         // make sure that material exists
-        int numMeshMaterials = (int) mMeshMaterials.size();
-        if (materialIndex >= numMeshMaterials)
+        int numMaterials = (int) mMeshMaterials.size();
+        if (materialIndex >= numMaterials)
         {
             mMeshMaterials.resize(materialIndex + 1);
         }
-        // copy mesh part data
-        mMeshParts[meshPartIndex].mMaterialIndex = materialIndex;
-        mMeshParts[meshPartIndex].mVertexDataOffset = vertexOffset;
-        mMeshParts[meshPartIndex].mIndexDataOffset = indexOffset;
-        mMeshParts[meshPartIndex].mVertexCount = vertexCount;
-        mMeshParts[meshPartIndex].mTriangleCount = triangleCount;
+        // copy data
+        mDrawCalls[drawCall].mMaterialIndex = materialIndex;
+        mDrawCalls[drawCall].mVertexDataOffset = vertexOffset;
+        mDrawCalls[drawCall].mIndexDataOffset = indexOffset;
+        mDrawCalls[drawCall].mVertexCount = vertexCount;
+        mDrawCalls[drawCall].mTriangleCount = triangleCount;
         return;
     }
     debug_assert(false);
 }
 
-void RenderableComponent::ClearMeshParts()
+void RenderableComponent::ClearDrawCalls()
 {
-    mMeshParts.clear();
+    mDrawCalls.clear();
 }
 
 bool RenderableComponent::HasOpaqueMeshParts() const

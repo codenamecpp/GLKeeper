@@ -4,7 +4,7 @@
 #include "WaterLavaMeshRenderer.h"
 #include "RenderManager.h"
 #include "GameObject.h"
-#include "MapTile.h"
+#include "TerrainTile.h"
 
 WaterLavaMeshComponent::WaterLavaMeshComponent(GameObject* gameObject)
     : RenderableComponent(gameObject)
@@ -36,13 +36,13 @@ void WaterLavaMeshComponent::ReleaseRenderResources()
     InvalidateMesh();
 }
 
-void WaterLavaMeshComponent::SetWaterLavaTiles(const TilesArray& tilesArray)
+void WaterLavaMeshComponent::SetWaterLavaTiles(const TilesList& tilesArray)
 {
     mWaterLavaTiles = tilesArray;
 
     // setup bounds
     cxx::aabbox bounds;
-    for (MapTile* currentTile: tilesArray)
+    for (TerrainTile* currentTile: tilesArray)
     {
         cxx::aabbox currentTileBounds;
         GetMapBlockBounds(currentTile->mTileLocation, currentTileBounds);
@@ -77,6 +77,7 @@ void WaterLavaMeshComponent::SetSurfaceParams(float translucency, float waveWidt
     {
         meshMaterial->mRenderStates.mIsAlphaBlendEnabled = false;
     }
+    meshMaterial->mMaterialColor.mA = (unsigned char)(mTranslucency * 255);
 }
 
 void WaterLavaMeshComponent::SetSurfaceTexture(Texture2D* diffuseTexture)

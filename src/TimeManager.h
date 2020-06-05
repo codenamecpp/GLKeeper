@@ -3,7 +3,6 @@
 class TimeManager: public cxx::noncopyable
 {
 public:
-
     // setup manager internal resources
     bool Initialize();
     void Deinit();

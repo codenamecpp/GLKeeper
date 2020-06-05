@@ -27,8 +27,16 @@ public:
 
     // add or remove object component, object takes ownership on pointer
     // @param component: Component instance
-    bool AddComponent(GameObjectComponent* component);
+    template<typename TComponent, typename... TArgs>
+    inline TComponent* AddComponent(const TArgs &&...  constructionArgs)
+    {
+        TComponent* newComponent = new TComponent(this, std::forward<TArgs>(constructionArgs)...);
+        AttachComponent(newComponent);
+        return newComponent;
+    }
+
     void DeleteComponent(GameObjectComponent* component);
+    void DeleteComponentByID(GameObjectComponentID componentID);
 
     template<typename TComponent>
     inline void DeleteComponent()
@@ -48,6 +56,16 @@ public:
         }
     }
 
+    // iterate all gameobject components    
+    template<typename TProc>
+    inline void ForEachComponent(TProc proc) const
+    {
+        for (GameObjectComponent* currComponent: mComponents)
+        {
+            proc(currComponent);
+        }
+    }
+
     // destroy all components including transform
     void DeleteAllComponents();
 
@@ -63,6 +81,9 @@ public:
         return nullptr;
     }
 
+    // get gameobject component by its unique identifier
+    GameObjectComponent* GetComponentByID(GameObjectComponentID componentID) const;
+
     // test whether object has specific component
     template<typename TComponent>
     inline bool HasComponent() const
@@ -73,9 +94,7 @@ public:
         return false;
     }
 
-    // test whether game object is currently attached to scene and therefore may be rendered
-    bool IsAttachedToScene() const;
-    void SetAttachedToScene(bool isAttached);
+    bool HasComponentWithID(GameObjectComponentID componentID) const;
 
 private:
     inline GameObjectComponent* GetComponentByRttiType(const cxx::rtti_type* rttiType) const
@@ -88,9 +107,9 @@ private:
         return nullptr;
     }
 
+    void AttachComponent(GameObjectComponent* component);
     void UpdateComponentsCache();
 
 private:
     std::vector<GameObjectComponent*> mComponents;
-    bool mIsAttachedToScene;
 };

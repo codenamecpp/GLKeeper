@@ -5,18 +5,21 @@
 #include "SceneRenderList.h"
 #include "TerrainMeshRenderer.h"
 #include "WaterLavaMeshRenderer.h"
+#include "StaticMeshRenderer.h"
 #include "GuiRenderer.h"
 
 // master render system, it is intended to manage rendering pipeline of the game
 class RenderManager: public cxx::noncopyable
 {
-    friend RenderProgram;
+    friend class RenderProgram;
+    friend class MeshMaterial;
 
 public:
     // readonly
     AnimatingMeshRenderer mAnimatingMeshRenderer;
     TerrainMeshRenderer mTerrainMeshRenderer;
     WaterLavaMeshRenderer mWaterLavaMeshRenderer;
+    StaticMeshRenderer mStaticMeshRenderer;
 
 public:
     // setup rendering system internal resources
@@ -44,6 +47,8 @@ private:
 
     void HandleRenderProgramLoad(RenderProgram* renderProgram);
     void HandleRenderProgramFree(RenderProgram* renderProgram);
+
+    void HandleMaterialActivate(MeshMaterial* material);
 
 private:
     DebugRenderer mDebugRenderer;

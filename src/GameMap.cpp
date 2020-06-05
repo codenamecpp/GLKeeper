@@ -3,6 +3,45 @@
 #include "randomizer.h"
 #include <stack>
 
+TerrainTile* MapTilesIterator::NextTile()
+{
+    debug_assert(mInitialTile);
+    TerrainTile* resultTile = mCurrentTile;
+
+    // advance
+    if (mCurrentTile)
+    {
+        // proceed to the next tile on current row
+        mCurrentTile = mCurrentTile->mNeighbours[eDirection_E];
+        if (mCurrentTile && mCurrentTile->mTileLocation.x < (mMapArea.x + mMapArea.w))
+        {
+            // done
+        }
+        else // proceed to the next row
+        {
+            mFromRowTile = mFromRowTile->mNeighbours[eDirection_S];
+            if (mFromRowTile && mFromRowTile->mTileLocation.y < (mMapArea.y + mMapArea.h))
+            {
+                mCurrentTile = mFromRowTile;
+            }
+            else
+            {
+                mCurrentTile = nullptr;
+            }
+        }
+    }
+
+    return resultTile;
+}
+
+void MapTilesIterator::Reset()
+{
+    mCurrentTile = mInitialTile;
+    mFromRowTile = mInitialTile;
+}
+
+//////////////////////////////////////////////////////////////////////////
+
 void GameMap::Setup(const Point& mapDimensions, unsigned int randomSeed)
 {
     Clear();
@@ -20,7 +59,7 @@ void GameMap::Setup(const Point& mapDimensions, unsigned int randomSeed)
     {
         const int tileIndex = (tiley * mDimensions.x) + tilex;
             
-        MapTile& currentTile = mTilesArray[tileIndex];
+        TerrainTile& currentTile = mTilesArray[tileIndex];
         currentTile.mRandomValue = randomize.generate_int();
         currentTile.mTileLocation.x = tilex;
         currentTile.mTileLocation.y = tiley;
@@ -35,7 +74,7 @@ void GameMap::Setup(const Point& mapDimensions, unsigned int randomSeed)
         currentTile.mNeighbours[eDirection_S]  = GetMapTile(currentTile.mTileLocation, eDirection_S);
     }
 
-    for (MapTile& currTile: mTilesArray)
+    for (TerrainTile& currTile: mTilesArray)
     {
         currTile.mRandomValue = randomize.generate_int();
     }
@@ -52,7 +91,7 @@ void GameMap::Clear()
     mBounds.clear();
 }
 
-MapTile* GameMap::GetTileFromCoord3d(const glm::vec3& coord)
+TerrainTile* GameMap::GetTileFromCoord3d(const glm::vec3& coord)
 {
     Point tileLocation {
         static_cast<int>((coord.x + DUNGEON_CELL_HALF_SIZE) / DUNGEON_CELL_SIZE),
@@ -61,7 +100,7 @@ MapTile* GameMap::GetTileFromCoord3d(const glm::vec3& coord)
     return GetMapTile(tileLocation);
 }
 
-MapTile* GameMap::GetMapTile(const Point& tileLocation)
+TerrainTile* GameMap::GetMapTile(const Point& tileLocation)
 {
     if (IsWithinMap(tileLocation))
         return &mTilesArray[tileLocation.y * mDimensions.x + tileLocation.x];
@@ -69,11 +108,29 @@ MapTile* GameMap::GetMapTile(const Point& tileLocation)
     return nullptr;
 }
 
-MapTile* GameMap::GetMapTile(const Point& tileLocation, eDirection direction)
+TerrainTile* GameMap::GetMapTile(const Point& tileLocation, eDirection direction)
 {
     Point directionVector = GetDirectionVector(direction);
 
     return GetMapTile(tileLocation + directionVector);
+}
+
+MapTilesIterator GameMap::IterateTiles(const Rectangle& mapArea)
+{
+    if (mapArea.w < 1 || mapArea.h < 1)
+    {
+        return MapTilesIterator(nullptr, mapArea);
+    }
+
+    Point initialTileLocation (mapArea.x, mapArea.y);
+    TerrainTile* initialTile = GetMapTile(initialTileLocation);
+    return MapTilesIterator(initialTile, mapArea);
+}
+
+MapTilesIterator GameMap::IterateTiles(const Point& startTile, const Point& areaSize)
+{
+    Rectangle rc ( startTile.x, startTile.y, areaSize.x, areaSize.y );
+    return IterateTiles(rc);
 }
 
 bool GameMap::IsWithinMap(const Point& tileLocation, eDirection direction) const
@@ -86,13 +143,13 @@ bool GameMap::IsWithinMap(const Point& tileLocation, eDirection direction) const
         (nextTilePosition.y < mDimensions.y); 
 }
 
-void GameMap::FloodFill4(TilesArray& outputTiles, MapTile* origin, MapFloodFillFlags flags)
+void GameMap::FloodFill4(TilesList& outputTiles, TerrainTile* origin, MapFloodFillFlags flags)
 {
     Rectangle scanArea(0, 0, mDimensions.x, mDimensions.y);
     FloodFill4(outputTiles, origin, scanArea, flags);
 }
 
-void GameMap::FloodFill4(TilesArray& outputTiles, MapTile* origin, const Rectangle& scanArea, MapFloodFillFlags flags)
+void GameMap::FloodFill4(TilesList& outputTiles, TerrainTile* origin, const Rectangle& scanArea, MapFloodFillFlags flags)
 {
     // check conditions
     if (origin == nullptr || scanArea.w < 1 || scanArea.h < 1)
@@ -111,12 +168,12 @@ void GameMap::FloodFill4(TilesArray& outputTiles, MapTile* origin, const Rectang
     }
 
     // explore tiles
-    std::stack<MapTile*> explorationList;
+    std::stack<TerrainTile*> explorationList;
     explorationList.push(origin); 
 
     while (!explorationList.empty())
     {
-        MapTile* currentTile = explorationList.top();
+        TerrainTile* currentTile = explorationList.top();
         explorationList.pop();
 
         // already explored
@@ -125,7 +182,7 @@ void GameMap::FloodFill4(TilesArray& outputTiles, MapTile* origin, const Rectang
 
         // move tile to cleselist
         currentTile->mFloodFillCounter = mFloodFillCounter;
-        MapTile* tilesToExplore[] = 
+        TerrainTile* tilesToExplore[] = 
         {
             currentTile->mNeighbours[eDirection_E],
             currentTile->mNeighbours[eDirection_N],
@@ -133,7 +190,7 @@ void GameMap::FloodFill4(TilesArray& outputTiles, MapTile* origin, const Rectang
             currentTile->mNeighbours[eDirection_S],
         };
 
-        for (MapTile* tile: tilesToExplore)
+        for (TerrainTile* tile: tilesToExplore)
         {
             if (!tile || tile->mFloodFillCounter == mFloodFillCounter) 
             {
@@ -155,7 +212,7 @@ void GameMap::FloodFill4(TilesArray& outputTiles, MapTile* origin, const Rectang
                 TerrainDefinition* terrainDefinition = flags.mSameBaseTerrain ? tile->GetBaseTerrain() : tile->GetTerrain();
                 if (terrainDefinition->mIsOwnable)
                 {
-                    acceptableTile = tile->mOwnerId == origin->mOwnerId;
+                    acceptableTile = tile->mOwnerID == origin->mOwnerID;
                 }
             }
 
@@ -180,7 +237,7 @@ void GameMap::ComputeBounds()
 
 void GameMap::ClearFloodFillCounter()
 {
-    for (MapTile& currTile: mTilesArray)
+    for (TerrainTile& currTile: mTilesArray)
     {
         currTile.mFloodFillCounter = 0;
     }

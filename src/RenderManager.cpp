@@ -11,6 +11,7 @@
 #include "AnimatingMeshComponent.h"
 #include "WaterLavaMeshComponent.h"
 #include "TerrainMeshComponent.h"
+#include "TerrainManager.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -30,7 +31,7 @@ RenderManager gRenderManager;
 bool RenderManager::Initialize()
 {
     if (!mAnimatingMeshRenderer.Initialize() ||  !mTerrainMeshRenderer.Initialize() || 
-        !mWaterLavaMeshRenderer.Initialize() || !mGuiRenderer.Initialize())
+        !mWaterLavaMeshRenderer.Initialize() || !mGuiRenderer.Initialize() || !mStaticMeshRenderer.Initialize())
     {
         gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize render manager");
 
@@ -66,6 +67,7 @@ void RenderManager::Deinit()
     mWaterLavaMeshRenderer.Deinit();
     mAnimatingMeshRenderer.Deinit();
     mTerrainMeshRenderer.Deinit();
+    mStaticMeshRenderer.Deinit();
     mDebugRenderer.Deinit();
     mSceneRenderList.Clear();
 
@@ -90,6 +92,8 @@ void RenderManager::RenderFrame()
     gGraphicsDevice.SetScissorRect(viewportRect);
 
     gGraphicsDevice.ClearScreen();
+
+    gTerrainManager.PreRenderScene();
     
     // draw objects
     DrawScene();
@@ -192,5 +196,14 @@ void RenderManager::HandleRenderProgramFree(RenderProgram* renderProgram)
     else
     {
         debug_assert(false);
+    }
+}
+
+void RenderManager::HandleMaterialActivate(MeshMaterial* material)
+{
+    debug_assert(material);
+    if (mActiveRenderProgram)
+    {
+        mActiveRenderProgram->SetMaterialColor(material->mMaterialColor);
     }
 }

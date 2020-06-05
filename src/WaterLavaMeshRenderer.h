@@ -1,6 +1,6 @@
 #pragma once
 
-#include "WaterLavaRenderProgram.h"
+#include "Shaders.h"
 
 // water and lava visualization manager
 class WaterLavaMeshRenderer: public cxx::noncopyable

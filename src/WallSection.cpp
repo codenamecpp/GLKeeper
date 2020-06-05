@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "WallSection.h"
-#include "MapTile.h"
+#include "TerrainTile.h"
 
 WallSection::WallSection(GenericRoom* room)
-    : mRoom(room)
+    : mOwnerRoom(room)
     , mFaceDirection(eDirection_N)
     , mFaceId(eTileFace_SideN)
 {
@@ -21,11 +21,11 @@ void WallSection::Setup(eTileFace faceId)
     mFaceId = faceId;
 }
 
-void WallSection::RemoveTile(MapTile* mapTile)
+void WallSection::RemoveTile(TerrainTile* terrainTile)
 {
-    if (mapTile)
+    if (terrainTile)
     {
-        cxx::erase_elements(mMapTiles, mapTile);
+        cxx::erase_elements(mMapTiles, terrainTile);
     }
     else
     {
@@ -33,12 +33,12 @@ void WallSection::RemoveTile(MapTile* mapTile)
     }
 }
 
-void WallSection::InsertTileHead(MapTile* mapTile)
+void WallSection::InsertTileHead(TerrainTile* terrainTile)
 {
-    if (mapTile)
+    if (terrainTile)
     {
-        debug_assert(!cxx::contains(mMapTiles, mapTile));
-        mMapTiles.insert(mMapTiles.begin(), mapTile);
+        debug_assert(!cxx::contains(mMapTiles, terrainTile));
+        mMapTiles.insert(mMapTiles.begin(), terrainTile);
     }
     else
     {
@@ -46,12 +46,12 @@ void WallSection::InsertTileHead(MapTile* mapTile)
     }
 }
 
-void WallSection::InsertTileTail(MapTile* mapTile)
+void WallSection::InsertTileTail(TerrainTile* terrainTile)
 {
-    if (mapTile)
+    if (terrainTile)
     {
-        debug_assert(!cxx::contains(mMapTiles, mapTile));
-        mMapTiles.push_back(mapTile);
+        debug_assert(!cxx::contains(mMapTiles, terrainTile));
+        mMapTiles.push_back(terrainTile);
     }
     else
     {
@@ -64,9 +64,9 @@ void WallSection::RemoveTiles()
     mMapTiles.clear();
 }
 
-bool WallSection::ContainsTile(MapTile* mapTile) const
+bool WallSection::ContainsTile(TerrainTile* terrainTile) const
 {
-    return cxx::contains(mMapTiles, mapTile);
+    return cxx::contains(mMapTiles, terrainTile);
 }
 
 bool WallSection::ContainsTiles() const
@@ -74,25 +74,25 @@ bool WallSection::ContainsTiles() const
     return !mMapTiles.empty();
 }
 
-bool WallSection::IsInnerTile(MapTile* mapTile) const
+bool WallSection::IsInnerTile(TerrainTile* terrainTile) const
 {
-    debug_assert(mapTile);
-    if (IsHeadTile(mapTile) || IsTailTile(mapTile))
+    debug_assert(terrainTile);
+    if (IsHeadTile(terrainTile) || IsTailTile(terrainTile))
         return false;
 
     return true;
 }
 
-bool WallSection::IsOuterTile(MapTile* mapTile) const
+bool WallSection::IsOuterTile(TerrainTile* terrainTile) const
 {
-    debug_assert(mapTile);
-    if (IsHeadTile(mapTile) || IsTailTile(mapTile))
+    debug_assert(terrainTile);
+    if (IsHeadTile(terrainTile) || IsTailTile(terrainTile))
         return true;
 
     return false;
 }
 
-bool WallSection::IsHeadTile(MapTile* mapTile) const
+bool WallSection::IsHeadTile(TerrainTile* terrainTile) const
 {
     if (mMapTiles.empty())
     {
@@ -102,16 +102,16 @@ bool WallSection::IsHeadTile(MapTile* mapTile) const
 
     if (mFaceDirection == eDirection_S || mFaceDirection == eDirection_W)
     {
-        return mapTile == mMapTiles.back();
+        return terrainTile == mMapTiles.back();
     }
     else
     {
-        return mapTile == mMapTiles.front();
+        return terrainTile == mMapTiles.front();
     }
     return false;
 }
 
-bool WallSection::IsTailTile(MapTile* mapTile) const
+bool WallSection::IsTailTile(TerrainTile* terrainTile) const
 {
     if (mMapTiles.empty())
     {
@@ -121,27 +121,27 @@ bool WallSection::IsTailTile(MapTile* mapTile) const
 
     if (mFaceDirection == eDirection_S || mFaceDirection == eDirection_W)
     {
-        return mapTile == mMapTiles.front();
+        return terrainTile == mMapTiles.front();
     }
     else
     {
-        return mapTile == mMapTiles.back();
+        return terrainTile == mMapTiles.back();
     }
     return false;
 }
 
-bool WallSection::IsEvenTile(MapTile* mapTile) const
+bool WallSection::IsEvenTile(TerrainTile* terrainTile) const
 {
     bool isEven = false;
-    if (mapTile)
+    if (terrainTile)
     {
         if (mFaceDirection == eDirection_N || mFaceDirection == eDirection_S)
         {
-            isEven = cxx::is_even(mapTile->mTileLocation.x);
+            isEven = cxx::is_even(terrainTile->mTileLocation.x);
         }
         else
         {
-            isEven = cxx::is_even(mapTile->mTileLocation.y);
+            isEven = cxx::is_even(terrainTile->mTileLocation.y);
         }
     }
     else

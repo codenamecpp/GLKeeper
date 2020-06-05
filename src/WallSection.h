@@ -11,16 +11,16 @@ public:
     void Setup(eTileFace faceId);
 
     // add tile to wall section or remove tile
-    void InsertTileHead(MapTile* mapTile);
-    void InsertTileTail(MapTile* mapTile);
-    void RemoveTile(MapTile* mapTile);
+    void InsertTileHead(TerrainTile* terrainTile);
+    void InsertTileTail(TerrainTile* terrainTile);
+    void RemoveTile(TerrainTile* terrainTile);
     void RemoveTiles();
 
-    bool ContainsTile(MapTile* mapTile) const;
+    bool ContainsTile(TerrainTile* terrainTile) const;
     bool ContainsTiles() const;
 
-    bool IsInnerTile(MapTile* mapTile) const;
-    bool IsOuterTile(MapTile* mapTile) const;
+    bool IsInnerTile(TerrainTile* terrainTile) const;
+    bool IsOuterTile(TerrainTile* terrainTile) const;
 
     // if face direction is North or South then
     //  - Head is on West
@@ -30,14 +30,14 @@ public:
     //  - Head is on North
     //  - Tail is on South
 
-    bool IsHeadTile(MapTile* mapTile) const;
-    bool IsTailTile(MapTile* mapTile) const;
+    bool IsHeadTile(TerrainTile* terrainTile) const;
+    bool IsTailTile(TerrainTile* terrainTile) const;
 
-    bool IsEvenTile(MapTile* mapTile) const;
+    bool IsEvenTile(TerrainTile* terrainTile) const;
 
 public:
-    GenericRoom* mRoom = nullptr;
+    GenericRoom* mOwnerRoom = nullptr;
     eDirection mFaceDirection;
     eTileFace mFaceId;
-    TilesArray mMapTiles;
+    TilesList mMapTiles;
 };

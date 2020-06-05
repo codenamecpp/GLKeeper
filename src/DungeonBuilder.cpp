@@ -1,26 +1,26 @@
 #include "pch.h"
 #include "DungeonBuilder.h"
-#include "MapTile.h"
+#include "TerrainTile.h"
 #include "ModelAsset.h"
 #include "TexturesManager.h"
 #include "ModelAssetsManager.h"
 #include "GameWorld.h"
 
-void DungeonBuilder::ExtendTileMesh(MapTile* mapTile, eTileFace faceid, ModelAsset* asset, const glm::mat3* rot, const glm::vec3* trans)
+void DungeonBuilder::ExtendTileMesh(TerrainTile* terrainTile, eTileFace faceid, ModelAsset* asset, const glm::mat3* rot, const glm::vec3* trans)
 {
-    debug_assert(mapTile);
+    debug_assert(terrainTile);
     debug_assert(asset);
     debug_assert(faceid < eTileFace_COUNT);
 
     // destination geometry
-    TileFaceData& tileFace = mapTile->mFaces[faceid];
+    TileFaceData& tileFace = terrainTile->mFaces[faceid];
     const glm::vec3 tileTranslation = 
     {
-        mapTile->mTileLocation.x + (trans ? trans->x : 0.0f), trans ? trans->y : 0.0f,
-        mapTile->mTileLocation.y + (trans ? trans->z : 0.0f)
+        terrainTile->mTileLocation.x + (trans ? trans->x : 0.0f), trans ? trans->y : 0.0f,
+        terrainTile->mTileLocation.y + (trans ? trans->z : 0.0f)
     };
 
-    TerrainDefinition* terrainDefinition = mapTile->GetTerrain();
+    TerrainDefinition* terrainDefinition = terrainTile->GetTerrain();
 
     // append submeshes
     for (const ModelAsset::SubMesh& pieceSprite: asset->mMeshArray)
@@ -61,7 +61,7 @@ void DungeonBuilder::ExtendTileMesh(MapTile* mapTile, eTileFace faceid, ModelAss
                         if (terrainDefinition->mHasRandomTexture)
                         {
                             // select random texture including original
-                            textureIndex = mapTile->mRandomValue % NumVariations;
+                            textureIndex = terrainTile->mRandomValue % NumVariations;
                             break;
                         }
                     }
@@ -109,8 +109,8 @@ void DungeonBuilder::ExtendTileMesh(MapTile* mapTile, eTileFace faceid, ModelAss
                     sourceNormals[ivertex].y, 
                     sourceNormals[ivertex].z});
 
-                vertex.mTileX = mapTile->mTileLocation.x;
-                vertex.mTileY = mapTile->mTileLocation.y;
+                vertex.mTileCoord[0] = terrainTile->mTileLocation.x;
+                vertex.mTileCoord[1] = terrainTile->mTileLocation.y;
                 vertex.mPosition = transformed + tileTranslation;
                 vertex.mNormal = transformedNormal;
                 vertex.mTexcoord = sourceTexcoord[ivertex];
@@ -122,8 +122,8 @@ void DungeonBuilder::ExtendTileMesh(MapTile* mapTile, eTileFace faceid, ModelAss
             unsigned int ivertex = 0;
             for (Vertex3D_Terrain& vertex : destMeshGroup.mVertices)
             {
-                vertex.mTileX = mapTile->mTileLocation.x;
-                vertex.mTileY = mapTile->mTileLocation.y;
+                vertex.mTileCoord[0] = terrainTile->mTileLocation.x;
+                vertex.mTileCoord[1] = terrainTile->mTileLocation.y;
                 vertex.mPosition = tileTranslation + sourcePositions[ivertex];
                 vertex.mNormal = sourceNormals[ivertex];
                 vertex.mTexcoord = sourceTexcoord[ivertex];
@@ -136,53 +136,53 @@ void DungeonBuilder::ExtendTileMesh(MapTile* mapTile, eTileFace faceid, ModelAss
     }
 }
 
-void DungeonBuilder::BuildTerrainMesh(MapTile* mapTile)
+void DungeonBuilder::BuildTerrainMesh(TerrainTile* terrainTile)
 {
-    debug_assert(mapTile);
-    mapTile->ClearTileMesh();
+    debug_assert(terrainTile);
+    terrainTile->ClearTileMesh();
 
-    ConstructTerrainFloor(mapTile);
+    ConstructTerrainFloor(terrainTile);
 
-    TerrainDefinition* terrainDef = mapTile->GetTerrain();
+    TerrainDefinition* terrainDef = terrainTile->GetTerrain();
     if (terrainDef->mIsSolid)
     {
-        ConstructTerrainWalls(mapTile);
+        ConstructTerrainWalls(terrainTile);
     }
 
     // todo: ceiling
 }
 
-void DungeonBuilder::BuildTerrainMesh(MapTile* mapTile, eTileFace faceid)
+void DungeonBuilder::BuildTerrainMesh(TerrainTile* terrainTile, eTileFace faceid)
 {
-    mapTile->ClearTileMesh(faceid);
+    terrainTile->ClearTileMesh(faceid);
 
     if (faceid == eTileFace_Floor)
     {
-        ConstructTerrainFloor(mapTile);
+        ConstructTerrainFloor(terrainTile);
     }
 
     // construct wall
     if (faceid == eTileFace_SideE || faceid == eTileFace_SideN || faceid == eTileFace_SideS || faceid == eTileFace_SideW)
     {
-        TerrainDefinition* terrainDef = mapTile->GetTerrain();
+        TerrainDefinition* terrainDef = terrainTile->GetTerrain();
         if (terrainDef->mIsSolid)
         {
-            ConstructTerrainWall(mapTile, faceid);
+            ConstructTerrainWall(terrainTile, faceid);
         }
     }
 
     // todo: ceiling
 }
 
-void DungeonBuilder::ConstructTerrainWalls(MapTile* mapTile)
+void DungeonBuilder::ConstructTerrainWalls(TerrainTile* terrainTile)
 {
     for (eTileFace faceid: {eTileFace_SideN, eTileFace_SideE, eTileFace_SideS, eTileFace_SideW})
     {
-        ConstructTerrainWall(mapTile, faceid);
+        ConstructTerrainWall(terrainTile, faceid);
     }
 }
 
-void DungeonBuilder::ConstructTerrainWall(MapTile* mapTile, eTileFace faceid)
+void DungeonBuilder::ConstructTerrainWall(TerrainTile* terrainTile, eTileFace faceid)
 {
     const glm::mat3* rotation = nullptr;
     switch (faceid)
@@ -204,28 +204,28 @@ void DungeonBuilder::ConstructTerrainWall(MapTile* mapTile, eTileFace faceid)
         return;
     }
 
-    TerrainDefinition* terrain = mapTile->GetTerrain();
+    TerrainDefinition* terrain = terrainTile->GetTerrain();
     debug_assert(terrain->mIsSolid);
     // test side wall is required
-    if (ShouldBuildSideWall(mapTile, faceid))
+    if (ShouldBuildSideWall(terrainTile, faceid))
     {
         ModelAsset* asset = gModelsManager.LoadModelAsset(terrain->mResourceSide.mResourceName);
         debug_assert(asset);
-        ExtendTileMesh(mapTile, faceid, asset, rotation);
+        ExtendTileMesh(terrainTile, faceid, asset, rotation);
     }
 }
 
-void DungeonBuilder::ConstructTerrainFloor(MapTile* mapTile)
+void DungeonBuilder::ConstructTerrainFloor(TerrainTile* terrainTile)
 {
-    TerrainDefinition* terrainDef = mapTile->GetTerrain();
+    TerrainDefinition* terrainDef = terrainTile->GetTerrain();
 
     // if terrain is bridge we building only water bed
     if (gGameWorld.IsRoomTypeTerrain(terrainDef))
     {
-        TerrainDefinition* baseTerrainDef = mapTile->GetBaseTerrain();
+        TerrainDefinition* baseTerrainDef = terrainTile->GetBaseTerrain();
         if (baseTerrainDef->mIsWater || baseTerrainDef->mIsLava)
         {
-            ConstructTerrainWaterBed(mapTile, mapTile->GetBaseTerrain()->GetCellResource());
+            ConstructTerrainWaterBed(terrainTile, terrainTile->GetBaseTerrain()->GetCellResource());
         }
         // dont build room floor geometry here
         return;
@@ -238,31 +238,31 @@ void DungeonBuilder::ConstructTerrainFloor(MapTile* mapTile)
     // water bed
     if (terrainDef->mConstructionTypeWater)
     {
-        ConstructTerrainWaterBed(mapTile, cellResource);
+        ConstructTerrainWaterBed(terrainTile, cellResource);
     }
     // construct terrain quad
     else if (terrainDef->mConstructionTypeQuad)
     {
-        ConstructTerrainQuad(mapTile, cellResource);
+        ConstructTerrainQuad(terrainTile, cellResource);
     }
     // construct terrain normal
     else
     {
         ModelAsset* asset = gModelsManager.LoadModelAsset(cellResource->mResourceName);
         debug_assert(asset);
-        ExtendTileMesh(mapTile, eTileFace_Floor, asset);
+        ExtendTileMesh(terrainTile, eTileFace_Floor, asset);
     }
 }
 
-void DungeonBuilder::ConstructTerrainQuad(MapTile* mapTile, ArtResource* artResource)
+void DungeonBuilder::ConstructTerrainQuad(TerrainTile* terrainTile, ArtResource* artResource)
 {
     std::string meshName = artResource->mResourceName;
 
     // coloured to player color
-    TerrainDefinition* tileTerrainDef = mapTile->GetTerrain();
+    TerrainDefinition* tileTerrainDef = terrainTile->GetTerrain();
     if (tileTerrainDef->mPlayerColouredPath || tileTerrainDef->mPlayerColouredWall) 
     {
-        const char* suffix = cxx::va("%d_", (mapTile->mOwnerId == ePlayerID_Null) ? 0 : mapTile->mOwnerId - 1);
+        const char* suffix = cxx::va("%d_", (terrainTile->mOwnerID == ePlayerID_Null) ? 0 : terrainTile->mOwnerID - 1);
         meshName.append(suffix);
     }
 
@@ -271,47 +271,47 @@ void DungeonBuilder::ConstructTerrainQuad(MapTile* mapTile, ArtResource* artReso
     {
         //SubtTopLeft
         subTiles[0] = 
-            (NeighbourTileSolid(mapTile, eDirection_W) ? 0x04 : 0) | 
-            (NeighbourTileSolid(mapTile, eDirection_NW) ? 0x02 : 0) | 
-            (NeighbourTileSolid(mapTile, eDirection_N) ? 0x01 : 0);
+            (NeighbourTileSolid(terrainTile, eDirection_W) ? 0x04 : 0) | 
+            (NeighbourTileSolid(terrainTile, eDirection_NW) ? 0x02 : 0) | 
+            (NeighbourTileSolid(terrainTile, eDirection_N) ? 0x01 : 0);
         //SubtTopRight
         subTiles[1] = 
-            (NeighbourTileSolid(mapTile, eDirection_N) ? 0x04 : 0) | 
-            (NeighbourTileSolid(mapTile, eDirection_NE) ? 0x02 : 0) | 
-            (NeighbourTileSolid(mapTile, eDirection_E) ? 0x01 : 0);
+            (NeighbourTileSolid(terrainTile, eDirection_N) ? 0x04 : 0) | 
+            (NeighbourTileSolid(terrainTile, eDirection_NE) ? 0x02 : 0) | 
+            (NeighbourTileSolid(terrainTile, eDirection_E) ? 0x01 : 0);
         //SubtBottomRight
         subTiles[2] = 
-            (NeighbourTileSolid(mapTile, eDirection_E) ? 0x04 : 0) | 
-            (NeighbourTileSolid(mapTile, eDirection_SE) ? 0x02 : 0) | 
-            (NeighbourTileSolid(mapTile, eDirection_S) ? 0x01 : 0);
+            (NeighbourTileSolid(terrainTile, eDirection_E) ? 0x04 : 0) | 
+            (NeighbourTileSolid(terrainTile, eDirection_SE) ? 0x02 : 0) | 
+            (NeighbourTileSolid(terrainTile, eDirection_S) ? 0x01 : 0);
         //SubtBottomLeft
         subTiles[3] = 
-            (NeighbourTileSolid(mapTile, eDirection_S) ? 0x04 : 0) | 
-            (NeighbourTileSolid(mapTile, eDirection_SW) ? 0x02 : 0) | 
-            (NeighbourTileSolid(mapTile, eDirection_W) ? 0x01 : 0);
+            (NeighbourTileSolid(terrainTile, eDirection_S) ? 0x04 : 0) | 
+            (NeighbourTileSolid(terrainTile, eDirection_SW) ? 0x02 : 0) | 
+            (NeighbourTileSolid(terrainTile, eDirection_W) ? 0x01 : 0);
     }
     else
     {
         //SubtTopLeft
         subTiles[0] = 
-            (NeighbourHasSameTerrain(mapTile, eDirection_W) ? 0x04 : 0) | 
-            (NeighbourHasSameTerrain(mapTile, eDirection_NW) ? 0x02 : 0) | 
-            (NeighbourHasSameTerrain(mapTile, eDirection_N) ? 0x01 : 0);
+            (NeighbourHasSameTerrain(terrainTile, eDirection_W) ? 0x04 : 0) | 
+            (NeighbourHasSameTerrain(terrainTile, eDirection_NW) ? 0x02 : 0) | 
+            (NeighbourHasSameTerrain(terrainTile, eDirection_N) ? 0x01 : 0);
         //SubtTopRight
         subTiles[1] = 
-            (NeighbourHasSameTerrain(mapTile, eDirection_N) ? 0x04 : 0) | 
-            (NeighbourHasSameTerrain(mapTile, eDirection_NE) ? 0x02 : 0) | 
-            (NeighbourHasSameTerrain(mapTile, eDirection_E) ? 0x01 : 0);
+            (NeighbourHasSameTerrain(terrainTile, eDirection_N) ? 0x04 : 0) | 
+            (NeighbourHasSameTerrain(terrainTile, eDirection_NE) ? 0x02 : 0) | 
+            (NeighbourHasSameTerrain(terrainTile, eDirection_E) ? 0x01 : 0);
         //SubtBottomRight
         subTiles[2] = 
-            (NeighbourHasSameTerrain(mapTile, eDirection_E) ? 0x04 : 0) | 
-            (NeighbourHasSameTerrain(mapTile, eDirection_SE) ? 0x02 : 0) | 
-            (NeighbourHasSameTerrain(mapTile, eDirection_S) ? 0x01 : 0);
+            (NeighbourHasSameTerrain(terrainTile, eDirection_E) ? 0x04 : 0) | 
+            (NeighbourHasSameTerrain(terrainTile, eDirection_SE) ? 0x02 : 0) | 
+            (NeighbourHasSameTerrain(terrainTile, eDirection_S) ? 0x01 : 0);
         //SubtBottomLeft
         subTiles[3] = 
-            (NeighbourHasSameTerrain(mapTile, eDirection_S) ? 0x04 : 0) | 
-            (NeighbourHasSameTerrain(mapTile, eDirection_SW) ? 0x02 : 0) | 
-            (NeighbourHasSameTerrain(mapTile, eDirection_W) ? 0x01 : 0);
+            (NeighbourHasSameTerrain(terrainTile, eDirection_S) ? 0x04 : 0) | 
+            (NeighbourHasSameTerrain(terrainTile, eDirection_SW) ? 0x02 : 0) | 
+            (NeighbourHasSameTerrain(terrainTile, eDirection_W) ? 0x01 : 0);
     }
 
     const glm::mat3* rotations[] =
@@ -336,11 +336,11 @@ void DungeonBuilder::ConstructTerrainQuad(MapTile* mapTile, ArtResource* artReso
     
     for (int isubtile = 0; isubtile < 4; ++isubtile)
     {
-        ExtendTileMesh(mapTile, eTileFace_Floor, pieces[subTiles[isubtile]], rotations[isubtile], &g_SubTileTranslations[isubtile]);
+        ExtendTileMesh(terrainTile, eTileFace_Floor, pieces[subTiles[isubtile]], rotations[isubtile], &g_SubTileTranslations[isubtile]);
     }
 }
 
-void DungeonBuilder::ConstructTerrainWaterBed(MapTile* mapTile, ArtResource* artResource)
+void DungeonBuilder::ConstructTerrainWaterBed(TerrainTile* terrainTile, ArtResource* artResource)
 {
     const glm::mat3* rotations[] =
     {
@@ -363,15 +363,15 @@ void DungeonBuilder::ConstructTerrainWaterBed(MapTile* mapTile, ArtResource* art
 
     const unsigned char bits =
     // sides
-        (!NeighbourHasSameBaseTerrain(mapTile, eDirection_N) ? sDirsBits[eDirection_N] : 0U) | // top
-        (!NeighbourHasSameBaseTerrain(mapTile, eDirection_E) ? sDirsBits[eDirection_E] : 0U) | // right
-        (!NeighbourHasSameBaseTerrain(mapTile, eDirection_S) ? sDirsBits[eDirection_S] : 0U) | // bottom
-        (!NeighbourHasSameBaseTerrain(mapTile, eDirection_W) ? sDirsBits[eDirection_W] : 0U) | // left
+        (!NeighbourHasSameBaseTerrain(terrainTile, eDirection_N) ? sDirsBits[eDirection_N] : 0U) | // top
+        (!NeighbourHasSameBaseTerrain(terrainTile, eDirection_E) ? sDirsBits[eDirection_E] : 0U) | // right
+        (!NeighbourHasSameBaseTerrain(terrainTile, eDirection_S) ? sDirsBits[eDirection_S] : 0U) | // bottom
+        (!NeighbourHasSameBaseTerrain(terrainTile, eDirection_W) ? sDirsBits[eDirection_W] : 0U) | // left
     // corners
-        (!NeighbourHasSameBaseTerrain(mapTile, eDirection_NE) ? sDirsBits[eDirection_NE] : 0U) | // top-right
-        (!NeighbourHasSameBaseTerrain(mapTile, eDirection_SE) ? sDirsBits[eDirection_SE] : 0U) | // bottom-right
-        (!NeighbourHasSameBaseTerrain(mapTile, eDirection_SW) ? sDirsBits[eDirection_SW] : 0U) | // bottom-left
-        (!NeighbourHasSameBaseTerrain(mapTile, eDirection_NW) ? sDirsBits[eDirection_NW] : 0U); // top-left
+        (!NeighbourHasSameBaseTerrain(terrainTile, eDirection_NE) ? sDirsBits[eDirection_NE] : 0U) | // top-right
+        (!NeighbourHasSameBaseTerrain(terrainTile, eDirection_SE) ? sDirsBits[eDirection_SE] : 0U) | // bottom-right
+        (!NeighbourHasSameBaseTerrain(terrainTile, eDirection_SW) ? sDirsBits[eDirection_SW] : 0U) | // bottom-left
+        (!NeighbourHasSameBaseTerrain(terrainTile, eDirection_NW) ? sDirsBits[eDirection_NW] : 0U); // top-left
 
     const unsigned char cornersBits = bits & 0xF0U;
     const unsigned char sidesBits = bits & 0x0FU;
@@ -384,7 +384,7 @@ void DungeonBuilder::ConstructTerrainWaterBed(MapTile* mapTile, ArtResource* art
     // simplest one
     if (bits == 0)
     {
-        ExtendTileMesh(mapTile, eTileFace_Floor, piece3);
+        ExtendTileMesh(terrainTile, eTileFace_Floor, piece3);
         return;
     }
 
@@ -404,7 +404,7 @@ void DungeonBuilder::ConstructTerrainWaterBed(MapTile* mapTile, ArtResource* art
         {
             if (bits == pentry.first)
             {
-                ExtendTileMesh(mapTile, eTileFace_Floor, piece2, pentry.second);
+                ExtendTileMesh(terrainTile, eTileFace_Floor, piece2, pentry.second);
                 break;
             }
         }
@@ -434,7 +434,7 @@ void DungeonBuilder::ConstructTerrainWaterBed(MapTile* mapTile, ArtResource* art
         {
             if (sidesBits == pentry.first)
             {
-                ExtendTileMesh(mapTile, eTileFace_Floor, piece0, pentry.second);
+                ExtendTileMesh(terrainTile, eTileFace_Floor, piece0, pentry.second);
                 break;
             }
         }
@@ -464,7 +464,7 @@ void DungeonBuilder::ConstructTerrainWaterBed(MapTile* mapTile, ArtResource* art
         {
             if (sidesBits == pentry.first)
             {
-                ExtendTileMesh(mapTile, eTileFace_Floor, piece1, pentry.second);
+                ExtendTileMesh(terrainTile, eTileFace_Floor, piece1, pentry.second);
                 break;
             }
         }
@@ -473,21 +473,21 @@ void DungeonBuilder::ConstructTerrainWaterBed(MapTile* mapTile, ArtResource* art
 
     int subTiles[] = {
     //SubtTopLeft
-        (NeighbourHasSameBaseTerrain(mapTile, eDirection_W) ? 0x04 : 0) | 
-        (NeighbourHasSameBaseTerrain(mapTile, eDirection_NW) ? 0x02 : 0) | 
-        (NeighbourHasSameBaseTerrain(mapTile, eDirection_N) ? 0x01 : 0),
+        (NeighbourHasSameBaseTerrain(terrainTile, eDirection_W) ? 0x04 : 0) | 
+        (NeighbourHasSameBaseTerrain(terrainTile, eDirection_NW) ? 0x02 : 0) | 
+        (NeighbourHasSameBaseTerrain(terrainTile, eDirection_N) ? 0x01 : 0),
     //SubtTopRight
-        (NeighbourHasSameBaseTerrain(mapTile, eDirection_N) ? 0x04 : 0) | 
-        (NeighbourHasSameBaseTerrain(mapTile, eDirection_NE) ? 0x02 : 0) | 
-        (NeighbourHasSameBaseTerrain(mapTile, eDirection_E) ? 0x01 : 0),
+        (NeighbourHasSameBaseTerrain(terrainTile, eDirection_N) ? 0x04 : 0) | 
+        (NeighbourHasSameBaseTerrain(terrainTile, eDirection_NE) ? 0x02 : 0) | 
+        (NeighbourHasSameBaseTerrain(terrainTile, eDirection_E) ? 0x01 : 0),
     //SubtBottomRight
-        (NeighbourHasSameBaseTerrain(mapTile, eDirection_E) ? 0x04 : 0) | 
-        (NeighbourHasSameBaseTerrain(mapTile, eDirection_SE) ? 0x02 : 0) | 
-        (NeighbourHasSameBaseTerrain(mapTile, eDirection_S) ? 0x01 : 0),
+        (NeighbourHasSameBaseTerrain(terrainTile, eDirection_E) ? 0x04 : 0) | 
+        (NeighbourHasSameBaseTerrain(terrainTile, eDirection_SE) ? 0x02 : 0) | 
+        (NeighbourHasSameBaseTerrain(terrainTile, eDirection_S) ? 0x01 : 0),
     //SubtBottomLeft
-        (NeighbourHasSameBaseTerrain(mapTile, eDirection_S) ? 0x04 : 0) | 
-        (NeighbourHasSameBaseTerrain(mapTile, eDirection_SW) ? 0x02 : 0) | 
-        (NeighbourHasSameBaseTerrain(mapTile, eDirection_W) ? 0x01 : 0)
+        (NeighbourHasSameBaseTerrain(terrainTile, eDirection_S) ? 0x04 : 0) | 
+        (NeighbourHasSameBaseTerrain(terrainTile, eDirection_SW) ? 0x02 : 0) | 
+        (NeighbourHasSameBaseTerrain(terrainTile, eDirection_W) ? 0x01 : 0)
     };
 
     ModelAsset* piece4 = gModelsManager.LoadModelAsset(artResource->mResourceName + "4");
@@ -509,15 +509,15 @@ void DungeonBuilder::ConstructTerrainWaterBed(MapTile* mapTile, ArtResource* art
     
     for (int isubtile = 0; isubtile < 4; ++isubtile)
     {
-        ExtendTileMesh(mapTile, eTileFace_Floor, geoIndices[subTiles[isubtile]], 
+        ExtendTileMesh(terrainTile, eTileFace_Floor, geoIndices[subTiles[isubtile]], 
             subtileRotations[isubtile][subTiles[isubtile]], &g_SubTileTranslations[isubtile]);
     }
 }
 
-bool DungeonBuilder::ShouldBuildSideWall(MapTile* mapTile, eTileFace faceid) const
+bool DungeonBuilder::ShouldBuildSideWall(TerrainTile* terrainTile, eTileFace faceid) const
 {
     eDirection direction = FaceIdToDirection(faceid);
-    if (MapTile* neighbour = mapTile->mNeighbours[direction])
+    if (TerrainTile* neighbour = terrainTile->mNeighbours[direction])
     {
         TerrainDefinition* neighbourTerrainDef = neighbour->GetTerrain();
         if (neighbourTerrainDef->mIsSolid)
@@ -525,7 +525,7 @@ bool DungeonBuilder::ShouldBuildSideWall(MapTile* mapTile, eTileFace faceid) con
 
         if (RoomHandlesWalls(neighbour))
         {
-            TerrainDefinition* tileTerrainDef = mapTile->GetTerrain();
+            TerrainDefinition* tileTerrainDef = terrainTile->GetTerrain();
             if (tileTerrainDef->mAllowRoomWalls)
                 return false;
         }
@@ -533,9 +533,9 @@ bool DungeonBuilder::ShouldBuildSideWall(MapTile* mapTile, eTileFace faceid) con
     return true;
 }
 
-bool DungeonBuilder::NeighbourTileSolid(MapTile* mapTile, eDirection direction) const
+bool DungeonBuilder::NeighbourTileSolid(TerrainTile* terrainTile, eDirection direction) const
 {
-    if (MapTile* neighbourTile = mapTile->mNeighbours[direction])
+    if (TerrainTile* neighbourTile = terrainTile->mNeighbours[direction])
     {
         TerrainDefinition* neighbourTerrainDef = neighbourTile->GetTerrain();
         return neighbourTerrainDef->mIsSolid;
@@ -543,42 +543,42 @@ bool DungeonBuilder::NeighbourTileSolid(MapTile* mapTile, eDirection direction) 
     return false;
 }
 
-bool DungeonBuilder::NeighbourHasSameTerrain(MapTile* mapTile, eDirection direction) const
+bool DungeonBuilder::NeighbourHasSameTerrain(TerrainTile* terrainTile, eDirection direction) const
 {
-    if (MapTile* neighbourTile = mapTile->mNeighbours[direction])
+    if (TerrainTile* neighbourTile = terrainTile->mNeighbours[direction])
     {
-        return mapTile->GetTerrain() == neighbourTile->GetTerrain();
+        return terrainTile->GetTerrain() == neighbourTile->GetTerrain();
     }
     return false;
 }
 
-bool DungeonBuilder::NeighbourHasSameBaseTerrain(MapTile* mapTile, eDirection direction) const
+bool DungeonBuilder::NeighbourHasSameBaseTerrain(TerrainTile* terrainTile, eDirection direction) const
 {
-    if (MapTile* neighbourTile = mapTile->mNeighbours[direction])
+    if (TerrainTile* neighbourTile = terrainTile->mNeighbours[direction])
     {
-        return mapTile->GetBaseTerrain() == neighbourTile->GetBaseTerrain();
+        return terrainTile->GetBaseTerrain() == neighbourTile->GetBaseTerrain();
     }
     return false;
 }
 
-bool DungeonBuilder::NeighbourRoomHandlesWalls(MapTile* mapTile, eDirection direction) const
+bool DungeonBuilder::NeighbourRoomHandlesWalls(TerrainTile* terrainTile, eDirection direction) const
 {
-    if (MapTile* neighbourTile = mapTile->mNeighbours[direction])
+    if (TerrainTile* neighbourTile = terrainTile->mNeighbours[direction])
     {
         return RoomHandlesWalls(neighbourTile);
     }
     return false;
 }
 
-bool DungeonBuilder::RoomHandlesWalls(MapTile* mapTile) const
+bool DungeonBuilder::RoomHandlesWalls(TerrainTile* terrainTile) const
 {
-    if (mapTile == nullptr)
+    if (terrainTile == nullptr)
     {
         debug_assert(false);
         return false;
     }
 
-    TerrainDefinition* terrain = mapTile->GetTerrain();
+    TerrainDefinition* terrain = terrainTile->GetTerrain();
     if (gGameWorld.IsRoomTypeTerrain(terrain))
     {
         RoomDefinition* roomDefinition = gGameWorld.GetRoomDefinitionByTerrain(terrain);
@@ -588,16 +588,15 @@ bool DungeonBuilder::RoomHandlesWalls(MapTile* mapTile) const
     return false;
 }
 
-bool DungeonBuilder::NeighbourHasSameRoom(MapTile* mapTile, eDirection direction) const
+bool DungeonBuilder::NeighbourHasSameRoom(TerrainTile* terrainTile, eDirection direction) const
 {
-    if (mapTile == nullptr || mapTile->mBuiltRoom == nullptr)
-    {
-        debug_assert(false);
+    debug_assert(terrainTile);
+    if (terrainTile == nullptr || terrainTile->mBuiltRoom == nullptr)
         return false;
-    }
-    if (MapTile* neighbourTile = mapTile->mNeighbours[direction])
+
+    if (TerrainTile* neighbourTile = terrainTile->mNeighbours[direction])
     {
-        return mapTile->mBuiltRoom == neighbourTile->mBuiltRoom;
+        return terrainTile->mBuiltRoom == neighbourTile->mBuiltRoom;
     }
     return false;
 }

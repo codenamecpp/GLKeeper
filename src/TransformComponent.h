@@ -70,6 +70,10 @@ public:
     void InvalidateTransform(); 
     void InvalidateBounds();
 
+    // override GameObjectComponent methods
+    void InitializeComponent() override;
+    void DestroyComponent() override;
+
 private:
     // dirty flags
     bool mTransformDirty;

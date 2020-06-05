@@ -6,7 +6,6 @@
 
 namespace cxx
 {
-
     // get next power of two value
     inline unsigned int get_next_pot(unsigned int value)
     {
@@ -339,5 +338,17 @@ namespace cxx
         return false;
     }
 
+    // loops the value within range [0, 1]
+    inline float repeat(float value, float length)
+    {
+        return value - glm::floor(value / length) * length;
+    }
+
+    // ping-pongs the value in range [0, 1]
+    inline float ping_pong(float value, float length)
+    {
+        value = repeat(value, length * 2.0f);
+        return length - glm::abs(value - length);
+    }
 
 } // namespace cxx

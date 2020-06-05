@@ -111,6 +111,7 @@ impl_enum_strings(eBlendingMode)
 {
     {eBlendingMode_Alpha, "alpha"},
     {eBlendingMode_AlphaAdditive, "alpha_additive"},
+    {eBlendingMode_Additive, "additive"},
     {eBlendingMode_Multiply, "multiply"},
     {eBlendingMode_Premultiplied, "premultiplied"},
     {eBlendingMode_Screen, "screen"},

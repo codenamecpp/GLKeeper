@@ -1,6 +1,6 @@
 #pragma once
 
-#include "TerrainRenderProgram.h"
+#include "Shaders.h"
 
 // terrain visualization manager
 class TerrainMeshRenderer: public cxx::noncopyable

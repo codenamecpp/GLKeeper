@@ -4,9 +4,11 @@
 #include "GraphicsDevice.h"
 #include "TerrainMeshComponent.h"
 #include "cvars.h"
-#include "MapTile.h"
+#include "TerrainTile.h"
 #include "GameWorld.h"
 #include "GpuBuffer.h"
+#include "TerrainManager.h"
+#include "Texture2D.h"
 
 // limits
 const int MaxTerrainMeshBufferSize = 1024 * 1024 * 2;
@@ -77,7 +79,7 @@ void TerrainMeshRenderer::Render(SceneRenderContext& renderContext, TerrainMeshC
         return;
 
     debug_assert(component);
-    if (component->mMeshParts.empty())
+    if (component->mDrawCalls.empty())
     {
         debug_assert(false);
         return;
@@ -87,11 +89,17 @@ void TerrainMeshRenderer::Render(SceneRenderContext& renderContext, TerrainMeshC
     mTerrainRenderProgram.SetModelMatrix(SceneIdentyMatrix);
     mTerrainRenderProgram.ActivateProgram();
 
+    // bind additional highlight tiles texture
+    if (gTerrainManager.mHighlightTilesTexture)
+    {
+        gTerrainManager.mHighlightTilesTexture->ActivateTexture(eTextureUnit_1);
+    }
+
     // bind indices
     gGraphicsDevice.BindIndexBuffer(component->mIndexBuffer);
     gGraphicsDevice.BindVertexBuffer(component->mVertexBuffer, Vertex3D_Terrain_Format::Get());
 
-    for (TerrainMeshComponent::MeshPartStruct& currBatch: component->mMeshParts)
+    for (TerrainMeshComponent::DrawCall& currBatch: component->mDrawCalls)
     {
         if (currBatch.mVertexCount == 0)
         {
@@ -121,7 +129,7 @@ void TerrainMeshRenderer::Render(SceneRenderContext& renderContext, TerrainMeshC
 void TerrainMeshRenderer::ReleaseRenderdata(TerrainMeshComponent* component)
 {
     debug_assert(component);
-
+    component->mRenderProgram = nullptr;
     if (component->mVertexBuffer)
     {
         gGraphicsDevice.DestroyBuffer(component->mVertexBuffer);
@@ -133,8 +141,7 @@ void TerrainMeshRenderer::ReleaseRenderdata(TerrainMeshComponent* component)
         gGraphicsDevice.DestroyBuffer(component->mIndexBuffer);
         component->mIndexBuffer = nullptr;
     }
-
-    component->ClearMeshParts();
+    component->ClearDrawCalls();
     component->ClearMeshMaterials();
 }
 
@@ -150,7 +157,7 @@ void TerrainMeshRenderer::PrepareRenderdata(TerrainMeshComponent* component)
     }
 
     component->ClearMeshMaterials();
-    component->ClearMeshParts();
+    component->ClearDrawCalls();
 
     GameMap& gamemap = gGameWorld.mMapData;
     
@@ -161,14 +168,14 @@ void TerrainMeshRenderer::PrepareRenderdata(TerrainMeshComponent* component)
     for (int tilex = rcMapTerrain.x; tilex < (rcMapTerrain.x + rcMapTerrain.w); ++tilex)
     {
         const Point tileLocation (tilex, tiley);
-        if (!gamemap.IsWithinMap(tileLocation))
+        const TerrainTile* currTile = gamemap.GetMapTile(tileLocation);
+
+        if (currTile == nullptr)
         {
             debug_assert(false);
             continue;
         }
 
-        const MapTile* currTile = gamemap.GetMapTile(tileLocation);
-        debug_assert(currTile);
         for (const TileFaceData& tileFace: currTile->mFaces)
         {
             SplitMeshPieces(tileFace.mMeshArray, pieceBucketContainer);
@@ -214,11 +221,11 @@ void TerrainMeshRenderer::PrepareRenderdata(TerrainMeshComponent* component)
         }
     }
 
-    GpuBuffer* vertBuffer = component->mVertexBuffer;
+    GpuBuffer* vertexBuffer = component->mVertexBuffer;
     GpuBuffer* indexBuffer = component->mIndexBuffer;
 
     // setup buffers
-    if (!vertBuffer->Setup(eBufferUsage_Static, actualVBufferLength, nullptr) ||
+    if (!vertexBuffer->Setup(eBufferUsage_Static, actualVBufferLength, nullptr) ||
         !indexBuffer->Setup(eBufferUsage_Static, actualIBufferLength, nullptr))
     {
         debug_assert(false);
@@ -227,11 +234,11 @@ void TerrainMeshRenderer::PrepareRenderdata(TerrainMeshComponent* component)
 
     int numPieces = (int) pieceBucketContainer.mPieceBucketMap.size();
     debug_assert(numPieces > 0);
-    component->SetMeshPartsCount(numPieces);
+    component->SetDrawCallsCount(numPieces);
     component->SetMeshMaterialsCount(numPieces);
 
     // compile geometries
-    Vertex3D_Terrain* vbufferPtr = vertBuffer->LockData<Vertex3D_Terrain>(BufferAccess_UnsynchronizedWrite, 0, actualVBufferLength);
+    Vertex3D_Terrain* vbufferPtr = vertexBuffer->LockData<Vertex3D_Terrain>(BufferAccess_UnsynchronizedWrite, 0, actualVBufferLength);
     debug_assert(vbufferPtr);
 
     glm::ivec3* ibufferPtr = indexBuffer->LockData<glm::ivec3>(BufferAccess_UnsynchronizedWrite, 0, actualIBufferLength);
@@ -245,12 +252,12 @@ void TerrainMeshRenderer::PrepareRenderdata(TerrainMeshComponent* component)
     {
         component->SetMeshMaterial(imaterial, ebucket.first);
 
-        RenderableComponent::MeshPartStruct& meshBatch = component->mMeshParts[imaterial];
-        meshBatch.mMaterialIndex = imaterial;
-        meshBatch.mTriangleCount = ebucket.second.mTriangleCount;
-        meshBatch.mVertexCount = ebucket.second.mVertexCount;
-        meshBatch.mIndexDataOffset = startTriangle * sizeof(glm::ivec3);
-        meshBatch.mVertexDataOffset = startVertex * sizeof(Vertex3D_Terrain);
+        RenderableComponent::DrawCall& drawCall = component->mDrawCalls[imaterial];
+        drawCall.mMaterialIndex = imaterial;
+        drawCall.mTriangleCount = ebucket.second.mTriangleCount;
+        drawCall.mVertexCount = ebucket.second.mVertexCount;
+        drawCall.mIndexDataOffset = startTriangle * sizeof(glm::ivec3);
+        drawCall.mVertexDataOffset = startVertex * Sizeof_Vertex3D_Terrain;
 
         // copy geometry data
         unsigned int vertexoffset = 0;
@@ -273,8 +280,8 @@ void TerrainMeshRenderer::PrepareRenderdata(TerrainMeshComponent* component)
             vbufferPtr += groupNumVertices;
         }
 
-        startTriangle += meshBatch.mTriangleCount;
-        startVertex += meshBatch.mVertexCount;
+        startTriangle += drawCall.mTriangleCount;
+        startVertex += drawCall.mVertexCount;
         ++imaterial;
     }
 
@@ -283,8 +290,10 @@ void TerrainMeshRenderer::PrepareRenderdata(TerrainMeshComponent* component)
         debug_assert(false);
     }
 
-    if (!vertBuffer->Unlock())
+    if (!vertexBuffer->Unlock())
     {
         debug_assert(false);
     }
+
+    component->mRenderProgram = &mTerrainRenderProgram;
 }

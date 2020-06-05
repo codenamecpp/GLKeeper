@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GuiRenderProgram.h"
+#include "Shaders.h"
 #include "GuiDefs.h"
 
 class GuiRenderer: public cxx::noncopyable

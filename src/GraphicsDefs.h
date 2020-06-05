@@ -63,15 +63,7 @@ public:
     glm::vec3 mNormal; // 12 bytes
     glm::vec2 mTexcoord; // 8 bytes
                          // terrain tile logical coordinate
-    union // 4 bytes
-    {
-        unsigned int mTileCoord;
-        struct
-        {
-            unsigned short mTileX;
-            unsigned short mTileY;
-        };
-    };
+    unsigned short mTileCoord[2]; // x/y tile coordinate
 };
 
 const unsigned int Sizeof_Vertex3D_Terrain = sizeof(Vertex3D_Terrain);
@@ -392,18 +384,7 @@ enum BufferAccessBits : unsigned short
     BufferAccess_InvalidateBuffer = (1 << 4), // orphan whole buffer
 };
 
-inline BufferAccessBits operator | (BufferAccessBits lhs, BufferAccessBits rhs)
-{
-    return static_cast<BufferAccessBits>(static_cast<unsigned short>(lhs) | static_cast<unsigned short>(rhs));
-}
-inline BufferAccessBits operator & (BufferAccessBits lhs, BufferAccessBits rhs)
-{
-    return static_cast<BufferAccessBits>(static_cast<unsigned short>(lhs) & static_cast<unsigned short>(rhs));
-}
-inline BufferAccessBits operator ^ (BufferAccessBits lhs, BufferAccessBits rhs)
-{
-    return static_cast<BufferAccessBits>(static_cast<unsigned short>(lhs) ^ static_cast<unsigned short>(rhs));
-}
+decl_enum_bitwise_operators(BufferAccessBits)
 
 const BufferAccessBits BufferAccess_UnsynchronizedWrite = BufferAccess_Unsynchronized | BufferAccess_Write;
 
@@ -413,6 +394,7 @@ enum eBlendingMode : unsigned char
 {
     eBlendingMode_Alpha,
     eBlendingMode_AlphaAdditive,
+    eBlendingMode_Additive,
     eBlendingMode_Multiply,
     eBlendingMode_Premultiplied,
     eBlendingMode_Screen
@@ -456,6 +438,7 @@ union RenderStates
 public:
     RenderStates()
         : mIsColorWriteEnabled(true)
+        , mIsAlphaWriteEnabled() // disabled
         , mIsDepthWriteEnabled(true)
         , mIsDepthTestEnabled(true)
         , mIsFaceCullingEnabled(true)
@@ -494,6 +477,7 @@ public:
         // render state flags
         bool mIsAlphaBlendEnabled : 1;
         bool mIsColorWriteEnabled : 1;
+        bool mIsAlphaWriteEnabled : 1;
         bool mIsDepthWriteEnabled : 1;
         bool mIsDepthTestEnabled : 1;
         bool mIsFaceCullingEnabled : 1;
