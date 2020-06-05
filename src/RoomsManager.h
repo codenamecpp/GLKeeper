@@ -32,6 +32,10 @@ public:
     GenericRoom* CreateRoomInstance(RoomDefinition* definition, ePlayerID owner);
     GenericRoom* CreateRoomInstance(RoomDefinition* definition, ePlayerID owner, const TilesList& roomTiles);
 
+    // immediately destroy room object, pointer becomes invalid
+    // @param roomInstance: Room instance
+    void DestroyRoomInstance(GenericRoom* roomInstance);
+
 private:
     void DestroyRoomsList();
 

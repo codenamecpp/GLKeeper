@@ -141,3 +141,10 @@ GenericRoom* RoomsManager::CreateRoomInstance(RoomDefinition* definition, ePlaye
     mRoomsList.push_back(genericRoom);
     return genericRoom;
 }
+
+void RoomsManager::DestroyRoomInstance(GenericRoom* roomInstance)
+{
+    cxx::erase_elements(mRoomsList, roomInstance);
+
+    SafeDelete(roomInstance);
+}

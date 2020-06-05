@@ -116,6 +116,11 @@ void GenericRoom::UpdateTilesMesh()
     ConstructWalls(gGameWorld.mDungeonBuilder, false);
 }
 
+bool GenericRoom::HasTiles() const
+{
+    return !mRoomTiles.empty();
+}
+
 void GenericRoom::AttachTiles(const TilesList& terrainTiles)
 {
     // first scan all good tiles and assign room instance to them
@@ -153,19 +158,16 @@ void GenericRoom::DetachTiles(const TilesList& terrainTiles)
         currTile->mIsRoomEntrance = false;
         currTile->mIsRoomInnerTile = false;
         // remove wall references
-        if (TerrainTile* neighTile = currTile->mNeighbours[eDirection_N]) neighTile->mFaces[eTileFace_SideS].mWallSection = nullptr;
-        if (TerrainTile* neighTile = currTile->mNeighbours[eDirection_E]) neighTile->mFaces[eTileFace_SideW].mWallSection = nullptr;
-        if (TerrainTile* neighTile = currTile->mNeighbours[eDirection_S]) neighTile->mFaces[eTileFace_SideN].mWallSection = nullptr;
-        if (TerrainTile* neighTile = currTile->mNeighbours[eDirection_W]) neighTile->mFaces[eTileFace_SideE].mWallSection = nullptr;
+        DetachFromWall(currTile);
         // invalidate tiles
         currTile->InvalidateTileMesh();
         currTile->InvalidateNeighbourTilesMesh();
     }
 
     // cleanup covered tiles
-    cxx::erase_elements_if(mRoomTiles, [](const TerrainTile* terrainTile)
+    cxx::erase_elements_if(mRoomTiles, [this](const TerrainTile* terrainTile)
         {
-            return terrainTile->mRoomTerrain == nullptr;
+            return terrainTile->mBuiltRoom != this;
         });
 }
 
@@ -388,6 +390,30 @@ void GenericRoom::ReleaseWallSections()
         gWallSectionsPool.destroy(currentSection);
     }
     mWallSections.clear();
+}
+
+void GenericRoom::DetachFromWall(TerrainTile* roomTile)
+{
+    debug_assert(roomTile);
+
+    for (eDirection outOfTileDirection: gStraightDirections)
+    {
+        TerrainTile* currNeighbour = roomTile->mNeighbours[outOfTileDirection];
+        if (currNeighbour == nullptr)
+            continue;
+
+        // inward direction
+        eDirection inwardsDirection = GetOppositeDirection(outOfTileDirection);
+        eTileFace faceid = DirectionToFaceId(inwardsDirection);
+        TileFaceData& facedata = currNeighbour->mFaces[faceid];
+        if (WallSection* wallSection = facedata.mWallSection)
+        {
+            debug_assert(wallSection->mOwnerRoom == this);
+            wallSection->RemoveTile(currNeighbour);
+
+            facedata.mWallSection = nullptr; // clear wall section reference
+        }
+    }
 }
 
 void GenericRoom::ConstructWalls(DungeonBuilder& builder, bool forceConstructAll)

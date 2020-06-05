@@ -42,6 +42,9 @@ public:
     // construct geometries of all invalidated room tiles and wall sections
     void UpdateTilesMesh();
 
+    // test whether room does own some tiles 
+    bool HasTiles() const;
+
 protected:
     void AttachTiles(const TilesList& terrainTiles);
     void DetachTiles(const TilesList& terrainTiles);
@@ -51,6 +54,7 @@ protected:
     void ReevaluateWallSections();
     
     void ReleaseWallSections();
+    void DetachFromWall(TerrainTile* roomTile);
 
     static void ScanWallSection(TerrainTile* terrainTile, eTileFace faceId, WallSection* section);
     static void ScanWallSection(TerrainTile* terrainTile, eDirection faceDirection, WallSection* section);

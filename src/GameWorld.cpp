@@ -361,6 +361,11 @@ void GameWorld::ReleaseRoomTiles(GenericRoom* roomInstance, const TilesList& roo
         GenericRoom* newRoomInstance = gRoomsManager.CreateRoomInstance(roomInstance->mDefinition, roomInstance->mOwnerID);
         newRoomInstance->AbsorbRoom(roomInstance, segmentTiles);
     });
+
+    if (!roomInstance->HasTiles())
+    {
+        gRoomsManager.DestroyRoomInstance(roomInstance);
+    }
 }
 
 TerrainDefinition* GameWorld::GetLavaTerrain()
