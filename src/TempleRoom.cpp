@@ -26,7 +26,7 @@ TempleRoom::~TempleRoom()
     }
 }
 
-void TempleRoom::OnReconfigure()
+void TempleRoom::Reconfigure()
 {
     TilesList waterTiles;
     ScanWaterPoolTiles(waterTiles);

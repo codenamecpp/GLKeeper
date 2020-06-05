@@ -11,7 +11,7 @@ public:
 
 private:
     // override GenericRoom
-    void OnReconfigure() override;
+    void Reconfigure() override;
 
     // get room tiles for water pool
     void ScanWaterPoolTiles(TilesList& poolTiles);

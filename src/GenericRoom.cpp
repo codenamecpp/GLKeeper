@@ -66,25 +66,31 @@ void GenericRoom::AbsorbRoom(GenericRoom* sourceRoom, const TilesList& targetTil
 
 void GenericRoom::ReleaseTiles(const TilesList& terrainTiles)
 {
-
-    OnReconfigure();
-}
-
-void GenericRoom::ReleaseTiles()
-{
-
-    OnReconfigure();
-}
-
-void GenericRoom::EnlargeRoom(const TilesList& terrainTiles)
-{
-    IncludeTiles(terrainTiles);
+    DetachTiles(terrainTiles);
 
     ReevaluateOccupationArea();
     ReevaluateInnerSquares();
     ReevaluateWallSections();
 
-    OnReconfigure();
+    Reconfigure();
+}
+
+void GenericRoom::ReleaseTiles()
+{
+    TilesList releasedTiles;
+    releasedTiles.swap(mRoomTiles);
+    ReleaseTiles(releasedTiles);
+}
+
+void GenericRoom::EnlargeRoom(const TilesList& terrainTiles)
+{
+    AttachTiles(terrainTiles);
+
+    ReevaluateOccupationArea();
+    ReevaluateInnerSquares();
+    ReevaluateWallSections();
+
+    Reconfigure();
 }
 
 void GenericRoom::BuildTilesMesh()
@@ -110,7 +116,7 @@ void GenericRoom::UpdateTilesMesh()
     ConstructWalls(gGameWorld.mDungeonBuilder, false);
 }
 
-void GenericRoom::IncludeTiles(const TilesList& terrainTiles)
+void GenericRoom::AttachTiles(const TilesList& terrainTiles)
 {
     // first scan all good tiles and assign room instance to them
     for (TerrainTile* currTile: terrainTiles)
@@ -133,6 +139,34 @@ void GenericRoom::IncludeTiles(const TilesList& terrainTiles)
         
         mRoomTiles.push_back(currTile);
     }
+}
+
+void GenericRoom::DetachTiles(const TilesList& terrainTiles)
+{
+    // unassign removed tiles
+    for (TerrainTile* currTile: terrainTiles)
+    {
+        if (currTile->mBuiltRoom != this)
+            continue;
+
+        currTile->mBuiltRoom = nullptr;
+        currTile->mIsRoomEntrance = false;
+        currTile->mIsRoomInnerTile = false;
+        // remove wall references
+        if (TerrainTile* neighTile = currTile->mNeighbours[eDirection_N]) neighTile->mFaces[eTileFace_SideS].mWallSection = nullptr;
+        if (TerrainTile* neighTile = currTile->mNeighbours[eDirection_E]) neighTile->mFaces[eTileFace_SideW].mWallSection = nullptr;
+        if (TerrainTile* neighTile = currTile->mNeighbours[eDirection_S]) neighTile->mFaces[eTileFace_SideN].mWallSection = nullptr;
+        if (TerrainTile* neighTile = currTile->mNeighbours[eDirection_W]) neighTile->mFaces[eTileFace_SideE].mWallSection = nullptr;
+        // invalidate tiles
+        currTile->InvalidateTileMesh();
+        currTile->InvalidateNeighbourTilesMesh();
+    }
+
+    // cleanup covered tiles
+    cxx::erase_elements_if(mRoomTiles, [](const TerrainTile* terrainTile)
+        {
+            return terrainTile->mRoomTerrain == nullptr;
+        });
 }
 
 void GenericRoom::ReevaluateOccupationArea()
@@ -348,7 +382,7 @@ void GenericRoom::ReleaseWallSections()
             }
             else
             {
-                debug_assert(false);
+                continue;
             }
         }
         gWallSectionsPool.destroy(currentSection);

@@ -43,7 +43,8 @@ public:
     void UpdateTilesMesh();
 
 protected:
-    void IncludeTiles(const TilesList& terrainTiles);
+    void AttachTiles(const TilesList& terrainTiles);
+    void DetachTiles(const TilesList& terrainTiles);
 
     void ReevaluateOccupationArea();
     void ReevaluateInnerSquares();
@@ -61,7 +62,7 @@ protected:
 
     // each time room gets modified it must be reconfigured
     // for example, tiles added or removed, wall sections updated
-    virtual void OnReconfigure() {}
+    virtual void Reconfigure() {}
 
 protected:
     // walls construction
