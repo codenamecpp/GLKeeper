@@ -14,11 +14,17 @@ public:
     RoomInstanceID mInstanceID; // instance unique identifier
     TilesList mRoomTiles;
     Rectangle mOccupationArea; // approximate size in tiles
-    ePlayerID mOwnerIdentifier;
+    ePlayerID mOwnerID;
 
 public:
     GenericRoom(RoomDefinition* definition, ePlayerID owner, RoomInstanceID uid);
     virtual ~GenericRoom();
+
+    // move tiles and objects from other room to this room
+    // @param sourceRoom: Donor
+    // @param targetTiles: Target tiles to absorb
+    void AbsorbRoom(GenericRoom* sourceRoom, const TilesList& targetTiles);
+    void AbsorbRoom(GenericRoom* sourceRoom);
 
     // process single frame logic
     void UpdateFrame();
@@ -27,7 +33,7 @@ public:
     void ReleaseTiles(const TilesList& terrainTiles);
     void ReleaseTiles();
 
-    // expand room with new tiles
+    // expand room with new tiles which must not be owned by any room so far
     void EnlargeRoom(const TilesList& terrainTiles);
 
     // force construct geometries of all room tiles and wall sections

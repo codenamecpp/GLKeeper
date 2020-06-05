@@ -129,18 +129,6 @@ void TerrainManager::UpdateTerrainMesh()
         {
             invalidateRooms.insert(currentTile->mBuiltRoom);
         }
-
-        // traverse each invalidated tile face
-        for (TileFaceData& currTileFace: currentTile->mFaces)
-        {
-            // rooms should rebuild their walls
-            //if (GenericRoom* invalidateRoom = currTileFace.mWallSectionData)
-            //{
-            //    invalidateRooms.insert(invalidateRoom);
-            //}
-            // todo
-
-        }
         // force rebuild mesh
         gGameWorld.mDungeonBuilder.BuildTerrainMesh(currentTile);
     }
@@ -148,7 +136,7 @@ void TerrainManager::UpdateTerrainMesh()
     // ask rooms rebuild themselves
     for (GenericRoom* currentRoom: invalidateRooms)
     {
-        //currentRoom->RefreshGeometries(false); // todo
+        currentRoom->UpdateTilesMesh(); // todo
     }
 
     // todo
@@ -163,20 +151,28 @@ void TerrainManager::UpdateTerrainMesh()
     //    }
     //}
 
-    // reset invalidated flag
     for (TerrainTile* currentTile: mMeshInvalidatedTiles)
     {
         currentTile->mIsMeshInvalidated = false;
+
+        // invalidate terrain mesh chunk
+        GameObject* terrainMeshChunk = GetObjectTerrainFromTile(currentTile->mTileLocation);
+        debug_assert(terrainMeshChunk);
+
+        TerrainMeshComponent* meshComponent = terrainMeshChunk->mRenderableComponent->CastComponent<TerrainMeshComponent>();
+        debug_assert(meshComponent);
+        meshComponent->InvalidateMesh();
     }
+
 
     // update terrain mesh objects
-    for (GameObject* currTerrainMesh: mTerrainMeshArray)
-    {
-        TerrainMeshComponent* meshComponent = currTerrainMesh->GetComponent<TerrainMeshComponent>();
-        debug_assert(meshComponent);
+    //for (GameObject* currTerrainMesh: mTerrainMeshArray)
+    //{
+    //    TerrainMeshComponent* meshComponent = currTerrainMesh->GetComponent<TerrainMeshComponent>();
+    //    debug_assert(meshComponent);
 
-        meshComponent->PrepareRenderResources();
-    }
+    //    meshComponent->PrepareRenderResources();
+    //}
 
     mMeshInvalidatedTiles.clear();
 }
@@ -219,8 +215,6 @@ void TerrainManager::ClearInvalidatedTiles()
 
 void TerrainManager::BuildFullTerrainMesh()
 {
-    mMeshInvalidatedTiles.clear();
-
     // build terrain tiles
     MapTilesIterator tilesIterator = gGameWorld.mMapData.IterateTiles(Point(), gGameWorld.mMapData.mDimensions);
     for (TerrainTile* currMapTile = tilesIterator.NextTile(); currMapTile; 
@@ -447,6 +441,19 @@ GameObject* TerrainManager::CreateObjectWater(const TilesList& tilesArray)
     meshComponent->SetSurfaceParams(DEFAULT_WATER_TRANSLUCENCY, DEFAULT_WATER_WAVE_WIDTH, DEFAULT_WATER_WAVE_HEIGHT, DEFAULT_WATER_WAVE_FREQ, DEFAULT_WATER_LEVEL);
 
     return gameObject;
+}
+
+GameObject* TerrainManager::GetObjectTerrainFromTile(const Point& tileLocation) const
+{
+    int mapsizex = gGameWorld.mMapData.mDimensions.x;
+    int numMeshesPerWidth = mapsizex / TerrainMeshSizeTiles;
+    if ((mapsizex % TerrainMeshSizeTiles) > 0)
+    {
+        ++numMeshesPerWidth;
+    }
+    int chunkIndex = (tileLocation.y / TerrainMeshSizeTiles) * numMeshesPerWidth + (tileLocation.x / TerrainMeshSizeTiles);
+    debug_assert(chunkIndex >= 0 && chunkIndex < (int) mTerrainMeshArray.size());
+    return mTerrainMeshArray[chunkIndex];
 }
 
 void TerrainManager::HighhlightTile(TerrainTile* terrainTile, bool isHighlighted)

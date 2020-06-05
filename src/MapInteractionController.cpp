@@ -349,7 +349,7 @@ void MapInteractionController::ProcessInteractionOnArea(const Rectangle& area)
             return;
 
         // todo
-        //gWorldState.ConstructRoom(ePlayerID_Keeper1, mConstructRoomDef, area);
+        gGameWorld.ConstructRoom(ePlayerID_Keeper1, mConstructRoomDef, area);
         return;
     }
 

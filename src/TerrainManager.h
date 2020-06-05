@@ -45,6 +45,8 @@ private:
     GameObject* CreateObjectLava(const TilesList& tilesArray);
     GameObject* CreateObjectWater(const TilesList& tilesArray);
 
+    GameObject* GetObjectTerrainFromTile(const Point& tileLocation) const;
+
 private:
     std::vector<GameObject*> mWaterLavaMeshArray;
     std::vector<GameObject*> mTerrainMeshArray;

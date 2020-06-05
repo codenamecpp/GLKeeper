@@ -18,7 +18,7 @@ static WallSectionObjectPool gWallSectionsPool;
 GenericRoom::GenericRoom(RoomDefinition* definition, ePlayerID owner, RoomInstanceID uid)
     : mDefinition(definition)
     , mInstanceID(uid)
-    , mOwnerIdentifier(owner)
+    , mOwnerID(owner)
 {
     debug_assert(mDefinition);
 }
@@ -31,6 +31,37 @@ GenericRoom::~GenericRoom()
 void GenericRoom::UpdateFrame()
 {
 
+}
+
+void GenericRoom::AbsorbRoom(GenericRoom* sourceRoom)
+{
+    debug_assert(sourceRoom);
+    debug_assert(sourceRoom != this);
+    debug_assert(mDefinition == sourceRoom->mDefinition);
+    if (sourceRoom == this)
+        return;
+
+    TilesList tilesToAbsorb = sourceRoom->mRoomTiles;
+    sourceRoom->ReleaseTiles();
+    EnlargeRoom(tilesToAbsorb);
+}
+
+void GenericRoom::AbsorbRoom(GenericRoom* sourceRoom, const TilesList& targetTiles)
+{
+    debug_assert(sourceRoom);
+    debug_assert(sourceRoom != this);
+    debug_assert(mDefinition == sourceRoom->mDefinition);
+    if (sourceRoom == this)
+        return;
+
+    TilesList filteredTiles = targetTiles;
+    cxx::erase_elements_if(filteredTiles, [sourceRoom](const TerrainTile* tileData)
+    {
+        return tileData->mBuiltRoom != sourceRoom;
+    });
+
+    sourceRoom->ReleaseTiles(filteredTiles);
+    EnlargeRoom(filteredTiles);
 }
 
 void GenericRoom::ReleaseTiles(const TilesList& terrainTiles)
@@ -64,6 +95,18 @@ void GenericRoom::BuildTilesMesh()
 
 void GenericRoom::UpdateTilesMesh()
 {
+    TilesList invalidTiles;
+    for (TerrainTile* currentTile: mRoomTiles)
+    {
+        if (currentTile->mIsMeshInvalidated)
+        {
+            invalidTiles.push_back(currentTile);
+        }
+    }
+    if (!invalidTiles.empty())
+    {
+        ConstructFloorTiles(gGameWorld.mDungeonBuilder, invalidTiles);
+    }
     ConstructWalls(gGameWorld.mDungeonBuilder, false);
 }
 
@@ -190,7 +233,7 @@ void GenericRoom::ReevaluateWallSections()
             TileFaceData& face = neighbourTile->mFaces[adjacentFaceId];
             if (face.mWallSection) // already processed
             {
-                debug_assert(face.mWallSection->mRoom == this);
+                debug_assert(face.mWallSection->mOwnerRoom == this);
                 continue;
             }
 
@@ -257,7 +300,7 @@ void GenericRoom::ScanWallSectionImpl(TerrainTile* originTile, WallSection* sect
             TerrainTile* neighbourTile = currTile->mNeighbours[section->mFaceDirection];
             debug_assert(neighbourTile);
 
-            if (neighbourTile->mBuiltRoom != section->mRoom)
+            if (neighbourTile->mBuiltRoom != section->mOwnerRoom)
                 return;
 
             if (isHead)

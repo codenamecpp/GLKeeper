@@ -75,7 +75,7 @@ GenericRoom* RoomsManager::GetRoomInstance(RoomTypeID typeIdentifier, ePlayerID 
     for (GenericRoom* currentRoom: mRoomsList)
     {
         if (currentRoom->mDefinition->mRoomType == typeIdentifier && 
-            currentRoom->mOwnerIdentifier == owner)
+            currentRoom->mOwnerID == owner)
         {
             return currentRoom;
         }

@@ -3,7 +3,7 @@
 #include "TerrainTile.h"
 
 WallSection::WallSection(GenericRoom* room)
-    : mRoom(room)
+    : mOwnerRoom(room)
     , mFaceDirection(eDirection_N)
     , mFaceId(eTileFace_SideN)
 {

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "TerrainTile.h"
 #include "TerrainManager.h"
+#include "GameWorld.h"
 
 // Rotations Y
 const glm::mat3 g_TileRotations[5] = 
@@ -58,6 +59,23 @@ void TerrainTile::InvalidateNeighbourTilesMesh()
     {
         currentTile->InvalidateTileMesh();
     }
+}
+
+void TerrainTile::SetTerrain(TerrainDefinition* terrainDefinition)
+{
+    if (terrainDefinition == nullptr)
+    {
+        mRoomTerrain = nullptr;
+        return;
+    }
+
+    if (gGameWorld.IsRoomTypeTerrain(terrainDefinition))
+    {
+        mRoomTerrain = terrainDefinition;
+        return;
+    }
+
+    mBaseTerrain = terrainDefinition;
 }
 
 void TerrainTile::SetTagged(bool isTagged)

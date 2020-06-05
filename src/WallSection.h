@@ -36,7 +36,7 @@ public:
     bool IsEvenTile(TerrainTile* terrainTile) const;
 
 public:
-    GenericRoom* mRoom = nullptr;
+    GenericRoom* mOwnerRoom = nullptr;
     eDirection mFaceDirection;
     eTileFace mFaceId;
     TilesList mMapTiles;

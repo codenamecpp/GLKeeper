@@ -117,73 +117,73 @@ void GameWorld::UnTagTerrain(const Rectangle& tilesArea)
 
 void GameWorld::ConstructRoom(ePlayerID ownerID, RoomDefinition* roomDefinition, const Rectangle& tilesArea)
 {
-    //// collect all tiles available to construction, output array is sorted
-    //TilesList tilesArray;
-    //tilesArray.reserve(tilesArea.w * tilesArea.h);
-    //for (int tiley = 0; tiley < tilesArea.h; ++tiley)
-    //for (int tilex = 0; tilex < tilesArea.w; ++tilex)
-    //{
-    //    Point tileLocation (tilex + tilesArea.x, tiley + tilesArea.y);
+    // collect all tiles available to construction, output array is sorted
+    TilesList tilesArray;
+    tilesArray.reserve(tilesArea.w * tilesArea.h);
+    for (int tiley = 0; tiley < tilesArea.h; ++tiley)
+    for (int tilex = 0; tilex < tilesArea.w; ++tilex)
+    {
+        Point tileLocation (tilex + tilesArea.x, tiley + tilesArea.y);
 
-    //    TerrainTile* currTile = mMapData.GetMapTile(tileLocation);
-    //    if (currTile == nullptr)
-    //        continue;
+        TerrainTile* currTile = mMapData.GetMapTile(tileLocation);
+        if (currTile == nullptr)
+            continue;
 
-    //    if (CanPlaceRoomOnLocation(currTile, ownerID, roomDefinition))
-    //    {
-    //        tilesArray.push_back(currTile);
-    //    }
-    //}
-    //
-    //if (tilesArray.empty()) // nothing to construct
-    //    return;
+        if (CanPlaceRoomOnLocation(currTile, ownerID, roomDefinition))
+        {
+            tilesArray.push_back(currTile);
+        }
+    }
+    
+    if (tilesArray.empty()) // nothing to construct
+        return;
 
-    //std::set<TerrainTile*> processedTiles;
-    //// scan for contiguous segments
-    //for (TerrainTile* currentTile: tilesArray)
-    //{
-    //    // is processed already ?
-    //    if (processedTiles.find(currentTile) != processedTiles.end())
-    //        continue;
+    std::set<TerrainTile*> processedTiles;
+    // scan for contiguous segments
+    for (TerrainTile* currentTile: tilesArray)
+    {
+        // is processed already ?
+        if (processedTiles.find(currentTile) != processedTiles.end())
+            continue;
 
-    //    TilesList segmentTiles;
-    //    MapFloodFillFlags floodfillFlags; // leave default
-    //    mMapData.FloodFill4(segmentTiles, currentTile, tilesArea, floodfillFlags);
-    //    // put into processed set
-    //    for (TerrainTile* processedTile: segmentTiles)
-    //    {
-    //        processedTiles.insert(processedTile);
-    //    }
-    //    
-    //    // find rooms that contacting with current segment and merge them all
-    //    GenericRoom* receivingRoom = nullptr;
-    //    EnumAdjacentRooms(segmentTiles, ownerID, [this, &receivingRoom, roomDefinition](GenericRoom* inspectRoom)
-    //    {
-    //        if (roomDefinition == inspectRoom->mDefinition)
-    //        {
-    //            if (!receivingRoom)
-    //            {
-    //                receivingRoom = inspectRoom;
-    //                return;
-    //            }
-    //            receivingRoom->AbsorbRoom(inspectRoom);
-    //        }
-    //    });
+        TilesList segmentTiles;
+        MapFloodFillFlags floodfillFlags; // leave default
+        mMapData.FloodFill4(segmentTiles, currentTile, tilesArea, floodfillFlags);
+        // put into processed set
+        for (TerrainTile* processedTile: segmentTiles)
+        {
+            processedTiles.insert(processedTile);
+        }
+        
+        // find rooms that contacting with current segment and merge them all
+        GenericRoom* receivingRoom = nullptr;
+        EnumAdjacentRooms(segmentTiles, ownerID, [this, &receivingRoom, roomDefinition](GenericRoom* inspectRoom)
+        {
+            if (roomDefinition == inspectRoom->mDefinition)
+            {
+                if (!receivingRoom)
+                {
+                    receivingRoom = inspectRoom;
+                    return;
+                }
+                receivingRoom->AbsorbRoom(inspectRoom);
+            }
+        });
 
-    //    if (!receivingRoom)
-    //    {
-    //        receivingRoom = gRoomsManager.CreateRoomInstance(roomDefinition, ownerID);
-    //    }
+        if (!receivingRoom)
+        {
+            receivingRoom = gRoomsManager.CreateRoomInstance(roomDefinition, ownerID);
+        }
 
-    //    // add segment tiles to room
-    //    for (TerrainTile* processedTile: segmentTiles)
-    //    {
-    //        debug_assert(processedTile->mRoomInstance == nullptr);
-    //        processedTile->mTerrain = &mScenarioData.mTerrainDefs[roomDefinition->mTerrainType];
-    //        processedTile->mOwnerIdentifier = ownerID;
-    //    }
-    //    receivingRoom->EnlargeRoom(segmentTiles);
-    //}
+        // add segment tiles to room
+        for (TerrainTile* processedTile: segmentTiles)
+        {
+            debug_assert(processedTile->mBuiltRoom == nullptr);
+            processedTile->SetTerrain(&mScenarioData.mTerrainDefs[roomDefinition->mTerrainType]);
+            processedTile->mOwnerID = ownerID;
+        }
+        receivingRoom->EnlargeRoom(segmentTiles);
+    }
 }
 
 void GameWorld::SellRooms(ePlayerID ownerID, const Rectangle& tilesRect)
@@ -446,12 +446,12 @@ void GameWorld::EnumAdjacentRooms(const TilesList& tilesToScan, ePlayerID ownerI
 #define SCAN_NEIGHBOUR_ROOM(neigh_direction)\
     if (TerrainTile* neighbourTile = currentTile->mNeighbours[neigh_direction])\
     {\
-        if (neighbourTile->mOwnerIdentifier == ownerID && neighbourTile->mRoomInstance)\
+        if (neighbourTile->mOwnerID == ownerID && neighbourTile->mBuiltRoom)\
         {\
-            if (processedRooms.find(neighbourTile->mRoomInstance) == processedRooms.end())\
+            if (processedRooms.find(neighbourTile->mBuiltRoom) == processedRooms.end())\
             {\
-                enumProc(neighbourTile->mRoomInstance);\
-                processedRooms.insert(neighbourTile->mRoomInstance);\
+                enumProc(neighbourTile->mBuiltRoom);\
+                processedRooms.insert(neighbourTile->mBuiltRoom);\
             }\
         }\
     }

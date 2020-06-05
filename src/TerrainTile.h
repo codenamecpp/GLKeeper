@@ -51,6 +51,9 @@ public:
     void InvalidateTileMesh();
     void InvalidateNeighbourTilesMesh();
 
+    // apply new terrain type (base or room) to tile
+    void SetTerrain(TerrainDefinition* terrainDefinition);
+
     // mark tile tagged
     void SetTagged(bool isTagged);
 
