@@ -8,14 +8,14 @@
 
 void GameplayGamestate::HandleGamestateEnter()
 {
-    gRenderScene.SetCameraController(&mGodmodeCameraControl);
+    gRenderScene.SetCameraController(&mTopDownCameraControl);
 
     // setup camera
     PlayerDefinition& playerDefinition = gGameWorld.mScenarioData.mPlayerDefs[ePlayerID_Keeper1];
     glm::vec3 cameraTileCoord;
     Point cameraTilePosition(playerDefinition.mStartCameraX, playerDefinition.mStartCameraY);
     GetMapBlockCenter(cameraTilePosition, cameraTileCoord);
-    mGodmodeCameraControl.SetFocusPoint(cameraTileCoord);
+    mTopDownCameraControl.SetFocusPoint(cameraTileCoord);
 
     gGameMain.mFpsWindow.SetWindowShown(true);
 
@@ -79,7 +79,7 @@ void GameplayGamestate::HandleInputEvent(KeyCharEvent& inputEvent)
 
 void GameplayGamestate::HandleScreenResolutionChanged()
 {
-    mGodmodeCameraControl.HandleScreenResolutionChanged();
+    mTopDownCameraControl.HandleScreenResolutionChanged();
 }
 
 bool GameplayGamestate::IsMapInteractionActive() const

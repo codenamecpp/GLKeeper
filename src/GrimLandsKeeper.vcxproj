@@ -210,7 +210,7 @@
     <ClInclude Include="GameObjectComponent.h" />
     <ClInclude Include="GameObjectsManager.h" />
     <ClInclude Include="GenericRoom.h" />
-    <ClInclude Include="GodmodeCameraController.h" />
+    <ClInclude Include="TopDownCameraController.h" />
     <ClInclude Include="TerrainTile.h" />
     <ClInclude Include="GameObjectsDefs.h" />
     <ClInclude Include="GameplayGamestate.h" />
@@ -347,7 +347,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameObjectsManager.cpp" />
     <ClCompile Include="GenericRoom.cpp" />
-    <ClCompile Include="GodmodeCameraController.cpp" />
+    <ClCompile Include="TopDownCameraController.cpp" />
     <ClCompile Include="TerrainTile.cpp" />
     <ClCompile Include="GameplayGamestate.cpp" />
     <ClCompile Include="GameWorld.cpp" />

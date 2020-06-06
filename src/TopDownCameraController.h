@@ -2,10 +2,10 @@
 
 #include "CameraController.h"
 
-class GodmodeCameraController: public CameraController
+class TopDownCameraController: public CameraController
 {
 public:
-    GodmodeCameraController();
+    TopDownCameraController();
 
     // set 3rd person camera params
     // @param yawDegrees, pitchDegrees: Yaw and pitch specified in degrees

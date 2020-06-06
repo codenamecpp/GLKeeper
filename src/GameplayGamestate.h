@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GenericGamestate.h"
-#include "GodmodeCameraController.h"
+#include "TopDownCameraController.h"
 #include "GameplayGameScreen.h"
 #include "MapInteractionController.h"
 
@@ -37,5 +37,5 @@ public:
     bool IsMapInteractionActive() const;
 
 private:
-    GodmodeCameraController mGodmodeCameraControl;
+    TopDownCameraController mTopDownCameraControl;
 };
