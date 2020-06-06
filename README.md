@@ -27,6 +27,9 @@ Run these commands in terminal:
 
 ### Screenshots
 
+Windows 7 x64:
 ![Alt text](/screenshots/0_0_1.png?raw=true "Screenshot")
-
 ![Alt text](/screenshots/0_0_2.png?raw=true "Screenshot")
+
+Linux Lite:
+![Alt text](/screenshots/0_0_3_Linux.png?raw=true "Screenshot")
