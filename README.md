@@ -15,6 +15,16 @@ It is barely started
 * GLFW
 * GLEW
 
+### Compiling on Linux
+
+Before build project make sure to install dependencies:
+* apt install libglew-dev libglm-dev libgl1-mesa-dev xorg-dev clang
+
+Run these commands in terminal:
+* git clone --recurse-submodules https://github.com/codenamecpp/GLKeeper
+* cd GLKeeper
+* make
+
 ### Screenshots
 
 ![Alt text](/screenshots/0_0_1.png?raw=true "Screenshot")
