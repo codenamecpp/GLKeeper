@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Texture2D_Image.h"
-#include "stb_image_write.h"
-#include "stb_image.h"
+#include "3rd_party/stb_image_write.h"
+#include "3rd_party/stb_image.h"
 
 Texture2D_Image::Texture2D_Image()
 {

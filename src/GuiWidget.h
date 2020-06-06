@@ -188,6 +188,24 @@ public:
     GuiWidget* Clone();
     GuiWidget* CloneDeep();
 
+    // try to cast base widget to specific widget class
+    template<typename TargetWidgetClass>
+    inline TargetWidgetClass* CastToWidgetClass()
+    {
+        TargetWidgetClass* resultWidget = nullptr;
+        GuiWidgetMetaClass* target_metaclass = &TargetWidgetClass::MetaClass;
+        for (GuiWidgetMetaClass* currMetaclass = mMetaClass; currMetaclass; 
+            currMetaclass = currMetaclass->mParentClass)
+        {
+            if (target_metaclass == currMetaclass)
+            {
+                resultWidget = (TargetWidgetClass*) this;
+                break;
+            }
+        }
+        return resultWidget;
+    }
+
 protected:
     GuiWidget(GuiWidgetMetaClass* widgetClass);
     // copy properties

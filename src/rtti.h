@@ -51,9 +51,7 @@ namespace cxx
         debug_assert(actual_rtti_type);
         debug_assert(target_rtti_type);
 
-        for (actual_rtti_type; 
-            actual_rtti_type; 
-            actual_rtti_type = actual_rtti_type->mParentType)
+        for (; actual_rtti_type; actual_rtti_type = actual_rtti_type->mParentType)
         {
             if (actual_rtti_type == target_rtti_type)
             {

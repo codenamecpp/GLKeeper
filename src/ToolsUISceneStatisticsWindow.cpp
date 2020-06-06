@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "imgui.h"
+#include "3rd_party/imgui.h"
 #include "ToolsUISceneStatisticsWindow.h"
 
 ToolsUISceneStatisticsWindow::ToolsUISceneStatisticsWindow()

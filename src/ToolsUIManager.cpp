@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "ToolsUIManager.h"
-#include "imgui.h"
+#include "3rd_party/imgui.h"
 #include "GraphicsDevice.h"
 #include "FileSystem.h"
 #include "BinaryInputStream.h"

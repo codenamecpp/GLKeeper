@@ -52,7 +52,7 @@ public:
         }
         if (componentWithType)
         {
-            DeleteComponent(currComponent);
+            DeleteComponent(componentWithType);
         }
     }
 

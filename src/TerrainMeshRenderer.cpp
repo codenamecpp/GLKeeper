@@ -252,7 +252,7 @@ void TerrainMeshRenderer::PrepareRenderdata(TerrainMeshComponent* component)
     {
         component->SetMeshMaterial(imaterial, ebucket.first);
 
-        RenderableComponent::DrawCall& drawCall = component->mDrawCalls[imaterial];
+        TerrainMeshComponent::DrawCall& drawCall = component->mDrawCalls[imaterial];
         drawCall.mMaterialIndex = imaterial;
         drawCall.mTriangleCount = ebucket.second.mTriangleCount;
         drawCall.mVertexCount = ebucket.second.mVertexCount;

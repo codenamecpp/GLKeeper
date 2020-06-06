@@ -3,7 +3,7 @@
 #include "RenderScene.h"
 #include "GraphicsDevice.h"
 #include "WaterLavaMeshComponent.h"
-#include "Cvars.h"
+#include "cvars.h"
 #include "GraphicsDevice.h"
 #include "GpuBuffer.h"
 #include "TerrainTile.h"

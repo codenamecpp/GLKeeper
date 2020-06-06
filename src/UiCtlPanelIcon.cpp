@@ -135,7 +135,7 @@ GuiPictureBox* UiCtlPanelIcon::GetPictureBox(const std::string& name) const
 
     if (GuiWidget* target = mControl->SearchForChild(name))
     {
-        GuiPictureBox* pictureBox = GuiCastWidgetClass<GuiPictureBox>(target);
+        GuiPictureBox* pictureBox = target->CastToWidgetClass<GuiPictureBox>();
         return pictureBox;
     }
     return nullptr;

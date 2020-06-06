@@ -148,9 +148,9 @@ decl_enum_strings(eTileFace);
 
 //
 //   NW   N   NE
-//      \ | /
+//        |  
 //  W <--- ---> E
-//      / | \ 
+//        |   
 //   SW   S   SE
 //
 

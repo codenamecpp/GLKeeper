@@ -165,7 +165,7 @@ public:
     }
     void HandlePerformAction(GuiWidget* targetWidget) override
     {
-        GuiPictureBox* pictureBox = GuiCastWidgetClass<GuiPictureBox>(targetWidget);
+        GuiPictureBox* pictureBox = targetWidget->CastToWidgetClass<GuiPictureBox>();
         if (pictureBox)
         {
             if (mTextureName.empty())

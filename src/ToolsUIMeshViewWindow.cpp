@@ -4,7 +4,7 @@
 #include "FileSystem.h"
 #include "Console.h"
 #include "FileSystemArchive.h"
-#include "imgui.h"
+#include "3rd_party/imgui.h"
 #include "ModelAsset.h"
 #include "ModelAssetsManager.h"
 #include "MeshViewGamestate.h"

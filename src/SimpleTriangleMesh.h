@@ -23,7 +23,7 @@ public:
         int currentCount = (int) mVertices.size();
         if (currentCount < vertexCount)
         {
-            mVertices.resize{vertexCount};
+            mVertices.resize(vertexCount);
         }
     }
 
@@ -31,10 +31,10 @@ public:
     // @param triangleCount: Required number of triangles
     inline void EnsureTriangleCount(int triangleCount)
     {
-        int triangleCount = (int) mTriangles.size();
-        if (triangleCount < triangleCount)
+        int currentCount = (int) mTriangles.size();
+        if (currentCount < triangleCount)
         {
-            mTriangles.resize{triangleCount};
+            mTriangles.resize(triangleCount);
         }
     }
 

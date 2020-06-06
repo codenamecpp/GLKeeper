@@ -132,7 +132,7 @@ void StaticMeshRenderer::PrepareRenderdata(StaticMeshComponent* component)
 
     for (StaticMeshComponent::TriMeshPart& currPart: component->mTriMeshParts)
     {
-        RenderableComponent::DrawCall& drawCall = component->mDrawCalls[iCurentPart];
+        StaticMeshComponent::DrawCall& drawCall = component->mDrawCalls[iCurentPart];
         drawCall.mMaterialIndex = iCurentPart;
         drawCall.mTriangleCount = (int) currPart.mTriangles.size();
         drawCall.mVertexCount = (int) currPart.mVertices.size();
