@@ -33,7 +33,7 @@ bool GameMain::Initialize()
 
     // set initial gamestate
     //SwitchToGameState(&mMeshViewGamestate);
-    gGameWorld.LoadScenario("devmap");
+    gGameWorld.LoadScenario("null");
     SwitchToGameState(&mGameplayGamestate);
 
     //SwitchToGameState(&mGuiTestGamestate);

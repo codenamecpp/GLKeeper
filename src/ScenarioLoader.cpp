@@ -1639,7 +1639,7 @@ bool ScenarioLoader::LoadScenarioData(const std::string& scenario)
             gConsole.LogMessage(eLogMessage_Warning, "Cannot locate scenario data file '%s'", pathEntry.mFilePath.c_str());
             continue;   
         }
-        if (!ReadDataFile(fileStream, pathEntry.mId))
+        if (!ReadDataFile(dataFileStream, pathEntry.mId))
         {
             gConsole.LogMessage(eLogMessage_Warning, "Error reading scenario data file '%s'", pathEntry.mFilePath.c_str());
             return false;
