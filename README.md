@@ -36,7 +36,7 @@ Original Dungeon Keeper 2 game resources required in order to play (GOG or Retai
 Note that GLKeeper must be compiled and configured (optionally) before this step as described above.
 To run it on Linux just type in console:
 * cd GLKeeper
-* run ARGS="-gamedir XXX -mapname YYY"
+* make run ARGS="-gamedir XXX -mapname YYY"
 
 Here XXX is path to original game resources directory and YYY is map name to load.
 
