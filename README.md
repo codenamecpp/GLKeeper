@@ -1,4 +1,8 @@
-# GrimLandsKeeper
+# Grim Lands Keeper [GLKeeper]
+
+![Alt text](/screenshots/logo.png?raw=true "Logo")
+
+
 Open Source Dungeon Keeper 2 Reimplementation
 
 ### Status
