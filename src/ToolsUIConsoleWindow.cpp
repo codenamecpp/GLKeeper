@@ -232,28 +232,7 @@ void ToolsUIConsoleWindow::Exec()
     if (mInputString.empty())
         return;
 
-    // find cvar
-    CVarBase* cvar = nullptr;
-    for (CVarBase* currCvar: gConsole.mConsoleVariables)
-    {
-        if (currCvar->mName == mInputString)
-        {
-            cvar = currCvar;
-            break;
-        }
-    }
-
-    if (cvar)
-    {
-        std::string cvarValue;
-        cvar->GetValueString(cvarValue);
-
-        gConsole.LogMessage(eLogMessage_Info, "'%s' is '%s' (%s)", cvar->mName.c_str(), cvarValue.c_str(), cvar->mDescription.c_str());
-    }
-    else
-    {
-        gConsole.ExecuteCommands(mInputString.c_str());
-    }
+    gConsole.ExecuteCommands(mInputString.c_str());
     MoveInputToHistory();
 }
 

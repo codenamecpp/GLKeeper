@@ -17,7 +17,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 // cvars
-CvarBoolean gCVarRender_DrawTerrainHeightFieldMesh ("r_drawTerrainHeightFieldMesh", false, "Enable draw terrain height field", ConsoleVar_Debug | ConsoleVar_Renderer);
+CvarBoolean gCVarRender_DrawTerrainHeightFieldMesh ("r_drawTerrainHeightField", false, "Enable draw terrain height field mesh", ConsoleVar_Debug | ConsoleVar_Renderer);
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -37,7 +37,7 @@ bool TerrainManager::Initialize()
             if (gCVarRender_DrawTerrainHeightFieldMesh.mValue)
             {
                 gTerrainManager.InitHeightFieldDebugMesh();
-                gTerrainManager.UpdateTerrainMesh();
+                gTerrainManager.UpdateHeightFieldDebugMesh();
             }
             else
             {
@@ -448,9 +448,6 @@ void TerrainManager::InitHeightFieldDebugMesh()
 
 void TerrainManager::FreeHeightFieldDebugMesh()
 {
-    if (!gCVarRender_DrawTerrainHeightFieldMesh.mValue)
-        return;
-
     if (mHeightFieldDebugMesh)
     {
         gGameObjectsManager.DestroyGameObject(mHeightFieldDebugMesh);
@@ -460,9 +457,6 @@ void TerrainManager::FreeHeightFieldDebugMesh()
 
 void TerrainManager::UpdateHeightFieldDebugMesh()
 {
-    if (!gCVarRender_DrawTerrainHeightFieldMesh.mValue)
-        return;
-
     if (mHeightFieldDebugMesh)
     {
         StaticMeshComponent* component = mHeightFieldDebugMesh->GetComponent<StaticMeshComponent>();

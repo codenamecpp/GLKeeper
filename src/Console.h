@@ -7,7 +7,6 @@ class Console: public cxx::noncopyable
     friend class ToolsUIConsoleWindow;
 
 public:
-
     // setup console internal resources, returns false on error
     bool Initialize();
     void Deinit();
@@ -32,6 +31,9 @@ public:
     // parse and execute commands
     // @param commands: Commands string
     void ExecuteCommands(const char* commands);
+
+    // find registered console variable by name
+    CVarBase* GetVariableByName(const std::string& cvarNamee) const;
 
 private:
 

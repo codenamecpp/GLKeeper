@@ -22,12 +22,12 @@ public:
     }
     static bool TryLoadValue(bool& outputValue, const std::string& inputData)
     {
-        if (inputData == "true")
+        if (inputData == "true" || inputData == "1")
         {
             outputValue = true;
             return true;
         }
-        if (inputData == "false")
+        if (inputData == "false" || inputData == "0")
         {
             outputValue = false;
             return true;

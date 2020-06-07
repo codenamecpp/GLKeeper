@@ -46,9 +46,60 @@ void Console::LogMessage(eLogMessage cat, const char* format, ...)
 
 void Console::ExecuteCommands(const char* commands)
 {
-    // todo
+    cxx::string_tokenizer tokenizer(commands);
+    for (;;)
+    {
+        std::string commandName;
+        if (!tokenizer.get_next(commandName, ' '))
+            break;
 
-    gConsole.LogMessage(eLogMessage_Info, "%s", commands);
+        std::string commandParams;
+        if (tokenizer.get_next(commandParams, ';'))
+        {
+            cxx::trim(commandParams);
+        }
+
+        cxx::trim(commandName);
+
+        // cvar
+        if (CVarBase* cvar = GetVariableByName(commandName))
+        {
+            if (commandParams.empty())
+            {
+                // just print current value and info
+                std::string cvarValue;
+                cvar->GetValueString(cvarValue);
+                LogMessage(eLogMessage_Info, "'%s' is '%s' (%s)", cvar->mName.c_str(), cvarValue.c_str(), cvar->mDescription.c_str());
+            }
+            else
+            {
+                // set new value
+                if (cvar->SetValueFromString(commandParams))
+                {
+                    LogMessage(eLogMessage_Info, "New value is '%s'", commandParams.c_str());
+                    
+                }
+                else
+                {
+                    LogMessage(eLogMessage_Warning, "Invalid value '%s'", commandParams.c_str());
+                }
+            }
+        }
+        else
+        {
+            LogMessage(eLogMessage_Warning, "Unknown command %s", commandName.c_str());
+        }
+    }
+}
+
+CVarBase* Console::GetVariableByName(const std::string& cvarNamee) const
+{
+    for (CVarBase* currCvar: mConsoleVariables)
+    {
+        if (currCvar->mName == cvarNamee)
+            return currCvar;
+    }
+    return nullptr;
 }
 
 void Console::Clear()
