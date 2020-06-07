@@ -443,10 +443,10 @@ void GenericRoom::ConstructWalls(DungeonBuilder& builder, bool forceConstructAll
 
     const std::string& meshName = mDefinition->mCompleteResource.mResourceName;
   
-    static const glm::vec3 sTranslationN { 0.0f,                0.0f,   -DUNGEON_CELL_SIZE };
-    static const glm::vec3 sTranslationE { DUNGEON_CELL_SIZE,   0.0f,   0.0f };
-    static const glm::vec3 sTranslationS { 0.0f,                0.0f,   DUNGEON_CELL_SIZE };
-    static const glm::vec3 sTranslationW { -DUNGEON_CELL_SIZE,  0.0f,   0.0f };
+    static const glm::vec3 sTranslationN { 0.0f,                0.0f,   -TERRAIN_BLOCK_SIZE };
+    static const glm::vec3 sTranslationE { TERRAIN_BLOCK_SIZE,   0.0f,   0.0f };
+    static const glm::vec3 sTranslationS { 0.0f,                0.0f,   TERRAIN_BLOCK_SIZE };
+    static const glm::vec3 sTranslationW { -TERRAIN_BLOCK_SIZE,  0.0f,   0.0f };
   
     // get required geometry
     ModelAsset* wall0 = gModelsManager.LoadModelAsset(meshName + "4");
@@ -494,26 +494,26 @@ void GenericRoom::ConstructWalls(DungeonBuilder& builder, bool forceConstructAll
             {  
                 // translate pieces
                 // half-pieces have tiny negative offset
-                glm::vec3 translationL = mTranslation - (mTranslation * (DUNGEON_CELL_HALF_SIZE * 0.5f)); 
-                glm::vec3 translationR = mTranslation - (mTranslation * (DUNGEON_CELL_HALF_SIZE * 0.5f));
+                glm::vec3 translationL = mTranslation - (mTranslation * (TERRAIN_BLOCK_HALF_SIZE * 0.5f)); 
+                glm::vec3 translationR = mTranslation - (mTranslation * (TERRAIN_BLOCK_HALF_SIZE * 0.5f));
   
                 switch (currSection->mFaceDirection)
                 {
                     case eDirection_N :
-                        translationL += glm::vec3(-DUNGEON_CELL_HALF_SIZE * 0.5f, 0.0f, 0.0f);
-                        translationR += glm::vec3(DUNGEON_CELL_HALF_SIZE * 0.5f, 0.0f, 0.0f);
+                        translationL += glm::vec3(-TERRAIN_BLOCK_HALF_SIZE * 0.5f, 0.0f, 0.0f);
+                        translationR += glm::vec3(TERRAIN_BLOCK_HALF_SIZE * 0.5f, 0.0f, 0.0f);
                     break;
                     case eDirection_E : 
-                        translationL += glm::vec3(0.0f, 0.0f, -DUNGEON_CELL_HALF_SIZE * 0.5f);
-                        translationR += glm::vec3(0.0f, 0.0f, DUNGEON_CELL_HALF_SIZE * 0.5f);
+                        translationL += glm::vec3(0.0f, 0.0f, -TERRAIN_BLOCK_HALF_SIZE * 0.5f);
+                        translationR += glm::vec3(0.0f, 0.0f, TERRAIN_BLOCK_HALF_SIZE * 0.5f);
                     break;
                     case eDirection_S : 
-                        translationL += glm::vec3(DUNGEON_CELL_HALF_SIZE * 0.5f, 0.0f, 0.0f);
-                        translationR += glm::vec3(-DUNGEON_CELL_HALF_SIZE * 0.5f, 0.0f, 0.0f);
+                        translationL += glm::vec3(TERRAIN_BLOCK_HALF_SIZE * 0.5f, 0.0f, 0.0f);
+                        translationR += glm::vec3(-TERRAIN_BLOCK_HALF_SIZE * 0.5f, 0.0f, 0.0f);
                     break;
                     case eDirection_W : 
-                        translationL += glm::vec3(0.0f, 0.0f, DUNGEON_CELL_HALF_SIZE * 0.5f);
-                        translationR += glm::vec3(0.0f, 0.0f, -DUNGEON_CELL_HALF_SIZE * 0.5f);
+                        translationL += glm::vec3(0.0f, 0.0f, TERRAIN_BLOCK_HALF_SIZE * 0.5f);
+                        translationR += glm::vec3(0.0f, 0.0f, -TERRAIN_BLOCK_HALF_SIZE * 0.5f);
                     break;
                 }
 

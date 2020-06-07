@@ -513,6 +513,9 @@
     <ClInclude Include="TopDownCameraController.h">
       <Filter>Game\Scene\CameraControllers</Filter>
     </ClInclude>
+    <ClInclude Include="TerrainHeightField.h">
+      <Filter>Game\World</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -807,6 +810,9 @@
     </ClCompile>
     <ClCompile Include="TopDownCameraController.cpp">
       <Filter>Game\Scene\CameraControllers</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainHeightField.cpp">
+      <Filter>Game\World</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

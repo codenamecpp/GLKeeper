@@ -180,6 +180,7 @@
     <ClInclude Include="3rd_party\stb_image.h" />
     <ClInclude Include="AABBTree.h" />
     <ClInclude Include="CreatureDefs.h" />
+    <ClInclude Include="TerrainHeightField.h" />
     <ClInclude Include="TerrainTilesCursor.h" />
     <ClInclude Include="Shaders.h" />
     <ClInclude Include="SimpleTriangleMesh.h" />
@@ -320,6 +321,7 @@
     <ClCompile Include="CommonTypes.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="ConsoleVariable.cpp" />
+    <ClCompile Include="TerrainHeightField.cpp" />
     <ClCompile Include="TerrainTilesCursor.cpp" />
     <ClCompile Include="Shaders.cpp" />
     <ClCompile Include="StaticMeshRenderer.cpp" />

@@ -45,7 +45,7 @@ void WaterLavaMeshComponent::SetWaterLavaTiles(const TilesList& tilesArray)
     for (TerrainTile* currentTile: tilesArray)
     {
         cxx::aabbox currentTileBounds;
-        GetMapBlockBounds(currentTile->mTileLocation, currentTileBounds);
+        GetTerrainBlockBounds(currentTile->mTileLocation, currentTileBounds);
 
         bounds.extend(currentTileBounds);
     }

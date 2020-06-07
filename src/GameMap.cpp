@@ -94,8 +94,8 @@ void GameMap::Clear()
 TerrainTile* GameMap::GetTileFromCoord3d(const glm::vec3& coord)
 {
     Point tileLocation {
-        static_cast<int>((coord.x + DUNGEON_CELL_HALF_SIZE) / DUNGEON_CELL_SIZE),
-        static_cast<int>((coord.z + DUNGEON_CELL_HALF_SIZE) / DUNGEON_CELL_SIZE)
+        static_cast<int>((coord.x + TERRAIN_BLOCK_HALF_SIZE) / TERRAIN_BLOCK_SIZE),
+        static_cast<int>((coord.z + TERRAIN_BLOCK_HALF_SIZE) / TERRAIN_BLOCK_SIZE)
     };
     return GetMapTile(tileLocation);
 }
@@ -230,8 +230,8 @@ void GameMap::ComputeBounds()
 {
     cxx::aabbox minPosBounds;
     cxx::aabbox maxPosBounds;
-    GetMapBlockBounds(Point(0, 0), minPosBounds);
-    GetMapBlockBounds(mDimensions - Point(1, 1), maxPosBounds);
+    GetTerrainBlockBounds(Point(0, 0), minPosBounds);
+    GetTerrainBlockBounds(mDimensions - Point(1, 1), maxPosBounds);
     mBounds = minPosBounds.union_with(maxPosBounds);
 }
 

@@ -97,7 +97,7 @@ void TerrainTilesCursor::SetupCursorMesh()
     }
 
     cxx::aabbox areaBounds;
-    GetMapAreaBounds(mSelectionRect, areaBounds);
+    GetTerrainAreaBounds(mSelectionRect, areaBounds);
 
     // setup selection trimesh
     renderable->mTriMeshParts.resize(1);

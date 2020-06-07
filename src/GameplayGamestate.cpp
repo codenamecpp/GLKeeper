@@ -14,7 +14,7 @@ void GameplayGamestate::HandleGamestateEnter()
     PlayerDefinition& playerDefinition = gGameWorld.mScenarioData.mPlayerDefs[ePlayerID_Keeper1];
     glm::vec3 cameraTileCoord;
     Point cameraTilePosition(playerDefinition.mStartCameraX, playerDefinition.mStartCameraY);
-    GetMapBlockCenter(cameraTilePosition, cameraTileCoord);
+    GetTerrainBlockCenter(cameraTilePosition, cameraTileCoord);
     mTopDownCameraControl.SetFocusPoint(cameraTileCoord);
 
     gGameMain.mFpsWindow.SetWindowShown(true);

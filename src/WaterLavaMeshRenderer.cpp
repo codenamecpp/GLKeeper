@@ -164,15 +164,15 @@ void WaterLavaMeshRenderer::PrepareRenderdata(WaterLavaMeshComponent* component)
 
         const glm::vec3 positions[NumVerticesPerTile] = 
         {
-            {middlep.x - DUNGEON_CELL_HALF_SIZE, middlep.y, middlep.z - DUNGEON_CELL_HALF_SIZE},
-            {middlep.x,                          middlep.y, middlep.z - DUNGEON_CELL_HALF_SIZE},
-            {middlep.x + DUNGEON_CELL_HALF_SIZE, middlep.y, middlep.z - DUNGEON_CELL_HALF_SIZE},
-            {middlep.x - DUNGEON_CELL_HALF_SIZE, middlep.y, middlep.z},
+            {middlep.x - TERRAIN_BLOCK_HALF_SIZE, middlep.y, middlep.z - TERRAIN_BLOCK_HALF_SIZE},
+            {middlep.x,                          middlep.y, middlep.z - TERRAIN_BLOCK_HALF_SIZE},
+            {middlep.x + TERRAIN_BLOCK_HALF_SIZE, middlep.y, middlep.z - TERRAIN_BLOCK_HALF_SIZE},
+            {middlep.x - TERRAIN_BLOCK_HALF_SIZE, middlep.y, middlep.z},
             middlep,
-            {middlep.x + DUNGEON_CELL_HALF_SIZE, middlep.y, middlep.z},
-            {middlep.x - DUNGEON_CELL_HALF_SIZE, middlep.y, middlep.z + DUNGEON_CELL_HALF_SIZE},
-            {middlep.x,                          middlep.y, middlep.z + DUNGEON_CELL_HALF_SIZE},
-            {middlep.x + DUNGEON_CELL_HALF_SIZE, middlep.y, middlep.z + DUNGEON_CELL_HALF_SIZE},
+            {middlep.x + TERRAIN_BLOCK_HALF_SIZE, middlep.y, middlep.z},
+            {middlep.x - TERRAIN_BLOCK_HALF_SIZE, middlep.y, middlep.z + TERRAIN_BLOCK_HALF_SIZE},
+            {middlep.x,                          middlep.y, middlep.z + TERRAIN_BLOCK_HALF_SIZE},
+            {middlep.x + TERRAIN_BLOCK_HALF_SIZE, middlep.y, middlep.z + TERRAIN_BLOCK_HALF_SIZE},
         };
 
         const glm::vec2 tcoordsp = {
