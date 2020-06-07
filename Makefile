@@ -21,7 +21,7 @@ clean:
 	make -C .build clean
 
 run:
-	./bin/glkeeper-debug -gamedir ../games/dk2
+	./bin/glkeeper-debug $(ARGS)
 
 builddir: 
 	test -d .build || mkdir .build

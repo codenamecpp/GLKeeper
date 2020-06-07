@@ -33,8 +33,17 @@ bool GameMain::Initialize()
 
     // set initial gamestate
     //SwitchToGameState(&mMeshViewGamestate);
-    gGameWorld.LoadScenario("null");
-    SwitchToGameState(&mGameplayGamestate);
+    if (!gSystem.mStartupParams.mStartupMapName.empty())
+    {
+        if (gGameWorld.LoadScenario(gSystem.mStartupParams.mStartupMapName))
+        {
+            SwitchToGameState(&mGameplayGamestate);
+        }
+    }
+    else
+    {
+        gConsole.LogMessage(eLogMessage_Info, "Startup map is not specified");
+    }
 
     //SwitchToGameState(&mGuiTestGamestate);
 

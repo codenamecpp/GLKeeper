@@ -64,6 +64,14 @@ bool SystemStartupParams::ParseStartupParams(int argc, char *argv[])
             continue;
         }
 
+        if (cxx_stricmp(argv[iarg], "-mapname") == 0 && (argc > iarg + 1))
+        {
+            mStartupMapName.assign(argv[iarg + 1]);
+
+            iarg += 2;
+            continue;
+        }
+
         ++iarg;
     }
 
@@ -74,4 +82,5 @@ void SystemStartupParams::Clear()
 {
     mCustomConfigFileName.clear();
     mDungeonKeeperGamePath.clear();
+    mStartupMapName.clear();
 }

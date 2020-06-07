@@ -30,6 +30,9 @@ public:
     // full path to dungeon keeper game folder
     std::string mDungeonKeeperGamePath;
 
+    // custom map name to load
+    std::string mStartupMapName;
+
 public:
     SystemStartupParams() = default;
 
