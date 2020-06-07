@@ -30,9 +30,6 @@ public:
     // setup water or lava surface parameters
     void SetSurfaceParams(float translucency, float waveWidth, float waveHeight, float waveFreq, float waterlineHeight);
 
-    void InvalidateMesh();
-    bool IsMeshInvalidated() const;
-
     // setup water or lava surface texture
     // @param diffuseTexture: Texture 2d
     void SetSurfaceTexture(Texture2D* diffuseTexture);
@@ -45,8 +42,4 @@ public:
     void PrepareRenderResources() override;
     void ReleaseRenderResources() override;
     void RenderFrame(SceneRenderContext& renderContext) override;
-
-private:
-    // dirty flag indicates that geometry is invalid and must be reuploaded
-    bool mMeshInvalidated; 
 };

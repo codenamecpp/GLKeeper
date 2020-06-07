@@ -29,7 +29,7 @@ public:
     float GetTerrainHeight(float coordx, float coordz) const;
 
     // for debug purposes
-    void GenerateMesh(Vertex3D_TriMesh& outputMesh) const;
+    void GenerateDebugMesh(Vertex3D_TriMesh& outputMesh) const;
 
 private:
     // internal computations

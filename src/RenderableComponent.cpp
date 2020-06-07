@@ -7,6 +7,18 @@ RenderableComponent::RenderableComponent(GameObject* sceneObject)
 {
 }
 
+void RenderableComponent::InvalidateMesh()
+{
+    ClearDrawCalls();
+
+    mMeshInvalidated = true;
+}
+
+bool RenderableComponent::IsMeshInvalidated() const
+{
+    return mMeshInvalidated;
+}
+
 void RenderableComponent::PrepareRenderResources()
 {
     // do nothing
@@ -27,6 +39,14 @@ void RenderableComponent::RegisterForRendering(SceneRenderList& renderList)
     bool hasOpaqueParts = false;
     bool hasTransparentParts = false;
 
+    // force regenerate renderdata
+    if (IsMeshInvalidated())
+    {
+        PrepareRenderResources();
+
+        mMeshInvalidated = false;
+    }
+
     for (const MeshMaterial& currMaterial: mMeshMaterials)
     {
         if (!currMaterial.IsTransparent())
@@ -38,7 +58,7 @@ void RenderableComponent::RegisterForRendering(SceneRenderList& renderList)
             hasTransparentParts = true;
         }
     }
-    
+
     if (hasOpaqueParts)
     {
         renderList.RegisterRenderableComponent(eRenderPass_Opaque, this);

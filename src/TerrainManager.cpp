@@ -181,15 +181,6 @@ void TerrainManager::UpdateTerrainMesh()
 
     UpdateHeightFieldDebugMesh();
 
-    // update terrain mesh objects
-    //for (GameObject* currTerrainMesh: mTerrainMeshArray)
-    //{
-    //    TerrainMeshComponent* meshComponent = currTerrainMesh->GetComponent<TerrainMeshComponent>();
-    //    debug_assert(meshComponent);
-
-    //    meshComponent->PrepareRenderResources();
-    //}
-
     mMeshInvalidatedTiles.clear();
 }
 
@@ -256,15 +247,6 @@ void TerrainManager::BuildFullTerrainMesh()
     }
 
     UpdateHeightFieldDebugMesh();
-
-    // update terrain mesh objects
-    for (GameObject* currTerrainMesh: mTerrainMeshArray)
-    {
-        TerrainMeshComponent* meshComponent = currTerrainMesh->GetComponent<TerrainMeshComponent>();
-        debug_assert(meshComponent);
-
-        meshComponent->PrepareRenderResources();
-    }
 }
 
 void TerrainManager::InitWaterLavaMeshList()
@@ -339,15 +321,6 @@ void TerrainManager::InitWaterLavaMeshList()
 
         // remove used tiles
         cxx::erase_elements(waterTiles, tempTilesArray);
-    }
-
-    // force build mesh
-    for (GameObject* currMesh: mWaterLavaMeshArray)
-    {
-        WaterLavaMeshComponent* meshComponent = currMesh->GetComponent<WaterLavaMeshComponent>();
-        debug_assert(meshComponent);
-
-        meshComponent->PrepareRenderResources();
     }
 }
 
@@ -438,6 +411,7 @@ void TerrainManager::InitHeightFieldDebugMesh()
     {
         mHeightFieldDebugMesh = gGameObjectsManager.CreateGameObject();
         StaticMeshComponent* component = mHeightFieldDebugMesh->AddComponent<StaticMeshComponent>();
+        debug_assert(component);
 
         MeshMaterial material;
         material.mDiffuseTexture = gTexturesManager.mWhiteTexture;
@@ -473,10 +447,9 @@ void TerrainManager::UpdateHeightFieldDebugMesh()
         StaticMeshComponent* component = mHeightFieldDebugMesh->GetComponent<StaticMeshComponent>();
         debug_assert(component);
         component->mTriMeshParts.resize(1);
-        mHeightField.GenerateMesh(component->mTriMeshParts[0]);
+        mHeightField.GenerateDebugMesh(component->mTriMeshParts[0]);
         component->InvalidateMesh();
         component->UpdateBounds();
-        component->PrepareRenderResources();
     }
 }
 

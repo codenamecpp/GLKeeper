@@ -141,7 +141,7 @@ void TerrainMeshRenderer::ReleaseRenderdata(TerrainMeshComponent* component)
         gGraphicsDevice.DestroyBuffer(component->mIndexBuffer);
         component->mIndexBuffer = nullptr;
     }
-    component->ClearDrawCalls();
+    component->InvalidateMesh();
     component->ClearMeshMaterials();
 }
 

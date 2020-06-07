@@ -83,7 +83,7 @@ float TerrainHeightField::GetTerrainHeight(float coordx, float coordz) const
     return 0.0f;
 }
 
-void TerrainHeightField::GenerateMesh(Vertex3D_TriMesh& outputMesh) const
+void TerrainHeightField::GenerateDebugMesh(Vertex3D_TriMesh& outputMesh) const
 {
     const float StepLength = TERRAIN_BLOCK_SIZE / (SubdivideCount * 1.0f);
     const float MaxHeight = TERRAIN_BLOCK_HEIGHT + TERRAIN_FLOOR_LEVEL;

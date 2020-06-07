@@ -232,5 +232,5 @@ void WaterLavaMeshRenderer::ReleaseRenderdata(WaterLavaMeshComponent* component)
         component->mIndexBuffer = nullptr;
     }
 
-    component->ClearDrawCalls();
+    component->InvalidateMesh();
 }

@@ -95,7 +95,7 @@ void AnimatingMeshComponent::SetModelAsset(ModelAsset* modelAsset)
         ++iCurrentMaterial;
     }
 
-    PrepareRenderResources();
+    InvalidateMesh();
     SetAnimationState();
 }
 

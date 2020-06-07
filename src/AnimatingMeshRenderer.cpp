@@ -296,5 +296,5 @@ void AnimatingMeshRenderer::ReleaseRenderdata(AnimatingMeshComponent* component)
     component->mVertexBuffer = nullptr;
     component->mRenderProgram = nullptr;
 
-    component->ClearDrawCalls();
+    component->InvalidateMesh();
 }

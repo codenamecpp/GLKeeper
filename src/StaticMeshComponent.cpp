@@ -9,33 +9,12 @@ StaticMeshComponent::StaticMeshComponent(GameObject* gameObject)
 {
 }
 
-void StaticMeshComponent::InvalidateMesh()
-{
-    if (mTriMeshParts.empty())
-        return;
-
-    mMeshInvalidated = true;
-
-    const int NumMeshParts = (int) mTriMeshParts.size();
-    if (NumMeshParts > GetMaterialsCount())
-    {
-        debug_assert(false);
-        SetMeshMaterialsCount(NumMeshParts);
-    }
-}
-
-bool StaticMeshComponent::IsMeshInvalidated() const
-{
-    return mMeshInvalidated;
-}
-
 void StaticMeshComponent::ClearMesh()
 {
     if (mTriMeshParts.empty())
         return;
 
     mTriMeshParts.clear();
-    ClearDrawCalls();
     InvalidateMesh();
 }
 
@@ -53,11 +32,6 @@ void StaticMeshComponent::UpdateBounds()
 
 void StaticMeshComponent::RenderFrame(SceneRenderContext& renderContext)
 {
-    if (IsMeshInvalidated())
-    {
-        PrepareRenderResources();
-    }
-
     StaticMeshRenderer& renderer = gRenderManager.mStaticMeshRenderer;
     renderer.Render(renderContext, this);
 }
@@ -66,8 +40,6 @@ void StaticMeshComponent::PrepareRenderResources()
 {
     if (!IsMeshInvalidated())
         return;
-
-    mMeshInvalidated = false;
 
     StaticMeshRenderer& renderer = gRenderManager.mStaticMeshRenderer;
     renderer.PrepareRenderdata(this);

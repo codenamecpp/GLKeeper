@@ -11,7 +11,6 @@
 
 TerrainMeshComponent::TerrainMeshComponent(GameObject* gameObject) 
     : RenderableComponent(gameObject)
-    , mMeshInvalidated()
 {
     debug_assert(mGameObject);
     mGameObject->mDebugColor = Color32_Brown;
@@ -19,10 +18,6 @@ TerrainMeshComponent::TerrainMeshComponent(GameObject* gameObject)
 
 void TerrainMeshComponent::RenderFrame(SceneRenderContext& renderContext)
 {
-    if (IsMeshInvalidated())
-    {
-        PrepareRenderResources();
-    }
     TerrainMeshRenderer& renderer = gRenderManager.mTerrainMeshRenderer;
     renderer.Render(renderContext, this);
 }
@@ -50,22 +45,10 @@ void TerrainMeshComponent::SetTerrainArea(const Rectangle& mapArea)
     InvalidateMesh();
 }
 
-void TerrainMeshComponent::InvalidateMesh()
-{
-    mMeshInvalidated = true;
-}
-
-bool TerrainMeshComponent::IsMeshInvalidated() const
-{
-    return mMeshInvalidated;
-}
-
 void TerrainMeshComponent::PrepareRenderResources()
 {
     if (!IsMeshInvalidated())
         return;
-
-    mMeshInvalidated = false;
 
     TerrainMeshRenderer& renderer = gRenderManager.mTerrainMeshRenderer;
     renderer.PrepareRenderdata(this);

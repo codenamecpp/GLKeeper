@@ -178,5 +178,5 @@ void StaticMeshRenderer::ReleaseRenderdata(StaticMeshComponent* component)
         gGraphicsDevice.DestroyBuffer(component->mIndexBuffer);
         component->mIndexBuffer = nullptr;
     }
-    component->ClearDrawCalls();
+    component->InvalidateMesh();
 }

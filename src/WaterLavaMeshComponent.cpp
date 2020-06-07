@@ -12,20 +12,9 @@ WaterLavaMeshComponent::WaterLavaMeshComponent(GameObject* gameObject)
     , mWaveHeight()
     , mWaveFreq()
     , mWaveTime()
-    , mMeshInvalidated()
 {
     debug_assert(mGameObject);
     mGameObject->mDebugColor = Color32_Cyan;
-}
-
-void WaterLavaMeshComponent::InvalidateMesh()
-{
-    mMeshInvalidated = true;
-}
-
-bool WaterLavaMeshComponent::IsMeshInvalidated() const
-{
-    return mMeshInvalidated;
 }
 
 void WaterLavaMeshComponent::ReleaseRenderResources()
@@ -95,11 +84,6 @@ void WaterLavaMeshComponent::UpdateComponent(float deltaTime)
 
 void WaterLavaMeshComponent::RenderFrame(SceneRenderContext& renderContext)
 {
-    if (IsMeshInvalidated())
-    {
-        PrepareRenderResources();
-    }
-
     WaterLavaMeshRenderer& renderer = gRenderManager.mWaterLavaMeshRenderer;
     renderer.Render(renderContext, this);
 }
@@ -108,8 +92,6 @@ void WaterLavaMeshComponent::PrepareRenderResources()
 {
     if (!IsMeshInvalidated())
         return;
-
-    mMeshInvalidated = false;
 
     WaterLavaMeshRenderer& renderer = gRenderManager.mWaterLavaMeshRenderer;
     renderer.PrepareRenderdata(this);

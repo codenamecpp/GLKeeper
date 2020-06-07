@@ -33,6 +33,10 @@ public:
     bool HasOpaqueMeshParts() const;
     bool HasTransparentMeshParts() const;
 
+    // whether renderdata must be renegerated next draw frame
+    void InvalidateMesh();
+    bool IsMeshInvalidated() const;
+
     // prepare/unload renderable component mesh for rendering
     virtual void PrepareRenderResources();
     virtual void ReleaseRenderResources();
@@ -51,6 +55,9 @@ protected:
     void ClearDrawCalls();
 
 protected:
+    
+    // dirty flag indicates that geometry is invalid and must be reuploaded
+    bool mMeshInvalidated = false;
 
     // defines single draw call operation
     struct DrawCall

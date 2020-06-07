@@ -19,9 +19,6 @@ public:
 public:
     StaticMeshComponent(GameObject* gameObject);
 
-    void InvalidateMesh();
-    bool IsMeshInvalidated() const;
-
     // clear all triangle mesh parts and materials
     void ClearMesh();
 
@@ -32,8 +29,4 @@ public:
     void PrepareRenderResources() override;
     void ReleaseRenderResources() override;
     void RenderFrame(SceneRenderContext& renderContext) override;
-
-private:
-    // dirty flag indicates that geometry is invalid and must be reuploaded
-    bool mMeshInvalidated;
 };
