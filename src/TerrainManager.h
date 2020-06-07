@@ -1,11 +1,16 @@
 #pragma once
 
 #include "Texture2D_Image.h"
+#include "TerrainHeightField.h"
 
 // dungeon terrain manager
 class TerrainManager: public cxx::noncopyable
 {
     friend class TerrainMeshRenderer;
+
+public:
+    // readonly
+    TerrainHeightField mHeightField;
 
 public:
     // setup terrain manager internal resources
@@ -41,6 +46,10 @@ private:
     void FreeHighhlightTilesTexture();
     void UpdateHighhlightTilesTexture();
 
+    void InitHeightFieldDebugMesh();
+    void FreeHeightFieldDebugMesh();
+    void UpdateHeightFieldDebugMesh();
+
     GameObject* CreateObjectTerrain(const Rectangle& mapArea);
     GameObject* CreateObjectLava(const TilesList& tilesArray);
     GameObject* CreateObjectWater(const TilesList& tilesArray);
@@ -50,6 +59,8 @@ private:
 private:
     std::vector<GameObject*> mWaterLavaMeshArray;
     std::vector<GameObject*> mTerrainMeshArray;
+
+    GameObject* mHeightFieldDebugMesh = nullptr;
 
     TilesList mMeshInvalidatedTiles;
     TilesList mHighlightTiles;

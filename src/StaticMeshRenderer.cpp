@@ -71,7 +71,7 @@ void StaticMeshRenderer::PrepareRenderdata(StaticMeshComponent* component)
 
     int overallVertexCount = 0;
     int overallTriangleCount = 0;
-    for (StaticMeshComponent::TriMeshPart& currPart: component->mTriMeshParts)
+    for (Vertex3D_TriMesh& currPart: component->mTriMeshParts)
     {
         overallVertexCount += (int) currPart.mVertices.size();
         overallTriangleCount += (int) currPart.mTriangles.size();
@@ -130,7 +130,7 @@ void StaticMeshRenderer::PrepareRenderdata(StaticMeshComponent* component)
     unsigned int vertexDataOffset = 0;
     unsigned int triangleDataOffset = 0;
 
-    for (StaticMeshComponent::TriMeshPart& currPart: component->mTriMeshParts)
+    for (Vertex3D_TriMesh& currPart: component->mTriMeshParts)
     {
         StaticMeshComponent::DrawCall& drawCall = component->mDrawCalls[iCurentPart];
         drawCall.mMaterialIndex = iCurentPart;

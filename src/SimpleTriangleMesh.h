@@ -2,6 +2,8 @@
 
 // simple triangle mesh
 
+#include "VertexFormat.h"
+
 template<typename TVertexFormat>
 class SimpleTriangleMesh
 {
@@ -127,3 +129,6 @@ public:
 
     cxx::aabbox mBoundingBox;
 };
+
+// alias
+using Vertex3D_TriMesh = SimpleTriangleMesh<Vertex3D_Format>;

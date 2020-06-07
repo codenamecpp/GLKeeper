@@ -12,9 +12,9 @@ void TerrainTilesCursor::Initialize()
     mMeshObject = gGameObjectsManager.CreateGameObject();
     if (mMeshObject)
     {
-        mMeshObject->AddComponent<StaticMeshComponent>();
+        StaticMeshComponent* component = mMeshObject->AddComponent<StaticMeshComponent>();
         mMeshObject->mDebugColor.mA = 0; // hide debug box
-        SetupCursorMeshMaterial();
+        SetupCursorMeshMaterial(component);
     }
     debug_assert(mMeshObject);
 }
@@ -101,7 +101,7 @@ void TerrainTilesCursor::SetupCursorMesh()
 
     // setup selection trimesh
     renderable->mTriMeshParts.resize(1);
-    StaticMeshComponent::TriMeshPart& triMesh = renderable->mTriMeshParts[0];
+    Vertex3D_TriMesh& triMesh = renderable->mTriMeshParts[0];
 
     /*
                   /1--------/3
@@ -127,7 +127,7 @@ void TerrainTilesCursor::SetupCursorMesh()
         curr_edge.z += (curr_edge.z > center.z) ? displacement : -displacement;
     }
 
-    auto PushSelectionLine = [&center](StaticMeshComponent::TriMeshPart& trimesh, 
+    auto PushSelectionLine = [&center](Vertex3D_TriMesh& trimesh, 
         const glm::vec3& point_start, 
         const glm::vec3& point_end, bool isDiagonal)
     {
@@ -186,20 +186,14 @@ void TerrainTilesCursor::SetupCursorMesh()
     renderable->UpdateBounds();
 }
 
-void TerrainTilesCursor::SetupCursorMeshMaterial()
+void TerrainTilesCursor::SetupCursorMeshMaterial(StaticMeshComponent* component)
 {
     debug_assert(mMeshObject);
+    debug_assert(component);
 
-    StaticMeshComponent* renderable = mMeshObject->mRenderableComponent->CastComponent<StaticMeshComponent>();
-    if (renderable == nullptr)
-    {
-        debug_assert(false);
-        return;
-    }
+    component->SetMeshMaterialsCount(1);
 
-    renderable->SetMeshMaterialsCount(1);
-
-    MeshMaterial* material = renderable->GetMeshMaterial();
+    MeshMaterial* material = component->GetMeshMaterial();
     debug_assert(material);
 
     material->mRenderStates.mIsDepthWriteEnabled = false;

@@ -21,7 +21,7 @@ public:
 
 private:
     void SetupCursorMesh();
-    void SetupCursorMeshMaterial();
+    void SetupCursorMeshMaterial(StaticMeshComponent* component);
 
 private:
     GameObject* mMeshObject = nullptr;

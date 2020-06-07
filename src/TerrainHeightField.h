@@ -2,6 +2,7 @@
 
 #include "Texture2D_Image.h"
 #include "TerrainTile.h"
+#include "SimpleTriangleMesh.h"
 
 // holds information about terrain height
 class TerrainHeightField
@@ -26,6 +27,9 @@ public:
     //  maximum height is TERRAIN_BLOCK_HEIGHT + TERRAIN_FLOOR_LEVEL
     //  minimum height is 0
     float GetTerrainHeight(float coordx, float coordz) const;
+
+    // for debug purposes
+    void GenerateMesh(Vertex3D_TriMesh& outputMesh) const;
 
 private:
     // internal computations

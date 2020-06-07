@@ -14,8 +14,7 @@ class StaticMeshComponent: public RenderableComponent
 public:
     // mesh data, available for both read and write
     // after making modifications you need invalidate and update bounds manually
-    using TriMeshPart = SimpleTriangleMesh<Vertex3D_Format>;
-    std::vector<TriMeshPart> mTriMeshParts;
+    std::vector<Vertex3D_TriMesh> mTriMeshParts;
 
 public:
     StaticMeshComponent(GameObject* gameObject);

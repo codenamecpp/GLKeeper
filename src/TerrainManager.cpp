@@ -11,6 +11,9 @@
 #include "TerrainMeshComponent.h"
 #include "WaterLavaMeshComponent.h"
 #include "Texture2D.h"
+#include "StaticMeshComponent.h"
+
+//#define DRAW_HEIGHT_FIELD_MESH
 
 const int TerrainMeshSizeTiles = 8; // 8x8 tiles per terrain mesh
                                     
@@ -44,6 +47,9 @@ void TerrainManager::EnterWorld()
     InitTerrainMeshList();    
     InitWaterLavaMeshList();
     InitHighhlightTilesTexture();
+
+    mHeightField.InitHeightField(gGameWorld.mMapData.mDimensions);
+    InitHeightFieldDebugMesh();
 }
 
 void TerrainManager::ClearWorld()
@@ -54,6 +60,9 @@ void TerrainManager::ClearWorld()
 
     mMeshInvalidatedTiles.clear();
     mHighlightTiles.clear();
+
+    mHeightField.Cleanup();
+    FreeHeightFieldDebugMesh();
 }
 
 void TerrainManager::PreRenderScene()
@@ -164,6 +173,13 @@ void TerrainManager::UpdateTerrainMesh()
         meshComponent->InvalidateMesh();
     }
 
+    // update heightfield
+    for (TerrainTile* currentTile: mMeshInvalidatedTiles)
+    {
+        mHeightField.UpdateHeights(currentTile);
+    }
+
+    UpdateHeightFieldDebugMesh();
 
     // update terrain mesh objects
     //for (GameObject* currTerrainMesh: mTerrainMeshArray)
@@ -230,6 +246,16 @@ void TerrainManager::BuildFullTerrainMesh()
     }
 
     ClearInvalidatedTiles();
+
+    // update heightfield
+    tilesIterator.Reset();
+    for (TerrainTile* currMapTile = tilesIterator.NextTile(); currMapTile; 
+        currMapTile = tilesIterator.NextTile())
+    {
+        mHeightField.UpdateHeights(currMapTile);
+    }
+
+    UpdateHeightFieldDebugMesh();
 
     // update terrain mesh objects
     for (GameObject* currTerrainMesh: mTerrainMeshArray)
@@ -401,6 +427,57 @@ void TerrainManager::UpdateHighhlightTilesTexture()
         }
     }
     mHighlightTilesTexture->UpdateTexture(0, pixels);
+}
+
+void TerrainManager::InitHeightFieldDebugMesh()
+{
+#ifndef DRAW_HEIGHT_FIELD_MESH
+    return;
+#endif
+    if (mHeightField.IsInitialized())
+    {
+        mHeightFieldDebugMesh = gGameObjectsManager.CreateGameObject();
+        StaticMeshComponent* component = mHeightFieldDebugMesh->AddComponent<StaticMeshComponent>();
+
+        MeshMaterial material;
+        material.mDiffuseTexture = gTexturesManager.mWhiteTexture;
+        material.mMaterialColor = Color32_Yellow;
+        material.mMaterialColor.mA = 200;
+        material.mRenderStates.mIsFaceCullingEnabled = false;
+        material.mRenderStates.mPolygonFillMode = ePolygonFillMode_WireFrame;
+        material.mRenderStates.mIsAlphaBlendEnabled = true;
+        component->SetMeshMaterialsCount(1);
+        component->SetMeshMaterial(0, material);
+    }
+}
+
+void TerrainManager::FreeHeightFieldDebugMesh()
+{
+#ifndef DRAW_HEIGHT_FIELD_MESH
+    return;
+#endif
+    if (mHeightFieldDebugMesh)
+    {
+        gGameObjectsManager.DestroyGameObject(mHeightFieldDebugMesh);
+        mHeightFieldDebugMesh = nullptr;
+    }
+}
+
+void TerrainManager::UpdateHeightFieldDebugMesh()
+{
+#ifndef DRAW_HEIGHT_FIELD_MESH
+    return;
+#endif
+    if (mHeightFieldDebugMesh)
+    {
+        StaticMeshComponent* component = mHeightFieldDebugMesh->GetComponent<StaticMeshComponent>();
+        debug_assert(component);
+        component->mTriMeshParts.resize(1);
+        mHeightField.GenerateMesh(component->mTriMeshParts[0]);
+        component->InvalidateMesh();
+        component->UpdateBounds();
+        component->PrepareRenderResources();
+    }
 }
 
 GameObject* TerrainManager::CreateObjectTerrain(const Rectangle& mapArea)

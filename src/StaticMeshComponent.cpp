@@ -42,7 +42,7 @@ void StaticMeshComponent::ClearMesh()
 void StaticMeshComponent::UpdateBounds()
 {
     cxx::aabbox bounds;
-    for (TriMeshPart& currMeshPart: mTriMeshParts)
+    for (Vertex3D_TriMesh& currMeshPart: mTriMeshParts)
     {
         currMeshPart.ComputeBounds();
         bounds.extend(currMeshPart.mBoundingBox);
