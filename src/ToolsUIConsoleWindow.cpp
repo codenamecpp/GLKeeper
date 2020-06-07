@@ -246,7 +246,7 @@ void ToolsUIConsoleWindow::Exec()
     if (cvar)
     {
         std::string cvarValue;
-        cvar->GetValueForConsole(cvarValue);
+        cvar->GetValueString(cvarValue);
 
         gConsole.LogMessage(eLogMessage_Info, "'%s' is '%s' (%s)", cvar->mName.c_str(), cvarValue.c_str(), cvar->mDescription.c_str());
     }

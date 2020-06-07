@@ -12,8 +12,14 @@
 #include "WaterLavaMeshComponent.h"
 #include "Texture2D.h"
 #include "StaticMeshComponent.h"
+#include "cvars.h"
 
-//#define DRAW_HEIGHT_FIELD_MESH
+//////////////////////////////////////////////////////////////////////////
+
+// cvars
+CvarBoolean gCVarRender_DrawTerrainHeightFieldMesh ("r_drawTerrainHeightFieldMesh", false, "Enable draw terrain height field", ConsoleVar_Debug | ConsoleVar_Renderer);
+
+//////////////////////////////////////////////////////////////////////////
 
 const int TerrainMeshSizeTiles = 8; // 8x8 tiles per terrain mesh
                                     
@@ -25,11 +31,26 @@ TerrainManager gTerrainManager;
 
 bool TerrainManager::Initialize()
 {
+    gConsole.RegisterVariable(&gCVarRender_DrawTerrainHeightFieldMesh);
+    gCVarRender_DrawTerrainHeightFieldMesh.SetValueChangedCallback([](CVarBase* cvar)
+        {
+            if (gCVarRender_DrawTerrainHeightFieldMesh.mValue)
+            {
+                gTerrainManager.InitHeightFieldDebugMesh();
+                gTerrainManager.UpdateTerrainMesh();
+            }
+            else
+            {
+                gTerrainManager.FreeHeightFieldDebugMesh();
+            }
+        });
+
     return true;
 }
 
 void TerrainManager::Deinit()
 {
+    gConsole.UnregisterVariable(&gCVarRender_DrawTerrainHeightFieldMesh);
     FreeHighhlightTilesTexture();
 }
 
@@ -404,9 +425,9 @@ void TerrainManager::UpdateHighhlightTilesTexture()
 
 void TerrainManager::InitHeightFieldDebugMesh()
 {
-#ifndef DRAW_HEIGHT_FIELD_MESH
-    return;
-#endif
+    if (!gCVarRender_DrawTerrainHeightFieldMesh.mValue)
+        return;
+
     if (mHeightField.IsInitialized())
     {
         mHeightFieldDebugMesh = gGameObjectsManager.CreateGameObject();
@@ -427,9 +448,9 @@ void TerrainManager::InitHeightFieldDebugMesh()
 
 void TerrainManager::FreeHeightFieldDebugMesh()
 {
-#ifndef DRAW_HEIGHT_FIELD_MESH
-    return;
-#endif
+    if (!gCVarRender_DrawTerrainHeightFieldMesh.mValue)
+        return;
+
     if (mHeightFieldDebugMesh)
     {
         gGameObjectsManager.DestroyGameObject(mHeightFieldDebugMesh);
@@ -439,9 +460,9 @@ void TerrainManager::FreeHeightFieldDebugMesh()
 
 void TerrainManager::UpdateHeightFieldDebugMesh()
 {
-#ifndef DRAW_HEIGHT_FIELD_MESH
-    return;
-#endif
+    if (!gCVarRender_DrawTerrainHeightFieldMesh.mValue)
+        return;
+
     if (mHeightFieldDebugMesh)
     {
         StaticMeshComponent* component = mHeightFieldDebugMesh->GetComponent<StaticMeshComponent>();

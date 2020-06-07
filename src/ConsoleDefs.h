@@ -48,3 +48,4 @@ enum
     ConsoleVar_Debug    = (1 << 9),
 };
 
+using CvarChagedCallback = std::function<void(CVarBase* cvar)>;

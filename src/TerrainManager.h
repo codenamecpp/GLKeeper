@@ -29,7 +29,6 @@ public:
     // tile mesh is invalidated and will be regenerated
     void InvalidateTileMesh(TerrainTile* terrainTile);
     void InvalidateTileNeighboursMesh(TerrainTile* terrainTile);
-
     void ClearInvalidatedTiles();
 
     // enable or disable highhlight for tile

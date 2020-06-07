@@ -10,6 +10,23 @@ public:
     int mFlags;
 
 public:
+    // get some cvar flags
+    inline bool IsConst() const { return (mFlags & ConsoleVar_Const) == ConsoleVar_Const; }
+    inline bool IsCheat() const { return (mFlags & ConsoleVar_Cheat) == ConsoleVar_Cheat; }
+
+    // set function which be invoked each time cvar value changes
+    inline void SetValueChangedCallback(CvarChagedCallback callback)
+    {
+        mValueChangedCb = callback;
+    }
+
+    // try set cvar value from console
+    virtual bool SetValueFromString(const std::string& consoleInput) = 0;
+
+    // dump cvar value for console
+    virtual void GetValueString(std::string& outputString) = 0;
+
+protected:
     CVarBase(const std::string& cvarName, const std::string& cvarDescription, int flags)
         : mName(cvarName)
         , mDescription(cvarDescription)
@@ -19,23 +36,23 @@ public:
     virtual ~CVarBase()
     {
     }
-
-    // get some cvar flags
-    inline bool IsConst() const { return (mFlags & ConsoleVar_Const) == ConsoleVar_Const; }
-    inline bool IsCheat() const { return (mFlags & ConsoleVar_Cheat) == ConsoleVar_Cheat; }
-
-    // try set cvar value from console
-    virtual bool SetValueFromConsole(const std::string& consoleInput) = 0;
-
-    // dump cvar value for console
-    virtual void GetValueForConsole(std::string& outputString) = 0;
+    // invoke callback on cvar value changed
+    inline void OnCvarValueChanged()
+    {
+        if (mValueChangedCb)
+        {
+            mValueChangedCb(this);
+        }
+    }
+protected:
+    CvarChagedCallback mValueChangedCb;
 };
 
 //////////////////////////////////////////////////////////////////////////
 
 // generic console variable implementation
 template<typename TCvarValue, typename TCvarValueHandler>
-class ConsoleVariable: public CVarBase
+class ConsoleVariable final: public CVarBase
 {
 public:
     // readonly
@@ -52,7 +69,7 @@ public:
     }
 
     // set value from console
-    bool SetValueFromConsole(const std::string& consoleInput) override
+    bool SetValueFromString(const std::string& consoleInput) override
     {
         TCvarValue temporaryValue;
         if (TCvarValueHandler::TryLoadValue(temporaryValue, consoleInput))
@@ -63,6 +80,8 @@ public:
                     return true;
 
                 mValue = std::move(temporaryValue);
+
+                OnCvarValueChanged();
                 return true;
             }
         }
@@ -70,7 +89,7 @@ public:
     }
 
     // dump cvar value for console
-    void GetValueForConsole(std::string& outputString) override
+    void GetValueString(std::string& outputString) override
     {
         outputString.clear();
         TCvarValueHandler::SerializeValue(mValue, outputString);
@@ -85,6 +104,8 @@ public:
                 return true;
 
             mValue = cvarValue;
+
+            OnCvarValueChanged();
             return true;
         }
         return false;

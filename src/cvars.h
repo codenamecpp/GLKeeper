@@ -11,3 +11,4 @@ extern CvarBoolean gCvarRender_EnableAnimBlendFrames;
 extern CvarBoolean gCVarRender_DrawWaterAndLava;
 extern CvarBoolean gCVarRender_DrawTerrain;
 extern CvarBoolean gCVarRender_DrawModels;
+extern CvarBoolean gCVarRender_DrawTerrainHeightFieldMesh;
