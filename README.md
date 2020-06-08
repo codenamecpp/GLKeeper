@@ -2,22 +2,24 @@
 
 ![Alt text](/screenshots/logo.png?raw=true "Logo")
 
-
 Open Source Dungeon Keeper 2 Reimplementation
 
-### Status
-It is barely started
+### Current development progress
+Loading some maps, building and selling rooms, terrain tagging, top-down camera control... 
+Not playable whatsoever.
+
+### Features
+* Windows and Linux support
+* Custom engine C++11 / OpenGL 3.2
 
 ### Tools and technologies used
-* C++11
-* OpenGL 3.2
-* Box2D
-* cJSON
-* Dear ImGui
-* STBI
-* GLM math library
-* GLFW
-* GLEW
+* [Box2D](https://github.com/erincatto/box2d)
+* [cJSON](https://github.com/DaveGamble/cJSON) (with some modifications)
+* [Dear ImGui](https://github.com/ocornut/imgui)
+* [STBI](https://github.com/nothings/stb)
+* [GLM](https://github.com/g-truc/glm)
+* [GLFW](https://github.com/glfw/glfw)
+* [GLEW](https://github.com/nigels-com/glew)
 
 ### Compiling on Linux
 
@@ -28,6 +30,11 @@ Run these commands in terminal:
 * git clone --recurse-submodules https://github.com/codenamecpp/GLKeeper
 * cd GLKeeper
 * make
+
+### Compiling on Windows
+
+You will need Visual Studio 2015/2017 Community Edition to build project. Before compile, add system environment variable SDKDIR with path where all the dependencies lives. These dependencies are:
+* GLM
 
 ### How to Run
 
