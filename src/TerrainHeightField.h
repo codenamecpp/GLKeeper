@@ -22,11 +22,16 @@ public:
     void ClearHeights();
 
     // get terrain height at specific coordinate
-    // @param coordx, coordz: Point in world space
+    // @param coordinate: Point in world space, 'y' component is ignored
     // @returns height:
     //  maximum height is TERRAIN_BLOCK_HEIGHT + TERRAIN_FLOOR_LEVEL
     //  minimum height is 0
-    float GetTerrainHeight(float coordx, float coordz) const;
+    float GetTerrainHeight(const glm::vec3& coordinate) const;
+    float GetTerrainHeight(float coordx, float coordz) const
+    {
+        const glm::vec3 coordinate(coordx, 0.0f, coordz);
+        return GetTerrainHeight(coordinate);
+    }
 
     // for debug purposes
     void GenerateDebugMesh(Vertex3D_TriMesh& outputMesh) const;
@@ -41,7 +46,7 @@ private:
     struct HeightFieldCell
     {
         // x/y
-        unsigned char mPoints[SubdividePointsCount][SubdividePointsCount];
+        float mPoints[SubdividePointsCount][SubdividePointsCount];
     };
     std::vector<HeightFieldCell> mHeightCells;
     Point mDimensions; // num tiles w x h

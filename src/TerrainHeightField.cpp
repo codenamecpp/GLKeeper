@@ -55,7 +55,7 @@ void TerrainHeightField::UpdateHeights(TerrainTile* terrainTile)
             float h1 = ComputeTerrainHeight(terrainTile->mFaces[eTileFace_Floor], ray);
             float height = glm::clamp((h0 > h1) ? h0 : h1, MinHeight, MaxHeight); // choose max height
             int cellOffset = (terrainTile->mTileLocation.y * mDimensions.x) + (terrainTile->mTileLocation.x);
-            mHeightCells[cellOffset].mPoints[ix][iy] = static_cast<unsigned char>((height / MaxHeight) * 255.0f);
+            mHeightCells[cellOffset].mPoints[ix][iy] = height;
         }
     }
 }
@@ -67,17 +67,60 @@ void TerrainHeightField::ClearHeights()
     memset(mHeightCells.data(), 0, HeightCells * sizeof(HeightFieldCell));
 }
 
-float TerrainHeightField::GetTerrainHeight(float coordx, float coordz) const
+float TerrainHeightField::GetTerrainHeight(const glm::vec3& coordinate) const
 {
+    const float StepLength = TERRAIN_BLOCK_SIZE / (SubdivideCount * 1.0f);
+    const float MaxHeight = TERRAIN_BLOCK_HEIGHT + TERRAIN_FLOOR_LEVEL;
+
     if (IsInitialized())
     {
-        //const float MaxHeight = TERRAIN_BLOCK_HEIGHT + TERRAIN_FLOOR_LEVEL;
-        //const float MinHeight = 0.0f;
-        //if (GameMapTile* currentTile = gWorldState.mDungeonMap.GetTileFromCoord3d(coordx, coordz))
-        //{
-        //    unsigned char height = mData[currentTile->mTileLocation.y * mSizeTilesX + currentTile->mTileLocation.x];
-        //    return height * (maxHeight / 255.0f);
-        //}
+        glm::vec3 coordinateWithinTile;
+        GetCoordinateWithinTerrainBlock(coordinate, coordinateWithinTile);
+
+        Point tileLocation;
+        GetTerrainBlockLocation(coordinate, tileLocation);
+
+        tileLocation.x = glm::clamp(tileLocation.x, 0, mDimensions.x - 1);
+        tileLocation.y = glm::clamp(tileLocation.y, 0, mDimensions.y - 1);
+
+        const HeightFieldCell& cell = mHeightCells[tileLocation.y * mDimensions.x + tileLocation.x];
+
+        // todo: optimize this!
+
+        //  0,0        1,0
+        //    A ------ B
+        //    |     // |
+        //    |   //   |
+        //    | //     |
+        //    C ------ D
+        //  0,1        1,1
+
+        cxx::ray3d ray;
+        ray.mOrigin.x = coordinateWithinTile.x;
+        ray.mOrigin.y = MaxHeight + 1.0f;
+        ray.mOrigin.z = coordinateWithinTile.z;
+        ray.mDirection = -SceneAxisY;
+
+        glm::vec3 output;
+        for (int cell_y = 0; cell_y < SubdivideCount; ++cell_y)
+        for (int cell_x = 0; cell_x < SubdivideCount; ++cell_x)
+        {
+            glm::vec3 pA ((cell_x + 0) * StepLength, cell.mPoints[cell_x + 0][cell_y + 0], (cell_y + 0) * StepLength);
+            glm::vec3 pB ((cell_x + 1) * StepLength, cell.mPoints[cell_x + 1][cell_y + 0], (cell_y + 0) * StepLength);
+            glm::vec3 pC ((cell_x + 0) * StepLength, cell.mPoints[cell_x + 0][cell_y + 1], (cell_y + 1) * StepLength);
+            glm::vec3 pD ((cell_x + 1) * StepLength, cell.mPoints[cell_x + 1][cell_y + 1], (cell_y + 1) * StepLength);
+
+            // upper triangle
+            if (cxx::intersects(ray, pA, pC, pB, output))
+            {
+                return output.y;
+            }
+            // lower triangle
+            if (cxx::intersects(ray, pC, pD, pB, output))
+            {
+                return output.y;
+            }
+        }
         return TERRAIN_FLOOR_LEVEL;
     }
     return 0.0f;
@@ -107,7 +150,7 @@ void TerrainHeightField::GenerateDebugMesh(Vertex3D_TriMesh& outputMesh) const
         {
             Vertex3D vertex;
             vertex.mPosition.x = blockCoordinate.x + (pointx * StepLength);
-            vertex.mPosition.y = 0.024f + MaxHeight * (cell.mPoints[pointx][pointy] / 255.0f);
+            vertex.mPosition.y = 0.024f + cell.mPoints[pointx][pointy];
             vertex.mPosition.z = blockCoordinate.z + (pointy * StepLength);
             outputMesh.mVertices.push_back(vertex);
         }

@@ -18,7 +18,6 @@ public:
     GuiTestGamestate mGuiTestGamestate;
 
 public:
-
     // setup internal game resources and gamestates
     bool Initialize();
     void Deinit();

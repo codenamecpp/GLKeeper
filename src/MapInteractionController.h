@@ -17,6 +17,9 @@ public:
     // specified if mode eMapInteractionMode_ConstructTraps
     GameObjectDefinition* mConstructTrapDef = nullptr;
 
+    // current mouse position in world space
+    glm::vec3 mCoordinateUnderCursor;
+
 public:
     MapInteractionController();
 

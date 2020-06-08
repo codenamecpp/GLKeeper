@@ -359,6 +359,22 @@ inline void GetTerrainBlockCoordinate(const Point& blockLocation, glm::vec3& out
     outputCoord.z = (blockLocation.y * TERRAIN_BLOCK_SIZE) - TERRAIN_BLOCK_HALF_SIZE;
 }
 
+// convert world coordinate to game map block logical location
+// @param coordinate: World space
+// @param blockLocation: Logical x,y
+inline void GetTerrainBlockLocation(const glm::vec3& coordinate, Point& blockLocation)
+{
+    blockLocation.x = static_cast<int>((coordinate.x + TERRAIN_BLOCK_HALF_SIZE) / TERRAIN_BLOCK_SIZE);
+    blockLocation.y = static_cast<int>((coordinate.z + TERRAIN_BLOCK_HALF_SIZE) / TERRAIN_BLOCK_SIZE);
+}
+
+inline void GetCoordinateWithinTerrainBlock(const glm::vec3& coordinateWithinWorld, glm::vec3& coordinateWithinBlock)
+{
+    coordinateWithinBlock.x = glm::mod(coordinateWithinWorld.x + TERRAIN_BLOCK_HALF_SIZE, TERRAIN_BLOCK_SIZE);
+    coordinateWithinBlock.y = coordinateWithinWorld.y;
+    coordinateWithinBlock.z = glm::mod(coordinateWithinWorld.z + TERRAIN_BLOCK_HALF_SIZE, TERRAIN_BLOCK_SIZE);
+}
+
 enum eMapInteractionMode
 {
     eMapInteractionMode_Free, // can tag terrain, pick creatures, interact with objects

@@ -30,6 +30,7 @@ void MapInteractionController::ResetState()
     mConstructRoomDef = nullptr;
     mConstructTrapDef = nullptr;
     mSelectionStartTile = nullptr;
+    mCoordinateUnderCursor = {0.0f, 0.0f, 0.0f};
 }
 
 void MapInteractionController::SetRoomsConstruction(RoomDefinition* roomDefinition)
@@ -190,7 +191,9 @@ void MapInteractionController::ScanHoveredTile()
 
     float coordx = ray3d.mOrigin.x + ray3d.mDirection.x * distanceNear;
     float coordz = ray3d.mOrigin.z + ray3d.mDirection.z * distanceNear;
-    mHoveredTile = gGameWorld.mMapData.GetTileFromCoord3d(glm::vec3(coordx, 0.0f, coordz));
+
+    mCoordinateUnderCursor = glm::vec3(coordx, 0.0f, coordz);
+    mHoveredTile = gGameWorld.mMapData.GetTileFromCoord3d(mCoordinateUnderCursor);
 }
 
 bool MapInteractionController::GetTerrainSelectionArea(Rectangle& selectionArea) const

@@ -93,10 +93,8 @@ void GameMap::Clear()
 
 TerrainTile* GameMap::GetTileFromCoord3d(const glm::vec3& coord)
 {
-    Point tileLocation {
-        static_cast<int>((coord.x + TERRAIN_BLOCK_HALF_SIZE) / TERRAIN_BLOCK_SIZE),
-        static_cast<int>((coord.z + TERRAIN_BLOCK_HALF_SIZE) / TERRAIN_BLOCK_SIZE)
-    };
+    Point tileLocation;
+    GetTerrainBlockLocation(coord, tileLocation);
     return GetMapTile(tileLocation);
 }
 
