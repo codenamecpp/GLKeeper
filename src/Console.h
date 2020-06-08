@@ -28,6 +28,11 @@ public:
     bool UnregisterVariable(CVarBase* consoleVariable);
     void UnregisterAllVariablesWithFlags(int flags);
 
+    // manage console functions
+    void RegisterFunction(const std::string& funcName, const std::string& funcDesc, ConsoleFuncExecuteCallback callback);
+    void UnregisterFunction(const std::string& funcName);
+    bool IsFunctionRegistered(const std::string& funcName) const;
+
     // parse and execute commands
     // @param commands: Commands string
     void ExecuteCommands(const char* commands);
@@ -36,7 +41,12 @@ public:
     CVarBase* GetVariableByName(const std::string& cvarNamee) const;
 
 private:
+    struct FunctionStruct;
+    FunctionStruct* GetFunction(const std::string& funcName);
 
+    void RegisterStandardFunctions();
+
+private:
     struct LineStruct
     {
         eLogMessage mMessageCategory;
@@ -48,6 +58,24 @@ private:
 
     // registered console variables
     std::vector<CVarBase*> mConsoleVariables;
+
+    struct FunctionStruct
+    {
+    public:
+        FunctionStruct(const std::string& funcName, const std::string& funcDesc, ConsoleFuncExecuteCallback executeCallback)
+            : mName(funcName)
+            , mDescription(funcDesc)
+            , mExecuteCallback(executeCallback)
+        {
+        }
+    public:
+        std::string mName;
+        std::string mDescription;
+        ConsoleFuncExecuteCallback mExecuteCallback;
+    };
+
+    // registered console functions
+    std::vector<FunctionStruct> mConsoleFunctions;
 };
 
 extern Console gConsole;

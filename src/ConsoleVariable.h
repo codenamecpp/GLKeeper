@@ -1,13 +1,16 @@
 #pragma once
 
+#include "ConsoleDefs.h"
+
 // console variable base class, not intended for direct usage
-class CVarBase
+class CVarBase: public cxx::noncopyable
 {
 public:
+    const std::string mName;
+    const std::string mDescription;
+
     // readonly
-    std::string mName;
-    std::string mDescription;
-    int mFlags;
+    ConsoleVarFlags mFlags;
 
 public:
     // get some cvar flags
@@ -27,7 +30,7 @@ public:
     virtual void GetValueString(std::string& outputString) = 0;
 
 protected:
-    CVarBase(const std::string& cvarName, const std::string& cvarDescription, int flags)
+    CVarBase(const std::string& cvarName, const std::string& cvarDescription, ConsoleVarFlags flags)
         : mName(cvarName)
         , mDescription(cvarDescription)
         , mFlags(flags)
@@ -51,30 +54,32 @@ protected:
 //////////////////////////////////////////////////////////////////////////
 
 // generic console variable implementation
-template<typename TCvarValue, typename TCvarValueHandler>
+template<typename TCvarValue>
 class ConsoleVariable final: public CVarBase
 {
 public:
+    using TValueHandler = typename ConsoleValueHandler<TCvarValue>;
+
     // readonly
     TCvarValue mValue;
     TCvarValue mDefaultValue;
 
 public:
-    ConsoleVariable(const std::string& cvarName, TCvarValue&& cvarValue, const std::string& cvarDescription, int flags)
+    ConsoleVariable(const std::string& cvarName, TCvarValue&& cvarValue, const std::string& cvarDescription, ConsoleVarFlags flags)
         : CVarBase(cvarName, cvarDescription, flags)
         , mValue(cvarValue)
         , mDefaultValue(cvarValue)
     {
-        TCvarValueHandler::ValidateValue(cvarValue);
+        TValueHandler::ValidateValue(cvarValue);
     }
 
     // set value from console
     bool SetValueFromString(const std::string& consoleInput) override
     {
         TCvarValue temporaryValue;
-        if (TCvarValueHandler::TryLoadValue(temporaryValue, consoleInput))
+        if (TValueHandler::TryLoadValue(temporaryValue, consoleInput))
         {
-            if (TCvarValueHandler::ValidateValue(temporaryValue))
+            if (TValueHandler::ValidateValue(temporaryValue))
             {
                 if (mValue == temporaryValue)
                     return true;
@@ -92,13 +97,13 @@ public:
     void GetValueString(std::string& outputString) override
     {
         outputString.clear();
-        TCvarValueHandler::SerializeValue(mValue, outputString);
+        TValueHandler::SerializeValue(mValue, outputString);
     }
 
     // set value directly from code
     inline bool SetValue(const TCvarValue& cvarValue)
     {
-        if (TCvarValueHandler::ValidateValue(cvarValue))
+        if (TValueHandler::ValidateValue(cvarValue))
         {
             if (mValue == cvarValue) // same value
                 return true;

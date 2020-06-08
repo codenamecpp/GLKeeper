@@ -3,38 +3,25 @@
 // forwards
 class CVarBase;
 
-template<typename TCvarValue, typename TCvarValueHandler>
+template<typename TValue>
 class ConsoleVariable;
 
-class CvarBooleanValueHandler;
-using CvarBoolean = ConsoleVariable<bool, CvarBooleanValueHandler>;
+template<typename TValue>
+class ConsoleValueHandler;
 
-class CvarFloatValueHandler;
-using CvarFloat = ConsoleVariable<float, CvarFloatValueHandler>;
-
-class CvarIntegerValueHandler;
-using CvarInteger = ConsoleVariable<int, CvarIntegerValueHandler>;
-
-class CvarStringValueHandler;
-using CvarString = ConsoleVariable<std::string, CvarStringValueHandler>;
-
-class CvarVector2ValueHandler;
-using CvarVector2 = ConsoleVariable<glm::vec2, CvarVector2ValueHandler>;
-
-class CvarVector3ValueHandler;
-using CvarVector3 = ConsoleVariable<glm::vec3, CvarVector3ValueHandler>;
-
-class CvarVector4ValueHandler;
-using CvarVector4 = ConsoleVariable<glm::vec4, CvarVector4ValueHandler>;
-
-class CvarPointValueHandler;
-using CvarPoint = ConsoleVariable<Point, CvarPointValueHandler>;
-
-class CvarRectangleValueHandler;
-using CvarRectangle = ConsoleVariable<Rectangle, CvarRectangleValueHandler>;
+// list of predefined cvar types
+using CvarBoolean   = ConsoleVariable<bool>;
+using CvarFloat     = ConsoleVariable<float>;
+using CvarInteger   = ConsoleVariable<int>;
+using CvarString    = ConsoleVariable<std::string>;
+using CvarVector2   = ConsoleVariable<glm::vec2>;
+using CvarVector3   = ConsoleVariable<glm::vec3>;
+using CvarVector4   = ConsoleVariable<glm::vec4>;
+using CvarPoint     = ConsoleVariable<Point>;
+using CvarRectangle = ConsoleVariable<Rectangle>;
 
 // console variable flags
-enum 
+enum ConsoleVarFlags
 {
     ConsoleVar_System   = (1 << 0),
     ConsoleVar_Renderer = (1 << 1),
@@ -48,4 +35,14 @@ enum
     ConsoleVar_Debug    = (1 << 9),
 };
 
+decl_enum_bitwise_operators(ConsoleVarFlags)
+
+
+// array of string arguments passed to console function
+using ConsoleFuncArgs = std::vector<std::string>;
+
+// console variable callback
 using CvarChagedCallback = std::function<void(CVarBase* cvar)>;
+
+// console function callback
+using ConsoleFuncExecuteCallback = std::function<void(const ConsoleFuncArgs& args)>;

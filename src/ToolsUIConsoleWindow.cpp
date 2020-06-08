@@ -120,13 +120,23 @@ int ToolsUIConsoleWindow::TextEditCallback(ImGuiInputTextCallbackData* data)
             if (word_end == word_start)
                 break;
 
-            // Build a list of candidates
+            // build a list of candidates
             std::vector<const char*> candidates;
+
+            // variables
             for (CVarBase* currCvar: gConsole.mConsoleVariables)
             {
                 if (::strncmp(currCvar->mName.c_str(), word_start, (int)(word_end - word_start)) == 0)
                 {
                     candidates.push_back(currCvar->mName.c_str());
+                }
+            }
+            // functions
+            for (Console::FunctionStruct& functionStruct: gConsole.mConsoleFunctions)
+            {
+                if (::strncmp(functionStruct.mName.c_str(), word_start, (int)(word_end - word_start)) == 0)
+                {
+                    candidates.push_back(functionStruct.mName.c_str());
                 }
             }
 

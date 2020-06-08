@@ -3,6 +3,7 @@
 #include "ToolsUIConsoleWindow.h"
 #include "ToolsUIManager.h"
 #include "ConsoleVariable.h"
+#include "System.h"
 
 #define SEND_LOG_TO_STDOUT
 
@@ -10,6 +11,8 @@ Console gConsole;
 
 bool Console::Initialize()
 {
+    RegisterStandardFunctions();
+
     gToolsUIManager.AttachWindow(&gConsoleWindow);
     return true;
 }
@@ -21,6 +24,7 @@ void Console::Deinit()
     Clear();
 
     mConsoleVariables.clear();
+    mConsoleFunctions.clear();
 }
 
 void Console::LogMessage(eLogMessage cat, const char* format, ...)
@@ -85,6 +89,30 @@ void Console::ExecuteCommands(const char* commands)
                 }
             }
         }
+        // function
+        else if (FunctionStruct* func = GetFunction(commandName))
+        {
+            LogMessage(eLogMessage_Info, "%s", commandName.c_str());
+
+            if (func->mExecuteCallback)
+            {
+                ConsoleFuncArgs functionArgsList;
+                if (!commandParams.empty())
+                {
+                    std::string stringBuffer;
+                    for (cxx::string_tokenizer tokenizer(commandParams);;)
+                    {
+                        if (tokenizer.get_next(stringBuffer, ','))
+                        {
+                            functionArgsList.push_back(stringBuffer);
+                            continue;
+                        }
+                        break;
+                    }
+                }
+                func->mExecuteCallback(functionArgsList);
+            }
+        }
         else
         {
             LogMessage(eLogMessage_Warning, "Unknown command %s", commandName.c_str());
@@ -100,6 +128,29 @@ CVarBase* Console::GetVariableByName(const std::string& cvarNamee) const
             return currCvar;
     }
     return nullptr;
+}
+
+Console::FunctionStruct* Console::GetFunction(const std::string& funcName)
+{
+    for (FunctionStruct& currStruct: mConsoleFunctions)
+    {
+        if (currStruct.mName == funcName)
+            return &currStruct;
+    }
+    return nullptr;
+}
+
+void Console::RegisterStandardFunctions()
+{
+    RegisterFunction("clear", "Clear console", [](const ConsoleFuncArgs& args)
+        {
+            gConsole.Clear();
+        });
+
+    RegisterFunction("quit", "Exit application", [](const ConsoleFuncArgs& args)
+        {
+            gSystem.QuitRequest();
+        });
 }
 
 void Console::Clear()
@@ -158,4 +209,27 @@ void Console::UnregisterAllVariablesWithFlags(int flags)
     {
         mConsoleVariables.erase(remove_iterator, mConsoleVariables.end());
     }
+}
+
+void Console::RegisterFunction(const std::string& funcName, const std::string& funcDesc, ConsoleFuncExecuteCallback callback)
+{
+    UnregisterFunction(funcName);
+
+    mConsoleFunctions.emplace_back(funcName, funcDesc, callback);
+}
+
+void Console::UnregisterFunction(const std::string& funcName)
+{
+    cxx::erase_elements_if(mConsoleFunctions, [&funcName](const FunctionStruct& funcStruct)
+        {
+            return funcName == funcStruct.mName;
+        });
+}
+
+bool Console::IsFunctionRegistered(const std::string& funcName) const
+{
+    return cxx::contains_if(mConsoleFunctions, [&funcName](const FunctionStruct& funcStruct)
+        {
+            return funcName == funcStruct.mName;
+        });
 }

@@ -115,15 +115,6 @@ void GameMain::ProcessInputEvent(KeyInputEvent& inputEvent)
         return;
     }
 
-    // exit game
-    if (inputEvent.HasPressed(eKeycode_ESCAPE))
-    {
-        gSystem.QuitRequest();
-
-        inputEvent.SetConsumed();
-        return;
-    }
-
     if (mCurrentGamestate)
     {
         mCurrentGamestate->HandleInputEvent(inputEvent);
