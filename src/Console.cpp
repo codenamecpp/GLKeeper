@@ -92,11 +92,11 @@ void Console::ExecuteCommands(const char* commands)
         // function
         else if (FunctionStruct* func = GetFunction(commandName))
         {
-            LogMessage(eLogMessage_Info, "%s", commandName.c_str());
+            LogMessage(eLogMessage_Info, "%s (%s)", commandName.c_str(), commandParams.c_str());
 
             if (func->mExecuteCallback)
             {
-                ConsoleFuncArgs functionArgsList;
+                ConsoleFuncArgs functionArgs;
                 if (!commandParams.empty())
                 {
                     std::string stringBuffer;
@@ -104,13 +104,13 @@ void Console::ExecuteCommands(const char* commands)
                     {
                         if (tokenizer.get_next(stringBuffer, ','))
                         {
-                            functionArgsList.push_back(stringBuffer);
+                            functionArgs.mArgumentsList.push_back(stringBuffer);
                             continue;
                         }
                         break;
                     }
                 }
-                func->mExecuteCallback(functionArgsList);
+                func->mExecuteCallback(functionArgs);
             }
         }
         else
@@ -142,14 +142,39 @@ Console::FunctionStruct* Console::GetFunction(const std::string& funcName)
 
 void Console::RegisterStandardFunctions()
 {
+    // clear
     RegisterFunction("clear", "Clear console", [](const ConsoleFuncArgs& args)
         {
             gConsole.Clear();
         });
 
+    // quit
     RegisterFunction("quit", "Exit application", [](const ConsoleFuncArgs& args)
         {
             gSystem.QuitRequest();
+        });
+
+    // desc
+    RegisterFunction("desc", "Show variable or function info", [](const ConsoleFuncArgs& args)
+        {
+            std::string identifier;
+            if (!args.ParseArgument(0, identifier))
+            {
+                gConsole.LogMessage(eLogMessage_Warning, "Variable or Function name expected");
+                return;
+            }
+
+            if (CVarBase* cvar = gConsole.GetVariableByName(identifier))
+            {
+                gConsole.LogMessage(eLogMessage_Debug, "%s", cvar->mDescription.c_str());
+                return;
+            }
+
+            if (Console::FunctionStruct* func = gConsole.GetFunction(identifier))
+            {
+                gConsole.LogMessage(eLogMessage_Debug, "%s", func->mDescription.c_str());
+                return;
+            }
         });
 }
 

@@ -59,6 +59,19 @@ template<>
 class ConsoleValueHandler<std::string>
 {
 public:
+    static bool ValidateValue(const std::string& value)
+    {
+        return true;
+    }
+    static void SerializeValue(const std::string& value, std::string& outputData)
+    {
+        outputData.assign(value);
+    }
+    static bool TryLoadValue(std::string& outputValue, const std::string& inputData)
+    {
+        outputValue.assign(inputData);
+        return true;
+    }
 };
 
 //////////////////////////////////////////////////////////////////////////

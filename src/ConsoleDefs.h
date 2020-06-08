@@ -39,7 +39,32 @@ decl_enum_bitwise_operators(ConsoleVarFlags)
 
 
 // array of string arguments passed to console function
-using ConsoleFuncArgs = std::vector<std::string>;
+struct ConsoleFuncArgs
+{
+public:
+    template<typename TValue>
+    inline bool ParseArgument(int argumentIndex, TValue& output) const
+    {
+        if (argumentIndex < (int) mArgumentsList.size())
+        {
+            using ValueHandler = ConsoleValueHandler<TValue>;
+            return ValueHandler::TryLoadValue(output, mArgumentsList[argumentIndex]);
+        }
+        return false;
+    }
+    template<>
+    inline bool ParseArgument<std::string>(int argumentIndex, std::string& output) const
+    {
+        if (argumentIndex < (int) mArgumentsList.size())
+        {
+            output.assign(mArgumentsList[argumentIndex]);
+            return true;
+        }
+        return false;
+    }
+public:
+    std::vector<std::string> mArgumentsList;
+};
 
 // console variable callback
 using CvarChagedCallback = std::function<void(CVarBase* cvar)>;
