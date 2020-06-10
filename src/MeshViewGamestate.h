@@ -32,6 +32,6 @@ public:
 
 private:
     OrbitCameraController mOrbitCameraController;
-    GameObject* mModelObject = nullptr;
+    Entity* mModelObject = nullptr;
     ToolsUIMeshViewWindow mMeshViewWindow;
 };

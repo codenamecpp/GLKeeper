@@ -1,27 +1,24 @@
 #pragma once
 
-#include "GameObjectComponent.h"
+#include "EntityComponent.h"
 #include "GameDefs.h"
 
-class GameObject: public cxx::noncopyable
+class Entity: public cxx::noncopyable
 {
 public:
     Color32 mDebugColor; // color used for debug draw
 
     float mDistanceToCameraSquared; // this value gets updated during scene rendition
 
-    // readonly
-    const GameObjectInstanceID mInstanceID;
-
     // components cache
     TransformComponent* mTransformComponent = nullptr;
     RenderableComponent* mRenderableComponent = nullptr;
 
 public:
-    GameObject(GameObjectInstanceID instanceID);
-    ~GameObject();
+    Entity();
+    ~Entity();
 
-    // process game object update frame
+    // process update frame
     // @param deltaTime: Time since last update
     void UpdateFrame(float deltaTime);
 
@@ -35,14 +32,14 @@ public:
         return newComponent;
     }
 
-    void DeleteComponent(GameObjectComponent* component);
-    void DeleteComponentByID(GameObjectComponentID componentID);
+    void DeleteComponent(EntityComponent* component);
+    void DeleteComponentByID(EntityComponentID componentID);
 
     template<typename TComponent>
     inline void DeleteComponent()
     {
-        GameObjectComponent* componentWithType = nullptr;
-        for (GameObjectComponent* currComponent: mComponents)
+        EntityComponent* componentWithType = nullptr;
+        for (EntityComponent* currComponent: mComponents)
         {
             if (cxx::rtti_cast<TComponent>(currComponent))
             {
@@ -56,11 +53,11 @@ public:
         }
     }
 
-    // iterate all gameobject components    
+    // iterate all components    
     template<typename TProc>
     inline void ForEachComponent(TProc proc) const
     {
-        for (GameObjectComponent* currComponent: mComponents)
+        for (EntityComponent* currComponent: mComponents)
         {
             proc(currComponent);
         }
@@ -73,7 +70,7 @@ public:
     template<typename TComponent>
     inline TComponent* GetComponent() const
     {
-        for (GameObjectComponent* currComponent: mComponents)
+        for (EntityComponent* currComponent: mComponents)
         {
             if (TComponent* componentWithType = cxx::rtti_cast<TComponent>(currComponent))
                 return componentWithType;
@@ -81,8 +78,8 @@ public:
         return nullptr;
     }
 
-    // get gameobject component by its unique identifier
-    GameObjectComponent* GetComponentByID(GameObjectComponentID componentID) const;
+    // get component by its unique identifier
+    EntityComponent* GetComponentByID(EntityComponentID componentID) const;
 
     // test whether object has specific component
     template<typename TComponent>
@@ -94,12 +91,12 @@ public:
         return false;
     }
 
-    bool HasComponentWithID(GameObjectComponentID componentID) const;
+    bool HasComponentWithID(EntityComponentID componentID) const;
 
 private:
-    inline GameObjectComponent* GetComponentByRttiType(const cxx::rtti_type* rttiType) const
+    inline EntityComponent* GetComponentByRttiType(const cxx::rtti_type* rttiType) const
     {
-        for (GameObjectComponent* currComponent: mComponents)
+        for (EntityComponent* currComponent: mComponents)
         {
             if (rttiType == currComponent->get_rtti_type())
                 return currComponent;
@@ -107,9 +104,9 @@ private:
         return nullptr;
     }
 
-    void AttachComponent(GameObjectComponent* component);
+    void AttachComponent(EntityComponent* component);
     void UpdateComponentsCache();
 
 private:
-    std::vector<GameObjectComponent*> mComponents;
+    std::vector<EntityComponent*> mComponents;
 };

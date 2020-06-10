@@ -5,8 +5,8 @@
 #include "RenderScene.h"
 #include "RoomsManager.h"
 #include "GenericRoom.h"
-#include "GameObject.h"
-#include "GameObjectsManager.h"
+#include "Entity.h"
+#include "EntityManager.h"
 #include "TexturesManager.h"
 #include "TerrainMeshComponent.h"
 #include "WaterLavaMeshComponent.h"
@@ -131,16 +131,16 @@ void TerrainManager::InitTerrainMeshList()
             rcmap.h = mapsizey - rcmap.y;
         }
 
-        GameObject* gameObject = CreateObjectTerrain(rcmap);
-        debug_assert(gameObject);
+        Entity* entity = CreateTerrainMesh(rcmap);
+        debug_assert(entity);
     }
 }
 
 void TerrainManager::FreeTerrainMeshList()
 {
-    for (GameObject* currTerrainMesh: mTerrainMeshArray)
+    for (Entity* currTerrainMesh: mTerrainMeshArray)
     {
-        gGameObjectsManager.DestroyGameObject(currTerrainMesh);
+        gEntityManager.DestroyEntity(currTerrainMesh);
     }
     mTerrainMeshArray.clear();
 }
@@ -186,7 +186,7 @@ void TerrainManager::UpdateTerrainMesh()
         currentTile->mIsMeshInvalidated = false;
 
         // invalidate terrain mesh chunk
-        GameObject* terrainMeshChunk = GetObjectTerrainFromTile(currentTile->mTileLocation);
+        Entity* terrainMeshChunk = GetObjectTerrainFromTile(currentTile->mTileLocation);
         debug_assert(terrainMeshChunk);
 
         TerrainMeshComponent* meshComponent = terrainMeshChunk->mRenderableComponent->CastComponent<TerrainMeshComponent>();
@@ -316,7 +316,7 @@ void TerrainManager::InitWaterLavaMeshList()
             continue;
         }
 
-        GameObject* lavaMeshObject = CreateObjectLava(tempTilesArray);
+        Entity* lavaMeshObject = CreateLavaMesh(tempTilesArray);
         debug_assert(lavaMeshObject);
 
         // remove used tiles
@@ -337,7 +337,7 @@ void TerrainManager::InitWaterLavaMeshList()
             continue;
         }
 
-        GameObject* waterMeshObject = CreateObjectWater(tempTilesArray);
+        Entity* waterMeshObject = CreateWaterMesh(tempTilesArray);
         debug_assert(waterMeshObject);
 
         // remove used tiles
@@ -347,9 +347,9 @@ void TerrainManager::InitWaterLavaMeshList()
 
 void TerrainManager::FreeWaterLavaMeshList()
 {
-    for (GameObject* currWaterLavaMesh: mWaterLavaMeshArray)
+    for (Entity* currWaterLavaMesh: mWaterLavaMeshArray)
     {
-        gGameObjectsManager.DestroyGameObject(currWaterLavaMesh);
+        gEntityManager.DestroyEntity(currWaterLavaMesh);
     }
     mWaterLavaMeshArray.clear();
 }
@@ -430,7 +430,7 @@ void TerrainManager::InitHeightFieldDebugMesh()
 
     if (mHeightField.IsInitialized())
     {
-        mHeightFieldDebugMesh = gGameObjectsManager.CreateGameObject();
+        mHeightFieldDebugMesh = gEntityManager.CreateEntity();
         StaticMeshComponent* component = mHeightFieldDebugMesh->AddComponent<StaticMeshComponent>();
         debug_assert(component);
 
@@ -450,7 +450,7 @@ void TerrainManager::FreeHeightFieldDebugMesh()
 {
     if (mHeightFieldDebugMesh)
     {
-        gGameObjectsManager.DestroyGameObject(mHeightFieldDebugMesh);
+        gEntityManager.DestroyEntity(mHeightFieldDebugMesh);
         mHeightFieldDebugMesh = nullptr;
     }
 }
@@ -468,47 +468,47 @@ void TerrainManager::UpdateHeightFieldDebugMesh()
     }
 }
 
-GameObject* TerrainManager::CreateObjectTerrain(const Rectangle& mapArea)
+Entity* TerrainManager::CreateTerrainMesh(const Rectangle& mapArea)
 {
-    GameObject* gameObject = gGameObjectsManager.CreateGameObject();
-    debug_assert(gameObject);
-    mTerrainMeshArray.push_back(gameObject);
+    Entity* entity = gEntityManager.CreateEntity();
+    debug_assert(entity);
+    mTerrainMeshArray.push_back(entity);
 
-    TerrainMeshComponent* meshComponent = gameObject->AddComponent<TerrainMeshComponent>();
+    TerrainMeshComponent* meshComponent = entity->AddComponent<TerrainMeshComponent>();
     meshComponent->SetTerrainArea(mapArea);
 
-    return gameObject;
+    return entity;
 }
 
-GameObject* TerrainManager::CreateObjectLava(const TilesList& tilesArray)
+Entity* TerrainManager::CreateLavaMesh(const TilesList& tilesArray)
 {
-    GameObject* gameObject = gGameObjectsManager.CreateGameObject();
-    debug_assert(gameObject);
-    mWaterLavaMeshArray.push_back(gameObject);
+    Entity* entity = gEntityManager.CreateEntity();
+    debug_assert(entity);
+    mWaterLavaMeshArray.push_back(entity);
 
-    WaterLavaMeshComponent* meshComponent = gameObject->AddComponent<WaterLavaMeshComponent>();
+    WaterLavaMeshComponent* meshComponent = entity->AddComponent<WaterLavaMeshComponent>();
     meshComponent->SetWaterLavaTiles(tilesArray);
     meshComponent->SetSurfaceTexture(gTexturesManager.mLavaTexture);
     meshComponent->SetSurfaceParams(DEFAULT_LAVA_TRANSLUCENCY, DEFAULT_LAVA_WAVE_WIDTH, DEFAULT_LAVA_WAVE_HEIGHT, DEFAULT_LAVA_WAVE_FREQ, DEFAULT_LAVA_LEVEL);
 
-    return gameObject;
+    return entity;
 }
 
-GameObject* TerrainManager::CreateObjectWater(const TilesList& tilesArray)
+Entity* TerrainManager::CreateWaterMesh(const TilesList& tilesArray)
 {
-    GameObject* gameObject = gGameObjectsManager.CreateGameObject();
-    debug_assert(gameObject);
-    mWaterLavaMeshArray.push_back(gameObject);
+    Entity* entity = gEntityManager.CreateEntity();
+    debug_assert(entity);
+    mWaterLavaMeshArray.push_back(entity);
 
-    WaterLavaMeshComponent* meshComponent = gameObject->AddComponent<WaterLavaMeshComponent>();
+    WaterLavaMeshComponent* meshComponent = entity->AddComponent<WaterLavaMeshComponent>();
     meshComponent->SetWaterLavaTiles(tilesArray);
     meshComponent->SetSurfaceTexture(gTexturesManager.mWaterTexture);
     meshComponent->SetSurfaceParams(DEFAULT_WATER_TRANSLUCENCY, DEFAULT_WATER_WAVE_WIDTH, DEFAULT_WATER_WAVE_HEIGHT, DEFAULT_WATER_WAVE_FREQ, DEFAULT_WATER_LEVEL);
 
-    return gameObject;
+    return entity;
 }
 
-GameObject* TerrainManager::GetObjectTerrainFromTile(const Point& tileLocation) const
+Entity* TerrainManager::GetObjectTerrainFromTile(const Point& tileLocation) const
 {
     int mapsizex = gGameWorld.mMapData.mDimensions.x;
     int numMeshesPerWidth = mapsizex / TerrainMeshSizeTiles;

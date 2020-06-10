@@ -1,35 +1,34 @@
 #include "pch.h"
-#include "GameObject.h"
+#include "Entity.h"
 #include "TransformComponent.h"
 #include "RenderableComponent.h"
 
-GameObject::GameObject(GameObjectInstanceID instanceID)
+Entity::Entity()
     : mDebugColor(Color32_Green)
     , mComponents()
-    , mInstanceID(instanceID)
 {
     // add automatically transform component
     AddComponent<TransformComponent>();
 }
 
-GameObject::~GameObject()
+Entity::~Entity()
 {
     DeleteAllComponents();
 }
 
-void GameObject::UpdateFrame(float deltaTime)
+void Entity::UpdateFrame(float deltaTime)
 {
-    for (GameObjectComponent* currComponent: mComponents)
+    for (EntityComponent* currComponent: mComponents)
     {
         currComponent->UpdateComponent(deltaTime);
     }
 }
 
-void GameObject::UpdateComponentsCache()
+void Entity::UpdateComponentsCache()
 {
     // cache transform component
     mTransformComponent = nullptr;
-    for (GameObjectComponent* currComponent: mComponents)
+    for (EntityComponent* currComponent: mComponents)
     {
         mTransformComponent = cxx::rtti_cast<TransformComponent>(currComponent);
         if (mTransformComponent)
@@ -38,7 +37,7 @@ void GameObject::UpdateComponentsCache()
     
     // cache renderable component
     mRenderableComponent = nullptr;
-    for (GameObjectComponent* currComponent: mComponents)
+    for (EntityComponent* currComponent: mComponents)
     {
         mRenderableComponent = cxx::rtti_cast<RenderableComponent>(currComponent);
         if (mRenderableComponent)
@@ -46,15 +45,15 @@ void GameObject::UpdateComponentsCache()
     }
 }
 
-bool GameObject::HasComponentWithID(GameObjectComponentID componentID) const
+bool Entity::HasComponentWithID(EntityComponentID componentID) const
 {
-    if (GameObjectComponent* component = GetComponentByID(componentID))
+    if (EntityComponent* component = GetComponentByID(componentID))
         return true;
 
     return false;
 }
 
-void GameObject::AttachComponent(GameObjectComponent* component)
+void Entity::AttachComponent(EntityComponent* component)
 {
     debug_assert(component);
 
@@ -64,7 +63,7 @@ void GameObject::AttachComponent(GameObjectComponent* component)
     component->InitializeComponent();
 }
 
-void GameObject::DeleteComponent(GameObjectComponent* component)
+void Entity::DeleteComponent(EntityComponent* component)
 {
     if (component)
     {
@@ -76,17 +75,17 @@ void GameObject::DeleteComponent(GameObjectComponent* component)
     debug_assert(component);
 }
 
-void GameObject::DeleteComponentByID(GameObjectComponentID componentID)
+void Entity::DeleteComponentByID(EntityComponentID componentID)
 {
-    if (GameObjectComponent* component = GetComponentByID(componentID))
+    if (EntityComponent* component = GetComponentByID(componentID))
     {
         DeleteComponent(component);
     }
 }
 
-void GameObject::DeleteAllComponents()
+void Entity::DeleteAllComponents()
 {
-    for (GameObjectComponent* currComponent: mComponents)
+    for (EntityComponent* currComponent: mComponents)
     {
         currComponent->DestroyComponent();
     }
@@ -94,9 +93,9 @@ void GameObject::DeleteAllComponents()
     UpdateComponentsCache();
 }
 
-GameObjectComponent* GameObject::GetComponentByID(GameObjectComponentID componentID) const
+EntityComponent* Entity::GetComponentByID(EntityComponentID componentID) const
 {
-    for (GameObjectComponent* currComponent: mComponents)
+    for (EntityComponent* currComponent: mComponents)
     {
         if (currComponent->mComponentID == componentID)
             return currComponent;

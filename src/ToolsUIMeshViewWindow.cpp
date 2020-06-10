@@ -10,7 +10,7 @@
 #include "MeshViewGamestate.h"
 #include "cvars.h"
 #include "AnimatingMeshComponent.h"
-#include "GameObject.h"
+#include "Entity.h"
 
 ToolsUIMeshViewWindow::ToolsUIMeshViewWindow()
 {

@@ -2,15 +2,15 @@
 #include "AnimatingMeshComponent.h"
 #include "ModelAsset.h"
 #include "TexturesManager.h"
-#include "GameObject.h"
+#include "Entity.h"
 #include "TransformComponent.h"
 #include "RenderManager.h"
 
-AnimatingMeshComponent::AnimatingMeshComponent(GameObject* gameObject)
-    : RenderableComponent(gameObject)
+AnimatingMeshComponent::AnimatingMeshComponent(Entity* entity)
+    : RenderableComponent(entity)
 {
-    debug_assert(mGameObject);
-    mGameObject->mDebugColor = Color32_Green;
+    debug_assert(mParentEntity);
+    mParentEntity->mDebugColor = Color32_Green;
 }
 
 void AnimatingMeshComponent::UpdateComponent(float deltaTime)
@@ -269,6 +269,6 @@ void AnimatingMeshComponent::SetAnimationState()
 
 void AnimatingMeshComponent::SetLocalBounds()
 {
-    TransformComponent* transformComponent = mGameObject->mTransformComponent;
+    TransformComponent* transformComponent = mParentEntity->mTransformComponent;
     transformComponent->SetLocalBoundingBox(mModelAsset->mFramesBounds[mAnimState.mFrame0]);
 }

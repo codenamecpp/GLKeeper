@@ -3,18 +3,18 @@
 #include "TransformComponent.h"
 #include "WaterLavaMeshRenderer.h"
 #include "RenderManager.h"
-#include "GameObject.h"
+#include "Entity.h"
 #include "TerrainTile.h"
 
-WaterLavaMeshComponent::WaterLavaMeshComponent(GameObject* gameObject)
-    : RenderableComponent(gameObject)
+WaterLavaMeshComponent::WaterLavaMeshComponent(Entity* entity)
+    : RenderableComponent(entity)
     , mWaveWidth()
     , mWaveHeight()
     , mWaveFreq()
     , mWaveTime()
 {
-    debug_assert(mGameObject);
-    mGameObject->mDebugColor = Color32_Cyan;
+    debug_assert(mParentEntity);
+    mParentEntity->mDebugColor = Color32_Cyan;
 }
 
 void WaterLavaMeshComponent::ReleaseRenderResources()
@@ -38,7 +38,7 @@ void WaterLavaMeshComponent::SetWaterLavaTiles(const TilesList& tilesArray)
 
         bounds.extend(currentTileBounds);
     }
-    TransformComponent* transformComponent = mGameObject->mTransformComponent;
+    TransformComponent* transformComponent = mParentEntity->mTransformComponent;
     transformComponent->SetLocalBoundingBox(bounds);
 
     InvalidateMesh();

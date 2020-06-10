@@ -24,7 +24,7 @@ private:
     void SetupCursorMeshMaterial(StaticMeshComponent* component);
 
 private:
-    GameObject* mMeshObject = nullptr;
+    Entity* mMeshObject = nullptr;
 
     float mCursorEffectTime = 0.0f;
 };

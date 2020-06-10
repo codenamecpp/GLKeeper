@@ -3,8 +3,8 @@
 #include "RenderScene.h"
 #include "WaterLavaMeshComponent.h"
 #include "TerrainTile.h"
-#include "GameObject.h"
-#include "GameObjectsManager.h"
+#include "Entity.h"
+#include "EntityManager.h"
 #include "TexturesManager.h"
 
 #define TEMPLE_WATER_POOL_TRANSLUCENCY  0.90f
@@ -22,7 +22,7 @@ TempleRoom::~TempleRoom()
 {
     if (mWaterPoolObject)
     {
-        gGameObjectsManager.DestroyGameObject(mWaterPoolObject);
+        gEntityManager.DestroyEntity(mWaterPoolObject);
     }
 }
 
@@ -44,7 +44,7 @@ void TempleRoom::Reconfigure()
     // create new water pool mesh
     if (mWaterPoolObject == nullptr)
     {
-        mWaterPoolObject = gGameObjectsManager.CreateGameObject();
+        mWaterPoolObject = gEntityManager.CreateEntity();
 
         WaterLavaMeshComponent* meshComponent = mWaterPoolObject->AddComponent<WaterLavaMeshComponent>();
         meshComponent->SetWaterLavaTiles(waterTiles);

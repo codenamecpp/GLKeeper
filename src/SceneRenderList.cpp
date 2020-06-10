@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SceneRenderList.h"
-#include "GameObject.h"
+#include "Entity.h"
 #include "RenderableComponent.h"
 
 void SceneRenderList::SortOpaqueComponents()
@@ -32,7 +32,7 @@ void SceneRenderList::SortTranslucentComponents()
         std::sort(renderPassList.mElements, renderPassList.mElements + renderPassList.mElementsCount, 
             [](const RenderableComponent* lhs, const RenderableComponent* rhs)
         {
-            return lhs->mGameObject->mDistanceToCameraSquared < rhs->mGameObject->mDistanceToCameraSquared;
+            return lhs->mParentEntity->mDistanceToCameraSquared < rhs->mParentEntity->mDistanceToCameraSquared;
         });
     }
 }

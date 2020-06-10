@@ -1,11 +1,11 @@
 #include "pch.h"
 #include "StaticMeshComponent.h"
 #include "RenderManager.h"
-#include "GameObject.h"
+#include "Entity.h"
 #include "TransformComponent.h"
 
-StaticMeshComponent::StaticMeshComponent(GameObject* gameObject)
-    : RenderableComponent(gameObject)
+StaticMeshComponent::StaticMeshComponent(Entity* entity)
+    : RenderableComponent(entity)
 {
 }
 
@@ -27,7 +27,7 @@ void StaticMeshComponent::UpdateBounds()
         bounds.extend(currMeshPart.mBoundingBox);
     }
 
-    mGameObject->mTransformComponent->SetLocalBoundingBox(bounds);
+    mParentEntity->mTransformComponent->SetLocalBoundingBox(bounds);
 }
 
 void StaticMeshComponent::RenderFrame(SceneRenderContext& renderContext)

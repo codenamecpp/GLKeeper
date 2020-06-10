@@ -702,7 +702,7 @@ bool ScenarioLoader::ReadObjectDefinition(BinaryInputStream* fileStream, GameObj
     READ_FSTREAM_UINT16(fileStream, objectDef.mMiscEffectId);
 
     // object type is not mapped to internal id so it can be red as is
-    READ_FSTREAM_UINT8(fileStream, objectDef.mObjectClass);
+    READ_FSTREAM_UINT8(fileStream, objectDef.mObjectType);
 
     unsigned char initialState;
     READ_FSTREAM_UINT8(fileStream, initialState);
@@ -730,7 +730,7 @@ bool ScenarioLoader::ReadObjectsData(BinaryInputStream* fileStream, int numEleme
         if (!ReadObjectDefinition(fileStream, mScenarioData.mGameObjectDefs[iobject]))
             return false;
 
-        bool correctId = (mScenarioData.mGameObjectDefs[iobject].mObjectClass == iobject);
+        bool correctId = (mScenarioData.mGameObjectDefs[iobject].mObjectType == iobject);
         debug_assert(correctId);
     }
     return true;

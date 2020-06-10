@@ -1,15 +1,15 @@
 #include "pch.h"
 #include "TerrainTilesCursor.h"
-#include "GameObject.h"
+#include "Entity.h"
 #include "StaticMeshComponent.h"
-#include "GameObjectsManager.h"
+#include "EntityManager.h"
 #include "TexturesManager.h"
 #include "TimeManager.h"
 
 void TerrainTilesCursor::Initialize()
 {
     debug_assert(mMeshObject == nullptr);
-    mMeshObject = gGameObjectsManager.CreateGameObject();
+    mMeshObject = gEntityManager.CreateEntity();
     if (mMeshObject)
     {
         StaticMeshComponent* component = mMeshObject->AddComponent<StaticMeshComponent>();
@@ -23,7 +23,7 @@ void TerrainTilesCursor::Deinit()
 {
     if (mMeshObject)
     {
-        gGameObjectsManager.DestroyGameObject(mMeshObject);
+        gEntityManager.DestroyEntity(mMeshObject);
         mMeshObject = nullptr;
     }
     mSelectionRect.w = 0;

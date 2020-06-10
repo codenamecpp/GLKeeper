@@ -31,12 +31,12 @@ public:
     void ProcessInputEvent(KeyInputEvent& inputEvent);
     void ProcessInputEvent(KeyCharEvent& inputEvent);
 
-    // attach renderable game object to scene - it will be rendered 
+    // attach renderable entity to scene - it will be rendered 
     // it is recommended to set transformation and bounding volume before attach
     // @param sceneObject: Target
-    void AttachObject(GameObject* sceneObject);
-    void DetachObject(GameObject* sceneObject);
-    void DetachObjects();
+    void AttachEntity(Entity* sceneObject);
+    void DetachEntity(Entity* sceneObject);
+    void DetachEntities();
 
     // set active scene camera controller
     // @param cameraController: Contoller or null to clear current
@@ -44,7 +44,7 @@ public:
 
     // callback from scene entities
     // Transformation or local bounds of object gets changed
-    void HandleTransformChange(GameObject* sceneObject);
+    void HandleTransformChange(Entity* sceneObject);
 
 private:
     void BuildAABBTree();
@@ -53,8 +53,8 @@ private:
     AABBTree mAABBTree;
     CameraController* mCameraController = nullptr;
     // entities lists
-    std::vector<GameObject*> mTransformObjects;
-    std::vector<GameObject*> mSceneObjects;
+    std::vector<Entity*> mTransformObjects;
+    std::vector<Entity*> mSceneObjects;
 };
 
 extern RenderScene gRenderScene;

@@ -4,7 +4,7 @@
 #include "VertexFormat.h"
 #include "RenderableComponent.h"
 
-// procedural static mesh component of game object
+// procedural static mesh component of entity
 class StaticMeshComponent: public RenderableComponent
 {
     decl_rtti(StaticMeshComponent, RenderableComponent)
@@ -17,7 +17,7 @@ public:
     std::vector<Vertex3D_TriMesh> mTriMeshParts;
 
 public:
-    StaticMeshComponent(GameObject* gameObject);
+    StaticMeshComponent(Entity* entity);
 
     // clear all triangle mesh parts and materials
     void ClearMesh();

@@ -3,7 +3,7 @@
 #include "SceneDefs.h"
 #include "RenderableComponent.h"
 
-// animating model component of game object
+// animating model component of entity
 class AnimatingMeshComponent: public RenderableComponent
 {
     decl_rtti(AnimatingMeshComponent, RenderableComponent)
@@ -19,7 +19,7 @@ public:
     int mPreferredLOD = 0;
 
 public:
-    AnimatingMeshComponent(GameObject* gameObject);
+    AnimatingMeshComponent(Entity* entity);
 
     // change model asset, setup bounds and materials
     // @param modelAsset: Source model data

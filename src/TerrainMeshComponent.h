@@ -2,7 +2,7 @@
 
 #include "RenderableComponent.h"
 
-// terrain mesh component of game object
+// terrain mesh component of entity
 class TerrainMeshComponent: public RenderableComponent
 {
     decl_rtti(TerrainMeshComponent, RenderableComponent)
@@ -14,7 +14,7 @@ public:
     Rectangle mMapTerrainRect;
 
 public:
-    TerrainMeshComponent(GameObject* gameObject);
+    TerrainMeshComponent(Entity* entity);
 
     void SetTerrainArea(const Rectangle& mapArea);
 

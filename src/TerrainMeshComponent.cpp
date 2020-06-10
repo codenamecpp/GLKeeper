@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "TerrainMeshComponent.h"
-#include "GameObject.h"
+#include "Entity.h"
 #include "GraphicsDevice.h"
 #include "TerrainTile.h"
 #include "GameWorld.h"
@@ -9,11 +9,11 @@
 #include "TerrainMeshRenderer.h"
 #include "RenderManager.h"
 
-TerrainMeshComponent::TerrainMeshComponent(GameObject* gameObject) 
-    : RenderableComponent(gameObject)
+TerrainMeshComponent::TerrainMeshComponent(Entity* entity) 
+    : RenderableComponent(entity)
 {
-    debug_assert(mGameObject);
-    mGameObject->mDebugColor = Color32_Brown;
+    debug_assert(mParentEntity);
+    mParentEntity->mDebugColor = Color32_Brown;
 }
 
 void TerrainMeshComponent::RenderFrame(SceneRenderContext& renderContext)
@@ -39,7 +39,7 @@ void TerrainMeshComponent::SetTerrainArea(const Rectangle& mapArea)
     sectorBox.mMax.y = 3.0f;
     sectorBox.mMax.z = sectorBox.mMin.z + (mMapTerrainRect.h * TERRAIN_BLOCK_SIZE);
 
-    TransformComponent* transformComponent = mGameObject->mTransformComponent;
+    TransformComponent* transformComponent = mParentEntity->mTransformComponent;
     transformComponent->SetLocalBoundingBox(sectorBox);
 
     InvalidateMesh();

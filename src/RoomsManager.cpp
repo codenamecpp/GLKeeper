@@ -2,6 +2,7 @@
 #include "RoomsManager.h"
 #include "GenericRoom.h"
 #include "TempleRoom.h"
+#include "DungeonHeartRoom.h"
 
 RoomsManager gRoomsManager;
 
@@ -94,7 +95,7 @@ void RoomsManager::DestroyRoomsList()
 
 RoomInstanceID RoomsManager::GenerateNewRoomInstanceID()
 {
-    return ++mRoomIDsCounter; // todo
+    return ++mRoomIDsCounter; // todo: need better way to generate id
 }
 
 GenericRoom* RoomsManager::CreateRoomInstance(RoomDefinition* definition, ePlayerID owner)
@@ -128,15 +129,26 @@ GenericRoom* RoomsManager::CreateRoomInstance(RoomDefinition* definition, ePlaye
 {
     GenericRoom* genericRoom = nullptr;
 
-    if (genericRoom == nullptr && definition->mRoomName == ROOM_NAME_TEMPLE)
+    do
     {
-        genericRoom = new TempleRoom(definition, owner, uid);
-    }
+        if (definition->mRoomName == ROOM_NAME_TEMPLE)
+        {
+            genericRoom = new TempleRoom(definition, owner, uid);
+            break;
+        }
 
-    if (genericRoom == nullptr) // create generic room
-    {
+        if (definition->mRoomName == ROOM_NAME_DUNGEON_HEART)
+        {
+            genericRoom = new DungeonHeartRoom(definition, owner, uid);
+            break;
+        }
+
+        // create generic room
         genericRoom = new GenericRoom(definition, owner, uid);
-    }
+
+    } while (false);
+
+    debug_assert(genericRoom);
 
     mRoomsList.push_back(genericRoom);
     return genericRoom;

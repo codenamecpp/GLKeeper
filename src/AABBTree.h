@@ -6,7 +6,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 class DebugRenderer;
-class GameObject;
+class Entity;
 
 //////////////////////////////////////////////////////////////////////////
 // Bounding Volume Hierarchy Tree
@@ -15,7 +15,7 @@ class GameObject;
 class AABBTree
 {
 public:
-    static const int MaxQueryObjects = 16384;
+    static const int MaxQueryEntities = 16384;
 
 public:
     AABBTree(unsigned int initialSize = 1024);
@@ -26,39 +26,39 @@ public:
 
     // Add spatial object to tree
     // @param entity: Object
-    void InsertObject(GameObject* entity);
+    void InsertEntity(Entity* entity);
 
     // Remove spatial object from tree
     // @param entity: Object
-    void RemoveObject(GameObject* entity);
+    void RemoveEntity(Entity* entity);
 
     // Update spatial object location in tree
     // @param entity: Object
-    void UpdateObject(GameObject* entity);
+    void UpdateEntity(Entity* entity);
 
     // Get all objects within bounding volume
     // @param aabbox: Bounding box
     // @param maxObjects: Maximum objects
     template<typename TCallback>
-    void QueryObjects(const cxx::aabbox& aabbox, const TCallback& callback, int maxObjects = MaxQueryObjects) const;
+    void QueryEntities(const cxx::aabbox& aabbox, const TCallback& callback, int maxObjects = MaxQueryEntities) const;
 
     // Get all objects within bounding volume
     // @param sphere: Bounding sphere
     // @param maxObjects: Maximum objects
     template<typename TCallback>
-    void QueryObjects(const cxx::bounding_sphere& sphere, const TCallback& callback, int maxObjects = MaxQueryObjects) const;
+    void QueryEntities(const cxx::bounding_sphere& sphere, const TCallback& callback, int maxObjects = MaxQueryEntities) const;
 
     // Get all objects colliding with ray
     // @param ray: Ray
     // @param maxObjects: Maximum objects
     template<typename TCallback>
-    void QueryObjects(const cxx::ray3d& ray, const TCallback& callback, int maxObjects = MaxQueryObjects) const;
+    void QueryEntities(const cxx::ray3d& ray, const TCallback& callback, int maxObjects = MaxQueryEntities) const;
 
     // Get all objects that currently visible
     // @param cameraFrustum: Camera frustum
     // @param maxObjects: Maximum objects
     template<typename TCallback>
-    void QueryObjects(const cxx::frustum_t& cameraFrustum, const TCallback& callback, int maxObjects = MaxQueryObjects) const;
+    void QueryEntities(const cxx::frustum_t& cameraFrustum, const TCallback& callback, int maxObjects = MaxQueryEntities) const;
 
     // Rebuild whole tree
     void UpdateTree();
@@ -95,7 +95,7 @@ private:
     {
     public:
         TreeNode()
-            : mGameObject()
+            : mEntity()
             , mParentNodeIndex(NULL_TREE_NODE)
             , mLeftNodeIndex(NULL_TREE_NODE)
             , mRightNodeIndex(NULL_TREE_NODE)
@@ -107,7 +107,7 @@ private:
 
     public:
         cxx::aabbox mBoundingBox; // world space aabb
-        GameObject* mGameObject;
+        Entity* mEntity;
         TreeNodeIndex mParentNodeIndex;
         TreeNodeIndex mLeftNodeIndex;
         TreeNodeIndex mRightNodeIndex;
@@ -115,7 +115,7 @@ private:
     };
     //////////////////////////////////////////////////////////////////////////
 
-    std::unordered_map<GameObject*, TreeNodeIndex> mEntitiesMap;
+    std::unordered_map<Entity*, TreeNodeIndex> mEntitiesMap;
     std::vector<TreeNode> mTreeNodes;
     TreeNodeIndex mRootNodeIndex;
     TreeNodeIndex mNextFreeNodeIndex;

@@ -337,7 +337,7 @@ struct GameObjectDefinition
 {
 public:
     GameObjectDefinition() 
-        : mObjectClass(GameObjectType_Null)
+        : mObjectType(GameObjectType_Null)
         , mDieOverTime()
         , mDieOverTimeIfNotInRoom()
         , mTypeSpecial()
@@ -374,7 +374,7 @@ public:
     }
 
 public:
-    GameObjectTypeID mObjectClass;
+    GameObjectTypeID mObjectType;
     std::string mObjectName; 
     ArtResource mMeshResource; 
     ArtResource mGuiIconResource;

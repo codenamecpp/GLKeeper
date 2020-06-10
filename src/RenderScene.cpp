@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "RenderScene.h"
-#include "GameObject.h"
+#include "Entity.h"
 #include "ConsoleVariable.h"
 #include "Console.h"
 #include "CameraController.h"
@@ -34,7 +34,7 @@ void RenderScene::Deinit()
 
     gConsole.UnregisterVariable(&gCvarScene_DebugDrawAabb);
 
-    DetachObjects();
+    DetachEntities();
     mAABBTree.Cleanup();
 }
 
@@ -53,9 +53,9 @@ void RenderScene::UpdateFrame()
 void RenderScene::CollectObjectsForRendering()
 {
     mCamera.ComputeMatrices();
-    mAABBTree.QueryObjects(mCamera.mFrustum, [this](GameObject* sceneObject)
+    mAABBTree.QueryEntities(mCamera.mFrustum, [this](Entity* sceneObject)
     {
-        gRenderManager.RegisterSceneObjectForRendering(sceneObject);
+        gRenderManager.RegisterEntityForRendering(sceneObject);
         // update distance to camera
         TransformComponent* transformComponent = sceneObject->mTransformComponent; 
         sceneObject->mDistanceToCameraSquared = glm::length2(transformComponent->mPosition - mCamera.mPosition);
@@ -111,13 +111,13 @@ void RenderScene::ProcessInputEvent(KeyCharEvent& inputEvent)
     }
 }
 
-void RenderScene::HandleTransformChange(GameObject* sceneEntity)
+void RenderScene::HandleTransformChange(Entity* sceneEntity)
 {
     debug_assert(sceneEntity);
     cxx::push_back_if_unique(mTransformObjects, sceneEntity); // queue for update
 }
 
-void RenderScene::AttachObject(GameObject* sceneEntity)
+void RenderScene::AttachEntity(Entity* sceneEntity)
 {
     debug_assert(sceneEntity);
     // already attached to scene
@@ -129,10 +129,10 @@ void RenderScene::AttachObject(GameObject* sceneEntity)
     mSceneObjects.push_back(sceneEntity);
 
     // refresh aabbtree node
-    mAABBTree.InsertObject(sceneEntity);
+    mAABBTree.InsertEntity(sceneEntity);
 }
 
-void RenderScene::DetachObject(GameObject* sceneEntity)
+void RenderScene::DetachEntity(Entity* sceneEntity)
 {
     debug_assert(sceneEntity);
     if (cxx::contains(mSceneObjects, sceneEntity))
@@ -146,15 +146,15 @@ void RenderScene::DetachObject(GameObject* sceneEntity)
     }
 
     // refresh aabbtree node
-    mAABBTree.RemoveObject(sceneEntity);
+    mAABBTree.RemoveEntity(sceneEntity);
 }
 
-void RenderScene::DetachObjects()
+void RenderScene::DetachEntities()
 {
     while (mSceneObjects.size())
     {
-        GameObject* gameObject = mSceneObjects.back();
-        DetachObject(gameObject);
+        Entity* entity = mSceneObjects.back();
+        DetachEntity(entity);
     }
 
     debug_assert(mTransformObjects.empty());
@@ -183,10 +183,10 @@ void RenderScene::BuildAABBTree()
 {
     while (!mTransformObjects.empty())
     {
-        GameObject* sceneObject = mTransformObjects.back();
+        Entity* sceneObject = mTransformObjects.back();
         mTransformObjects.pop_back();
 
         // refresh aabbtree node
-        mAABBTree.UpdateObject(sceneObject);
+        mAABBTree.UpdateEntity(sceneObject);
     }
 }

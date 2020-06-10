@@ -3,13 +3,13 @@
 #include "ModelAsset.h"
 #include "GraphicsDevice.h"
 #include "GpuBuffer.h"
-#include "GameObjectComponent.h"
+#include "EntityComponent.h"
 #include "AnimatingMeshComponent.h"
 #include "RenderScene.h"
 #include "VertexFormat.h"
 #include "ConsoleVariable.h"
 #include "cvars.h"
-#include "GameObject.h"
+#include "Entity.h"
 #include "TransformComponent.h"
 
 bool AnimatingMeshRenderer::Initialize()
@@ -53,7 +53,7 @@ void AnimatingMeshRenderer::Render(SceneRenderContext& renderContext, AnimatingM
         return;
     }
 
-    TransformComponent* transformComponent = component->mGameObject->mTransformComponent;
+    TransformComponent* transformComponent = component->mParentEntity->mTransformComponent;
 
     mMorphAnimRenderProgram.SetViewProjectionMatrix(gRenderScene.mCamera.mViewProjectionMatrix);
     mMorphAnimRenderProgram.SetModelMatrix(transformComponent->mTransformation);

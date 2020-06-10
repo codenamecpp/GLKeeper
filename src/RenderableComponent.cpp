@@ -2,8 +2,8 @@
 #include "RenderableComponent.h"
 #include "SceneRenderList.h"
 
-RenderableComponent::RenderableComponent(GameObject* sceneObject)
-    : GameObjectComponent(sceneObject)
+RenderableComponent::RenderableComponent(Entity* sceneObject)
+    : EntityComponent(sceneObject)
 {
 }
 

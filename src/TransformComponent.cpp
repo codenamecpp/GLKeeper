@@ -1,10 +1,10 @@
 #include "pch.h"
 #include "TransformComponent.h"
-#include "GameObject.h"
+#include "Entity.h"
 #include "RenderScene.h"
 
-TransformComponent::TransformComponent(GameObject* gameObject)
-    : GameObjectComponent(gameObject)
+TransformComponent::TransformComponent(Entity* entity)
+    : EntityComponent(entity)
     , mTransformDirty()
     , mBoundingBoxDirty()
     , mTransformation(1.0f)
@@ -18,12 +18,12 @@ TransformComponent::TransformComponent(GameObject* gameObject)
 
 void TransformComponent::InitializeComponent()
 {
-    gRenderScene.AttachObject(mGameObject);  
+    gRenderScene.AttachEntity(mParentEntity);  
 }
 
 void TransformComponent::DestroyComponent()
 {
-    gRenderScene.DetachObject(mGameObject);
+    gRenderScene.DetachEntity(mParentEntity);
     delete this;
 }
 
@@ -142,7 +142,7 @@ void TransformComponent::InvalidateTransform()
     mTransformDirty = true;
     mBoundingBoxDirty = true; // force refresh world space bounds 
 
-    gRenderScene.HandleTransformChange(mGameObject);
+    gRenderScene.HandleTransformChange(mParentEntity);
 }
 
 void TransformComponent::InvalidateBounds()
@@ -151,7 +151,7 @@ void TransformComponent::InvalidateBounds()
         return;
 
     mBoundingBoxDirty = true;
-    gRenderScene.HandleTransformChange(mGameObject);
+    gRenderScene.HandleTransformChange(mParentEntity);
 }
 
 void TransformComponent::ResetOrientation()

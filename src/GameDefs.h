@@ -8,8 +8,8 @@
 // forwards
 class GameMap;
 class TerrainTile;
-class GameObject;
-class GameObjectComponent;
+class Entity;
+class EntityComponent;
 class RenderableComponent;
 class TransformComponent;
 class AnimatingMeshComponent;
@@ -18,19 +18,19 @@ class StaticMeshComponent;
 class WaterLavaMeshComponent;
 
 // terrain type identifier
-enum TerrainTypeID: unsigned int // for sake of flexibility, do not rely on specific id
+enum TerrainTypeID: unsigned int
 {
     TerrainType_Null = 0 // invalid identifier
 };
 
 // room type identifier
-enum RoomTypeID: unsigned int // for sake of flexibility, do not rely on specific id
+enum RoomTypeID: unsigned int
 {
     RoomType_Null = 0 // invalid identifier
 };
 
 // game object type identifier
-enum GameObjectTypeID: unsigned int // for sake of flexibility, do not rely on specific id
+enum GameObjectTypeID: unsigned int
 {
     GameObjectType_Null = 0 // invalid identifier
 };
@@ -40,12 +40,6 @@ enum CreatureTypeID: unsigned int
 {
     CreatureType_Null = 0 // invalid identifier
 };
-
-// weak pointer to game object instance
-using GameObjectHandle = cxx::handle<GameObject>;
-
-// game object instance unique identifier
-using GameObjectInstanceID = unsigned long long;
 
 // array of map tiles
 using TilesList = std::vector<TerrainTile*>;

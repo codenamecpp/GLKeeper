@@ -6,7 +6,7 @@
 #include "GameMain.h"
 #include "ConsoleVariable.h"
 #include "RenderScene.h"
-#include "GameObject.h"
+#include "Entity.h"
 #include "GuiManager.h"
 #include "AnimatingMeshComponent.h"
 #include "WaterLavaMeshComponent.h"
@@ -74,11 +74,11 @@ void RenderManager::Deinit()
     mLoadedRenderProgramsList.clear();
 }
 
-void RenderManager::RegisterSceneObjectForRendering(GameObject* gameObject)
+void RenderManager::RegisterEntityForRendering(Entity* entity)
 {
-    debug_assert(gameObject);
+    debug_assert(entity);
 
-    if (RenderableComponent* renderableComponent = gameObject->mRenderableComponent)
+    if (RenderableComponent* renderableComponent = entity->mRenderableComponent)
     {
         renderableComponent->RegisterForRendering(mSceneRenderList);
     }

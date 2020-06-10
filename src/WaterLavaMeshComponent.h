@@ -2,7 +2,7 @@
 
 #include "RenderableComponent.h"
 
-// water lava mesh component of game object
+// water lava mesh component of entity
 class WaterLavaMeshComponent: public RenderableComponent
 {
     decl_rtti(WaterLavaMeshComponent, RenderableComponent)
@@ -21,7 +21,7 @@ public:
     TilesList mWaterLavaTiles;
 
 public:
-    WaterLavaMeshComponent(GameObject* gameObject);
+    WaterLavaMeshComponent(Entity* entity);
 
     // set water or lava surface tiles
     // @param tilesArray: List of map tiles

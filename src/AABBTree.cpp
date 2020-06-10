@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "AABBTree.h"
 #include "DebugRenderer.h"
-#include "GameObject.h"
+#include "Entity.h"
 #include "TransformComponent.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -272,7 +272,7 @@ void AABBTree::DebugRenderNode(DebugRenderer& renderer, TreeNode& treeNode)
 {
     if (treeNode.IsLeafNode())
     {
-        renderer.DrawAabb(treeNode.mBoundingBox, treeNode.mGameObject->mDebugColor, true);
+        renderer.DrawAabb(treeNode.mBoundingBox, treeNode.mEntity->mDebugColor, true);
         return;
     }
     if (treeNode.mLeftNodeIndex != NULL_TREE_NODE)
@@ -307,7 +307,7 @@ void AABBTree::Cleanup()
     mTreeNodes[mCapacity - 1].mNextNodeIndex = NULL_TREE_NODE;
 }
 
-void AABBTree::InsertObject(GameObject* entity)
+void AABBTree::InsertEntity(Entity* entity)
 {
     debug_assert(entity);
     TransformComponent* transformComponent = entity->mTransformComponent;
@@ -318,13 +318,13 @@ void AABBTree::InsertObject(GameObject* entity)
     
     TreeNode& treeNode = mTreeNodes[nodeIndex];
     treeNode.mBoundingBox = transformComponent->mBoundsTransformed;
-    treeNode.mGameObject = entity;
+    treeNode.mEntity = entity;
 
     InsertLeaf(nodeIndex);
     mEntitiesMap[entity] = nodeIndex;
 }
 
-void AABBTree::RemoveObject(GameObject* entity)
+void AABBTree::RemoveEntity(Entity* entity)
 {
     debug_assert(entity);
     TreeNodeIndex nodeIndex = mEntitiesMap[entity];
@@ -334,7 +334,7 @@ void AABBTree::RemoveObject(GameObject* entity)
     DeallocateTreeNode(nodeIndex);
 }
 
-void AABBTree::UpdateObject(GameObject* entity)
+void AABBTree::UpdateEntity(Entity* entity)
 {
     debug_assert(entity);
     TransformComponent* transformComponent = entity->mTransformComponent;

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "GameObjectComponent.h"
+#include "EntityComponent.h"
 
-// transformation component of game object
-class TransformComponent: public GameObjectComponent
+// transformation component of entity
+class TransformComponent: public EntityComponent
 {
-    decl_rtti(TransformComponent, GameObjectComponent)
+    decl_rtti(TransformComponent, EntityComponent)
 
 public:
     // readonly
@@ -21,7 +21,7 @@ public:
     cxx::aabbox mBounds; // untransformed, used for culling and mouse tests
 
 public:
-    TransformComponent(GameObject* gameObject);
+    TransformComponent(Entity* entity);
 
     // set entity orienation vectors, expecting all normalized
     // @param directionRight: Vector X
@@ -70,7 +70,7 @@ public:
     void InvalidateTransform(); 
     void InvalidateBounds();
 
-    // override GameObjectComponent methods
+    // override EntityComponent methods
     void InitializeComponent() override;
     void DestroyComponent() override;
 

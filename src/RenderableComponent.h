@@ -1,16 +1,16 @@
 #pragma once
 
-#include "GameObjectComponent.h"
+#include "EntityComponent.h"
 
 // base class for renderable objects
-class RenderableComponent: public GameObjectComponent
+class RenderableComponent: public EntityComponent
 {
-    decl_rtti(RenderableComponent, GameObjectComponent)
+    decl_rtti(RenderableComponent, EntityComponent)
 
     friend class SceneRenderList;
 
 public:
-    RenderableComponent(GameObject* sceneObject);
+    RenderableComponent(Entity* sceneObject);
 
     // register itself for rendering on current frame
     // @param renderList: Current frame render list

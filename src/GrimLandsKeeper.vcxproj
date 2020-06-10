@@ -180,6 +180,7 @@
     <ClInclude Include="3rd_party\stb_image.h" />
     <ClInclude Include="AABBTree.h" />
     <ClInclude Include="CreatureDefs.h" />
+    <ClInclude Include="DungeonHeartRoom.h" />
     <ClInclude Include="TerrainHeightField.h" />
     <ClInclude Include="TerrainTilesCursor.h" />
     <ClInclude Include="Shaders.h" />
@@ -207,9 +208,9 @@
     <ClInclude Include="logical_expression.h" />
     <ClInclude Include="ToolsUISceneStatisticsWindow.h" />
     <ClInclude Include="GameMap.h" />
-    <ClInclude Include="GameObject.h" />
-    <ClInclude Include="GameObjectComponent.h" />
-    <ClInclude Include="GameObjectsManager.h" />
+    <ClInclude Include="Entity.h" />
+    <ClInclude Include="EntityComponent.h" />
+    <ClInclude Include="EntityManager.h" />
     <ClInclude Include="GenericRoom.h" />
     <ClInclude Include="TopDownCameraController.h" />
     <ClInclude Include="TerrainTile.h" />
@@ -321,6 +322,7 @@
     <ClCompile Include="CommonTypes.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="ConsoleVariable.cpp" />
+    <ClCompile Include="DungeonHeartRoom.cpp" />
     <ClCompile Include="TerrainHeightField.cpp" />
     <ClCompile Include="TerrainTilesCursor.cpp" />
     <ClCompile Include="Shaders.cpp" />
@@ -346,8 +348,8 @@
     <ClCompile Include="GuiWidget.cpp" />
     <ClCompile Include="ToolsUISceneStatisticsWindow.cpp" />
     <ClCompile Include="GameMap.cpp" />
-    <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="GameObjectsManager.cpp" />
+    <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="EntityManager.cpp" />
     <ClCompile Include="GenericRoom.cpp" />
     <ClCompile Include="TopDownCameraController.cpp" />
     <ClCompile Include="TerrainTile.cpp" />

@@ -1,21 +1,21 @@
 #pragma once
 
-// unique gameobject component identifier
-using GameObjectComponentID = unsigned int;
+// unique identifier of entity component
+using EntityComponentID = unsigned int;
 
-// base class of all gameobject components
-class GameObjectComponent: public cxx::noncopyable
+// base class of all entity components
+class EntityComponent: public cxx::noncopyable
 {
-    decl_rtti_base(GameObjectComponent) // enable rtti for components
+    decl_rtti_base(EntityComponent) // enable rtti for components
 
 public:
-    const GameObjectComponentID mComponentID;
+    const EntityComponentID mComponentID;
 
     // readonly
-    GameObject* mGameObject;
+    Entity* mParentEntity;
 
 public:
-    virtual ~GameObjectComponent()
+    virtual ~EntityComponent()
     {
     }
 
@@ -43,17 +43,17 @@ public:
     }
 protected:
     // base component does not meant to be instantiated directly
-    GameObjectComponent(GameObject* sceneObject)
-        : mGameObject(sceneObject)
+    EntityComponent(Entity* parentEntity)
+        : mParentEntity(parentEntity)
         , mComponentID(NextUniqueID())
     {
-        debug_assert(mGameObject);
+        debug_assert(mParentEntity);
     }
 
 private:
-    static GameObjectComponentID NextUniqueID()
+    static EntityComponentID NextUniqueID()
     {
-        static GameObjectComponentID IDsCounter = 0;
+        static EntityComponentID IDsCounter = 0;
         return IDsCounter++;
     }
 };

@@ -68,12 +68,6 @@
     <Filter Include="Game\World\Rooms">
       <UniqueIdentifier>{070a4973-7fbe-49b1-acd7-2ba43980fe1f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\GameObject">
-      <UniqueIdentifier>{594601b6-4a03-416c-b1e3-5ad2709c6c4a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game\GameObject\Components">
-      <UniqueIdentifier>{5b78e975-7e29-42a9-a52f-30b8a952e05d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game\Scene\CameraControllers">
       <UniqueIdentifier>{23269d5d-8ec3-4467-95fb-43902adf5c8d}</UniqueIdentifier>
     </Filter>
@@ -100,6 +94,15 @@
     </Filter>
     <Filter Include="Game\Rendering">
       <UniqueIdentifier>{e607d4ee-67e8-4d5f-b41f-1bfc554959f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Entity">
+      <UniqueIdentifier>{594601b6-4a03-416c-b1e3-5ad2709c6c4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\EntityComponents">
+      <UniqueIdentifier>{5b78e975-7e29-42a9-a52f-30b8a952e05d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\EntityComponents\Draw">
+      <UniqueIdentifier>{18de9687-5111-4019-a160-ba6028195748}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -360,18 +363,6 @@
     <ClInclude Include="TempleRoom.h">
       <Filter>Game\World\Rooms</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Game\GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObjectComponent.h">
-      <Filter>Game\GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObjectsManager.h">
-      <Filter>Game\GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="TransformComponent.h">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClInclude>
     <ClInclude Include="MeshMaterial.h">
       <Filter>Game\Rendering</Filter>
     </ClInclude>
@@ -465,26 +456,11 @@
     <ClInclude Include="MapInteractionController.h">
       <Filter>Game\World</Filter>
     </ClInclude>
-    <ClInclude Include="RenderableComponent.h">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClInclude>
     <ClInclude Include="rtti.h">
       <Filter>Lib</Filter>
     </ClInclude>
-    <ClInclude Include="WaterLavaMeshComponent.h">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="TerrainMeshComponent.h">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimatingMeshComponent.h">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClInclude>
     <ClInclude Include="Shaders.h">
       <Filter>Game\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="StaticMeshComponent.h">
-      <Filter>Game\GameObject\Components</Filter>
     </ClInclude>
     <ClInclude Include="SimpleTriangleMesh.h">
       <Filter>Application\Graphics</Filter>
@@ -515,6 +491,36 @@
     </ClInclude>
     <ClInclude Include="TerrainHeightField.h">
       <Filter>Game\World</Filter>
+    </ClInclude>
+    <ClInclude Include="DungeonHeartRoom.h">
+      <Filter>Game\World\Rooms</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatingMeshComponent.h">
+      <Filter>Game\EntityComponents\Draw</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderableComponent.h">
+      <Filter>Game\EntityComponents\Draw</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticMeshComponent.h">
+      <Filter>Game\EntityComponents\Draw</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainMeshComponent.h">
+      <Filter>Game\EntityComponents\Draw</Filter>
+    </ClInclude>
+    <ClInclude Include="WaterLavaMeshComponent.h">
+      <Filter>Game\EntityComponents\Draw</Filter>
+    </ClInclude>
+    <ClInclude Include="TransformComponent.h">
+      <Filter>Game\EntityComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>Game\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityComponent.h">
+      <Filter>Game\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityManager.h">
+      <Filter>Game\Entity</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -682,15 +688,6 @@
     <ClCompile Include="SceneRenderList.cpp">
       <Filter>Game\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Game\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObjectsManager.cpp">
-      <Filter>Game\GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="TransformComponent.cpp">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClCompile>
     <ClCompile Include="MeshMaterial.cpp">
       <Filter>Game\Rendering</Filter>
     </ClCompile>
@@ -772,23 +769,8 @@
     <ClCompile Include="UserInterface.cpp">
       <Filter>Game\UserInterface</Filter>
     </ClCompile>
-    <ClCompile Include="RenderableComponent.cpp">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="WaterLavaMeshComponent.cpp">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="TerrainMeshComponent.cpp">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimatingMeshComponent.cpp">
-      <Filter>Game\GameObject\Components</Filter>
-    </ClCompile>
     <ClCompile Include="Shaders.cpp">
       <Filter>Game\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="StaticMeshComponent.cpp">
-      <Filter>Game\GameObject\Components</Filter>
     </ClCompile>
     <ClCompile Include="AnimatingMeshRenderer.cpp">
       <Filter>Game\Rendering</Filter>
@@ -813,6 +795,33 @@
     </ClCompile>
     <ClCompile Include="TerrainHeightField.cpp">
       <Filter>Game\World</Filter>
+    </ClCompile>
+    <ClCompile Include="DungeonHeartRoom.cpp">
+      <Filter>Game\World\Rooms</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatingMeshComponent.cpp">
+      <Filter>Game\EntityComponents\Draw</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderableComponent.cpp">
+      <Filter>Game\EntityComponents\Draw</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticMeshComponent.cpp">
+      <Filter>Game\EntityComponents\Draw</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainMeshComponent.cpp">
+      <Filter>Game\EntityComponents\Draw</Filter>
+    </ClCompile>
+    <ClCompile Include="WaterLavaMeshComponent.cpp">
+      <Filter>Game\EntityComponents\Draw</Filter>
+    </ClCompile>
+    <ClCompile Include="TransformComponent.cpp">
+      <Filter>Game\EntityComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="Entity.cpp">
+      <Filter>Game\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityManager.cpp">
+      <Filter>Game\Entity</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
