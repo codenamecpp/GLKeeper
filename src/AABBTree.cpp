@@ -310,7 +310,7 @@ void AABBTree::Cleanup()
 void AABBTree::InsertEntity(Entity* entity)
 {
     debug_assert(entity);
-    TransformComponent* transformComponent = entity->mTransformComponent;
+    TransformComponent* transformComponent = entity->mTransform;
     transformComponent->ComputeTransformation();
 
     TreeNodeIndex nodeIndex = NULL_TREE_NODE;
@@ -337,7 +337,7 @@ void AABBTree::RemoveEntity(Entity* entity)
 void AABBTree::UpdateEntity(Entity* entity)
 {
     debug_assert(entity);
-    TransformComponent* transformComponent = entity->mTransformComponent;
+    TransformComponent* transformComponent = entity->mTransform;
     transformComponent->ComputeTransformation();
 
     TreeNodeIndex nodeIndex = mEntitiesMap[entity];

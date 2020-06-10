@@ -39,7 +39,7 @@ void TerrainMeshComponent::SetTerrainArea(const Rectangle& mapArea)
     sectorBox.mMax.y = 3.0f;
     sectorBox.mMax.z = sectorBox.mMin.z + (mMapTerrainRect.h * TERRAIN_BLOCK_SIZE);
 
-    TransformComponent* transformComponent = mParentEntity->mTransformComponent;
+    TransformComponent* transformComponent = mParentEntity->mTransform;
     transformComponent->SetLocalBoundingBox(sectorBox);
 
     InvalidateMesh();

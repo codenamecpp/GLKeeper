@@ -78,7 +78,7 @@ void RenderManager::RegisterEntityForRendering(Entity* entity)
 {
     debug_assert(entity);
 
-    if (RenderableComponent* renderableComponent = entity->mRenderableComponent)
+    if (RenderableComponent* renderableComponent = entity->mRenderable)
     {
         renderableComponent->RegisterForRendering(mSceneRenderList);
     }

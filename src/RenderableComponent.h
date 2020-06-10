@@ -45,10 +45,12 @@ public:
     // @param renderContext: Scene render context
     virtual void RenderFrame(SceneRenderContext& renderContext);
 
-    // destroy renderable component instance
-    void DestroyComponent() override;
-
 protected:
+    // override EntityComponent methods
+    void DeleteComponent() override;
+    void AwakeComponent() override;
+    void UpdateComponent(float deltaTime) override;
+
     // setup draw calls for renderable component
     void SetDrawCallsCount(int numDrawCalls);
     void SetDrawCall(int drawCall, int materialIndex, int vertexOffset, int indexOffset, int vertexCount, int triangleCount);

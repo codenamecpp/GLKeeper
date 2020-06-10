@@ -38,7 +38,7 @@ void WaterLavaMeshComponent::SetWaterLavaTiles(const TilesList& tilesArray)
 
         bounds.extend(currentTileBounds);
     }
-    TransformComponent* transformComponent = mParentEntity->mTransformComponent;
+    TransformComponent* transformComponent = mParentEntity->mTransform;
     transformComponent->SetLocalBoundingBox(bounds);
 
     InvalidateMesh();

@@ -84,7 +84,7 @@ Entity* EntityManager::CreateEntity(const glm::vec3& position, const glm::vec3& 
     Entity* entity = CreateEntity();
     debug_assert(entity);
 
-    TransformComponent* transformComponent = entity->mTransformComponent;
+    TransformComponent* transformComponent = entity->mTransform;
     debug_assert(transformComponent);
 
     transformComponent->SetPosition(position);

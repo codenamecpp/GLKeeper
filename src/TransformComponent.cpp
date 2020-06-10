@@ -16,12 +16,27 @@ TransformComponent::TransformComponent(Entity* entity)
 {
 }
 
-void TransformComponent::InitializeComponent()
+void TransformComponent::OnComponentEnabled()
+{
+    gRenderScene.AttachEntity(mParentEntity);
+}
+
+void TransformComponent::OnComponentDisabled()
+{
+    gRenderScene.DetachEntity(mParentEntity);
+}
+
+void TransformComponent::UpdateComponent(float deltaTime)
+{
+    // do nothing
+}
+
+void TransformComponent::AwakeComponent()
 {
     gRenderScene.AttachEntity(mParentEntity);  
 }
 
-void TransformComponent::DestroyComponent()
+void TransformComponent::DeleteComponent()
 {
     gRenderScene.DetachEntity(mParentEntity);
     delete this;
@@ -142,7 +157,10 @@ void TransformComponent::InvalidateTransform()
     mTransformDirty = true;
     mBoundingBoxDirty = true; // force refresh world space bounds 
 
-    gRenderScene.HandleTransformChange(mParentEntity);
+    if (IsComponentActive())
+    {
+        gRenderScene.HandleTransformChange(mParentEntity);
+    }
 }
 
 void TransformComponent::InvalidateBounds()
@@ -151,7 +169,10 @@ void TransformComponent::InvalidateBounds()
         return;
 
     mBoundingBoxDirty = true;
-    gRenderScene.HandleTransformChange(mParentEntity);
+    if (IsComponentActive())
+    {
+        gRenderScene.HandleTransformChange(mParentEntity);
+    }
 }
 
 void TransformComponent::ResetOrientation()

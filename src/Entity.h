@@ -11,8 +11,8 @@ public:
     float mDistanceToCameraSquared; // this value gets updated during scene rendition
 
     // components cache
-    TransformComponent* mTransformComponent = nullptr;
-    RenderableComponent* mRenderableComponent = nullptr;
+    TransformComponent* mTransform = nullptr;
+    RenderableComponent* mRenderable = nullptr;
 
 public:
     Entity();
@@ -33,7 +33,6 @@ public:
     }
 
     void DeleteComponent(EntityComponent* component);
-    void DeleteComponentByID(EntityComponentID componentID);
 
     template<typename TComponent>
     inline void DeleteComponent()
@@ -78,9 +77,6 @@ public:
         return nullptr;
     }
 
-    // get component by its unique identifier
-    EntityComponent* GetComponentByID(EntityComponentID componentID) const;
-
     // test whether object has specific component
     template<typename TComponent>
     inline bool HasComponent() const
@@ -91,7 +87,11 @@ public:
         return false;
     }
 
-    bool HasComponentWithID(EntityComponentID componentID) const;
+    // enable or disable all attached component within entity
+    void SetActive(bool isActive);
+
+    // test whether entity has at least one component which is in enabled state
+    bool IsActive() const;
 
 private:
     inline EntityComponent* GetComponentByRttiType(const cxx::rtti_type* rttiType) const

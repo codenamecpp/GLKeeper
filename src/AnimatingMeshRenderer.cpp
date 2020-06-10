@@ -53,7 +53,7 @@ void AnimatingMeshRenderer::Render(SceneRenderContext& renderContext, AnimatingM
         return;
     }
 
-    TransformComponent* transformComponent = component->mParentEntity->mTransformComponent;
+    TransformComponent* transformComponent = component->mParentEntity->mTransform;
 
     mMorphAnimRenderProgram.SetViewProjectionMatrix(gRenderScene.mCamera.mViewProjectionMatrix);
     mMorphAnimRenderProgram.SetModelMatrix(transformComponent->mTransformation);

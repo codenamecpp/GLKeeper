@@ -36,7 +36,7 @@ void TerrainTilesCursor::UpdateFrame()
     mCursorEffectTime += deltaTime;
     if (mMeshObject)
     {
-        MeshMaterial* material = mMeshObject->mRenderableComponent->GetMeshMaterial();
+        MeshMaterial* material = mMeshObject->mRenderable->GetMeshMaterial();
         debug_assert(material);
 
         float translucency = cxx::ping_pong(mCursorEffectTime, 0.3f);
@@ -81,7 +81,7 @@ void TerrainTilesCursor::SetupCursorMesh()
     }
 
     // it is possible to cache mesh component
-    StaticMeshComponent* renderable = mMeshObject->mRenderableComponent->CastComponent<StaticMeshComponent>();
+    StaticMeshComponent* renderable = mMeshObject->mRenderable->CastComponent<StaticMeshComponent>();
     if (renderable == nullptr)
     {
         debug_assert(false);

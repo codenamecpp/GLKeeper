@@ -70,9 +70,13 @@ public:
     void InvalidateTransform(); 
     void InvalidateBounds();
 
+protected:
     // override EntityComponent methods
-    void InitializeComponent() override;
-    void DestroyComponent() override;
+    void DeleteComponent() override;
+    void AwakeComponent() override;
+    void UpdateComponent(float deltaTime) override;
+    void OnComponentEnabled() override;
+    void OnComponentDisabled() override;
 
 private:
     // dirty flags

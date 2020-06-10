@@ -20,37 +20,40 @@ void Entity::UpdateFrame(float deltaTime)
 {
     for (EntityComponent* currComponent: mComponents)
     {
-        currComponent->UpdateComponent(deltaTime);
+        if (currComponent->IsComponentActive())
+        {
+            currComponent->UpdateComponent(deltaTime);
+        }
+    }
+}
+
+void Entity::SetActive(bool isActive)
+{
+    for (EntityComponent* currComponent: mComponents)
+    {
+        currComponent->EnableComponent(isActive);
     }
 }
 
 void Entity::UpdateComponentsCache()
 {
     // cache transform component
-    mTransformComponent = nullptr;
+    mTransform = nullptr;
     for (EntityComponent* currComponent: mComponents)
     {
-        mTransformComponent = cxx::rtti_cast<TransformComponent>(currComponent);
-        if (mTransformComponent)
+        mTransform = cxx::rtti_cast<TransformComponent>(currComponent);
+        if (mTransform)
             break;
     }
     
     // cache renderable component
-    mRenderableComponent = nullptr;
+    mRenderable = nullptr;
     for (EntityComponent* currComponent: mComponents)
     {
-        mRenderableComponent = cxx::rtti_cast<RenderableComponent>(currComponent);
-        if (mRenderableComponent)
+        mRenderable = cxx::rtti_cast<RenderableComponent>(currComponent);
+        if (mRenderable)
             break;
     }
-}
-
-bool Entity::HasComponentWithID(EntityComponentID componentID) const
-{
-    if (EntityComponent* component = GetComponentByID(componentID))
-        return true;
-
-    return false;
 }
 
 void Entity::AttachComponent(EntityComponent* component)
@@ -60,7 +63,7 @@ void Entity::AttachComponent(EntityComponent* component)
     mComponents.push_back(component);
     UpdateComponentsCache();
 
-    component->InitializeComponent();
+    component->AwakeComponent();
 }
 
 void Entity::DeleteComponent(EntityComponent* component)
@@ -68,38 +71,30 @@ void Entity::DeleteComponent(EntityComponent* component)
     if (component)
     {
         cxx::erase_elements(mComponents, component);
-        component->DestroyComponent();
+        component->DeleteComponent();
 
         UpdateComponentsCache();
     }
     debug_assert(component);
 }
 
-void Entity::DeleteComponentByID(EntityComponentID componentID)
-{
-    if (EntityComponent* component = GetComponentByID(componentID))
-    {
-        DeleteComponent(component);
-    }
-}
-
 void Entity::DeleteAllComponents()
 {
     for (EntityComponent* currComponent: mComponents)
     {
-        currComponent->DestroyComponent();
+        currComponent->DeleteComponent();
     }
     mComponents.clear();
     UpdateComponentsCache();
 }
 
-EntityComponent* Entity::GetComponentByID(EntityComponentID componentID) const
+bool Entity::IsActive() const
 {
     for (EntityComponent* currComponent: mComponents)
     {
-        if (currComponent->mComponentID == componentID)
-            return currComponent;
+        if (currComponent->IsComponentActive())
+            return true;
     }
 
-    return nullptr;
+    return false;
 }

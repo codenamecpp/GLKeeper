@@ -823,6 +823,9 @@
     <ClCompile Include="EntityManager.cpp">
       <Filter>Game\Entity</Filter>
     </ClCompile>
+    <ClCompile Include="EntityComponent.cpp">
+      <Filter>Game\Entity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\docs\creatures_anims.txt">

@@ -269,6 +269,6 @@ void AnimatingMeshComponent::SetAnimationState()
 
 void AnimatingMeshComponent::SetLocalBounds()
 {
-    TransformComponent* transformComponent = mParentEntity->mTransformComponent;
+    TransformComponent* transformComponent = mParentEntity->mTransform;
     transformComponent->SetLocalBoundingBox(mModelAsset->mFramesBounds[mAnimState.mFrame0]);
 }

@@ -20,9 +20,9 @@ TempleRoom::TempleRoom(RoomDefinition* definition, ePlayerID owner, RoomInstance
 
 TempleRoom::~TempleRoom()
 {
-    if (mWaterPoolObject)
+    if (mWaterPool)
     {
-        gEntityManager.DestroyEntity(mWaterPoolObject);
+        gEntityManager.DestroyEntity(mWaterPool);
     }
 }
 
@@ -33,20 +33,19 @@ void TempleRoom::Reconfigure()
 
     if (waterTiles.empty())
     {
-        if (mWaterPoolObject)
+        if (mWaterPool)
         {
-            WaterLavaMeshComponent* component = mWaterPoolObject->GetComponent<WaterLavaMeshComponent>();
-            debug_assert(component);
+            mWaterPool->SetActive(false);
         }
         return;
     }
 
     // create new water pool mesh
-    if (mWaterPoolObject == nullptr)
+    if (mWaterPool == nullptr)
     {
-        mWaterPoolObject = gEntityManager.CreateEntity();
+        mWaterPool = gEntityManager.CreateEntity();
 
-        WaterLavaMeshComponent* meshComponent = mWaterPoolObject->AddComponent<WaterLavaMeshComponent>();
+        WaterLavaMeshComponent* meshComponent = mWaterPool->AddComponent<WaterLavaMeshComponent>();
         meshComponent->SetWaterLavaTiles(waterTiles);
         meshComponent->SetSurfaceTexture(gTexturesManager.mWaterTexture);
         meshComponent->SetSurfaceParams(TEMPLE_WATER_POOL_TRANSLUCENCY, TEMPLE_WATER_POOL_WAVE_WIDTH, 
@@ -54,13 +53,15 @@ void TempleRoom::Reconfigure()
         return;
     }
 
-    WaterLavaMeshComponent* meshComponent = mWaterPoolObject->GetComponent<WaterLavaMeshComponent>();
+    WaterLavaMeshComponent* meshComponent = mWaterPool->GetComponent<WaterLavaMeshComponent>();
     debug_assert(meshComponent);
 
     if (!cxx::collections_equals(waterTiles, meshComponent->mWaterLavaTiles))
     {
         meshComponent->SetWaterLavaTiles(waterTiles);
     }
+
+    mWaterPool->SetActive(true);
 }
 
 void TempleRoom::ScanWaterPoolTiles(TilesList& poolTiles)

@@ -17,5 +17,5 @@ private:
     void ScanWaterPoolTiles(TilesList& poolTiles);
 
 private:
-    Entity* mWaterPoolObject = nullptr;
+    Entity* mWaterPool = nullptr;
 };

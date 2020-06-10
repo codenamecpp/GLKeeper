@@ -27,7 +27,7 @@ void StaticMeshComponent::UpdateBounds()
         bounds.extend(currMeshPart.mBoundingBox);
     }
 
-    mParentEntity->mTransformComponent->SetLocalBoundingBox(bounds);
+    mParentEntity->mTransform->SetLocalBoundingBox(bounds);
 }
 
 void StaticMeshComponent::RenderFrame(SceneRenderContext& renderContext)

@@ -36,6 +36,9 @@ void RenderableComponent::RenderFrame(SceneRenderContext& renderContext)
 
 void RenderableComponent::RegisterForRendering(SceneRenderList& renderList)
 {
+    if (!IsComponentActive())
+        return;
+
     bool hasOpaqueParts = false;
     bool hasTransparentParts = false;
 
@@ -70,7 +73,16 @@ void RenderableComponent::RegisterForRendering(SceneRenderList& renderList)
     }
 }
 
-void RenderableComponent::DestroyComponent()
+void RenderableComponent::AwakeComponent()
+{
+}
+
+void RenderableComponent::UpdateComponent(float deltaTime)
+{
+    // do nothing
+}
+
+void RenderableComponent::DeleteComponent()
 {
     ReleaseRenderResources();
     delete this;

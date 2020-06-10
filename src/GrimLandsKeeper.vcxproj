@@ -323,6 +323,7 @@
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="ConsoleVariable.cpp" />
     <ClCompile Include="DungeonHeartRoom.cpp" />
+    <ClCompile Include="EntityComponent.cpp" />
     <ClCompile Include="TerrainHeightField.cpp" />
     <ClCompile Include="TerrainTilesCursor.cpp" />
     <ClCompile Include="Shaders.cpp" />
