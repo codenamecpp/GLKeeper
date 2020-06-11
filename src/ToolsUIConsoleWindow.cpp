@@ -12,30 +12,36 @@ ToolsUIConsoleWindow::ToolsUIConsoleWindow()
 
 void ToolsUIConsoleWindow::DoUI(ImGuiIO& imguiContext)
 {
-    ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoNav;
+    ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoMove | 
+        ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse;
 
-    const ImVec2 distance { 10.0f, 10.0f };
-    const ImVec2 initialSize { 700.0f, 420.0f };
-    const ImVec2 initialPos { distance.x, distance.y };
-
-    ImGui::SetNextWindowSize(initialSize, ImGuiCond_Once);
-    ImGui::SetNextWindowPos(initialPos, ImGuiCond_Once);
-
+    ImGui::SetNextWindowBgAlpha(0.9f);
     if (!ImGui::Begin("Console", &mWindowShown, windowFlags))
     {
         ImGui::End();
         return;
     }
 
+    if (ImGui::IsWindowAppearing())
+    {
+        ImVec2 distance { 10.0f, 10.0f };
+        ImVec2 windowSize { 
+            imguiContext.DisplaySize.x - distance.x * 2.0f, 
+            imguiContext.DisplaySize.y * 0.45f - distance.y * 2.0f};
+        ImVec2 windowPos { distance.x, distance.y };
+        ImGui::SetWindowSize(windowSize);
+        ImGui::SetWindowPos(windowPos);
+    }
+
     ImGui::Separator();
 
     const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
-    ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false, ImGuiWindowFlags_HorizontalScrollbar);
-    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4,1)); // Tighten spacing
+    ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false, 
+        ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoBackground);
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4,1));
 
-    for (unsigned int i = 0; i < gConsole.mLogLines.size(); i++)
+    for (const Console::LineStruct& currentLine: gConsole.mLogLines)
     {
-        const Console::LineStruct& currentLine = gConsole.mLogLines[i];
         const char* item = currentLine.mMessageString.c_str();
 
         bool pop_color = false;
@@ -82,8 +88,11 @@ void ToolsUIConsoleWindow::DoUI(ImGuiIO& imguiContext)
     // command-line
     bool reclaim_focus = false;
     if (ImGui::InputText("Input", (char*)mInputString.c_str(), mInputString.capacity() + 1, 
-        ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_CallbackCompletion | 
-        ImGuiInputTextFlags_CallbackHistory | ImGuiInputTextFlags_CallbackResize, TextEditCallbackStub, (void*)this))
+        ImGuiInputTextFlags_EnterReturnsTrue | 
+        ImGuiInputTextFlags_CallbackCompletion | 
+        ImGuiInputTextFlags_CallbackHistory | 
+        ImGuiInputTextFlags_CallbackResize | 
+        ImGuiInputTextFlags_CallbackCharFilter, TextEditCallbackStub, (void*)this))
     {
         Exec();
         reclaim_focus = true;
@@ -95,6 +104,10 @@ void ToolsUIConsoleWindow::DoUI(ImGuiIO& imguiContext)
     {
         ImGui::SetKeyboardFocusHere(-1); // Auto focus previous widget
     }
+    else
+    {
+        ImGui::SetKeyboardFocusHere(0); // Auto focus previous widget
+    }
 
     ImGui::End();
 }
@@ -103,6 +116,15 @@ int ToolsUIConsoleWindow::TextEditCallback(ImGuiInputTextCallbackData* data)
 {
     switch (data->EventFlag)
     {
+    case ImGuiInputTextFlags_CallbackCharFilter:
+        {
+            if (data->EventChar == L'`')
+            {
+                ToggleWindowShown();
+                return 1;
+            }
+            break;
+        }
     case ImGuiInputTextFlags_CallbackCompletion:
         {
             // Locate beginning of current word
