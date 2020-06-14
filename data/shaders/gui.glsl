@@ -20,7 +20,7 @@ void main()
 	Texcoord = in_texcoord;
     FragColor = in_color;
 
-    vec4 vertexPosition = view_projection_matrix * vec4(in_pos, 0.0, 1.0f);
+    vec4 vertexPosition = view_projection_matrix * vec4(in_pos, 0.0, 1.0);
     gl_Position = vertexPosition;
 }
 

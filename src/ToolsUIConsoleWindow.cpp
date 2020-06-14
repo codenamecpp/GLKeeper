@@ -197,7 +197,7 @@ int ToolsUIConsoleWindow::TextEditCallback(ImGuiInputTextCallbackData* data)
                     data->DeleteChars((int)(word_start - data->Buf), (int)(word_end-word_start));
                     data->InsertChars(data->CursorPos, candidates[0], candidates[0] + match_len);
                 }
-
+                gConsole.LogMessage(eLogMessage_Debug, "");
                 // List matches
                 for (int i = 0; i < candidatesCount; i++)
                 {

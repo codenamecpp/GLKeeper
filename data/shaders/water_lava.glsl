@@ -19,13 +19,13 @@ void main()
 	Texcoord = in_texcoord;
 
     // transformed position
-    vec4 position = vec4(in_pos, 1.0f);
+    vec4 position = vec4(in_pos, 1.0);
 
     // base waterline
     position.y += wave_params.w;
 
     // lava waves
-    if (wave_params.z > 0.0f)
+    if (wave_params.z > 0.0)
     {
         position.y = position.y +
             sin(wave_params.y * position.x + wave_params.x * wave_params.z) * 
@@ -35,8 +35,8 @@ void main()
     else 
     {
         position.y = position.y +
-            sin(1.0f * position.x + wave_params.x) * 
-            cos(1.0f * position.z + wave_params.x) * 0.01f;
+            sin(1.0 * position.x + wave_params.x) * 
+            cos(1.0 * position.z + wave_params.x) * 0.01;
     }
 
     gl_Position = view_projection_matrix * position;

@@ -22,8 +22,8 @@ void main()
 {
 	Texcoord = in_texcoord;
 
-    vec4 v0 = view_projection_matrix * model_matrix * vec4(in_pos_frame0, 1.0f);
-    vec4 v1 = view_projection_matrix * model_matrix * vec4(in_pos_frame1, 1.0f);
+    vec4 v0 = view_projection_matrix * model_matrix * vec4(in_pos_frame0, 1.0);
+    vec4 v1 = view_projection_matrix * model_matrix * vec4(in_pos_frame1, 1.0);
 
     gl_Position = mix(v0, v1, mix_frames);
 }

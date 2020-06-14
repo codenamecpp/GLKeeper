@@ -21,7 +21,7 @@ void main()
     FragColor = in_color;
 
     // transformed position
-    vec4 position = vec4(in_pos, 1.0f);
+    vec4 position = vec4(in_pos, 1.0);
     gl_Position = view_projection_matrix * position;
 }
 

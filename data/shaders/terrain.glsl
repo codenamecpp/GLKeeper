@@ -29,7 +29,7 @@ void main()
 
 	FragColor = texelFetch(colorsTex, in_tile_coord, 0);
 
-    vec4 vertexPosition = view_projection_matrix * model_matrix * vec4(in_pos, 1.0f);
+    vec4 vertexPosition = view_projection_matrix * model_matrix * vec4(in_pos, 1.0);
     gl_Position = vertexPosition;
 }
 
@@ -60,7 +60,7 @@ void main()
 
     // temporary color correction 
     // >>
-    FinalColor = texelColor * (smoothstep(-2.0f, 2.0f, InPos.y));
+    FinalColor = texelColor * (smoothstep(-2.0, 2.0, InPos.y));
     FinalColor += FragColor; // addtitive
     // <<
 
