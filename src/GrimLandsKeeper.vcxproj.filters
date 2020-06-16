@@ -522,6 +522,9 @@
     <ClInclude Include="EntityManager.h">
       <Filter>Game\Entity</Filter>
     </ClInclude>
+    <ClInclude Include="EntityController.h">
+      <Filter>Game\Entity</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -824,6 +827,9 @@
       <Filter>Game\Entity</Filter>
     </ClCompile>
     <ClCompile Include="EntityComponent.cpp">
+      <Filter>Game\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="EntityController.cpp">
       <Filter>Game\Entity</Filter>
     </ClCompile>
   </ItemGroup>

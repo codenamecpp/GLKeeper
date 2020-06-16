@@ -8,14 +8,6 @@
 // forwards
 class GameMap;
 class TerrainTile;
-class Entity;
-class EntityComponent;
-class RenderableComponent;
-class TransformComponent;
-class AnimatingMeshComponent;
-class TerrainMeshComponent;
-class StaticMeshComponent;
-class WaterLavaMeshComponent;
 
 // terrain type identifier
 enum TerrainTypeID: unsigned int

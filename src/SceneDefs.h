@@ -20,6 +20,30 @@ class RenderScene;
 class CameraController;
 class SceneRenderList;
 class SceneRenderContext;
+class Entity;
+class EntityComponent;
+class EntityController;
+class RenderableComponent;
+class TransformComponent;
+class AnimatingMeshComponent;
+class TerrainMeshComponent;
+class StaticMeshComponent;
+class WaterLavaMeshComponent;
+
+// cast helpers
+template<typename TComponent>
+inline TComponent* entity_component_cast(EntityComponent* component)
+{
+    TComponent* resultComponent = cxx::rtti_cast<TComponent>(component);
+    return resultComponent;
+}
+
+template<typename TController>
+inline TController* entity_controller_cast(EntityController* controller)
+{
+    TController* resultController = cxx::rtti_cast<TController>(controller);
+    return resultController;
+}
 
 // camera mode
 enum eSceneCameraMode

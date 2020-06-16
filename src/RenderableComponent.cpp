@@ -82,7 +82,7 @@ void RenderableComponent::UpdateComponent(float deltaTime)
     // do nothing
 }
 
-void RenderableComponent::DeleteComponent()
+void RenderableComponent::DestroyComponent()
 {
     ReleaseRenderResources();
     delete this;

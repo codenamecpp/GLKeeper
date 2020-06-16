@@ -2,25 +2,36 @@
 
 #include "EntityComponent.h"
 #include "GameDefs.h"
+#include "SceneDefs.h"
+#include "EntityController.h"
 
-class Entity: public cxx::noncopyable
+// scene entity is components container
+class Entity final: public cxx::noncopyable
 {
 public:
     Color32 mDebugColor; // color used for debug draw
 
     float mDistanceToCameraSquared; // this value gets updated during scene rendition
 
+    // readonly
+
     // components cache
     TransformComponent* mTransform = nullptr;
     RenderableComponent* mRenderable = nullptr;
+
+    // entity owner can control and listen entity components
+    EntityController* mController = nullptr;
 
 public:
     Entity();
     ~Entity();
 
-    // process update frame
+    // update active entity components
     // @param deltaTime: Time since last update
-    void UpdateFrame(float deltaTime);
+    void UpdateComponents(float deltaTime);
+    
+    // assign new or clear current controller if nullptr specified
+    void SetController(EntityController* controller);
 
     // add or remove object component, object takes ownership on pointer
     // @param component: Component instance
@@ -32,25 +43,28 @@ public:
         return newComponent;
     }
 
-    void DeleteComponent(EntityComponent* component);
+    // immediately destroy specific component
+    void RemoveComponent(EntityComponent* component);
 
+    // immediately destroy component of specific type
     template<typename TComponent>
-    inline void DeleteComponent()
+    inline void RemoveComponent()
     {
-        EntityComponent* componentWithType = nullptr;
+        TComponent* componentWithType = nullptr;
         for (EntityComponent* currComponent: mComponents)
         {
-            if (cxx::rtti_cast<TComponent>(currComponent))
-            {
-                componentWithType = currComponent;
+            componentWithType = entity_component_cast<TComponent>(currComponent);
+            if (componentWithType)
                 break;
-            }
         }
         if (componentWithType)
         {
-            DeleteComponent(componentWithType);
+            RemoveComponent(componentWithType);
         }
     }
+
+    // immediately destroy all components including transform
+    void RemoveAllComponents();
 
     // iterate all components    
     template<typename TProc>
@@ -62,16 +76,14 @@ public:
         }
     }
 
-    // destroy all components including transform
-    void DeleteAllComponents();
-
     // get component by type
     template<typename TComponent>
     inline TComponent* GetComponent() const
     {
         for (EntityComponent* currComponent: mComponents)
         {
-            if (TComponent* componentWithType = cxx::rtti_cast<TComponent>(currComponent))
+            TComponent* componentWithType = entity_component_cast<TComponent>(currComponent);
+            if (componentWithType)
                 return componentWithType;
         }
         return nullptr;

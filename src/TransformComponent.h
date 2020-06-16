@@ -72,7 +72,7 @@ public:
 
 protected:
     // override EntityComponent methods
-    void DeleteComponent() override;
+    void DestroyComponent() override;
     void AwakeComponent() override;
     void UpdateComponent(float deltaTime) override;
     void OnComponentEnabled() override;

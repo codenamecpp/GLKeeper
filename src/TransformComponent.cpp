@@ -36,7 +36,7 @@ void TransformComponent::AwakeComponent()
     gRenderScene.AttachEntity(mParentEntity);  
 }
 
-void TransformComponent::DeleteComponent()
+void TransformComponent::DestroyComponent()
 {
     gRenderScene.DetachEntity(mParentEntity);
     delete this;

@@ -189,7 +189,7 @@ void TerrainManager::UpdateTerrainMesh()
         Entity* terrainMeshChunk = GetObjectTerrainFromTile(currentTile->mTileLocation);
         debug_assert(terrainMeshChunk);
 
-        TerrainMeshComponent* meshComponent = terrainMeshChunk->mRenderable->CastComponent<TerrainMeshComponent>();
+        TerrainMeshComponent* meshComponent = terrainMeshChunk->GetComponent<TerrainMeshComponent>();
         debug_assert(meshComponent);
         meshComponent->InvalidateMesh();
     }

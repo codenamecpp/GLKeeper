@@ -181,6 +181,7 @@
     <ClInclude Include="AABBTree.h" />
     <ClInclude Include="CreatureDefs.h" />
     <ClInclude Include="DungeonHeartRoom.h" />
+    <ClInclude Include="EntityController.h" />
     <ClInclude Include="TerrainHeightField.h" />
     <ClInclude Include="TerrainTilesCursor.h" />
     <ClInclude Include="Shaders.h" />
@@ -324,6 +325,7 @@
     <ClCompile Include="ConsoleVariable.cpp" />
     <ClCompile Include="DungeonHeartRoom.cpp" />
     <ClCompile Include="EntityComponent.cpp" />
+    <ClCompile Include="EntityController.cpp" />
     <ClCompile Include="TerrainHeightField.cpp" />
     <ClCompile Include="TerrainTilesCursor.cpp" />
     <ClCompile Include="Shaders.cpp" />

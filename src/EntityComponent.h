@@ -10,26 +10,28 @@ public:
     Entity* mParentEntity;
 
 public:
-    // try to cast base component type to derived
-    template<typename TComponent>
-    inline TComponent* CastComponent()
-    {
-        return cxx::rtti_cast<TComponent>(this);
-    }
-
     // enable or disable component
     // @param isEnable: New enable state
     void EnableComponent(bool isEnable);
+
     // test whether component is enabled
     inline bool IsComponentActive() const { return mComponentEnabled; }
+
+    // queue for deletion, component will be deleted next frame
+    void Delete();
+
+    // test whether component must be deleted
+    inline bool IsComponentDeleted() const { return mComponentDeleted; }
 
     // handle update frame
     // @param deltaTime: Time since last update
     virtual void UpdateComponent(float deltaTime) = 0;
+
     // component is attached to entity
     virtual void AwakeComponent() = 0;
+
     // destroy component instance
-    virtual void DeleteComponent() = 0;
+    virtual void DestroyComponent() = 0;
 
 protected:
     // base component does not meant to be instantiated directly
@@ -49,4 +51,5 @@ protected:
 
 protected:
     bool mComponentEnabled = true; // initially enabled
+    bool mComponentDeleted = false; // mark for deletion
 };

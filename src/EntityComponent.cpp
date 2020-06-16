@@ -18,6 +18,11 @@ void EntityComponent::EnableComponent(bool isEnable)
     }
 }
 
+void EntityComponent::Delete()
+{
+    mComponentDeleted = true;
+}
+
 void EntityComponent::OnComponentEnabled() 
 {
     // do nothing

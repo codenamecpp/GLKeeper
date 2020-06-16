@@ -40,7 +40,7 @@ void EntityManager::UpdateFrame()
             doCleanup = true;
             continue;
         }
-        currEntity->UpdateFrame(deltaTime);
+        currEntity->UpdateComponents(deltaTime);
     }
 
     if (doCleanup)

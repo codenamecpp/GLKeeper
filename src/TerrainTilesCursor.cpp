@@ -81,7 +81,7 @@ void TerrainTilesCursor::SetupCursorMesh()
     }
 
     // it is possible to cache mesh component
-    StaticMeshComponent* renderable = mMeshObject->mRenderable->CastComponent<StaticMeshComponent>();
+    StaticMeshComponent* renderable = mMeshObject->GetComponent<StaticMeshComponent>();
     if (renderable == nullptr)
     {
         debug_assert(false);
