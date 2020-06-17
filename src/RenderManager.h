@@ -5,7 +5,7 @@
 #include "SceneRenderList.h"
 #include "TerrainMeshRenderer.h"
 #include "WaterLavaMeshRenderer.h"
-#include "StaticMeshRenderer.h"
+#include "ProcMeshRenderer.h"
 #include "GuiRenderer.h"
 
 // master render system, it is intended to manage rendering pipeline of the game
@@ -19,7 +19,7 @@ public:
     AnimatingMeshRenderer mAnimatingMeshRenderer;
     TerrainMeshRenderer mTerrainMeshRenderer;
     WaterLavaMeshRenderer mWaterLavaMeshRenderer;
-    StaticMeshRenderer mStaticMeshRenderer;
+    ProcMeshRenderer mProcMeshRenderer;
 
 public:
     // setup rendering system internal resources

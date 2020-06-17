@@ -471,9 +471,6 @@
     <ClInclude Include="AnimatingMeshRenderer.h">
       <Filter>Game\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="StaticMeshRenderer.h">
-      <Filter>Game\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="TerrainMeshRenderer.h">
       <Filter>Game\Rendering</Filter>
     </ClInclude>
@@ -499,9 +496,6 @@
       <Filter>Game\Entity\Components\Draw</Filter>
     </ClInclude>
     <ClInclude Include="RenderableComponent.h">
-      <Filter>Game\Entity\Components\Draw</Filter>
-    </ClInclude>
-    <ClInclude Include="StaticMeshComponent.h">
       <Filter>Game\Entity\Components\Draw</Filter>
     </ClInclude>
     <ClInclude Include="TerrainMeshComponent.h">
@@ -530,6 +524,12 @@
     </ClInclude>
     <ClInclude Include="GameObjectsManager.h">
       <Filter>Game\World\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="ProcMeshComponent.h">
+      <Filter>Game\Entity\Components\Draw</Filter>
+    </ClInclude>
+    <ClInclude Include="ProcMeshRenderer.h">
+      <Filter>Game\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -784,9 +784,6 @@
     <ClCompile Include="AnimatingMeshRenderer.cpp">
       <Filter>Game\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="StaticMeshRenderer.cpp">
-      <Filter>Game\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="TerrainMeshRenderer.cpp">
       <Filter>Game\Rendering</Filter>
     </ClCompile>
@@ -812,9 +809,6 @@
       <Filter>Game\Entity\Components\Draw</Filter>
     </ClCompile>
     <ClCompile Include="RenderableComponent.cpp">
-      <Filter>Game\Entity\Components\Draw</Filter>
-    </ClCompile>
-    <ClCompile Include="StaticMeshComponent.cpp">
       <Filter>Game\Entity\Components\Draw</Filter>
     </ClCompile>
     <ClCompile Include="TerrainMeshComponent.cpp">
@@ -843,6 +837,12 @@
     </ClCompile>
     <ClCompile Include="GameObjectsManager.cpp">
       <Filter>Game\World\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="ProcMeshComponent.cpp">
+      <Filter>Game\Entity\Components\Draw</Filter>
+    </ClCompile>
+    <ClCompile Include="ProcMeshRenderer.cpp">
+      <Filter>Game\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

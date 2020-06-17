@@ -1,15 +1,15 @@
 #include "pch.h"
-#include "StaticMeshComponent.h"
+#include "ProcMeshComponent.h"
 #include "RenderManager.h"
 #include "Entity.h"
 #include "TransformComponent.h"
 
-StaticMeshComponent::StaticMeshComponent(Entity* entity)
+ProcMeshComponent::ProcMeshComponent(Entity* entity)
     : RenderableComponent(entity)
 {
 }
 
-void StaticMeshComponent::ClearMesh()
+void ProcMeshComponent::ClearMesh()
 {
     if (mTriMeshParts.empty())
         return;
@@ -18,7 +18,7 @@ void StaticMeshComponent::ClearMesh()
     InvalidateMesh();
 }
 
-void StaticMeshComponent::UpdateBounds()
+void ProcMeshComponent::UpdateBounds()
 {
     cxx::aabbox bounds;
     for (Vertex3D_TriMesh& currMeshPart: mTriMeshParts)
@@ -30,24 +30,24 @@ void StaticMeshComponent::UpdateBounds()
     mParentEntity->mTransform->SetLocalBoundingBox(bounds);
 }
 
-void StaticMeshComponent::RenderFrame(SceneRenderContext& renderContext)
+void ProcMeshComponent::RenderFrame(SceneRenderContext& renderContext)
 {
-    StaticMeshRenderer& renderer = gRenderManager.mStaticMeshRenderer;
+    ProcMeshRenderer& renderer = gRenderManager.mProcMeshRenderer;
     renderer.Render(renderContext, this);
 }
 
-void StaticMeshComponent::PrepareRenderResources()
+void ProcMeshComponent::PrepareRenderResources()
 {
     if (!IsMeshInvalidated())
         return;
 
-    StaticMeshRenderer& renderer = gRenderManager.mStaticMeshRenderer;
+    ProcMeshRenderer& renderer = gRenderManager.mProcMeshRenderer;
     renderer.PrepareRenderdata(this);
 }
 
-void StaticMeshComponent::ReleaseRenderResources()
+void ProcMeshComponent::ReleaseRenderResources()
 {
-    StaticMeshRenderer& renderer = gRenderManager.mStaticMeshRenderer;
+    ProcMeshRenderer& renderer = gRenderManager.mProcMeshRenderer;
     renderer.ReleaseRenderdata(this);
 
     InvalidateMesh();

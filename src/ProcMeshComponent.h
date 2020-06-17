@@ -5,11 +5,11 @@
 #include "RenderableComponent.h"
 
 // procedural static mesh component of entity
-class StaticMeshComponent: public RenderableComponent
+class ProcMeshComponent: public RenderableComponent
 {
-    decl_rtti(StaticMeshComponent, RenderableComponent)
+    decl_rtti(ProcMeshComponent, RenderableComponent)
 
-    friend class StaticMeshRenderer;
+    friend class ProcMeshRenderer;
 
 public:
     // mesh data, available for both read and write
@@ -17,7 +17,7 @@ public:
     std::vector<Vertex3D_TriMesh> mTriMeshParts;
 
 public:
-    StaticMeshComponent(Entity* entity);
+    ProcMeshComponent(Entity* entity);
 
     // clear all triangle mesh parts and materials
     void ClearMesh();

@@ -21,7 +21,7 @@ public:
 
 private:
     void SetupCursorMesh();
-    void SetupCursorMeshMaterial(StaticMeshComponent* component);
+    void SetupCursorMeshMaterial(ProcMeshComponent* component);
 
 private:
     Entity* mMeshObject = nullptr;

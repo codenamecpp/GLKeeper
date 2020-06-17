@@ -188,10 +188,10 @@
     <ClInclude Include="TerrainTilesCursor.h" />
     <ClInclude Include="Shaders.h" />
     <ClInclude Include="SimpleTriangleMesh.h" />
-    <ClInclude Include="StaticMeshRenderer.h" />
+    <ClInclude Include="ProcMeshRenderer.h" />
     <ClInclude Include="MapInteractionController.h" />
     <ClInclude Include="RenderableComponent.h" />
-    <ClInclude Include="StaticMeshComponent.h" />
+    <ClInclude Include="ProcMeshComponent.h" />
     <ClInclude Include="rtti.h" />
     <ClInclude Include="SimpleTriangleMeshUtils.h" />
     <ClInclude Include="UiCtlPanelBar.h" />
@@ -332,10 +332,10 @@
     <ClCompile Include="TerrainHeightField.cpp" />
     <ClCompile Include="TerrainTilesCursor.cpp" />
     <ClCompile Include="Shaders.cpp" />
-    <ClCompile Include="StaticMeshRenderer.cpp" />
+    <ClCompile Include="ProcMeshRenderer.cpp" />
     <ClCompile Include="MapInteractionController.cpp" />
     <ClCompile Include="RenderableComponent.cpp" />
-    <ClCompile Include="StaticMeshComponent.cpp" />
+    <ClCompile Include="ProcMeshComponent.cpp" />
     <ClCompile Include="UiCtlPanelBar.cpp" />
     <ClCompile Include="UiCtlPanelIcon.cpp" />
     <ClCompile Include="GameplayGameScreen.cpp" />

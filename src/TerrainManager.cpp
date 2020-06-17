@@ -11,7 +11,7 @@
 #include "TerrainMeshComponent.h"
 #include "WaterLavaMeshComponent.h"
 #include "Texture2D.h"
-#include "StaticMeshComponent.h"
+#include "ProcMeshComponent.h"
 #include "cvars.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -431,7 +431,7 @@ void TerrainManager::InitHeightFieldDebugMesh()
     if (mHeightField.IsInitialized())
     {
         mHeightFieldDebugMesh = gEntityManager.CreateEntity();
-        StaticMeshComponent* component = mHeightFieldDebugMesh->AddComponent<StaticMeshComponent>();
+        ProcMeshComponent* component = mHeightFieldDebugMesh->AddComponent<ProcMeshComponent>();
         debug_assert(component);
 
         MeshMaterial material;
@@ -459,7 +459,7 @@ void TerrainManager::UpdateHeightFieldDebugMesh()
 {
     if (mHeightFieldDebugMesh)
     {
-        StaticMeshComponent* component = mHeightFieldDebugMesh->GetComponent<StaticMeshComponent>();
+        ProcMeshComponent* component = mHeightFieldDebugMesh->GetComponent<ProcMeshComponent>();
         debug_assert(component);
         component->mTriMeshParts.resize(1);
         mHeightField.GenerateDebugMesh(component->mTriMeshParts[0]);

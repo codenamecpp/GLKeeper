@@ -38,11 +38,11 @@ void TerrainRenderProgram::HandleProgramFree()
 
 //////////////////////////////////////////////////////////////////////////
 
-StaticMeshRenderProgram::StaticMeshRenderProgram(): RenderProgram("shaders/mesh.glsl")
+ProcMeshRenderProgram::ProcMeshRenderProgram(): RenderProgram("shaders/mesh.glsl")
 {
 }
 
-void StaticMeshRenderProgram::HandleProgramLoad()
+void ProcMeshRenderProgram::HandleProgramLoad()
 {
     // configure input layout
     mGpuProgram->BindAttribute(eVertexAttribute_Position0, "in_pos");
@@ -50,7 +50,7 @@ void StaticMeshRenderProgram::HandleProgramLoad()
     mGpuProgram->BindAttribute(eVertexAttribute_Color0, "in_color");
 }
 
-void StaticMeshRenderProgram::HandleProgramFree()
+void ProcMeshRenderProgram::HandleProgramFree()
 {
 }
 

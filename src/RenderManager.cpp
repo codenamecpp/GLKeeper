@@ -31,7 +31,7 @@ RenderManager gRenderManager;
 bool RenderManager::Initialize()
 {
     if (!mAnimatingMeshRenderer.Initialize() ||  !mTerrainMeshRenderer.Initialize() || 
-        !mWaterLavaMeshRenderer.Initialize() || !mGuiRenderer.Initialize() || !mStaticMeshRenderer.Initialize())
+        !mWaterLavaMeshRenderer.Initialize() || !mGuiRenderer.Initialize() || !mProcMeshRenderer.Initialize())
     {
         gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize render manager");
 
@@ -67,7 +67,7 @@ void RenderManager::Deinit()
     mWaterLavaMeshRenderer.Deinit();
     mAnimatingMeshRenderer.Deinit();
     mTerrainMeshRenderer.Deinit();
-    mStaticMeshRenderer.Deinit();
+    mProcMeshRenderer.Deinit();
     mDebugRenderer.Deinit();
     mSceneRenderList.Clear();
 

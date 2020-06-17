@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "TerrainTilesCursor.h"
 #include "Entity.h"
-#include "StaticMeshComponent.h"
+#include "ProcMeshComponent.h"
 #include "EntityManager.h"
 #include "TexturesManager.h"
 #include "TimeManager.h"
@@ -12,7 +12,7 @@ void TerrainTilesCursor::EnterWorld()
     mMeshObject = gEntityManager.CreateEntity();
     if (mMeshObject)
     {
-        StaticMeshComponent* component = mMeshObject->AddComponent<StaticMeshComponent>();
+        ProcMeshComponent* component = mMeshObject->AddComponent<ProcMeshComponent>();
         mMeshObject->mDebugColor.mA = 0; // hide debug box
         SetupCursorMeshMaterial(component);
     }
@@ -81,7 +81,7 @@ void TerrainTilesCursor::SetupCursorMesh()
     }
 
     // it is possible to cache mesh component
-    StaticMeshComponent* renderable = mMeshObject->GetComponent<StaticMeshComponent>();
+    ProcMeshComponent* renderable = mMeshObject->GetComponent<ProcMeshComponent>();
     if (renderable == nullptr)
     {
         debug_assert(false);
@@ -186,7 +186,7 @@ void TerrainTilesCursor::SetupCursorMesh()
     renderable->UpdateBounds();
 }
 
-void TerrainTilesCursor::SetupCursorMeshMaterial(StaticMeshComponent* component)
+void TerrainTilesCursor::SetupCursorMeshMaterial(ProcMeshComponent* component)
 {
     debug_assert(mMeshObject);
     debug_assert(component);

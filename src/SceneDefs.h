@@ -27,7 +27,7 @@ class RenderableComponent;
 class TransformComponent;
 class AnimatingMeshComponent;
 class TerrainMeshComponent;
-class StaticMeshComponent;
+class ProcMeshComponent;
 class WaterLavaMeshComponent;
 
 // cast helpers

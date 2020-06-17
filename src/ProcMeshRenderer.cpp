@@ -1,13 +1,13 @@
 #include "pch.h"
-#include "StaticMeshRenderer.h"
+#include "ProcMeshRenderer.h"
 #include "GpuBuffer.h"
-#include "StaticMeshComponent.h"
+#include "ProcMeshComponent.h"
 #include "GraphicsDevice.h"
 #include "RenderScene.h"
 
-bool StaticMeshRenderer::Initialize()
+bool ProcMeshRenderer::Initialize()
 {
-    if (!mStaticMeshRenderProgram.LoadProgram())
+    if (!mProcMeshRenderProgram.LoadProgram())
     {
         debug_assert(false);
     }
@@ -15,25 +15,25 @@ bool StaticMeshRenderer::Initialize()
     return true;
 }
 
-void StaticMeshRenderer::Deinit()
+void ProcMeshRenderer::Deinit()
 {
-    mStaticMeshRenderProgram.FreeProgram();
+    mProcMeshRenderProgram.FreeProgram();
 }
 
-void StaticMeshRenderer::Render(SceneRenderContext& renderContext, StaticMeshComponent* component)
+void ProcMeshRenderer::Render(SceneRenderContext& renderContext, ProcMeshComponent* component)
 {
     debug_assert(component);
     if (component->mDrawCalls.empty())
         return;
 
-    mStaticMeshRenderProgram.SetViewProjectionMatrix(gRenderScene.mCamera.mViewProjectionMatrix);
-    mStaticMeshRenderProgram.ActivateProgram();
+    mProcMeshRenderProgram.SetViewProjectionMatrix(gRenderScene.mCamera.mViewProjectionMatrix);
+    mProcMeshRenderProgram.ActivateProgram();
 
     // bind indices
     gGraphicsDevice.BindIndexBuffer(component->mIndexBuffer);
     gGraphicsDevice.BindVertexBuffer(component->mVertexBuffer, Vertex3D_Format::Get());
 
-    for (StaticMeshComponent::DrawCall& currDrawCall: component->mDrawCalls)
+    for (ProcMeshComponent::DrawCall& currDrawCall: component->mDrawCalls)
     {
         if (currDrawCall.mVertexCount == 0)
         {
@@ -60,7 +60,7 @@ void StaticMeshRenderer::Render(SceneRenderContext& renderContext, StaticMeshCom
     }
 }
 
-void StaticMeshRenderer::PrepareRenderdata(StaticMeshComponent* component)
+void ProcMeshRenderer::PrepareRenderdata(ProcMeshComponent* component)
 {
     debug_assert(component);
 
@@ -132,7 +132,7 @@ void StaticMeshRenderer::PrepareRenderdata(StaticMeshComponent* component)
 
     for (Vertex3D_TriMesh& currPart: component->mTriMeshParts)
     {
-        StaticMeshComponent::DrawCall& drawCall = component->mDrawCalls[iCurentPart];
+        ProcMeshComponent::DrawCall& drawCall = component->mDrawCalls[iCurentPart];
         drawCall.mMaterialIndex = iCurentPart;
         drawCall.mTriangleCount = (int) currPart.mTriangles.size();
         drawCall.mVertexCount = (int) currPart.mVertices.size();
@@ -160,10 +160,10 @@ void StaticMeshRenderer::PrepareRenderdata(StaticMeshComponent* component)
         debug_assert(false);
     }
 
-    component->mRenderProgram = &mStaticMeshRenderProgram;
+    component->mRenderProgram = &mProcMeshRenderProgram;
 }
 
-void StaticMeshRenderer::ReleaseRenderdata(StaticMeshComponent* component)
+void ProcMeshRenderer::ReleaseRenderdata(ProcMeshComponent* component)
 {
     debug_assert(component);
     component->mRenderProgram = nullptr;

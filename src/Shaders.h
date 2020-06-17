@@ -30,10 +30,10 @@ private:
 //////////////////////////////////////////////////////////////////////////
 
 // procedural mesh shader
-class StaticMeshRenderProgram: public RenderProgram
+class ProcMeshRenderProgram: public RenderProgram
 {
 public:
-    StaticMeshRenderProgram();
+    ProcMeshRenderProgram();
 
 private:
     void HandleProgramLoad() override;
