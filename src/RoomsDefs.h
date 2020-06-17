@@ -31,6 +31,3 @@ class WallSection;
 
 // weak pointer to room instance
 using RoomHandle = cxx::handle<GenericRoom>;
-
-// room instance unique identifier
-using RoomInstanceID = unsigned long long;

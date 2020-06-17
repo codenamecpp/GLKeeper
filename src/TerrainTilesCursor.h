@@ -10,8 +10,8 @@ public:
     Rectangle mSelectionRect;
 
 public:
-    void Initialize();
-    void Deinit();
+    void EnterWorld();
+    void ClearWorld();
     void UpdateFrame();
 
     // update current selection

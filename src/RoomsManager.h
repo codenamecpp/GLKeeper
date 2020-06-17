@@ -7,7 +7,7 @@ public:
     std::vector<GenericRoom*> mRoomsList;
 
 public:
-    // setup rooms manager internal resources
+    // one time initialization/shutdown routine
     bool Initialize();
     void Deinit();
 

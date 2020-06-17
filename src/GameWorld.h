@@ -15,7 +15,7 @@ public:
     TerrainTilesCursor mTerrainCursor;
 
 public:
-    // setup game world internal resources
+    // one time initialization/shutdown routine
     bool Initialize();
     void Deinit();
 

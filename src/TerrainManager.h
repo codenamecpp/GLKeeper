@@ -13,7 +13,7 @@ public:
     TerrainHeightField mHeightField;
 
 public:
-    // setup terrain manager internal resources
+    // one time initialization/shutdown routine
     bool Initialize();
     void Deinit();
 

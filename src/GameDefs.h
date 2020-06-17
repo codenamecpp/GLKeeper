@@ -8,6 +8,7 @@
 // forwards
 class GameMap;
 class TerrainTile;
+class GameObject;
 
 // terrain type identifier
 enum TerrainTypeID: unsigned int
@@ -35,6 +36,10 @@ enum CreatureTypeID: unsigned int
 
 // array of map tiles
 using TilesList = std::vector<TerrainTile*>;
+
+// aliases
+using RoomInstanceID = unsigned long long; // room instance unique identifier
+using GameObjectID = unsigned long long; // gameobject instance unique identifier
 
 // possible player identifiers
 enum ePlayerID

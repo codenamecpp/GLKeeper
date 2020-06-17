@@ -7,6 +7,7 @@ public:
     std::vector<Entity*> mEntitiesList;
 
 public:
+    // one time initialization/shutdown routine
     bool Initialize();
     void Deinit();
 

@@ -6,6 +6,7 @@
 #include "RoomsManager.h"
 #include "EntityManager.h"
 #include "GenericRoom.h"
+#include "GameObjectsManager.h"
 
 GameWorld gGameWorld;
 
@@ -27,6 +28,14 @@ bool GameWorld::Initialize()
         return false;
     }
 
+    if (!gGameObjectsManager.Initialize())
+    {
+        Deinit();
+
+        gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize gameobjects manager");
+        return false;
+    }
+
     if (!gRoomsManager.Initialize())
     {
         Deinit();
@@ -34,14 +43,14 @@ bool GameWorld::Initialize()
         gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize rooms manager");
         return false;
     }
-    mTerrainCursor.Initialize();
+
     return true;
 }
 
 void GameWorld::Deinit()
 {
-    mTerrainCursor.Deinit();
     gRoomsManager.Deinit();
+    gGameObjectsManager.Deinit();
     gTerrainManager.Deinit();
     gEntityManager.Deinit();
 }
@@ -67,12 +76,17 @@ void GameWorld::EnterWorld()
     ConstructStartupRooms();
     gRoomsManager.EnterWorld();
 
+    gGameObjectsManager.EnterWorld();
+
     gTerrainManager.BuildFullTerrainMesh();
+    mTerrainCursor.EnterWorld();
 }
 
 void GameWorld::ClearWorld()
 {
+    mTerrainCursor.ClearWorld();
     gTerrainManager.ClearWorld();
+    gGameObjectsManager.ClearWorld();
     gRoomsManager.ClearWorld();
     gEntityManager.ClearWorld();
     mScenarioData.Clear();
@@ -81,6 +95,7 @@ void GameWorld::ClearWorld()
 
 void GameWorld::UpdateFrame()
 {
+    gGameObjectsManager.UpdateFrame();
     gRoomsManager.UpdateFrame();
     gTerrainManager.UpdateTerrainMesh();
     gEntityManager.UpdateFrame();

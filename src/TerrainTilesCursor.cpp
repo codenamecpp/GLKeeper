@@ -6,7 +6,7 @@
 #include "TexturesManager.h"
 #include "TimeManager.h"
 
-void TerrainTilesCursor::Initialize()
+void TerrainTilesCursor::EnterWorld()
 {
     debug_assert(mMeshObject == nullptr);
     mMeshObject = gEntityManager.CreateEntity();
@@ -19,7 +19,7 @@ void TerrainTilesCursor::Initialize()
     debug_assert(mMeshObject);
 }
 
-void TerrainTilesCursor::Deinit()
+void TerrainTilesCursor::ClearWorld()
 {
     if (mMeshObject)
     {

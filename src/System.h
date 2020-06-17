@@ -11,7 +11,6 @@ public:
     SystemStartupParams mStartupParams;
 
 public:
-
     // setup system internal resources, terminates application on error
     void Initialize(int argc, char *argv[]);
     void Deinit();

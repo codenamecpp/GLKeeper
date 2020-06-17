@@ -82,7 +82,6 @@
 #include "RenderDefs.h"
 #include "SceneDefs.h"
 #include "ResourceDefs.h"
-#include "GameObjectsDefs.h"
 #include "ConsoleDefs.h"
 
 #include "MeshMaterial.h"

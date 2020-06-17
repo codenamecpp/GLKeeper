@@ -98,11 +98,14 @@
     <Filter Include="Game\Entity">
       <UniqueIdentifier>{594601b6-4a03-416c-b1e3-5ad2709c6c4a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\EntityComponents">
+    <Filter Include="Game\Entity\Components">
       <UniqueIdentifier>{5b78e975-7e29-42a9-a52f-30b8a952e05d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game\EntityComponents\Draw">
+    <Filter Include="Game\Entity\Components\Draw">
       <UniqueIdentifier>{18de9687-5111-4019-a160-ba6028195748}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\World\Objects">
+      <UniqueIdentifier>{ba36f8cd-da57-4fd9-a9f9-1ef084e94087}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -333,9 +336,6 @@
     <ClInclude Include="CreatureDefs.h">
       <Filter>Game\World</Filter>
     </ClInclude>
-    <ClInclude Include="GameObjectsDefs.h">
-      <Filter>Game\World</Filter>
-    </ClInclude>
     <ClInclude Include="ScenarioLoader.h">
       <Filter>Game</Filter>
     </ClInclude>
@@ -496,22 +496,22 @@
       <Filter>Game\World\Rooms</Filter>
     </ClInclude>
     <ClInclude Include="AnimatingMeshComponent.h">
-      <Filter>Game\EntityComponents\Draw</Filter>
+      <Filter>Game\Entity\Components\Draw</Filter>
     </ClInclude>
     <ClInclude Include="RenderableComponent.h">
-      <Filter>Game\EntityComponents\Draw</Filter>
+      <Filter>Game\Entity\Components\Draw</Filter>
     </ClInclude>
     <ClInclude Include="StaticMeshComponent.h">
-      <Filter>Game\EntityComponents\Draw</Filter>
+      <Filter>Game\Entity\Components\Draw</Filter>
     </ClInclude>
     <ClInclude Include="TerrainMeshComponent.h">
-      <Filter>Game\EntityComponents\Draw</Filter>
+      <Filter>Game\Entity\Components\Draw</Filter>
     </ClInclude>
     <ClInclude Include="WaterLavaMeshComponent.h">
-      <Filter>Game\EntityComponents\Draw</Filter>
+      <Filter>Game\Entity\Components\Draw</Filter>
     </ClInclude>
     <ClInclude Include="TransformComponent.h">
-      <Filter>Game\EntityComponents</Filter>
+      <Filter>Game\Entity\Components</Filter>
     </ClInclude>
     <ClInclude Include="Entity.h">
       <Filter>Game\Entity</Filter>
@@ -524,6 +524,12 @@
     </ClInclude>
     <ClInclude Include="EntityController.h">
       <Filter>Game\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Game\World\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObjectsManager.h">
+      <Filter>Game\World\Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -803,22 +809,22 @@
       <Filter>Game\World\Rooms</Filter>
     </ClCompile>
     <ClCompile Include="AnimatingMeshComponent.cpp">
-      <Filter>Game\EntityComponents\Draw</Filter>
+      <Filter>Game\Entity\Components\Draw</Filter>
     </ClCompile>
     <ClCompile Include="RenderableComponent.cpp">
-      <Filter>Game\EntityComponents\Draw</Filter>
+      <Filter>Game\Entity\Components\Draw</Filter>
     </ClCompile>
     <ClCompile Include="StaticMeshComponent.cpp">
-      <Filter>Game\EntityComponents\Draw</Filter>
+      <Filter>Game\Entity\Components\Draw</Filter>
     </ClCompile>
     <ClCompile Include="TerrainMeshComponent.cpp">
-      <Filter>Game\EntityComponents\Draw</Filter>
+      <Filter>Game\Entity\Components\Draw</Filter>
     </ClCompile>
     <ClCompile Include="WaterLavaMeshComponent.cpp">
-      <Filter>Game\EntityComponents\Draw</Filter>
+      <Filter>Game\Entity\Components\Draw</Filter>
     </ClCompile>
     <ClCompile Include="TransformComponent.cpp">
-      <Filter>Game\EntityComponents</Filter>
+      <Filter>Game\Entity\Components</Filter>
     </ClCompile>
     <ClCompile Include="Entity.cpp">
       <Filter>Game\Entity</Filter>
@@ -831,6 +837,12 @@
     </ClCompile>
     <ClCompile Include="EntityController.cpp">
       <Filter>Game\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Game\World\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObjectsManager.cpp">
+      <Filter>Game\World\Objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
