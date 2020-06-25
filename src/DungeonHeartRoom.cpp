@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "DungeonHeartRoom.h"
-#include "EntityManager.h"
 
 DungeonHeartRoom::DungeonHeartRoom(RoomDefinition* definition, ePlayerID owner, RoomInstanceID uid)
     : GenericRoom(definition, owner, uid)
@@ -9,11 +8,7 @@ DungeonHeartRoom::DungeonHeartRoom(RoomDefinition* definition, ePlayerID owner, 
 
 DungeonHeartRoom::~DungeonHeartRoom()
 {
-    if (mHeartAnimation)
-    {
-        gEntityManager.DestroyEntity(mHeartAnimation);
-        mHeartAnimation = nullptr;
-    }
+
 }
 
 void DungeonHeartRoom::Reconfigure()

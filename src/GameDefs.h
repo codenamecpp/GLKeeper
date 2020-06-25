@@ -7,6 +7,7 @@
 
 // forwards
 class GameMap;
+class Entity;
 class TerrainTile;
 class GameObject;
 
@@ -39,7 +40,7 @@ using TilesList = std::vector<TerrainTile*>;
 
 // aliases
 using RoomInstanceID = unsigned long long; // room instance unique identifier
-using GameObjectID = unsigned long long; // gameobject instance unique identifier
+using GameObjectID = unsigned long long; // game object instance unique identifier
 
 // possible player identifiers
 enum ePlayerID

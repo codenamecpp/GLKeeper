@@ -4,7 +4,6 @@
 #include "Console.h"
 #include "TerrainManager.h"
 #include "RoomsManager.h"
-#include "EntityManager.h"
 #include "GenericRoom.h"
 #include "GameObjectsManager.h"
 
@@ -12,14 +11,6 @@ GameWorld gGameWorld;
 
 bool GameWorld::Initialize()
 {
-    if (!gEntityManager.Initialize())
-    {
-        Deinit();
-
-        gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize entity manager");
-        return false;
-    }
-
     if (!gTerrainManager.Initialize())
     {
         Deinit();
@@ -52,7 +43,6 @@ void GameWorld::Deinit()
     gRoomsManager.Deinit();
     gGameObjectsManager.Deinit();
     gTerrainManager.Deinit();
-    gEntityManager.Deinit();
 }
 
 bool GameWorld::LoadScenario(const std::string& scenarioName)
@@ -70,7 +60,6 @@ void GameWorld::EnterWorld()
 {
     SetupMapData(0xDEADBEEF);
 
-    gEntityManager.EnterWorld();
     gTerrainManager.EnterWorld();
 
     ConstructStartupRooms();
@@ -88,7 +77,6 @@ void GameWorld::ClearWorld()
     gTerrainManager.ClearWorld();
     gGameObjectsManager.ClearWorld();
     gRoomsManager.ClearWorld();
-    gEntityManager.ClearWorld();
     mScenarioData.Clear();
     mMapData.Clear();
 }
@@ -98,7 +86,6 @@ void GameWorld::UpdateFrame()
     gGameObjectsManager.UpdateFrame();
     gRoomsManager.UpdateFrame();
     gTerrainManager.UpdateTerrainMesh();
-    gEntityManager.UpdateFrame();
     mTerrainCursor.UpdateFrame();
 }
 

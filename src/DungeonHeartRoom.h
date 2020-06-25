@@ -12,7 +12,4 @@ public:
 private:
     // override GenericRoom
     void Reconfigure() override;
-
-private:
-    Entity* mHeartAnimation = nullptr;
 };

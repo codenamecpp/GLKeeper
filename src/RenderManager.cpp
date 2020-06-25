@@ -6,11 +6,11 @@
 #include "GameMain.h"
 #include "ConsoleVariable.h"
 #include "RenderScene.h"
-#include "Entity.h"
+#include "SceneObject.h"
 #include "GuiManager.h"
-#include "AnimatingMeshComponent.h"
-#include "WaterLavaMeshComponent.h"
-#include "TerrainMeshComponent.h"
+#include "RenderableModel.h"
+#include "RenderableWaterLavaMesh.h"
+#include "RenderableTerrainMesh.h"
 #include "TerrainManager.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ RenderManager gRenderManager;
 
 bool RenderManager::Initialize()
 {
-    if (!mAnimatingMeshRenderer.Initialize() ||  !mTerrainMeshRenderer.Initialize() || 
+    if (!mAnimatingModelsRenderer.Initialize() ||  !mTerrainMeshRenderer.Initialize() || 
         !mWaterLavaMeshRenderer.Initialize() || !mGuiRenderer.Initialize() || !mProcMeshRenderer.Initialize())
     {
         gConsole.LogMessage(eLogMessage_Warning, "Cannot initialize render manager");
@@ -65,7 +65,7 @@ void RenderManager::Deinit()
 
     mGuiRenderer.Deinit();
     mWaterLavaMeshRenderer.Deinit();
-    mAnimatingMeshRenderer.Deinit();
+    mAnimatingModelsRenderer.Deinit();
     mTerrainMeshRenderer.Deinit();
     mProcMeshRenderer.Deinit();
     mDebugRenderer.Deinit();
@@ -74,14 +74,10 @@ void RenderManager::Deinit()
     mLoadedRenderProgramsList.clear();
 }
 
-void RenderManager::RegisterEntityForRendering(Entity* entity)
+void RenderManager::RegisterObjectForRendering(SceneObject* object)
 {
-    debug_assert(entity);
-
-    if (RenderableComponent* renderableComponent = entity->mRenderable)
-    {
-        renderableComponent->RegisterForRendering(mSceneRenderList);
-    }
+    debug_assert(object);
+    object->RegisterForRendering(mSceneRenderList);
 }
 
 void RenderManager::RenderFrame()
@@ -152,17 +148,17 @@ void RenderManager::DrawScene()
 
     gRenderScene.CollectObjectsForRendering();
 
-    mSceneRenderList.SortOpaqueComponents();
-    mSceneRenderList.SortTranslucentComponents();
+    mSceneRenderList.SortOpaque();
+    mSceneRenderList.SortTranslucent();
 
     for (eRenderPass currRenderPass : {eRenderPass_Opaque, eRenderPass_Translucent})
     {
-        const auto& currentList = mSceneRenderList.mComponentsForRenderPass[currRenderPass];
+        const auto& currentList = mSceneRenderList.mObjectsForRenderPass[currRenderPass];
         for (int icurrentComponent = 0; icurrentComponent < currentList.mElementsCount; ++icurrentComponent)
         {
-            RenderableComponent* currentComponent = currentList.mElements[icurrentComponent];
+            SceneObject* currentObject = currentList.mElements[icurrentComponent];
             renderContext.mCurrentPass = currRenderPass;
-            currentComponent->RenderFrame(renderContext);
+            currentObject->RenderFrame(renderContext);
         }
     }
 

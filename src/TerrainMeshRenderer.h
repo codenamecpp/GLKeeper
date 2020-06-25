@@ -5,7 +5,7 @@
 // terrain visualization manager
 class TerrainMeshRenderer: public cxx::noncopyable
 {
-    friend class TerrainMeshComponent;
+    friend class RenderableTerrainMesh;
 
 public:
 
@@ -16,12 +16,12 @@ public:
     // render terrain mesh for current render pass
     // @param renderContext: Current render context
     // @param component: Renderable component
-    void Render(SceneRenderContext& renderContext, TerrainMeshComponent* component);
+    void Render(SceneRenderContext& renderContext, RenderableTerrainMesh* component);
 
 private:
     // setup renderable component mesh renderdata
-    void PrepareRenderdata(TerrainMeshComponent* component);
-    void ReleaseRenderdata(TerrainMeshComponent* component);
+    void PrepareRenderdata(RenderableTerrainMesh* component);
+    void ReleaseRenderdata(RenderableTerrainMesh* component);
 
 private:
     TerrainRenderProgram mTerrainRenderProgram;

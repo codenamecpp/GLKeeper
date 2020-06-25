@@ -17,5 +17,5 @@ private:
     void ScanWaterPoolTiles(TilesList& poolTiles);
 
 private:
-    Entity* mWaterPool = nullptr;
+    RenderableWaterLavaMesh* mWaterPool = nullptr;
 };

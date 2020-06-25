@@ -2,7 +2,7 @@
 #include "TerrainMeshRenderer.h"
 #include "RenderScene.h"
 #include "GraphicsDevice.h"
-#include "TerrainMeshComponent.h"
+#include "RenderableTerrainMesh.h"
 #include "cvars.h"
 #include "TerrainTile.h"
 #include "GameWorld.h"
@@ -73,13 +73,13 @@ void TerrainMeshRenderer::Deinit()
     mTerrainRenderProgram.FreeProgram();
 }
 
-void TerrainMeshRenderer::Render(SceneRenderContext& renderContext, TerrainMeshComponent* component)
+void TerrainMeshRenderer::Render(SceneRenderContext& renderContext, RenderableTerrainMesh* component)
 {
     if (!gCVarRender_DrawTerrain.mValue)
         return;
 
     debug_assert(component);
-    if (component->mDrawCalls.empty())
+    if (component->mDrawParts.empty())
     {
         debug_assert(false);
         return;
@@ -99,7 +99,7 @@ void TerrainMeshRenderer::Render(SceneRenderContext& renderContext, TerrainMeshC
     gGraphicsDevice.BindIndexBuffer(component->mIndexBuffer);
     gGraphicsDevice.BindVertexBuffer(component->mVertexBuffer, Vertex3D_Terrain_Format::Get());
 
-    for (TerrainMeshComponent::DrawCall& currBatch: component->mDrawCalls)
+    for (RenderableTerrainMesh::DrawPart& currBatch: component->mDrawParts)
     {
         if (currBatch.mVertexCount == 0)
         {
@@ -126,7 +126,7 @@ void TerrainMeshRenderer::Render(SceneRenderContext& renderContext, TerrainMeshC
     }
 }
 
-void TerrainMeshRenderer::ReleaseRenderdata(TerrainMeshComponent* component)
+void TerrainMeshRenderer::ReleaseRenderdata(RenderableTerrainMesh* component)
 {
     debug_assert(component);
     component->mRenderProgram = nullptr;
@@ -145,7 +145,7 @@ void TerrainMeshRenderer::ReleaseRenderdata(TerrainMeshComponent* component)
     component->ClearMeshMaterials();
 }
 
-void TerrainMeshRenderer::PrepareRenderdata(TerrainMeshComponent* component)
+void TerrainMeshRenderer::PrepareRenderdata(RenderableTerrainMesh* component)
 {
     debug_assert(component);
 
@@ -157,7 +157,7 @@ void TerrainMeshRenderer::PrepareRenderdata(TerrainMeshComponent* component)
     }
 
     component->ClearMeshMaterials();
-    component->ClearDrawCalls();
+    component->ClearDrawParts();
 
     GameMap& gamemap = gGameWorld.mMapData;
     
@@ -234,7 +234,7 @@ void TerrainMeshRenderer::PrepareRenderdata(TerrainMeshComponent* component)
 
     int numPieces = (int) pieceBucketContainer.mPieceBucketMap.size();
     debug_assert(numPieces > 0);
-    component->SetDrawCallsCount(numPieces);
+    component->SetDrawPartsCount(numPieces);
     component->SetMeshMaterialsCount(numPieces);
 
     // compile geometries
@@ -252,7 +252,7 @@ void TerrainMeshRenderer::PrepareRenderdata(TerrainMeshComponent* component)
     {
         component->SetMeshMaterial(imaterial, ebucket.first);
 
-        TerrainMeshComponent::DrawCall& drawCall = component->mDrawCalls[imaterial];
+        RenderableTerrainMesh::DrawPart& drawCall = component->mDrawParts[imaterial];
         drawCall.mMaterialIndex = imaterial;
         drawCall.mTriangleCount = ebucket.second.mTriangleCount;
         drawCall.mVertexCount = ebucket.second.mVertexCount;

@@ -181,7 +181,6 @@
     <ClInclude Include="AABBTree.h" />
     <ClInclude Include="CreatureDefs.h" />
     <ClInclude Include="DungeonHeartRoom.h" />
-    <ClInclude Include="EntityController.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObjectsManager.h" />
     <ClInclude Include="TerrainHeightField.h" />
@@ -190,8 +189,7 @@
     <ClInclude Include="SimpleTriangleMesh.h" />
     <ClInclude Include="ProcMeshRenderer.h" />
     <ClInclude Include="MapInteractionController.h" />
-    <ClInclude Include="RenderableComponent.h" />
-    <ClInclude Include="ProcMeshComponent.h" />
+    <ClInclude Include="RenderableProcMesh.h" />
     <ClInclude Include="rtti.h" />
     <ClInclude Include="SimpleTriangleMeshUtils.h" />
     <ClInclude Include="UiCtlPanelBar.h" />
@@ -211,16 +209,14 @@
     <ClInclude Include="logical_expression.h" />
     <ClInclude Include="ToolsUISceneStatisticsWindow.h" />
     <ClInclude Include="GameMap.h" />
-    <ClInclude Include="Entity.h" />
-    <ClInclude Include="EntityComponent.h" />
-    <ClInclude Include="EntityManager.h" />
+    <ClInclude Include="SceneObject.h" />
     <ClInclude Include="GenericRoom.h" />
     <ClInclude Include="TopDownCameraController.h" />
     <ClInclude Include="TerrainTile.h" />
     <ClInclude Include="GameplayGamestate.h" />
     <ClInclude Include="GameWorld.h" />
     <ClInclude Include="ToolsUIMeshViewWindow.h" />
-    <ClInclude Include="AnimatingMeshComponent.h" />
+    <ClInclude Include="RenderableModel.h" />
     <ClInclude Include="BinaryInputStream.h" />
     <ClInclude Include="BinaryOutputStream.h" />
     <ClInclude Include="CameraController.h" />
@@ -233,15 +229,14 @@
     <ClInclude Include="ModelAsset.h" />
     <ClInclude Include="MeshViewGamestate.h" />
     <ClInclude Include="ModelAssetsManager.h" />
-    <ClInclude Include="AnimatingMeshRenderer.h" />
+    <ClInclude Include="AnimModelsRenderer.h" />
     <ClInclude Include="OrbitCameraController.h" />
     <ClInclude Include="MeshMaterial.h" />
     <ClInclude Include="ResourceDefs.h" />
     <ClInclude Include="RoomsDefs.h" />
     <ClInclude Include="RoomsManager.h" />
-    <ClInclude Include="TransformComponent.h" />
     <ClInclude Include="TempleRoom.h" />
-    <ClInclude Include="TerrainMeshComponent.h" />
+    <ClInclude Include="RenderableTerrainMesh.h" />
     <ClInclude Include="GuiDefs.h" />
     <ClInclude Include="GuiManager.h" />
     <ClInclude Include="GuiRenderer.h" />
@@ -307,8 +302,9 @@
     <ClInclude Include="TimeManager.h" />
     <ClInclude Include="version.h" />
     <ClInclude Include="VertexFormat.h" />
-    <ClInclude Include="WaterLavaMeshComponent.h" />
+    <ClInclude Include="RenderableWaterLavaMesh.h" />
     <ClInclude Include="WaterLavaMeshRenderer.h" />
+    <ClInclude Include="Entity.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="3rd_party\cJSON.cpp" />
@@ -318,15 +314,14 @@
     <ClCompile Include="3rd_party\imgui_widgets.cpp" />
     <ClCompile Include="3rd_party\stb_rect_pack.cpp" />
     <ClCompile Include="AABBTree.cpp" />
-    <ClCompile Include="AnimatingMeshComponent.cpp" />
+    <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="RenderableModel.cpp" />
     <ClCompile Include="BinaryInputStream.cpp" />
     <ClCompile Include="BinaryOutputStream.cpp" />
     <ClCompile Include="CommonTypes.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="ConsoleVariable.cpp" />
     <ClCompile Include="DungeonHeartRoom.cpp" />
-    <ClCompile Include="EntityComponent.cpp" />
-    <ClCompile Include="EntityController.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameObjectsManager.cpp" />
     <ClCompile Include="TerrainHeightField.cpp" />
@@ -334,8 +329,7 @@
     <ClCompile Include="Shaders.cpp" />
     <ClCompile Include="ProcMeshRenderer.cpp" />
     <ClCompile Include="MapInteractionController.cpp" />
-    <ClCompile Include="RenderableComponent.cpp" />
-    <ClCompile Include="ProcMeshComponent.cpp" />
+    <ClCompile Include="RenderableProcMesh.cpp" />
     <ClCompile Include="UiCtlPanelBar.cpp" />
     <ClCompile Include="UiCtlPanelIcon.cpp" />
     <ClCompile Include="GameplayGameScreen.cpp" />
@@ -354,8 +348,7 @@
     <ClCompile Include="GuiWidget.cpp" />
     <ClCompile Include="ToolsUISceneStatisticsWindow.cpp" />
     <ClCompile Include="GameMap.cpp" />
-    <ClCompile Include="Entity.cpp" />
-    <ClCompile Include="EntityManager.cpp" />
+    <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="GenericRoom.cpp" />
     <ClCompile Include="TopDownCameraController.cpp" />
     <ClCompile Include="TerrainTile.cpp" />
@@ -384,7 +377,7 @@
     <ClCompile Include="MeshViewGamestate.cpp" />
     <ClCompile Include="micropather.cpp" />
     <ClCompile Include="ModelAssetsManager.cpp" />
-    <ClCompile Include="AnimatingMeshRenderer.cpp" />
+    <ClCompile Include="AnimModelsRenderer.cpp" />
     <ClCompile Include="OrbitCameraController.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -396,10 +389,9 @@
     <ClCompile Include="MeshMaterial.cpp" />
     <ClCompile Include="RenderProgram.cpp" />
     <ClCompile Include="RoomsManager.cpp" />
-    <ClCompile Include="TransformComponent.cpp" />
     <ClCompile Include="SceneRenderList.cpp" />
     <ClCompile Include="TempleRoom.cpp" />
-    <ClCompile Include="TerrainMeshComponent.cpp" />
+    <ClCompile Include="RenderableTerrainMesh.cpp" />
     <ClCompile Include="GuiManager.cpp" />
     <ClCompile Include="GuiRenderer.cpp" />
     <ClCompile Include="unique_string.cpp" />
@@ -419,7 +411,7 @@
     <ClCompile Include="Texture2D_Image.cpp" />
     <ClCompile Include="TexturesManager.cpp" />
     <ClCompile Include="TimeManager.cpp" />
-    <ClCompile Include="WaterLavaMeshComponent.cpp" />
+    <ClCompile Include="RenderableWaterLavaMesh.cpp" />
     <ClCompile Include="WaterLavaMeshRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>

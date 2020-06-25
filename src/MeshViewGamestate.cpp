@@ -3,12 +3,11 @@
 #include "GameMain.h"
 #include "RenderScene.h"
 #include "System.h"
-#include "Entity.h"
+#include "SceneObject.h"
 #include "ModelAssetsManager.h"
-#include "AnimatingMeshComponent.h"
+#include "RenderableModel.h"
 #include "TimeManager.h"
 #include "ToolsUIManager.h"
-#include "EntityManager.h"
 #include "GraphicsDevice.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -34,12 +33,11 @@ void MeshViewGamestate::HandleGamestateEnter()
 
     ModelAsset* modelAsset = gModelsManager.LoadModelAsset("vampire-pray");
 
-    mModelObject = gEntityManager.CreateEntity();
+    mModelObject = new RenderableModel;
     debug_assert(mModelObject);
 
-    AnimatingMeshComponent* animComponent = mModelObject->AddComponent<AnimatingMeshComponent>();
-    animComponent->SetModelAsset(modelAsset);
-    animComponent->StartAnimation(24.0f, true);
+    mModelObject->SetModelAsset(modelAsset);
+    mModelObject->StartAnimation(24.0f, true);
 
     gToolsUIManager.AttachWindow(&mMeshViewWindow);
     mMeshViewWindow.SetWindowShown(true);
@@ -51,7 +49,7 @@ void MeshViewGamestate::HandleGamestateLeave()
     gRenderScene.SetCameraController(nullptr);
     if (mModelObject)
     {
-        gEntityManager.DestroyEntity(mModelObject);
+        mModelObject->DestroyObject();
         mModelObject = nullptr;
     }
 

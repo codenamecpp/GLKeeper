@@ -21,10 +21,10 @@ public:
 
 private:
     void SetupCursorMesh();
-    void SetupCursorMeshMaterial(ProcMeshComponent* component);
+    void SetupCursorMeshMaterial(RenderableProcMesh* component);
 
 private:
-    Entity* mMeshObject = nullptr;
+    RenderableProcMesh* mMeshObject = nullptr;
 
     float mCursorEffectTime = 0.0f;
 };

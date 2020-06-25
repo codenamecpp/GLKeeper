@@ -1,19 +1,16 @@
 #include "pch.h"
-#include "AnimatingMeshComponent.h"
+#include "RenderableModel.h"
 #include "ModelAsset.h"
 #include "TexturesManager.h"
-#include "Entity.h"
-#include "TransformComponent.h"
+#include "SceneObject.h"
 #include "RenderManager.h"
 
-AnimatingMeshComponent::AnimatingMeshComponent(Entity* entity)
-    : RenderableComponent(entity)
+RenderableModel::RenderableModel()
 {
-    debug_assert(mParentEntity);
-    mParentEntity->mDebugColor = Color32_Green;
+    mDebugColor = Color32_Green;
 }
 
-void AnimatingMeshComponent::UpdateComponent(float deltaTime)
+void RenderableModel::UpdateFrame(float deltaTime)
 {
     if (!IsAnimationActive() || IsAnimationPaused())
         return;
@@ -21,25 +18,25 @@ void AnimatingMeshComponent::UpdateComponent(float deltaTime)
     AdvanceAnimation(deltaTime);
 }
 
-void AnimatingMeshComponent::PrepareRenderResources()
+void RenderableModel::PrepareRenderResources()
 {
-    AnimatingMeshRenderer& renderer = gRenderManager.mAnimatingMeshRenderer;
+    AnimModelsRenderer& renderer = gRenderManager.mAnimatingModelsRenderer;
     renderer.PrepareRenderdata(this);
 }
 
-void AnimatingMeshComponent::ReleaseRenderResources()
+void RenderableModel::ReleaseRenderResources()
 {
-    AnimatingMeshRenderer& renderer = gRenderManager.mAnimatingMeshRenderer;
+    AnimModelsRenderer& renderer = gRenderManager.mAnimatingModelsRenderer;
     renderer.ReleaseRenderdata(this);
 }
 
-void AnimatingMeshComponent::RenderFrame(SceneRenderContext& renderContext)
+void RenderableModel::RenderFrame(SceneRenderContext& renderContext)
 {
-    AnimatingMeshRenderer& renderer = gRenderManager.mAnimatingMeshRenderer;
+    AnimModelsRenderer& renderer = gRenderManager.mAnimatingModelsRenderer;
     renderer.Render(renderContext, this);
 }
 
-void AnimatingMeshComponent::SetModelAsset(ModelAsset* modelAsset)
+void RenderableModel::SetModelAsset(ModelAsset* modelAsset)
 {
     if (modelAsset == nullptr || !modelAsset->IsModelLoaded())
     {
@@ -99,7 +96,7 @@ void AnimatingMeshComponent::SetModelAsset(ModelAsset* modelAsset)
     SetAnimationState();
 }
 
-void AnimatingMeshComponent::SetModelAssetNull()
+void RenderableModel::SetModelAssetNull()
 {
     mModelAsset = nullptr;
     ReleaseRenderResources();
@@ -110,7 +107,7 @@ void AnimatingMeshComponent::SetModelAssetNull()
     SetAnimationState();
 }
 
-bool AnimatingMeshComponent::StartAnimation(float animationSpeed, bool loop)
+bool RenderableModel::StartAnimation(float animationSpeed, bool loop)
 {
     if (IsStatic())
     {
@@ -131,7 +128,7 @@ bool AnimatingMeshComponent::StartAnimation(float animationSpeed, bool loop)
     return true;
 }
 
-void AnimatingMeshComponent::ClearAnimation()
+void RenderableModel::ClearAnimation()
 {
     mAnimState.mFrame0 = mAnimState.mStartFrame;
     mAnimState.mFrame1 = mAnimState.mStartFrame + 1;
@@ -151,17 +148,17 @@ void AnimatingMeshComponent::ClearAnimation()
     SetLocalBounds();
 }
 
-void AnimatingMeshComponent::RewindToStart()
+void RenderableModel::RewindToStart()
 {
     debug_assert(false); // todo
 }
 
-void AnimatingMeshComponent::RewingToEnd()
+void RenderableModel::RewingToEnd()
 {
     debug_assert(false); // todo
 }
 
-void AnimatingMeshComponent::AdvanceAnimation(float deltaTime)
+void RenderableModel::AdvanceAnimation(float deltaTime)
 {
     if (!IsAnimationActive())
     {
@@ -210,7 +207,7 @@ void AnimatingMeshComponent::AdvanceAnimation(float deltaTime)
     }
 }
 
-void AnimatingMeshComponent::SetAnimationPaused(bool isPaused)
+void RenderableModel::SetAnimationPaused(bool isPaused)
 {
     if (IsAnimationActive())
     {
@@ -218,32 +215,32 @@ void AnimatingMeshComponent::SetAnimationPaused(bool isPaused)
     }
 }
 
-bool AnimatingMeshComponent::IsAnimationLoop() const
+bool RenderableModel::IsAnimationLoop() const
 {
     return mAnimState.mIsAnimationLoop;
 }
 
-bool AnimatingMeshComponent::IsAnimationActive() const
+bool RenderableModel::IsAnimationActive() const
 {
     return mAnimState.mIsAnimationActive;
 }
 
-bool AnimatingMeshComponent::IsAnimationFinish() const
+bool RenderableModel::IsAnimationFinish() const
 {
     return !mAnimState.mIsAnimationActive && mAnimState.mCyclesCount > 0;
 }
 
-bool AnimatingMeshComponent::IsAnimationPaused() const
+bool RenderableModel::IsAnimationPaused() const
 {
     return mAnimState.mIsAnimationPaused;
 }
 
-bool AnimatingMeshComponent::IsStatic() const
+bool RenderableModel::IsStatic() const
 {
     return mAnimState.mStartFrame == mAnimState.mFinalFrame;
 }
 
-void AnimatingMeshComponent::SetPreferredLOD(int lod)
+void RenderableModel::SetPreferredLOD(int lod)
 {
     if (mPreferredLOD == lod)
         return;
@@ -252,7 +249,7 @@ void AnimatingMeshComponent::SetPreferredLOD(int lod)
     // todo
 }
 
-void AnimatingMeshComponent::SetAnimationState()
+void RenderableModel::SetAnimationState()
 {   
     mAnimState = BlendFramesAnimState ();
 
@@ -267,8 +264,7 @@ void AnimatingMeshComponent::SetAnimationState()
     SetLocalBounds();
 }
 
-void AnimatingMeshComponent::SetLocalBounds()
+void RenderableModel::SetLocalBounds()
 {
-    TransformComponent* transformComponent = mParentEntity->mTransform;
-    transformComponent->SetLocalBoundingBox(mModelAsset->mFramesBounds[mAnimState.mFrame0]);
+    SetLocalBoundingBox(mModelAsset->mFramesBounds[mAnimState.mFrame0]);
 }

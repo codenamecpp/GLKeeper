@@ -1,10 +1,9 @@
 #include "pch.h"
 #include "TempleRoom.h"
 #include "RenderScene.h"
-#include "WaterLavaMeshComponent.h"
+#include "RenderableWaterLavaMesh.h"
 #include "TerrainTile.h"
-#include "Entity.h"
-#include "EntityManager.h"
+#include "SceneObject.h"
 #include "TexturesManager.h"
 
 #define TEMPLE_WATER_POOL_TRANSLUCENCY  0.90f
@@ -22,7 +21,8 @@ TempleRoom::~TempleRoom()
 {
     if (mWaterPool)
     {
-        gEntityManager.DestroyEntity(mWaterPool);
+        mWaterPool->DestroyObject();
+        mWaterPool = nullptr;
     }
 }
 
@@ -43,22 +43,18 @@ void TempleRoom::Reconfigure()
     // create new water pool mesh
     if (mWaterPool == nullptr)
     {
-        mWaterPool = gEntityManager.CreateEntity();
+        mWaterPool = new RenderableWaterLavaMesh;
 
-        WaterLavaMeshComponent* meshComponent = mWaterPool->AddComponent<WaterLavaMeshComponent>();
-        meshComponent->SetWaterLavaTiles(waterTiles);
-        meshComponent->SetSurfaceTexture(gTexturesManager.mWaterTexture);
-        meshComponent->SetSurfaceParams(TEMPLE_WATER_POOL_TRANSLUCENCY, TEMPLE_WATER_POOL_WAVE_WIDTH, 
+        mWaterPool->SetWaterLavaTiles(waterTiles);
+        mWaterPool->SetSurfaceTexture(gTexturesManager.mWaterTexture);
+        mWaterPool->SetSurfaceParams(TEMPLE_WATER_POOL_TRANSLUCENCY, TEMPLE_WATER_POOL_WAVE_WIDTH, 
             TEMPLE_WATER_POOL_WAVE_HEIGHT, TEMPLE_WATER_POOL_WAVE_FREQ, TEMPLE_WATER_POOL_WATERLINE);
         return;
     }
 
-    WaterLavaMeshComponent* meshComponent = mWaterPool->GetComponent<WaterLavaMeshComponent>();
-    debug_assert(meshComponent);
-
-    if (!cxx::collections_equals(waterTiles, meshComponent->mWaterLavaTiles))
+    if (!cxx::collections_equals(waterTiles, mWaterPool->mWaterLavaTiles))
     {
-        meshComponent->SetWaterLavaTiles(waterTiles);
+        mWaterPool->SetWaterLavaTiles(waterTiles);
     }
 
     mWaterPool->SetActive(true);

@@ -2,7 +2,7 @@
 #include "WaterLavaMeshRenderer.h"
 #include "RenderScene.h"
 #include "GraphicsDevice.h"
-#include "WaterLavaMeshComponent.h"
+#include "RenderableWaterLavaMesh.h"
 #include "cvars.h"
 #include "GraphicsDevice.h"
 #include "GpuBuffer.h"
@@ -24,7 +24,7 @@ void WaterLavaMeshRenderer::Deinit()
     mWaterLavaRenderProgram.FreeProgram();
 }
 
-void WaterLavaMeshRenderer::Render(SceneRenderContext& renderContext, WaterLavaMeshComponent* component)
+void WaterLavaMeshRenderer::Render(SceneRenderContext& renderContext, RenderableWaterLavaMesh* component)
 {
     if (!gCVarRender_DrawWaterAndLava.mValue)
         return;
@@ -45,7 +45,7 @@ void WaterLavaMeshRenderer::Render(SceneRenderContext& renderContext, WaterLavaM
     gGraphicsDevice.BindIndexBuffer(component->mIndexBuffer);
     gGraphicsDevice.BindVertexBuffer(component->mVertexBuffer, Vertex3D_WaterLava_Format::Get());
 
-    for (WaterLavaMeshComponent::DrawCall& currPart: component->mDrawCalls)
+    for (RenderableWaterLavaMesh::DrawPart& currPart: component->mDrawParts)
     {
         if (currPart.mVertexCount == 0)
         {
@@ -70,7 +70,7 @@ void WaterLavaMeshRenderer::Render(SceneRenderContext& renderContext, WaterLavaM
     }    
 }
 
-void WaterLavaMeshRenderer::PrepareRenderdata(WaterLavaMeshComponent* component)
+void WaterLavaMeshRenderer::PrepareRenderdata(RenderableWaterLavaMesh* component)
 {
     debug_assert(component);
     if (component->mWaterLavaTiles.empty())
@@ -85,8 +85,8 @@ void WaterLavaMeshRenderer::PrepareRenderdata(WaterLavaMeshComponent* component)
     int vertexCount = component->mWaterLavaTiles.size() * NumVerticesPerTile;
     int triangleCount = component->mWaterLavaTiles.size() * NumTrianglesPerTile;
 
-    component->SetDrawCallsCount(1);
-    component->SetDrawCall(0, 0, 0, 0, vertexCount, triangleCount);
+    component->SetDrawPartsCount(1);
+    component->SetDrawPart(0, 0, 0, 0, vertexCount, triangleCount);
 
     int actualVBufferLength = vertexCount * Sizeof_Vertex3D_WaterLava;
     int actualIBufferLength = triangleCount * sizeof(glm::ivec3);
@@ -216,7 +216,7 @@ void WaterLavaMeshRenderer::PrepareRenderdata(WaterLavaMeshComponent* component)
     component->mRenderProgram = &mWaterLavaRenderProgram;
 }
 
-void WaterLavaMeshRenderer::ReleaseRenderdata(WaterLavaMeshComponent* component)
+void WaterLavaMeshRenderer::ReleaseRenderdata(RenderableWaterLavaMesh* component)
 {
     debug_assert(component);
     component->mRenderProgram = nullptr;

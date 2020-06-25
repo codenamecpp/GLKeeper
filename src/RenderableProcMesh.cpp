@@ -1,15 +1,13 @@
 #include "pch.h"
-#include "ProcMeshComponent.h"
+#include "RenderableProcMesh.h"
 #include "RenderManager.h"
-#include "Entity.h"
-#include "TransformComponent.h"
+#include "SceneObject.h"
 
-ProcMeshComponent::ProcMeshComponent(Entity* entity)
-    : RenderableComponent(entity)
+RenderableProcMesh::RenderableProcMesh()
 {
 }
 
-void ProcMeshComponent::ClearMesh()
+void RenderableProcMesh::ClearMesh()
 {
     if (mTriMeshParts.empty())
         return;
@@ -18,7 +16,7 @@ void ProcMeshComponent::ClearMesh()
     InvalidateMesh();
 }
 
-void ProcMeshComponent::UpdateBounds()
+void RenderableProcMesh::UpdateBounds()
 {
     cxx::aabbox bounds;
     for (Vertex3D_TriMesh& currMeshPart: mTriMeshParts)
@@ -27,16 +25,16 @@ void ProcMeshComponent::UpdateBounds()
         bounds.extend(currMeshPart.mBoundingBox);
     }
 
-    mParentEntity->mTransform->SetLocalBoundingBox(bounds);
+    SetLocalBoundingBox(bounds);
 }
 
-void ProcMeshComponent::RenderFrame(SceneRenderContext& renderContext)
+void RenderableProcMesh::RenderFrame(SceneRenderContext& renderContext)
 {
     ProcMeshRenderer& renderer = gRenderManager.mProcMeshRenderer;
     renderer.Render(renderContext, this);
 }
 
-void ProcMeshComponent::PrepareRenderResources()
+void RenderableProcMesh::PrepareRenderResources()
 {
     if (!IsMeshInvalidated())
         return;
@@ -45,7 +43,7 @@ void ProcMeshComponent::PrepareRenderResources()
     renderer.PrepareRenderdata(this);
 }
 
-void ProcMeshComponent::ReleaseRenderResources()
+void RenderableProcMesh::ReleaseRenderResources()
 {
     ProcMeshRenderer& renderer = gRenderManager.mProcMeshRenderer;
     renderer.ReleaseRenderdata(this);

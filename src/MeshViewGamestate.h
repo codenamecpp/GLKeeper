@@ -32,6 +32,6 @@ public:
 
 private:
     OrbitCameraController mOrbitCameraController;
-    Entity* mModelObject = nullptr;
+    RenderableModel* mModelObject = nullptr;
     ToolsUIMeshViewWindow mMeshViewWindow;
 };

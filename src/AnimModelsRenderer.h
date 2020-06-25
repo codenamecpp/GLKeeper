@@ -3,9 +3,9 @@
 #include "Shaders.h"
 
 // animating models visualization manager
-class AnimatingMeshRenderer: public cxx::noncopyable
+class AnimModelsRenderer: public cxx::noncopyable
 {
-    friend class AnimatingMeshComponent;
+    friend class RenderableModel;
 
 public:
     // setup renderer internal resources
@@ -15,7 +15,7 @@ public:
     // render animating model for current render pass
     // @param renderContext: Current render context
     // @param component: Renderable component
-    void Render(SceneRenderContext& renderContext, AnimatingMeshComponent* component);
+    void Render(SceneRenderContext& renderContext, RenderableModel* component);
 
     // recreate renderdata for specific model asset
     // @param modelAsset: Model data
@@ -23,8 +23,8 @@ public:
 
 private:
     // setup component renderdata
-    void PrepareRenderdata(AnimatingMeshComponent* component);
-    void ReleaseRenderdata(AnimatingMeshComponent* component);
+    void PrepareRenderdata(RenderableModel* component);
+    void ReleaseRenderdata(RenderableModel* component);
 
     // create renderdata for model asset and put it in internal cache
     // @param modelAsset: Model data

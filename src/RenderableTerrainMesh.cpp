@@ -1,28 +1,25 @@
 #include "pch.h"
-#include "TerrainMeshComponent.h"
-#include "Entity.h"
+#include "RenderableTerrainMesh.h"
+#include "SceneObject.h"
 #include "GraphicsDevice.h"
 #include "TerrainTile.h"
 #include "GameWorld.h"
 #include "GpuBuffer.h"
-#include "TransformComponent.h"
 #include "TerrainMeshRenderer.h"
 #include "RenderManager.h"
 
-TerrainMeshComponent::TerrainMeshComponent(Entity* entity) 
-    : RenderableComponent(entity)
+RenderableTerrainMesh::RenderableTerrainMesh() 
 {
-    debug_assert(mParentEntity);
-    mParentEntity->mDebugColor = Color32_Brown;
+    mDebugColor = Color32_Brown;
 }
 
-void TerrainMeshComponent::RenderFrame(SceneRenderContext& renderContext)
+void RenderableTerrainMesh::RenderFrame(SceneRenderContext& renderContext)
 {
     TerrainMeshRenderer& renderer = gRenderManager.mTerrainMeshRenderer;
     renderer.Render(renderContext, this);
 }
 
-void TerrainMeshComponent::SetTerrainArea(const Rectangle& mapArea)
+void RenderableTerrainMesh::SetTerrainArea(const Rectangle& mapArea)
 {
     if (mMapTerrainRect == mapArea)
         return;
@@ -39,13 +36,11 @@ void TerrainMeshComponent::SetTerrainArea(const Rectangle& mapArea)
     sectorBox.mMax.y = 3.0f;
     sectorBox.mMax.z = sectorBox.mMin.z + (mMapTerrainRect.h * TERRAIN_BLOCK_SIZE);
 
-    TransformComponent* transformComponent = mParentEntity->mTransform;
-    transformComponent->SetLocalBoundingBox(sectorBox);
-
+    SetLocalBoundingBox(sectorBox);
     InvalidateMesh();
 }
 
-void TerrainMeshComponent::PrepareRenderResources()
+void RenderableTerrainMesh::PrepareRenderResources()
 {
     if (!IsMeshInvalidated())
         return;
@@ -54,7 +49,7 @@ void TerrainMeshComponent::PrepareRenderResources()
     renderer.PrepareRenderdata(this);
 }
 
-void TerrainMeshComponent::ReleaseRenderResources()
+void RenderableTerrainMesh::ReleaseRenderResources()
 {
     TerrainMeshRenderer& renderer = gRenderManager.mTerrainMeshRenderer;
     renderer.ReleaseRenderdata(this);

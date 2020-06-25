@@ -1,11 +1,11 @@
 #pragma once
 
-#include "RenderableComponent.h"
+#include "SceneObject.h"
 
-// water lava mesh component of entity
-class WaterLavaMeshComponent: public RenderableComponent
+// water lava mesh scene object
+class RenderableWaterLavaMesh: public SceneObject
 {
-    decl_rtti(WaterLavaMeshComponent, RenderableComponent)
+    decl_rtti(RenderableWaterLavaMesh, SceneObject)
 
     friend class WaterLavaMeshRenderer;
 
@@ -21,7 +21,7 @@ public:
     TilesList mWaterLavaTiles;
 
 public:
-    WaterLavaMeshComponent(Entity* entity);
+    RenderableWaterLavaMesh();
 
     // set water or lava surface tiles
     // @param tilesArray: List of map tiles
@@ -34,12 +34,9 @@ public:
     // @param diffuseTexture: Texture 2d
     void SetSurfaceTexture(Texture2D* diffuseTexture);
 
-    // process update
-    // @param deltaTime: Time since last update
-    void UpdateComponent(float deltaTime) override;
-
-    // override RenderableComponent methods
+    // override RenderableObject methods
     void PrepareRenderResources() override;
     void ReleaseRenderResources() override;
     void RenderFrame(SceneRenderContext& renderContext) override;
+    void UpdateFrame(float deltaTime) override;
 };

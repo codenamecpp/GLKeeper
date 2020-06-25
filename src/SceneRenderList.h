@@ -2,7 +2,7 @@
 
 #include "GameDefs.h"
 
-// list for collecting scene entities which will be rendered on current frame
+// list for collecting scene objects which will be rendered on current frame
 class SceneRenderList
 {
 private:
@@ -11,40 +11,39 @@ private:
 public:
     SceneRenderList() = default;
 
-    inline void RegisterRenderableComponent(eRenderPass renderPass, RenderableComponent* component)
+    inline void RegisterSceneObject(eRenderPass renderPass, SceneObject* sceneObject)
     {
-        debug_assert(component);
+        debug_assert(sceneObject);
 
-        ComponentsList& renderPassList = mComponentsForRenderPass[renderPass];
+        ObjectsCollection& renderPassList = mObjectsForRenderPass[renderPass];
         if (renderPassList.mElementsCount < MaxElements)
         {
-            renderPassList.mElements[renderPassList.mElementsCount++] = component;
+            renderPassList.mElements[renderPassList.mElementsCount++] = sceneObject;
         }        
     }
 
-    // discard all previously collected entities
+    // discard all previously collected objects
     inline void Clear()
     {
         for (int icurr = 0; icurr < eRenderPass_Count; ++icurr)
         {
-            mComponentsForRenderPass[icurr].mElementsCount = 0;
+            mObjectsForRenderPass[icurr].mElementsCount = 0;
         }
     }
 
     // sort opaque objects by render program
-    void SortOpaqueComponents();
+    void SortOpaque();
 
     // sort translucent object by distance to camera
-    void SortTranslucentComponents();
+    void SortTranslucent();
 
 public:
-    // registered components lists
-    struct ComponentsList
+    // registered objects lists
+    struct ObjectsCollection
     {
         int mElementsCount = 0;
-
-        RenderableComponent* mElements[MaxElements];
+        SceneObject* mElements[MaxElements];
     };
 
-    ComponentsList mComponentsForRenderPass[eRenderPass_Count];
+    ObjectsCollection mObjectsForRenderPass[eRenderPass_Count];
 };

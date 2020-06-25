@@ -1,11 +1,10 @@
 #include "pch.h"
 #include "SceneRenderList.h"
-#include "Entity.h"
-#include "RenderableComponent.h"
+#include "SceneObject.h"
 
-void SceneRenderList::SortOpaqueComponents()
+void SceneRenderList::SortOpaque()
 {
-    ComponentsList& renderPassList = mComponentsForRenderPass[eRenderPass_Opaque];
+    ObjectsCollection& renderPassList = mObjectsForRenderPass[eRenderPass_Opaque];
 
     if (renderPassList.mElementsCount > 2)
     {
@@ -16,23 +15,23 @@ void SceneRenderList::SortOpaqueComponents()
         }
 
         std::sort(renderPassList.mElements, renderPassList.mElements + renderPassList.mElementsCount, 
-            [](const RenderableComponent* lhs, const RenderableComponent* rhs)
+            [](const SceneObject* lhs, const SceneObject* rhs)
         {
             return lhs->mRenderProgram < rhs->mRenderProgram;
         });
     }
 }
 
-void SceneRenderList::SortTranslucentComponents()
+void SceneRenderList::SortTranslucent()
 {
-    ComponentsList& renderPassList = mComponentsForRenderPass[eRenderPass_Translucent];
+    ObjectsCollection& renderPassList = mObjectsForRenderPass[eRenderPass_Translucent];
 
     if (renderPassList.mElementsCount > 2)
     {
         std::sort(renderPassList.mElements, renderPassList.mElements + renderPassList.mElementsCount, 
-            [](const RenderableComponent* lhs, const RenderableComponent* rhs)
+            [](const SceneObject* lhs, const SceneObject* rhs)
         {
-            return lhs->mParentEntity->mDistanceToCameraSquared < rhs->mParentEntity->mDistanceToCameraSquared;
+            return lhs->mDistanceToCameraSquared < rhs->mDistanceToCameraSquared;
         });
     }
 }

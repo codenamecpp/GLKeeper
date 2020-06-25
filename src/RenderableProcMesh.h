@@ -2,12 +2,12 @@
 
 #include "SimpleTriangleMesh.h"
 #include "VertexFormat.h"
-#include "RenderableComponent.h"
+#include "SceneObject.h"
 
-// procedural static mesh component of entity
-class ProcMeshComponent: public RenderableComponent
+// procedural static mesh scene object
+class RenderableProcMesh: public SceneObject
 {
-    decl_rtti(ProcMeshComponent, RenderableComponent)
+    decl_rtti(RenderableProcMesh, SceneObject)
 
     friend class ProcMeshRenderer;
 
@@ -17,7 +17,7 @@ public:
     std::vector<Vertex3D_TriMesh> mTriMeshParts;
 
 public:
-    ProcMeshComponent(Entity* entity);
+    RenderableProcMesh();
 
     // clear all triangle mesh parts and materials
     void ClearMesh();
@@ -25,7 +25,7 @@ public:
     // compute bounding box for current mesh
     void UpdateBounds();
 
-    // override RenderableComponent methods
+    // override RenderableObject methods
     void PrepareRenderResources() override;
     void ReleaseRenderResources() override;
     void RenderFrame(SceneRenderContext& renderContext) override;

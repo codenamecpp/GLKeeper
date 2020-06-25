@@ -49,17 +49,19 @@ private:
     void FreeHeightFieldDebugMesh();
     void UpdateHeightFieldDebugMesh();
 
-    Entity* CreateTerrainMesh(const Rectangle& mapArea);
-    Entity* CreateLavaMesh(const TilesList& tilesArray);
-    Entity* CreateWaterMesh(const TilesList& tilesArray);
-
-    Entity* GetObjectTerrainFromTile(const Point& tileLocation) const;
+    // create water or lava renderable object
+    RenderableWaterLavaMesh* CreateLavaMesh(const TilesList& tilesArray);
+    RenderableWaterLavaMesh* CreateWaterMesh(const TilesList& tilesArray);
+    // create terrain renderable object
+    RenderableTerrainMesh* CreateTerrainMesh(const Rectangle& mapArea);
+    // get terrain renderable object from map coordinate
+    RenderableTerrainMesh* GetObjectTerrainFromTile(const Point& tileLocation) const;
 
 private:
-    std::vector<Entity*> mWaterLavaMeshArray;
-    std::vector<Entity*> mTerrainMeshArray;
+    std::vector<RenderableWaterLavaMesh*> mWaterLavaMeshArray;
+    std::vector<RenderableTerrainMesh*> mTerrainMeshArray;
 
-    Entity* mHeightFieldDebugMesh = nullptr;
+    RenderableProcMesh* mHeightFieldDebugMesh = nullptr;
 
     TilesList mMeshInvalidatedTiles;
     TilesList mHighlightTiles;

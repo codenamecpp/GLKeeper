@@ -1,7 +1,7 @@
 #pragma once
 
 #include "DebugRenderer.h"
-#include "AnimatingMeshRenderer.h"
+#include "AnimModelsRenderer.h"
 #include "SceneRenderList.h"
 #include "TerrainMeshRenderer.h"
 #include "WaterLavaMeshRenderer.h"
@@ -16,7 +16,7 @@ class RenderManager: public cxx::noncopyable
 
 public:
     // readonly
-    AnimatingMeshRenderer mAnimatingMeshRenderer;
+    AnimModelsRenderer mAnimatingModelsRenderer;
     TerrainMeshRenderer mTerrainMeshRenderer;
     WaterLavaMeshRenderer mWaterLavaMeshRenderer;
     ProcMeshRenderer mProcMeshRenderer;
@@ -27,8 +27,8 @@ public:
     bool Initialize();
     void Deinit();
 
-    // register entity for rendering on current render frame
-    void RegisterEntityForRendering(Entity* entity);
+    // register object for rendering on current render frame
+    void RegisterObjectForRendering(SceneObject* object);
 
     // render game frame routine
     void RenderFrame();

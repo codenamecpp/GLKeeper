@@ -1,8 +1,7 @@
 #include "pch.h"
 #include "AABBTree.h"
 #include "DebugRenderer.h"
-#include "Entity.h"
-#include "TransformComponent.h"
+#include "SceneObject.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AABBTree implementation borrowed from here
@@ -272,7 +271,7 @@ void AABBTree::DebugRenderNode(DebugRenderer& renderer, TreeNode& treeNode)
 {
     if (treeNode.IsLeafNode())
     {
-        renderer.DrawAabb(treeNode.mBoundingBox, treeNode.mEntity->mDebugColor, true);
+        renderer.DrawAabb(treeNode.mBoundingBox, treeNode.mObject->mDebugColor, true);
         return;
     }
     if (treeNode.mLeftNodeIndex != NULL_TREE_NODE)
@@ -293,8 +292,8 @@ void AABBTree::UpdateTree()
 
 void AABBTree::Cleanup()
 {
-    // drop all entities links
-    mEntitiesMap.clear();
+    // drop all objects links
+    mObjectsMap.clear();
 
     mRootNodeIndex = NULL_TREE_NODE;
     mNextFreeNodeIndex = 0;
@@ -307,39 +306,37 @@ void AABBTree::Cleanup()
     mTreeNodes[mCapacity - 1].mNextNodeIndex = NULL_TREE_NODE;
 }
 
-void AABBTree::InsertEntity(Entity* entity)
+void AABBTree::InsertObject(SceneObject* object)
 {
-    debug_assert(entity);
-    TransformComponent* transformComponent = entity->mTransform;
-    transformComponent->ComputeTransformation();
+    debug_assert(object);
+    object->ComputeTransformation();
 
     TreeNodeIndex nodeIndex = NULL_TREE_NODE;
     AllocateTreeNode(&nodeIndex);
     
     TreeNode& treeNode = mTreeNodes[nodeIndex];
-    treeNode.mBoundingBox = transformComponent->mBoundsTransformed;
-    treeNode.mEntity = entity;
+    treeNode.mBoundingBox = object->mBoundsTransformed;
+    treeNode.mObject = object;
 
     InsertLeaf(nodeIndex);
-    mEntitiesMap[entity] = nodeIndex;
+    mObjectsMap[object] = nodeIndex;
 }
 
-void AABBTree::RemoveEntity(Entity* entity)
+void AABBTree::RemoveObject(SceneObject* object)
 {
-    debug_assert(entity);
-    TreeNodeIndex nodeIndex = mEntitiesMap[entity];
-    mEntitiesMap.erase(entity);
+    debug_assert(object);
+    TreeNodeIndex nodeIndex = mObjectsMap[object];
+    mObjectsMap.erase(object);
 
     RemoveLeaf(nodeIndex);
     DeallocateTreeNode(nodeIndex);
 }
 
-void AABBTree::UpdateEntity(Entity* entity)
+void AABBTree::UpdateObject(SceneObject* object)
 {
-    debug_assert(entity);
-    TransformComponent* transformComponent = entity->mTransform;
-    transformComponent->ComputeTransformation();
+    debug_assert(object);
+    object->ComputeTransformation();
 
-    TreeNodeIndex nodeIndex = mEntitiesMap[entity];
-    UpdateLeaf(nodeIndex, transformComponent->mBoundsTransformed);
+    TreeNodeIndex nodeIndex = mObjectsMap[object];
+    UpdateLeaf(nodeIndex, object->mBoundsTransformed);
 }

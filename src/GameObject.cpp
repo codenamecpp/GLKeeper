@@ -1,8 +1,7 @@
 #include "pch.h"
 #include "GameObject.h"
-#include "EntityManager.h"
-#include "AnimatingMeshComponent.h"
-#include "Entity.h"
+#include "RenderableModel.h"
+#include "SceneObject.h"
 #include "ModelAssetsManager.h"
 
 GameObject::GameObject(GameObjectID objectID, GameObjectDefinition* objectDefinition)
@@ -18,29 +17,14 @@ GameObject::~GameObject()
 
 void GameObject::InitGameObjectEntity()
 {
-    if (mGameObjectEntity)
-    {
-        // do nothing
-        return;
-    }
 
-    mGameObjectEntity = gEntityManager.CreateEntity();
-    debug_assert(mGameObjectEntity);
-
-    // init render component
-    mGameObjectEntity->AddComponent<AnimatingMeshComponent>();
-    SetAnimationResource(mDefinition->mMeshResource);
 
     // init physics component
 }
 
 void GameObject::FreeGameObjectEntity()
 {
-    if (mGameObjectEntity)
-    {
-        gEntityManager.DestroyEntity(mGameObjectEntity);
-        mGameObjectEntity = nullptr;
-    }
+
 }
 
 void GameObject::EnterGameWorld()
@@ -53,9 +37,12 @@ void GameObject::LeaveGameWorld()
     FreeGameObjectEntity();
 }
 
+void GameObject::UpdateFrame()
+{
+}
+
 bool GameObject::SetAnimationResource(const ArtResource& artResource)
 {
-    debug_assert(mGameObjectEntity);
 
     ModelAsset* modelAsset = nullptr;
 

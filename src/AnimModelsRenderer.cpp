@@ -1,18 +1,16 @@
 #include "pch.h"
-#include "AnimatingMeshRenderer.h"
+#include "AnimModelsRenderer.h"
 #include "ModelAsset.h"
 #include "GraphicsDevice.h"
 #include "GpuBuffer.h"
-#include "EntityComponent.h"
-#include "AnimatingMeshComponent.h"
+#include "RenderableModel.h"
 #include "RenderScene.h"
 #include "VertexFormat.h"
 #include "ConsoleVariable.h"
 #include "cvars.h"
-#include "Entity.h"
-#include "TransformComponent.h"
+#include "SceneObject.h"
 
-bool AnimatingMeshRenderer::Initialize()
+bool AnimModelsRenderer::Initialize()
 {
     if (!mMorphAnimRenderProgram.LoadProgram())
     {
@@ -22,7 +20,7 @@ bool AnimatingMeshRenderer::Initialize()
     return true;
 }
 
-void AnimatingMeshRenderer::Deinit()
+void AnimModelsRenderer::Deinit()
 {
     mMorphAnimRenderProgram.FreeProgram();
     for (auto& curr_iterator : mModelsCache)
@@ -33,7 +31,7 @@ void AnimatingMeshRenderer::Deinit()
     mModelsCache.clear();
 }
 
-void AnimatingMeshRenderer::Render(SceneRenderContext& renderContext, AnimatingMeshComponent* component)
+void AnimModelsRenderer::Render(SceneRenderContext& renderContext, RenderableModel* component)
 {
     if (!gCVarRender_DrawModels.mValue)
         return;
@@ -53,10 +51,8 @@ void AnimatingMeshRenderer::Render(SceneRenderContext& renderContext, AnimatingM
         return;
     }
 
-    TransformComponent* transformComponent = component->mParentEntity->mTransform;
-
     mMorphAnimRenderProgram.SetViewProjectionMatrix(gRenderScene.mCamera.mViewProjectionMatrix);
-    mMorphAnimRenderProgram.SetModelMatrix(transformComponent->mTransformation);
+    mMorphAnimRenderProgram.SetModelMatrix(component->mTransformation);
 
     float mixFrames = component->mAnimState.mMixFrames;
     if (!gCvarRender_EnableAnimBlendFrames.mValue)
@@ -88,7 +84,7 @@ void AnimatingMeshRenderer::Render(SceneRenderContext& renderContext, AnimatingM
         int frame0 = component->mAnimState.mFrame0;
         int frame1 = component->mAnimState.mFrame1;
 
-        AnimatingMeshComponent::DrawCall& currMeshPart = component->mDrawCalls[icurrSubset];
+        RenderableModel::DrawPart& currMeshPart = component->mDrawParts[icurrSubset];
 
         // prepare vertex streams definition
         vertexDefs.Setup(currMeshPart.mVertexDataOffset, currentSubMesh.mFrameVerticesCount, modelAsset->mFramesCount, frame0, frame1);
@@ -98,7 +94,7 @@ void AnimatingMeshRenderer::Render(SceneRenderContext& renderContext, AnimatingM
     }
 }
 
-ModelAssetRenderdata* AnimatingMeshRenderer::GetRenderdata(ModelAsset* modelAsset)
+ModelAssetRenderdata* AnimModelsRenderer::GetRenderdata(ModelAsset* modelAsset)
 {
     if (modelAsset == nullptr || !modelAsset->IsModelLoaded())
     {
@@ -117,7 +113,7 @@ ModelAssetRenderdata* AnimatingMeshRenderer::GetRenderdata(ModelAsset* modelAsse
     return renderdata;
 }
 
-void AnimatingMeshRenderer::InvalidateRenderData(ModelAsset* modelAsset)
+void AnimModelsRenderer::InvalidateRenderData(ModelAsset* modelAsset)
 {
     if (modelAsset == nullptr || !modelAsset->IsModelLoaded())
     {
@@ -133,7 +129,7 @@ void AnimatingMeshRenderer::InvalidateRenderData(ModelAsset* modelAsset)
     PrepareRenderdata(&cache_iterator->second, modelAsset);
 }
 
-void AnimatingMeshRenderer::ReleaseRenderdata(ModelAssetRenderdata* renderdata)
+void AnimModelsRenderer::ReleaseRenderdata(ModelAssetRenderdata* renderdata)
 {
     debug_assert(renderdata);
     if (renderdata->mVertexBuffer)
@@ -147,7 +143,7 @@ void AnimatingMeshRenderer::ReleaseRenderdata(ModelAssetRenderdata* renderdata)
     renderdata->Clear();
 }
 
-void AnimatingMeshRenderer::PrepareRenderdata(ModelAssetRenderdata* renderdata, ModelAsset* modelAsset)
+void AnimModelsRenderer::PrepareRenderdata(ModelAssetRenderdata* renderdata, ModelAsset* modelAsset)
 {
     debug_assert(renderdata);
     debug_assert(modelAsset);
@@ -251,7 +247,7 @@ void AnimatingMeshRenderer::PrepareRenderdata(ModelAssetRenderdata* renderdata, 
     } // if
 }
 
-void AnimatingMeshRenderer::PrepareRenderdata(AnimatingMeshComponent* component)
+void AnimModelsRenderer::PrepareRenderdata(RenderableModel* component)
 {
     debug_assert(component);
 
@@ -267,13 +263,13 @@ void AnimatingMeshRenderer::PrepareRenderdata(AnimatingMeshComponent* component)
     }
 
     const int NumParts = (int) modelAsset->mMeshArray.size();
-    component->SetDrawCallsCount(NumParts);
+    component->SetDrawPartsCount(NumParts);
 
     // setup mesh parts
     int iCurrentMeshPart = 0;
     for (const ModelAsset::SubMesh& srcSubMesh: modelAsset->mMeshArray)
     {
-        AnimatingMeshComponent::DrawCall& currMeshPart = component->mDrawCalls[iCurrentMeshPart];
+        RenderableModel::DrawPart& currMeshPart = component->mDrawParts[iCurrentMeshPart];
         currMeshPart.mMaterialIndex = srcSubMesh.mMaterialIndex;
         currMeshPart.mIndexDataOffset = renderdata->mSubsets[iCurrentMeshPart].mIndexDataOffset;
         currMeshPart.mVertexDataOffset = renderdata->mSubsets[iCurrentMeshPart].mVertexDataOffset;
@@ -287,7 +283,7 @@ void AnimatingMeshRenderer::PrepareRenderdata(AnimatingMeshComponent* component)
     component->mRenderProgram = &mMorphAnimRenderProgram;
 }
 
-void AnimatingMeshRenderer::ReleaseRenderdata(AnimatingMeshComponent* component)
+void AnimModelsRenderer::ReleaseRenderdata(RenderableModel* component)
 {
     debug_assert(component);
 

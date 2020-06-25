@@ -1,11 +1,11 @@
 #pragma once
 
-#include "RenderableComponent.h"
+#include "SceneObject.h"
 
-// terrain mesh component of entity
-class TerrainMeshComponent: public RenderableComponent
+// terrain mesh scene object
+class RenderableTerrainMesh: public SceneObject
 {
-    decl_rtti(TerrainMeshComponent, RenderableComponent)
+    decl_rtti(RenderableTerrainMesh, SceneObject)
 
     friend class TerrainMeshRenderer;
 
@@ -14,11 +14,11 @@ public:
     Rectangle mMapTerrainRect;
 
 public:
-    TerrainMeshComponent(Entity* entity);
+    RenderableTerrainMesh();
 
     void SetTerrainArea(const Rectangle& mapArea);
 
-    // override RenderableComponent methods
+    // override RenderableObject methods
     void PrepareRenderResources() override;
     void ReleaseRenderResources() override;
     void RenderFrame(SceneRenderContext& renderContext) override;

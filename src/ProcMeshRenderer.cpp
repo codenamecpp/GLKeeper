@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ProcMeshRenderer.h"
 #include "GpuBuffer.h"
-#include "ProcMeshComponent.h"
+#include "RenderableProcMesh.h"
 #include "GraphicsDevice.h"
 #include "RenderScene.h"
 
@@ -20,10 +20,10 @@ void ProcMeshRenderer::Deinit()
     mProcMeshRenderProgram.FreeProgram();
 }
 
-void ProcMeshRenderer::Render(SceneRenderContext& renderContext, ProcMeshComponent* component)
+void ProcMeshRenderer::Render(SceneRenderContext& renderContext, RenderableProcMesh* component)
 {
     debug_assert(component);
-    if (component->mDrawCalls.empty())
+    if (component->mDrawParts.empty())
         return;
 
     mProcMeshRenderProgram.SetViewProjectionMatrix(gRenderScene.mCamera.mViewProjectionMatrix);
@@ -33,7 +33,7 @@ void ProcMeshRenderer::Render(SceneRenderContext& renderContext, ProcMeshCompone
     gGraphicsDevice.BindIndexBuffer(component->mIndexBuffer);
     gGraphicsDevice.BindVertexBuffer(component->mVertexBuffer, Vertex3D_Format::Get());
 
-    for (ProcMeshComponent::DrawCall& currDrawCall: component->mDrawCalls)
+    for (RenderableProcMesh::DrawPart& currDrawCall: component->mDrawParts)
     {
         if (currDrawCall.mVertexCount == 0)
         {
@@ -60,11 +60,11 @@ void ProcMeshRenderer::Render(SceneRenderContext& renderContext, ProcMeshCompone
     }
 }
 
-void ProcMeshRenderer::PrepareRenderdata(ProcMeshComponent* component)
+void ProcMeshRenderer::PrepareRenderdata(RenderableProcMesh* component)
 {
     debug_assert(component);
 
-    component->ClearDrawCalls();
+    component->ClearDrawParts();
 
     if (component->mTriMeshParts.empty())
         return;
@@ -117,7 +117,7 @@ void ProcMeshRenderer::PrepareRenderdata(ProcMeshComponent* component)
     }
 
     int numPieces = (int) component->mTriMeshParts.size();
-    component->SetDrawCallsCount(numPieces);
+    component->SetDrawPartsCount(numPieces);
 
     // upload parts
     unsigned char* vbufferPtr = vertexBuffer->LockData<unsigned char>(BufferAccess_UnsynchronizedWrite, 0, actualVBufferLength);
@@ -132,7 +132,7 @@ void ProcMeshRenderer::PrepareRenderdata(ProcMeshComponent* component)
 
     for (Vertex3D_TriMesh& currPart: component->mTriMeshParts)
     {
-        ProcMeshComponent::DrawCall& drawCall = component->mDrawCalls[iCurentPart];
+        RenderableProcMesh::DrawPart& drawCall = component->mDrawParts[iCurentPart];
         drawCall.mMaterialIndex = iCurentPart;
         drawCall.mTriangleCount = (int) currPart.mTriangles.size();
         drawCall.mVertexCount = (int) currPart.mVertices.size();
@@ -163,7 +163,7 @@ void ProcMeshRenderer::PrepareRenderdata(ProcMeshComponent* component)
     component->mRenderProgram = &mProcMeshRenderProgram;
 }
 
-void ProcMeshRenderer::ReleaseRenderdata(ProcMeshComponent* component)
+void ProcMeshRenderer::ReleaseRenderdata(RenderableProcMesh* component)
 {
     debug_assert(component);
     component->mRenderProgram = nullptr;

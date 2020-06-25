@@ -2,10 +2,10 @@
 
 #include "GameDefs.h"
 #include "ScenarioDefs.h"
-#include "EntityController.h"
+#include "Entity.h"
 
 // base class of game object
-class GameObject: public EntityController
+class GameObject: public Entity
 {
 public:
     // readonly 
@@ -21,13 +21,14 @@ public:
     void InitGameObjectEntity();
     void FreeGameObjectEntity();
 
-    // process world enter and exit
-    void EnterGameWorld();
-    void LeaveGameWorld();
+    // override Entity methods
+    void EnterGameWorld() override;
+    void LeaveGameWorld() override;
+    void UpdateFrame() override;
 
 protected:
     bool SetAnimationResource(const ArtResource& artResource);
 
 protected:
-    Entity* mGameObjectEntity = nullptr;
+    RenderableModel* mSceneObject = nullptr;
 };

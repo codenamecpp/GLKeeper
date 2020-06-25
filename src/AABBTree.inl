@@ -10,9 +10,9 @@ inline void AABBTree::QueryObjectsRecursive(const TreeNode* node, const cxx::fru
     // found leaf node
     if (node->IsLeafNode())
     {
-        if (node->mEntity)
+        if (node->mObject)
         {
-            callback(node->mEntity);
+            callback(node->mObject);
             maxObjects--;
         }
         return;
@@ -34,25 +34,25 @@ inline void AABBTree::QueryObjectsRecursive(const TreeNode* node, const cxx::fru
 //////////////////////////////////////////////////////////////////////////
 
 template<typename TCallback>
-inline void AABBTree::QueryEntities(const cxx::aabbox& aabbox, const TCallback& callback, int maxObjects) const
+inline void AABBTree::QueryObjects(const cxx::aabbox& aabbox, const TCallback& callback, int maxObjects) const
 {
     // todo
 }
 
 template<typename TCallback>
-inline void AABBTree::QueryEntities(const cxx::bounding_sphere& sphere, const TCallback& callback, int maxObjects) const
+inline void AABBTree::QueryObjects(const cxx::bounding_sphere& sphere, const TCallback& callback, int maxObjects) const
 {
     // todo
 }
 
 template<typename TCallback>
-inline void AABBTree::QueryEntities(const cxx::ray3d& ray, const TCallback& callback, int maxObjects) const
+inline void AABBTree::QueryObjects(const cxx::ray3d& ray, const TCallback& callback, int maxObjects) const
 {
     // todo
 }
 
 template<typename TCallback>
-inline void AABBTree::QueryEntities(const cxx::frustum_t& cameraFrustum, const TCallback& callback, int maxObjects) const
+inline void AABBTree::QueryObjects(const cxx::frustum_t& cameraFrustum, const TCallback& callback, int maxObjects) const
 {
     if (mRootNodeIndex == NULL_TREE_NODE || maxObjects < 1)
         return;

@@ -1,14 +1,14 @@
 #pragma once
 
 #include "SceneDefs.h"
-#include "RenderableComponent.h"
+#include "SceneObject.h"
 
-// animating model component of entity
-class AnimatingMeshComponent: public RenderableComponent
+// renderable model scene object
+class RenderableModel: public SceneObject
 {
-    decl_rtti(AnimatingMeshComponent, RenderableComponent)
+    decl_rtti(RenderableModel, SceneObject)
 
-    friend class AnimatingMeshRenderer;
+    friend class AnimModelsRenderer;
 
 public:
     // readonly
@@ -20,7 +20,7 @@ public:
     int mPreferredLOD = 0;
 
 public:
-    AnimatingMeshComponent(Entity* entity);
+    RenderableModel();
 
     // change model asset, setup bounds and materials
     // @param modelAsset: Source model data
@@ -43,14 +43,11 @@ public:
 
     void SetPreferredLOD(int lod);
 
-    // process component update frame
-    // @param deltaTime: Time since last update
-    void UpdateComponent(float deltaTime) override;
-
-    // override RenderableComponent methods
+    // override RenderableObject methods
     void PrepareRenderResources() override;
     void ReleaseRenderResources() override;
     void RenderFrame(SceneRenderContext& renderContext) override;
+    void UpdateFrame(float deltaTime) override;
 
 private:
     void SetAnimationState();

@@ -1,29 +1,23 @@
 #include "pch.h"
 #include "TerrainTilesCursor.h"
-#include "Entity.h"
-#include "ProcMeshComponent.h"
-#include "EntityManager.h"
+#include "SceneObject.h"
+#include "RenderableProcMesh.h"
 #include "TexturesManager.h"
 #include "TimeManager.h"
 
 void TerrainTilesCursor::EnterWorld()
 {
     debug_assert(mMeshObject == nullptr);
-    mMeshObject = gEntityManager.CreateEntity();
-    if (mMeshObject)
-    {
-        ProcMeshComponent* component = mMeshObject->AddComponent<ProcMeshComponent>();
-        mMeshObject->mDebugColor.mA = 0; // hide debug box
-        SetupCursorMeshMaterial(component);
-    }
-    debug_assert(mMeshObject);
+    mMeshObject = new RenderableProcMesh;
+    mMeshObject->mDebugColor.mA = 0; // hide debug box
+    SetupCursorMeshMaterial(mMeshObject);
 }
 
 void TerrainTilesCursor::ClearWorld()
 {
     if (mMeshObject)
     {
-        gEntityManager.DestroyEntity(mMeshObject);
+        mMeshObject->DestroyObject();
         mMeshObject = nullptr;
     }
     mSelectionRect.w = 0;
@@ -36,7 +30,7 @@ void TerrainTilesCursor::UpdateFrame()
     mCursorEffectTime += deltaTime;
     if (mMeshObject)
     {
-        MeshMaterial* material = mMeshObject->mRenderable->GetMeshMaterial();
+        MeshMaterial* material = mMeshObject->GetMeshMaterial();
         debug_assert(material);
 
         float translucency = cxx::ping_pong(mCursorEffectTime, 0.3f);
@@ -81,18 +75,17 @@ void TerrainTilesCursor::SetupCursorMesh()
     }
 
     // it is possible to cache mesh component
-    ProcMeshComponent* renderable = mMeshObject->GetComponent<ProcMeshComponent>();
-    if (renderable == nullptr)
+    if (mMeshObject == nullptr)
     {
         debug_assert(false);
         return;
     }
 
-    renderable->ClearMesh();
+    mMeshObject->ClearMesh();
 
     if (mSelectionRect.w == 0 || mSelectionRect.h == 0)
     {
-        renderable->UpdateBounds();
+        mMeshObject->UpdateBounds();
         return;
     }
 
@@ -100,8 +93,8 @@ void TerrainTilesCursor::SetupCursorMesh()
     GetTerrainAreaBounds(mSelectionRect, areaBounds);
 
     // setup selection trimesh
-    renderable->mTriMeshParts.resize(1);
-    Vertex3D_TriMesh& triMesh = renderable->mTriMeshParts[0];
+    mMeshObject->mTriMeshParts.resize(1);
+    Vertex3D_TriMesh& triMesh = mMeshObject->mTriMeshParts[0];
 
     /*
                   /1--------/3
@@ -182,11 +175,11 @@ void TerrainTilesCursor::SetupCursorMesh()
     PushSelectionLine(triMesh, edges[7], edges[6], true);
     PushSelectionLine(triMesh, edges[3], edges[2], true);
 
-    renderable->InvalidateMesh();
-    renderable->UpdateBounds();
+    mMeshObject->InvalidateMesh();
+    mMeshObject->UpdateBounds();
 }
 
-void TerrainTilesCursor::SetupCursorMeshMaterial(ProcMeshComponent* component)
+void TerrainTilesCursor::SetupCursorMeshMaterial(RenderableProcMesh* component)
 {
     debug_assert(mMeshObject);
     debug_assert(component);
