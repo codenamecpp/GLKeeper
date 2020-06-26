@@ -38,16 +38,13 @@ void RenderableModel::RenderFrame(SceneRenderContext& renderContext)
 
 void RenderableModel::SetModelAsset(ModelAsset* modelAsset)
 {
-    if (modelAsset == nullptr || !modelAsset->IsModelLoaded())
-    {
-        debug_assert(false);
-        return;
-    }
-
     if (mModelAsset == modelAsset) // same asset, ignore
         return;
 
-    SetModelAssetNull();
+    Clear();
+
+    if (modelAsset == nullptr)
+        return;
 
     mModelAsset = modelAsset;
 
@@ -96,7 +93,7 @@ void RenderableModel::SetModelAsset(ModelAsset* modelAsset)
     SetAnimationState();
 }
 
-void RenderableModel::SetModelAssetNull()
+void RenderableModel::Clear()
 {
     mModelAsset = nullptr;
     ReleaseRenderResources();

@@ -23,9 +23,9 @@ public:
     RenderableModel();
 
     // change model asset, setup bounds and materials
-    // @param modelAsset: Source model data
+    // @param modelAsset: Source asset or nullptr to clear
     void SetModelAsset(ModelAsset* modelAsset);
-    void SetModelAssetNull();
+    void Clear();
 
     // model animation control
     bool StartAnimation(float animationSpeed, bool loop);
