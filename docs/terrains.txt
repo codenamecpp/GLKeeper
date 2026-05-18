@@ -1,0 +1,5409 @@
+==========================================================================================================================================================================
+* TERRAIN TYPES *
+==========================================================================================================================================================================
+
+* FLAGS *
+	#SOLID
+		Impenetrable Rock
+		Rock
+		Gold
+		Gems
+		Reinforced Wall
+		Fog Of War
+		Edge of Map
+		Claim Scan
+
+	#IMPENETRABLE
+		Impenetrable Rock
+		Water
+		Lava
+		Gems
+		Fog Of War
+		Edge of Map
+		Claim Scan
+
+	#OWNABLE
+		Claimed Path
+		Reinforced Wall
+		Treasury
+		Lair
+		Portal
+		Hatchery
+		Dungeon Heart
+		Library
+		Training Room
+		Wooden Bridge
+		Guard Room
+		Work Shop
+		Prison
+		Torture Chamber
+		Temple
+		Graveyard
+		Casino
+		Combat Pit
+		Stone Bridge
+		Hero Gate [ Final ]
+		Hero Gate [ Tile ] [<not used>]
+		Claimed Vault
+		Hero Gate [ 2x2 ]
+		Hero Gate [ FrontEnd ]
+		Hero Lair
+		Hero Stone Bridge
+		Hero Gate [ 3x1 ]
+		Mercenary Gate [<not used>]
+		Hero Portal
+		Crypt
+
+	#TAGGABLE
+		Rock
+		Gold
+		Gems
+		Reinforced Wall
+		Fog Of War
+		Claim Scan
+
+	#ATTACKABLE
+		Claimed Path
+		Reinforced Wall
+		Treasury
+		Lair
+		Portal
+		Hatchery
+		Dungeon Heart
+		Library
+		Training Room
+		Wooden Bridge
+		Guard Room
+		Work Shop
+		Prison
+		Torture Chamber
+		Temple
+		Graveyard
+		Casino
+		Combat Pit
+		Stone Bridge
+		Claimed Vault
+		Hero Gate [ FrontEnd ]
+		Hero Stone Bridge
+		Hero Portal
+		Crypt
+
+	#TORCH
+		Impenetrable Rock
+		Reinforced Wall
+		Edge of Map
+
+	#WATER
+		Water
+
+	#LAVA
+		Lava
+
+	#ALWAYS_EXPLORED
+
+	#PLAYER_COLOURED_PATH
+		Claimed Path
+		Hero Lair
+
+	#PLAYER_COLOURED_WALL
+		Reinforced Wall
+
+	#CONSTRUCTION_TYPE_WATER
+		Water
+		Lava
+
+	#CONSTRUCTION_TYPE_QUAD
+		Claimed Path
+		Reinforced Wall
+		Hero Lair
+
+	#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER
+
+	#FILL_INABLE
+		Dirt Path
+		Claimed Path
+		Mana Vault
+		Claimed Vault
+		Hero Lair
+
+	#ALLOW_ROOM_WALLS
+		Impenetrable Rock
+		Reinforced Wall
+		Edge of Map
+
+	#DECAY
+		Reinforced Wall
+
+	#RANDOM_TEXTURE
+		Impenetrable Rock
+		Rock
+		Gold
+		Edge of Map
+
+	#DWARF_CAN_DIG_THROUGH
+		Rock
+		Gold
+		Hero Gate [ 2x2 ]
+
+	#REVEAL_THROUGH_FOG_OF_WAR
+		Impenetrable Rock
+		Water
+		Lava
+		Gold
+		Gems
+		Edge of Map
+
+	#LIGHT
+		Impenetrable Rock
+		Dirt Path
+		Water
+		Lava
+		Gold
+		Gems
+		Claimed Path
+		Reinforced Wall
+		Treasury
+		Lair
+		Hatchery
+		Dungeon Heart
+		Library
+		Training Room
+		Wooden Bridge
+		Guard Room
+		Work Shop
+		Prison
+		Torture Chamber
+		Temple
+		Graveyard
+		Casino
+		Combat Pit
+		Stone Bridge
+		Mana Vault
+		Claimed Vault
+		Claim Scan
+		Crypt
+
+	#AMBIENT_LIGHT
+		Treasury
+		Lair
+		Portal
+		Hatchery
+		Dungeon Heart
+		Wooden Bridge
+		Guard Room
+		Work Shop
+		Torture Chamber
+		Temple
+		Graveyard
+		Casino
+		Combat Pit
+		Stone Bridge
+		Hero Gate [ Final ]
+		Hero Gate [ Tile ] [<not used>]
+		Hero Portal
+		Crypt
+
+
+* TERRAIN TYPES *
+	Impenetrable Rock
+		#SOLID : 1
+		#IMPENETRABLE : 1
+		#OWNABLE : 0
+		#TAGGABLE : 0
+		#ATTACKABLE : 0
+		#TORCH : 1
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 1
+		#DECAY : 0
+		#RANDOM_TEXTURE : 1
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 1
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 0
+		 Resource COMPLETE : 
+		 Resource SIDE : IMPEN ROCK WALL
+		 Resource TAGGED : 
+		 Resource TOP : IMPEN ROCK TOP
+
+	Rock
+		#SOLID : 1
+		#IMPENETRABLE : 0
+		#OWNABLE : 0
+		#TAGGABLE : 1
+		#ATTACKABLE : 0
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 1
+		#DWARF_CAN_DIG_THROUGH : 1
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 0
+		#AMBIENT_LIGHT : 0
+		 Resource COMPLETE : Rock Corner
+		 Resource SIDE : ROCK WALL
+		 Resource TAGGED : ROCK TOP TAGGED
+		 Resource TOP : ROCK TOP
+
+	Dirt Path
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 0
+		#TAGGABLE : 0
+		#ATTACKABLE : 0
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 1
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 0
+		 Resource COMPLETE : ROCK FLOOR
+		 Resource SIDE : 
+		 Resource TAGGED : ROCK TOP TAGGED
+		 Resource TOP : ROCK TOP TAGGED
+
+	Water
+		#SOLID : 0
+		#IMPENETRABLE : 1
+		#OWNABLE : 0
+		#TAGGABLE : 0
+		#ATTACKABLE : 0
+		#TORCH : 0
+		#WATER : 1
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 1
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 1
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 0
+		 Resource COMPLETE : WATER BED
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : Water
+
+	Lava
+		#SOLID : 0
+		#IMPENETRABLE : 1
+		#OWNABLE : 0
+		#TAGGABLE : 0
+		#ATTACKABLE : 0
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 1
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 1
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 1
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 0
+		 Resource COMPLETE : LAVA BED
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : Lava0
+
+	Gold
+		#SOLID : 1
+		#IMPENETRABLE : 0
+		#OWNABLE : 0
+		#TAGGABLE : 1
+		#ATTACKABLE : 0
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 1
+		#DWARF_CAN_DIG_THROUGH : 1
+		#REVEAL_THROUGH_FOG_OF_WAR : 1
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 0
+		 Resource COMPLETE : 
+		 Resource SIDE : GOLD WALL
+		 Resource TAGGED : GOLD TOP TAGGED
+		 Resource TOP : GOLD TOP
+
+	Gems
+		#SOLID : 1
+		#IMPENETRABLE : 1
+		#OWNABLE : 0
+		#TAGGABLE : 1
+		#ATTACKABLE : 0
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 1
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 0
+		 Resource COMPLETE : 
+		 Resource SIDE : GEMS WALL
+		 Resource TAGGED : GEMS TOP TAGGED
+		 Resource TOP : GEMS TOP
+
+	Claimed Path
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 1
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 1
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 1
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 1
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 0
+		 Resource COMPLETE : CLAIMED FLOOR
+		 Resource SIDE : 
+		 Resource TAGGED : ROCK TOP TAGGED
+		 Resource TOP : 
+
+	Reinforced Wall
+		#SOLID : 1
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 1
+		#ATTACKABLE : 1
+		#TORCH : 1
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 1
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 1
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 1
+		#DECAY : 1
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 0
+		 Resource COMPLETE : CLAIMED TOP
+		 Resource SIDE : CLAIMED WALL
+		 Resource TAGGED : ROCK TOP TAGGED
+		 Resource TOP : 
+
+	Treasury
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 1
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 1
+		 Resource COMPLETE : 
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Lair
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 1
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 1
+		 Resource COMPLETE : 
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Portal
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 1
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 0
+		#AMBIENT_LIGHT : 1
+		 Resource COMPLETE : 
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Hatchery
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 1
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 1
+		 Resource COMPLETE : 
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Dungeon Heart
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 1
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 1
+		 Resource COMPLETE : 
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Library
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 1
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 0
+		 Resource COMPLETE : 
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Training Room
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 1
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 0
+		 Resource COMPLETE : 
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Wooden Bridge
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 1
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 1
+		 Resource COMPLETE : 
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Guard Room
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 1
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 1
+		 Resource COMPLETE : 
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Work Shop
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 1
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 1
+		 Resource COMPLETE : 
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Prison
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 1
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 0
+		 Resource COMPLETE : 
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Torture Chamber
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 1
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 1
+		 Resource COMPLETE : 
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Temple
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 1
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 1
+		 Resource COMPLETE : 
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Graveyard
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 1
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 1
+		 Resource COMPLETE : 
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Casino
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 1
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 1
+		 Resource COMPLETE : 
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Combat Pit
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 1
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 1
+		 Resource COMPLETE : 
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Stone Bridge
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 1
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 1
+		 Resource COMPLETE : 
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Fog Of War
+		#SOLID : 1
+		#IMPENETRABLE : 1
+		#OWNABLE : 0
+		#TAGGABLE : 1
+		#ATTACKABLE : 0
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 0
+		#AMBIENT_LIGHT : 0
+		 Resource COMPLETE : Rock
+		 Resource SIDE : ROCK WALL
+		 Resource TAGGED : ROCK TOP TAGGED
+		 Resource TOP : ROCK TOP
+
+	Hero Gate [ Final ]
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 0
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 0
+		#AMBIENT_LIGHT : 1
+		 Resource COMPLETE : 
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Hero Gate [ Tile ] [<not used>]
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 0
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 0
+		#AMBIENT_LIGHT : 1
+		 Resource COMPLETE : 
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Edge of Map
+		#SOLID : 1
+		#IMPENETRABLE : 1
+		#OWNABLE : 0
+		#TAGGABLE : 0
+		#ATTACKABLE : 0
+		#TORCH : 1
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 1
+		#DECAY : 0
+		#RANDOM_TEXTURE : 1
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 1
+		#LIGHT : 0
+		#AMBIENT_LIGHT : 0
+		 Resource COMPLETE : 
+		 Resource SIDE : IMPEN ROCK WALL
+		 Resource TAGGED : 
+		 Resource TOP : IMPEN ROCK TOP
+
+	Mana Vault
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 0
+		#TAGGABLE : 0
+		#ATTACKABLE : 0
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 1
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 0
+		 Resource COMPLETE : MANA_VAULT
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Claimed Vault
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 1
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 1
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 0
+		 Resource COMPLETE : MANA_VAULT_CLAIMED
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Hero Gate [ 2x2 ]
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 0
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 1
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 0
+		#AMBIENT_LIGHT : 0
+		 Resource COMPLETE : 
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Hero Gate [ FrontEnd ]
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 1
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 0
+		#AMBIENT_LIGHT : 0
+		 Resource COMPLETE : 
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Hero Lair
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 0
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 1
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 1
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 1
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 0
+		#AMBIENT_LIGHT : 0
+		 Resource COMPLETE : 
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Hero Stone Bridge
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 1
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 0
+		#AMBIENT_LIGHT : 0
+		 Resource COMPLETE : 
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Hero Gate [ 3x1 ]
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 0
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 0
+		#AMBIENT_LIGHT : 0
+		 Resource COMPLETE : 
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Claim Scan
+		#SOLID : 1
+		#IMPENETRABLE : 1
+		#OWNABLE : 0
+		#TAGGABLE : 1
+		#ATTACKABLE : 0
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 0
+		 Resource COMPLETE : Rock
+		 Resource SIDE : ROCK WALL
+		 Resource TAGGED : ROCK TOP TAGGED
+		 Resource TOP : ROCK TOP
+
+	Mercenary Gate [<not used>]
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 0
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 0
+		#AMBIENT_LIGHT : 0
+		 Resource COMPLETE : 
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Hero Portal
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 1
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 0
+		#AMBIENT_LIGHT : 1
+		 Resource COMPLETE : 
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+	Crypt
+		#SOLID : 0
+		#IMPENETRABLE : 0
+		#OWNABLE : 1
+		#TAGGABLE : 0
+		#ATTACKABLE : 1
+		#TORCH : 0
+		#WATER : 0
+		#LAVA : 0
+		#ALWAYS_EXPLORED : 0
+		#PLAYER_COLOURED_PATH : 0
+		#PLAYER_COLOURED_WALL : 0
+		#CONSTRUCTION_TYPE_WATER : 0
+		#CONSTRUCTION_TYPE_QUAD : 0
+		#UNEXPLORE_IF_DUG_BY_ANOTHER_PLAYER : 0
+		#FILL_INABLE : 0
+		#ALLOW_ROOM_WALLS : 0
+		#DECAY : 0
+		#RANDOM_TEXTURE : 0
+		#DWARF_CAN_DIG_THROUGH : 0
+		#REVEAL_THROUGH_FOG_OF_WAR : 0
+		#LIGHT : 1
+		#AMBIENT_LIGHT : 1
+		 Resource COMPLETE : 
+		 Resource SIDE : 
+		 Resource TAGGED : 
+		 Resource TOP : 
+
+
+==========================================================================================================================================================================
+* ROOM TYPES *
+==========================================================================================================================================================================
+
+	Treasury
+		Complete Resource: Treasury
+		Straight Resource: 
+		Inside Corner Resource: 
+		Unknown Resource: 
+		Outside Corner Resource: 
+		Wall Resource: 
+		Cap Resource: 
+		Ceiling Resource: 
+		Torch Resource: Torch1
+		Room Flags:
+			#PLACEABLE_ON_LAND
+			#HAS_WALLS
+			#BUILDABLE
+			#ATTACKABLE
+			#HAS_FLAME
+
+		TILECONSTR_NORMAL (5)
+
+	Lair
+		Complete Resource: LAIR
+		Straight Resource: 
+		Inside Corner Resource: 
+		Unknown Resource: 
+		Outside Corner Resource: 
+		Wall Resource: 
+		Cap Resource: 
+		Ceiling Resource: 
+		Torch Resource: Torch1
+		Room Flags:
+			#PLACEABLE_ON_LAND
+			#HAS_WALLS
+			#BUILDABLE
+			#ATTACKABLE
+			#HAS_FLAME
+
+		TILECONSTR_NORMAL (5)
+
+	Portal
+		Complete Resource: PORTAL
+		Straight Resource: 
+		Inside Corner Resource: 
+		Unknown Resource: 
+		Outside Corner Resource: 
+		Wall Resource: 
+		Cap Resource: 
+		Ceiling Resource: 
+		Torch Resource: Torch1
+		Room Flags:
+			#PLACEABLE_ON_LAND
+			#HAS_FLAME
+
+		TILECONSTR_3_BY_3 (3)
+
+	Hatchery
+		Complete Resource: HATCHERY
+		Straight Resource: 
+		Inside Corner Resource: 
+		Unknown Resource: 
+		Outside Corner Resource: 
+		Wall Resource: 
+		Cap Resource: 
+		Ceiling Resource: 
+		Torch Resource: Torch1
+		Room Flags:
+			#PLACEABLE_ON_LAND
+			#HAS_WALLS
+			#BUILDABLE
+			#ATTACKABLE
+			#HAS_FLAME
+
+		TILECONSTR_NORMAL (5)
+
+	Dungeon Heart
+		Complete Resource: DUNGEON
+		Straight Resource: 
+		Inside Corner Resource: 
+		Unknown Resource: 
+		Outside Corner Resource: 
+		Wall Resource: 
+		Cap Resource: 
+		Ceiling Resource: 
+		Torch Resource: Torch1
+		Room Flags:
+			#PLACEABLE_ON_LAND
+			#ATTACKABLE
+
+		TILECONSTR_5_BY_5_DUNGEON_HEART (8)
+
+	Library
+		Complete Resource: LIBRARY
+		Straight Resource: 
+		Inside Corner Resource: 
+		Unknown Resource: 
+		Outside Corner Resource: 
+		Wall Resource: 
+		Cap Resource: 
+		Ceiling Resource: 
+		Torch Resource: Torch1
+		Room Flags:
+			#PLACEABLE_ON_LAND
+			#HAS_WALLS
+			#SPECIAL_TILES
+			#BUILDABLE
+			#SPECIAL_WALLS
+			#HAS_FLAME
+
+		TILECONSTR_NORMAL (5)
+
+	Training Room
+		Complete Resource: TRAINING
+		Straight Resource: 
+		Inside Corner Resource: 
+		Unknown Resource: 
+		Outside Corner Resource: 
+		Wall Resource: 
+		Cap Resource: 
+		Ceiling Resource: 
+		Torch Resource: Torch1
+		Room Flags:
+			#PLACEABLE_ON_LAND
+			#HAS_WALLS
+			#SPECIAL_TILES
+			#BUILDABLE
+			#SPECIAL_WALLS
+			#ATTACKABLE
+			#HAS_FLAME
+
+		TILECONSTR_NORMAL (5)
+
+	Wooden Bridge
+		Complete Resource: BRIDGE
+		Straight Resource: 
+		Inside Corner Resource: 
+		Unknown Resource: 
+		Outside Corner Resource: 
+		Wall Resource: 
+		Cap Resource: 
+		Ceiling Resource: 
+		Torch Resource: Torch1
+		Room Flags:
+			#PLACEABLE_ON_WATER
+			#PLACEABLE_ON_LAVA
+			#BUILDABLE
+			#HAS_FLAME
+
+		TILECONSTR_QUAD (2)
+
+	Guard Room
+		Complete Resource: GUARDPOST
+		Straight Resource: 
+		Inside Corner Resource: 
+		Unknown Resource: 
+		Outside Corner Resource: 
+		Wall Resource: 
+		Cap Resource: 
+		Ceiling Resource: 
+		Torch Resource: Torch1
+		Room Flags:
+			#PLACEABLE_ON_LAND
+			#SPECIAL_TILES
+			#BUILDABLE
+			#HAS_FLAME
+
+		TILECONSTR_NORMAL (5)
+
+	Work Shop
+		Complete Resource: WORKSHOP
+		Straight Resource: 
+		Inside Corner Resource: 
+		Unknown Resource: 
+		Outside Corner Resource: 
+		Wall Resource: 
+		Cap Resource: 
+		Ceiling Resource: 
+		Torch Resource: Torch1
+		Room Flags:
+			#PLACEABLE_ON_LAND
+			#HAS_WALLS
+			#SPECIAL_TILES
+			#BUILDABLE
+			#SPECIAL_WALLS
+			#ATTACKABLE
+			#HAS_FLAME
+
+		TILECONSTR_NORMAL (5)
+
+	Prison
+		Complete Resource: PRISON
+		Straight Resource: 
+		Inside Corner Resource: 
+		Unknown Resource: 
+		Outside Corner Resource: 
+		Wall Resource: 
+		Cap Resource: 
+		Ceiling Resource: 
+		Torch Resource: Torch1
+		Room Flags:
+			#PLACEABLE_ON_LAND
+			#HAS_WALLS
+			#SPECIAL_TILES
+			#BUILDABLE
+			#SPECIAL_WALLS
+			#ATTACKABLE
+			#HAS_FLAME
+
+		TILECONSTR_DOUBLE_QUAD (7)
+
+	Torture Chamber
+		Complete Resource: TORTURE
+		Straight Resource: 
+		Inside Corner Resource: 
+		Unknown Resource: 
+		Outside Corner Resource: 
+		Wall Resource: 
+		Cap Resource: 
+		Ceiling Resource: 
+		Torch Resource: Torch1
+		Room Flags:
+			#PLACEABLE_ON_LAND
+			#HAS_WALLS
+			#SPECIAL_TILES
+			#BUILDABLE
+			#SPECIAL_WALLS
+			#ATTACKABLE
+			#HAS_FLAME
+
+		TILECONSTR_NORMAL (5)
+
+	Temple
+		Complete Resource: TEMPLE
+		Straight Resource: 
+		Inside Corner Resource: 
+		Unknown Resource: 
+		Outside Corner Resource: 
+		Wall Resource: 
+		Cap Resource: 
+		Ceiling Resource: 
+		Torch Resource: 
+		Room Flags:
+			#PLACEABLE_ON_LAND
+			#HAS_WALLS
+			#BUILDABLE
+			#HAS_FLAME
+
+		TILECONSTR_DOUBLE_QUAD (7)
+
+	Graveyard
+		Complete Resource: Crypt
+		Straight Resource: 
+		Inside Corner Resource: 
+		Unknown Resource: 
+		Outside Corner Resource: 
+		Wall Resource: 
+		Cap Resource: 
+		Ceiling Resource: 
+		Torch Resource: Torch1
+		Room Flags:
+			#PLACEABLE_ON_LAND
+			#HAS_WALLS
+			#SPECIAL_TILES
+			#BUILDABLE
+			#HAS_FLAME
+
+		TILECONSTR_NORMAL (5)
+
+	Casino
+		Complete Resource: Bar
+		Straight Resource: 
+		Inside Corner Resource: 
+		Unknown Resource: 
+		Outside Corner Resource: 
+		Wall Resource: 
+		Cap Resource: 
+		Ceiling Resource: 
+		Torch Resource: Torch1
+		Room Flags:
+			#PLACEABLE_ON_LAND
+			#HAS_WALLS
+			#SPECIAL_TILES
+			#BUILDABLE
+			#SPECIAL_WALLS
+			#ATTACKABLE
+			#HAS_FLAME
+
+		TILECONSTR_NORMAL (5)
+
+	Combat Pit
+		Complete Resource: CombatPit
+		Straight Resource: 
+		Inside Corner Resource: 
+		Unknown Resource: 
+		Outside Corner Resource: 
+		Wall Resource: 
+		Cap Resource: 
+		Ceiling Resource: 
+		Torch Resource: Torch1
+		Room Flags:
+			#PLACEABLE_ON_LAND
+			#HAS_WALLS
+			#SPECIAL_TILES
+			#BUILDABLE
+			#ATTACKABLE
+			#HAS_FLAME
+
+		TILECONSTR_DOUBLE_QUAD (7)
+
+	Stone Bridge
+		Complete Resource: StoneBridge
+		Straight Resource: 
+		Inside Corner Resource: 
+		Unknown Resource: 
+		Outside Corner Resource: 
+		Wall Resource: 
+		Cap Resource: 
+		Ceiling Resource: 
+		Torch Resource: Torch1
+		Room Flags:
+			#PLACEABLE_ON_WATER
+			#PLACEABLE_ON_LAVA
+			#BUILDABLE
+			#HAS_FLAME
+
+		TILECONSTR_QUAD (2)
+
+	Hero Gate [ Final ]
+		Complete Resource: hero door0
+		Straight Resource: 
+		Inside Corner Resource: 
+		Unknown Resource: 
+		Outside Corner Resource: 
+		Wall Resource: 
+		Cap Resource: IMPEN ROCK TOP
+		Ceiling Resource: 
+		Torch Resource: 
+		Room Flags:
+			#PLACEABLE_ON_LAND
+			#HAS_WALLS
+			#NORMAL_TILES
+			#ATTACKABLE
+			#UNK_0x0400
+			#UNK_0x0800
+
+		TILECONSTR_HERO_GATE (9)
+
+	Hero Gate [ Tile ] [<not used>]
+		Complete Resource: 
+		Straight Resource: 
+		Inside Corner Resource: 
+		Unknown Resource: 
+		Outside Corner Resource: 
+		Wall Resource: 
+		Cap Resource: 
+		Ceiling Resource: 
+		Torch Resource: 
+		Room Flags:
+			#PLACEABLE_ON_LAND
+			#HAS_WALLS
+			#NORMAL_TILES
+			#ATTACKABLE
+			#UNK_0x0400
+			#UNK_0x0800
+			#IS_GOOD
+
+		TILECONSTR_HERO_GATE_TILE (10)
+
+	Hero Gate [ 2x2 ]
+		Complete Resource: Hero_Gate
+		Straight Resource: 
+		Inside Corner Resource: 
+		Unknown Resource: 
+		Outside Corner Resource: 
+		Wall Resource: 
+		Cap Resource: 
+		Ceiling Resource: 
+		Torch Resource: Torch1
+		Room Flags:
+			#PLACEABLE_ON_LAND
+			#NORMAL_TILES
+			#ATTACKABLE
+
+		TILECONSTR_HERO_GATE_2_BY_2 (11)
+
+	Hero Gate [ FrontEnd ]
+		Complete Resource: 3DFrontend
+		Straight Resource: 
+		Inside Corner Resource: 
+		Unknown Resource: 
+		Outside Corner Resource: 
+		Wall Resource: 
+		Cap Resource: IMPEN ROCK TOP
+		Ceiling Resource: 
+		Torch Resource: 
+		Room Flags:
+			#PLACEABLE_ON_LAND
+			#ATTACKABLE
+
+		TILECONSTR_HERO_GATE_FRONT_END (12)
+
+	Hero Stone Bridge
+		Complete Resource: Hero_StoneBridge
+		Straight Resource: 
+		Inside Corner Resource: 
+		Unknown Resource: 
+		Outside Corner Resource: 
+		Wall Resource: 
+		Cap Resource: 
+		Ceiling Resource: 
+		Torch Resource: Torch1
+		Room Flags:
+			#PLACEABLE_ON_WATER
+			#PLACEABLE_ON_LAVA
+			#IS_GOOD
+
+		TILECONSTR_QUAD (2)
+
+	Hero Gate [ 3x1 ]
+		Complete Resource: 3Tile_Hero_Gate
+		Straight Resource: 
+		Inside Corner Resource: 
+		Unknown Resource: 
+		Outside Corner Resource: 
+		Wall Resource: 
+		Cap Resource: 
+		Ceiling Resource: 
+		Torch Resource: 
+		Room Flags:
+			#PLACEABLE_ON_LAND
+			#NORMAL_TILES
+			#ATTACKABLE
+
+		TILECONSTR_HERO_GATE_3_BY_1 (13)
+
+	Mercenary Gate [<not used>]
+		Complete Resource: 
+		Straight Resource: 
+		Inside Corner Resource: 
+		Unknown Resource: 
+		Outside Corner Resource: 
+		Wall Resource: 
+		Cap Resource: 
+		Ceiling Resource: 
+		Torch Resource: 
+		Room Flags:
+			#PLACEABLE_ON_LAND
+			#NORMAL_TILES
+			#ATTACKABLE
+
+		TILECONSTR_HERO_GATE_2_BY_2 (11)
+
+	Hero Portal
+		Complete Resource: heroportal
+		Straight Resource: 
+		Inside Corner Resource: 
+		Unknown Resource: 
+		Outside Corner Resource: 
+		Wall Resource: 
+		Cap Resource: 
+		Ceiling Resource: 
+		Torch Resource: 
+		Room Flags:
+			#PLACEABLE_ON_LAND
+			#HAS_FLAME
+			
+		TILECONSTR_3_BY_3 (3)
+
+	Crypt
+		Complete Resource: Crypt
+		Straight Resource: 
+		Inside Corner Resource: 
+		Unknown Resource: 
+		Outside Corner Resource: 
+		Wall Resource: 
+		Cap Resource: 
+		Ceiling Resource: 
+		Torch Resource: Torch1
+		Room Flags:
+			#PLACEABLE_ON_LAND
+			#HAS_WALLS
+			#SPECIAL_TILES
+			#HAS_FLAME
+
+		TILECONSTR_NORMAL (5)
+
+==========================================================================================================================================================================
+* OBJECT TYPES *
+==========================================================================================================================================================================
+
+
+Gold
+	Resource mesh: Gold Pile
+	Resource gui icon: gui\rooms\Treasury
+	Resource in hand icon: ObjectIcons#2
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.0625
+	Height: 0.299805
+	Mass: 4
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 1
+	Sound category: OBJECT_GOLD
+	Flags: 
+		#TYPE_GOLD
+		#CAN_BE_PICKED_UP
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Gold Bag
+	Resource mesh: Gold Bag1
+	Resource gui icon: gui\rooms\Treasury
+	Resource in hand icon: ObjectIcons#1
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.142822
+	Height: 0.299805
+	Mass: 4
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 1
+	Object Id: 2
+	Sound category: 
+	Flags: 
+		#TYPE_GOLD
+		#CAN_BE_PICKED_UP
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Gold Pile 1
+	Resource mesh: Gold Chest
+	Resource gui icon: gui\rooms\Treasury
+	Resource in hand icon: ObjectIcons#3
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.264893
+	Height: 0.260742
+	Mass: 4
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 1
+	Object Id: 3
+	Sound category: 
+	Flags: 
+		#TYPE_GOLD
+		#CAN_BE_PICKED_UP
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+
+Spell Book
+	Resource mesh: Library Book2
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#3
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.0998535
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 4
+	Sound category: LIBRARY_BOOK
+	Flags: 
+		#TYPE_SPELL_BOOK
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Crate Alarm
+	Resource mesh: Crate Alarm
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#0
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.21582
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 256
+	Room capacity: 0
+	Object Id: 5
+	Sound category: 
+	Flags: 
+		#TYPE_CRATE
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Hero Creature Bed
+	Resource mesh: CREATURE BED_HERO OUT
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#4
+	Resource in hand mesh: Hero_bed(swing)
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.399902
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 1
+	Object Id: 6
+	Sound category: OBJECT_BED
+	Flags: 
+		#TYPE_LAIR
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+		#BOULDER_DESTROYS
+		#PLACEABLE
+		#CAST_SHADOWS
+
+Special [ <not used> ]
+	Resource mesh: 
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#7
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.299805
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 7
+	Sound category: OBJECT_SPECIAL
+	Flags: 
+		#TYPE_SPECIAL
+		#CAN_BE_PICKED_UP
+		#BOULDER_CAN_ROLL_THROUGH
+
+Torture Wheel
+	Resource mesh: Torture_Wheel_Wall
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#8
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.899902
+	Height: 0.199951
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 8
+	Sound category: OBJECT_WHEEL
+	Flags: 
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+		#HIGHLIGHTABLE
+
+Chicken
+	Resource mesh: Chicken-Walk
+	Resource gui icon: gui\rooms\hatchery
+	Resource in hand icon: ObjectIcons#9
+	Resource in hand mesh: Chicken-swing
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.03125
+	Height: 0.03125
+	Mass: 2
+	Speed: 0.25
+	Air Friction: 0.0039978
+	HP: 1000
+	Max angle: 256
+	Room capacity: 1
+	Object Id: 9
+	Sound category: OBJECT_CHICKEN
+	Flags: 
+		#DIE_OVER_TIME_IF_NOT_IN_ROOM
+		#TYPE_FOOD
+		#CAN_BE_PICKED_UP
+		#CAN_BE_SLAPPED
+		#DIE_WHEN_SLAPPED
+		#BOULDER_CAN_ROLL_THROUGH
+		#BOULDER_DESTROYS
+		#DAMAGEABLE
+
+Call To Arms
+	Resource mesh: Call_To_Arms-Appear(Rise-From-Ground)
+	Resource gui icon: gui\spells\call_to_arms
+	Resource in hand icon: ObjectIcons#9
+	Resource in hand mesh: Call_To_Arms-Swing
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.41626
+	Height: 0.03125
+	Mass: 4
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 1
+	Object Id: 10
+	Sound category: 
+	Flags: 
+		#CAN_BE_PICKED_UP
+		#CAN_BE_SLAPPED
+		#CAN_BE_DROPPED_ON_ANY_LAND
+		#BOULDER_CAN_ROLL_THROUGH
+		#HIGHLIGHTABLE
+		#CAST_SHADOWS
+
+Rat
+	Resource mesh: Rat_Run
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#9
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.03125
+	Height: 0.03125
+	Mass: 2
+	Speed: 0.199951
+	Air Friction: 0
+	HP: 300
+	Max angle: 512
+	Room capacity: 1
+	Object Id: 11
+	Sound category: OBJECT_RAT
+	Flags: 
+		#DIE_OVER_TIME
+		#CAN_BE_SLAPPED
+		#DIE_WHEN_SLAPPED
+		#BOULDER_CAN_ROLL_THROUGH
+		#DAMAGEABLE
+
+Bat
+	Resource mesh: Bat-Fly
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#9
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.03125
+	Height: 0.03125
+	Mass: 2
+	Speed: 3
+	Air Friction: 0
+	HP: 300
+	Max angle: 1000
+	Room capacity: 1
+	Object Id: 12
+	Sound category: OBJECT_BAT
+	Flags: 
+		#DIE_OVER_TIME
+		#CAN_BE_SLAPPED
+		#DIE_WHEN_SLAPPED
+		#BOULDER_CAN_ROLL_THROUGH
+		#DAMAGEABLE
+
+Dungeon Heart
+	Resource mesh: Dungeon centre
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#5
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 1
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 34464
+	Max angle: 0
+	Room capacity: 1
+	Object Id: 13
+	Sound category: OBJECT_HEART
+	Flags: 
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+		#BOULDER_DESTROYS
+		#DAMAGEABLE
+
+Training Dummy
+	Resource mesh: Training Dummy
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#9
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.560791
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 14
+	Sound category: OBJECT_TRAINING_DUMMY
+	Flags: 
+		#OBSTACLE
+		#SOLID_OBSTACLE
+
+Anvil
+	Resource mesh: WorkShop Anvil
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#9
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.549805
+	Height: 0.03125
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 15
+	Sound category: OBJECT_FORGE
+	Flags: 
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+		#SOLID_OBSTACLE
+
+Steel Bucket
+	Resource mesh: WorkShop Steel Bucket
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#9
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.549805
+	Height: 0.03125
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 16
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+		#SOLID_OBSTACLE
+
+Door Key [ Wood ]
+	Resource mesh: Door_ChainWooden
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#9
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.03125
+	Height: 0.03125
+	Mass: 0
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 17
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+		#DOOR_KEY
+
+Bile Demon Creature Bed
+	Resource mesh: CREATURE BED_FATTY OUT
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#6
+	Resource in hand mesh: BileDemon-bed(swing)
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.5
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 1
+	Object Id: 18
+	Sound category: OBJECT_BED
+	Flags: 
+		#TYPE_LAIR
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+		#BOULDER_DESTROYS
+		#CAST_SHADOWS
+
+Dark Angel Creature Bed
+	Resource mesh: CREATURE BED_ANGEL 2
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#6
+	Resource in hand mesh: DarkAngel_bed(swing)
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.269775
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 1
+	Object Id: 19
+	Sound category: OBJECT_BED
+	Flags: 
+		#TYPE_LAIR
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+		#BOULDER_DESTROYS
+		#CAST_SHADOWS
+
+Dark Elf Creature Bed
+	Resource mesh: CREATURE BED_DARK ELF
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#6
+	Resource in hand mesh: Darkelf_bed(swing)
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.476318
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 1
+	Object Id: 20
+	Sound category: OBJECT_BED
+	Flags: 
+		#TYPE_LAIR
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+		#BOULDER_DESTROYS
+		#CAST_SHADOWS
+
+Firefly Creature Bed
+	Resource mesh: CREATURE BED_FIREFLY OUT
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#6
+	Resource in hand mesh: firefly_bed(swing)
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.323975
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 1
+	Object Id: 21
+	Sound category: OBJECT_BED
+	Flags: 
+		#TYPE_LAIR
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+		#BOULDER_DESTROYS
+		#CAST_SHADOWS
+
+Goblin Creature Bed
+	Resource mesh: CREATURE BED_GOBLIN OUT
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#6
+	Resource in hand mesh: goblin_bed(swing)
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.5
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 1
+	Object Id: 22
+	Sound category: OBJECT_BED
+	Flags: 
+		#TYPE_LAIR
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+		#BOULDER_DESTROYS
+		#CAST_SHADOWS
+
+Mistress Creature Bed
+	Resource mesh: CREATURE BED_MISTRESS IN
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#6
+	Resource in hand mesh: Mistress_bed(swing)
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.268799
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 1
+	Object Id: 23
+	Sound category: OBJECT_BED
+	Flags: 
+		#TYPE_LAIR
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+		#BOULDER_DESTROYS
+		#CAST_SHADOWS
+
+Salamander Creature Bed
+	Resource mesh: CREATURE BED_SALAMANOUT
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#6
+	Resource in hand mesh: Salamander_bed(swing)
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.5
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 1
+	Object Id: 24
+	Sound category: OBJECT_BED
+	Flags: 
+		#TYPE_LAIR
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+		#BOULDER_DESTROYS
+		#CAST_SHADOWS
+
+Troll Creature Bed
+	Resource mesh: CREATURE BED_TROLL OUT
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#6
+	Resource in hand mesh: Troll_bed(swing)
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.271973
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 1
+	Object Id: 25
+	Sound category: OBJECT_BED
+	Flags: 
+		#TYPE_LAIR
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+		#BOULDER_DESTROYS
+		#CAST_SHADOWS
+
+Vampire Creature Bed
+	Resource mesh: CREATURE BED_VAMPIRE OUT
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#6
+	Resource in hand mesh: Vampire_bed(swing)
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.5
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 1
+	Object Id: 26
+	Sound category: OBJECT_BED
+	Flags: 
+		#TYPE_LAIR
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+		#BOULDER_DESTROYS
+		#CAST_SHADOWS
+
+Warlock Creature Bed
+	Resource mesh: CREATURE BED_WARLOCKOUT
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#6
+	Resource in hand mesh: Warlock_bed(swing)
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.362305
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 1
+	Object Id: 27
+	Sound category: OBJECT_BED
+	Flags: 
+		#TYPE_LAIR
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+		#BOULDER_DESTROYS
+		#CAST_SHADOWS
+
+Portal Gem
+	Resource mesh: Gem
+	Resource gui icon: 
+	Resource in hand icon: #5
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.5
+	Height: 0.5
+	Mass: 0
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 28
+	Sound category: 
+	Flags: 
+		#TYPE_LEVEL_GEM
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Training Target
+	Resource mesh: Target-Move
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.5
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 29
+	Sound category: OBJECT_TRAINING_TARGET
+	Flags: 
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+
+Roulette Wheel
+	Resource mesh: RouletteWheel
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.399902
+	Height: 0.399902
+	Mass: 1
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 30
+	Sound category: OBJECT_ROULETTE_WHEEL
+	Flags: 
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+		#SOLID_OBSTACLE
+
+Tomb Stone 1
+	Resource mesh: TombStone1
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.269775
+	Height: 0.199951
+	Mass: 1
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 31
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#SOLID_OBSTACLE
+
+Tomb Stone 2
+	Resource mesh: TombStone2
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.269775
+	Height: 0.199951
+	Mass: 1
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 32
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#SOLID_OBSTACLE
+
+Tomb Stone 3
+	Resource mesh: TombStone3
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.269775
+	Height: 0.199951
+	Mass: 1
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 33
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#SOLID_OBSTACLE
+
+Tomb Stone 4
+	Resource mesh: TombStone4
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.269775
+	Height: 0.199951
+	Mass: 1
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 34
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#SOLID_OBSTACLE
+
+Chicken Coop
+	Resource mesh: Hatchery Coup
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.793945
+	Height: 0.299805
+	Mass: 1
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 35
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+
+Crate Boulder
+	Resource mesh: Crate Boulder
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.21582
+	Height: 0.0617676
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 256
+	Room capacity: 0
+	Object Id: 36
+	Sound category: 
+	Flags: 
+		#TYPE_CRATE
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Crate Fear
+	Resource mesh: Crate Fear
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.21582
+	Height: 0.0617676
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 256
+	Room capacity: 0
+	Object Id: 37
+	Sound category: 
+	Flags: 
+		#TYPE_CRATE
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Crate Fireburst
+	Resource mesh: Crate Fireburst
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.21582
+	Height: 0.0617676
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 256
+	Room capacity: 0
+	Object Id: 38
+	Sound category: 
+	Flags: 
+		#TYPE_CRATE
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Crate Freeze
+	Resource mesh: Crate Freeze
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.21582
+	Height: 0.0617676
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 256
+	Room capacity: 0
+	Object Id: 39
+	Sound category: 
+	Flags: 
+		#TYPE_CRATE
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Crate Gas
+	Resource mesh: Crate Gas
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.21582
+	Height: 0.0617676
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 256
+	Room capacity: 0
+	Object Id: 40
+	Sound category: 
+	Flags: 
+		#TYPE_CRATE
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Crate Lightning
+	Resource mesh: Crate Lightning
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.21582
+	Height: 0.0617676
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 256
+	Room capacity: 0
+	Object Id: 41
+	Sound category: 
+	Flags: 
+		#TYPE_CRATE
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Crate Sentry
+	Resource mesh: Crate Sentry
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.21582
+	Height: 0.0617676
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 256
+	Room capacity: 0
+	Object Id: 42
+	Sound category: 
+	Flags: 
+		#TYPE_CRATE
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Crate Spike
+	Resource mesh: Crate Spike
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.21582
+	Height: 0.0617676
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 256
+	Room capacity: 0
+	Object Id: 43
+	Sound category: 
+	Flags: 
+		#TYPE_CRATE
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Crate Trigger
+	Resource mesh: Crate Trigger
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.21582
+	Height: 0.0617676
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 256
+	Room capacity: 0
+	Object Id: 44
+	Sound category: 
+	Flags: 
+		#TYPE_CRATE
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Piranha
+	Resource mesh: 
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.0998535
+	Height: 0.0998535
+	Mass: 1
+	Speed: 0.25
+	Air Friction: 0
+	HP: 256
+	Max angle: 360
+	Room capacity: 0
+	Object Id: 45
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+
+Work Bench
+	Resource mesh: Spin
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#9
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.799805
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 46
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#SOLID_OBSTACLE
+
+Egg
+	Resource mesh: Egg-Hatch_Start
+	Resource gui icon: Icon-Chicken
+	Resource in hand icon: ObjectIcons#9
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.03125
+	Height: 0.03125
+	Mass: 2
+	Speed: 0.25
+	Air Friction: 0.0039978
+	HP: 128
+	Max angle: 256
+	Room capacity: 0
+	Object Id: 47
+	Sound category: 
+	Flags: 
+		#DIE_OVER_TIME_IF_NOT_IN_ROOM
+		#CAN_BE_SLAPPED
+		#DIE_WHEN_SLAPPED
+		#BOUNCE
+		#BOULDER_CAN_ROLL_THROUGH
+
+Skeleton
+	Resource mesh: Skelechain
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#9
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.299805
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 48
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+
+Skull
+	Resource mesh: Skull
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#9
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.111328
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 49
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+
+Bone
+	Resource mesh: Bone
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#9
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.299805
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 50
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+
+Lavatory
+	Resource mesh: Potty
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#9
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.167969
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 51
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+
+Crate Wooden Door
+	Resource mesh: Crate wooddoor
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#0
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.21582
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 256
+	Room capacity: 0
+	Object Id: 52
+	Sound category: 
+	Flags: 
+		#TYPE_CRATE
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Crate Steel Door
+	Resource mesh: Crate metaldoor
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#0
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.21582
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 256
+	Room capacity: 0
+	Object Id: 53
+	Sound category: 
+	Flags: 
+		#TYPE_CRATE
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Crate Braced Door
+	Resource mesh: Crate braceddoor
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#0
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.21582
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 256
+	Room capacity: 0
+	Object Id: 54
+	Sound category: 
+	Flags: 
+		#TYPE_CRATE
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Crate Magic Door
+	Resource mesh: Crate magicdoor
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#0
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.21582
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 256
+	Room capacity: 0
+	Object Id: 55
+	Sound category: 
+	Flags: 
+		#TYPE_CRATE
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Crate Barricade
+	Resource mesh: Crate Barricades
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#0
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.21582
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 256
+	Room capacity: 0
+	Object Id: 56
+	Sound category: 
+	Flags: 
+		#TYPE_CRATE
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Crate Secret Door
+	Resource mesh: Crate secretdoor
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#0
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.21582
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 256
+	Room capacity: 0
+	Object Id: 57
+	Sound category: 
+	Flags: 
+		#TYPE_CRATE
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Library Book
+	Resource mesh: BookFlip
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.0998535
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 58
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+
+Barrel
+	Resource mesh: Bar_Barrel1
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.457764
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 59
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+		#SOLID_OBSTACLE
+
+Hand Of Evil
+	Resource mesh: Imp
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0
+	Height: 0
+	Mass: 0
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 60
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+
+Electric Chair
+	Resource mesh: Torture_Electric_Chair
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.264404
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 61
+	Sound category: OBJECT_ELECTRIC_CHAIR
+	Flags: 
+		#OBSTACLE
+		#HIGHLIGHTABLE
+
+Torture Coals
+	Resource mesh: Torture_Trough_Coals
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.299805
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 62
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+
+Torture Water
+	Resource mesh: Torture_Trough_Water
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.299805
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 63
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+
+Book Case
+	Resource mesh: book_case
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: book_case4
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.649902
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 64
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#SOLID_OBSTACLE
+
+Torture Pendulum
+	Resource mesh: Torture_Pendulum
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.449951
+	Height: 0.199951
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 65
+	Sound category: 
+	Flags: 
+		#TYPE_FOOD
+		#BOULDER_CAN_ROLL_THROUGH
+
+Temple Hand
+	Resource mesh: Temple_Hand
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.599854
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 66
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+
+Bar Table
+	Resource mesh: Bar_Table
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.598389
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 67
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#SOLID_OBSTACLE
+
+Alcove Barrels
+	Resource mesh: Bar_Barrel2
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.599854
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 68
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+
+Fruit Machine
+	Resource mesh: Bar_Fruit_Machine
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.599854
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 69
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+
+Guard Post
+	Resource mesh: 
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.398926
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 70
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+
+Guard Post Weapons
+	Resource mesh: Guard_Post_Weapons
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.599854
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 71
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+
+DoorFrame - Wooden
+	Resource mesh: wooden frame
+	Resource gui icon: Icon-Gold
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.0625
+	Height: 0.299805
+	Mass: 4
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 72
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+
+DoorFrame - Braced
+	Resource mesh: braced frame
+	Resource gui icon: Icon-Gold
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.0625
+	Height: 0.299805
+	Mass: 4
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 73
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+
+Boulder
+	Resource mesh: TRAP_BOULDER(Rolling)
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 1
+	Height: 1
+	Mass: 1
+	Speed: 5
+	Air Friction: 0
+	HP: 4000
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 74
+	Sound category: TRAP_BOULDER
+	Flags: 
+		#CAN_BE_SLAPPED
+		#BOUNCE
+		#BOULDER_CAN_ROLL_THROUGH
+		#BOULDER_DESTROYS
+		#DAMAGEABLE
+
+Graveyard Crypt
+	Resource mesh: Crypt_Sarcophagus
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.942871
+	Height: 0.299805
+	Mass: 1
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 75
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+
+Treasury Pillar
+	Resource mesh: Treasury_Pillar
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.398926
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 76
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#PILLAR
+
+Lair Pillar
+	Resource mesh: Lair_Pillar
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.398926
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 77
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#PILLAR
+
+Hatchery Pillar
+	Resource mesh: Hatchery_Pillar
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.398926
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 78
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#PILLAR
+
+Pit Pillar
+	Resource mesh: Pit_Pillar
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.398926
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 79
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#PILLAR
+
+Workshop Pillar
+	Resource mesh: Workshop_Pillar
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.398926
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 80
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#PILLAR
+
+Prison Pillar
+	Resource mesh: Prison_Pillar
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.199951
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 81
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#PILLAR
+
+Torture Pillar
+	Resource mesh: Torture_Pillar
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.398926
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 82
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#PILLAR
+
+Temple Pillar
+	Resource mesh: 
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.398926
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 83
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#PILLAR
+
+Graveyard Pillar
+	Resource mesh: Graveyard_Pillar
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.398926
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 84
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#PILLAR
+
+Casino Pillar
+	Resource mesh: Casino_Pillar
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.398926
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 85
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#PILLAR
+
+Arches
+	Resource mesh: DHeart Arches
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.599854
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 86
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+
+Roulette Table
+	Resource mesh: RouletteTable
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.799805
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 87
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+		#SOLID_OBSTACLE
+
+Big Steps
+	Resource mesh: DHeart BigSteps
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.599854
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 88
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+
+3D Front End Banner 1
+	Resource mesh: banner1_swing
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0
+	Height: 0
+	Mass: 0
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 89
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+
+Hero Gate Door Hold
+	Resource mesh: 
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0
+	Height: 0
+	Mass: 0
+	Speed: 0
+	Air Friction: 0
+	HP: 0
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 90
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+
+Hero Gate Door
+	Resource mesh: Trapdoor-open
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0
+	Height: 0
+	Mass: 0
+	Speed: 0
+	Air Friction: 0
+	HP: 0
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 91
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+
+Crate Guard Post
+	Resource mesh: Crate GuardPost
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.21582
+	Height: 0.0617676
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 256
+	Room capacity: 0
+	Object Id: 92
+	Sound category: 
+	Flags: 
+		#TYPE_CRATE
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Partial Crate
+	Resource mesh: 
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.0998535
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 93
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+
+Arch Pillar
+	Resource mesh: 
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.299805
+	Height: 1
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 94
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+		#BOULDER_DESTROYS
+
+Casino Pay Out Adjuster
+	Resource mesh: 
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.411377
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 95
+	Sound category: 
+	Flags: 
+		#CAN_BE_PICKED_UP
+		#OBSTACLE
+
+Dungeon Heart Plug
+	Resource mesh: DHeartPlug
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.899902
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1000
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 96
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+		#BOULDER_DESTROYS
+
+Arch Construction
+	Resource mesh: 
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.599854
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 97
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+		#BOULDER_DESTROYS
+
+Destructor
+	Resource mesh: 
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.599854
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1000
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 98
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+
+Portal Crystal
+	Resource mesh: 
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.5
+	Height: 1
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 99
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+
+Dungeon Heart Obstacle
+	Resource mesh: 
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 3
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1000
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 100
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+		#FIRST_PERSON_OBSTACLE
+		#SOLID_OBSTACLE
+
+Mana Vault
+	Resource mesh: 
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 1
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1000
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 101
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+
+Hero Gate Table
+	Resource mesh: 
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#7
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.599854
+	Height: 0.299805
+	Mass: 0
+	Speed: 0
+	Air Friction: 0
+	HP: 1000
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 102
+	Sound category: 
+	Flags: 
+		#CAN_BE_PICKED_UP
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Threat Burn
+	Resource mesh: 
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0
+	Height: 0
+	Mass: 0
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 103
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+
+Door Key [ Steel ]
+	Resource mesh: Door_ChainPortcullis
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.03125
+	Height: 0.03125
+	Mass: 0
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 104
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+		#DOOR_KEY
+
+Door Key [ Braced ]
+	Resource mesh: Door_ChainRound
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.03125
+	Height: 0.03125
+	Mass: 0
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 105
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+		#DOOR_KEY
+
+Door Key [ Magic ]
+	Resource mesh: Door_ChainMagic
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.03125
+	Height: 0.03125
+	Mass: 0
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 106
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+		#DOOR_KEY
+
+Door Key [ Secret ]
+	Resource mesh: Door_ChainSecret
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.03125
+	Height: 0.03125
+	Mass: 0
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 107
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+		#DOOR_KEY
+
+Claimed Mana Vault
+	Resource mesh: 
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 1
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1000
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 108
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+
+Prison Door
+	Resource mesh: dooropen
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.411377
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 109
+	Sound category: 
+
+3D Front End Candle Stick
+	Resource mesh: 
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0
+	Height: 0
+	Mass: 1
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 110
+	Sound category: 
+
+Temple Candlestick
+	Resource mesh: 3dfe_candle
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0
+	Height: 0
+	Mass: 1
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 111
+	Sound category: 
+
+Guard Post Table
+	Resource mesh: Guard_Post_Table
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.899902
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 112
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+		#SOLID_OBSTACLE
+
+Hero Armoury Trestle
+	Resource mesh: hero_armoury_trestle
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#8
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.599854
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 113
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Hero Gate [ 2 By 2 ]
+	Resource mesh: 
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 1
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1000
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 114
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+
+Frontend 3D Arrow
+	Resource mesh: 
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 1
+	Height: 1
+	Mass: 0
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 1
+	Room capacity: 0
+	Object Id: 115
+	Sound category: 
+	Flags: 
+		#CAN_BE_PICKED_UP
+
+Prison Door Bar
+	Resource mesh: barclose
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.411377
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 116
+	Sound category: 
+	Flags: 
+		#CAN_BE_PICKED_UP
+
+Special [ Increase Level ]
+	Resource mesh: Special Box
+	Resource gui icon: GUI\Specials\SP-Level_Up
+	Resource in hand icon: ObjectIcons#6
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.299805
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 117
+	Sound category: OBJECT_SPECIAL
+	Flags: 
+		#TYPE_SPECIAL
+		#CAN_BE_PICKED_UP
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Special [ Reveal Map ]
+	Resource mesh: Special Box
+	Resource gui icon: GUI\Specials\SP-Reveal_Map
+	Resource in hand icon: ObjectIcons#6
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.299805
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 118
+	Sound category: OBJECT_SPECIAL
+	Flags: 
+		#TYPE_SPECIAL
+		#CAN_BE_PICKED_UP
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Special [ Make Safe ]
+	Resource mesh: Special Box
+	Resource gui icon: GUI\Specials\SP-Safe
+	Resource in hand icon: ObjectIcons#6
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.299805
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 119
+	Sound category: OBJECT_SPECIAL
+	Flags: 
+		#TYPE_SPECIAL
+		#CAN_BE_PICKED_UP
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Special [ Destroy Walls ]
+	Resource mesh: Special Box
+	Resource gui icon: GUI\Specials\SP-Destroy_Walls
+	Resource in hand icon: ObjectIcons#6
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.299805
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 120
+	Sound category: OBJECT_SPECIAL
+	Flags: 
+		#TYPE_SPECIAL
+		#CAN_BE_PICKED_UP
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Special [ Increase Gold ]
+	Resource mesh: Special Box
+	Resource gui icon: GUI\Specials\SP-Increase_Gold
+	Resource in hand icon: ObjectIcons#6
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.299805
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 121
+	Sound category: OBJECT_SPECIAL
+	Flags: 
+		#TYPE_SPECIAL
+		#CAN_BE_PICKED_UP
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Special [ Mana Boost ]
+	Resource mesh: Special Box
+	Resource gui icon: GUI\Specials\SP-Mana_Up
+	Resource in hand icon: ObjectIcons#6
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.299805
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 122
+	Sound category: OBJECT_SPECIAL
+	Flags: 
+		#TYPE_SPECIAL
+		#CAN_BE_PICKED_UP
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Special [ Stun Imps ]
+	Resource mesh: Special Box
+	Resource gui icon: GUI\Specials\SP-Stun_Imps
+	Resource in hand icon: ObjectIcons#6
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.299805
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 123
+	Sound category: OBJECT_SPECIAL
+	Flags: 
+		#TYPE_SPECIAL
+		#CAN_BE_PICKED_UP
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Special [ Receive Imps ]
+	Resource mesh: Special Box
+	Resource gui icon: GUI\Specials\SP-Get_Imps
+	Resource in hand icon: ObjectIcons#6
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.299805
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 124
+	Sound category: OBJECT_SPECIAL
+	Flags: 
+		#TYPE_SPECIAL
+		#CAN_BE_PICKED_UP
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Special [ Make Happy ]
+	Resource mesh: Special Box
+	Resource gui icon: GUI\Specials\SP-Make_Happy
+	Resource in hand icon: ObjectIcons#6
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.299805
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 125
+	Sound category: OBJECT_SPECIAL
+	Flags: 
+		#TYPE_SPECIAL
+		#CAN_BE_PICKED_UP
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Special [ Make Unhappy ]
+	Resource mesh: Special Box
+	Resource gui icon: GUI\Specials\SP-Make_Unhappy
+	Resource in hand icon: ObjectIcons#6
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.299805
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 126
+	Sound category: OBJECT_SPECIAL
+	Flags: 
+		#TYPE_SPECIAL
+		#CAN_BE_PICKED_UP
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Special [ Kill Creatures ]
+	Resource mesh: Special Box
+	Resource gui icon: GUI\Specials\SP-Kill
+	Resource in hand icon: ObjectIcons#6
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.299805
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 127
+	Sound category: OBJECT_SPECIAL
+	Flags: 
+		#TYPE_SPECIAL
+		#CAN_BE_PICKED_UP
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Special [ Heal All ]
+	Resource mesh: Special Box
+	Resource gui icon: GUI\Specials\SP-Heal_All
+	Resource in hand icon: ObjectIcons#6
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.299805
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 128
+	Sound category: OBJECT_SPECIAL
+	Flags: 
+		#TYPE_SPECIAL
+		#CAN_BE_PICKED_UP
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Special [ Locate Hidden Land ]
+	Resource mesh: Special Box
+	Resource gui icon: GUI\Specials\SP-Locate
+	Resource in hand icon: ObjectIcons#6
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.299805
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 129
+	Sound category: OBJECT_SPECIAL
+	Flags: 
+		#TYPE_SPECIAL
+		#CAN_BE_PICKED_UP
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+MPD Level Indicator
+	Resource mesh: MPDSelector_activate
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#9
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.411377
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 130
+	Sound category: 
+	Flags: 
+		#CAN_BE_PICKED_UP
+		#CAN_BE_SLAPPED
+		#OBSTACLE
+		#HIGHLIGHTABLE
+		#PLACEABLE
+
+3D Front End Gem Holder
+	Resource mesh: 3DFE_GemHolder
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0
+	Height: 0
+	Mass: 1
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 131
+	Sound category: OBJECT_FE_WINDOW
+	Flags: 
+		#CAST_SHADOWS
+
+3D Front End Chain
+	Resource mesh: chain_swing
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0
+	Height: 0
+	Mass: 1
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 132
+	Sound category: 
+
+HeroGate MPD Table
+	Resource mesh: 
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.599854
+	Height: 0.299805
+	Mass: 0
+	Speed: 0
+	Air Friction: 0
+	HP: 1000
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 133
+	Sound category: 
+	Flags: 
+		#CAN_BE_PICKED_UP
+		#BOULDER_CAN_ROLL_THROUGH
+
+3D Front End Banner 2
+	Resource mesh: banner2_swing
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0
+	Height: 0
+	Mass: 1
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 134
+	Sound category: 
+
+3D Front End Banner 3
+	Resource mesh: banner3_swing
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0
+	Height: 0
+	Mass: 1
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 135
+	Sound category: 
+
+3D Front End Banner 4
+	Resource mesh: banner4_swing
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0
+	Height: 0
+	Mass: 1
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 136
+	Sound category: 
+
+Door Key - Hero Portcullis
+	Resource mesh: Door_Chain_HeroPortcullis
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.03125
+	Height: 0.03125
+	Mass: 0
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 137
+	Sound category: 
+	Flags: 
+		#BOULDER_CAN_ROLL_THROUGH
+		#DOOR_KEY
+
+Crate [ Jack-In-The-Box ]
+	Resource mesh: Crate jack
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.21582
+	Height: 0.0617676
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 256
+	Room capacity: 0
+	Object Id: 138
+	Sound category: 
+	Flags: 
+		#TYPE_CRATE
+		#PLACEABLE
+
+Jack-In-The-Box
+	Resource mesh: TRAP_BOULDER(Rolling)
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#10
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 1
+	Height: 1
+	Mass: 1
+	Speed: 5
+	Air Friction: 0
+	HP: 4000
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 139
+	Sound category: 
+	Flags: 
+		#DIE_OVER_TIME
+		#DIE_WHEN_SLAPPED
+		#BOULDER_DESTROYS
+
+Special [ Transfer Creature ]
+	Resource mesh: Special Box
+	Resource gui icon: GUI\Specials\SP-Locate
+	Resource in hand icon: ObjectIcons#6
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.299805
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 140
+	Sound category: OBJECT_SPECIAL
+	Flags: 
+		#TYPE_SPECIAL
+		#CAN_BE_PICKED_UP
+		#BOULDER_CAN_ROLL_THROUGH
+		#PLACEABLE
+
+Crypt Pillar
+	Resource mesh: Graveyard_Pillar
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#15
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.398926
+	Height: 0.299805
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 141
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+		#PILLAR
+
+Crypt Bell
+	Resource mesh: Hatchery Coup
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.793945
+	Height: 0.299805
+	Mass: 1
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 142
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+
+Crypt Dancer
+	Resource mesh: Ske-Dance
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.793945
+	Height: 0.299805
+	Mass: 1
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 143
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+
+Crypt Special Dancer
+	Resource mesh: Ske-Dance
+	Resource gui icon: 
+	Resource in hand icon: 
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.793945
+	Height: 0.299805
+	Mass: 1
+	Speed: 0
+	Air Friction: 0
+	HP: 1
+	Max angle: 0
+	Room capacity: 0
+	Object Id: 144
+	Sound category: 
+	Flags: 
+		#OBSTACLE
+
+Maiden Creature Bed
+	Resource mesh: CREATURE BED_Maiden
+	Resource gui icon: 
+	Resource in hand icon: ObjectIcons#15
+	Resource in hand mesh: 
+	Resource unknown: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Additional resource: 
+	Width: 0.5
+	Height: 0.0625
+	Mass: 2
+	Speed: 0
+	Air Friction: 0
+	HP: 128
+	Max angle: 0
+	Room capacity: 1
+	Object Id: 145
+	Sound category: OBJECT_BED
+	Flags: 
+		#TYPE_LAIR
+		#OBSTACLE
+		#BOULDER_CAN_ROLL_THROUGH
+		#BOULDER_DESTROYS
+		#CAST_SHADOWS
+

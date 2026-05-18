@@ -1,0 +1,9 @@
+*.tlog
+*.idb
+*.ipch
+*.db
+*.opendb
+.vs/
+bin/
+lib/
+obj/

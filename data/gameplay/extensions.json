@@ -1,0 +1,39 @@
+{
+    "creatures": 
+    {
+        "Imp": {
+            "walk_anim_scale": 1.4
+        },
+        "Prince Tristran": {
+            "walk_anim_scale": 1.3
+        },
+        "Bile Demon": {
+            "walk_anim_scale": 2.0
+        },
+        "Mistress": {
+            "walk_anim_scale": 7.0
+        },
+        "Warlock": {
+            "walk_anim_scale": 6.0
+        },
+        "Dark Elf": {
+            "walk_anim_scale": 3.0
+        },
+        "Goblin": {
+            "walk_anim_scale": 2.8
+        },
+        "Skeleton": {
+            "walk_anim_scale": 2.8
+        },
+        "Troll": {
+            "walk_anim_scale": 1.3
+        },
+        "Salamander": {
+            "walk_anim_scale": 3.0
+        },
+        "Black Knight": {
+            "walk_anim_scale": 1.4
+        }
+    }
+
+}

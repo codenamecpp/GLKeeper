@@ -1,0 +1,11 @@
+{
+    "screen":
+    {
+        "resolution": [1680, 1050],
+        "fullscreen": false,
+        "vsync": false,
+        "hardware_cursor": true
+    },
+
+    "game_root": ""
+}

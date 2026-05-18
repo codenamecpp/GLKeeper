@@ -1,0 +1,21 @@
+{
+
+"widget": {"class": "dummy",  "id": "root", "pos":[0,0], "size":[1024,768], "anchor_min":[0,0], "anchor_max":[1,1], "children": 
+    [
+        {"class":"picture", "id":"logo", "path":"Logo.png", "stretch_mode":"scale", "pos":[0,40], "size":[526,198], "anchor_min":[0.5,0], "pivot":[0.5,0]},
+        {"class":"dummy", "id":"main_menu_1", "pos":[0,0], "size":[0,410], "anchor_min":[0,0.9], "anchor_max":[1,0.9], "pivot":[0.5,1], "children":
+            [
+                {"class":"textbox", "id":"single_player", "interactive":true, "pos":[0,0], "size":[0,48], "anchor_min":[0.0,0.0], "anchor_max":[1.0,0.0], "horz_align":"center", "font":"FONT_FRONTEND28", "text":"#Single Player Game#", "string_id":71, "color":[190,190,190,255], "color_hovered":[255,255,255,255]},
+                {"class":"textbox", "id":"mpd", "interactive":true, "pos":[0,70], "size":[0,48], "anchor_min":[0.0,0.0], "anchor_max":[1.0,0.0], "horz_align":"center", "font":"FONT_FRONTEND28", "text":"#My Pet Dungeon#", "string_id":1675, "color":[190,190,190,255], "color_hovered":[255,255,255,255]},
+                {"class":"textbox", "id":"options", "interactive":true, "pos":[0,180], "size":[0,48], "anchor_min":[0.0,0.0], "anchor_max":[1.0,0.0], "horz_align":"center", "font":"FONT_FRONTEND28", "text":"#Options#", "string_id":94, "color":[190,190,190,255], "color_hovered":[255,255,255,255]},
+                {"class":"textbox", "id":"extras", "interactive":true, "pos":[0,250], "size":[0,48], "anchor_min":[0.0,0.0], "anchor_max":[1.0,0.0], "horz_align":"center", "font":"FONT_FRONTEND28", "text":"#Extras#", "string_id":73, "color":[190,190,190,255], "color_hovered":[255,255,255,255]},
+                {"class":"textbox", "id":"quit", "interactive":true, "pos":[0,362], "size":[0,48], "anchor_min":[0.0,0.0], "anchor_max":[1.0,0.0], "horz_align":"center", "font":"FONT_FRONTEND28", "text":"#Quit#", "string_id":28, "color":[190,190,190,255], "color_hovered":[255,255,255,255]}
+            ]
+        },
+        {"class":"textbox", "id":"version_string", "pos":[0,-20], "size":[300,30], "pivot":[0,1], "anchor_min":[0,1], "text":"#version:#", "font":"FONT_FRONTEND20", "color":[255,255,255,255]}
+
+    ]
+}
+
+
+}

@@ -1,0 +1,81 @@
+out of action
+stunned
+dying
+idle
+digging
+claiming territory
+destroying rooms
+reinforcing walls
+repairing walls
+mining
+collecting Gold
+canking Gold in Treasury
+collecting an item
+archiving a Spell Book
+taking a Special to Library
+installing a Trap
+collecting a Trap Crate
+delivering a Trap Crate
+installing a Door
+collecting a Door Crate
+delivering a Door Crate
+rescuing wounded creatures
+collecting corpses
+dragging a casualty to the Lair
+taking prisoners
+snatching fallen enemies
+dragging an enemy to Prison
+teleporting
+manufacturing
+researching
+looking for the Lair
+making a home
+wandering
+waiting
+eating
+going for food
+praying
+training
+torturing a captive
+being tortured
+freeing comrades
+pit-fighting
+cheering on a fight
+drinking
+gambling
+dancing
+stealing booty
+escaping with stolen booty
+attacking rooms
+attacking Dungeon Heart
+attacking walls
+tunnelling
+heeding Call To Arms
+leaving Dungeon
+looking for battle
+advancing
+retreating
+disarming a Trap
+celebrating
+incapacitated
+frozen
+rebelling
+fleeing
+exploring
+burning in Lava
+guarding
+on patrol to a Guard Post
+assembling a unit
+responding to a threat
+reporting danger
+hypnotised
+recuperating
+looking for food
+collecting wages
+en route
+going to bed
+sleeping
+sulking
+being held captive
+doing nothing
+your prisoner

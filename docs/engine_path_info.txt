@@ -1,0 +1,102 @@
+
+			Camera Path Assignments.....              Last update 27/05/99  KD.
+
+
+EnginePath0	-	Camera for level start....Plug Explosion 
+EnginePath1	-	Camera for level start....Plug Explosion
+EnginePath2	-	Camera for level start....Plug Explosion
+EnginePath3	-	Camera for level start....Plug Explosion
+
+...........................................................................
+
+EnginePath50	-	Camera for creature intro (Generic)
+EnginePath51	-	Camera for creature intro (Generic)
+EnginePath52	-	Camera for creature intro (Generic)
+EnginePath53	-	Camera for creature intro (Generic)
+EnginePath54	-	Camera for creature intro (Generic)
+EnginePath55	-	Camera for creature intro (Generic)
+EnginePath56	-	Camera for Dark Elf Intro.
+EnginePath57	-	Camera for Dark Angel Intro.
+EnginePath58	-	Camera for Misstress Intro.
+EnginePath59	-	Camera for Bile Demon intro.
+EnginePath60	-	Camera for Warlock Intro.
+EnginePath61	-	Camera for Goblin Intro.
+EnginePath62	-	Camera for Salamander Intro.
+EnginePath63	-	Camera for Firfly Intro.
+EnginePath64	-	Camera for Dark Knight Intro.
+EnginePath65	-	Camera for Rouge Intro.
+EnginePath66	-	Camera for Troll Intro.
+...........................................................................
+
+EnginePath100   -	Camera for 1st cut - End of Level Sequance.
+EnginePath101   -	Camera for 2nd cut - End of Level Sequance.
+EnginePath102   -	Camera for gem rotation.......
+...........................................................................
+
+EnginePath150	-	Camera for heart explosion....
+
+...........................................................................
+
+EnginePath201   -	Cam enterance for level 1
+EnginePath203   -	Cam enterance for level 3
+EnginePath204   -	Cam enterance for level 4
+EnginePath205   -	Cam enterance for level 5
+EnginePath206   -	Cam enterance for level 6
+EnginePath207   -	Cam enterance for level 7
+EnginePath208   -	Cam enterance for level 8
+EnginePath209   -	Cam enterance for level 9
+EnginePath210   -	Cam enterance for level 10
+EnginePath211   -	Cam enterance for level 11
+EnginePath212   -	Cam enterance for level 12
+EnginePath213   -	Cam enterance for level 13
+EnginePath214   -	Cam enterance for level 14
+EnginePath215   -	Cam enterance for level 15a
+EnginePath216   -	Cam enterance for level 16
+EnginePath217   -	Cam enterance for level 17
+EnginePath201   -	Cam enterance for level 18
+EnginePath219   -	Cam enterance for level 19
+EnginePath221   -	Cam enterance for level 11b
+EnginePath222   -	Cam enterance for level 11c
+EnginePath230   -	Camera- Generic rotate (5 secs)
+EnginePath231   -	Camera- Generic rotate (10 secs)
+EnginePath232   -	Camera- Generic rotate (20 secs)
+
+...........................................................................
+
+
+			3D Front End Camera's.
+
+EnginePath250 	-    	Intro to 3D Front End.
+EnginePath251	-    	Entry to Table.	
+EnginePath252	-    	Table to Entry.
+EnginePath253	-    	Table to 1st right.
+EnginePath254	-    	1st right to Table.
+EnginePath255	-    	Spare.........
+EnginePath256	-    	Entry to 2nd right.
+EnginePath257	-    	2nd right to Entry.
+EnginePath258	-    	Static 2nd right.
+EnginePath259	-    	Entry to 1st left.
+EnginePath260	-    	1st left to Entry.
+EnginePath261	-    	Static 1st left.
+EnginePath262	-    	Entry to 2nd left.
+EnginePath263	-    	2nd left to Entry.
+EnginePath264	-    	Static 2nd left.
+EnginePath265	-    	1st left to credit view.
+EnginePath266	-    	Credit view to 1st left.
+EnginePath267	-    	Entry to MPD Table.
+EnginePath268	-    	MPD Table to Entry.
+EnginePath269	-    	MPD Table to 1st right.
+EnginePath270	-    	1st right to MPD Table.
+EnginePath271	-    	Entry to 1st right.
+EnginePath272	-    	1st right to Entry.
+EnginePath273	-    	Static 1st right.
+EnginePath274	-    	Static Entry.
+
+
+
+
+
+...........................................................................
+
+
+

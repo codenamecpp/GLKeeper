@@ -1,0 +1,10 @@
+
+
++ hot reaload feature for shaders
++ sampler states instead of glTexParameter
+
++ revisit iterators for map tiles/room objects etc
++ helpers for select random point within tile
+
++ adding rooms/objects to player's inventory lists invalidates iterators - find solution
++ sync tiles owner id with room after level loaded

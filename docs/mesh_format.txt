@@ -1,0 +1,226 @@
+// Dungeon Keeper 2 Meshes (static and vertex animated)
+
+local int i;
+
+struct KMSH {
+	char magic[4];
+	int size; // size of file incl. header
+	int version; // = 17
+
+	struct KHEAD {
+		char magic[4];
+		int size;
+		enum {
+			MESH = 1,
+			ANIM,
+			GROP
+		} format;
+		int uk; // = 1
+	} header;
+} kmsh;
+
+if (kmsh.header.format > 2)
+	return;
+
+local int isAnim = kmsh.header.format == 2;
+
+struct Texture {
+	string name;
+};
+
+struct MAT2 {
+	char magic[4];
+	int size;
+	string name;
+	int numTextures;
+	struct {
+		string name;
+	} textures[numTextures]<optimize=false>;
+	enum MaterialFlag {
+		HAS_ALPHA      = 0x0001, /* masked / alpha-test geometry (ALPHABLENDENABLE)
+		                            Usage: masked UI/arrows and some decals
+		                            Often combined with DOUBLE_SIDED (0x02). */
+		DOUBLE_SIDED   = 0x0002, /* disable back-face culling / surface modifier
+		                            Usage: thin geometry, blades, tails, some candles/bottles
+		                            Runtime: seen only D3DRENDERSTATE_CULLMODE=D3DCULL_NONE */
+		ALPHA_ADDITIVE = 0x0004, /* additive blending (FX/glows/slashes)
+		                            Usage: additive effects, slashes, falloff rays
+		                            ALPHABLENDENABLE/ZWRITE + SRC/DST blend factors switched to create additive/falloff */
+		TRANSLUCENT    = 0x0008, /* translucent / ice-like material
+		                            Usage: only #TRANS25#icey */
+		UNKNOWN10      = 0x0010, // only used for 'Angel Bed Ribs - Creature Bed_Dark Angel2'
+		UNKNOWN20      = 0x0020, // never used?
+		HAS_SPECULAR   = 0x0040, /* use specular value
+		                            Usage: metal/weapon/reflective surfaces, swords, correlated with `specular` and envMap
+		                            Runtime: D3DRENDERSTATE_SPECULARENABLE=0 !
+                                D3DTSS_COLOROP=D3DTOP_BUMPENVMAP, unit D3DTSS_BUMPENVMAT */
+
+		HAS_EMISSIVE   = 0x0080, /* use emissive value
+		                            Usage: lava, torches, portal gems, illuminated props */
+
+		INVISIBLE      = 0x0100  /* invisible / placeholder / env-only
+		                            Usage: invisible placeholders like "InvisibleKnightBack" */
+	} flags;
+	float emissive; // 0.2 dungeon heart, 0.4 portal, 0.6 gold, 0.75 torch/lava/fire, 1.0 firefly tail/Torture_Trough/Jack Box
+	float specular; // 0.2 pickimpback/armor/mistress suit, 0.3 GuardFrnt/DarkAngel sword, 0.4/0.5 swords/blades/scythe, 1 128gem1/#mask#gembit/Brickex1
+	string envMap;  // optional environment map name (present on many 0x40/0x42 entries)
+};
+
+struct MATL {
+	char magic[4];
+	int size;
+	int numMat;
+	MAT2 materials[numMat]<optimize=false>;
+} matl;
+
+struct MESH {
+	char sig[4];
+	int size;
+	struct HEAD {
+		char head[4];
+		int size;
+		string meshname;
+		int numGroups;	// number of SPRS groups
+		if (isAnim) {
+			int numFrames;
+			int numIndices;
+		}
+		int numVerts;   // number of vertex positions defined in GEOM, worst case numFrames*numIndices
+		if (isAnim) {
+			enum {CLAMP, WRAP} frameFactorFunction;
+		}
+		float tx; // translation
+		float ty;
+		float tz;
+		if (isAnim) {
+			float cubeScale;
+		}
+		float scale;
+		int numLODs;	// number of total LOD entries
+	} header;
+	struct CTRL {
+		char magic[4];
+		int size;
+		int numCtrl; // only non-zero in ANIM files
+		struct {
+			short uk1;
+			short uk2;
+			int uk3;
+		} data[numCtrl]<optimize=false>;
+	} ctrl;
+
+	struct Model {
+		char magic[4];
+		int size;
+		for (i=0; i < header.numGroups; i++)
+		{
+			struct SPHD {
+				char magic[4];
+				int size;
+				int numFacesPerLevel[header.numLODs]; // one entry for each LOD
+				int numVertsEx; // number of entries in the extended vertex list
+				float mmFactor;
+			} groups;
+		}
+
+		for (i=0; i < header.numGroups; i++)
+		{
+			struct SPRS
+			{
+				char magic[4];
+				int size;
+				uint materialIdx;
+				if (isAnim) {
+					struct POLY {
+						char magic[4];
+						int size;
+					} poly;
+				}
+				local int j;
+				for (j=0; j < header.numLODs; j++)
+				{
+					struct {
+						struct {
+							ubyte x,y,z; // indices for the extended vertex list
+						} faces[groups[i].numFacesPerLevel[j]] <read=Str("(%u %u %u)",this.x,this.y,this.z)>;
+					} levels;
+   				}
+
+				if (isAnim) {
+					char VERTmagic[4];
+					int VERTsize;
+				}
+				struct VertEx {
+					if (!isAnim) ushort index;	// index of the vertex in GEOM
+					ushort u; // up to 32768
+					ushort v;
+					float nX;	// the vertex normal
+					float nY;
+					float nZ;
+					if (isAnim) ushort itabIdx;
+				} vertsEx[groups[i].numVertsEx] <read=Str("%u, uv(%g, %g) n(%g,%g,%g)", isAnim ? this.itabIdx : 0, this.u / 32768.0, 1.0 - this.v / 32768.0, this.nX,this.nY,this.nZ)>;
+			} groupData;
+		}
+	} model;
+
+if (isAnim) {
+	struct ITAB {
+		char magic[4];
+		int size;
+		struct {
+			uint geomBase[header.numIndices];
+		} frameChunks[(uint)((header.numFrames - 1) / 128.0 + 1)]; // per 128 frames
+	} itab;
+
+	typedef struct {
+		// 10 bits per coordinate (Z, Y, X) = 30 bits (2 last bits can be thrown away)
+		union {
+			int data;
+			struct {
+				uint z : 10 <format=hex>;
+				uint y : 10 <format=hex>;
+				uint x : 10 <format=hex>;
+				uint garbage : 2;
+			} bits;
+		} coords;
+		byte frameBase;
+	} GeomAnim<read=GeomAnimRead>;
+
+	struct ANIMGEOM {
+		char magic[4];
+		int size;
+        // list of "keyframes" (positions) for each vertex
+        // "worst case" there is an entry for each frame
+        // there is at least an entry for the first and last frame
+		GeomAnim vertices[header.numVerts];
+	} geom;
+	struct VGEO {
+		char magic[4];
+		int size;
+		struct {
+			ubyte geomOffset[header.numFrames];
+		} geomOffset[header.numIndices];
+	} vgeo;
+}
+else {
+	struct GEOM {
+		char magic[4];
+		int size;
+		struct  Vec3f {
+			float x;
+			float y;
+			float z;
+		} vertices[header.numVerts] <read=Str("(%g, %g, %g)", this.x, this.y, this.z)>;
+	} geom;
+}
+} mesh;
+
+string GeomAnimRead(GeomAnim& f)
+{
+	float x = (int)(((f.coords.data >> 20) & 1023) - 512) / 511.0f * mesh.header.scale;
+	float y = (int)(((f.coords.data >> 10) & 0x3ff) - 512) / 511.0f * mesh.header.scale;
+	float z = (int)(((f.coords.data >>  0) & 0x3ff) - 512) / 511.0f * mesh.header.scale;
+	string s;
+	SPrintf(s, "%u (%g %g %g)", f.frameBase, x, y, z);
+	return s;
+}

@@ -1,0 +1,1202 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="_PCH">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Data">
+      <UniqueIdentifier>{33b2679b-25e8-48ef-af03-b0c083dcf046}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\UI">
+      <UniqueIdentifier>{7681bfad-9cfa-48a5-b7b8-db37504ac463}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\Shaders">
+      <UniqueIdentifier>{6e7e58c9-0326-4ef9-ba61-932df19f1ec7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\Config">
+      <UniqueIdentifier>{f9f33efa-f172-4a92-abc7-8200b55e8c9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{43ae236c-cae1-4293-8981-55d6e1b9fbbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Base">
+      <UniqueIdentifier>{ba1206ff-2770-4249-b17c-882405c7f8af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Lib">
+      <UniqueIdentifier>{30a1a825-ec9b-443a-8ba7-469ddb677c42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Rendering">
+      <UniqueIdentifier>{5f7c9074-e28f-46af-b539-7bb2b7982b64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\World">
+      <UniqueIdentifier>{aa3eb950-02f0-4ec2-968f-3347f30659c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\MainMenu">
+      <UniqueIdentifier>{7b590171-f903-4063-a98c-7de4f2ea08b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Session">
+      <UniqueIdentifier>{ccbfe626-f8f6-4e93-8e3b-57a21c9ef9ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\World\Map">
+      <UniqueIdentifier>{a6a5bdd2-0960-496b-ad11-89ec7a0ed044}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\World\Scene">
+      <UniqueIdentifier>{966ddf15-de65-4894-b165-6dd7f7bbe0fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\World\Scene\BVH">
+      <UniqueIdentifier>{53b6fbb1-37e4-4cbb-a80b-79e0653e5514}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\World\GameObjects">
+      <UniqueIdentifier>{dcd31780-7967-443c-a330-0375b5bd542c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\World\Rooms">
+      <UniqueIdentifier>{5f494d16-9838-4d4a-b5dd-6d832b1fffe9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\World\TilesConstruction">
+      <UniqueIdentifier>{fe890316-b6d1-4bfb-bb40-194b2d7c11e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\World\Rooms\Controllers">
+      <UniqueIdentifier>{e8935907-2d59-4a0d-adec-6d4b7847464e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\World\GameObjects\Controllers">
+      <UniqueIdentifier>{7863da33-cba9-4156-8921-6a945118ce4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\World\Physics">
+      <UniqueIdentifier>{2de8b7aa-c9ea-4389-80d1-b078ede6c535}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\World\View">
+      <UniqueIdentifier>{5652bb19-2708-426e-8310-ab565ad4d60b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\3rd_party">
+      <UniqueIdentifier>{83067944-8c67-4854-8b8a-471a0ef878f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\3rd_party\stb">
+      <UniqueIdentifier>{5a1305f1-3a23-48aa-bde4-7b590969182d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\3rd_party\cjson">
+      <UniqueIdentifier>{4472e901-9522-4efc-b441-4d383e26a172}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\3rd_party\imgui">
+      <UniqueIdentifier>{468a996e-3f81-45f6-a31d-e6e68d4f9d4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Graphics">
+      <UniqueIdentifier>{8f963d4c-33e9-4a19-b5e2-a2dc6914f575}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Player">
+      <UniqueIdentifier>{3a1fab7b-f6ff-4fb0-add8-63cfe7876b0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Ui">
+      <UniqueIdentifier>{3e59e329-e239-4a91-9f8d-6db27436c339}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Ui\Screens">
+      <UniqueIdentifier>{ce50f3c7-725b-46e6-9096-445300c140d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Ui\Widgets">
+      <UniqueIdentifier>{6d31c90f-6c02-4396-be90-ea8be99d289b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\ToolsUi">
+      <UniqueIdentifier>{83f2dbb3-4a71-42e3-910f-239d6f0b6cb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Gameplay">
+      <UniqueIdentifier>{8f283cf0-1eb2-4e96-95c9-8271ea1434f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Docs">
+      <UniqueIdentifier>{0203d8a5-6b32-4dce-811a-f69715906f85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Assets">
+      <UniqueIdentifier>{4cbd5be9-b53f-4e7c-81d9-82ebe0af62d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Assets\Formats">
+      <UniqueIdentifier>{66e05a86-e30e-41df-88cd-b3c8825de5ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\World\Creatures">
+      <UniqueIdentifier>{6df827b5-8691-474e-bfdc-4fc91aa93a2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\World\Creatures\Controllers">
+      <UniqueIdentifier>{7f97b479-ce4a-4d4c-b11c-4e1ba1c255ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\World\Locomotion">
+      <UniqueIdentifier>{0015a64a-40f2-46c2-bc7c-91fd14cbf437}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\World\Entity">
+      <UniqueIdentifier>{6b1a758d-2ee7-4093-9759-74909a290c61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\World\Creatures\Activities">
+      <UniqueIdentifier>{fff2d468-29c2-4528-a018-f9b4e2386592}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\World\Navigation">
+      <UniqueIdentifier>{eef4ee5b-060b-4b7f-9d77-450d9703bc70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\Gameplay">
+      <UniqueIdentifier>{e514f89a-ea6e-4394-9399-62a236dc204d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>_PCH</Filter>
+    </ClInclude>
+    <ClInclude Include="IDebugVisualizer.h">
+      <Filter>Source\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="DK2EngineTextures.h">
+      <Filter>Source\Assets\Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="DK2Font.h">
+      <Filter>Source\Assets\Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugRenderer.h">
+      <Filter>Source\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="UiRenderContext.h">
+      <Filter>Source\Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="UiDefs.h">
+      <Filter>Source\Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="UiEvent.h">
+      <Filter>Source\Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="UiButton.h">
+      <Filter>Source\Ui\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="UiPicture.h">
+      <Filter>Source\Ui\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="UiPanel.h">
+      <Filter>Source\Ui\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="UiHelpers.h">
+      <Filter>Source\Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="UiTextBox.h">
+      <Filter>Source\Ui\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="UiGridLayout.h">
+      <Filter>Source\Ui\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="UiProductionButton.h">
+      <Filter>Source\Ui\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="DK2ScenarioReader.h">
+      <Filter>Source\Assets\Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="AABBTree.h">
+      <Filter>Source\World\Scene\BVH</Filter>
+    </ClInclude>
+    <ClInclude Include="AABBTree.inl">
+      <Filter>Source\World\Scene\BVH</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainRenderer.h">
+      <Filter>Source\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="noncopyable.h">
+      <Filter>Source\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="bounding_volumes.h">
+      <Filter>Source\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="frustum.h">
+      <Filter>Source\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="plane.h">
+      <Filter>Source\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="intersection.h">
+      <Filter>Source\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="auxmath.h">
+      <Filter>Source\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="heap.h">
+      <Filter>Source\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="strings.h">
+      <Filter>Source\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="memory_istream.h">
+      <Filter>Source\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderDevice.h">
+      <Filter>Source\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="GpuBuffer.h">
+      <Filter>Source\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="GpuTexture2D.h">
+      <Filter>Source\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGLDefs.h">
+      <Filter>Source\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsDefs.h">
+      <Filter>Source\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="BMFont.h">
+      <Filter>Source\Assets\Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="CreatureDefs.h">
+      <Filter>Source\World\Creatures</Filter>
+    </ClInclude>
+    <ClInclude Include="Creature.h">
+      <Filter>Source\World\Creatures</Filter>
+    </ClInclude>
+    <ClInclude Include="std_ext.h">
+      <Filter>Source\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="ListenersContainer.h">
+      <Filter>Source\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="enum_serialize.h">
+      <Filter>Source\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="GameDefs.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonTypes.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="InputsState.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Version.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="DK2KMFModel.h">
+      <Filter>Source\Assets\Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeManager.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleTimer.h">
+      <Filter>Source\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Console.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="Debug.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="FileSystem.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="GameProfile.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="BitmapImage.h">
+      <Filter>Source\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonDocument.h">
+      <Filter>Source\Assets\Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="GpuProgram.h">
+      <Filter>Source\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="UiManager.h">
+      <Filter>Source\Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="Font.h">
+      <Filter>Source\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="FontManager.h">
+      <Filter>Source\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderProgram.h">
+      <Filter>Source\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Source\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureManager.h">
+      <Filter>Source\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadersManager.h">
+      <Filter>Source\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>Source\3rd_party\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_image_write.h">
+      <Filter>Source\3rd_party\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="stb_rect_pack.h">
+      <Filter>Source\3rd_party\stb</Filter>
+    </ClInclude>
+    <ClInclude Include="cJSON.h">
+      <Filter>Source\3rd_party\cjson</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMain.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="FrontendCameraController.h">
+      <Filter>Source\MainMenu</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSession.h">
+      <Filter>Source\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="GameWorld.h">
+      <Filter>Source\World</Filter>
+    </ClInclude>
+    <ClInclude Include="GameWorldDefs.h">
+      <Filter>Source\World</Filter>
+    </ClInclude>
+    <ClInclude Include="GameRenderManager.h">
+      <Filter>Source\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMap.h">
+      <Filter>Source\World\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="MapTile.h">
+      <Filter>Source\World\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="MapUtils.h">
+      <Filter>Source\World\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshAsset.h">
+      <Filter>Source\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshAssetManager.h">
+      <Filter>Source\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatingMeshRenderer.h">
+      <Filter>Source\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexFormat.h">
+      <Filter>Source\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="ProceduralMeshRenderer.h">
+      <Filter>Source\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMapDefs.h">
+      <Filter>Source\World\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="TileSelectionOutline.h">
+      <Filter>Source\World</Filter>
+    </ClInclude>
+    <ClInclude Include="Room.h">
+      <Filter>Source\World\Rooms</Filter>
+    </ClInclude>
+    <ClInclude Include="SimplePool.h">
+      <Filter>Source\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomWallSection.h">
+      <Filter>Source\World\Rooms</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolsUiManager.h">
+      <Filter>Source\ToolsUi</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolsUi.h">
+      <Filter>Source\ToolsUi</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui.h">
+      <Filter>Source\3rd_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_internal.h">
+      <Filter>Source\3rd_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_rectpack.h">
+      <Filter>Source\3rd_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_textedit.h">
+      <Filter>Source\3rd_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_truetype.h">
+      <Filter>Source\3rd_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imconfig.h">
+      <Filter>Source\3rd_party\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="BinaryInputStream.h">
+      <Filter>Source\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugToolsUi.h">
+      <Filter>Source\ToolsUi</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderView.h">
+      <Filter>Source\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="uniqueptr.h">
+      <Filter>Source\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="EnvironmentMeshRenderer.h">
+      <Filter>Source\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimatingMeshObject.h">
+      <Filter>Source\World\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="EnvironmentMeshObject.h">
+      <Filter>Source\World\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="ProceduralMeshObject.h">
+      <Filter>Source\World\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Source\World\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneDefs.h">
+      <Filter>Source\World\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneObject.h">
+      <Filter>Source\World\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObjectDefs.h">
+      <Filter>Source\World\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Source\World\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="auxmath_angle.h">
+      <Filter>Source\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="FrameMemoryManager.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="span.h">
+      <Filter>Source\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="TileConstructor.h">
+      <Filter>Source\World\TilesConstruction</Filter>
+    </ClInclude>
+    <ClInclude Include="TileConstructionSet.h">
+      <Filter>Source\World\TilesConstruction</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomTileConstructor.h">
+      <Filter>Source\World\TilesConstruction</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomTileConstructor_5_by_5.h">
+      <Filter>Source\World\TilesConstruction</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomTileConstructor_3_by_3.h">
+      <Filter>Source\World\TilesConstruction</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomTileConstructor_Quad.h">
+      <Filter>Source\World\TilesConstruction</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomTileConstructor_Normal.h">
+      <Filter>Source\World\TilesConstruction</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomTileConstructor_DoubleQuad.h">
+      <Filter>Source\World\TilesConstruction</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomTileConstructor_HeroGateFrontend.h">
+      <Filter>Source\World\TilesConstruction</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomTileConstructor_DungeonHeart.h">
+      <Filter>Source\World\TilesConstruction</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomDefs.h">
+      <Filter>Source\World\Rooms</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObjectManager.h">
+      <Filter>Source\World\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomManager.h">
+      <Filter>Source\World\Rooms</Filter>
+    </ClInclude>
+    <ClInclude Include="DungeonHeartRoomController.h">
+      <Filter>Source\World\Rooms\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="HeroGateFrontendRoomController.h">
+      <Filter>Source\World\Rooms\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomController.h">
+      <Filter>Source\World\Rooms\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="TempleRoomController.h">
+      <Filter>Source\World\Rooms\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="WorkshopRoomController.h">
+      <Filter>Source\World\Rooms\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="LibraryRoomController.h">
+      <Filter>Source\World\Rooms\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="TortureChamberRoomController.h">
+      <Filter>Source\World\Rooms\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="TrainingRoomController.h">
+      <Filter>Source\World\Rooms\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="HatcheryRoomController.h">
+      <Filter>Source\World\Rooms\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObjectController.h">
+      <Filter>Source\World\GameObjects\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="ChickenObjectController.h">
+      <Filter>Source\World\GameObjects\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsObject.h">
+      <Filter>Source\World\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics.h">
+      <Filter>Source\World\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsDefs.h">
+      <Filter>Source\World\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSessionDefs.h">
+      <Filter>Source\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="UiWidget.h">
+      <Filter>Source\Ui\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="UiWidgetManager.h">
+      <Filter>Source\Ui\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="UiHierarchy.h">
+      <Filter>Source\Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="UiView.h">
+      <Filter>Source\Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadingScreenView.h">
+      <Filter>Source\Ui\Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="HUDScreenView.h">
+      <Filter>Source\Ui\Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="ConsoleScreenView.h">
+      <Filter>Source\Ui\Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="TestScreenView.h">
+      <Filter>Source\Ui\Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldViewCameraController.h">
+      <Filter>Source\World\View</Filter>
+    </ClInclude>
+    <ClInclude Include="SurfaceMaterial.h">
+      <Filter>Source\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Source\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerDefs.h">
+      <Filter>Source\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Source\World\View</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEventBus.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="GameEvent.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSessionAware.h">
+      <Filter>Source\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="GameSessionController.h">
+      <Filter>Source\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="GameplayController.h">
+      <Filter>Source\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="FrontendController.h">
+      <Filter>Source\MainMenu</Filter>
+    </ClInclude>
+    <ClInclude Include="TextManager.h">
+      <Filter>Source\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="DK2Text.h">
+      <Filter>Source\Assets\Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="std_stream_helpers.h">
+      <Filter>Source\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="GameplayDefs.h">
+      <Filter>Source\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleScreenView.h">
+      <Filter>Source\Ui\Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="FrontendScreen.h">
+      <Filter>Source\Ui\Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="ScenarioDefs.h">
+      <Filter>Source\World</Filter>
+    </ClInclude>
+    <ClInclude Include="DK2AssetLoader.h">
+      <Filter>Source\Assets\Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="DK2WADArchive.h">
+      <Filter>Source\Assets\Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObjectComponents.h">
+      <Filter>Source\World\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObjectCapabilities.h">
+      <Filter>Source\World\GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="GoldPileObjectController.h">
+      <Filter>Source\World\GameObjects\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomComponents.h">
+      <Filter>Source\World\Rooms</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomCapabilities.h">
+      <Filter>Source\World\Rooms</Filter>
+    </ClInclude>
+    <ClInclude Include="StorageRoomController.h">
+      <Filter>Source\World\Rooms\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="Random.h">
+      <Filter>Source\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="static_vector.h">
+      <Filter>Source\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="EconomyService.h">
+      <Filter>Source\Session</Filter>
+    </ClInclude>
+    <ClInclude Include="MoneyStorageRoomController.h">
+      <Filter>Source\World\Rooms\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="TreasuryRoomController.h">
+      <Filter>Source\World\Rooms\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomTileConstructor_HeroGate_2_by_2.h">
+      <Filter>Source\World\TilesConstruction</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomTileConstructor_HeroGate_3_by_1.h">
+      <Filter>Source\World\TilesConstruction</Filter>
+    </ClInclude>
+    <ClInclude Include="CreatureManager.h">
+      <Filter>Source\World\Creatures</Filter>
+    </ClInclude>
+    <ClInclude Include="CreatureController.h">
+      <Filter>Source\World\Creatures\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>Source\World\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityCapabilities.h">
+      <Filter>Source\World\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityComponents.h">
+      <Filter>Source\World\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityDefs.h">
+      <Filter>Source\World\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityNotification.h">
+      <Filter>Source\World\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="WeightSelector.h">
+      <Filter>Source\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="CreatureActivityUtils.h">
+      <Filter>Source\World\Creatures\Activities</Filter>
+    </ClInclude>
+    <ClInclude Include="CreatureActivity.h">
+      <Filter>Source\World\Creatures\Activities</Filter>
+    </ClInclude>
+    <ClInclude Include="CreatureAnimConst.h">
+      <Filter>Source\World\Creatures</Filter>
+    </ClInclude>
+    <ClInclude Include="NavigationDefs.h">
+      <Filter>Source\World\Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="NavigationService.h">
+      <Filter>Source\World\Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="Animator.h">
+      <Filter>Source\World\View</Filter>
+    </ClInclude>
+    <ClInclude Include="Locomotion.h">
+      <Filter>Source\World\Locomotion</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>_PCH</Filter>
+    </ClCompile>
+    <ClCompile Include="DK2EngineTextures.cpp">
+      <Filter>Source\Assets\Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="DK2Font.cpp">
+      <Filter>Source\Assets\Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugRenderer.cpp">
+      <Filter>Source\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="UiRenderContext.cpp">
+      <Filter>Source\Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="UiButton.cpp">
+      <Filter>Source\Ui\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="UiPicture.cpp">
+      <Filter>Source\Ui\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="UiPanel.cpp">
+      <Filter>Source\Ui\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="UiHelpers.cpp">
+      <Filter>Source\Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="UiTextBox.cpp">
+      <Filter>Source\Ui\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="UiGridLayout.cpp">
+      <Filter>Source\Ui\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="UiProductionButton.cpp">
+      <Filter>Source\Ui\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="DK2ScenarioReader.cpp">
+      <Filter>Source\Assets\Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="AABBTree.cpp">
+      <Filter>Source\World\Scene\BVH</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainRenderer.cpp">
+      <Filter>Source\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="intersection.cpp">
+      <Filter>Source\Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="strings.cpp">
+      <Filter>Source\Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderDevice.cpp">
+      <Filter>Source\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="GpuBuffer.cpp">
+      <Filter>Source\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="GpuTexture2D.cpp">
+      <Filter>Source\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="BMFont.cpp">
+      <Filter>Source\Assets\Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="Creature.cpp">
+      <Filter>Source\World\Creatures</Filter>
+    </ClCompile>
+    <ClCompile Include="enums_impl.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="InputsState.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="DK2KMFModel.cpp">
+      <Filter>Source\Assets\Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Console.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="Debug.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="FileSystem.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="GameProfile.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="BitmapImage.cpp">
+      <Filter>Source\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonDocument.cpp">
+      <Filter>Source\Assets\Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="GpuProgram.cpp">
+      <Filter>Source\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="UiManager.cpp">
+      <Filter>Source\Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="Font.cpp">
+      <Filter>Source\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="FontManager.cpp">
+      <Filter>Source\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderProgram.cpp">
+      <Filter>Source\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureManager.cpp">
+      <Filter>Source\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadersManager.cpp">
+      <Filter>Source\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="cJSON.cpp">
+      <Filter>Source\3rd_party\cjson</Filter>
+    </ClCompile>
+    <ClCompile Include="stb.cpp">
+      <Filter>Source\3rd_party\stb</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMain.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="FrontendCameraController.cpp">
+      <Filter>Source\MainMenu</Filter>
+    </ClCompile>
+    <ClCompile Include="GameSession.cpp">
+      <Filter>Source\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="GameWorld.cpp">
+      <Filter>Source\World</Filter>
+    </ClCompile>
+    <ClCompile Include="GameRenderManager.cpp">
+      <Filter>Source\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMap.cpp">
+      <Filter>Source\World\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="MapTile.cpp">
+      <Filter>Source\World\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshAsset.cpp">
+      <Filter>Source\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshAssetManager.cpp">
+      <Filter>Source\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatingMeshRenderer.cpp">
+      <Filter>Source\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="ProceduralMeshRenderer.cpp">
+      <Filter>Source\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="TileSelectionOutline.cpp">
+      <Filter>Source\World</Filter>
+    </ClCompile>
+    <ClCompile Include="Room.cpp">
+      <Filter>Source\World\Rooms</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomWallSection.cpp">
+      <Filter>Source\World\Rooms</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolsUiManager.cpp">
+      <Filter>Source\ToolsUi</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui.cpp">
+      <Filter>Source\3rd_party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_demo.cpp">
+      <Filter>Source\3rd_party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_draw.cpp">
+      <Filter>Source\3rd_party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_widgets.cpp">
+      <Filter>Source\3rd_party\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="BinaryInputStream.cpp">
+      <Filter>Source\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugToolsUi.cpp">
+      <Filter>Source\ToolsUi</Filter>
+    </ClCompile>
+    <ClCompile Include="EnvironmentMeshRenderer.cpp">
+      <Filter>Source\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimatingMeshObject.cpp">
+      <Filter>Source\World\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="EnvironmentMeshObject.cpp">
+      <Filter>Source\World\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="ProceduralMeshObject.cpp">
+      <Filter>Source\World\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source\World\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneObject.cpp">
+      <Filter>Source\World\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Source\World\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="FrameMemoryManager.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="TileConstructor.cpp">
+      <Filter>Source\World\TilesConstruction</Filter>
+    </ClCompile>
+    <ClCompile Include="TileConstructionSet.cpp">
+      <Filter>Source\World\TilesConstruction</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomTileConstructor.cpp">
+      <Filter>Source\World\TilesConstruction</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomTileConstructor_5_by_5.cpp">
+      <Filter>Source\World\TilesConstruction</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomTileConstructor_3_by_3.cpp">
+      <Filter>Source\World\TilesConstruction</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomTileConstructor_Quad.cpp">
+      <Filter>Source\World\TilesConstruction</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomTileConstructor_Normal.cpp">
+      <Filter>Source\World\TilesConstruction</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomTileConstructor_DoubleQuad.cpp">
+      <Filter>Source\World\TilesConstruction</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomTileConstructor_HeroGateFrontend.cpp">
+      <Filter>Source\World\TilesConstruction</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomTileConstructor_DungeonHeart.cpp">
+      <Filter>Source\World\TilesConstruction</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObjectManager.cpp">
+      <Filter>Source\World\GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomManager.cpp">
+      <Filter>Source\World\Rooms</Filter>
+    </ClCompile>
+    <ClCompile Include="DungeonHeartRoomController.cpp">
+      <Filter>Source\World\Rooms\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="HeroGateFrontendRoomController.cpp">
+      <Filter>Source\World\Rooms\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomController.cpp">
+      <Filter>Source\World\Rooms\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="TempleRoomController.cpp">
+      <Filter>Source\World\Rooms\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="WorkshopRoomController.cpp">
+      <Filter>Source\World\Rooms\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="LibraryRoomController.cpp">
+      <Filter>Source\World\Rooms\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="TortureChamberRoomController.cpp">
+      <Filter>Source\World\Rooms\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="TrainingRoomController.cpp">
+      <Filter>Source\World\Rooms\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="HatcheryRoomController.cpp">
+      <Filter>Source\World\Rooms\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObjectController.cpp">
+      <Filter>Source\World\GameObjects\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="ChickenObjectController.cpp">
+      <Filter>Source\World\GameObjects\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsObject.cpp">
+      <Filter>Source\World\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics.cpp">
+      <Filter>Source\World\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="UiWidget.cpp">
+      <Filter>Source\Ui\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="UiWidgetManager.cpp">
+      <Filter>Source\Ui\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="UiHierarchy.cpp">
+      <Filter>Source\Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="UiView.cpp">
+      <Filter>Source\Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadingScreenView.cpp">
+      <Filter>Source\Ui\Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="HUDScreenView.cpp">
+      <Filter>Source\Ui\Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="ConsoleScreenView.cpp">
+      <Filter>Source\Ui\Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScreenView.cpp">
+      <Filter>Source\Ui\Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldViewCameraController.cpp">
+      <Filter>Source\World\View</Filter>
+    </ClCompile>
+    <ClCompile Include="SurfaceMaterial.cpp">
+      <Filter>Source\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Source\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source\World\View</Filter>
+    </ClCompile>
+    <ClCompile Include="GameEventBus.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="GameSessionAware.cpp">
+      <Filter>Source\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="GameSessionController.cpp">
+      <Filter>Source\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="GameplayController.cpp">
+      <Filter>Source\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="FrontendController.cpp">
+      <Filter>Source\MainMenu</Filter>
+    </ClCompile>
+    <ClCompile Include="TextManager.cpp">
+      <Filter>Source\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="DK2Text.cpp">
+      <Filter>Source\Assets\Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleScreenView.cpp">
+      <Filter>Source\Ui\Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="FrontendScreen.cpp">
+      <Filter>Source\Ui\Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="DK2AssetLoader.cpp">
+      <Filter>Source\Assets\Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="DK2WADArchive.cpp">
+      <Filter>Source\Assets\Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="GoldPileObjectController.cpp">
+      <Filter>Source\World\GameObjects\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="StorageRoomController.cpp">
+      <Filter>Source\World\Rooms\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="Random.cpp">
+      <Filter>Source\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="EconomyService.cpp">
+      <Filter>Source\Session</Filter>
+    </ClCompile>
+    <ClCompile Include="MoneyStorageRoomController.cpp">
+      <Filter>Source\World\Rooms\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="TreasuryRoomController.cpp">
+      <Filter>Source\World\Rooms\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomTileConstructor_HeroGate_2_by_2.cpp">
+      <Filter>Source\World\TilesConstruction</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomTileConstructor_HeroGate_3_by_1.cpp">
+      <Filter>Source\World\TilesConstruction</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatureManager.cpp">
+      <Filter>Source\World\Creatures</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatureController.cpp">
+      <Filter>Source\World\Creatures\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatureActivity_Idle.cpp">
+      <Filter>Source\World\Creatures\Activities</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatureAnimConst.cpp">
+      <Filter>Source\World\Creatures</Filter>
+    </ClCompile>
+    <ClCompile Include="NavigationService.cpp">
+      <Filter>Source\World\Navigation</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatureActivity_GoTo.cpp">
+      <Filter>Source\World\Creatures\Activities</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatureActivityUtils.cpp">
+      <Filter>Source\World\Creatures\Activities</Filter>
+    </ClCompile>
+    <ClCompile Include="Animator.cpp">
+      <Filter>Source\World\View</Filter>
+    </ClCompile>
+    <ClCompile Include="Locomotion.cpp">
+      <Filter>Source\World\Locomotion</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ListenersContainer.inl">
+      <Filter>Source\Base</Filter>
+    </None>
+    <None Include="..\data\config\app_settings.json">
+      <Filter>Data\Config</Filter>
+    </None>
+    <None Include="..\data\shaders\mesh_blend_frames.vert">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\data\shaders\mesh_static.frag">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\data\shaders\mesh_static.vert">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\data\shaders\mesh_terrain.frag">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\data\shaders\mesh_terrain.vert">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\data\shaders\mesh_water_lava.frag">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\data\shaders\mesh_water_lava.vert">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\data\shaders\ui.frag">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\data\shaders\ui.vert">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\data\shaders\debug.frag">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\data\shaders\debug.vert">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\data\shaders\mesh_blend_frames.frag">
+      <Filter>Data\Shaders</Filter>
+    </None>
+    <None Include="..\data\ui\test_screen.json">
+      <Filter>Data\UI</Filter>
+    </None>
+    <None Include="..\data\ui\gameplay_screen.json">
+      <Filter>Data\UI</Filter>
+    </None>
+    <None Include="..\data\ui\frontend_screen.json">
+      <Filter>Data\UI</Filter>
+    </None>
+    <None Include="..\data\gameplay\extensions.json">
+      <Filter>Data\Gameplay</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\docs\engine_textures.txt">
+      <Filter>Docs</Filter>
+    </Text>
+    <Text Include="..\docs\jobs.txt">
+      <Filter>Docs</Filter>
+    </Text>
+    <Text Include="..\docs\mesh_format.txt">
+      <Filter>Docs</Filter>
+    </Text>
+    <Text Include="..\docs\objects_names.txt">
+      <Filter>Docs</Filter>
+    </Text>
+    <Text Include="..\docs\terrains.txt">
+      <Filter>Docs</Filter>
+    </Text>
+    <Text Include="..\docs\Todo.txt">
+      <Filter>Docs</Filter>
+    </Text>
+    <Text Include="..\docs\creatures_anims.txt">
+      <Filter>Docs</Filter>
+    </Text>
+    <Text Include="..\docs\engine_path_info.txt">
+      <Filter>Docs</Filter>
+    </Text>
+  </ItemGroup>
+</Project>

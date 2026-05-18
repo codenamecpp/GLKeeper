@@ -1,0 +1,477 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C0AA5B54-7698-45DE-BDDA-818475A2FD1E}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Keeper</RootNamespace>
+    <SccProjectName>
+    </SccProjectName>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccProvider>
+    </SccProvider>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)..\bin\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)..\obj\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)_d</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)..\bin\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)..\obj\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_HAS_ITERATOR_DEBUGGING=0;GLEW_STATIC;WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SDKDIR)/GLM/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SDKDIR)/GLM/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent />
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="AnimatingMeshObject.h" />
+    <ClInclude Include="Animator.h" />
+    <ClInclude Include="auxmath_angle.h" />
+    <ClInclude Include="BinaryInputStream.h" />
+    <ClInclude Include="BMFont.h" />
+    <ClInclude Include="ChickenObjectController.h" />
+    <ClInclude Include="CommonTypes.h" />
+    <ClInclude Include="Creature.h" />
+    <ClInclude Include="CreatureActivity.h" />
+    <ClInclude Include="CreatureActivityUtils.h" />
+    <ClInclude Include="CreatureAnimConst.h" />
+    <ClInclude Include="CreatureController.h" />
+    <ClInclude Include="CreatureManager.h" />
+    <ClInclude Include="Debug.h" />
+    <ClInclude Include="DebugToolsUi.h" />
+    <ClInclude Include="DK2Font.h" />
+    <ClInclude Include="DK2KMFModel.h" />
+    <ClInclude Include="DK2Text.h" />
+    <ClInclude Include="DK2ScenarioReader.h" />
+    <ClInclude Include="DungeonHeartRoomController.h" />
+    <ClInclude Include="Entity.h" />
+    <ClInclude Include="EntityCapabilities.h" />
+    <ClInclude Include="EntityComponents.h" />
+    <ClInclude Include="EntityDefs.h" />
+    <ClInclude Include="EntityNotification.h" />
+    <ClInclude Include="enum_serialize.h" />
+    <ClInclude Include="Font.h" />
+    <ClInclude Include="FontManager.h" />
+    <ClInclude Include="FrameMemoryManager.h" />
+    <ClInclude Include="FrontendScreen.h" />
+    <ClInclude Include="GameEventBus.h" />
+    <ClInclude Include="GameMapDefs.h" />
+    <ClInclude Include="GameObjectCapabilities.h" />
+    <ClInclude Include="GameObjectComponents.h" />
+    <ClInclude Include="GameObjectController.h" />
+    <ClInclude Include="GameObjectManager.h" />
+    <ClInclude Include="GameplayController.h" />
+    <ClInclude Include="GameplayDefs.h" />
+    <ClInclude Include="GameProfile.h" />
+    <ClInclude Include="GameSessionAware.h" />
+    <ClInclude Include="GameSessionController.h" />
+    <ClInclude Include="GameSessionDefs.h" />
+    <ClInclude Include="GameWorld.h" />
+    <ClInclude Include="Locomotion.h" />
+    <ClInclude Include="GoldPileObjectController.h" />
+    <ClInclude Include="HatcheryRoomController.h" />
+    <ClInclude Include="imconfig.h" />
+    <ClInclude Include="imgui.h" />
+    <ClInclude Include="imgui_internal.h" />
+    <ClInclude Include="imstb_rectpack.h" />
+    <ClInclude Include="imstb_textedit.h" />
+    <ClInclude Include="imstb_truetype.h" />
+    <ClInclude Include="LibraryRoomController.h" />
+    <ClInclude Include="MeshAsset.h" />
+    <ClInclude Include="GameWorldDefs.h" />
+    <ClInclude Include="MapUtils.h" />
+    <ClInclude Include="MoneyStorageRoomController.h" />
+    <ClInclude Include="NavigationDefs.h" />
+    <ClInclude Include="NavigationService.h" />
+    <ClInclude Include="Physics.h" />
+    <ClInclude Include="PhysicsDefs.h" />
+    <ClInclude Include="PhysicsObject.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerDefs.h" />
+    <ClInclude Include="EconomyService.h" />
+    <ClInclude Include="ProceduralMeshObject.h" />
+    <ClInclude Include="ProceduralMeshRenderer.h" />
+    <ClInclude Include="RenderView.h" />
+    <ClInclude Include="RoomCapabilities.h" />
+    <ClInclude Include="RoomComponents.h" />
+    <ClInclude Include="RoomController.h" />
+    <ClInclude Include="RoomDefs.h" />
+    <ClInclude Include="RoomTileConstructor_DungeonHeart.h" />
+    <ClInclude Include="RoomTileConstructor.h" />
+    <ClInclude Include="RoomTileConstructor_3_by_3.h" />
+    <ClInclude Include="RoomTileConstructor_5_by_5.h" />
+    <ClInclude Include="RoomTileConstructor_DoubleQuad.h" />
+    <ClInclude Include="RoomTileConstructor_HeroGate_2_by_2.h" />
+    <ClInclude Include="RoomTileConstructor_HeroGateFrontend.h" />
+    <ClInclude Include="RoomTileConstructor_HeroGate_3_by_1.h" />
+    <ClInclude Include="RoomTileConstructor_Normal.h" />
+    <ClInclude Include="RoomTileConstructor_Quad.h" />
+    <ClInclude Include="RoomWallSection.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="SceneDefs.h" />
+    <ClInclude Include="SimplePool.h" />
+    <ClInclude Include="span.h" />
+    <ClInclude Include="static_vector.h" />
+    <ClInclude Include="std_stream_helpers.h" />
+    <ClInclude Include="StorageRoomController.h" />
+    <ClInclude Include="TestScreenView.h" />
+    <ClInclude Include="TextManager.h" />
+    <ClInclude Include="TileConstructionSet.h" />
+    <ClInclude Include="TitleScreenView.h" />
+    <ClInclude Include="ToolsUi.h" />
+    <ClInclude Include="ToolsUiManager.h" />
+    <ClInclude Include="TortureChamberRoomController.h" />
+    <ClInclude Include="TrainingRoomController.h" />
+    <ClInclude Include="TreasuryRoomController.h" />
+    <ClInclude Include="UiHierarchy.h" />
+    <ClInclude Include="uniqueptr.h" />
+    <ClInclude Include="VertexFormat.h" />
+    <ClInclude Include="EnvironmentMeshObject.h" />
+    <ClInclude Include="MeshAssetManager.h" />
+    <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="ShadersManager.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureManager.h" />
+    <ClInclude Include="UiManager.h" />
+    <ClInclude Include="FrontendCameraController.h" />
+    <ClInclude Include="ListenersContainer.h" />
+    <ClInclude Include="LoadingScreenView.h" />
+    <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GameObjectDefs.h" />
+    <ClInclude Include="HeroGateFrontendRoomController.h" />
+    <ClInclude Include="FrontendController.h" />
+    <ClInclude Include="RoomManager.h" />
+    <ClInclude Include="AnimatingMeshRenderer.h" />
+    <ClInclude Include="SimpleTimer.h" />
+    <ClInclude Include="std_ext.h" />
+    <ClInclude Include="TimeManager.h" />
+    <ClInclude Include="memory_istream.h" />
+    <ClInclude Include="noncopyable.h" />
+    <ClInclude Include="Console.h" />
+    <ClInclude Include="TerrainRenderer.h" />
+    <ClInclude Include="GameEvent.h" />
+    <ClInclude Include="TileSelectionOutline.h" />
+    <ClInclude Include="ConsoleScreenView.h" />
+    <ClInclude Include="Version.h" />
+    <ClInclude Include="SceneObject.h" />
+    <ClInclude Include="GpuBuffer.h" />
+    <ClInclude Include="GpuProgram.h" />
+    <ClInclude Include="GpuTexture2D.h" />
+    <ClInclude Include="OpenGLDefs.h" />
+    <ClInclude Include="ScenarioDefs.h" />
+    <ClInclude Include="UiButton.h" />
+    <ClInclude Include="UiDefs.h" />
+    <ClInclude Include="UiGridLayout.h" />
+    <ClInclude Include="UiHelpers.h" />
+    <ClInclude Include="UiPanel.h" />
+    <ClInclude Include="UiProductionButton.h" />
+    <ClInclude Include="UiPicture.h" />
+    <ClInclude Include="UiRenderContext.h" />
+    <ClInclude Include="DK2AssetLoader.h" />
+    <ClInclude Include="stb_rect_pack.h" />
+    <ClInclude Include="cJSON.h" />
+    <ClInclude Include="DK2EngineTextures.h" />
+    <ClInclude Include="DK2WADArchive.h" />
+    <ClInclude Include="heap.h" />
+    <ClInclude Include="IDebugVisualizer.h" />
+    <ClInclude Include="JsonDocument.h" />
+    <ClInclude Include="GameMain.h" />
+    <ClInclude Include="AABBTree.h" />
+    <ClInclude Include="DebugRenderer.h" />
+    <ClInclude Include="WeightSelector.h" />
+    <ClInclude Include="WorldViewCameraController.h" />
+    <ClInclude Include="TileConstructor.h" />
+    <ClInclude Include="GameMap.h" />
+    <ClInclude Include="MapTile.h" />
+    <ClInclude Include="GameSession.h" />
+    <ClInclude Include="UiView.h" />
+    <ClInclude Include="HUDScreenView.h" />
+    <ClInclude Include="UiWidgetManager.h" />
+    <ClInclude Include="intersection.h" />
+    <ClInclude Include="plane.h" />
+    <ClInclude Include="Random.h" />
+    <ClInclude Include="GameRenderManager.h" />
+    <ClInclude Include="BitmapImage.h" />
+    <ClInclude Include="bounding_volumes.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="CreatureDefs.h" />
+    <ClInclude Include="FileSystem.h" />
+    <ClInclude Include="frustum.h" />
+    <ClInclude Include="GameDefs.h" />
+    <ClInclude Include="SurfaceMaterial.h" />
+    <ClInclude Include="GraphicsDefs.h" />
+    <ClInclude Include="RenderDevice.h" />
+    <ClInclude Include="Room.h" />
+    <ClInclude Include="InputsState.h" />
+    <ClInclude Include="auxmath.h" />
+    <ClInclude Include="stb_image_write.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="stb_image.h" />
+    <ClInclude Include="strings.h" />
+    <ClInclude Include="TempleRoomController.h" />
+    <ClInclude Include="UiTextBox.h" />
+    <ClInclude Include="UiWidget.h" />
+    <ClInclude Include="UiEvent.h" />
+    <ClInclude Include="EnvironmentMeshRenderer.h" />
+    <ClInclude Include="WorkshopRoomController.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AABBTree.cpp" />
+    <ClCompile Include="AnimatingMeshObject.cpp" />
+    <ClCompile Include="Animator.cpp" />
+    <ClCompile Include="BinaryInputStream.cpp" />
+    <ClCompile Include="BMFont.cpp" />
+    <ClCompile Include="ChickenObjectController.cpp" />
+    <ClCompile Include="Creature.cpp" />
+    <ClCompile Include="CreatureActivityUtils.cpp" />
+    <ClCompile Include="CreatureActivity_GoTo.cpp" />
+    <ClCompile Include="CreatureActivity_Idle.cpp" />
+    <ClCompile Include="CreatureAnimConst.cpp" />
+    <ClCompile Include="CreatureController.cpp" />
+    <ClCompile Include="CreatureManager.cpp" />
+    <ClCompile Include="Debug.cpp" />
+    <ClCompile Include="DebugToolsUi.cpp" />
+    <ClCompile Include="DK2KMFModel.cpp" />
+    <ClCompile Include="DK2ScenarioReader.cpp" />
+    <ClCompile Include="DK2Text.cpp" />
+    <ClCompile Include="DungeonHeartRoomController.cpp" />
+    <ClCompile Include="enums_impl.cpp" />
+    <ClCompile Include="Font.cpp" />
+    <ClCompile Include="FontManager.cpp" />
+    <ClCompile Include="FrameMemoryManager.cpp" />
+    <ClCompile Include="FrontendCameraController.cpp" />
+    <ClCompile Include="FrontendScreen.cpp" />
+    <ClCompile Include="GameEventBus.cpp" />
+    <ClCompile Include="GameObjectController.cpp" />
+    <ClCompile Include="Locomotion.cpp" />
+    <ClCompile Include="GameObjectManager.cpp" />
+    <ClCompile Include="GameplayController.cpp" />
+    <ClCompile Include="GameProfile.cpp" />
+    <ClCompile Include="GameSessionAware.cpp" />
+    <ClCompile Include="GameSessionController.cpp" />
+    <ClCompile Include="GameWorld.cpp" />
+    <ClCompile Include="GoldPileObjectController.cpp" />
+    <ClCompile Include="HatcheryRoomController.cpp" />
+    <ClCompile Include="imgui.cpp" />
+    <ClCompile Include="imgui_demo.cpp" />
+    <ClCompile Include="imgui_draw.cpp" />
+    <ClCompile Include="imgui_widgets.cpp" />
+    <ClCompile Include="LibraryRoomController.cpp" />
+    <ClCompile Include="MeshAsset.cpp" />
+    <ClCompile Include="MoneyStorageRoomController.cpp" />
+    <ClCompile Include="NavigationService.cpp" />
+    <ClCompile Include="Physics.cpp" />
+    <ClCompile Include="PhysicsObject.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="EconomyService.cpp" />
+    <ClCompile Include="ProceduralMeshObject.cpp" />
+    <ClCompile Include="ProceduralMeshRenderer.cpp" />
+    <ClCompile Include="Random.cpp" />
+    <ClCompile Include="RoomController.cpp" />
+    <ClCompile Include="RoomTileConstructor.cpp" />
+    <ClCompile Include="RoomTileConstructor_3_by_3.cpp" />
+    <ClCompile Include="RoomTileConstructor_5_by_5.cpp" />
+    <ClCompile Include="RoomTileConstructor_DoubleQuad.cpp" />
+    <ClCompile Include="RoomTileConstructor_DungeonHeart.cpp" />
+    <ClCompile Include="RoomTileConstructor_HeroGate_2_by_2.cpp" />
+    <ClCompile Include="RoomTileConstructor_HeroGateFrontend.cpp" />
+    <ClCompile Include="RoomTileConstructor_HeroGate_3_by_1.cpp" />
+    <ClCompile Include="RoomTileConstructor_Normal.cpp" />
+    <ClCompile Include="RoomTileConstructor_Quad.cpp" />
+    <ClCompile Include="RoomWallSection.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="StorageRoomController.cpp" />
+    <ClCompile Include="TestScreenView.cpp" />
+    <ClCompile Include="TextManager.cpp" />
+    <ClCompile Include="TileConstructionSet.cpp" />
+    <ClCompile Include="TitleScreenView.cpp" />
+    <ClCompile Include="ToolsUiManager.cpp" />
+    <ClCompile Include="EnvironmentMeshObject.cpp" />
+    <ClCompile Include="MeshAssetManager.cpp" />
+    <ClCompile Include="ShaderProgram.cpp" />
+    <ClCompile Include="ShadersManager.cpp" />
+    <ClCompile Include="stb.cpp" />
+    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="TortureChamberRoomController.cpp" />
+    <ClCompile Include="TrainingRoomController.cpp" />
+    <ClCompile Include="TreasuryRoomController.cpp" />
+    <ClCompile Include="UiManager.cpp" />
+    <ClCompile Include="LoadingScreenView.cpp" />
+    <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="HeroGateFrontendRoomController.cpp" />
+    <ClCompile Include="FrontendController.cpp" />
+    <ClCompile Include="RoomManager.cpp" />
+    <ClCompile Include="AnimatingMeshRenderer.cpp" />
+    <ClCompile Include="DK2Font.cpp" />
+    <ClCompile Include="cJSON.cpp" />
+    <ClCompile Include="DK2EngineTextures.cpp" />
+    <ClCompile Include="DK2WADArchive.cpp" />
+    <ClCompile Include="GpuProgram.cpp" />
+    <ClCompile Include="GpuTexture2D.cpp" />
+    <ClCompile Include="strings.cpp" />
+    <ClCompile Include="Console.cpp" />
+    <ClCompile Include="TerrainRenderer.cpp" />
+    <ClCompile Include="TileSelectionOutline.cpp" />
+    <ClCompile Include="ConsoleScreenView.cpp" />
+    <ClCompile Include="GpuBuffer.cpp" />
+    <ClCompile Include="TimeManager.cpp" />
+    <ClCompile Include="SceneObject.cpp" />
+    <ClCompile Include="UiButton.cpp" />
+    <ClCompile Include="UiGridLayout.cpp" />
+    <ClCompile Include="UiHelpers.cpp" />
+    <ClCompile Include="UiPanel.cpp" />
+    <ClCompile Include="UiProductionButton.cpp" />
+    <ClCompile Include="UiPicture.cpp" />
+    <ClCompile Include="UiRenderContext.cpp" />
+    <ClCompile Include="JsonDocument.cpp" />
+    <ClCompile Include="GameMain.cpp" />
+    <ClCompile Include="GameSession.cpp" />
+    <ClCompile Include="GameRenderManager.cpp" />
+    <ClCompile Include="DK2AssetLoader.cpp" />
+    <ClCompile Include="Room.cpp" />
+    <ClCompile Include="TempleRoomController.cpp" />
+    <ClCompile Include="UiView.cpp" />
+    <ClCompile Include="HUDScreenView.cpp" />
+    <ClCompile Include="UiTextBox.cpp" />
+    <ClCompile Include="UiWidget.cpp" />
+    <ClCompile Include="EnvironmentMeshRenderer.cpp" />
+    <ClCompile Include="UiHierarchy.cpp" />
+    <ClCompile Include="WorkshopRoomController.cpp" />
+    <ClInclude Include="AABBTree.inl">
+      <FileType>Document</FileType>
+    </ClInclude>
+    <ClCompile Include="DebugRenderer.cpp" />
+    <ClCompile Include="WorldViewCameraController.cpp" />
+    <ClCompile Include="TileConstructor.cpp" />
+    <ClCompile Include="GameMap.cpp" />
+    <ClCompile Include="MapTile.cpp" />
+    <ClCompile Include="UiWidgetManager.cpp" />
+    <ClCompile Include="intersection.cpp" />
+    <ClCompile Include="SurfaceMaterial.cpp" />
+    <ClCompile Include="BitmapImage.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="FileSystem.cpp" />
+    <ClCompile Include="RenderDevice.cpp" />
+    <ClCompile Include="InputsState.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\data\config\app_settings.json" />
+    <None Include="..\data\gameplay\extensions.json" />
+    <None Include="..\data\shaders\debug.frag" />
+    <None Include="..\data\shaders\debug.vert" />
+    <None Include="..\data\shaders\mesh_blend_frames.frag" />
+    <None Include="..\data\shaders\mesh_blend_frames.vert" />
+    <None Include="..\data\shaders\mesh_static.frag" />
+    <None Include="..\data\shaders\mesh_static.vert" />
+    <None Include="..\data\shaders\mesh_terrain.frag" />
+    <None Include="..\data\shaders\mesh_terrain.vert" />
+    <None Include="..\data\shaders\mesh_water_lava.frag" />
+    <None Include="..\data\shaders\mesh_water_lava.vert" />
+    <None Include="..\data\shaders\ui.frag" />
+    <None Include="..\data\shaders\ui.vert" />
+    <None Include="..\data\ui\frontend_screen.json" />
+    <None Include="..\data\ui\gameplay_screen.json" />
+    <None Include="..\data\ui\test_screen.json" />
+    <None Include="ListenersContainer.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\docs\creatures_anims.txt" />
+    <Text Include="..\docs\engine_path_info.txt" />
+    <Text Include="..\docs\engine_textures.txt" />
+    <Text Include="..\docs\jobs.txt" />
+    <Text Include="..\docs\mesh_format.txt" />
+    <Text Include="..\docs\objects_names.txt" />
+    <Text Include="..\docs\terrains.txt" />
+    <Text Include="..\docs\Todo.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="GLEW\GLEW.vcxproj">
+      <Project>{282ddb45-29cb-4ba9-b1e0-3be91a3f6860}</Project>
+    </ProjectReference>
+    <ProjectReference Include="GLFW\GLFW.vcxproj">
+      <Project>{4a74163f-7d76-46eb-92bf-05c50173d846}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

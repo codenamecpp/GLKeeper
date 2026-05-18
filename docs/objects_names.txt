@@ -1,0 +1,145 @@
+ -- Gold
+ -- Gold Bag
+ -- Gold Pile 1
+ -- Spell Book
+ -- Crate Alarm
+ -- Hero Creature Bed
+ -- Special [ <not used> ]
+ -- Torture Wheel
+ -- Chicken
+ -- Call To Arms
+ -- Rat
+ -- Bat
+ -- Dungeon Heart
+ -- Training Dummy
+ -- Anvil
+ -- Steel Bucket
+ -- Door Key [ Wood ]
+ -- Bile Demon Creature Bed
+ -- Dark Angel Creature Bed
+ -- Dark Elf Creature Bed
+ -- Firefly Creature Bed
+ -- Goblin Creature Bed
+ -- Mistress Creature Bed
+ -- Salamander Creature Bed
+ -- Troll Creature Bed
+ -- Vampire Creature Bed
+ -- Warlock Creature Bed
+ -- Portal Gem
+ -- Training Target
+ -- Roulette Wheel
+ -- Tomb Stone 1
+ -- Tomb Stone 2
+ -- Tomb Stone 3
+ -- Tomb Stone 4
+ -- Chicken Coop
+ -- Crate Boulder
+ -- Crate Fear
+ -- Crate Fireburst
+ -- Crate Freeze
+ -- Crate Gas
+ -- Crate Lightning
+ -- Crate Sentry
+ -- Crate Spike
+ -- Crate Trigger
+ -- Piranha
+ -- Work Bench
+ -- Egg
+ -- Skeleton
+ -- Skull
+ -- Bone
+ -- Lavatory
+ -- Crate Wooden Door
+ -- Crate Steel Door
+ -- Crate Braced Door
+ -- Crate Magic Door
+ -- Crate Barricade
+ -- Crate Secret Door
+ -- Library Book
+ -- Barrel
+ -- Hand Of Evil
+ -- Electric Chair
+ -- Torture Coals
+ -- Torture Water
+ -- Book Case
+ -- Torture Pendulum
+ -- Temple Hand
+ -- Bar Table
+ -- Alcove Barrels
+ -- Fruit Machine
+ -- Guard Post
+ -- Guard Post Weapons
+ -- DoorFrame - Wooden
+ -- DoorFrame - Braced
+ -- Boulder
+ -- Graveyard Crypt
+ -- Treasury Pillar
+ -- Lair Pillar
+ -- Hatchery Pillar
+ -- Pit Pillar
+ -- Workshop Pillar
+ -- Prison Pillar
+ -- Torture Pillar
+ -- Temple Pillar
+ -- Graveyard Pillar
+ -- Casino Pillar
+ -- Arches
+ -- Roulette Table
+ -- Big Steps
+ -- 3D Front End Banner 1
+ -- Hero Gate Door Hold
+ -- Hero Gate Door
+ -- Crate Guard Post
+ -- Partial Crate
+ -- Arch Pillar
+ -- Casino Pay Out Adjuster
+ -- Dungeon Heart Plug
+ -- Arch Construction
+ -- Destructor
+ -- Portal Crystal
+ -- Dungeon Heart Obstacle
+ -- Mana Vault
+ -- Hero Gate Table
+ -- Threat Burn
+ -- Door Key [ Steel ]
+ -- Door Key [ Braced ]
+ -- Door Key [ Magic ]
+ -- Door Key [ Secret ]
+ -- Claimed Mana Vault
+ -- Prison Door
+ -- 3D Front End Candle Stick
+ -- Temple Candlestick
+ -- Guard Post Table
+ -- Hero Armoury Trestle
+ -- Hero Gate [ 2 By 2 ]
+ -- Frontend 3D Arrow
+ -- Prison Door Bar
+ -- Special [ Increase Level ]
+ -- Special [ Reveal Map ]
+ -- Special [ Make Safe ]
+ -- Special [ Destroy Walls ]
+ -- Special [ Increase Gold ]
+ -- Special [ Mana Boost ]
+ -- Special [ Stun Imps ]
+ -- Special [ Receive Imps ]
+ -- Special [ Make Happy ]
+ -- Special [ Make Unhappy ]
+ -- Special [ Kill Creatures ]
+ -- Special [ Heal All ]
+ -- Special [ Locate Hidden Land ]
+ -- MPD Level Indicator
+ -- 3D Front End Gem Holder
+ -- 3D Front End Chain
+ -- HeroGate MPD Table
+ -- 3D Front End Banner 2
+ -- 3D Front End Banner 3
+ -- 3D Front End Banner 4
+ -- Door Key - Hero Portcullis
+ -- Crate [ Jack-In-The-Box ]
+ -- Jack-In-The-Box
+ -- Special [ Transfer Creature ]
+ -- Crypt Pillar
+ -- Crypt Bell
+ -- Crypt Dancer
+ -- Crypt Special Dancer
+ -- Maiden Creature Bed
