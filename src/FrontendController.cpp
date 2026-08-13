@@ -14,8 +14,8 @@ FrontendController::FrontendController()
 
 void FrontendController::OnStartSinglePlayerGameSelected()
 {
-    //gGameEventBus.Send_StartScenarioRequest("level1");
-    gGameEventBus.Send_StartScenarioRequest("Devmap");
+    gGameEventBus.Send_StartScenarioRequest("level1");
+    //gGameEventBus.Send_StartScenarioRequest("Devmap");
 }
 
 void FrontendController::OnQuitGameSelected()

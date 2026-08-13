@@ -285,7 +285,39 @@ void NavigationService::UpdateMapAreaCodes(MapTile* startTile, ePassabilityType 
     }
     else // made passable
     {
-        FloodFillArea(startTile, passabilityType);
+
+        // best case scenario: all neighbours have the same area code
+        MapAreaCode commonAreaCode = 0;
+        for (eDirection dir: gStraightDirections)
+        {
+            MapTile* neighbourTile = startTile->mNeighbours[dir];
+            if (neighbourTile == nullptr)
+                continue;
+
+            const MapAreaCode neighbourAreaCode = neighbourTile->GetAreaCode(passabilityType);
+            if (neighbourAreaCode == 0)
+                continue;
+
+            if (commonAreaCode == 0)
+            {
+                commonAreaCode = neighbourAreaCode;
+                continue;
+            }
+            if (commonAreaCode != neighbourAreaCode)
+            {
+                commonAreaCode = 0;
+                break;
+            }
+        }
+
+        if (commonAreaCode != 0)
+        {
+            startTile->mAreaCode[passabilityType] = commonAreaCode;
+        }
+        else // areas connected, need flood fill
+        {
+            FloodFillArea(startTile, passabilityType);
+        }
     }
 }
 

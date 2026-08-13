@@ -32,14 +32,17 @@ public:
     // Stop moving or rotating
     void StopCamera();
 
-    // Set camera start position
+    // Set camera start position / bounds
     void SetStartPosition(const glm::vec2& position);
+    void SetPositionBounds(const glm::vec2& boundsMin, const glm::vec2& boundsMax);
 
 private:
     glm::vec2 GetMoveDirectionFromInputs() const;
 
     float GetRotateDirectionFromInputs() const;
     float GetZoomDirectionFromInputs();
+
+    void ClampWithinBounds(glm::vec2& position) const;
 
     void ApplyPositionAndRotation();
 
@@ -51,6 +54,9 @@ private:
     glm::vec2 mCurrentPosition;
     glm::vec2 mMoveVelocity {};
     float mCameraHeight {};
+
+    glm::vec2 mBoundsMin {};
+    glm::vec2 mBoundsMax {};
 
     // states
     bool mIncreasingFov;

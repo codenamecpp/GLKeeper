@@ -28,8 +28,14 @@ void GameplayController::OnSessionStart()
 {
     Player& localPlayer = gGameSession.GetLocalPlayer();
 
+    const Point2D& gameMapDimensions = gGameMap.GetDimensions();
+    cxx_assert(gameMapDimensions.x > 0);
+    cxx_assert(gameMapDimensions.y > 0);
     glm::vec2 cameraTileCoord = MapUtils::ComputeTileCenter2d(localPlayer.GetStartCameraTilePosition());
     mWorldViewCamera.SetStartPosition(cameraTileCoord);
+    mWorldViewCamera.SetPositionBounds(
+        MapUtils::ComputeTileCenter2d({0, 0}),
+        MapUtils::ComputeTileCenter2d({gameMapDimensions.x - 1, gameMapDimensions.y - 1}));
     mWorldViewCamera.CaptureCamera(&gScene.GetCamera());
     if (!mHUDScreen.IsActive())
     {
