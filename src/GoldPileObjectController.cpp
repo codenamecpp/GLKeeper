@@ -6,8 +6,8 @@ void GoldPileObjectController::ConfigureInstance(GameObject* objectInstance)
     GameObjectController::ConfigureInstance(objectInstance);
 
     // wire components
-    mGoldComponent = GetGameObject().GetComponent<GoldContainerComponent>();
-    cxx_assert(mGoldComponent);
+    mMoneyComponent = GetGameObject().GetComponent<MoneyComponent>();
+    cxx_assert(mMoneyComponent);
 
     // setup capabilities
     GetGameObject().AddCapability<GoldContainerCapability>(this);
@@ -33,24 +33,24 @@ void GoldPileObjectController::OnRecycle()
 {
     GameObjectController::OnRecycle();
 
-    mGoldComponent = nullptr;
+    mMoneyComponent = nullptr;
 }
 
 long GoldPileObjectController::GetStoredGoldAmount() const
 {
-    return mGoldComponent->mGoldAmount;
+    return mMoneyComponent->mAmount;
 }
 
 long GoldPileObjectController::GetStoredGoldCapacity() const
 {
-    return mGoldComponent->mGoldCapacity;
+    return mMoneyComponent->mCapacity;
 }
 
 long GoldPileObjectController::StoreGold(long goldAmount)
 {
     long maxCapacity = GetStoredGoldCapacity();
 
-    long oldGoldAmount = mGoldComponent->mGoldAmount;
+    long oldGoldAmount = mMoneyComponent->mAmount;
     long newGoldAmount = (oldGoldAmount + goldAmount);
     if (maxCapacity > 0)
     {
@@ -58,7 +58,7 @@ long GoldPileObjectController::StoreGold(long goldAmount)
     }
     if (newGoldAmount > oldGoldAmount)
     {
-        mGoldComponent->mGoldAmount = newGoldAmount;
+        mMoneyComponent->mAmount = newGoldAmount;
         SetMeshFromGoldAmount();
         return newGoldAmount - oldGoldAmount;
     }
@@ -67,11 +67,11 @@ long GoldPileObjectController::StoreGold(long goldAmount)
 
 long GoldPileObjectController::DisposeGold(long goldAmount)
 {
-    long oldGoldAmount = mGoldComponent->mGoldAmount;
+    long oldGoldAmount = mMoneyComponent->mAmount;
     long newGoldAmount = std::max(0L, oldGoldAmount - goldAmount);
     if (newGoldAmount < oldGoldAmount)
     {
-        mGoldComponent->mGoldAmount = newGoldAmount;
+        mMoneyComponent->mAmount = newGoldAmount;
         SetMeshFromGoldAmount();
         return oldGoldAmount - newGoldAmount;
     }
@@ -89,10 +89,10 @@ void GoldPileObjectController::SetMeshFromGoldAmount()
 
     eGameObjectMeshId meshId = eGameObjectMeshId_Main;
 
-    long goldPerStage = (mGoldComponent->mGoldCapacity / numStages);
+    long goldPerStage = (mMoneyComponent->mCapacity / numStages);
     if (goldPerStage > 0)
     {
-        long currStage = std::min((mGoldComponent->mGoldAmount / goldPerStage), numStages - 1);
+        long currStage = std::min((mMoneyComponent->mAmount / goldPerStage), numStages - 1);
         meshId = animIds[currStage];
     }
     GetGameObject().SetMeshResource(meshId);

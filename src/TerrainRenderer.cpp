@@ -6,6 +6,7 @@
 #include "ShadersManager.h"
 #include "GameWorld.h"
 #include "GameMain.h"
+#include "GameSession.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -109,8 +110,6 @@ void TerrainRenderer::Shutdown()
 
 void TerrainRenderer::Render(Camera& camera)
 {
-    CommitHighlightTiles();
-
     gRenderDevice.BindTexture2D(eTextureUnit_DiffuseMap1, mHighlightTilesTexture.get());
 
     // setup constants
@@ -125,6 +124,7 @@ void TerrainRenderer::Render(Camera& camera)
     {
         Sector& theSector = mSectorArray[iSectorX + iSectorY * mSectorsX];
 
+        bool isSectorOnScreen = true;
         // culling
         if (mSectorCulling)
         {
@@ -138,8 +138,7 @@ void TerrainRenderer::Render(Camera& camera)
             sectorBox.mMax.y = 3.0f;
             sectorBox.mMax.z = sectorBox.mMin.z + (SECTOR_SIZE * MAP_TILE_SIZE);
 
-            if (!camera.mFrustum.contains(sectorBox))
-                continue;
+            isSectorOnScreen = camera.mFrustum.contains(sectorBox);
         }
 
         if (theSector.mDirty)
@@ -147,6 +146,9 @@ void TerrainRenderer::Render(Camera& camera)
             ++sectorsDirty;
             BuildSector(iSectorX, iSectorY);
         }
+
+        if (!isSectorOnScreen)
+            continue;
 
         if (!theSector.mVertexBuffer)
         {
@@ -167,6 +169,8 @@ void TerrainRenderer::Render(Camera& camera)
                 sectorBatch.mTriangleCount * 3);
         }
     } // for
+
+    CommitHighlightTiles();
 }
 
 void TerrainRenderer::InvalidateTile(const MapPoint2D& theTileLocation)
@@ -195,7 +199,7 @@ void TerrainRenderer::TileHighlightChanged(MapTile* mapTile)
 
 void TerrainRenderer::CreateTerrainMesh()
 {
-    const MapPoint2D& mapDimensions = GetGameWorld().GetGameMap().GetDimensions();
+    const MapPoint2D& mapDimensions = gGameMap.GetDimensions();
 
     mLevelSizeX = mapDimensions.x;
     mLevelSizeY = mapDimensions.y;
@@ -238,7 +242,7 @@ bool TerrainRenderer::BuildSector(int theSectorX, int theSectorY)
 
     theSector.mSectorBatches.clear();
     
-    const GameMap& gameMap = GetGameWorld().GetGameMap();
+    const GameMap& gameMap = gGameMap;
 
     // prepare data for batching
     PieceBucketContainer pieceBucketContainer;
@@ -250,11 +254,9 @@ bool TerrainRenderer::BuildSector(int theSectorX, int theSectorY)
             blockX + theSectorX * SECTOR_SIZE, 
             blockY + theSectorY * SECTOR_SIZE
         };
-
-        if (!gameMap.WithinMap(tileLocation))
+        const MapTile* targetMapTile = gameMap.GetMapTileOrNull(tileLocation);
+        if (targetMapTile == nullptr)
             continue;
-
-        const MapTile* targetMapTile = gameMap.GetMapTile(tileLocation);
         // process tile geometry
         for (const TileFaceData& tileFace: targetMapTile->mFaces)
         {
@@ -369,8 +371,8 @@ void TerrainRenderer::CommitHighlightTiles()
     int highlightTilesTextureWidth = mHighlightTilesTexture->GetTextureWidth();
     for (MapTile* currentTile: mHighlightTilesChanged)
     {
-        int offset = currentTile->mTileLocation.y * highlightTilesTextureWidth + currentTile->mTileLocation.x;
-        if (currentTile->mIsTagged)
+        int offset = currentTile->mLocation.y * highlightTilesTextureWidth + currentTile->mLocation.x;
+        if (currentTile->IsTaggedForDigging(gGameSession.GetLocalPlayerId()))
         {
             pixels[offset * 3 + 0] = TILE_TAGGED_COLOR.mR;
             pixels[offset * 3 + 1] = TILE_TAGGED_COLOR.mG;

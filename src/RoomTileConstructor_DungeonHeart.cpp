@@ -18,8 +18,8 @@ void RoomTileConstructor_DungeonHeart::ConstructRoomFloor(Room* roomInstance, cx
     // construct inner geometry
     for (MapTile* mapTile: floorTiles)
     {
-        const int ioffsetx = mapTile->mTileLocation.x - locationArea.x;
-        const int ioffsety = mapTile->mTileLocation.y - locationArea.y;
+        const int ioffsetx = mapTile->mLocation.x - locationArea.x;
+        const int ioffsety = mapTile->mLocation.y - locationArea.y;
         const int ioffset = (ioffsety * 5) + ioffsetx;
 
         if (ioffsetx == 2 && ioffsety == 2)

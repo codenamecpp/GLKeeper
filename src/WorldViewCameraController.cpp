@@ -222,12 +222,15 @@ void WorldViewCameraController::ResetCamera()
 {
     if (mCamera == nullptr) return;
 
-    mRotationAngles = glm::vec3(CAM_ANGLE, 0.0f, 0.0f);
+    mRotationAngles = glm::vec3(CAM_ANGLE, -45.0f, 0.0f);
 
     Camera::ProjectionParams cameraParams (DEFAULT_CAMERA_NEAR_DISTANCE, DEFAULT_CAMERA_FAR_DISTANCE, KEEPER_CAMERA_FOVY);
     mCamera->SetupProjection(cameraParams);
     mCamera->SetRotation(mRotationAngles);
-    mCamera->SetPosition(mStartPosition);
+
+    float distanceFromTargetPoint = mStartPosition.y / tanf(glm::radians(CAM_ANGLE));
+    const glm::vec3 worldForward = glm::normalize(glm::cross(WorldAxes::Y, mCamera->mRight));
+    mCamera->SetPosition(mStartPosition - worldForward * distanceFromTargetPoint);
 
     StopCamera();
 }

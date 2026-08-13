@@ -14,8 +14,8 @@ public:
     // override RoomController
     void SpawnInstance() override;
     void DespawnInstance() override;
-    void EvaluateFloorFurniture(FurnitureEvaluationResult& evaluation) override;
-    void EvaluateWallFurniture(FurnitureEvaluationResult& evaluation) override;
-    void EvaluatePillars(FurnitureEvaluationResult& evaluation) override;
+    void EvaluateFloorFurniture(RoomFurnitureSlots& evaluation) override;
+    void EvaluateWallFurniture(RoomFurnitureSlots& evaluation) override;
+    void EvaluatePillars(RoomFurnitureSlots& evaluation) override;
     void PostRearrangeObjects() override;
 };

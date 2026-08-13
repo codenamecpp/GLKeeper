@@ -11,6 +11,9 @@
 #include "Physics.h"
 #include "GameObjectManager.h"
 #include "NavigationService.h"
+#include "Scene.h"
+#include "GameMap.h"
+#include "CreatureTaskManager.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -18,24 +21,9 @@ GameWorld gGameWorld;
 
 //////////////////////////////////////////////////////////////////////////
 
-GameWorld::GameWorld()
-{
-    // allocate services
-    mCreatureManager    = std::make_unique<CreatureManager>();
-    mRoomManager        = std::make_unique<RoomManager>();
-    mGameObjects        = std::make_unique<GameObjectManager>();
-    mPhysics            = std::make_unique<Physics>();
-    mNavigationService  = std::make_unique<NavigationService>();
-}
-
-GameWorld::~GameWorld()
-{
-
-}
-
 bool GameWorld::LoadScenario(const ScenarioDefinition& scenarioDefinition, GameLoadingAware& loadingContext)
 {
-    GetScene().Initialize();
+    gScene.Initialize();
 
     loadingContext.UpdateLoadingProgress(0.0f);
 
@@ -47,17 +35,17 @@ bool GameWorld::LoadScenario(const ScenarioDefinition& scenarioDefinition, GameL
 
     loadingContext.UpdateLoadingProgress(0.1f);
 
-    GetPhysics().LoadScenario(scenarioDefinition);
-    GetRoomManager().LoadScenario(scenarioDefinition);
+    gPhysics.LoadScenario(scenarioDefinition);
+    gRoomManager.LoadScenario(scenarioDefinition);
 
     loadingContext.UpdateLoadingProgress(0.15f);
 
-    GetGameMap().LoadScenario(scenarioDefinition);
+    gGameMap.LoadScenario(scenarioDefinition);
 
     loadingContext.UpdateLoadingProgress(0.2f);
 
     { // create rooms
-        GameMap::TilesIterator tilesIterator = GetGameMap().IterateTiles();
+        GameMap::TilesIterator tilesIterator = gGameMap.IterateTiles();
         for (MapTile* mapTile = tilesIterator.NextTile(); mapTile; 
             mapTile = tilesIterator.NextTile())
         {
@@ -76,7 +64,7 @@ bool GameWorld::LoadScenario(const ScenarioDefinition& scenarioDefinition, GameL
     { // construct base terrain, water bed
         TileConstructor& tileConstructor = *mTileConstructionSet.GetBaseConstructor();
 
-        GameMap::TilesIterator tilesIterator = GetGameMap().IterateTiles();
+        GameMap::TilesIterator tilesIterator = gGameMap.IterateTiles();
         for (MapTile* mapTile = tilesIterator.NextTile(); mapTile; 
             mapTile = tilesIterator.NextTile())
         {
@@ -91,8 +79,8 @@ bool GameWorld::LoadScenario(const ScenarioDefinition& scenarioDefinition, GameL
     loadingContext.UpdateLoadingProgress(0.5f);
 
     // build room geometry
-    GetRoomManager().ProcessRoomChanges();
-    for (Room* roomInstance: GetRoomManager().GetRooms())
+    gRoomManager.ProcessRoomChanges();
+    for (Room* roomInstance: gRoomManager.GetRooms())
     {
         RoomTileConstructor* roomConstructor = roomInstance->GetTileConstructor();
         // floor
@@ -116,15 +104,16 @@ bool GameWorld::LoadScenario(const ScenarioDefinition& scenarioDefinition, GameL
 
     loadingContext.UpdateLoadingProgress(0.8f);
 
-    GetGameObjects().LoadScenario(scenarioDefinition);
+    gGameObjectManager.LoadScenario(scenarioDefinition);
 
     loadingContext.UpdateLoadingProgress(0.9f);
 
-    GetCreatureManager().LoadScenario(scenarioDefinition);
+    gCreatureManager.LoadScenario(scenarioDefinition);
+    gCreatureTaskManager.LoadScenario(scenarioDefinition);
 
-    mTileSelectionOutline.Init(GetScene());
+    mTileSelectionOutline.Init(gScene);
 
-    GetMainCamera().ResetOrientation();
+    gScene.GetCamera().ResetOrientation();
 
     EnterWorld();
 
@@ -134,11 +123,12 @@ bool GameWorld::LoadScenario(const ScenarioDefinition& scenarioDefinition, GameL
 
 void GameWorld::EnterWorld()
 {
-    GetPhysics().EnterWorld();
-    GetNavigationService().EnterWorld();
-    GetRoomManager().EnterWorld();
-    GetGameObjects().EnterWorld();
-    GetCreatureManager().EnterWorld();
+    gPhysics.EnterWorld();
+    gNavigationService.EnterWorld();
+    gRoomManager.EnterWorld();
+    gGameObjectManager.EnterWorld();
+    gCreatureTaskManager.EnterWorld();
+    gCreatureManager.EnterWorld();
 
     mCurrentFrameStats.Clear();
     mPrevFrameStats.Clear();
@@ -148,18 +138,19 @@ void GameWorld::ClearWorld()
 {   
     mEnvironmentObjects.clear();
     mTileSelectionOutline.Deinit();
-    GetRoomManager().ClearWorld();
-    GetCreatureManager().ClearWorld();
-    GetGameObjects().ClearWorld();
-    GetNavigationService().ClearWorld();
-    GetPhysics().ClearWorld();
+    gRoomManager.ClearWorld();
+    gCreatureManager.ClearWorld();
+    gCreatureTaskManager.ClearWorld();
+    gGameObjectManager.ClearWorld();
+    gNavigationService.ClearWorld();
+    gPhysics.ClearWorld();
     gGameRenderer.mTerrainRenderer.CleanupTerrainMesh();
-    GetGameMap().Cleanup();
-    GetScene().ClearScene();
+    gGameMap.Cleanup();
+    gScene.ClearScene();
     mTileConstructionSet.Cleanup();
     mNextEntityUid = 1;
 
-    GetScene().Shutdown();
+    gScene.Shutdown();
 }
 
 void GameWorld::UpdateFrame(float deltaTime)
@@ -167,41 +158,43 @@ void GameWorld::UpdateFrame(float deltaTime)
     mPrevFrameStats = mCurrentFrameStats;
 
     mCurrentFrameStats.Clear();
-    mCurrentFrameStats.mNumSceneObjectsActive = mScene.GetActiveSceneObjectCount();
+    mCurrentFrameStats.mNumSceneObjectsActive = gScene.GetActiveSceneObjectCount();
 
     mTileSelectionOutline.UpdateFrame();
 
     BuildInvalidatedTiles();
 
     // tick those subsystems after refresh terrain geometries
-    GetGameObjects().UpdateFrame(deltaTime);
-    GetCreatureManager().UpdateFrame(deltaTime);
-    GetRoomManager().UpdateFrame(deltaTime);
-    GetNavigationService().UpdateFrame(deltaTime);
-    GetPhysics().UpdateFrame(deltaTime);
-    GetScene().UpdateFrame(deltaTime);
+    gGameObjectManager.UpdateFrame(deltaTime);
+    gCreatureManager.UpdateFrame(deltaTime);
+    gRoomManager.UpdateFrame(deltaTime);
+    gNavigationService.UpdateFrame(deltaTime);
+    gCreatureTaskManager.UpdateFrame(deltaTime);
+    gPhysics.UpdateFrame(deltaTime);
+    gScene.UpdateFrame(deltaTime);
 }
 
 void GameWorld::UpdateLogic(float stepDeltaTime)
 {
-    GetGameObjects().UpdateLogic(stepDeltaTime);
-    GetRoomManager().UpdateLogic(stepDeltaTime);
-    GetCreatureManager().UpdateLogic(stepDeltaTime);
-    GetNavigationService().UpdateLogic(stepDeltaTime);
+    gGameObjectManager.UpdateLogic(stepDeltaTime);
+    gRoomManager.UpdateLogic(stepDeltaTime);
+    gCreatureManager.UpdateLogic(stepDeltaTime);
+    gCreatureTaskManager.UpdateLogic(stepDeltaTime);
+    gNavigationService.UpdateLogic(stepDeltaTime);
 }
 
 void GameWorld::UpdatePhysics(float stepDeltaTime)
 {
-    GetCreatureManager().UpdatePhysics(stepDeltaTime);
-    GetGameObjects().UpdatePhysics(stepDeltaTime);
-    GetPhysics().UpdatePhysics(stepDeltaTime);
+    gCreatureManager.UpdatePhysics(stepDeltaTime);
+    gGameObjectManager.UpdatePhysics(stepDeltaTime);
+    gPhysics.UpdatePhysics(stepDeltaTime);
 }
 
 bool GameWorld::CastRayFromScreenPoint(const Point2D& screenCoordinate, cxx::ray3d_t& resultRay)
 {
     const Viewport& viewport = gRenderDevice.GetViewport();
 
-    Camera& sceneCamera = GetMainCamera();
+    Camera& sceneCamera = gScene.GetCamera();
     sceneCamera.ComputeMatricesAndFrustum(gRenderDevice.GetViewport());
 
     // wrap y
@@ -287,16 +280,17 @@ void GameWorld::CreateEnvironmentEntities()
     waterTiles.reserve(128);
 
     // find water and lava tiles
-    GameMap::TilesIterator tilesIterator = GetGameMap().IterateTiles();
+    GameMap::TilesIterator tilesIterator = gGameMap.IterateTiles();
     for (MapTile* currMapTile = tilesIterator.NextTile(); currMapTile; currMapTile = tilesIterator.NextTile())
     {
+        const TerrainDefinition* baseTerrainDef = currMapTile->GetBaseTerrain();
         // collect lava tile
-        if (currMapTile->mBaseTerrain->mIsLava)
+        if (baseTerrainDef->mIsLava)
         {
             lavaTiles.push_back(currMapTile);
         }
         // collect water tile
-        if (currMapTile->mBaseTerrain->mIsWater)
+        if (baseTerrainDef->mIsWater)
         {
             waterTiles.push_back(currMapTile);
         }
@@ -309,14 +303,14 @@ void GameWorld::CreateEnvironmentEntities()
         lavaTiles.pop_back();
 
         tempTiles.clear();
-        GetGameMap().FloodFill4(tempTiles, originTile, FLOOD_FILL4_SAME_BASE_TERRAIN);
+        gGameMap.FloodFill4(tempTiles, originTile, FLOOD_FILL4_SAME_BASE_TERRAIN);
         if (tempTiles.empty())
         {
             cxx_assert(false);
             continue;
         }
 
-        cxx::uniqueptr<EnvironmentMeshObject> lavaSurface = GetScene().CreateLavaMesh(tempTiles);
+        cxx::uniqueptr<EnvironmentMeshObject> lavaSurface = gScene.CreateLavaMesh(tempTiles);
         cxx_assert(lavaSurface);
         if (lavaSurface)
         {
@@ -337,14 +331,14 @@ void GameWorld::CreateEnvironmentEntities()
         waterTiles.pop_back();
 
         tempTiles.clear();
-        GetGameMap().FloodFill4(tempTiles, originTile, FLOOD_FILL4_SAME_BASE_TERRAIN);
+        gGameMap.FloodFill4(tempTiles, originTile, FLOOD_FILL4_SAME_BASE_TERRAIN);
         if (tempTiles.empty())
         {
             cxx_assert(false);
             continue;
         }
 
-        cxx::uniqueptr<EnvironmentMeshObject> waterSurface = GetScene().CreateWaterMesh(tempTiles);
+        cxx::uniqueptr<EnvironmentMeshObject> waterSurface = gScene.CreateWaterMesh(tempTiles);
         cxx_assert(waterSurface);
         if (waterSurface)
         {
@@ -365,21 +359,21 @@ void GameWorld::CreateRoomFromUnexploredTiles(MapTile* startTile, const Scenario
     cxx_assert(startTile);
 
     // query room definition
-    RoomDefinition* roomDefinition = GetScenarioDefinition().GetRoomDefinitionByTerrain(startTile->GetTerrain());
+    RoomDefinition* roomDefinition = gGameSession.GetScenarioDefinition().GetRoomDefinitionByTerrain(startTile->GetTerrain());
     cxx_assert(roomDefinition);
     if (!roomDefinition)
         return;
 
     Temp_Vector<MapTile*> floodTiles;
-    GetGameMap().FloodFill4(floodTiles, startTile);
+    gGameMap.FloodFill4(floodTiles, startTile);
 
     // get room extents
-    MapPoint2D minPoint = startTile->mTileLocation;
-    MapPoint2D maxPoint = startTile->mTileLocation;
+    MapPoint2D minPoint = startTile->mLocation;
+    MapPoint2D maxPoint = startTile->mLocation;
     for (MapTile* roller: floodTiles)
     {
-        minPoint = glm::min(minPoint, roller->mTileLocation);
-        maxPoint = glm::max(maxPoint, roller->mTileLocation);
+        minPoint = glm::min(minPoint, roller->mLocation);
+        maxPoint = glm::max(maxPoint, roller->mLocation);
     }
     MapPoint2D roomCenter = (minPoint + maxPoint) / 2;
     // check for init params
@@ -397,142 +391,210 @@ void GameWorld::CreateRoomFromUnexploredTiles(MapTile* startTile, const Scenario
         roomInitParams = &scenarioDefinition.mRoomThings[initParamsIdx];
     }
 
-    const ePlayerID ownerID = roomInitParams ? roomInitParams->mPlayerId : startTile->mOwnerID;
+    const ePlayerID ownerId = roomInitParams ? roomInitParams->mPlayerId : startTile->mOwnerId;
 
     // create room instance
     EntityHandle roomHandle = roomInitParams ?
-        GetRoomManager().CreateScenarioRoom(*roomInitParams) :
-        GetRoomManager().CreateRoom(roomDefinition, ownerID);
+        gRoomManager.CreateScenarioRoom(*roomInitParams) :
+        gRoomManager.CreateRoom(roomDefinition, ownerId);
 
-    GetGameSession().GetPlayer(ownerID).AddToInventory(roomHandle);
-    GetRoomManager().ActivateRoom(roomHandle);
-    if (Room* roomInstance = GetRoomManager().GetRoomPtr(roomHandle))
+    gGameSession.GetPlayer(ownerId).AddToInventory(roomHandle);
+    gRoomManager.ActivateRoom(roomHandle);
+    if (Room* roomInstance = gRoomManager.GetRoomPtr(roomHandle))
     {
         roomInstance->EnlargeRoom(floodTiles);
     }
 }
 
-void GameWorld::DamageTile(MapTile* mapTile, ePlayerID playerID, int hitPoints)
+bool GameWorld::DigTile(MapTile* mapTile, ePlayerID playerId, long& outGoldMined)
 {
     cxx_assert(mapTile);
-    cxx_assert(hitPoints > 0);
 
-    if (mapTile->mRoomInstance)
+    if (mapTile == nullptr)
+        return false;
+
+    TerrainDefinition* terrainDef = mapTile->GetTerrain();
+    if (!terrainDef->mIsSolid)
+        return false;
+
+    const ScenarioVariables& scenarioVars = gGameSession.GetScenarioVariables();
+
+    outGoldMined = 0;
+
+    const bool isTileImpenetrable = terrainDef->mIsImpenetrable;
+    // mining gold?
+    if (mapTile->IsMoneySource())
     {
-        ReleaseRoomTiles(mapTile->mRoomInstance, {&mapTile, 1});
+        // gems ?
+        if (isTileImpenetrable)
+        {
+            outGoldMined = scenarioVars.mGoldMinedFromGems;
+        }
+        else // regular gold
+        {
+            const int deltaHitPoints = ChangeTileHealth(mapTile, playerId, scenarioVars.mMineGoldHealth);
+            if (deltaHitPoints > 0)
+            {
+                cxx_assert(terrainDef->mHealthMax);
+                outGoldMined = static_cast<int>(((deltaHitPoints * 1.0f) / (terrainDef->mHealthMax * 1.0f)) * terrainDef->mGoldValue + 0.5f);
+            }
+            cxx_assert(deltaHitPoints > 0);
+        }
+        return outGoldMined > 0;
     }
 
-    TerrainDefinition* terrain = mapTile->GetTerrain();
-    if (terrain->mIsLava || terrain->mIsWater || terrain->mIsImpenetrable)
-        return;
-
-    // todo: tile hp
-
-    TerrainTypeId newTerrainType = terrain->mBecomesTerrainTypeWhenDestroyed;
-    if (terrain->mTerrainType == newTerrainType)
-        return;
-
-    TerrainDefinition* newTerrain = GetScenarioDefinition().GetTerrainDefinition(newTerrainType);
-    mapTile->mBaseTerrain = newTerrain;
-
-    Temp_Set<Room*> rooms;
-    for (eDirection direction: gStraightDirections)
+    if (!isTileImpenetrable)
     {
-        MapTile* neighbourTile = mapTile->mNeighbours[direction];
-        if (neighbourTile && neighbourTile->mRoomInstance)
+        outGoldMined = 0;
+
+        int digHealth = scenarioVars.mDigRockHealth;
+        // reinforced wall?
+        if (terrainDef->mIsOwnable)
         {
-            rooms.insert(neighbourTile->mRoomInstance);
+            digHealth = mapTile->HasOwner(playerId) ? 
+                scenarioVars.mDigOwnWallHealth : 
+                scenarioVars.mDigEnemyWallHealth;
+        }
+
+        const int deltaHitPoints = ChangeTileHealth(mapTile, playerId, digHealth);
+        if (deltaHitPoints > 0)
+            return true;
+
+        cxx_assert(false);
+    }
+    return false;
+}
+
+bool GameWorld::ReinforceWall(MapTile* mapTile, ePlayerID playerId, bool& outCompleted)
+{
+    outCompleted = false;
+
+    cxx_assert(mapTile);
+    if (mapTile == nullptr)
+        return false;
+
+    TerrainDefinition* terrainDef = mapTile->GetTerrain();
+    if (!terrainDef->mIsSolid || terrainDef->mIsOwnable || terrainDef->mIsImpenetrable)
+        return false;
+
+    const TerrainTypeId nextTerrainTypeId = terrainDef->mBecomesTerrainTypeWhenMaxHealth;
+    if ((nextTerrainTypeId == TerrainTypeId_Null) || 
+        (nextTerrainTypeId == terrainDef->mTerrainType))
+    {
+        return false;
+    }
+
+    const TerrainDefinition* nextTerrainDef = gGameSession.GetScenarioDefinition().GetTerrainDefinition(nextTerrainTypeId);
+    cxx_assert(nextTerrainDef);
+    if (!nextTerrainDef->mIsSolid || !nextTerrainDef->mIsOwnable)
+        return false;
+
+    const ScenarioVariables& scenarioVars = gGameSession.GetScenarioVariables();
+
+    const int deltaHitPoints = ChangeTileHealth(mapTile, playerId, scenarioVars.mReinforceWallHealth);
+    // reinforced?
+    if (mapTile->GetTerrain() == nextTerrainDef)
+    {
+        outCompleted = true;
+        return true;
+    }
+    return (deltaHitPoints != 0);
+}
+
+bool GameWorld::ClaimFloor(MapTile* mapTile, ePlayerID playerId, bool& outCompleted)
+{
+    outCompleted = false;
+
+    cxx_assert(mapTile);
+    if (mapTile == nullptr)
+        return false;
+
+    TerrainDefinition* terrainDef = mapTile->GetTerrain();
+    if (terrainDef->mIsSolid || terrainDef->mIsOwnable)
+        return false;
+
+    const TerrainTypeId nextTerrainTypeId = terrainDef->mBecomesTerrainTypeWhenMaxHealth;
+    if ((nextTerrainTypeId == TerrainTypeId_Null) || 
+        (nextTerrainTypeId == terrainDef->mTerrainType))
+    {
+        return false;
+    }
+
+    const TerrainDefinition* nextTerrainDef = gGameSession.GetScenarioDefinition().GetTerrainDefinition(nextTerrainTypeId);
+    cxx_assert(nextTerrainDef);
+    if (nextTerrainDef->mIsSolid || !nextTerrainDef->mIsOwnable)
+        return false;
+
+    // must be adjacent to owned territory
+    bool bordersWithOwnedTerritory = false;
+    for (eDirection dir: gStraightDirections)
+    {
+        const MapTile* neighbourTile = mapTile->mNeighbours[dir];
+        if (neighbourTile == nullptr)
+            continue;
+
+        const TerrainDefinition* neighbourTileDef = neighbourTile->GetTerrain();
+        if (neighbourTileDef->mIsOwnable && neighbourTile->HasOwner(playerId))
+        {
+            bordersWithOwnedTerritory = true;
+            break;
         }
     }
 
-    for (Room* room: rooms)
-    {
-        room->NeighbourTileChanged(mapTile);
-    }
+    if (!bordersWithOwnedTerritory)
+        return false;
 
-    // force update tagged state
-    if (!CanTagTerrain(mapTile))
+    const ScenarioVariables& scenarioVars = gGameSession.GetScenarioVariables();
+    const int deltaHitPoints = ChangeTileHealth(mapTile, playerId, scenarioVars.mClaimFloorHealth);
+    // reinforced?
+    if (mapTile->GetTerrain() == nextTerrainDef)
     {
-        SetTileTagged(mapTile, false);
+        outCompleted = true;
+        return true;
     }
-
-    InvalidateTile(mapTile);
-    InvalidateTileNeighbours(mapTile);
+    return (deltaHitPoints != 0);
 }
 
-void GameWorld::RepairTile(MapTile* mapTile, ePlayerID playerID, int hitPoints)
+void GameWorld::DamageTile(MapTile* mapTile, ePlayerID playerId, int hitPoints)
 {
-    cxx_assert(mapTile);
     cxx_assert(hitPoints > 0);
-
-    TerrainDefinition* terrain = mapTile->GetTerrain();
-    if (terrain->mIsLava || terrain->mIsWater || terrain->mIsImpenetrable)
-        return;
-
-    // todo: tile hp
-
-    if (mapTile->mRoomInstance)
-        return;
-
-    TerrainTypeId newTerrainType = terrain->mBecomesTerrainTypeWhenMaxHealth;
-    if (terrain->mTerrainType == newTerrainType)
-        return;
-
-    TerrainDefinition* newTerrain = GetScenarioDefinition().GetTerrainDefinition(newTerrainType);
-    mapTile->mBaseTerrain = newTerrain;
-    mapTile->mOwnerID = playerID;
-    
-    Temp_Set<Room*> rooms;
-    for (eDirection direction: gStraightDirections)
-    {
-        MapTile* neighbourTile = mapTile->mNeighbours[direction];
-        if (neighbourTile && neighbourTile->mRoomInstance)
-        {
-            rooms.insert(neighbourTile->mRoomInstance);
-        }
-    }
-
-    for (Room* genericRoom: rooms)
-    {
-        genericRoom->NeighbourTileChanged(mapTile);
-    }
-
-    InvalidateTile(mapTile);
-    InvalidateTileNeighbours(mapTile);
+    ChangeTileHealth(mapTile, playerId, -hitPoints);
 }
 
-void GameWorld::TagTerrain(const MapArea2D& tileArea)
+void GameWorld::RepairTile(MapTile* mapTile, ePlayerID playerId, int hitPoints)
 {
-    auto tilesIterator = GetGameMap().IterateTiles(tileArea);
+    cxx_assert(hitPoints > 0);
+    ChangeTileHealth(mapTile, playerId, hitPoints);
+}
+
+void GameWorld::TagTilesForDigging(const MapArea2D& tileArea, ePlayerID playerId, bool setTagged)
+{
+    auto tilesIterator = gGameMap.IterateTiles(tileArea);
     for (MapTile* mapTile = tilesIterator.NextTile(); mapTile; 
         mapTile = tilesIterator.NextTile())
     {
-        if (CanTagTerrain(mapTile))
+        // set tag
+        if (setTagged)
         {
-            SetTileTagged(mapTile, true);
+            if (CanTagTileForDigging(mapTile))
+            {
+                UpdateTileTaggedState(mapTile, playerId, true);
+            }
+        }
+        // clear tag
+        else if (mapTile->IsTaggedForDigging(playerId))
+        {
+            UpdateTileTaggedState(mapTile, playerId, false);
         }
     }
 }
 
-void GameWorld::UnTagTerrain(const MapArea2D& tileArea)
-{
-    auto tilesIterator = GetGameMap().IterateTiles(tileArea);
-    for (MapTile* mapTile = tilesIterator.NextTile(); mapTile; 
-        mapTile = tilesIterator.NextTile())
-    {
-        if (mapTile->mIsTagged)
-        {
-            SetTileTagged(mapTile, false);
-        }
-    }
-}
-
-bool GameWorld::CanPlaceRoomOnLocation(MapTile* mapTile, ePlayerID playerID, RoomDefinition* roomDefinition) const
+bool GameWorld::CanPlaceRoomOnLocation(MapTile* mapTile, ePlayerID playerId, RoomDefinition* roomDefinition) const
 {
     cxx_assert(mapTile);
 
     TerrainDefinition* tileTerrain = mapTile->GetTerrain();
-    if (GetScenarioDefinition().IsRoomTypeTerrain(tileTerrain))
+    if (gGameSession.GetScenarioDefinition().IsRoomTypeTerrain(tileTerrain))
         return false;
 
     // cannot place on mana vault
@@ -541,7 +603,7 @@ bool GameWorld::CanPlaceRoomOnLocation(MapTile* mapTile, ePlayerID playerID, Roo
 
     if (roomDefinition->mPlaceableOnLand)
     {
-        if (!tileTerrain->mIsSolid && tileTerrain->mIsOwnable && (mapTile->mOwnerID == playerID))
+        if (!tileTerrain->mIsSolid && tileTerrain->mIsOwnable && mapTile->HasOwner(playerId))
             return true;
     }
 
@@ -554,28 +616,28 @@ bool GameWorld::CanPlaceRoomOnLocation(MapTile* mapTile, ePlayerID playerID, Roo
     return false;
 }
 
-bool GameWorld::CanSellRoomOnLocation(MapTile* mapTile, ePlayerID playerID) const
+bool GameWorld::CanSellRoomOnLocation(MapTile* mapTile, ePlayerID playerId) const
 {
     cxx_assert(mapTile);
 
     Room* roomInstance = mapTile->mRoomInstance;
-    if (!roomInstance || playerID != mapTile->mOwnerID)
+    if (!roomInstance || (playerId != mapTile->mOwnerId))
         return false;
 
     RoomDefinition* roomDefinition = roomInstance->GetDefinition();
     return (roomDefinition->mBuildable == true);
 }
 
-void GameWorld::SellEntities(ePlayerID playerID, const MapArea2D& tilesArea)
+void GameWorld::SellEntities(ePlayerID playerId, const MapArea2D& tilesArea)
 {
     Temp_Vector<MapTile*> roomTiles;
     roomTiles.reserve(64);
 
-    auto tilesIterator = GetGameMap().IterateTiles(tilesArea);
+    auto tilesIterator = gGameMap.IterateTiles(tilesArea);
     for (MapTile* mapTile = tilesIterator.NextTile(); mapTile; 
         mapTile = tilesIterator.NextTile())
     {
-        if (CanSellRoomOnLocation(mapTile, playerID))
+        if (CanSellRoomOnLocation(mapTile, playerId))
         {
             roomTiles.push_back(mapTile);
         }
@@ -616,18 +678,18 @@ void GameWorld::SellEntities(ePlayerID playerID, const MapArea2D& tilesArea)
     }
 }
 
-void GameWorld::ConstructRoom(ePlayerID playerID, RoomDefinition* roomDefinition, const MapArea2D& tilesArea)
+void GameWorld::ConstructRoom(ePlayerID playerId, RoomDefinition* roomDefinition, const MapArea2D& tilesArea)
 {
     // collect all tiles available to construction, output array is sorted
 
     Temp_Vector<MapTile*> constructionTiles;
     constructionTiles.reserve(tilesArea.w * tilesArea.h);
 
-    auto tilesIterator = GetGameMap().IterateTiles(tilesArea);
+    auto tilesIterator = gGameMap.IterateTiles(tilesArea);
     for (MapTile* mapTile = tilesIterator.NextTile(); mapTile; 
         mapTile = tilesIterator.NextTile())
     {
-        if (CanPlaceRoomOnLocation(mapTile, playerID, roomDefinition))
+        if (CanPlaceRoomOnLocation(mapTile, playerId, roomDefinition))
         {
             constructionTiles.push_back(mapTile);
         }
@@ -648,7 +710,7 @@ void GameWorld::ConstructRoom(ePlayerID playerID, RoomDefinition* roomDefinition
             continue;
 
         segmentTiles.clear();
-        GetGameMap().FloodFill4(segmentTiles, currentTile, tilesArea);
+        gGameMap.FloodFill4(segmentTiles, currentTile, tilesArea);
         // put into processed set
         for (MapTile* processedTile: segmentTiles)
         {
@@ -658,7 +720,7 @@ void GameWorld::ConstructRoom(ePlayerID playerID, RoomDefinition* roomDefinition
         // find rooms that contacting with current segment and merge them all
 
         adjacentRooms.clear();
-        ScanAdjacentRooms(segmentTiles, playerID, 
+        ScanAdjacentRooms(segmentTiles, playerId, 
             [roomDefinition](Room* checkRoom) { return checkRoom->GetDefinition() == roomDefinition; }, adjacentRooms);
 
         Room* absorberRoom = nullptr;
@@ -679,18 +741,19 @@ void GameWorld::ConstructRoom(ePlayerID playerID, RoomDefinition* roomDefinition
 
         if (absorberRoom == nullptr) // new room
         {
-            EntityHandle roomHandle = GetRoomManager().CreateRoom(roomDefinition, playerID);
-            GetGameSession().GetPlayer(playerID).AddToInventory(roomHandle);
-            GetRoomManager().ActivateRoom(roomHandle);
-            absorberRoom = GetRoomManager().GetRoomPtr(roomHandle);
+            EntityHandle roomHandle = gRoomManager.CreateRoom(roomDefinition, playerId);
+            gGameSession.GetPlayer(playerId).AddToInventory(roomHandle);
+            gRoomManager.ActivateRoom(roomHandle);
+            absorberRoom = gRoomManager.GetRoomPtr(roomHandle);
         }
 
         // add segment tiles to room
         for (MapTile* processedTile: segmentTiles)
         {
             cxx_assert(processedTile->mRoomInstance == nullptr);
-            processedTile->mTerrain = GetScenarioDefinition().GetTerrainDefinition(roomDefinition->mTerrainType);
-            processedTile->mOwnerID = playerID;
+            processedTile->SetRoomTerrain(gGameSession.GetScenarioDefinition().GetTerrainDefinition(roomDefinition->mTerrainType));
+            processedTile->mOwnerId = playerId;
+            gCreatureTaskManager.OnTileTerrainTypeChanged(processedTile);
         }
         absorberRoom->EnlargeRoom(segmentTiles);
 
@@ -714,12 +777,13 @@ void GameWorld::ReleaseRoomTiles(Room* currentRoom, cxx::span<MapTile*> roomTile
     for (MapTile* roomTile: roomTiles)
     {
         RoomDefinition* roomDefinition = currentRoom->GetDefinition();
-        roomTile->mTerrain = nullptr;
+        roomTile->SetRoomTerrain(nullptr);
         if (!roomDefinition->mPlaceableOnLand && 
             (roomDefinition->mPlaceableOnLava || roomDefinition->mPlaceableOnWater))
         {   
-            roomTile->mOwnerID = ePlayerID_Neutral; // for bridges terrain reset owner
+            roomTile->mOwnerId = ePlayerID_Neutral; // for bridges terrain reset owner
         }
+        gCreatureTaskManager.OnTileTerrainTypeChanged(roomTile);
     }
 
     int segmentsCounter = 0;
@@ -728,13 +792,13 @@ void GameWorld::ReleaseRoomTiles(Room* currentRoom, cxx::span<MapTile*> roomTile
         if (segmentsCounter++ == 0) // first segment is current room segment
             return;
 
-        ePlayerID ownerID = currentRoom->GetOwnerID();
+        ePlayerID ownerId = currentRoom->GetOwnerId();
 
         // each new segment is a new room
-        EntityHandle newRoom = GetRoomManager().CreateRoom(currentRoom->GetDefinition(), ownerID);
-        GetGameSession().GetPlayer(ownerID).AddToInventory(newRoom);
-        GetRoomManager().ActivateRoom(newRoom);
-        if (Room* roomInstance = GetRoomManager().GetRoomPtr(newRoom))
+        EntityHandle newRoom = gRoomManager.CreateRoom(currentRoom->GetDefinition(), ownerId);
+        gGameSession.GetPlayer(ownerId).AddToInventory(newRoom);
+        gRoomManager.ActivateRoom(newRoom);
+        if (Room* roomInstance = gRoomManager.GetRoomPtr(newRoom))
         {
             roomInstance->AbsorbRoom(currentRoom, segmentTiles);
         }
@@ -756,9 +820,9 @@ void GameWorld::HandleRoomAbsorbed(Room* roomInstance)
         cxx_assert(false);
     }
     // delete it
-    ePlayerID ownerID = roomInstance->GetOwnerID();
-    GetGameSession().GetPlayer(ownerID).RemoveFromInventory(roomInstance->GetOwnHandle());
-    GetRoomManager().DeleteRoom(roomInstance->GetInstanceUid());
+    ePlayerID ownerId = roomInstance->GetOwnerId();
+    gGameSession.GetPlayer(ownerId).RemoveFromInventory(roomInstance->GetOwnHandle());
+    gRoomManager.DeleteRoom(roomInstance->GetInstanceUid());
 }
 
 void GameWorld::HandleRoomCollapsed(Room* roomInstance)
@@ -770,13 +834,16 @@ void GameWorld::HandleRoomCollapsed(Room* roomInstance)
         cxx_assert(false);
     }
     // delete it
-    ePlayerID ownerID = roomInstance->GetOwnerID();
-    GetGameSession().GetPlayer(ownerID).RemoveFromInventory(roomInstance->GetOwnHandle());
-    GetRoomManager().DeleteRoom(roomInstance->GetInstanceUid());
+    ePlayerID ownerId = roomInstance->GetOwnerId();
+    gGameSession.GetPlayer(ownerId).RemoveFromInventory(roomInstance->GetOwnHandle());
+    gRoomManager.DeleteRoom(roomInstance->GetInstanceUid());
 }
 
 void GameWorld::BuildInvalidatedTiles()
 {
+    if (mInvalidatedTiles.empty())
+        return;
+
     Temp_Set<Room*> invalidateRooms;
 
     // build terrain tiles and collect invalidated rooms
@@ -828,8 +895,9 @@ void GameWorld::BuildInvalidatedTiles()
             tileface.mFaceMeshDirty = false;
         }
     }
+    // refresh navigation
+    gNavigationService.UpdateAreaCodes(mInvalidatedTiles);
     mInvalidatedTiles.clear();
-
     // handle rooms objects arrangement
     for (Room* currentRoom: invalidateRooms)
     {
@@ -839,7 +907,7 @@ void GameWorld::BuildInvalidatedTiles()
 
 void GameWorld::ResetInvalidatedTiles()
 {
-    GameMap::TilesIterator tilesIterator = GetGameMap().IterateTiles();
+    GameMap::TilesIterator tilesIterator = gGameMap.IterateTiles();
     for (MapTile* mapTile = tilesIterator.NextTile(); mapTile; 
         mapTile = tilesIterator.NextTile())
     {
@@ -853,7 +921,7 @@ void GameWorld::ResetInvalidatedTiles()
 
 void GameWorld::InitTilesFloorHeightmap()
 {
-    GameMap::TilesIterator tilesIterator = GetGameMap().IterateTiles();
+    GameMap::TilesIterator tilesIterator = gGameMap.IterateTiles();
     for (MapTile* mapTile = tilesIterator.NextTile(); mapTile; 
         mapTile = tilesIterator.NextTile())
     {
@@ -868,7 +936,7 @@ void GameWorld::UpdateTileFloorHeightmap(MapTile* mapTile)
 
     cxx::ray3d_t processRay;
     processRay.mDirection = -WorldAxes::Y;
-    processRay.mOrigin = MapUtils::ComputeBlockCoordinate(mapTile->mTileLocation);
+    processRay.mOrigin = MapUtils::ComputeBlockCoordinate(mapTile->mLocation);
     processRay.mOrigin.y = MAP_FLOOR_LEVEL + MAP_BLOCK_HEIGHT + 1.0f;
 
     static float invResolution = 1.0f / (TileHeightmap::Resolution * 1.0f);
@@ -920,13 +988,38 @@ void GameWorld::UpdateTileFloorHeightmap(MapTile* mapTile)
     }
 }
 
-void GameWorld::SetTileTagged(MapTile* mapTile, bool isTagged)
+void GameWorld::UpdateTileTaggedState(MapTile* mapTile, ePlayerID playerId, bool isTagged)
 {
     cxx_assert(mapTile);
-    if (mapTile && (mapTile->mIsTagged != isTagged))
+    cxx_assert(playerId > ePlayerID_Null);
+    if (playerId == ePlayerID_Null)
+        return;
+
+    auto updateTileTaggedStateImpl = [mapTile](ePlayerID pid, bool isTagged)
+        {
+            if (mapTile->IsTaggedForDigging(pid) == isTagged)
+                return;
+
+            mapTile->SetTaggedForDigging(pid, isTagged);
+            gCreatureTaskManager.OnTileTaggedStateChanged(mapTile, pid);
+            if (pid == gGameSession.GetLocalPlayerId())
+            {
+                gGameRenderer.mTerrainRenderer.TileHighlightChanged(mapTile);
+            }
+        };
+
+    // force for all players
+    if (playerId == ePlayerID_COUNT)
     {
-        mapTile->mIsTagged = isTagged;
-        gGameRenderer.mTerrainRenderer.TileHighlightChanged(mapTile); 
+        for (int roller = ePlayerID_Null + 1; roller < ePlayerID_COUNT; ++roller)
+        {
+            const ePlayerID rollerId = static_cast<ePlayerID>(roller);
+            updateTileTaggedStateImpl(rollerId, isTagged);
+        }
+    }
+    else
+    {
+        updateTileTaggedStateImpl(playerId, isTagged);
     }
 }
 
@@ -941,7 +1034,7 @@ void GameWorld::ScanAdjacentRooms(cxx::span<MapTile*> tilesToScan, ePlayerID own
         {
             MapTile* neighbourTile = currentTile->mNeighbours[direction];
             if (neighbourTile == nullptr) continue; // invalid tile
-            if (neighbourTile->mOwnerID != ownerId) continue; // owner mismatch
+            if (neighbourTile->mOwnerId != ownerId) continue; // owner mismatch
 
             Room* roomInstance = neighbourTile->mRoomInstance;
             if (roomInstance == nullptr) continue; // no room there
@@ -965,31 +1058,164 @@ void GameWorld::EnumRoomSegments(Room* roomInstance, TEnumProc enumProc)
     // todo: optimize
     Temp_Set<MapTile*> processedTiles;
     Temp_Vector<MapTile*> segmentTiles;
-    Temp_Vector<MapTile*> coveredTiles = MakeTempVector(roomInstance->GetFloorTiles());// intent copy
+    Temp_Vector<MapTile*> coveredTiles = TempVectorFrom(roomInstance->GetFloorTiles());// intent copy
     for (MapTile* targetTile: coveredTiles)
     {
         if (processedTiles.find(targetTile) != processedTiles.end()) // already processed
             continue;
 
         segmentTiles.clear();
-        GetGameMap().FloodFill4(segmentTiles, targetTile);
+        gGameMap.FloodFill4(segmentTiles, targetTile);
         // add to processed tiles
         processedTiles.insert(segmentTiles.begin(), segmentTiles.end());
         enumProc(segmentTiles);
     }
 }
 
-bool GameWorld::CanTagTerrain(const MapPoint2D& mapLocation) const
+bool GameWorld::CanTagTileForDigging(const MapPoint2D& mapLocation) const
 {
-    return mGameMap.WithinMap(mapLocation) && CanTagTerrain(mGameMap.GetMapTile(mapLocation));
+    return gGameMap.WithinMap(mapLocation) && CanTagTileForDigging(gGameMap.GetMapTile(mapLocation));
 }
 
-bool GameWorld::CanTagTerrain(MapTile* mapTile) const
+bool GameWorld::CanTagTileForDigging(MapTile* mapTile) const
 {
     if (mapTile)
     {
         TerrainDefinition* terrainDef = mapTile->GetTerrain();
-        return terrainDef->mIsTaggable;
+        return terrainDef->mIsSolid && terrainDef->mIsTaggable;
     }
     return false;
 }
+
+int GameWorld::ChangeTileHealth(MapTile* mapTile, ePlayerID playerId, int hitpoints)
+{
+    cxx_assert(mapTile);
+
+    if (mapTile == nullptr)
+        return 0;
+
+    TerrainDefinition* terrainDef = mapTile->GetTerrain();
+    if (terrainDef->mIsImpenetrable)
+        return 0;
+
+    int deltaHitPoints = mapTile->ChangeHitPoints(hitpoints);
+    if (deltaHitPoints == 0)
+        return 0;
+
+    // always invalidate
+    InvalidateTile(mapTile);
+
+    // handle terrain type changed
+    TerrainTypeId changeTerrainType = TerrainTypeId_Null;
+    if (mapTile->GetHitPoints() == 0)
+    {
+        changeTerrainType = terrainDef->mBecomesTerrainTypeWhenDestroyed;
+    }
+    if (mapTile->GetHitPoints() == mapTile->GetHitPointsMax())
+    {
+        changeTerrainType = terrainDef->mBecomesTerrainTypeWhenMaxHealth;
+    }
+
+    if ((changeTerrainType != TerrainTypeId_Null) && 
+        (changeTerrainType != terrainDef->mTerrainType))
+    {
+        TerrainDefinition* newTerrain = gGameSession.GetScenarioDefinition().GetTerrainDefinition(changeTerrainType);
+        cxx_assert(newTerrain);
+        mapTile->SetBaseTerrain(newTerrain);
+        // change owner
+        // todo: notify owner about change
+        mapTile->mOwnerId = newTerrain->mIsOwnable ? playerId : ePlayerID_Neutral;
+
+        // force reset tagged state
+        if (!CanTagTileForDigging(mapTile))
+        {
+            UpdateTileTaggedState(mapTile, ePlayerID_COUNT, false);
+        }
+
+        Temp_Set<Room*> rooms;
+        for (eDirection direction: gStraightDirections)
+        {
+            MapTile* neighbourTile = mapTile->mNeighbours[direction];
+            if (neighbourTile && neighbourTile->mRoomInstance)
+            {
+                rooms.insert(neighbourTile->mRoomInstance);
+            }
+        }
+        for (Room* room: rooms)
+        {
+            room->NeighbourTileChanged(mapTile);
+        }
+        InvalidateTileNeighbours(mapTile);
+
+        gCreatureTaskManager.OnTileTerrainTypeChanged(mapTile);
+    }
+    return deltaHitPoints;
+}
+
+bool GameWorld::QueryAccessibleMoneyStorageRoomsForDeposit(ePlayerID playerId, EntityHandle agentEntity, int maxRooms, 
+    std::vector<EntityHandle>& outEntities)
+{
+    outEntities.clear();
+    outEntities.reserve(16);
+
+    // process creature
+    if (agentEntity.IsCreature())
+    {
+        Player& player = gGameSession.GetPlayer(playerId);
+        cxx_assert(!player.IsNonPlayer());
+
+        Creature* creature = gCreatureManager.GetCreaturePtr(agentEntity);
+        if ((creature == nullptr) || creature->WasDeleted())
+            return false;
+
+        const MapPoint2D startTileCoord = creature->GetTilePosition();
+        const ePassabilityType passabilityType = creature->GetPassabilityType();
+
+        for (const EntityHandle& roomHandle: player.GetOwnedMoneyStorageRooms())
+        {
+            Room* roomInstance = gRoomManager.GetRoomPtr(roomHandle);
+            if ((roomInstance == nullptr) || roomInstance->WasDeleted())
+            {
+                continue;
+            }
+
+            // check if room is reachable
+            cxx::span<MapTile*> roomTiles = roomInstance->GetFloorTiles();
+            if (roomTiles.empty())
+            {
+                continue;
+            }
+
+            if (!gNavigationService.CheckPathExists(startTileCoord, roomTiles[0]->mLocation, passabilityType))
+                continue;
+           
+            auto* moneyStorage = roomInstance->GetCapability<MoneyStorageRoomCapability>();
+            cxx_assert(moneyStorage);
+            if (moneyStorage == nullptr)
+            {
+                continue;
+            }
+
+            const long storageCapacity = moneyStorage->GetStoredGoldCapacity();
+            bool isStorageFull = (storageCapacity > 0) && (moneyStorage->GetStoredGoldAmount() >= storageCapacity);
+            if (isStorageFull)
+            {
+                continue;
+            }
+            outEntities.push_back(roomInstance->GetOwnHandle());
+            
+            // check limits
+            if (maxRooms == static_cast<int>(outEntities.size()))
+            {
+                break;
+            }
+        }
+    }
+    else
+    {
+        cxx_assert(false);
+    }
+    return !outEntities.empty();
+}
+
+

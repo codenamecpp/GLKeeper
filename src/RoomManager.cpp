@@ -13,6 +13,13 @@
 #include "HatcheryRoomController.h"
 #include "TreasuryRoomController.h"
 #include "GameMain.h"
+#include "GameSession.h"
+
+//////////////////////////////////////////////////////////////////////////
+
+RoomManager gRoomManager;
+
+//////////////////////////////////////////////////////////////////////////
 
 bool RoomManager::LoadScenario(const ScenarioDefinition& scenarioDef)
 {
@@ -67,18 +74,18 @@ EntityHandle RoomManager::CreateScenarioRoom(const ScenarioRoomThing& roomThing)
     return roomHandle;
 }
 
-EntityHandle RoomManager::CreateRoom(RoomTypeId typeId, ePlayerID ownerID, eDirection direction)
+EntityHandle RoomManager::CreateRoom(RoomTypeId typeId, ePlayerID ownerId, eDirection direction)
 {
-    if (RoomDefinition* roomDefinition = GetScenarioDefinition().GetRoomDefinition(typeId))
+    if (RoomDefinition* roomDefinition = gGameSession.GetScenarioDefinition().GetRoomDefinition(typeId))
     {
-        return CreateRoom(roomDefinition, ownerID, direction);
+        return CreateRoom(roomDefinition, ownerId, direction);
     }
     gConsole.LogMessage(eLogLevel_Warning, "Cannot create room with type id '%d'", typeId);
     cxx_assert(false);
     return {};
 }
 
-EntityHandle RoomManager::CreateRoom(RoomDefinition* roomDefinition, ePlayerID ownerID, eDirection direction)
+EntityHandle RoomManager::CreateRoom(RoomDefinition* roomDefinition, ePlayerID ownerId, eDirection direction)
 {
     cxx_assert(roomDefinition);
     if (roomDefinition == nullptr) return {}; // nothing to create
@@ -99,9 +106,9 @@ EntityHandle RoomManager::CreateRoom(RoomDefinition* roomDefinition, ePlayerID o
     cxx_assert(roomSlot.mController);
 
     const EntityHandle roomHandle { eEntityType_Room, roomSlot.mGeneration, static_cast<uint32_t>(freeSlotIndex) };
-    const EntityUid instanceUid = GetGameWorld().GenerateEntityUid();
+    const EntityUid instanceUid = gGameWorld.GenerateEntityUid();
     mInstanceUidsMap[instanceUid] = roomHandle;
-    ConfigureNewRoomInstance(roomSlot.mInstance.get(), roomSlot.mController.get(), roomDefinition, instanceUid, direction, ownerID);
+    ConfigureNewRoomInstance(roomSlot.mInstance.get(), roomSlot.mController.get(), roomDefinition, instanceUid, direction, ownerId);
     return roomHandle;
 }
 
@@ -346,7 +353,7 @@ void RoomManager::DestroyRooms()
 void RoomManager::ConfigureNewRoomInstance(Room* roomInstance, 
     RoomController* controller, 
     RoomDefinition* definition, 
-    EntityUid instanceUid, eDirection roomDirection, ePlayerID ownerID)
+    EntityUid instanceUid, eDirection roomDirection, ePlayerID ownerId)
 {
     cxx_assert(roomInstance);
 
@@ -354,14 +361,14 @@ void RoomManager::ConfigureNewRoomInstance(Room* roomInstance,
     if ((definition->mRoomType == RoomTypeId_DungeonHeart) ||
         (definition->mRoomType == RoomTypeId_Treasury))
     {
-        roomInstance->AddComponent<GoldStorageComponent>();
+        roomInstance->AddComponent<MoneyComponent>();
     }
 
-    TileConstructionSet& constructionSet = GetGameWorld().GetTileConstructionSet();
+    TileConstructionSet& constructionSet = gGameWorld.GetTileConstructionSet();
 
     // assing room constructor
     RoomTileConstructor* roomConstructor = constructionSet.GetRoomConstructor(definition);
-    roomInstance->ConfigureInstance(instanceUid, controller, roomConstructor, definition, roomDirection, ownerID);
+    roomInstance->ConfigureInstance(instanceUid, controller, roomConstructor, definition, roomDirection, ownerId);
 }
 
 void RoomManager::RegisterRoom(Room* roomInstance)

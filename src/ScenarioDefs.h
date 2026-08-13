@@ -203,7 +203,7 @@ struct ScenarioMapTileDefinition
 {
 public:
     TerrainTypeId mTerrainType;
-    ePlayerID mOwnerID; // owner
+    ePlayerID mOwnerId; // owner
     eBridgeTerrain mTerrainUnderTheBridge;
 };
 
@@ -248,7 +248,7 @@ public:
         , mHasAmbientLight()
         , mTextureFrames()
         , mDamage()
-        , mGoldCapacity()
+        , mGoldValue()
         , mManaGain()
         , mManaGainMax()
         , mHealthInitial()
@@ -306,7 +306,7 @@ public:
     ArtResourceDefinition mResourceTagged;
     int mTextureFrames;
     int mDamage;
-    int mGoldCapacity;
+    int mGoldValue;
     int mManaGain;
     int mManaGainMax;
     int mHealthInitial;
@@ -479,6 +479,12 @@ public:
 struct ScenarioVariables
 {
 public:
+    int mDigRockHealth = 0;
+    int mDigOwnWallHealth = 0;
+    int mDigEnemyWallHealth = 0;
+    int mClaimFloorHealth = 0;
+    int mMineGoldHealth = 0;
+    int mReinforceWallHealth = 0;
     int mGoldMinedFromGems = 0;
     int mMaxGoldPerTreasuryTile = 0;
     int mSpecialIncreaseGoldAmount = 0;
@@ -498,6 +504,16 @@ public:
         , mCloneCreatureTypeId(CreatureTypeId_Null)
     {
     }
+
+    // get animation resource with fallback to pose frame if not specified
+    const ArtResourceDefinition& GetAnimResourceOrPoseFrame(CreatureAnimationID animID)
+    {
+        cxx_assert(animID < CreatureAnimation_COUNT);
+        // fallback to pose frame
+        return mAnimationResources[animID].IsDefined() ? 
+            mAnimationResources[animID] : 
+            mAnimationResources[CreatureAnimation_Pose_Frame];
+    };
 
 public:
     CreatureTypeId mCreatureTypeId;

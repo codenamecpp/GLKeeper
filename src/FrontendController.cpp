@@ -2,6 +2,10 @@
 #include "FrontendController.h"
 #include "GameWorld.h"
 #include "GameMain.h"
+#include "MapUtils.h"
+#include "GameEventBus.h"
+#include "GameSession.h"
+#include "Scene.h"
 
 FrontendController::FrontendController()
     : mMenuScreen(*this)
@@ -10,18 +14,18 @@ FrontendController::FrontendController()
 
 void FrontendController::OnStartSinglePlayerGameSelected()
 {
-    GetGameEventBus().Send_StartScenarioRequest("level1");
-    //GetGameEventBus().Send_StartScenarioRequest("Devmap");
+    //gGameEventBus.Send_StartScenarioRequest("level1");
+    gGameEventBus.Send_StartScenarioRequest("Devmap");
 }
 
 void FrontendController::OnQuitGameSelected()
 {
-    GetGameEventBus().Send_QuitGameRequest();
+    gGameEventBus.Send_QuitGameRequest();
 }
 
 void FrontendController::OnSessionLoaded()
 {
-    Player& localPlayer = GetGameSession().GetLocalPlayer();
+    Player& localPlayer = gGameSession.GetLocalPlayer();
 
     // setup camera
     mCameraController.ResetCamera();
@@ -31,7 +35,7 @@ void FrontendController::OnSessionLoaded()
     cameraTileCoord[1] = 1.65f; // height
     cameraTileCoord[2] -= 0.5f;
     mCameraController.SetStartPosition(cameraTileCoord);
-    mCameraController.CaptureCamera(&GetGameWorld().GetMainCamera());
+    mCameraController.CaptureCamera(&gScene.GetCamera());
 }
 
 void FrontendController::OnSessionStart()

@@ -21,8 +21,8 @@ void MoneyStorageRoomController::ConfigureInstance(Room* roomInstance)
     StorageRoomController::ConfigureInstance(roomInstance);
 
     // wire components
-    mGoldComponent = GetRoom().GetComponent<GoldStorageComponent>();
-    cxx_assert(mGoldComponent);
+    mMoneyComponent = GetRoom().GetComponent<MoneyComponent>();
+    cxx_assert(mMoneyComponent);
 
     // setup capabilities
     GetRoom().AddCapability<MoneyStorageRoomCapability>(this);
@@ -32,7 +32,7 @@ void MoneyStorageRoomController::SpawnInstance()
 {
     StorageRoomController::SpawnInstance();
 
-    SyncStoredGoldAmount();
+    SyncStoredMoneyAmount();
 }
 
 void MoneyStorageRoomController::DespawnInstance()
@@ -50,13 +50,13 @@ void MoneyStorageRoomController::PostReconfigureRoom()
     StorageRoomController::PostReconfigureRoom();
 
     // update max capacity
-    if (mGoldComponent)
+    if (mMoneyComponent)
     {
-        mGoldComponent->mGoldCapacity = mMoneyStorageMaxGoldPerTile * GetStorageTilesCount();
+        mMoneyComponent->mCapacity = mMoneyStorageMaxGoldPerTile * GetStorageTilesCount();
     }
 
     // update stored gold amount
-    SyncStoredGoldAmount();
+    SyncStoredMoneyAmount();
 
     // auto add loose gold to storage
     ScanForLooseGold();
@@ -65,18 +65,18 @@ void MoneyStorageRoomController::PostReconfigureRoom()
 void MoneyStorageRoomController::OnRecycle()
 {
     StorageRoomController::OnRecycle();
-    mGoldComponent = nullptr;
+    mMoneyComponent = nullptr;
     mMoneyStorageMaxGoldPerTile = MoneyStorageDefaultMaxGoldPerTile;
 }
 
 long MoneyStorageRoomController::GetStoredGoldAmount() const
 {
-    return mGoldComponent->mGoldAmount;
+    return mMoneyComponent->mAmount;
 }
 
 long MoneyStorageRoomController::GetStoredGoldCapacity() const
 {
-    return mGoldComponent->mGoldCapacity;
+    return mMoneyComponent->mCapacity;
 }
 
 long MoneyStorageRoomController::StoreGold(long goldAmount)
@@ -88,8 +88,24 @@ long MoneyStorageRoomController::StoreGold(long goldAmount)
     // update stored gold amount
     if (distributedAmount > 0)
     {
-        mGoldComponent->mGoldAmount += distributedAmount;
-        GetEconomyService().StoredGoldAmountChanged(GetRoom().GetOwnerID(), GetRoom().GetOwnHandle(), distributedAmount);
+        SyncStoredMoneyAmount();
+    }
+    return distributedAmount;
+}
+
+long MoneyStorageRoomController::StoreGold(long goldAmount, const MapPoint2D& tileLocation)
+{
+    if ((goldAmount < 1) || (GetFreeStorageSpace() == 0)) 
+        return 0;
+
+    long distributedAmount = StoreGoldOnStorageTile(tileLocation, goldAmount, true);
+    if (distributedAmount < goldAmount)
+    {
+        distributedAmount += DistributeGoldBetweenChests(goldAmount - distributedAmount, true);
+    }
+    if (distributedAmount > 0)
+    {
+        SyncStoredMoneyAmount();
     }
     return distributedAmount;
 }
@@ -105,7 +121,7 @@ long MoneyStorageRoomController::DisposeGold(long goldAmount)
     // dispose gold from chests
     for (const RoomStorageSlot& storageSlot: GetRoom().GetStorageSlots())
     {
-        GameObject* objectInstance = GetObjectManager().GetObjectPtr(storageSlot.mObjectHandle);
+        GameObject* objectInstance = gGameObjectManager.GetObjectPtr(storageSlot.mObjectHandle);
         cxx_assert(objectInstance);
         if (objectInstance == nullptr) continue;
 
@@ -135,22 +151,59 @@ long MoneyStorageRoomController::DisposeGold(long goldAmount)
         {
             cxx_assert(false);
         }
-        GetObjectManager().DeleteObject(roller);
+        gGameObjectManager.DeleteObject(roller);
     }
 
     // update stored gold amount
     if (resultAmount > 0)
     {
-        mGoldComponent->mGoldAmount -= resultAmount;
-        cxx_assert(mGoldComponent->mGoldAmount >= 0);
-        GetEconomyService().StoredGoldAmountChanged(GetRoom().GetOwnerID(), GetRoom().GetOwnHandle(), -resultAmount);
+        SyncStoredMoneyAmount();
     }
     return resultAmount;
 }
 
+bool MoneyStorageRoomController::GetTileToStoreGold(MapPoint2D& tileLocation)
+{
+    if (GetFreeStorageSpace() == 0)
+        return false;
+
+    for (const RoomStorageTile& storageRoller: GetStorageTiles())
+    {
+        if (storageRoller.mObjects.size() < GetMaxObjectsPerStorageTile())
+        {
+            tileLocation = storageRoller.mTileLocation;
+            return true;
+        }
+
+        for (EntityHandle objectsRoller: storageRoller.mObjects)
+        {
+            GameObject* objectInstance = gGameObjectManager.GetObjectPtr(objectsRoller);
+            cxx_assert(objectInstance);
+            if (objectInstance == nullptr) 
+            {
+                continue;
+            }
+            auto* storageCapability = objectInstance->GetCapability<GoldContainerCapability>();
+            cxx_assert(storageCapability);
+            if (storageCapability == nullptr)
+            {
+                continue;
+            }
+            long storageCapacity = storageCapability->GetStoredGoldCapacity();
+            if ((storageCapacity == 0) || 
+                (storageCapacity > storageCapability->GetStoredGoldAmount()))
+            {
+                tileLocation = storageRoller.mTileLocation;
+                return true;
+            }   
+        }
+    }
+    return false;
+}
+
 long MoneyStorageRoomController::GetFreeStorageSpace() const
 {
-    long freeCapacity = std::max(mGoldComponent->mGoldCapacity - mGoldComponent->mGoldAmount, 0L);
+    long freeCapacity = std::max(mMoneyComponent->mCapacity - mMoneyComponent->mAmount, 0L);
     return freeCapacity;
 }
 
@@ -158,7 +211,7 @@ void MoneyStorageRoomController::StoredObjectUnassigned(EntityHandle entityHandl
 {  
     // delete chest and create gold pile
 
-    GameObject* gameObject = GetObjectManager().GetObjectPtr(entityHandle);
+    GameObject* gameObject = gGameObjectManager.GetObjectPtr(entityHandle);
     if (gameObject == nullptr) return;
 
     if (gameObject->GetClassId() == GameObjectClassId_GoldPile) 
@@ -169,16 +222,16 @@ void MoneyStorageRoomController::StoredObjectUnassigned(EntityHandle entityHandl
         long goldAmount = goldContainer->GetStoredGoldAmount();
         if (goldAmount > 0)
         {
-            EntityHandle newEntity = GetObjectManager().CreateGoldPile(goldAmount);
+            EntityHandle newEntity = gGameObjectManager.CreateGoldPile(goldAmount);
 
             SetObjectPlacementToTileCenter(newEntity, gameObject->GetTilePosition(), true);
-            if (!GetObjectManager().ActivateObject(newEntity))
+            if (!gGameObjectManager.ActivateObject(newEntity))
             {
                 cxx_assert(false);
             }
         }
     }
-    GetObjectManager().DeleteObject(entityHandle);
+    gGameObjectManager.DeleteObject(entityHandle);
 }
 
 void MoneyStorageRoomController::StoredObjectReassigned(EntityHandle entityHandle, const RoomStorageTile& newStorageTile)
@@ -199,7 +252,7 @@ void MoneyStorageRoomController::SetMoneyStorageMaxGoldPerTile(long maxGoldPerTi
 
 void MoneyStorageRoomController::SetObjectPlacementToTileCenter(EntityHandle entityHandle, const MapPoint2D& tileLocation, bool setRandomOrientation)
 {
-    GameObject* gameObject = GetObjectManager().GetObjectPtr(entityHandle);
+    GameObject* gameObject = gGameObjectManager.GetObjectPtr(entityHandle);
     cxx_assert(gameObject);
 
     if (gameObject == nullptr) return;
@@ -213,30 +266,32 @@ void MoneyStorageRoomController::SetObjectPlacementToTileCenter(EntityHandle ent
     gameObject->SnapPositionToFloor();
 }
 
-void MoneyStorageRoomController::SyncStoredGoldAmount()
+void MoneyStorageRoomController::SyncStoredMoneyAmount()
 {
-    if (mGoldComponent == nullptr) return;
+    if (mMoneyComponent == nullptr) 
+        return;
 
     long currentGoldAmount = 0;
-    GameObjectManager& gobjects = GetObjectManager();
+    GameObjectManager& gobjects = gGameObjectManager;
     for (const RoomStorageSlot& storageSlot: GetRoom().GetStorageSlots())
     {
         GameObject* gameObject = gobjects.GetObjectPtr(storageSlot.mObjectHandle);
-        cxx_assert(gameObject);
-
-        if (gameObject == nullptr) continue;
-
+        if (gameObject == nullptr) 
+        {
+            cxx_assert(false);
+            continue;
+        }
         if (auto* goldContainer = gameObject->GetCapability<GoldContainerCapability>())
         {
             currentGoldAmount += goldContainer->GetStoredGoldAmount();
         }
     }
 
-    if (mGoldComponent->mGoldAmount != currentGoldAmount)
+    if (mMoneyComponent->mAmount != currentGoldAmount)
     {
-        long deltaAmount = currentGoldAmount - mGoldComponent->mGoldAmount;
-        mGoldComponent->mGoldAmount = currentGoldAmount;
-        GetEconomyService().StoredGoldAmountChanged(GetRoom().GetOwnerID(), GetRoom().GetOwnHandle(), deltaAmount);
+        long deltaAmount = currentGoldAmount - mMoneyComponent->mAmount;
+        mMoneyComponent->mAmount = currentGoldAmount;
+        gEconomyService.StoredMoneyAmountChanged(GetRoom().GetOwnerId(), GetRoom().GetOwnHandle(), deltaAmount);
     }
 }
 
@@ -247,7 +302,7 @@ void MoneyStorageRoomController::ScanForLooseGold()
 
     long addedLooseGoldAmount = 0;
 
-    for (GameObject* gameObject: GetObjectManager().GetGoldContainers())
+    for (GameObject* gameObject: gGameObjectManager.GetGoldContainers())
     {
         // ignore deleted
         if (gameObject->WasDeleted()) continue;
@@ -285,7 +340,7 @@ void MoneyStorageRoomController::ScanForLooseGold()
         // delete empty containers
         if (goldContainer->GetStoredGoldAmount() == 0)
         {
-            GetObjectManager().DeleteObject(gameObject->GetOwnHandle());
+            gGameObjectManager.DeleteObject(gameObject->GetOwnHandle());
         }
 
         // done?
@@ -295,8 +350,7 @@ void MoneyStorageRoomController::ScanForLooseGold()
     // update stored gold amount
     if (addedLooseGoldAmount > 0)
     {
-        mGoldComponent->mGoldAmount += addedLooseGoldAmount;
-        GetEconomyService().StoredGoldAmountChanged(GetRoom().GetOwnerID(), GetRoom().GetOwnHandle(), addedLooseGoldAmount);
+        SyncStoredMoneyAmount();
     }
 }
 
@@ -340,8 +394,8 @@ long MoneyStorageRoomController::StoreGoldOnStorageTile(RoomStorageTile& storage
                 if (!hasFreeStorageSpace) break;
 
                 long storedAmount = std::min(mMoneyStorageMaxGoldPerTile, goldAmount);
-                EntityHandle chestObject = GetObjectManager().CreateGoldChest(storedAmount, mMoneyStorageMaxGoldPerTile);
-                GetObjectManager().ActivateObject(chestObject);
+                EntityHandle chestObject = gGameObjectManager.CreateGoldChest(storedAmount, mMoneyStorageMaxGoldPerTile);
+                gGameObjectManager.ActivateObject(chestObject);
                 if (!chestObject || !AssignObjectToStorageTile(chestObject, storageTile))
                 {
                     cxx_assert(false);
@@ -360,7 +414,7 @@ long MoneyStorageRoomController::StoreGoldOnStorageTile(RoomStorageTile& storage
 
 long MoneyStorageRoomController::StoreGoldInContainer(EntityHandle objectHandle, long goldAmount)
 {
-    GameObject* gameObject = GetObjectManager().GetObjectPtr(objectHandle);
+    GameObject* gameObject = gGameObjectManager.GetObjectPtr(objectHandle);
     cxx_assert(gameObject);
     if (gameObject)
     {

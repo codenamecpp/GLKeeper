@@ -5,22 +5,29 @@
 #include "CreatureDefs.h"
 #include "GameDefs.h"
 #include "ScenarioDefs.h"
-#include "GameSessionAware.h"
 #include "Entity.h"
 #include "PhysicsDefs.h"
 #include "AnimatingMeshObject.h"
 #include "Locomotion.h"
 #include "Animator.h"
-#include "CreatureActivity.h"
-#include "CreatureActivityUtils.h"
+#include "CreatureState.h"
+#include "CreatureComponents.h"
 
 //////////////////////////////////////////////////////////////////////////
 
-class Creature final: public Entity
+class Creature final
+    : public Entity
+    , public EnableEntityComponents<CreatureComponents>
 {
     friend class CreatureController;
 
+    // states
+    friend class CreatureState_Idle;
+    friend class CreatureState_Working;
+
 public:
+    Creature();
+    ~Creature();
 
     //////////////////////////////////////////////////////////////////////////
     // lifecycle
@@ -74,29 +81,55 @@ public:
     { 
         return mDefinition->mCreatureTypeId; 
     }
+    inline bool IsCreature(CreatureTypeId typeId) const { return typeId == GetCreatureTypeId(); }
 
-    // creature activities
-    inline bool HasActivity() const { return !!mCurrentActivity; }
-    inline eCreatureActivity GetCurrentActivityType() const
+    // get current passability
+    // depending on creature's abilities its passability type may change
+    ePassabilityType GetPassabilityType() const;
+
+    // get current owner player
+    // the owner may change as a result of conversion
+    inline ePlayerID GetOwnerId() const { return mOwnerId; }
+
+    // get current held amount of gold
+    long GetMoneyCarried() const;
+    bool CanCarryMoreMoney() const;
+    // give gold to creature, returns current held amount of gold
+    long ReceiveMoney(long moneyAmount, long& leftoverAmount);
+    // take gold from creature, returns current held amount of gold
+    long WithdrawMoney(long moneyAmount);
+
+    // get current / previous state
+    inline bool InState(eCreatureState stateId) const { return GetStateId() == stateId; }
+    inline eCreatureState GetStateId() const
     {
-        return mCurrentActivity ? CreatureActivityUtils::GetType(*mCurrentActivity) : eCreatureActivity_None;
+        return mCurrState ? mCurrState->GetStateId() : eCreatureState_None;
     }
-    inline eCreatureActivity GetRequestActivityType() const
+
+    inline bool WasInState(eCreatureState stateId) const { return GetPreviousStateId() == stateId; }
+    inline eCreatureState GetPreviousStateId() const
     {
-        return mRequestActivity ? CreatureActivityUtils::GetType(*mRequestActivity) : eCreatureActivity_None; 
+        return mPrevState ? mPrevState->GetStateId() : eCreatureState_None;
     }
-    inline CreatureActivity* GetCurrentActivity() const { return mCurrentActivity.get(); }
-    inline CreatureActivity* GetRequestActivity() const { return mRequestActivity.get(); }
+
+    // accessing assigned task
+    inline CreatureTask* GetAssignedTask() const 
+    { 
+        return mAssignedTask.get(); 
+    }
+
+    inline eCreatureJob GetLastAssignedJob() const { return mLastAssignedJob; }
 
     // accessing primary components
-    inline AnimatingMeshObject* GetMeshObject() const { return mMeshObject.get(); }
-
+    inline AnimatingMeshObject* GetMeshObject() const 
+    { 
+        return mMeshObject.get(); 
+    }
     inline Locomotion& GetLocomotion() { return mLocomotion; }
-
     inline Animator& GetAnimator() { return mAnimator; }
 
     // override Entity
-    void Notify(const EntityNotification& notificationData) override;
+    void ReceiveMsg(EntityMsg& msgData) override;
 
 private:
     // enable or disable primary components
@@ -104,35 +137,38 @@ private:
     void EnablePhysics(bool isEnabled);
 
     //////////////////////////////////////////////////////////////////////////
-    
-    // activity
 
-    template<typename TActivity, typename ... TArgs>
-    inline void RequestActivity(TArgs&&... args)
-    {
-        mRequestActivity = CreatureActivityUtils::Construct<TActivity>(std::forward<TArgs>(args)...);
-    }
+    // task
+    bool SelectBestTask();
+    bool SelectTaskForJob(eCreatureJob jobType);
+    void AssignTask(CreatureTaskPtr&& creatureTask);
+    void UnassignCurrentTask();
 
-    void ClearCurrentActivity();
-    void ClearRequestActivity();
-    void SwitchToRequestActivity();
-    void CancelCurrentActivity();
+    //////////////////////////////////////////////////////////////////////////
+
+    // state
+    void SelectState();
+    void ChangeState(eCreatureState stateId);
+    void ChangeState(CreatureStatePtr&& creatureState);
 
     //////////////////////////////////////////////////////////////////////////
 
 private:
-    ePlayerID mOwnerID = ePlayerID_Null;
+    ePlayerID mOwnerId = ePlayerID_Null;
 
     CreatureDefinition* mDefinition = nullptr; // never changes
     CreatureController* mController = nullptr;
     PhysicsObject* mPhysicsObject = nullptr; // optional
     Locomotion mLocomotion;
 
+    CreatureTaskPtr mAssignedTask;
+    eCreatureJob mLastAssignedJob {};
+
     cxx::uniqueptr<AnimatingMeshObject> mMeshObject;
     Animator mAnimator;
 
-    cxx::uniqueptr<CreatureActivity> mCurrentActivity;
-    cxx::uniqueptr<CreatureActivity> mRequestActivity;
+    CreatureStatePtr mCurrState;
+    CreatureStatePtr mPrevState;
 };
 
 //////////////////////////////////////////////////////////////////////////

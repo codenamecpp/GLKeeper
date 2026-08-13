@@ -31,8 +31,8 @@ void RoomTileConstructor_3_by_3::ConstructRoomFloor(Room* roomInstance, cxx::spa
 
     for (MapTile* targetTile : floorTiles)
     {
-        const int ioffsetx = targetTile->mTileLocation.x - locationArea.x;
-        const int ioffsety = targetTile->mTileLocation.y - locationArea.y;
+        const int ioffsetx = targetTile->mLocation.x - locationArea.x;
+        const int ioffsety = targetTile->mLocation.y - locationArea.y;
         const int ioffset = (ioffsety * 3) + ioffsetx;
 
         cxx_assert(ioffset >= 0 && ioffset <= 8);

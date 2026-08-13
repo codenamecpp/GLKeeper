@@ -16,6 +16,7 @@ public:
     public:
         // common
         std::string mGameRootFolder;
+        std::string mLanguage; // text folder name, optional
         // graphics
         Point2D mScreenResolution;
         bool mEnableVSync = true;

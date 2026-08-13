@@ -3,8 +3,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "EntityDefs.h"
-#include "EntityNotification.h"
-#include "GameSessionAware.h"
+#include "EntityMsg.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -15,7 +14,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-class Entity: protected GameSessionAware
+class Entity: public cxx::noncopyable
 {
 public:
 
@@ -48,9 +47,9 @@ public:
     }
     inline cxx::angle_t GetOrientation() const { return mTransform.mOrientation; }
 
-    // generic notification
-    virtual void Notify(const EntityNotification& notificationData) 
-    { 
+    // handle message
+    virtual void ReceiveMsg(EntityMsg& msgData) 
+    {
     }
 
 protected:
@@ -121,6 +120,12 @@ protected:
     EnableEntityComponents() {}
     ~EnableEntityComponents() {}
 
+    // pool
+    inline void OnRecycle()
+    {
+        mComponents = {};
+    }
+
 protected:
     TComponentsList mComponents;
 };
@@ -155,6 +160,12 @@ public:
 protected:
     EnableEntityCapabilities() {}
     ~EnableEntityCapabilities() {}
+
+    // pool
+    inline void OnRecycle()
+    {
+        mCapabilities = {};
+    }
 
 protected:
     TCapabilitiesList mCapabilities;

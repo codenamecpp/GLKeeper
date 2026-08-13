@@ -4,5 +4,6 @@
 
 class Physics;
 class PhysicsObject;
+using PhysicsObjectPtr = cxx::uniqueptr<PhysicsObject>;
 
 //////////////////////////////////////////////////////////////////////////

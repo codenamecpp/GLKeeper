@@ -19,8 +19,8 @@ void RoomTileConstructor_HeroGateFrontend::ConstructRoomFloor(Room* roomInstance
 
     for (MapTile* targetTile: floorTiles)
     {
-        int tilex = targetTile->mTileLocation.x - locationArea.x;
-        int tiley = targetTile->mTileLocation.y - locationArea.y;
+        int tilex = targetTile->mLocation.x - locationArea.x;
+        int tiley = targetTile->mLocation.y - locationArea.y;
         if (tiley > 4)
         {
             tilex = 0;

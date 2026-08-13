@@ -6,6 +6,9 @@
 #include "MeshAssetManager.h"
 #include "GameMain.h"
 #include "GameObjectManager.h"
+#include "Scene.h"
+#include "GameSession.h"
+#include "EconomyService.h"
 
 void DebugToolsUi::DoUI(ImGuiIO& imguiContext, float deltaTime)
 {
@@ -115,12 +118,12 @@ void DebugToolsUi::DoCheatsTab(ImGuiIO& imguiContext)
 
     if (ImGui::Button("Spawn Chicken"))
     {
-        EntityHandle objectHandle = GetObjectManager().CreateObject(GameObjectClassId_Chicken);
-        if (GameObject* gameObject = GetObjectManager().GetObjectPtr(objectHandle))
+        EntityHandle objectHandle = gGameObjectManager.CreateObject(GameObjectClassId_Chicken);
+        if (GameObject* gameObject = gGameObjectManager.GetObjectPtr(objectHandle))
         {
             gameObject->SetPosition({4.0f, 1.0f, 18.0f});
         }
-        GetObjectManager().ActivateObject(objectHandle);
+        gGameObjectManager.ActivateObject(objectHandle);
     }
 
     
@@ -136,7 +139,7 @@ void DebugToolsUi::EnableMeshPreview()
     // create mesh preview object
     if (mPreviewMeshObject == nullptr)
     {
-        mPreviewMeshObject = GetScene().CreateAnimatingMesh();
+        mPreviewMeshObject = gScene.CreateAnimatingMesh();
         cxx_assert(mPreviewMeshObject);
         mPreviewMeshObject->SetObjectActive(true);
     }
@@ -517,7 +520,7 @@ void DebugToolsUi::DoArtResourceDef(ImGuiIO& imguiContext, const ArtResourceDefi
 
 void DebugToolsUi::SetupScenarioDefs()
 {
-    const ScenarioDefinition& scenarioData = GetScenarioDefinition();
+    const ScenarioDefinition& scenarioData = gGameSession.GetScenarioDefinition();
     mObjectDefsList = scenarioData.mGameObjectDefs;
     mCreatureDefsList = scenarioData.mCreatureDefs;
 }
@@ -543,11 +546,11 @@ void DebugToolsUi::ChangeGoldAmount(long amount)
 
     if (amount > 0)
     {
-        GetEconomyService().GiveResource(GetGameSession().GetLocalPlayer(), eGameResource_Gold, amount);
+        gEconomyService.GiveResource(gGameSession.GetLocalPlayer(), eGameResource_Gold, amount);
     }
     else
     {
-        GetEconomyService().TakeResource(GetGameSession().GetLocalPlayer(), eGameResource_Gold, -amount);
+        gEconomyService.TakeResource(gGameSession.GetLocalPlayer(), eGameResource_Gold, -amount);
     }
 }
 

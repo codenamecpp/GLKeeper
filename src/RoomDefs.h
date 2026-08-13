@@ -86,6 +86,8 @@ public:
     EntityHandle mObjectHandle {}; // will be set after evaluation
 };
 
+using RoomFurnitureSlots = std::vector<RoomFurnitureSlot>;
+
 //////////////////////////////////////////////////////////////////////////
 
 struct RoomStorageSlot

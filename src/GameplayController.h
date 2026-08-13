@@ -66,7 +66,7 @@ private:
     bool GetTerrainSelectionArea(MapArea2D* selectionArea) const;
     void OnInteractionModeChanged();   
     void HandleInteractionOnArea(const MapArea2D& tilesArea);
-    bool HandleTagTerrain(const MapArea2D& tilesArea);
+    bool HandleTagForDigging(const MapArea2D& tilesArea);
 
     void HandleSingleTileInteraction();
     void HandleSingleTileInteractionAlt();

@@ -6,13 +6,12 @@
 #include "LoadingScreenView.h"
 #include "TitleScreenView.h"
 #include "TestScreenView.h"
-#include "GameSession.h"
 #include "GameSessionDefs.h"
-#include "GameEventBus.h"
+#include "GameEvent.h"
 
 //////////////////////////////////////////////////////////////////////////
 
-class GameMain: private GameLoadingAware, private GameEventListener
+class GameMain: private GameEventListener, private GameLoadingAware
 {
 public:
     // one-time initialization/deinitialization
@@ -32,12 +31,6 @@ public:
     void Terminate();
 
     inline eGamestate GetCurrentGamestate() const { return mCurrentGamestate; }
-
-    // accessing game events bus
-    inline GameEventBus& GetEventsBus() { return mEventBus; }
-
-    // accessing current session
-    inline GameSession& GetGameSession() { return mGameSession; }
 
     // Common processing
     void UpdateFrame();
@@ -79,12 +72,8 @@ private:
 private:
     bool mQuitRequested = false;
 
-    GameEventBus mEventBus;
-
     // gamestates
     eGamestate mCurrentGamestate = eGamestate::None;
-
-    GameSession mGameSession;
 
     // screens
     ConsoleScreenView mConsoleScreen;

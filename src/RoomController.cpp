@@ -29,17 +29,17 @@ void RoomController::UpdateLogic(float stepDeltaTime)
 
 }
 
-void RoomController::EvaluateFloorFurniture(FurnitureEvaluationResult& evaluation)
+void RoomController::EvaluateFloorFurniture(RoomFurnitureSlots& evaluation)
 {
 
 }
 
-void RoomController::EvaluateWallFurniture(FurnitureEvaluationResult& evaluation)
+void RoomController::EvaluateWallFurniture(RoomFurnitureSlots& evaluation)
 {
 
 }
 
-void RoomController::EvaluatePillars(FurnitureEvaluationResult& evaluation)
+void RoomController::EvaluatePillars(RoomFurnitureSlots& evaluation)
 {
     if (GetRoomPillarObjectId() == GameObjectClassId_Null) 
         return;
@@ -47,7 +47,7 @@ void RoomController::EvaluatePillars(FurnitureEvaluationResult& evaluation)
     for (MapTile* currentTile: mPillarTiles)
     {
         RoomFurnitureSlot& objectSlot = evaluation.emplace_back();
-        objectSlot.mTileLocation = currentTile->mTileLocation;
+        objectSlot.mTileLocation = currentTile->mLocation;
         objectSlot.mObjectClassId = GetRoomPillarObjectId();
         // rotate
         // 1. top-left / top-right corner
@@ -116,7 +116,7 @@ void RoomController::ReevaluatePillarTiles()
             if (CheckForRoomCorner(neighbourTile))
             {
                 mPillarTiles.push_back(neighbourTile);
-                GetGameWorld().InvalidateTile(neighbourTile);
+                gGameWorld.InvalidateTile(neighbourTile);
             }
         }
     }

@@ -1,8 +1,13 @@
 #pragma once
 
+//////////////////////////////////////////////////////////////////////////
+
 #include "GameDefs.h"
 #include "GameMapDefs.h"
 #include "ScenarioDefs.h"
+#include "PlayerDefs.h"
+
+//////////////////////////////////////////////////////////////////////////
 
 // Tile transformations used during geometry building
 
@@ -80,22 +85,35 @@ class MapTile
 public:
     MapTile();
 
-    // Test whether tile base terrain type is water or lava
+    // Whether tile base terrain type is water or lava
     inline bool IsBaseTerrainWaterOrLava() const 
     { 
         const TerrainDefinition* tileBaseTerrain = GetBaseTerrain();
         return tileBaseTerrain->mIsLava || tileBaseTerrain->mIsWater; 
     }
 
-    // Test whether tile is solid block (ie has walls)
-    inline bool IsTerrainSolid() const 
+    // Whether tile is solid block (ie has walls)
+    inline bool IsSolidBlock() const 
     { 
         const TerrainDefinition* tileTerrain = GetTerrain();
         return tileTerrain->mIsSolid; 
     }
 
+    // Whether gold can be mined from tile
+    inline bool IsMoneySource() const
+    {
+        const TerrainDefinition* tileTerrain = GetTerrain();
+        return tileTerrain->mIsSolid && (tileTerrain->mGoldValue > 0);
+    }
+
+    inline bool IsImpenetrable() const
+    {
+        const TerrainDefinition* tileTerrain = GetTerrain();
+        return tileTerrain->mIsImpenetrable;
+    }
+
     // Test whether walls could be overriden by rooms
-    inline bool IsTerrainAllowRoomWalls() const 
+    inline bool IsAllowRoomWalls() const 
     { 
         const TerrainDefinition* tileTerrain = GetTerrain();
         return tileTerrain->mAllowRoomWalls; 
@@ -110,6 +128,8 @@ public:
         }
         return false;
     }
+
+    inline bool HasOwner(ePlayerID playerId) const { return mOwnerId == playerId; }
 
     // Test whether map tiles has same terrain type
     inline bool SameTileTerrainType(const MapTile* targetTile) const
@@ -165,23 +185,32 @@ public:
     inline bool SameNeighbourOwner(eDirection direction) const
     {
         cxx_assert(direction < eDirection_COUNT);
-        return mNeighbours[direction] && (mNeighbours[direction]->mOwnerID == mOwnerID);
+        return mNeighbours[direction] && mNeighbours[direction]->HasOwner(mOwnerId);
     }
 
     // Test whether neighbour tile is exists and it is solid
     inline bool NeighbourTileSolid(eDirection direction) const
     {
-        return mNeighbours[direction] && mNeighbours[direction]->IsTerrainSolid();
+        return mNeighbours[direction] && mNeighbours[direction]->IsSolidBlock();
     }
 
-    // Get base terrain type
     inline TerrainDefinition* GetBaseTerrain() const { return mBaseTerrain; }
-
-    // Get overriden terrain type
     inline TerrainDefinition* GetTerrain() const 
     {
-        return mTerrain ? mTerrain : mBaseTerrain;
+        return mRoomTerrain ? mRoomTerrain : mBaseTerrain;
     }
+
+    void SetBaseTerrain(TerrainDefinition* terrainDef);
+    void SetRoomTerrain(TerrainDefinition* terrainDef);
+
+    inline int GetHitPoints() const { return mHitPoints; }
+    inline int GetHitPointsMax() const 
+    {
+        const TerrainDefinition* terrainDef = GetTerrain();
+        return terrainDef->mHealthMax;
+    }
+    int ChangeHitPoints(int deltaHitpoints);
+    void RestoreHitPoints();
 
     // Get tile side by direction
     // @param direction: Direction, must be one of N,E,S,W
@@ -217,6 +246,22 @@ public:
         return tileface && tileface->mWallExtendsRoom;
     }
 
+    inline bool IsTaggedForDigging(ePlayerID playerId) const
+    {
+        return mTaggedByPlayers.Contains(playerId);
+    }
+
+    inline void SetTaggedForDigging(ePlayerID playerId, bool isTagged)
+    {
+        if (isTagged) { mTaggedByPlayers.Include(playerId); } else { mTaggedByPlayers.Exclude(playerId); }
+    }
+
+    inline MapAreaCode GetAreaCode(ePassabilityType passabilityType) const
+    {
+        cxx_assert(passabilityType < ePassabilityType_COUNT);
+        return mAreaCode[passabilityType];
+    }
+
     // Reset mesh geometries for specified tile face
     void ClearTileMesh(eTileFace meshFace);
 
@@ -226,26 +271,32 @@ public:
     // set floor heightmap data to default floor level
     void ClearFloorHeightmap();
 
+    void ClearAreaCode();
+
+private:
+    TerrainDefinition* mBaseTerrain; // base terrain type, cannot be null
+    TerrainDefinition* mRoomTerrain; // overrides the base terrain type when placing a room on the tile, optional
+
 public:
-    MapPoint2D mTileLocation; // logical location of tile
-
-    TerrainDefinition* mBaseTerrain; // used to determine base terrain type, cannot be null
-    TerrainDefinition* mTerrain; // override base terrain type, can be null
-
-    ePlayerID mOwnerID;
+    MapTile* mNeighbours[eDirection_COUNT];
 
     Room* mRoomInstance; // room built on that tile
 
-    MapTile* mNeighbours[eDirection_COUNT];
+    ePlayerID mOwnerId;
 
+    MapPoint2D mLocation; // logical tile coordinate
     TileFaceData mFaces[eTileFace_COUNT];
     TileHeightmap mFloorHeightmap;
 
     unsigned int mRandomValue = 0; // affects on visuals only
     unsigned int mFloodFillCounter = 0; // gets modified on each flood fill operation
+    int mHitPoints = 100;
+
+    MapAreaCode mAreaCode[ePassabilityType_COUNT];
+
+    PlayerIdSet mTaggedByPlayers;
 
     // these flags is valid only if tile is a part of room
-    bool mIsTagged;
     bool mIsRoomInnerTile; // tile is center of 3x3 square of room
-    bool mIsRoomEntrance;
+    bool mIsRoomEntrance;    
 }; 

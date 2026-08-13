@@ -3,10 +3,11 @@
 #include "ToolsUiManager.h"
 #include "MeshAssetManager.h"
 #include "TileConstructor.h"
-#include "GameSessionAware.h"
 #include "GameWorld.h"
 #include "GameSession.h"
 #include "GameEventBus.h"
+#include "GameMap.h"
+#include "Scene.h"
 
 GameplayController::GameplayController()
     : mHUDScreen(*this)
@@ -26,12 +27,12 @@ void GameplayController::OnSessionLoaded()
 
 void GameplayController::OnSessionStart()
 {
-    Player& localPlayer = GetGameSession().GetLocalPlayer();
+    Player& localPlayer = gGameSession.GetLocalPlayer();
 
     glm::vec3 cameraTileCoord = MapUtils::ComputeTileCenter(localPlayer.GetStartCameraTilePosition());
-    cameraTileCoord[1] = 8.0f; // height
+    cameraTileCoord[1] = 7.0f; // height
     mWorldViewCamera.SetStartPosition(cameraTileCoord);
-    mWorldViewCamera.CaptureCamera(&GetGameWorld().GetMainCamera());
+    mWorldViewCamera.CaptureCamera(&gScene.GetCamera());
     if (!mHUDScreen.IsActive())
     {
         mHUDScreen.Activate();
@@ -42,7 +43,7 @@ void GameplayController::OnSessionStart()
 
     // listen game events
     {
-        GameEventBus& eventBus = GetGameEventBus();
+        GameEventBus& eventBus = gGameEventBus;
         eventBus.Subscribe(eGameEvent_ResourceAmountChanged, this);
     }
 }
@@ -65,7 +66,7 @@ void GameplayController::OnSessionShutdown()
     mConstructTrapDef = nullptr;
     mSelectionStartTile = nullptr;
 
-    GetGameEventBus().Unsubscribe(this);
+    gGameEventBus.Unsubscribe(this);
 }
 
 void GameplayController::UpdateFrame(float deltaTime)
@@ -145,7 +146,7 @@ void GameplayController::InputEvent(KeyInputEvent& inputEvent)
 
     if (inputEvent.IsKeyPressed(KEYCODE_ESCAPE))
     {
-        GetGameEventBus().Send_ReturnToFrontendRequest();
+        gGameEventBus.Send_ReturnToFrontendRequest();
         inputEvent.SetConsumed();
     }
 }
@@ -182,16 +183,16 @@ void GameplayController::ScanHoveredTile()
 
     Point2D mouseScreenPos { gInputs.mCursorPositionX, gInputs.mCursorPositionY };
     cxx::ray3d_t ray3d;
-    if (!GetGameWorld().CastRayFromScreenPoint(mouseScreenPos, ray3d))
+    if (!gGameWorld.CastRayFromScreenPoint(mouseScreenPos, ray3d))
         return; // failed
     
     float distanceNear;
     float distanceFar;
 
-    if (!cxx::intersects(GetGameWorld().GetGameMap().mBoundingBox, ray3d, distanceNear, distanceFar))
+    if (!cxx::intersects(gGameMap.mBoundingBox, ray3d, distanceNear, distanceFar))
         return; // not intersected
  
-    mHoveredTile = GetGameWorld().GetGameMap().GetTileAtPosition(ray3d.mOrigin + ray3d.mDirection * distanceNear);
+    mHoveredTile = gGameMap.GetTileAtPosition(ray3d.mOrigin + ray3d.mDirection * distanceNear);
 }
 
 bool GameplayController::GetTerrainSelectionArea(MapArea2D* selectionArea) const
@@ -201,21 +202,21 @@ bool GameplayController::GetTerrainSelectionArea(MapArea2D* selectionArea) const
 
     if (mSelectionStartTile && mSelectionStartTile != mHoveredTile)
     {
-        const int CX = glm::clamp(mSelectionStartTile->mTileLocation.x - mHoveredTile->mTileLocation.x, 
+        const int CX = glm::clamp(mSelectionStartTile->mLocation.x - mHoveredTile->mLocation.x, 
             -MAX_TILE_SELECTION_RECT_WIDE + 1, MAX_TILE_SELECTION_RECT_WIDE - 1);
 
-        const int CY = glm::clamp(mSelectionStartTile->mTileLocation.y - mHoveredTile->mTileLocation.y, 
+        const int CY = glm::clamp(mSelectionStartTile->mLocation.y - mHoveredTile->mLocation.y, 
             -MAX_TILE_SELECTION_RECT_WIDE + 1, MAX_TILE_SELECTION_RECT_WIDE - 1);
 
-        selectionArea->x = std::min(mSelectionStartTile->mTileLocation.x, mSelectionStartTile->mTileLocation.x - CX);
-        selectionArea->y = std::min(mSelectionStartTile->mTileLocation.y, mSelectionStartTile->mTileLocation.y - CY);
+        selectionArea->x = std::min(mSelectionStartTile->mLocation.x, mSelectionStartTile->mLocation.x - CX);
+        selectionArea->y = std::min(mSelectionStartTile->mLocation.y, mSelectionStartTile->mLocation.y - CY);
         selectionArea->w = std::abs(CX) + 1;
         selectionArea->h = std::abs(CY) + 1;
     }
     else
     {
-        selectionArea->x = mHoveredTile->mTileLocation.x;
-        selectionArea->y = mHoveredTile->mTileLocation.y;
+        selectionArea->x = mHoveredTile->mLocation.x;
+        selectionArea->y = mHoveredTile->mLocation.y;
         selectionArea->w = 1;
         selectionArea->h = 1;
     }
@@ -227,11 +228,11 @@ void GameplayController::OnSelectionChanged()
     MapArea2D selectionArea;
     if (NeedToShowSelection() && GetTerrainSelectionArea(&selectionArea))
     {
-        GetGameWorld().GetTileSelectionOutline().UpdateSelection(selectionArea);
+        gGameWorld.GetTileSelectionOutline().UpdateSelection(selectionArea);
     }
     else
     {
-        GetGameWorld().GetTileSelectionOutline().ClearSelection();
+        gGameWorld.GetTileSelectionOutline().ClearSelection();
     }
 }
 
@@ -362,23 +363,17 @@ void GameplayController::OnInteractionModeChanged()
 {
     mHUDScreen.UpdateHUDState();
 
-    GetGameWorld().GetTileSelectionOutline().SetSelectionTint((mInteraction == eMapInteractionMode_Sell) ?
+    gGameWorld.GetTileSelectionOutline().SetSelectionTint((mInteraction == eMapInteractionMode_Sell) ?
         TileSelectionOutline::SelectionTint::Dangerous : 
         TileSelectionOutline::SelectionTint::Neutral);
 }
 
-bool GameplayController::HandleTagTerrain(const MapArea2D& tilesArea)
+bool GameplayController::HandleTagForDigging(const MapArea2D& tilesArea)
 {
-    if (mSelectionStartTile && mSelectionStartTile->IsTerrainSolid())
+    if (mSelectionStartTile && mSelectionStartTile->IsSolidBlock())
     {
-        if (mSelectionStartTile->mIsTagged)
-        {
-            GetGameWorld().UnTagTerrain(tilesArea);
-        }
-        else
-        {
-            GetGameWorld().TagTerrain(tilesArea);
-        }
+        bool wasTagged = mSelectionStartTile->IsTaggedForDigging(gGameSession.GetLocalPlayerId());
+        gGameWorld.TagTilesForDigging(tilesArea, gGameSession.GetLocalPlayerId(), !wasTagged);
         return true;
     }
     return false;
@@ -388,7 +383,7 @@ void GameplayController::HandleInteractionOnArea(const MapArea2D& tilesArea)
 {
     if (mInteraction == eMapInteractionMode_Free)
     {
-        if (HandleTagTerrain(tilesArea))
+        if (HandleTagForDigging(tilesArea))
             return;
 
         return;
@@ -396,16 +391,16 @@ void GameplayController::HandleInteractionOnArea(const MapArea2D& tilesArea)
 
     if (mInteraction == eMapInteractionMode_Build)
     {
-        if (HandleTagTerrain(tilesArea))
+        if (HandleTagForDigging(tilesArea))
             return;
 
-        GetGameWorld().ConstructRoom(ePlayerID_Keeper1, mConstructRoomDef, tilesArea);
+        gGameWorld.ConstructRoom(gGameSession.GetLocalPlayerId(), mConstructRoomDef, tilesArea);
         return;
     }
 
     if (mInteraction == eMapInteractionMode_Sell)
     {
-        GetGameWorld().SellEntities(ePlayerID_Keeper1, tilesArea);
+        gGameWorld.SellEntities(gGameSession.GetLocalPlayerId(), tilesArea);
         return;
     }
 }
@@ -417,7 +412,7 @@ void GameplayController::HandleSingleTileInteraction()
 
     if (mInteraction == eMapInteractionMode_Dig)
     {
-        GetGameWorld().RepairTile(mHoveredTile, ePlayerID_Keeper1, 999999);
+        gGameWorld.RepairTile(mHoveredTile, gGameSession.GetLocalPlayerId(), 999999);
         return;
     }
 }
@@ -429,7 +424,7 @@ void GameplayController::HandleSingleTileInteractionAlt()
 
     if (mInteraction == eMapInteractionMode_Dig)
     {
-        GetGameWorld().DamageTile(mHoveredTile, ePlayerID_Keeper1, 999999);
+        gGameWorld.DamageTile(mHoveredTile, gGameSession.GetLocalPlayerId(), 999999);
         return;
     }
 }

@@ -7,13 +7,25 @@
 #include "PhysicsObject.h"
 #include "GameWorld.h"
 #include "Physics.h"
+#include "GameMap.h"
+#include "CreatureTaskManager.h"
+#include "CreatureTask.h"
+
+Creature::Creature()
+{
+}
+
+Creature::~Creature()
+{
+    cxx_assert(mAssignedTask == nullptr);
+}
 
 void Creature::ConfigureInstance(EntityUid instanceUid, CreatureController* controller, CreatureDefinition* definition, ePlayerID owner)
 {
     mInstanceUid = instanceUid;
 
-    mOwnerID = owner;
-    cxx_assert(mOwnerID != ePlayerID_Null);
+    mOwnerId = owner;
+    cxx_assert(mOwnerId != ePlayerID_Null);
 
     cxx_assert((mDefinition == nullptr) && definition);
     mDefinition = definition;
@@ -33,9 +45,12 @@ void Creature::SpawnInstance()
     cxx_assert(!mLifecycleFlags.mWasDespawned);
     cxx_assert(!mLifecycleFlags.mWasDeleted);
 
-    if (mLifecycleFlags.mWasSpawned) return;
+    if (mLifecycleFlags.mWasSpawned) 
+        return;
 
-    mOwnHandle = GetCreatureManager().FindCreature(mInstanceUid);
+    mLifecycleFlags.mWasSpawned = true;
+
+    mOwnHandle = gCreatureManager.FindCreature(mInstanceUid);
 
     EnableMeshObject(true);
     
@@ -52,25 +67,30 @@ void Creature::SpawnInstance()
         mController->SpawnInstance();
     }
 
-    mLifecycleFlags.mWasSpawned = true;
+    if (mCurrState == nullptr)
+    {
+        SelectState();
+    }
 }
 
 void Creature::DespawnInstance()
 {
     cxx_assert(mLifecycleFlags.mWasSpawned);
 
-    if (mLifecycleFlags.mWasDespawned) return;
+    if (mLifecycleFlags.mWasDespawned)
+        return;
+
+    ChangeState(eCreatureState_None);
+    mCurrState.reset();
+    mPrevState.reset();
 
     if (mController)
     {
         mController->DespawnInstance();
     }
 
-    mOwnerID = ePlayerID_Null;
+    mOwnerId = ePlayerID_Null;
     mOwnHandle = {};
-
-    mCurrentActivity.reset();
-    mRequestActivity.reset();
 
     mLocomotion.ResetToDefaults();
     mLocomotion.ClearGoals();
@@ -78,11 +98,24 @@ void Creature::DespawnInstance()
     EnablePhysics(false);
     EnableMeshObject(false);
 
+    UnassignCurrentTask();
+
     mLifecycleFlags.mWasDespawned = true;
 }
 
 void Creature::UpdateLogic(float stepDeltaTime)
 {
+    // advance current state
+    if (mCurrState)
+    {
+        mCurrState->UpdateLogic(stepDeltaTime);
+    }
+  
+    if (mCurrState == nullptr)
+    {
+        SelectState();
+    }
+
     if (mController)
     {
         mController->UpdateLogic(stepDeltaTime);
@@ -98,11 +131,11 @@ void Creature::UpdatePhysics(float stepDeltaTime)
         // notify self
         if (mLocomotion.HasGoals())
         {
-            Notify(EntityNotification::ForLocoApplyVelocities(velocities.mLinearVelocity, velocities.mAngularVelocity));
+            ReceiveMsg(EntityMsg_LocoApplyVelocities{velocities.mLinearVelocity, velocities.mAngularVelocity});
         }
         else
         {
-            Notify(EntityNotification::ForLocoClearVelocities());
+            ReceiveMsg(EntityMsg_LocoClearVelocities{});
         }
     }
 }
@@ -141,7 +174,7 @@ void Creature::SetPosition(const glm::vec2& position)
 
 void Creature::SnapPositionToFloor(bool withRespectToMeshBounds)
 {
-    float floorHeight = GetGameWorld().GetGameMap().GetFloorHeightAt(mTransform.mPosition);
+    float floorHeight = gGameMap.GetFloorHeightAt(mTransform.mPosition);
 
     if (withRespectToMeshBounds)
     {
@@ -205,6 +238,63 @@ const cxx::aabbox& Creature::GetMeshWorldBounds() const
     return nullBounds;
 }
 
+long Creature::GetMoneyCarried() const
+{
+    long resultAmount = 0;
+    if (const MoneyComponent* moneyComponent = GetComponent<MoneyComponent>())
+    {
+        resultAmount = moneyComponent->mAmount;
+    }
+    return resultAmount;
+}
+
+bool Creature::CanCarryMoreMoney() const
+{
+    bool canCarryMore = false;
+    if (const MoneyComponent* moneyComponent = GetComponent<MoneyComponent>())
+    {
+        canCarryMore = moneyComponent->mAmount < moneyComponent->mCapacity;
+    }
+    return canCarryMore;
+}
+
+long Creature::ReceiveMoney(long moneyAmount, long& leftoverAmount)
+{
+    long currentAmount = 0;
+    long previousAmount = 0;
+    cxx_assert(moneyAmount > 0);
+    if (MoneyComponent* moneyComponent = GetComponent<MoneyComponent>())
+    {
+        previousAmount = moneyComponent->mAmount;
+        if (moneyAmount > 0)
+        {
+            cxx_assert(moneyComponent->mCapacity > 0);
+            currentAmount = std::clamp<long>(previousAmount + moneyAmount, 0, moneyComponent->mCapacity);
+            moneyComponent->mAmount = currentAmount;
+        }
+        else
+        {
+            currentAmount = previousAmount;
+        }
+    }
+    leftoverAmount = moneyAmount - (currentAmount - previousAmount);
+    return currentAmount;
+}
+
+long Creature::WithdrawMoney(long moneyAmount)
+{
+    long currentAmount = 0;
+    long previousAmount = 0;
+    cxx_assert(moneyAmount > 0);
+    if (MoneyComponent* moneyComponent = GetComponent<MoneyComponent>())
+    {
+        previousAmount = moneyComponent->mAmount;
+        currentAmount = std::clamp<long>(previousAmount - moneyAmount, 0, moneyComponent->mCapacity);
+        moneyComponent->mAmount = currentAmount;
+    }
+    return currentAmount;
+}
+
 void Creature::MarkDeleted()
 {
     mLifecycleFlags.mWasDeleted = true;
@@ -213,12 +303,24 @@ void Creature::MarkDeleted()
 void Creature::OnRecycle()
 {
     Entity::OnRecycle();
+    EnableEntityComponents::OnRecycle();
 
     mController = nullptr;
     mDefinition = nullptr;
 
+    cxx_assert(mPrevState == nullptr);
+    mPrevState.reset();
+
+    cxx_assert(mCurrState == nullptr);
+    mCurrState.reset();
+
     cxx_assert(mPhysicsObject == nullptr);
     mPhysicsObject = nullptr;
+
+    cxx_assert(mAssignedTask == nullptr);
+    mAssignedTask = nullptr;
+
+    mLastAssignedJob = {};
 
     mLocomotion.ResetToDefaults();
     mLocomotion.ClearGoals();
@@ -229,7 +331,8 @@ void Creature::OnRecycle()
 void Creature::EnableMeshObject(bool isEnabled)
 {
     bool wasEnabled = (mMeshObject != nullptr);
-    if (wasEnabled == isEnabled) return;
+    if (wasEnabled == isEnabled) 
+        return;
 
     // cleanup
     if (wasEnabled)
@@ -241,7 +344,7 @@ void Creature::EnableMeshObject(bool isEnabled)
     }
 
     // init mesh
-    mMeshObject = GetScene().CreateAnimatingMesh();
+    mMeshObject = gScene.CreateAnimatingMesh();
     cxx_assert(mMeshObject);
 
     if (mMeshObject)
@@ -263,31 +366,33 @@ void Creature::EnableMeshObject(bool isEnabled)
 void Creature::EnablePhysics(bool isEnabled)
 {
     bool wasEnabled = (mPhysicsObject != nullptr);
-    if (wasEnabled == isEnabled) return;
+    if (wasEnabled == isEnabled) 
+        return;
 
     if (wasEnabled)
     {
         // cleanup
-        GetGameWorld().GetPhysics().DetachUser(this);
+        gPhysics.DetachUser(this);
         mPhysicsObject = nullptr;
 
         return;
     }
 
     // init physics
-    GetGameWorld().GetPhysics().AttachUser(this);
+    gPhysics.AttachUser(this);
 
-    mPhysicsObject = GetGameWorld().GetPhysics().GetPhysicsObject(this);
+    mPhysicsObject = gPhysics.GetPhysicsObject(this);
     cxx_assert(mPhysicsObject);
     mPhysicsObject->ClearAngularVelocity();
     mPhysicsObject->ClearLinearVelocity();
 }
 
-void Creature::Notify(const EntityNotification& notificationData)
+void Creature::ReceiveMsg(EntityMsg& msgData)
 {
-    if (WasDeleted()) return;
+    if (WasDeleted()) 
+        return;
 
-    if (notificationData.mID == EntityNotification::eID_SyncWithPhysicsTransform)
+    if (msgData.Is(EntityMsg::eID_SyncWithPhysicsTransform))
     {
         if (mPhysicsObject)
         {
@@ -299,56 +404,257 @@ void Creature::Notify(const EntityNotification& notificationData)
                 mMeshObject->RotateAroundAxis(WorldAxes::Y, mTransform.mOrientation);
             }
         }
+        msgData.SetConsumed();
         return;
     }
 
-    if (mController)
-    {
-        mController->HandleNotification(notificationData);
-    }
-
-    if (notificationData.mID == EntityNotification::eID_LocoApplyVelocities)
+    if (msgData.Is(EntityMsg::eID_LocoApplyVelocities))
     {
         if (mPhysicsObject)
         {
-            mPhysicsObject->SetLinearVelocity(notificationData.mLocoVelocities.mLinear);
-            mPhysicsObject->SetAngularVelocity(notificationData.mLocoVelocities.mAngular);
+            mPhysicsObject->SetLinearVelocity(msgData.mLocoVelocities.mLinear);
+            mPhysicsObject->SetAngularVelocity(msgData.mLocoVelocities.mAngular);
         }
-        return;
+        msgData.SetConsumed();
     }
 
-    if (notificationData.mID == EntityNotification::eID_LocoClearVelocities)
+    if (msgData.Is(EntityMsg::eID_LocoClearVelocities))
     {
         if (mPhysicsObject)
         {
             mPhysicsObject->ClearLinearVelocity();
             mPhysicsObject->ClearAngularVelocity();
         }
+        msgData.SetConsumed();
+    }
+
+    if (mCurrState)
+    {
+        mCurrState->ReceiveMsg(msgData);
+    }
+
+    if (mController)
+    {
+        mController->HandleMessage(msgData);
+    }
+}
+
+ePassabilityType Creature::GetPassabilityType() const
+{
+    ePassabilityType passabilityType = ePassabilityType_Land;
+    if (mDefinition)
+    {
+        if (mDefinition->mCanWalkOnWater || mDefinition->mCanWalkOnLava)
+        {
+            // assuming that there is no such case when creature can walk on lava but cannot walk on water
+            passabilityType = mDefinition->mCanWalkOnLava ? 
+                ePassabilityType_Land_Any :  
+                ePassabilityType_Land_Water;
+        }
+    }
+    return passabilityType;
+}
+
+void Creature::UnassignCurrentTask()
+{
+    mAssignedTask.reset();
+}
+
+void Creature::AssignTask(CreatureTaskPtr&& creatureTask)
+{
+    cxx_assert(creatureTask);
+    if (creatureTask == nullptr)
+        return;
+
+    cxx_assert(mAssignedTask != creatureTask);
+    if (mAssignedTask == creatureTask)
+        return;
+
+    UnassignCurrentTask();
+
+    mAssignedTask = std::move(creatureTask);
+    mLastAssignedJob = mAssignedTask->GetJobType();
+}
+
+void Creature::ChangeState(CreatureStatePtr&& creatureState)
+{
+    if ((mCurrState == nullptr) && (creatureState == nullptr))
+        return;
+
+    eCreatureState prevState = eCreatureState_None;
+    eCreatureState nextState = eCreatureState_None;
+
+    if (creatureState)
+    {
+        nextState = creatureState->GetStateId();
+    }
+
+    // shutdown current state
+    if (mCurrState)
+    {
+        prevState = mCurrState->GetStateId();
+        cxx_assert(prevState != nextState);
+
+        mPrevState.reset();
+        mPrevState.swap(mCurrState);
+
+        if (mPrevState)
+        {
+            mPrevState->LeaveState(nextState);
+        }
+    }
+
+    // sanity check
+    cxx_assert(mCurrState == nullptr);
+
+    if (mCurrState)
+        return;
+
+    mCurrState.swap(creatureState);
+    if (mCurrState)
+    {
+        mCurrState->Configure(this);
+        mCurrState->EnterState(prevState);
+    }
+}
+
+void Creature::ChangeState(eCreatureState stateId)
+{
+    CreatureStatePtr newState;
+    if (stateId != eCreatureState_None)
+    {
+        newState = gCreatureManager.CreateState(this, stateId);
+    }
+    ChangeState(std::move(newState));
+}
+
+void Creature::SelectState()
+{
+    if (mCurrState)
+        return;
+
+    if (mAssignedTask)
+    {
+        ChangeState(eCreatureState_Working);
         return;
     }
+
+    // default
+    ChangeState(eCreatureState_Idle);
 }
 
-void Creature::ClearCurrentActivity()
+bool Creature::SelectBestTask()
 {
-    mCurrentActivity.reset();
-}
+    // todo: refactore
 
-void Creature::ClearRequestActivity()
-{
-    mRequestActivity.reset();
-}
+    CreatureTaskPtr assignTask;
 
-void Creature::SwitchToRequestActivity()
-{
-    mRequestActivity.swap(mCurrentActivity);
-    mRequestActivity.reset();
-}
-
-void Creature::CancelCurrentActivity()
-{
-    if (CreatureActivity* currentActivity = GetCurrentActivity())
+    const CreatureDefinition* creatureDefs = GetDefinition();
+    if (creatureDefs->mIsWorker)
     {
-        CreatureActivityUtils::SetCancellationStatus(*currentActivity);
+        // search for worker tasks
+
+        if (assignTask == nullptr)
+        {
+            assignTask = gCreatureTaskManager.GetClaimFloorTask(this);
+        }
+
+        if ((assignTask == nullptr) && !CanCarryMoreMoney())
+        {
+            assignTask = gCreatureTaskManager.GetCarryGoldToTreasuryTask(this);
+        }
+
+        if (assignTask == nullptr)
+        {
+            assignTask = gCreatureTaskManager.GetDiggingTask(this);
+        }
+
+        if (assignTask == nullptr)
+        {
+            assignTask = gCreatureTaskManager.GetMiningTask(this);
+        }
+
+        if (assignTask == nullptr)
+        {
+            assignTask = gCreatureTaskManager.GetReinforceWallTask(this);
+        }
     }
+
+    if (assignTask == nullptr)
+    {
+        assignTask = gCreatureTaskManager.GetWanderTask(this);
+    }
+
+    if (assignTask)
+    {
+        AssignTask(std::move(assignTask));
+        return true;
+    }
+
+    return false;
 }
 
+bool Creature::SelectTaskForJob(eCreatureJob jobType)
+{
+    if (jobType == eCreatureJob_None)
+        return false;
+
+    // todo: refactore
+
+    CreatureTaskPtr assignTask;
+
+    const CreatureDefinition* creatureDefs = GetDefinition();
+    if (creatureDefs->mIsWorker)
+    {
+        switch (jobType)
+        {
+            case eCreatureJob_Claim:
+            {
+                if (assignTask == nullptr)
+                {
+                    assignTask = gCreatureTaskManager.GetClaimFloorTask(this);
+                }
+            }
+            // fallthrough ->
+            case eCreatureJob_Mine:
+            case eCreatureJob_CarryGoldToTreasury:
+            {
+                if ((assignTask == nullptr) && (GetMoneyCarried() > 0))
+                {
+                    assignTask = gCreatureTaskManager.GetCarryGoldToTreasuryTask(this);
+                }
+
+                if (assignTask == nullptr)
+                {
+                    assignTask = gCreatureTaskManager.GetMiningTask(this);
+                }
+            }
+            // fallthrough ->
+            case eCreatureJob_Dig:
+            {
+                if (assignTask == nullptr)
+                {
+                    assignTask = gCreatureTaskManager.GetDiggingTask(this);
+                }
+            }
+            // fallthrough ->
+            case eCreatureJob_ReinforceWall:
+            {
+                if (assignTask == nullptr)
+                {
+                    assignTask = gCreatureTaskManager.GetReinforceWallTask(this);
+                }
+            }
+            // fallthrough ->
+            default: break;
+        }
+    }
+
+    if (assignTask)
+    {
+        AssignTask(std::move(assignTask));
+        return true;
+    }
+
+    return false;
+}

@@ -4,16 +4,13 @@
 
 #include "GameSessionDefs.h"
 #include "Player.h"
-#include "EconomyService.h"
-#include "GameWorld.h"
 #include "GameSessionController.h"
 
 //////////////////////////////////////////////////////////////////////////
 
-class GameSession: public cxx::noncopyable
+class GameSession final: public cxx::noncopyable
 {
 public:
-
     bool Preload(GameLoadingAware& loadingContext, const GameSessionStartupParams& startupParams);
     void StartSession();
     void ShutdownSession();
@@ -29,10 +26,10 @@ public:
     void InputEvent(MouseScrollInputEvent& inputEvent);
 
     // accessing players
-    inline ePlayerID GetLocalPlayerID() const { return ePlayerID_Keeper1; }
+    inline ePlayerID GetLocalPlayerId() const { return ePlayerID_Keeper1; }
     inline Player& GetLocalPlayer()
     {
-        const ePlayerID pid = GetLocalPlayerID();
+        const ePlayerID pid = GetLocalPlayerId();
         return mPlayers[pid];
     }
     inline cxx::span<Player> GetPlayers() { return mPlayers; }
@@ -41,14 +38,12 @@ public:
         return (pid < ePlayerID_COUNT) ? mPlayers[pid] : mPlayers[ePlayerID_Null];
     }
 
-    // accessing world
-    inline GameWorld& GetGameWorld() { return mGameWorld; }
-
-    // accessing enonomy service
-    inline EconomyService& GetEconomyService() { return mEconomyService; }
-
     // accessing scenario definitions
-    inline ScenarioDefinition& GetScenarioDefinition() { return mScenarioData; } 
+    inline ScenarioDefinition& GetScenarioDefinition() { return mScenarioData; }
+    inline const ScenarioVariables& GetScenarioVariables() const
+    {
+        return mScenarioData.mVariables;
+    }
 
 private:
     void ConfigurePlayers(const ScenarioDefinition& scenarioDefinition);
@@ -59,13 +54,14 @@ private:
 
     ScenarioDefinition mScenarioData;
 
-    EconomyService mEconomyService;
-
     eGameSessionState mSessionState = eGameSessionState_None;
     std::unique_ptr<GameSessionController> mSessionController;
 
     Player mPlayers[ePlayerID_COUNT];
-    GameWorld mGameWorld;
 };
+
+//////////////////////////////////////////////////////////////////////////
+
+extern GameSession gGameSession;
 
 //////////////////////////////////////////////////////////////////////////

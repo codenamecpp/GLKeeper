@@ -3,11 +3,10 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "GameObject.h"
-#include "GameSessionAware.h"
 
 //////////////////////////////////////////////////////////////////////////
 
-class GameObjectController: protected GameSessionAware
+class GameObjectController: public cxx::noncopyable
 {
 public:
     GameObjectController() = default;

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "TreasuryRoomController.h"
+#include "GameSession.h"
 
 TreasuryRoomController::TreasuryRoomController()
     : MoneyStorageRoomController()
@@ -10,7 +11,7 @@ void TreasuryRoomController::ConfigureInstance(Room* roomInstance)
 {
     MoneyStorageRoomController::ConfigureInstance(roomInstance);
 
-    const ScenarioVariables& vars = GetScenarioVariables();
+    const ScenarioVariables& vars = gGameSession.GetScenarioVariables();
     SetMoneyStorageMaxGoldPerTile(vars.mMaxGoldPerTreasuryTile);
 }
 
@@ -47,6 +48,6 @@ void TreasuryRoomController::EvaluateStorageTiles(StorageTilesEvaluationResult& 
     evaluationResult.reserve(floorTilesSpan.size());
     for (MapTile* rollerTile: floorTilesSpan)
     {
-        evaluationResult.push_back(rollerTile->mTileLocation);
+        evaluationResult.push_back(rollerTile->mLocation);
     }
 }

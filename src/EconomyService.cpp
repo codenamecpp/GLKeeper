@@ -4,6 +4,12 @@
 #include "GameEventBus.h"
 #include "RoomManager.h"
 
+//////////////////////////////////////////////////////////////////////////
+
+EconomyService gEconomyService;
+
+//////////////////////////////////////////////////////////////////////////
+
 void EconomyService::EnterWorld()
 {
     IssueStartingResources();
@@ -26,7 +32,7 @@ void EconomyService::UpdateLogic(float stepDeltaTime)
 
 long EconomyService::GiveResource(ePlayerID playerId, eGameResource resourceType, long resourceAmount)
 {
-    return GiveResource(GetGameSession().GetPlayer(playerId), resourceType, resourceAmount);
+    return GiveResource(gGameSession.GetPlayer(playerId), resourceType, resourceAmount);
 }
 
 long EconomyService::GiveResource(Player& player, eGameResource resourceType, long resourceAmount)
@@ -44,7 +50,7 @@ long EconomyService::GiveResource(Player& player, eGameResource resourceType, lo
         long moneyAmountLeft = resourceAmount;
         for (const EntityHandle roomHandle: player.GetOwnedMoneyStorageRooms())
         {
-            Room* roomInstance = GetRoomManager().GetRoomPtr(roomHandle);
+            Room* roomInstance = gRoomManager.GetRoomPtr(roomHandle);
             cxx_assert(roomInstance);
             if (roomInstance == nullptr) continue;
             if (auto* moneyStorage = roomInstance->GetCapability<MoneyStorageRoomCapability>())
@@ -69,7 +75,7 @@ long EconomyService::GiveResource(Player& player, eGameResource resourceType, lo
 
 long EconomyService::TakeResource(ePlayerID playerId, eGameResource resourceType, long resourceAmount)
 {
-    return TakeResource(GetGameSession().GetPlayer(playerId), resourceType, resourceAmount);
+    return TakeResource(gGameSession.GetPlayer(playerId), resourceType, resourceAmount);
 }
 
 long EconomyService::TakeResource(Player& player, eGameResource resourceType, long resourceAmount)
@@ -87,7 +93,7 @@ long EconomyService::TakeResource(Player& player, eGameResource resourceType, lo
         long moneyAmountLeft = resourceAmount;
         for (const EntityHandle roomHandle: player.GetOwnedMoneyStorageRooms())
         {
-            Room* roomInstance = GetRoomManager().GetRoomPtr(roomHandle);
+            Room* roomInstance = gRoomManager.GetRoomPtr(roomHandle);
             cxx_assert(roomInstance);
             if (roomInstance == nullptr) continue;
             if (auto* moneyStorage = roomInstance->GetCapability<MoneyStorageRoomCapability>())
@@ -110,23 +116,23 @@ long EconomyService::TakeResource(Player& player, eGameResource resourceType, lo
     return 0;
 }
 
-void EconomyService::StoredGoldAmountChanged(ePlayerID playerId, EntityHandle roomHandle, long amountDelta)
+void EconomyService::StoredMoneyAmountChanged(ePlayerID playerId, EntityHandle roomHandle, long amountDelta)
 {
     cxx_assert(amountDelta != 0);
     if (amountDelta != 0)
     {
         // update cache
-        Player& player = GetGameSession().GetPlayer(playerId);
+        Player& player = gGameSession.GetPlayer(playerId);
         player.ChangeResourceAmount(eGameResource_Gold, amountDelta);
 
         // issue global event
-        GetGameEventBus().Send_ResourceAmountChanged(playerId, eGameResource_Gold);
+        gGameEventBus.Send_ResourceAmountChanged(playerId, eGameResource_Gold);
     }
 }
 
 void EconomyService::IssueStartingResources()
 {
-    for (Player& player: GetGameSession().GetPlayers())
+    for (Player& player: gGameSession.GetPlayers())
     {
         if (player.IsNonPlayer()) continue;
 

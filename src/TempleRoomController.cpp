@@ -2,6 +2,7 @@
 #include "TempleRoomController.h"
 #include "GameRenderManager.h"
 #include "GameWorld.h"
+#include "Scene.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -37,7 +38,7 @@ void TempleRoomController::PostReconfigureRoom()
         // create water pool
         if (mWaterPool == nullptr)
         {
-            mWaterPool = GetScene().CreateWaterMesh(mWaterPoolTiles);
+            mWaterPool = gScene.CreateWaterMesh(mWaterPoolTiles);
 
             if (mWaterPool)
             {
@@ -74,7 +75,7 @@ void TempleRoomController::PostReconfigureRoom()
     }
 }
 
-void TempleRoomController::EvaluateFloorFurniture(FurnitureEvaluationResult& evaluation)
+void TempleRoomController::EvaluateFloorFurniture(RoomFurnitureSlots& evaluation)
 {
     if (!mHandLocation.has_value()) return;
 
@@ -83,7 +84,7 @@ void TempleRoomController::EvaluateFloorFurniture(FurnitureEvaluationResult& eva
     objectSlot.mObjectClassId = GameObjectClassId_TempleHand;
 }
 
-void TempleRoomController::EvaluatePillars(FurnitureEvaluationResult& evaluation)
+void TempleRoomController::EvaluatePillars(RoomFurnitureSlots& evaluation)
 {
     if (GetRoomPillarObjectId() == GameObjectClassId_Null)
         return;
@@ -100,7 +101,7 @@ void TempleRoomController::EvaluatePillars(FurnitureEvaluationResult& evaluation
 
         RoomFurnitureSlot& pillarSlot = evaluation.emplace_back();
         pillarSlot.mObjectClassId = GetRoomPillarObjectId();
-        pillarSlot.mTileLocation = roller->mTileLocation;
+        pillarSlot.mTileLocation = roller->mLocation;
     }
 }
 
@@ -160,11 +161,11 @@ bool TempleRoomController::ReevaluateHandLocation()
 
     // previous position still valid?
     MapPoint2D prevHandPosition = *mHandLocation;
-    if (cxx::contains_if(candidateTiles, [prevHandPosition](MapTile* mapTile) { return mapTile->mTileLocation == prevHandPosition; }))
+    if (cxx::contains_if(candidateTiles, [prevHandPosition](MapTile* mapTile) { return mapTile->mLocation == prevHandPosition; }))
         return true;
 
     // set first valid
-    mHandLocation = candidateTiles.front()->mTileLocation;
+    mHandLocation = candidateTiles.front()->mLocation;
     return true;
 }
 

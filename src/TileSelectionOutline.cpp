@@ -4,6 +4,7 @@
 #include "MapUtils.h"
 #include "ProceduralMeshObject.h"
 #include "TextureManager.h"
+#include "Scene.h"
 
 void TileSelectionOutline::Init(Scene& scene)
 {

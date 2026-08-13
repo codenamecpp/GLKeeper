@@ -31,5 +31,5 @@ private:
     void SetMeshFromGoldAmount();
     
 private:
-    GoldContainerComponent* mGoldComponent = nullptr;
+    MoneyComponent* mMoneyComponent = nullptr;
 };

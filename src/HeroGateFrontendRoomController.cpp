@@ -8,6 +8,8 @@
 #include "AnimatingMeshObject.h"
 #include "MeshAssetManager.h"
 #include "GameObjectManager.h"
+#include "Scene.h"
+#include "MapUtils.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -29,7 +31,7 @@ void HeroGateFrontendRoomController::PostReconfigureRoom()
 
         MeshAsset* tableMesh = gMeshAssetManager.GetMesh(FRONT_END_LEVELS_TABLE_MESH);
 
-        mCampaignLevelsTable = GetScene().CreateAnimatingMesh();
+        mCampaignLevelsTable = gScene.CreateAnimatingMesh();
         mCampaignLevelsTable->Configure(tableMesh);
         mCampaignLevelsTable->SetPosition(tablePosition);
         mCampaignLevelsTable->SetObjectActive(true);
@@ -47,7 +49,7 @@ void HeroGateFrontendRoomController::DespawnInstance()
     mCampaignLevelsTable.reset();
 }
 
-void HeroGateFrontendRoomController::EvaluateFloorFurniture(FurnitureEvaluationResult& evaluation)
+void HeroGateFrontendRoomController::EvaluateFloorFurniture(RoomFurnitureSlots& evaluation)
 {
     // TODO : temporary implementation
 
@@ -95,7 +97,7 @@ void HeroGateFrontendRoomController::EvaluateFloorFurniture(FurnitureEvaluationR
 
 void HeroGateFrontendRoomController::PostRearrangeObjects()
 {
-    GameObjectManager& gobjects = GetObjectManager();
+    GameObjectManager& gobjects = gGameObjectManager;
     for (const RoomFurnitureSlot& roller: GetRoom().GetFloorFurniture())
     {
         if (GameObject* gameObject = gobjects.GetObjectPtr(roller.mObjectHandle))

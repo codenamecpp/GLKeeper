@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "SceneObject.h"
 #include "GameWorld.h"
+#include "Scene.h"
 
 SceneObject::SceneObject()
     : mRight(WorldAxes::X)

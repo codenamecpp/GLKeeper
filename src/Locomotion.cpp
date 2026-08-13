@@ -28,7 +28,7 @@ void Locomotion::ResetToDefaults()
     SetAlignTolerance(0.1f);
     // init default speed params
     SetArriveSpeed(1.0f);
-    SetOrientSpeed(glm::radians(210.0f));
+    SetOrientSpeed(glm::radians(230.0f));
 }
 
 void Locomotion::SetArriveSpeed(float moveSpeedPerTile)
@@ -117,6 +117,7 @@ Locomotion::VelocitiesResult Locomotion::ProcessGoals(float simulationStep, cons
             }
             else 
             {
+                isCurrentGoalReached = true;
                 // finish
             }
         }

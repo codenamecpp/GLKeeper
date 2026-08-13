@@ -131,5 +131,5 @@ bool RoomWallSection::IsTail(MapTile* wallTile) const
 bool RoomWallSection::IsOdd(MapTile* wallTile) const
 {
     cxx_assert(wallTile);
-    return cxx::is_odd(wallTile->mTileLocation.x + wallTile->mTileLocation.y);
+    return cxx::is_odd(wallTile->mLocation.x + wallTile->mLocation.y);
 }

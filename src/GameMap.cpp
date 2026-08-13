@@ -14,6 +14,10 @@ enum
 
 //////////////////////////////////////////////////////////////////////////
 
+GameMap gGameMap;
+
+//////////////////////////////////////////////////////////////////////////
+
 GameMap::TilesIterator::TilesIterator(MapTile* initialTile, const MapArea2D& mapArea)
     : mInitialTile(initialTile)
     , mCurrentTile(initialTile)
@@ -32,14 +36,14 @@ MapTile* GameMap::TilesIterator::NextTile()
     {
         // proceed to the next tile on current row
         mCurrentTile = mCurrentTile->mNeighbours[eDirection_E];
-        if (mCurrentTile && mCurrentTile->mTileLocation.x < (mMapArea.x + mMapArea.w))
+        if (mCurrentTile && mCurrentTile->mLocation.x < (mMapArea.x + mMapArea.w))
         {
             // done
         }
         else // proceed to the next row
         {
             mFromRowTile = mFromRowTile->mNeighbours[eDirection_S];
-            if (mFromRowTile && mFromRowTile->mTileLocation.y < (mMapArea.y + mMapArea.h))
+            if (mFromRowTile && mFromRowTile->mLocation.y < (mMapArea.y + mMapArea.h))
             {
                 mCurrentTile = mFromRowTile;
             }
@@ -87,7 +91,7 @@ void GameMap::LoadScenario(const ScenarioDefinition& scenarioData)
 
             // terrain types
             TerrainDefinition* tileBaseTerrain = nullptr;
-            TerrainDefinition* tileTerrain = nullptr;
+            TerrainDefinition* tileRoomTerrain = nullptr;
 
             // acquire terrain type
             TerrainTypeId tileTerrainType = scenarioData.mMapTiles[tileIndex].mTerrainType;
@@ -119,7 +123,7 @@ void GameMap::LoadScenario(const ScenarioDefinition& scenarioData)
                     tileBaseTerrain = scenarioData.GetTerrainDefinition(scenarioData.mPlayerColouredPathTerrainType);
                 }
                 // override terrain type
-                tileTerrain = scenarioData.GetTerrainDefinition(tileTerrainType);
+                tileRoomTerrain = scenarioData.GetTerrainDefinition(tileTerrainType);
             }
             else
             {
@@ -127,9 +131,9 @@ void GameMap::LoadScenario(const ScenarioDefinition& scenarioData)
             }
 
             // set tile info
-            currentTile->mBaseTerrain = tileBaseTerrain;
-            currentTile->mTerrain = tileTerrain;
-            currentTile->mOwnerID = scenarioData.mMapTiles[tileIndex].mOwnerID;
+            currentTile->SetBaseTerrain(tileBaseTerrain);
+            currentTile->SetRoomTerrain(tileRoomTerrain);
+            currentTile->mOwnerId = scenarioData.mMapTiles[tileIndex].mOwnerId;
 
             // setup neighbours
             if (tiley > 0)
@@ -192,14 +196,15 @@ void GameMap::Cleanup()
 
 GameMap::TilesIterator GameMap::IterateTiles(const MapArea2D& mapArea) const
 {
-    if (mapArea.w < 1 || mapArea.h < 1)
+    const MapArea2D fullMapArea {0, 0, mDimensions.x, mDimensions.y};
+    const MapArea2D insersetionArea = GetIntersection(fullMapArea, mapArea);
+    if ((insersetionArea.w == 0) || (insersetionArea.h == 0))
     {
-        return TilesIterator(nullptr, mapArea);
+        return TilesIterator(nullptr, {});
     }
-
-    MapPoint2D initialTileLocation (mapArea.x, mapArea.y);
+    const MapPoint2D initialTileLocation (insersetionArea.x, insersetionArea.y);
     MapTile* initialTile = GetMapTile(initialTileLocation);
-    return TilesIterator(initialTile, mapArea);
+    return TilesIterator(initialTile, insersetionArea);
 }
 
 GameMap::TilesIterator GameMap::IterateTiles(const MapPoint2D& startTile, const MapPoint2D& areaSize) const
@@ -237,15 +242,17 @@ MapTile* GameMap::GetTileInitialize(int tilex, int tiley, unsigned int randomVal
 {
     MapTile* currentTile = &mTiles[tiley * mDimensions.x + tilex];
 
-    currentTile->mTileLocation.x = tilex;
-    currentTile->mTileLocation.y = tiley;
-    currentTile->mIsTagged = false;
+    currentTile->mLocation.x = tilex;
+    currentTile->mLocation.y = tiley;
+    currentTile->mTaggedByPlayers.Clear();
     currentTile->mIsRoomInnerTile = false;
     currentTile->mIsRoomEntrance = false;
     currentTile->mRandomValue = randomValue;
+    currentTile->mHitPoints = 100;
     currentTile->mFloodFillCounter = 0;
-
+        
     currentTile->ClearFloorHeightmap();
+    currentTile->ClearAreaCode();
     return currentTile;
 }
 
@@ -283,10 +290,10 @@ void GameMap::FloodFill4Impl(MapTile* tileOrigin, MapArea2D scanArea, unsigned i
             }
 
             // bounds
-            if (tile->mTileLocation.x < scanArea.x) continue;
-            if (tile->mTileLocation.y < scanArea.y) continue;
-            if (tile->mTileLocation.x >= (scanArea.x + scanArea.w)) continue;
-            if (tile->mTileLocation.y >= (scanArea.y + scanArea.h)) continue;
+            if (tile->mLocation.x < scanArea.x) continue;
+            if (tile->mLocation.y < scanArea.y) continue;
+            if (tile->mLocation.x >= (scanArea.x + scanArea.w)) continue;
+            if (tile->mLocation.y >= (scanArea.y + scanArea.h)) continue;
 
             bool sameTerrain = (floodFillFlags & FLOOD_FILL4_SAME_BASE_TERRAIN) ? 
                 tileOrigin->SameTileBaseTerrainType(tile) : 
@@ -302,7 +309,7 @@ void GameMap::FloodFill4Impl(MapTile* tileOrigin, MapArea2D scanArea, unsigned i
 
                     if (terrainDefinition->mIsOwnable)
                     {
-                        sameTerrain = tile->mOwnerID == tileOrigin->mOwnerID;
+                        sameTerrain = (tile->mOwnerId == tileOrigin->mOwnerId);
                     }
                 }
             }

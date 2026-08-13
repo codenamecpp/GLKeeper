@@ -4,4 +4,18 @@
 
 class NavigationService;
 
+class PathFindRequest;
+using PathFindRequestPtr = cxx::uniqueptr<PathFindRequest>;
+
+class PathFindEngine;
+
+//////////////////////////////////////////////////////////////////////////
+
+enum ePathFindStatus
+{
+    ePathFindStatus_Pending, // task is not started yet
+    ePathFindStatus_Searching, // task in progress
+    ePathFindStatus_Completed,
+};
+
 //////////////////////////////////////////////////////////////////////////

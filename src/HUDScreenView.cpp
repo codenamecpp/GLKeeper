@@ -79,9 +79,11 @@ void HUDScreenView::UpdateDebugStatsText()
 {
     if (mDebugSceneStatsLabel && mDebugSceneStatsLabel->IsVisibleInHierarchy())
     {
-        const WorldStatistics& worldStats = GetGameWorld().GetStatistics();
+        const WorldStatistics& worldStats = gGameWorld.GetStatistics();
 
-        int roomCount = GetRoomManager().GetRoomCount();
+        int roomCount = gRoomManager.GetRoomCount();
+
+        MapTile* hoveredTile = mGameplay.mHoveredTile;
 
         cxx::str_wprintf(mDebugStrBuffer, 
             L"Scene objects: %d\n"
@@ -94,7 +96,8 @@ void HUDScreenView::UpdateDebugStatsText()
                 L"Programs bind count: %d\n" 
                 L"Textures bind count: %d\n"
             L".....................\n" 
-            L"Tile x: %d, y: %d"
+            L"Tile x: %d, y: %d\n"
+            L"Tile Area: Land %d | Water %d | Lava %d"
             , worldStats.mNumSceneObjectsActive
             , roomCount
             , gRenderDevice.mFrameStats.mNumDIPs
@@ -103,8 +106,11 @@ void HUDScreenView::UpdateDebugStatsText()
             , gRenderDevice.mFrameStats.mNumSwitchVertexBuffers
             , gRenderDevice.mFrameStats.mNumSwitchPrograms
             , gRenderDevice.mFrameStats.mNumSwitchTextures
-            , mGameplay.mHoveredTile ? mGameplay.mHoveredTile->mTileLocation.x : 0
-            , mGameplay.mHoveredTile ? mGameplay.mHoveredTile->mTileLocation.y : 0);
+            , hoveredTile ? hoveredTile->mLocation.x : 0
+            , hoveredTile ? hoveredTile->mLocation.y : 0
+            , hoveredTile ? hoveredTile->mAreaCode[ePassabilityType_Land] : 0
+            , hoveredTile ? hoveredTile->mAreaCode[ePassabilityType_Land_Water] : 0
+            , hoveredTile ? hoveredTile->mAreaCode[ePassabilityType_Land_Any] : 0);
         mDebugSceneStatsLabel->SetText(mDebugStrBuffer);
     }
 
@@ -282,9 +288,9 @@ void HUDScreenView::OnKeeperPanelTabSelected(UiKeeperTab panelTab)
     // init rooms buttons
     if (panelTab == UiKeeperTab_Rooms)
     {
-        ScenarioDefinition& scenarioDefinitions = GetScenarioDefinition();
+        ScenarioDefinition& scenarioDefinitions = gGameSession.GetScenarioDefinition();
 
-        const Player& localPlayer = GetGameSession().GetLocalPlayer();
+        const Player& localPlayer = gGameSession.GetLocalPlayer();
 
         Temp_Vector<RoomDefinition*> availableRooms;
         availableRooms.reserve(16);
@@ -446,7 +452,7 @@ void HUDScreenView::UpdateMoneyInfo()
 {
     if (mMoneyAmountTextbox)
     {
-        long moneyAmount = GetGameSession().GetLocalPlayer().GetResourceAmount(eGameResource_Gold);
+        long moneyAmount = gGameSession.GetLocalPlayer().GetResourceAmount(eGameResource_Gold);
         mMoneyAmountTextbox->SetText(cxx::va(L"%ld", moneyAmount));
     }
 }
@@ -455,7 +461,7 @@ void HUDScreenView::UpdateManaInfo()
 {
     if (mManaAmountTextbox)
     {
-        long manaAmount = GetGameSession().GetLocalPlayer().GetResourceAmount(eGameResource_Mana);
+        long manaAmount = gGameSession.GetLocalPlayer().GetResourceAmount(eGameResource_Mana);
         mManaAmountTextbox->SetText(cxx::va(L"%ld", manaAmount));
     }
 }

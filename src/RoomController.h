@@ -3,22 +3,11 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "Room.h"
-#include "GameSessionAware.h"
 
 //////////////////////////////////////////////////////////////////////////
 
-class RoomController: protected GameSessionAware
+class RoomController: public cxx::noncopyable
 {
-public:
-
-    //////////////////////////////////////////////////////////////////////////
-
-    // temporary array for room object evaluation
-
-    using FurnitureEvaluationResult = Temp_Vector<RoomFurnitureSlot>;
-
-    //////////////////////////////////////////////////////////////////////////
-
 public:
     virtual ~RoomController();
 
@@ -39,9 +28,9 @@ public:
     // fixed logic tick update
     virtual void UpdateLogic(float stepDeltaTime);
 
-    virtual void EvaluateFloorFurniture(FurnitureEvaluationResult& evaluation);
-    virtual void EvaluateWallFurniture(FurnitureEvaluationResult& evaluation);
-    virtual void EvaluatePillars(FurnitureEvaluationResult& evaluation);
+    virtual void EvaluateFloorFurniture(RoomFurnitureSlots& evaluation);
+    virtual void EvaluateWallFurniture(RoomFurnitureSlots& evaluation);
+    virtual void EvaluatePillars(RoomFurnitureSlots& evaluation);
     virtual void PostRearrangeObjects();
     virtual void PostReconfigureRoom();
 

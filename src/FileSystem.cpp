@@ -43,6 +43,8 @@ bool FileSystem::Initialize()
 //#else
     AddSearchPlace(mWorkingDirectoryPath + "/data");
 //#endif
+
+    InitTextLocation("");
     return true;
 }
 
@@ -53,13 +55,33 @@ void FileSystem::Shutdown()
     mWorkingDirectoryPath.clear();
 }
 
+void FileSystem::InitTextLocation(const std::string_view& folderName)
+{
+    const char* textLocationPrefix = "Data/Text/";
+
+    if (!folderName.empty())
+    {
+        mTextFolder = textLocationPrefix;
+        mTextFolder.append(folderName);
+
+        // ensure valid path
+        std::string tempPath;
+        if (LocateTextTableFile("Text.str", tempPath))
+            return;
+    }
+
+    // fallback to default
+    mTextFolder = textLocationPrefix;
+    mTextFolder.append("Default");
+}
+
 bool FileSystem::LocateFont(const std::string& resourceName, std::string& resourcePath) const
 {
     std::string subpath = cxx::va("fonts/%s", resourceName.c_str());
     if (PathToFile(subpath, resourcePath))
         return true;
 
-    subpath = cxx::va("Data/Text/Default/%s", resourceName.c_str());
+    subpath = cxx::va("%s/%s", mTextFolder.c_str(), resourceName.c_str());
     return PathToFile(subpath, resourcePath);
 }
 
@@ -317,7 +339,7 @@ bool FileSystem::LocateWAD(const std::string& theName, std::string& theResourceP
 
 bool FileSystem::LocateTextTableFile(const std::string& fileName, std::string& resourcePath) const
 {
-    std::string subpath = cxx::va("Data/Text/Default/%s", fileName.c_str());
+    std::string subpath = cxx::va("%s/%s", mTextFolder.c_str(), fileName.c_str());
     return PathToFile(subpath, resourcePath);
 }
 
@@ -327,7 +349,7 @@ bool FileSystem::EnumTextTableFiles(EnumFilesCallback callback) const
     int filesFound = 0;
     for (const std::string& searchPlace : mSearchPlaces)
     {
-        const sys::path mapsDirectory = sys::path {searchPlace} / "Data/Text/Default";
+        const sys::path mapsDirectory = sys::path {searchPlace} / mTextFolder;
         const sys::path mapsExtension = ".str";
         if (!sys::exists(mapsDirectory))
             continue;

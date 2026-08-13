@@ -5,6 +5,14 @@
 #include "GameObjectController.h"
 #include "ChickenObjectController.h"
 #include "GoldPileObjectController.h"
+#include "MapUtils.h"
+#include "GameSession.h"
+
+//////////////////////////////////////////////////////////////////////////
+
+GameObjectManager gGameObjectManager;
+
+//////////////////////////////////////////////////////////////////////////
 
 bool GameObjectManager::LoadScenario(const ScenarioDefinition& scenarioDef)
 {
@@ -91,9 +99,9 @@ EntityHandle GameObjectManager::CreateScenarioObject(const ScenarioObjectThing& 
         // todo
 
         // money amount
-        if (auto* containerComponent = objectInstance->GetComponent<GoldContainerComponent>())
+        if (auto* containerComponent = objectInstance->GetComponent<MoneyComponent>())
         {
-            containerComponent->mGoldAmount = objectThing.mMoneyAmount;
+            containerComponent->mAmount = objectThing.mMoneyAmount;
         }
 
         // owner
@@ -123,7 +131,7 @@ EntityHandle GameObjectManager::CreateObject(GameObjectDefinition* classDefiniti
     objectSlot.mController = NewControllerInstance(classDefinition);
 
     const EntityHandle objectHandle { eEntityType_GameObject, objectSlot.mGeneration, static_cast<uint32_t>(freeSlotIndex) };
-    const EntityUid instanceUid = GetGameWorld().GenerateEntityUid();
+    const EntityUid instanceUid = gGameWorld.GenerateEntityUid();
     mObjectUidsMap[instanceUid] = objectHandle;
     ConfigureNewObjectInstance(objectSlot.mObject.get(), objectSlot.mController.get(), classDefinition, instanceUid);
     return objectHandle;
@@ -131,7 +139,7 @@ EntityHandle GameObjectManager::CreateObject(GameObjectDefinition* classDefiniti
 
 EntityHandle GameObjectManager::CreateObject(GameObjectClassId classId)
 {
-    if (GameObjectDefinition* objectDefinition = GetScenarioDefinition().GetObjectDefinition(classId))
+    if (GameObjectDefinition* objectDefinition = gGameSession.GetScenarioDefinition().GetObjectDefinition(classId))
     {
         return CreateObject(objectDefinition);
     }
@@ -145,12 +153,12 @@ EntityHandle GameObjectManager::CreateGoldChest(long startGold, long storageCapa
     EntityHandle entityHandle = CreateObject(GameObjectClassId_GoldChest);
     if (GameObject* objectInstance = GetObjectPtr(entityHandle))
     {
-        if (auto* containerComponent = objectInstance->GetComponent<GoldContainerComponent>())
+        if (auto* containerComponent = objectInstance->GetComponent<MoneyComponent>())
         {
             cxx_assert(startGold > 0);
-            containerComponent->mGoldAmount = std::max(startGold, 0L);
+            containerComponent->mAmount = std::max(startGold, 0L);
             cxx_assert(storageCapacity >= 0);
-            containerComponent->mGoldCapacity = std::max(storageCapacity, 0L);
+            containerComponent->mCapacity = std::max(storageCapacity, 0L);
         }
     }
     return entityHandle;
@@ -161,10 +169,10 @@ EntityHandle GameObjectManager::CreateGoldPile(long goldAmount)
     EntityHandle entityHandle = CreateObject(GameObjectClassId_GoldPile);
     if (GameObject* objectInstance = GetObjectPtr(entityHandle))
     {
-        if (auto* containerComponent = objectInstance->GetComponent<GoldContainerComponent>())
+        if (auto* containerComponent = objectInstance->GetComponent<MoneyComponent>())
         {
-            containerComponent->mGoldAmount = goldAmount;
-            containerComponent->mGoldCapacity = 0;
+            containerComponent->mAmount = goldAmount;
+            containerComponent->mCapacity = 0;
         }
     }
     return entityHandle;
@@ -421,7 +429,7 @@ void GameObjectManager::ConfigureNewObjectInstance(GameObject* gameObject,
     // setup components
     if (definition->mObjectCategory == eGameObjectCategory_Gold)
     {
-        gameObject->AddComponent<GoldContainerComponent>();
+        gameObject->AddComponent<MoneyComponent>();
     }
 
     gameObject->ConfigureInstance(instanceUid, controller, definition);

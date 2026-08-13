@@ -53,8 +53,8 @@ void RoomTileConstructor_HeroGate_3_by_1::ConstructRoomFloor(Room* roomInstance,
     const MapArea2D& locationArea = roomInstance->GetLocationArea();
     for (MapTile* targetTile : floorTiles)
     {
-        const int ioffsetx = targetTile->mTileLocation.x - locationArea.x;
-        const int ioffsety = targetTile->mTileLocation.y - locationArea.y;
+        const int ioffsetx = targetTile->mLocation.x - locationArea.x;
+        const int ioffsety = targetTile->mLocation.y - locationArea.y;
         const int ioffset = std::max(ioffsetx, ioffsety) % 3;
 
         MeshAsset* piece = pieces[(invertSides ? (3 - ioffset - 1) : ioffset)];

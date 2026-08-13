@@ -6,7 +6,6 @@
 #include "RoomDefs.h"
 #include "ScenarioDefs.h"
 #include "RoomWallSection.h"
-#include "GameSessionAware.h"
 #include "Entity.h"
 #include "RoomComponents.h"
 #include "RoomCapabilities.h"
@@ -105,7 +104,7 @@ public:
     // approximate room size in tiles
     const MapArea2D& GetLocationArea() const { return mLocationArea; }
 
-    inline ePlayerID GetOwnerID() const { return mOwnerID; }
+    inline ePlayerID GetOwnerId() const { return mOwnerId; }
 
     inline eDirection GetRoomDirection() const { return mRoomDirection; }
 
@@ -136,7 +135,7 @@ private:
     bool TransferRoomObjectsTo(Room* receiver);
 
     // actualize room own objects (furniture/pillars): adds new or removes old
-    void HandleRoomFurnitureObjects(cxx::span<RoomFurnitureSlot> newObjects, std::vector<RoomFurnitureSlot>& prevObjects);
+    void HandleRoomFurnitureObjects(cxx::span<RoomFurnitureSlot> newObjects, RoomFurnitureSlots& prevObjects);
     void PostRearrangeObjects();
     void DeleteFurnitureObjects();
 
@@ -160,7 +159,7 @@ private:
     int GetStorageSlotIndex(EntityHandle entityHandle) const;
 
 private:   
-    ePlayerID mOwnerID = ePlayerID_Null;
+    ePlayerID mOwnerId = ePlayerID_Null;
 
     eDirection mRoomDirection = eDirection_N;
 
@@ -174,9 +173,10 @@ private:
     std::vector<RoomWallSection*> mWallSections;
 
     // furniture objects
-    std::vector<RoomFurnitureSlot> mFloorFurniture;
-    std::vector<RoomFurnitureSlot> mWallsFurniture;
-    std::vector<RoomFurnitureSlot> mPillars;
+    RoomFurnitureSlots mFloorFurniture;
+    RoomFurnitureSlots mWallsFurniture;
+    RoomFurnitureSlots mPillars;
+    RoomFurnitureSlots mTempFurnitureEvaluation;
 
     // list of currently stored objects
     std::vector<RoomStorageSlot> mStorageSlots;

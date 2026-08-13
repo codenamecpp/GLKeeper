@@ -4,6 +4,7 @@
 #include "MapUtils.h"
 #include "GameWorld.h"
 #include "GameObjectManager.h"
+#include "GameMap.h"
 
 void HatcheryRoomController::SpawnInstance()
 {
@@ -38,7 +39,7 @@ void HatcheryRoomController::PostReconfigureRoom()
     RoomController::PostReconfigureRoom();
 }
 
-void HatcheryRoomController::EvaluateFloorFurniture(FurnitureEvaluationResult& evaluation)
+void HatcheryRoomController::EvaluateFloorFurniture(RoomFurnitureSlots& evaluation)
 {
     RoomDefinition* roomDefinition = GetRoom().GetDefinition();
 
@@ -49,8 +50,8 @@ void HatcheryRoomController::EvaluateFloorFurniture(FurnitureEvaluationResult& e
         // check for nearby objects
         for (const RoomFurnitureSlot& evalSlots: evaluation)
         {
-            if ((std::abs(evalSlots.mTileLocation.x - mapTile->mTileLocation.x) < 2) && 
-                (std::abs(evalSlots.mTileLocation.y - mapTile->mTileLocation.y) < 2)) 
+            if ((std::abs(evalSlots.mTileLocation.x - mapTile->mLocation.x) < 2) && 
+                (std::abs(evalSlots.mTileLocation.y - mapTile->mLocation.y) < 2)) 
             {
                 canPutObjectOnTile = false;
                 continue;
@@ -61,7 +62,7 @@ void HatcheryRoomController::EvaluateFloorFurniture(FurnitureEvaluationResult& e
 
         RoomFurnitureSlot& roomObject = evaluation.emplace_back();
         roomObject.mObjectClassId = roomDefinition->mObjectIds[0];
-        roomObject.mTileLocation = mapTile->mTileLocation;
+        roomObject.mTileLocation = mapTile->mLocation;
         roomObject.mObjectRotation = (mapTile->mRandomValue % 100) > 30 ?
             RoomFurnitureSlot::eFaceRotation_90_Pos : 
             RoomFurnitureSlot::eFaceRotation_0;
@@ -78,7 +79,7 @@ bool HatcheryRoomController::TryGenerateEggWithingRoom()
     MapTile* randomRoomTile = GetRoom().GetFloorTiles()[tileIndex];
 
     // select random position within tile
-    cxx::aabbox blockBounds = MapUtils::ComputeBlockBounds(randomRoomTile->mTileLocation);
+    cxx::aabbox blockBounds = MapUtils::ComputeBlockBounds(randomRoomTile->mLocation);
     glm::vec2 eggPosition2d
     {
         blockBounds.get_center().x + ((Random::GenerateFloat01() * blockBounds.get_width()) - (blockBounds.get_width() * 0.5f)) * 0.8f,
@@ -86,15 +87,15 @@ bool HatcheryRoomController::TryGenerateEggWithingRoom()
     };
     glm::vec3 eggPosition3d 
     {
-        eggPosition2d.x, GetGameWorld().GetGameMap().GetFloorHeightAt(eggPosition2d),
+        eggPosition2d.x, gGameMap.GetFloorHeightAt(eggPosition2d),
         eggPosition2d.y
     };
 
-    EntityHandle objectHandle = GetObjectManager().CreateObject(GameObjectClassId_Egg);
-    if (GameObject* gameObject = GetObjectManager().GetObjectPtr(objectHandle))
+    EntityHandle objectHandle = gGameObjectManager.CreateObject(GameObjectClassId_Egg);
+    if (GameObject* gameObject = gGameObjectManager.GetObjectPtr(objectHandle))
     {
         gameObject->SetPosition(eggPosition3d);
-        return GetObjectManager().ActivateObject(objectHandle);
+        return gGameObjectManager.ActivateObject(objectHandle);
     }
     cxx_assert(false);
     return false;

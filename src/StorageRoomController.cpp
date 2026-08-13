@@ -108,7 +108,7 @@ bool StorageRoomController::AssignObjectToStorageTile(EntityHandle entityHandle,
         }
     }
 
-    GameObject* objectInstance = GetObjectManager().GetObjectPtr(entityHandle);
+    GameObject* objectInstance = gGameObjectManager.GetObjectPtr(entityHandle);
     cxx_assert(objectInstance);
     if (objectInstance == nullptr) return false;
     if (objectInstance->GetParentRoom())
@@ -214,7 +214,7 @@ void StorageRoomController::HandleRoomStorageTiles(cxx::span<MapPoint2D> evaluat
         {
             return cxx::contains_if(this->GetRoom().GetFloorTiles(), [tileLocation](MapTile* mapTile)
                 {
-                    return (mapTile->mTileLocation == tileLocation);
+                    return (mapTile->mLocation == tileLocation);
                 });
         };
 

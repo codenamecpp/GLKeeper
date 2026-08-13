@@ -4,14 +4,13 @@
 
 #include "PlayerDefs.h"
 #include "RoomDefs.h"
-#include "GameSessionAware.h"
 
 //////////////////////////////////////////////////////////////////////////
 
-class Player final: private GameSessionAware
+class Player final: public cxx::noncopyable
 {
 public:
-    void Configure(ePlayerID playerID, ePlayerType playerType, const std::string_view& playerName);
+    void Configure(ePlayerID playerId, ePlayerType playerType, const std::string_view& playerName);
     void Cleanup();
 
     void SetStartingResourceAmount(eGameResource resourceType, long resourceAmount);
@@ -28,10 +27,18 @@ public:
     }
 
     // get player identifier, its value is constant during gameplay session
-    inline ePlayerID GetPlayerID() const { return mPlayerID; }
+    inline ePlayerID GetPlayerId() const { return mPlayerId; }
+    inline bool IsPlayerId(ePlayerID playerId) const
+    {
+        return mPlayerId == playerId;
+    }
 
     // get player type, its value is constant during gameplay session
     inline ePlayerType GetPlayerType() const { return mPlayerType; }
+    inline bool IsPlayerType(ePlayerType playerType) const
+    {
+        return mPlayerType == playerType;
+    }
 
     // manage player's inventory:
     // rooms, objects, etc.
@@ -76,15 +83,20 @@ public:
         return (mPlayerType != ePlayerType_Null) && !mIsDefeated;
     }
     // player type shortcuts
-    inline bool IsNonPlayer () const { return mPlayerType == ePlayerType_Null; }
-    inline bool IsHuman     () const { return mPlayerType == ePlayerType_Human; }
-    inline bool IsComputer  () const { return mPlayerType == ePlayerType_AI; }
+    inline bool IsNonPlayer () const { return IsPlayerType(ePlayerType_Null); }
+    inline bool IsHuman     () const { return IsPlayerType(ePlayerType_Human); }
+    inline bool IsComputer  () const { return IsPlayerType(ePlayerType_AI); }
+
+    inline bool IsKeeperPlayer() const
+    {
+        return (mPlayerType != ePlayerType_Null) && (mPlayerId >= ePlayerID_Keeper1);
+    }
 
 private:
     using EntitiesList = std::vector<EntityHandle>;
 
     // properties
-    ePlayerID   mPlayerID = ePlayerID_Null;
+    ePlayerID mPlayerId = ePlayerID_Null;
     ePlayerType mPlayerType = ePlayerType_Null;
     std::string mPlayerName;
 

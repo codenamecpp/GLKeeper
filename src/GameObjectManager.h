@@ -6,11 +6,10 @@
 #include "ScenarioDefs.h"
 #include "GameObjectController.h"
 #include "EntityDefs.h"
-#include "GameSessionAware.h"
 
 //////////////////////////////////////////////////////////////////////////
 
-class GameObjectManager final: private GameSessionAware
+class GameObjectManager final: public cxx::noncopyable
 {
 private:
     
@@ -110,3 +109,9 @@ private:
     std::vector<EntityHandle> mRegistrationQueue; // pending registration in lists
     std::vector<EntityHandle> mRemoveQueue; // pending destroy
 };
+
+//////////////////////////////////////////////////////////////////////////
+
+extern GameObjectManager gGameObjectManager;
+
+//////////////////////////////////////////////////////////////////////////

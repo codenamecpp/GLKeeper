@@ -3,18 +3,18 @@
 #include "RoomManager.h"
 #include "GameSession.h"
 
-void Player::Configure(ePlayerID playerID, ePlayerType playerType, const std::string_view& playerName)
+void Player::Configure(ePlayerID playerId, ePlayerType playerType, const std::string_view& playerName)
 {
     Cleanup();
 
-    mPlayerID = playerID;
+    mPlayerId = playerId;
     mPlayerType = playerType;
     mPlayerName = playerName;
 }
 
 void Player::Cleanup()
 {
-    mPlayerID = {};
+    mPlayerId = {};
     mPlayerType = {};
     mStartCameraTilePos = {};
 
@@ -60,9 +60,9 @@ void Player::AddToInventory(EntityHandle entity)
             return;
         }
 
-        if (Room* roomInstance = GetRoomManager().GetRoomPtr(entity))
+        if (Room* roomInstance = gRoomManager.GetRoomPtr(entity))
         {
-            cxx_assert(roomInstance->GetOwnerID() == GetPlayerID());
+            cxx_assert(roomInstance->GetOwnerId() == GetPlayerId());
 
             RoomDefinition* definition = roomInstance->GetDefinition();
             mRoomsOwned.push_back(entity);
@@ -162,7 +162,7 @@ bool Player::CanBuildRoomOfType(RoomTypeId roomType) const
 {
     if (roomType == RoomTypeId_Null) return false;
 
-    if (RoomDefinition* roomDefinition = GetGameSession().GetScenarioDefinition().GetRoomDefinition(roomType))
+    if (RoomDefinition* roomDefinition = gGameSession.GetScenarioDefinition().GetRoomDefinition(roomType))
     {
         if (roomDefinition->mBuildable) return true;
     }

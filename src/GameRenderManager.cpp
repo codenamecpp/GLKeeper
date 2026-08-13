@@ -5,6 +5,7 @@
 #include "ShadersManager.h"
 #include "GameWorld.h"
 #include "ToolsUiManager.h"
+#include "Scene.h"
 
 GameRenderManager gGameRenderer;
 
@@ -50,9 +51,8 @@ void GameRenderManager::RenderFrame()
     gRenderDevice.SetClearColor(COLOR_BLACK);
     gRenderDevice.ClearScreen();
 
-    Scene& scene = gGame.GetGameSession().GetGameWorld().GetScene();
-    Camera& camera = scene.GetCamera();
-    RenderWorld(camera, scene);
+    Camera& camera = gScene.GetCamera();
+    RenderWorld(camera, gScene);
 
     // Debug information
     if (!mDebugVisializers.empty())
@@ -65,7 +65,7 @@ void GameRenderManager::RenderFrame()
         mDebugRenderer.EndFrame();
     }
 
-    RenderCustomViews(scene);
+    RenderCustomViews(gScene);
 
     // render gui
     mUiRenderContext.BeginFrame();

@@ -20,8 +20,8 @@ void TileConstructor::ExtendTileMesh(MapTile* mapTile, eTileFace face, MeshAsset
     TileFaceData& tileFace = mapTile->mFaces[face];
     const glm::vec3 tileTranslation = 
     {
-        mapTile->mTileLocation.x + (translation ? translation->x : 0.0f), translation ? translation->y : 0.0f,
-        mapTile->mTileLocation.y + (translation ? translation->z : 0.0f)
+        mapTile->mLocation.x + (translation ? translation->x : 0.0f), translation ? translation->y : 0.0f,
+        mapTile->mLocation.y + (translation ? translation->z : 0.0f)
     };
 
     TerrainDefinition* terrainDefinition = mapTile->GetTerrain();
@@ -36,7 +36,7 @@ void TileConstructor::ExtendTileMesh(MapTile* mapTile, eTileFace face, MeshAsset
 
         if (terrainDefinition->mTextureFrames > 1)
         {
-            const int numTextureVariations = pieceMaterial.mDiffuseTextures.size();
+            const int numTextureVariations = static_cast<int>(pieceMaterial.mDiffuseTextures.size());
             if (numTextureVariations > 1)
             {
                 switch (face)
@@ -46,13 +46,18 @@ void TileConstructor::ExtendTileMesh(MapTile* mapTile, eTileFace face, MeshAsset
                     case eTileFace_SideS:
                     case eTileFace_SideW:
                     {
-                        if (terrainDefinition->mIsDecay)
+                        if (terrainDefinition->mIsDecay && !tileFace.mWallExtendsRoom)
                         {
-                            if (!tileFace.mWallExtendsRoom) // wall not specified
+                            diffuseTexture = pieceMaterial.mDiffuseTextures.back();
+
+                            // select texture for current decay stage
+                            int maxHitpoints = mapTile->GetHitPointsMax();
+                            if (maxHitpoints > 0)
                             {
-                                diffuseTexture = pieceMaterial.mDiffuseTextures.back();
+                                const int currentStage = ((numTextureVariations - 1) * mapTile->GetHitPoints()) / mapTile->GetHitPointsMax();
+                                const int ivariation = std::clamp(currentStage, 0, numTextureVariations - 1);
+                                diffuseTexture = pieceMaterial.mDiffuseTextures[ivariation];
                             }
-                            break;
                         }
                     }
                     break;
@@ -60,15 +65,11 @@ void TileConstructor::ExtendTileMesh(MapTile* mapTile, eTileFace face, MeshAsset
                     case eTileFace_Floor:
                     case eTileFace_Ceiling:
                     {
-                        if (terrainDefinition->mIsDecay)
-                            break;
-
-                        if (terrainDefinition->mHasRandomTexture)
+                        if (!terrainDefinition->mIsDecay && terrainDefinition->mHasRandomTexture)
                         {
                             // select random texture including original
                             const int ivariation = mapTile->mRandomValue % numTextureVariations; 
                             diffuseTexture = pieceMaterial.mDiffuseTextures[ivariation];
-                            break;
                         }
                     }
                     break;
@@ -117,8 +118,8 @@ void TileConstructor::ExtendTileMesh(MapTile* mapTile, eTileFace face, MeshAsset
                     sourceNormals[ivertex].y, 
                     sourceNormals[ivertex].z});
 
-                vertex.mTileX = mapTile->mTileLocation.x;
-                vertex.mTileY = mapTile->mTileLocation.y;
+                vertex.mTileX = mapTile->mLocation.x;
+                vertex.mTileY = mapTile->mLocation.y;
                 vertex.mPosition = transformed + tileTranslation;
                 vertex.mNormal = transformedNormal;
                 vertex.mTexcoord = sourceTexcoord[ivertex];
@@ -129,8 +130,8 @@ void TileConstructor::ExtendTileMesh(MapTile* mapTile, eTileFace face, MeshAsset
             for (unsigned int ivertex = 0; ivertex < tileMeshPiece.mVertexCount; ++ivertex)
             {
                 TerrainVertex3D& vertex = tileFace.mFaceMesh.mVertices[tileMeshPiece.mBaseVertex + ivertex];
-                vertex.mTileX = mapTile->mTileLocation.x;
-                vertex.mTileY = mapTile->mTileLocation.y;
+                vertex.mTileX = mapTile->mLocation.x;
+                vertex.mTileY = mapTile->mLocation.y;
                 vertex.mPosition = tileTranslation + sourcePositions[ivertex];
                 vertex.mNormal = sourceNormals[ivertex];
                 vertex.mTexcoord = sourceTexcoord[ivertex];
@@ -151,7 +152,7 @@ void TileConstructor::ConstructTile(MapTile* mapTile)
     // construct floor
     ConstructFloor(mapTile);
     // construct walls
-    if (mapTile->IsTerrainSolid())
+    if (mapTile->IsSolidBlock())
     {
         ConstructWalls(mapTile);
     }
@@ -171,7 +172,7 @@ void TileConstructor::ConstructTile(MapTile* mapTile, eTileFace targetFace)
     if ((targetFace == eTileFace_SideE) || (targetFace == eTileFace_SideN) || 
         (targetFace == eTileFace_SideS) || (targetFace == eTileFace_SideW))
     {
-        if (mapTile->IsTerrainSolid())
+        if (mapTile->IsSolidBlock())
         {
             ConstructWall(mapTile, targetFace);
         }
@@ -188,12 +189,12 @@ void TileConstructor::ConstructQuad(MapTile* mapTile, ArtResourceDefinition* res
     if (tileTerrainDef->mPlayerColouredPath || tileTerrainDef->mPlayerColouredWall) 
     {
         static const char* playerIndices[] = {"0","0","1","2","3","4","5","6","7"};
-        meshName.append(playerIndices[mapTile->mOwnerID]);
+        meshName.append(playerIndices[mapTile->mOwnerId]);
         meshName.append("_");
     }
 
     int subTiles[4] = {};
-    if (mapTile->IsTerrainSolid())
+    if (mapTile->IsSolidBlock())
     {
         //SubtTopLeft
         subTiles[0] = 
@@ -271,7 +272,7 @@ void TileConstructor::ConstructWall(MapTile* mapTile, eTileFace tileFace)
     cxx_assert(mapTile);
 
     // non solid tile cannot have walls
-    if (!mapTile->IsTerrainSolid())
+    if (!mapTile->IsSolidBlock())
         return;
 
     eDirection wallDirection = TileFaceToDirection(tileFace);
@@ -287,7 +288,7 @@ void TileConstructor::ConstructWall(MapTile* mapTile, eTileFace tileFace)
         // cannot construct wall next to solid block
         if (mapTile->NeighbourTileSolid(wallDirection)) return;
         // check room handles wall
-        if (mapTile->IsTerrainAllowRoomWalls())
+        if (mapTile->IsAllowRoomWalls())
         {
             MapTile* neighbourTile = mapTile->mNeighbours[wallDirection];
             cxx_assert(neighbourTile);

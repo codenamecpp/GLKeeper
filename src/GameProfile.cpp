@@ -38,6 +38,7 @@ bool GameProfile::LoadGameProfile(const std::string& filepath)
     JsonQuery(jsonSettings.GetRootElement(), "screen.vsync", mUserSettings.mEnableVSync);
     JsonQuery(jsonSettings.GetRootElement(), "hardware_cursor", mUserSettings.mEnableHwCursor);
     JsonQuery(jsonSettings.GetRootElement(), "game_root", mUserSettings.mGameRootFolder);
+    JsonQuery(jsonSettings.GetRootElement(), "language", mUserSettings.mLanguage);
     // user progress
 
     return true;
@@ -83,6 +84,7 @@ void GameProfile::LoadDefaults()
 {
     // default video settings
     mUserSettings.mGameRootFolder.clear();
+    mUserSettings.mLanguage.clear();
     mUserSettings.mScreenResolution = {1280, 900};
     mUserSettings.mEnableFullscreen = false;
     mUserSettings.mEnableVSync = true;

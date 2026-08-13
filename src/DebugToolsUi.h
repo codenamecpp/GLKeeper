@@ -5,12 +5,10 @@
 #include "ToolsUi.h"
 #include "RenderView.h"
 #include "AnimatingMeshObject.h"
-#include "GameSessionAware.h"
 
 //////////////////////////////////////////////////////////////////////////
 
 class DebugToolsUi final: public ToolsUi
-    , private GameSessionAware
 {
 private:
     // override ToolsUi

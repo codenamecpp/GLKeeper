@@ -54,6 +54,17 @@ namespace
     // straight directions in clockwise order
     static const eDirection gStraightDirections[] { eDirection_N, eDirection_E, eDirection_S, eDirection_W };
     static const eDirection gDiagonalDirections[] { eDirection_NE, eDirection_SE, eDirection_SW, eDirection_NW };
+    static const glm::ivec2 gDirectionVectors[eDirection_COUNT] 
+    {
+        { 0, -1}, // eDirection_N
+        { 1, -1}, // eDirection_NE
+        { 1,  0}, // eDirection_E
+        { 1,  1}, // eDirection_SE
+        { 0,  1}, // eDirection_S
+        {-1,  1}, // eDirection_SW
+        {-1,  0}, // eDirection_W
+        {-1, -1}, // eDirection_NW
+    };
 }
 
 static_assert(eDirection_COUNT == 8, "NUM_TERRAIN_DIRECTIONS");
@@ -138,6 +149,8 @@ enum eTileFace
     eTileFace_COUNT
 };
 
+using TileFaceIdSet = EnumSet<eTileFace, uint8_t>;
+
 namespace
 {
     static const eTileFace gTileFaces[] 
@@ -183,6 +196,24 @@ inline eTileFace DirectionToTileFace(eDirection direction)
 
 //////////////////////////////////////////////////////////////////////////
 
+enum ePassabilityType
+{
+    ePassabilityType_Land,          // vampires
+    ePassabilityType_Land_Water,    // cannot cross the lava, most of the creatures
+    ePassabilityType_Land_Any,      // land + water + lava
+    ePassabilityType_COUNT
+};
+
+//////////////////////////////////////////////////////////////////////////
+
+// area code used for fast pathfinding validation
+// matching area codes indicate that reachable path exists
+
+// value 0 means impassable
+using MapAreaCode = unsigned int;
+
+//////////////////////////////////////////////////////////////////////////
+
 // logical coord or size on game map 2d tiles grid
 
 using MapPoint2D = glm::ivec2;
@@ -211,10 +242,45 @@ public:
     }
     inline bool operator == (const MapArea2D& rhs) const { return (x == rhs.x) && (y == rhs.y) && (w == rhs.w) && (h == rhs.h); }
     inline bool operator != (const MapArea2D& rhs) const { return !(*this == rhs); }
+
+    inline MapPoint2D GetCenter() const
+    {
+        return MapPoint2D 
+        { 
+            x + (w >> 1),
+            y + (h >> 1) 
+        };
+    }
 public:
     int x, y;
     int w, h;
 };
+
+//////////////////////////////////////////////////////////////////////////
+
+// get intersection area of two rectangular map areas
+inline MapArea2D GetIntersection(const MapArea2D& lhs, const MapArea2D& rhs)
+{
+    // make sure both rectangles has area
+    if ((lhs.w > 0) && (lhs.h > 0) &&
+        (rhs.w > 0) && (rhs.h > 0))
+    {
+        // calc boundaries of the intersection interval [x1, x2), [y1, y2)
+
+        const int x1 = std::max(lhs.x, rhs.x);
+        const int y1 = std::max(lhs.y, rhs.y);
+        const int x2 = std::min(lhs.x + lhs.w, rhs.x + rhs.w);
+        const int y2 = std::min(lhs.y + lhs.h, rhs.y + rhs.h);
+
+        // check intersection
+        if ((x1 < x2) && (y1 < y2))
+        {
+            return MapArea2D {x1, y1, x2 - x1, y2 - y1};
+        }
+    }
+
+    return MapArea2D {0, 0, 0, 0};
+}
 
 //////////////////////////////////////////////////////////////////////////
 

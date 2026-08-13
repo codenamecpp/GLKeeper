@@ -21,7 +21,7 @@ void TrainingRoomController::PostReconfigureRoom()
     RoomController::PostReconfigureRoom();
 }
 
-void TrainingRoomController::EvaluateFloorFurniture(FurnitureEvaluationResult& evaluation)
+void TrainingRoomController::EvaluateFloorFurniture(RoomFurnitureSlots& evaluation)
 {
     RoomDefinition* roomDefinition = GetRoom().GetDefinition();
     GameObjectClassId objectIds[] =
@@ -38,12 +38,12 @@ void TrainingRoomController::EvaluateFloorFurniture(FurnitureEvaluationResult& e
 
         RoomFurnitureSlot& roomObject = evaluation.emplace_back();
         roomObject.mObjectClassId = objectIds[objectIndex];
-        roomObject.mTileLocation = mapTile->mTileLocation;
+        roomObject.mTileLocation = mapTile->mLocation;
         roomObject.mObjectRotation = RoomFurnitureSlot::eFaceRotation_Random;
     }
 }
 
-void TrainingRoomController::EvaluateWallFurniture(FurnitureEvaluationResult& evaluation)
+void TrainingRoomController::EvaluateWallFurniture(RoomFurnitureSlots& evaluation)
 {
     RoomDefinition* roomDefinition = GetRoom().GetDefinition();
     GameObjectClassId objectIds[] =
@@ -66,7 +66,7 @@ void TrainingRoomController::EvaluateWallFurniture(FurnitureEvaluationResult& ev
 
             RoomFurnitureSlot& roomObject = evaluation.emplace_back();
             roomObject.mObjectClassId = objectIds[objectIndex];
-            roomObject.mTileLocation = wallTile->mNeighbours[wallFaceDirection]->mTileLocation;
+            roomObject.mTileLocation = wallTile->mNeighbours[wallFaceDirection]->mLocation;
             switch (wallFaceDirection)
             {
                 case eDirection_N: 

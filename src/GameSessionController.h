@@ -2,11 +2,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-#include "GameSessionAware.h"
-
-//////////////////////////////////////////////////////////////////////////
-
-class GameSessionController: protected GameSessionAware
+class GameSessionController: public cxx::noncopyable
 {
 public:
     GameSessionController() = default;

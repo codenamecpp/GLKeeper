@@ -4,6 +4,14 @@
 #include "FrontendController.h"
 #include "GameplayController.h"
 #include "DK2ScenarioReader.h"
+#include "GameWorld.h"
+#include "EconomyService.h"
+
+//////////////////////////////////////////////////////////////////////////
+
+GameSession gGameSession;
+
+//////////////////////////////////////////////////////////////////////////
 
 bool GameSession::Preload(GameLoadingAware& loadingContext, const GameSessionStartupParams& startupParams)
 {
@@ -32,7 +40,7 @@ bool GameSession::Preload(GameLoadingAware& loadingContext, const GameSessionSta
 
     ConfigurePlayers(mScenarioData);
 
-    bool isSuccess = GetGameWorld().LoadScenario(mScenarioData, loadingContext);
+    bool isSuccess = gGameWorld.LoadScenario(mScenarioData, loadingContext);
     if (isSuccess)
     {
         mSessionState = eGameSessionState_Loaded;
@@ -54,7 +62,7 @@ bool GameSession::Preload(GameLoadingAware& loadingContext, const GameSessionSta
         gConsole.LogMessage(eLogLevel_Error, "Cannot initialize scenario '%s'", mSessionStartupParams.mScenarioName.c_str());
     }
 
-    GetEconomyService().EnterWorld();
+    gEconomyService.EnterWorld();
 
     if (isSuccess && mSessionController)
     {
@@ -87,12 +95,12 @@ void GameSession::ShutdownSession()
         return;
 
     mSessionState = eGameSessionState_None;
-    GetEconomyService().ClearWorld();
+    gEconomyService.ClearWorld();
     if (mSessionController)
     {
         mSessionController->OnSessionShutdown();
     }
-    GetGameWorld().ClearWorld();
+    gGameWorld.ClearWorld();
     mSessionStartupParams.Clear();
     mSessionController.reset();
     ClearScenarioData();
@@ -105,19 +113,19 @@ void GameSession::UpdateFrame(float deltaTime)
         mSessionController->UpdateFrame(deltaTime);
     }
 
-    GetGameWorld().UpdateFrame(deltaTime);
-    GetEconomyService().UpdateFrame(deltaTime);
+    gGameWorld.UpdateFrame(deltaTime);
+    gEconomyService.UpdateFrame(deltaTime);
 }
 
 void GameSession::UpdateLogic(float stepDeltaTime)
 {
-    GetGameWorld().UpdateLogic(stepDeltaTime);
-    GetEconomyService().UpdateLogic(stepDeltaTime);
+    gGameWorld.UpdateLogic(stepDeltaTime);
+    gEconomyService.UpdateLogic(stepDeltaTime);
 }
 
 void GameSession::UpdatePhysics(float stepDeltaTime)
 {
-    GetGameWorld().UpdatePhysics(stepDeltaTime);
+    gGameWorld.UpdatePhysics(stepDeltaTime);
 }
 
 void GameSession::InputEvent(KeyInputEvent& inputEvent)
@@ -156,23 +164,23 @@ void GameSession::ConfigurePlayers(const ScenarioDefinition& scenarioDefinition)
 {
     for (int iplayer = 0; iplayer < ePlayerID_COUNT; ++iplayer)
     {
-        ePlayerID playerID;
-        if (!cxx::parse_enum_int(iplayer, playerID))
+        ePlayerID playerId;
+        if (!cxx::parse_enum_int(iplayer, playerId))
         {
             cxx_assert(false);
             continue;
         }
 
-        PlayerDefinition* playerDefinition = scenarioDefinition.GetPlayerDefinition(playerID);
+        PlayerDefinition* playerDefinition = scenarioDefinition.GetPlayerDefinition(playerId);
         if (playerDefinition == nullptr)
         {
-            mPlayers[iplayer].Configure(playerID, ePlayerType_Null, "");
+            mPlayers[iplayer].Configure(playerId, ePlayerType_Null, "");
             continue;
         }
 
         Player& player = mPlayers[iplayer];
 
-        player.Configure(playerID, playerDefinition->mPlayerType, playerDefinition->mPlayerName);
+        player.Configure(playerId, playerDefinition->mPlayerType, playerDefinition->mPlayerName);
         player.SetStartCameraTilePosition({playerDefinition->mStartCameraX, playerDefinition->mStartCameraY});
         player.SetStartingResourceAmount(eGameResource_Gold, playerDefinition->mInitialGold);
         player.SetStartingResourceAmount(eGameResource_Mana, playerDefinition->mInitialMana);

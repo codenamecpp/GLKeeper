@@ -6,19 +6,18 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-class CreatureManager final: private GameSessionAware
+class CreatureManager final: public cxx::noncopyable
 {
 private:
 
     //////////////////////////////////////////////////////////////////////////
     struct CreatureSlot { uint32_t mGeneration = 1; 
         cxx::uniqueptr<Creature> mCreature; 
-        cxx::uniqueptr<CreatureController> mController;
+        CreatureControllerPtr mController;
     };
     //////////////////////////////////////////////////////////////////////////
 
 public:
-
     bool LoadScenario(const ScenarioDefinition& scenarioDef);
     void EnterWorld();
     void ClearWorld();
@@ -32,8 +31,8 @@ public:
     void ProcessCreatureChanges();
 
     EntityHandle CreateScenarioCreature(const ScenarioCreatureThing& creatureThing);
-    EntityHandle CreateCreature(CreatureTypeId creatureTypeId, ePlayerID ownerID);
-    EntityHandle CreateCreature(CreatureDefinition* definition, ePlayerID ownerID);
+    EntityHandle CreateCreature(CreatureTypeId creatureTypeId, ePlayerID ownerId);
+    EntityHandle CreateCreature(CreatureDefinition* definition, ePlayerID ownerId);
 
     EntityHandle FindCreature(EntityUid creatureUid) const;
 
@@ -61,13 +60,45 @@ public:
         }
         return {};
     }
+
+public:
+
+    //////////////////////////////////////////////////////////////////////////
+
+    // states factory
+
+    CreatureStatePtr CreateState(Creature* creature, eCreatureState stateId) const;
+
+    //////////////////////////////////////////////////////////////////////////
+
+    // actions factory
+
+    CreatureActionPtr CreateIdleStandingAction(Creature* creature);
+    CreatureActionPtr CreateWanderAction(Creature* creature, const glm::vec2& destination);
+    CreatureActionPtr CreateWalkToPointAction(Creature* creature, const glm::vec2& destination);
+    CreatureActionPtr CreateDiggingAction(Creature* creature, const glm::vec2& workPoint, const MapPoint2D& targetTile);
+    CreatureActionPtr CreateMiningAction(Creature* creature, const glm::vec2& workPoint, const MapPoint2D& targetTile);
+    CreatureActionPtr CreateFaceTileAction(Creature* creature, const MapPoint2D& targetTile);
+    CreatureActionPtr CreateCarryGoldToTreasuryAction(Creature* creature, const MapPoint2D& targetTile);
+    CreatureActionPtr CreateReinforceWallAction(Creature* creature, const glm::vec2& workPoint, const MapPoint2D& targetTile);
+    CreatureActionPtr CreateClaimFloorAction(Creature* creature, const MapPoint2D& targetTile);
+
+    //////////////////////////////////////////////////////////////////////////
+
+
 private:
     // factory
     cxx::uniqueptr<Creature> NewCreatureInstance() const;
 
+    template<typename TState>
+    CreatureStatePtr NewStateInstance() const;
+
+    template<typename TAction, typename... TArgs>
+    CreatureActionPtr NewActionInstance(TArgs && ... args) const;
+
     template<typename TController>
-    cxx::uniqueptr<CreatureController> NewControllerInstance() const;
-    cxx::uniqueptr<CreatureController> NewControllerInstance(CreatureDefinition* creatureDefinition) const;
+    CreatureControllerPtr NewControllerInstance() const;
+    CreatureControllerPtr NewControllerInstance(CreatureDefinition* creatureDefinition) const;
 
     void ProcessRegistrationQueue();
     void ProcessRemoveQueue();
@@ -76,7 +107,7 @@ private:
 
     void ConfigureNewCreatureInstance(Creature* creature, 
         CreatureController* controller, 
-        CreatureDefinition* definition, EntityUid instanceUid, ePlayerID ownerID);
+        CreatureDefinition* definition, EntityUid instanceUid, ePlayerID ownerId);
 
     void RegisterCreature(Creature* creatureInstance);
     void UnregisterCreature(Creature* creatureInstance);
@@ -90,5 +121,9 @@ private:
     std::vector<EntityHandle> mRegistrationQueue; // pending registration in lists
     std::vector<EntityHandle> mRemoveQueue; // pending destroy
 };
+
+//////////////////////////////////////////////////////////////////////////
+
+extern CreatureManager gCreatureManager;
 
 //////////////////////////////////////////////////////////////////////////

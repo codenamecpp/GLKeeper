@@ -6,6 +6,8 @@
 #include "GameMain.h"
 #include "Physics.h"
 #include "GameObjectManager.h"
+#include "Scene.h"
+#include "GameMap.h"
 
 void GameObject::ConfigureInstance(EntityUid instanceUid, GameObjectController* objectController, GameObjectDefinition* objectDef)
 {
@@ -32,9 +34,12 @@ void GameObject::SpawnInstance()
     cxx_assert(!mLifecycleFlags.mWasDespawned);
     cxx_assert(!mLifecycleFlags.mWasDeleted);
 
-    if (mLifecycleFlags.mWasSpawned) return;
+    if (mLifecycleFlags.mWasSpawned) 
+        return;
 
-    mOwnHandle = GetObjectManager().FindObject(mInstanceUid);
+    mLifecycleFlags.mWasSpawned = true;
+
+    mOwnHandle = gGameObjectManager.FindObject(mInstanceUid);
 
     // configure locomotion
     {
@@ -49,8 +54,6 @@ void GameObject::SpawnInstance()
     {
         mController->SpawnInstance();
     }
-
-    mLifecycleFlags.mWasSpawned = true;
 }
 
 void GameObject::DespawnInstance()
@@ -98,7 +101,7 @@ void GameObject::SetPosition(const glm::vec2& position)
 
 void GameObject::SnapPositionToFloor(bool withRespectToMeshBounds)
 {
-    float floorHeight = GetGameWorld().GetGameMap().GetFloorHeightAt(mTransform.mPosition);
+    float floorHeight = gGameMap.GetFloorHeightAt(mTransform.mPosition);
 
     if (withRespectToMeshBounds)
     {
@@ -170,14 +173,14 @@ MapPoint2D GameObject::GetTilePosition() const
 void GameObject::OnRecycle()
 {
     Entity::OnRecycle();
+    EnableEntityComponents::OnRecycle();
+    EnableEntityCapabilities::OnRecycle();
 
     mController = nullptr;
     cxx_assert(mPhysicsObject == nullptr);
     mPhysicsObject = nullptr;
     mCurrentState = eGameObjectState_None;
     mParentRoom = {};
-    mComponents = {};
-    mCapabilities = {};
     mDefinition = nullptr;
     mMeshResourceId = eGameObjectMeshId_Main;
 }
@@ -200,7 +203,7 @@ void GameObject::EnableMeshObject(bool isEnabled)
     if (!mDefinition->mResourceMesh.IsDefined())
         return;
 
-    mMeshObject = GetScene().CreateAnimatingMesh();
+    mMeshObject = gScene.CreateAnimatingMesh();
     cxx_assert(mMeshObject);
 
     if (mMeshObject)
@@ -367,16 +370,16 @@ void GameObject::EnablePhysics(bool isEnabled)
     if (wasEnabled)
     {
         // cleanup
-        GetGameWorld().GetPhysics().DetachUser(this);
+        gPhysics.DetachUser(this);
         mPhysicsObject = nullptr;
 
         return;
     }
 
     // init physics
-    GetGameWorld().GetPhysics().AttachUser(this);
+    gPhysics.AttachUser(this);
 
-    mPhysicsObject = GetGameWorld().GetPhysics().GetPhysicsObject(this);
+    mPhysicsObject = gPhysics.GetPhysicsObject(this);
     cxx_assert(mPhysicsObject);
     mPhysicsObject->ClearAngularVelocity();
     mPhysicsObject->ClearLinearVelocity();
@@ -404,40 +407,43 @@ void GameObject::UpdatePhysics(float stepDeltaTime)
         // notify self
         if (mLocomotion.HasGoals())
         {
-            Notify(EntityNotification::ForLocoApplyVelocities(velocities.mLinearVelocity, velocities.mAngularVelocity));
+            ReceiveMsg(EntityMsg_LocoApplyVelocities{velocities.mLinearVelocity, velocities.mAngularVelocity});
         }
         else
         {
-            Notify(EntityNotification::ForLocoClearVelocities());
+            ReceiveMsg(EntityMsg_LocoClearVelocities{});
         }
     }
 }
 
-void GameObject::Notify(const EntityNotification& notificationData)
+void GameObject::ReceiveMsg(EntityMsg& msgData)
 {
-    if (WasDeleted()) return;
+    if (WasDeleted()) 
+        return;
 
-    if (notificationData.mID == EntityNotification::eID_LocoApplyVelocities)
+    if (msgData.Is(EntityMsg::eID_LocoApplyVelocities))
     {
         if (mPhysicsObject)
         {
-            mPhysicsObject->SetLinearVelocity(notificationData.mLocoVelocities.mLinear);
-            mPhysicsObject->SetAngularVelocity(notificationData.mLocoVelocities.mAngular);
+            mPhysicsObject->SetLinearVelocity(msgData.mLocoVelocities.mLinear);
+            mPhysicsObject->SetAngularVelocity(msgData.mLocoVelocities.mAngular);
         }
+        msgData.SetConsumed();
         return;
     }
 
-    if (notificationData.mID == EntityNotification::eID_LocoClearVelocities)
+    if (msgData.Is(EntityMsg::eID_LocoClearVelocities))
     {
         if (mPhysicsObject)
         {
             mPhysicsObject->ClearLinearVelocity();
             mPhysicsObject->ClearAngularVelocity();
         }
+        msgData.SetConsumed();
         return;
     }
 
-    if (notificationData.mID == EntityNotification::eID_SyncWithPhysicsTransform)
+    if (msgData.Is(EntityMsg::eID_SyncWithPhysicsTransform))
     {
         if (mPhysicsObject)
         {
@@ -449,6 +455,7 @@ void GameObject::Notify(const EntityNotification& notificationData)
                 mMeshObject->RotateAroundAxis(WorldAxes::Y, mTransform.mOrientation);
             }
         }
+        msgData.SetConsumed();
         return;
     }
 }

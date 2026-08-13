@@ -33,8 +33,8 @@ void RoomTileConstructor_HeroGate_2_by_2::ConstructRoomFloor(Room* roomInstance,
     const MapArea2D& locationArea = roomInstance->GetLocationArea();
     for (MapTile* targetTile : floorTiles)
     {
-        const int ioffsetx = targetTile->mTileLocation.x - locationArea.x;
-        const int ioffsety = targetTile->mTileLocation.y - locationArea.y;
+        const int ioffsetx = targetTile->mLocation.x - locationArea.x;
+        const int ioffsety = targetTile->mLocation.y - locationArea.y;
         const int ioffset = (ioffsety * 2) + ioffsetx;
 
         cxx_assert(ioffset >= 0 && ioffset <= 4);

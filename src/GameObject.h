@@ -8,7 +8,6 @@
 #include "AnimatingMeshObject.h"
 #include "Entity.h"
 #include "PhysicsDefs.h"
-#include "GameSessionAware.h"
 #include "GameObjectComponents.h"
 #include "GameObjectCapabilities.h"
 #include "Locomotion.h"
@@ -102,7 +101,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     // override Entity
-    void Notify(const EntityNotification& notificationData) override;
+    void ReceiveMsg(EntityMsg& msgData) override;
 
 public:
 

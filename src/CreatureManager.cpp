@@ -1,8 +1,31 @@
 #include "stdafx.h"
 #include "CreatureManager.h"
-#include "CreatureController.h"
 #include "GameWorld.h"
 #include "SimplePool.h"
+#include "MapUtils.h"
+#include "GameSession.h"
+
+#include "CreatureController.h"
+#include "ImpCreatureController.h"
+
+#include "CreatureState_Idle.h"
+#include "CreatureState_Working.h"
+
+#include "CreatureAction_IdleStanding.h"
+#include "CreatureAction_WalkToPoint.h"
+#include "CreatureAction_Wander.h"
+#include "CreatureAction_Digging.h"
+#include "CreatureAction_FaceTarget.h"
+#include "CreatureAction_Mining.h"
+#include "CreatureAction_CarryGoldToTreasury.h"
+#include "CreatureAction_ReinforceWall.h"
+#include "CreatureAction_ClaimFloor.h"
+
+//////////////////////////////////////////////////////////////////////////
+
+CreatureManager gCreatureManager;
+
+//////////////////////////////////////////////////////////////////////////
 
 bool CreatureManager::LoadScenario(const ScenarioDefinition& scenarioDef)
 {
@@ -97,18 +120,18 @@ EntityHandle CreatureManager::CreateScenarioCreature(const ScenarioCreatureThing
     return creatureHandle;
 }
 
-EntityHandle CreatureManager::CreateCreature(CreatureTypeId creatureTypeId, ePlayerID ownerID)
+EntityHandle CreatureManager::CreateCreature(CreatureTypeId creatureTypeId, ePlayerID ownerId)
 {
-    if (CreatureDefinition* definition = GetScenarioDefinition().GetCreatureDefinition(creatureTypeId))
+    if (CreatureDefinition* definition = gGameSession.GetScenarioDefinition().GetCreatureDefinition(creatureTypeId))
     {
-        return CreateCreature(definition, ownerID);
+        return CreateCreature(definition, ownerId);
     }
     gConsole.LogMessage(eLogLevel_Warning, "Cannot create creature with type id '%d'", creatureTypeId);
     cxx_assert(false);
     return {};
 }
 
-EntityHandle CreatureManager::CreateCreature(CreatureDefinition* definition, ePlayerID ownerID)
+EntityHandle CreatureManager::CreateCreature(CreatureDefinition* definition, ePlayerID ownerId)
 {
     cxx_assert(definition);
     if (definition == nullptr) return {}; // nothing to create
@@ -128,9 +151,9 @@ EntityHandle CreatureManager::CreateCreature(CreatureDefinition* definition, ePl
     creatureSlot.mController = NewControllerInstance(definition);
 
     const EntityHandle creatureHandle { eEntityType_Creature, creatureSlot.mGeneration, static_cast<uint32_t>(freeSlotIndex) };
-    const EntityUid instanceUid = GetGameWorld().GenerateEntityUid();
+    const EntityUid instanceUid = gGameWorld.GenerateEntityUid();
     mCreatureUidsMap[instanceUid] = creatureHandle;
-    ConfigureNewCreatureInstance(creatureSlot.mCreature.get(), creatureSlot.mController.get(), definition, instanceUid, ownerID);
+    ConfigureNewCreatureInstance(creatureSlot.mCreature.get(), creatureSlot.mController.get(), definition, instanceUid, ownerId);
     return creatureHandle;
 }
 
@@ -267,7 +290,7 @@ cxx::uniqueptr<Creature> CreatureManager::NewCreatureInstance() const
 }
 
 template<typename TController>
-cxx::uniqueptr<CreatureController> CreatureManager::NewControllerInstance() const
+CreatureControllerPtr CreatureManager::NewControllerInstance() const
 {
     static SimplePool<TController> controllersPool = {
         [](TController* instance)
@@ -279,7 +302,7 @@ cxx::uniqueptr<CreatureController> CreatureManager::NewControllerInstance() cons
     CreatureController* controllerInstance = controllersPool.Acquire();
     cxx_assert(controllerInstance);
 
-    return std::move(cxx::uniqueptr<CreatureController> (controllerInstance, [](CreatureController* instance)
+    return std::move(CreatureControllerPtr (controllerInstance, [](CreatureController* instance)
     {
         if (instance)
         {
@@ -289,9 +312,18 @@ cxx::uniqueptr<CreatureController> CreatureManager::NewControllerInstance() cons
     }));
 }
 
-cxx::uniqueptr<CreatureController> CreatureManager::NewControllerInstance(CreatureDefinition* creatureDefinition) const
+CreatureControllerPtr CreatureManager::NewControllerInstance(CreatureDefinition* creatureDefinition) const
 {
     cxx_assert(creatureDefinition);
+
+    switch (creatureDefinition->mCreatureTypeId)
+    {
+        case CreatureTypeId_Imp:
+            cxx_assert(creatureDefinition->mIsWorker);
+            return NewControllerInstance<ImpCreatureController>();
+        break;
+    }
+
     return NewControllerInstance<CreatureController>();
 }
 
@@ -363,11 +395,11 @@ void CreatureManager::DestroyCreatures()
 
 void CreatureManager::ConfigureNewCreatureInstance(Creature* creature, 
     CreatureController* controller, 
-    CreatureDefinition* definition, EntityUid instanceUid, ePlayerID ownerID)
+    CreatureDefinition* definition, EntityUid instanceUid, ePlayerID ownerId)
 {
     cxx_assert(creature);
 
-    creature->ConfigureInstance(instanceUid, controller, definition, ownerID);
+    creature->ConfigureInstance(instanceUid, controller, definition, ownerId);
 }
 
 void CreatureManager::RegisterCreature(Creature* creatureInstance)
@@ -390,4 +422,156 @@ void CreatureManager::UnregisterCreature(Creature* creatureInstance)
 
     const CreatureTypeId creatureTypeId = creatureInstance->GetCreatureTypeId();
     cxx::erase(mActiveCreaturesByType[creatureTypeId], creatureInstance);
+}
+
+CreatureStatePtr CreatureManager::CreateState(Creature* creature, eCreatureState stateId) const
+{
+    cxx_assert(creature);
+
+    CreatureStatePtr stateInstance;
+    switch (stateId)
+    {
+        case eCreatureState_Idle:
+            stateInstance = NewStateInstance<CreatureState_Idle>();
+        break;
+        case eCreatureState_Working:
+            stateInstance = NewStateInstance<CreatureState_Working>();
+        break;
+        case eCreatureState_Stunned:
+        break;
+        case eCreatureState_Frozen:
+        break;
+        case eCreatureState_Unconscious:
+        break;
+        case eCreatureState_Tortured:
+        break;
+        case eCreatureState_Dead:
+        break;
+        case eCreatureState_InHand:
+        break;
+        case eCreatureState_InPrison:
+        break;
+        case eCreatureState_Dropped:
+        break;
+        case eCreatureState_Slapped:
+        break;
+        case eCreatureState_GetUp:
+        break;
+        case eCreatureState_EnteringDungeon:
+        break;
+    }
+    cxx_assert(stateInstance);
+    if (stateInstance)
+    {
+        stateInstance->Configure(creature);
+    }
+    return stateInstance;
+}
+
+
+template<typename TState>
+CreatureStatePtr CreatureManager::NewStateInstance() const
+{
+    static SimplePool<TState> instancesPool = {
+        [](TState* instance)
+        {
+            instance->OnRecycle();
+        }};
+    CreatureState* stateInstance = instancesPool.Acquire();
+    cxx_assert(stateInstance);
+    return std::move(CreatureStatePtr (stateInstance, 
+        [](CreatureState* instance)
+        {
+            if (instance)
+            {
+                TState* speciticStateType = static_cast<TState*>(instance);
+                instancesPool.Return(speciticStateType);
+            }
+        }));
+}
+
+
+template<typename TAction, typename... TArgs>
+CreatureActionPtr CreatureManager::NewActionInstance(TArgs && ... args) const
+{
+    static SimplePool<TAction> instancesPool = {
+        [](TAction* instance)
+        {
+            instance->OnRecycle();
+        }};
+    TAction* newInstance = instancesPool.Acquire();
+    newInstance->Configure(std::forward<TArgs>(args)...);
+    cxx_assert(newInstance);
+    return std::move(CreatureActionPtr (newInstance, 
+        [](CreatureAction* instance)
+        {
+            if (instance)
+            {
+                TAction* speciticAction = static_cast<TAction*>(instance);
+                instancesPool.Return(speciticAction);
+            }
+        }));
+}
+
+CreatureActionPtr CreatureManager::CreateIdleStandingAction(Creature* creature)
+{
+    CreatureActionPtr instance = NewActionInstance<CreatureAction_IdleStanding>(creature);
+    cxx_assert(instance);
+    return instance;
+}
+
+CreatureActionPtr CreatureManager::CreateWanderAction(Creature* creature, const glm::vec2& destination)
+{
+    CreatureActionPtr instance = NewActionInstance<CreatureAction_Wander>(creature, destination);
+    cxx_assert(instance);
+    return instance;
+}
+
+CreatureActionPtr CreatureManager::CreateWalkToPointAction(Creature* creature, const glm::vec2& destination)
+{
+    CreatureActionPtr instance = NewActionInstance<CreatureAction_WalkToPoint>(creature, destination);
+    cxx_assert(instance);
+    return instance;
+}
+
+CreatureActionPtr CreatureManager::CreateDiggingAction(Creature* creature, const glm::vec2& workPoint, const MapPoint2D& targetTile)
+{
+    CreatureActionPtr instance = NewActionInstance<CreatureAction_Digging>(creature, workPoint, targetTile);
+    cxx_assert(instance);
+    return instance;
+}
+
+CreatureActionPtr CreatureManager::CreateFaceTileAction(Creature* creature, const MapPoint2D& targetTile)
+{
+    CreatureActionPtr instance = NewActionInstance<CreatureAction_FaceTarget>(creature, targetTile);
+    cxx_assert(instance);
+    return instance;
+}
+
+CreatureActionPtr CreatureManager::CreateMiningAction(Creature* creature, const glm::vec2& workPoint, const MapPoint2D& targetTile)
+{
+    CreatureActionPtr instance = NewActionInstance<CreatureAction_Mining>(creature, workPoint, targetTile);
+    cxx_assert(instance);
+    return instance;
+}
+
+CreatureActionPtr CreatureManager::CreateCarryGoldToTreasuryAction(Creature* creature, const MapPoint2D& targetTile)
+{
+    CreatureActionPtr instance = NewActionInstance<CreatureAction_CarryGoldToTreasury>(creature, targetTile);
+    cxx_assert(instance);
+    return instance;
+}
+
+CreatureActionPtr CreatureManager::CreateReinforceWallAction(Creature* creature, const glm::vec2& workPoint, const MapPoint2D& targetTile)
+{
+    CreatureActionPtr instance = NewActionInstance<CreatureAction_ReinforceWall>(creature, workPoint, targetTile);
+    cxx_assert(instance);
+    return instance;
+}
+
+CreatureActionPtr CreatureManager::CreateClaimFloorAction(Creature* creature, const MapPoint2D& targetTile)
+{
+    CreatureActionPtr instance = NewActionInstance<CreatureAction_ClaimFloor>(creature, targetTile);
+    cxx_assert(instance);
+    return instance;
 }

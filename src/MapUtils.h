@@ -21,6 +21,31 @@ namespace MapUtils
         return outputBounds;
     }
 
+    /*
+            0________1
+            /       /
+           /   C   /
+          /_______/
+         3       2
+    */
+    inline void ComputeTileEdges2d(const MapPoint2D& location, glm::vec2 edges[4])
+    {
+        const glm::vec2 minPoint
+        {
+            (location.x * MAP_TILE_SIZE) - MAP_TILE_HALF_SIZE,
+            (location.y * MAP_TILE_SIZE) - MAP_TILE_HALF_SIZE
+        };
+        const glm::vec2 maxPoint
+        {
+            minPoint.x + MAP_TILE_SIZE,
+            minPoint.y + MAP_TILE_SIZE
+        };
+        edges[0] = minPoint;
+        edges[2] = maxPoint;
+        edges[1] = {maxPoint.x, minPoint.y};
+        edges[3] = {minPoint.x, maxPoint.y};
+    }
+
     // compute blocks area bounding box within world
     inline cxx::aabbox ComputeBlocksAreaBounds(const MapArea2D& area)
     {
@@ -121,6 +146,12 @@ namespace MapUtils
             glm::mod(coordinate.x + MAP_TILE_HALF_SIZE, MAP_TILE_SIZE),
             glm::mod(coordinate.y + MAP_TILE_HALF_SIZE, MAP_TILE_SIZE)
         };
+    }
+
+    // check whether two tiles are adjacent to each other
+    inline bool AreTilesAdjacent(const MapPoint2D& lhs, const MapPoint2D& rhs)
+    {
+        return (abs(lhs.x - rhs.x) < 2) && (abs(lhs.y - rhs.y) < 2);
     }
 
 } // namespace MapUtils

@@ -17,7 +17,7 @@ public:
     void UpdateLogic(float stepDeltaTime) override;
     void PostRearrangeObjects() override;
     void PostReconfigureRoom() override;
-    void EvaluateFloorFurniture(FurnitureEvaluationResult& evaluation) override;
+    void EvaluateFloorFurniture(RoomFurnitureSlots& evaluation) override;
 
 protected:
     bool TryGenerateEggWithingRoom();

@@ -7,11 +7,10 @@
 #include "Room.h"
 #include "RoomController.h"
 #include "EntityDefs.h"
-#include "GameSessionAware.h"
 
 //////////////////////////////////////////////////////////////////////////
 
-class RoomManager final: private GameSessionAware
+class RoomManager final: public cxx::noncopyable
 {
 private:
 
@@ -36,8 +35,8 @@ public:
     void ProcessRoomChanges();
 
     EntityHandle CreateScenarioRoom(const ScenarioRoomThing& roomThing);
-    EntityHandle CreateRoom(RoomTypeId typeId, ePlayerID ownerID, eDirection direction = eDirection_N);
-    EntityHandle CreateRoom(RoomDefinition* roomDefinition, ePlayerID ownerID, eDirection direction = eDirection_N);
+    EntityHandle CreateRoom(RoomTypeId typeId, ePlayerID ownerId, eDirection direction = eDirection_N);
+    EntityHandle CreateRoom(RoomDefinition* roomDefinition, ePlayerID ownerId, eDirection direction = eDirection_N);
 
     EntityHandle FindRoom(EntityUid instanceUid) const;
 
@@ -85,7 +84,7 @@ private:
     void ConfigureNewRoomInstance(Room* roomInstance, 
         RoomController* controller, 
         RoomDefinition* definition, 
-        EntityUid instanceUid, eDirection roomDirection, ePlayerID ownerID);
+        EntityUid instanceUid, eDirection roomDirection, ePlayerID ownerId);
 
     void RegisterRoom(Room* roomInstance);
     void UnregisterRoom(Room* roomInstance);
@@ -99,3 +98,9 @@ private:
     std::vector<EntityHandle> mRegistrationQueue; // pending registration in lists
     std::vector<EntityHandle> mRemoveQueue; // pending destroy
 };
+
+//////////////////////////////////////////////////////////////////////////
+
+extern RoomManager gRoomManager;
+
+//////////////////////////////////////////////////////////////////////////

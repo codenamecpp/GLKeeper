@@ -21,7 +21,7 @@ void LibraryRoomController::PostReconfigureRoom()
     RoomController::PostReconfigureRoom();
 }
 
-void LibraryRoomController::EvaluateFloorFurniture(FurnitureEvaluationResult& evaluation)
+void LibraryRoomController::EvaluateFloorFurniture(RoomFurnitureSlots& evaluation)
 {
     RoomDefinition* roomDefinition = GetRoom().GetDefinition();
 
@@ -38,8 +38,8 @@ void LibraryRoomController::EvaluateFloorFurniture(FurnitureEvaluationResult& ev
         {
             roomObject.mObjectClassId = roomDefinition->mObjectIds[FirstObjectIndex];
         }
-        roomObject.mTileLocation = mapTile->mTileLocation;
-        roomObject.mObjectRotation = cxx::is_even(mapTile->mTileLocation.y) ? 
+        roomObject.mTileLocation = mapTile->mLocation;
+        roomObject.mObjectRotation = cxx::is_even(mapTile->mLocation.y) ? 
             RoomFurnitureSlot::eFaceRotation_180 : 
             RoomFurnitureSlot::eFaceRotation_0;
 
@@ -49,7 +49,7 @@ void LibraryRoomController::EvaluateFloorFurniture(FurnitureEvaluationResult& ev
     }
 }
 
-void LibraryRoomController::EvaluateWallFurniture(FurnitureEvaluationResult& evaluation)
+void LibraryRoomController::EvaluateWallFurniture(RoomFurnitureSlots& evaluation)
 {
     RoomDefinition* roomDefinition = GetRoom().GetDefinition();
 
@@ -73,7 +73,7 @@ void LibraryRoomController::EvaluateWallFurniture(FurnitureEvaluationResult& eva
             {
                 roomObject.mObjectClassId = roomDefinition->mObjectIds[FirstObjectIndex];
             }
-            roomObject.mTileLocation = wallTile->mNeighbours[wallFaceDirection]->mTileLocation;
+            roomObject.mTileLocation = wallTile->mNeighbours[wallFaceDirection]->mLocation;
             switch (wallFaceDirection)
             {
                 case eDirection_N: 

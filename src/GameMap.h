@@ -55,26 +55,14 @@ public:
     inline MapTile* GetTileAtPosition(const glm::vec3& coord) const
     {
         MapPoint2D tileLocation = MapUtils::ComputeTileFromPosition(coord);
-        // test tile coord is within map
-        MapTile* resultTile = nullptr;
-        if (WithinMap(tileLocation))
-        {
-            resultTile = GetMapTile(tileLocation);
-        }
-        return resultTile;
+        return GetMapTileOrNull(tileLocation);
     }
 
     // @param coord: World coordinates 
     inline MapTile* GetTileAtPosition(const glm::vec2& coord) const
     {
         MapPoint2D tileLocation = MapUtils::ComputeTileFromPosition(coord);
-        // test tile coord is within map
-        MapTile* resultTile = nullptr;
-        if (WithinMap(tileLocation))
-        {
-            resultTile = GetMapTile(tileLocation);
-        }
-        return resultTile;
+        return GetMapTileOrNull(tileLocation);
     }
 
     // Get map tile located at coordinates
@@ -82,6 +70,11 @@ public:
     {
         cxx_assert(WithinMap(tileLocation));
         return &mTiles[tileLocation.y * mDimensions.x + tileLocation.x];
+    }
+
+    inline MapTile* GetMapTileOrNull(const MapPoint2D& tileLocation) const
+    {
+        return WithinMap(tileLocation) ? GetMapTile(tileLocation) : nullptr;
     }
 
     // Test whether tile is within map
@@ -133,3 +126,9 @@ public:
     std::vector<MapTile*> mFloodFillOpenListBuffer;
     std::vector<MapTile*> mFloodFillResultBuffer;
 };
+
+//////////////////////////////////////////////////////////////////////////
+
+extern GameMap gGameMap;
+
+//////////////////////////////////////////////////////////////////////////

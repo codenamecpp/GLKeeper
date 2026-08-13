@@ -11,17 +11,17 @@ void WorkshopRoomController::DespawnInstance()
     RoomController::DespawnInstance();
 }
 
-void WorkshopRoomController::EvaluateFloorFurniture(FurnitureEvaluationResult& evaluation)
+void WorkshopRoomController::EvaluateFloorFurniture(RoomFurnitureSlots& evaluation)
 {
 
 }
 
-void WorkshopRoomController::EvaluateWallFurniture(FurnitureEvaluationResult& evaluation)
+void WorkshopRoomController::EvaluateWallFurniture(RoomFurnitureSlots& evaluation)
 {
 
 }
 
-void WorkshopRoomController::EvaluatePillars(FurnitureEvaluationResult& evaluation)
+void WorkshopRoomController::EvaluatePillars(RoomFurnitureSlots& evaluation)
 {
 
 }

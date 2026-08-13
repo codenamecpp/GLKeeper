@@ -6,7 +6,6 @@
 #include "UiProductionButton.h"
 #include "UiGridLayout.h"
 #include "SimpleTimer.h"
-#include "GameSessionAware.h"
 #include "GameSessionDefs.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -26,7 +25,6 @@ enum UiKeeperTab
 //////////////////////////////////////////////////////////////////////////
 
 class HUDScreenView final: public UiView, public UiEventListener
-    , private GameSessionAware
 {
 public:
     HUDScreenView(GameplayController& gameplay);

@@ -646,7 +646,7 @@ inline bool KWDParseENUM(int inputValue, eCreatureJob& outputValue)
         eCreatureJob_Train,
         eCreatureJob_Manufacture,
         eCreatureJob_Guard,
-        eCreatureJob_Torture,
+        eCreatureJob_Torture, 
         eCreatureJob_Pray,
         eCreatureJob_Drink,
         eCreatureJob_Leave,
@@ -656,18 +656,18 @@ inline bool KWDParseENUM(int inputValue, eCreatureJob& outputValue)
         eCreatureJob_StealSpells,
         eCreatureJob_Sulk,
         eCreatureJob_Rebel,
-        eCreatureJob_StealManufactureCrates,
+        eCreatureJob_StealCrates,
         eCreatureJob_KillCreatures,
         eCreatureJob_KillPlayer,
-        eCreatureJob_Tunnelling,
-        eCreatureJob_COUNT, // 21
+        eCreatureJob_COUNT, // tunnelling 20
+        eCreatureJob_COUNT, // ? 21
         eCreatureJob_Wait,
         eCreatureJob_SendToActionPoint,
         eCreatureJob_Explore,
         eCreatureJob_StealEnemyGold,
         eCreatureJob_CombatPitSpectate,
         eCreatureJob_JailBreak,
-        eCreatureJob_COUNT,
+        eCreatureJob_COUNT, // tolling 28
     };
 
     outputValue = eCreatureJob_COUNT;
@@ -1046,7 +1046,7 @@ bool DK2ScenarioReader::ReadMapData(ScenarioDefinition& scenarioData)
 
         unsigned char playerID;
         READ_FSTREAM_U8(mFileStream, playerID);
-        if (!KWDParseENUM(playerID, scenarioData.mMapTiles[tileIndex].mOwnerID))
+        if (!KWDParseENUM(playerID, scenarioData.mMapTiles[tileIndex].mOwnerId))
             return false;
 
         unsigned char bridgeTerrain;
@@ -1122,25 +1122,44 @@ bool DK2ScenarioReader::ReadScenarioVariables(int numElements, ScenarioDefinitio
         READ_FROM_FSTREAM(mFileStream, dummyInt); // unknown 1
         READ_FROM_FSTREAM(mFileStream, dummyInt); // unknown 1
 
+        ScenarioVariables& scenarioVars = scenarioData.mVariables;
         switch (variableType)
         {
+            case ScenarioVariableType_DigRockHealth:
+                scenarioVars.mDigRockHealth = intValue;
+            break;
+            case ScenarioVariableType_DigOwnWallHealth:
+                scenarioVars.mDigOwnWallHealth = intValue;
+            break;
+            case ScenarioVariableType_DigEnemyWallHealth:
+                scenarioVars.mDigEnemyWallHealth = intValue;
+            break;
+            case ScenarioVariableType_ClaimTileHealth:
+                scenarioVars.mClaimFloorHealth = intValue;
+            break;
+            case ScenarioVariableType_MineGoldHealth:
+                scenarioVars.mMineGoldHealth = intValue;
+            break;
+            case ScenarioVariableType_ReinforceWallHealth:
+                scenarioVars.mReinforceWallHealth = intValue;
+            break;
             case ScenarioVariableType_GoldMinedFromGems:
-                scenarioData.mVariables.mGoldMinedFromGems = intValue;
+                scenarioVars.mGoldMinedFromGems = intValue;
             break;
             case ScenarioVariableType_MaxGoldPerTreasuryTile:
-                scenarioData.mVariables.mMaxGoldPerTreasuryTile = intValue;
+                scenarioVars.mMaxGoldPerTreasuryTile = intValue;
             break;
             case ScenarioVariableType_SpecialIncreaseGoldAmount:
-                scenarioData.mVariables.mSpecialIncreaseGoldAmount = intValue;
+                scenarioVars.mSpecialIncreaseGoldAmount = intValue;
             break;
             case ScenarioVariableType_MaxGoldPileOutsideTreasury:
-                scenarioData.mVariables.mMaxGoldPileOutsideTreasury = intValue;
+                scenarioVars.mMaxGoldPileOutsideTreasury = intValue;
             break;
             case ScenarioVariableType_MaxGoldPerDungeonHeartTile:
-                scenarioData.mVariables.mMaxGoldPerDungeonHeartTile = intValue;
+                scenarioVars.mMaxGoldPerDungeonHeartTile = intValue;
             break;
             case ScenarioVariableType_MaximumManaThreshold:
-                scenarioData.mVariables.mMaximumManaThreshold = intValue;
+                scenarioVars.mMaximumManaThreshold = intValue;
             break;
         }
     }
@@ -2117,7 +2136,7 @@ bool DK2ScenarioReader::ReadTerrainDefinition(TerrainDefinition& terrainDef)
     READ_FROM_FSTREAM(mFileStream, filledWord);
     READ_FROM_FSTREAM(mFileStream, filledWord);
 
-    READ_FSTREAM_U16(mFileStream, terrainDef.mGoldCapacity);
+    READ_FSTREAM_U16(mFileStream, terrainDef.mGoldValue);
     READ_FSTREAM_U16(mFileStream, terrainDef.mManaGain);
     READ_FSTREAM_U16(mFileStream, terrainDef.mManaGainMax);
 

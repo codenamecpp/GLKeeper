@@ -4,11 +4,10 @@
 
 #include "GameObjectDefs.h"
 #include "PhysicsObject.h"
-#include "GameSessionAware.h"
 
 //////////////////////////////////////////////////////////////////////////
 
-class Physics final: private GameSessionAware
+class Physics final: public cxx::noncopyable
 {
 public:
     // start / finish game session
@@ -26,7 +25,7 @@ public:
 
 private:
     // factory
-    cxx::uniqueptr<PhysicsObject> CreatePhysicsObject();
+    PhysicsObjectPtr CreatePhysicsObject() const;
 
     void InterpolationStep(PhysicsObject* object, float t);
     void SimulationStep(PhysicsObject* object);
@@ -38,7 +37,7 @@ private:
 
     //////////////////////////////////////////////////////////////////////////
 
-    using EntityEntry = std::pair<Entity*, cxx::uniqueptr<PhysicsObject>>;
+    using EntityEntry = std::pair<Entity*, PhysicsObjectPtr>;
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -46,3 +45,9 @@ private:
     std::vector<PhysicsObject*> mObjects;
     std::vector<PhysicsObject*> mInterpolateTransforms;
 };
+
+//////////////////////////////////////////////////////////////////////////
+
+extern Physics gPhysics;
+
+//////////////////////////////////////////////////////////////////////////

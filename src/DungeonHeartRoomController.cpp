@@ -6,6 +6,7 @@
 #include "GameWorld.h"
 #include "GameMain.h"
 #include "GameObjectManager.h"
+#include "GameSession.h"
 
 DungeonHeartRoomController::DungeonHeartRoomController()
     : MoneyStorageRoomController()
@@ -16,7 +17,7 @@ void DungeonHeartRoomController::ConfigureInstance(Room* roomInstance)
 {
     MoneyStorageRoomController::ConfigureInstance(roomInstance);
 
-    const ScenarioVariables& vars = GetScenarioVariables();
+    const ScenarioVariables& vars = gGameSession.GetScenarioVariables();
     SetMoneyStorageMaxGoldPerTile(vars.mMaxGoldPerDungeonHeartTile);
 }
 
@@ -31,7 +32,7 @@ void DungeonHeartRoomController::DespawnInstance()
     MoneyStorageRoomController::DespawnInstance();
 }
 
-void DungeonHeartRoomController::EvaluateFloorFurniture(FurnitureEvaluationResult& evaluation)
+void DungeonHeartRoomController::EvaluateFloorFurniture(RoomFurnitureSlots& evaluation)
 {
     const MapArea2D& locationArea = GetRoom().GetLocationArea();
 
@@ -44,7 +45,7 @@ void DungeonHeartRoomController::PostRearrangeObjects()
 {
     MoneyStorageRoomController::PostRearrangeObjects();
 
-    GameObjectManager& gobjects = GetObjectManager();
+    GameObjectManager& gobjects = gGameObjectManager;
     for (const RoomFurnitureSlot& roller: GetRoom().GetFloorFurniture())
     {
         if (roller.mObjectClassId != GameObjectClassId_DungeonHeart) 
@@ -82,6 +83,6 @@ void DungeonHeartRoomController::EvaluateStorageTiles(StorageTilesEvaluationResu
         if (floorTile->mIsRoomInnerTile) 
             continue;
 
-        evaluationResult.push_back(floorTile->mTileLocation);
+        evaluationResult.push_back(floorTile->mLocation);
     }
 }

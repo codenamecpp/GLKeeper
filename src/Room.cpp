@@ -25,8 +25,8 @@ void Room::ConfigureInstance(EntityUid instanceUid,
     mInstanceUid = instanceUid;
     mRoomDirection = direction;
 
-    mOwnerID = owner;
-    cxx_assert(mOwnerID != ePlayerID_Null);
+    mOwnerId = owner;
+    cxx_assert(mOwnerId != ePlayerID_Null);
 
     cxx_assert((mDefinition == nullptr) && definition);
     mDefinition = definition;
@@ -45,14 +45,15 @@ void Room::SpawnInstance()
     cxx_assert(!mLifecycleFlags.mWasDespawned);
     cxx_assert(!mLifecycleFlags.mWasDeleted);
 
-    if (mLifecycleFlags.mWasSpawned) return;
-
-    mLocationArea = {};
-    mOwnHandle = GetRoomManager().FindRoom(mInstanceUid);
-
-    mController->SpawnInstance();
+    if (mLifecycleFlags.mWasSpawned) 
+        return;
 
     mLifecycleFlags.mWasSpawned = true;
+
+    mLocationArea = {};
+    mOwnHandle = gRoomManager.FindRoom(mInstanceUid);
+
+    mController->SpawnInstance();
 }
 
 void Room::DespawnInstance()
@@ -63,7 +64,7 @@ void Room::DespawnInstance()
 
     mController->DespawnInstance();
 
-    mOwnerID = ePlayerID_Null;
+    mOwnerId = ePlayerID_Null;
     mOwnHandle = {};
     mLocationArea = {};
     ReleaseWallSections();
@@ -96,7 +97,7 @@ void Room::AbsorbRoom(Room* sourceRoom)
     {
         cxx_assert(false);
     }
-    auto tilesToAbsorb = MakeTempVector<MapTile*>(sourceRoom->mCoveredTiles);
+    auto tilesToAbsorb = TempVectorFrom<MapTile*>(sourceRoom->mCoveredTiles);
     sourceRoom->ReleaseTiles(tilesToAbsorb);
     EnlargeRoom(tilesToAbsorb);
 }
@@ -157,8 +158,8 @@ void Room::AssignTiles(cxx::span<MapTile*> targetTiles)
         if (MapTile* neighTile = targetTile->mNeighbours[eDirection_W]) { cxx_assert(neighTile->mFaces[eTileFace_SideE].mWallExtendsRoom == false); }
 #endif
         // invalidate tiles
-        GetGameWorld().InvalidateTile(targetTile);
-        GetGameWorld().InvalidateTileNeighbours(targetTile);
+        gGameWorld.InvalidateTile(targetTile);
+        gGameWorld.InvalidateTileNeighbours(targetTile);
         mCoveredTiles.push_back(targetTile);
     }
 }
@@ -176,8 +177,8 @@ void Room::UnassignTiles(cxx::span<MapTile*> targetTiles)
         // remove wall references
         DetachFromWall(targetTile);
         // invalidate tiles
-        GetGameWorld().InvalidateTile(targetTile);
-        GetGameWorld().InvalidateTileNeighbours(targetTile);
+        gGameWorld.InvalidateTile(targetTile);
+        gGameWorld.InvalidateTileNeighbours(targetTile);
     }
 
     // cleanup covered tiles
@@ -209,14 +210,14 @@ void Room::ReleaseTiles(cxx::span<MapTile*> targetTiles)
 
 void Room::ReleaseTiles()
 {
-    auto releasedTiles = MakeTempVector<MapTile*>(mCoveredTiles);
+    auto releasedTiles = TempVectorFrom<MapTile*>(mCoveredTiles);
     mCoveredTiles.clear();
     ReleaseTiles(releasedTiles);
 }
 
 void Room::PostRearrangeObjects()
 {
-    GameObjectManager& gobjects = GetObjectManager();
+    GameObjectManager& gobjects = gGameObjectManager;
 
     // make sure to ground objects
     for (const RoomFurnitureSlot& rollerSlot: mFloorFurniture)
@@ -253,16 +254,16 @@ void Room::ReevaluateOccupationArea()
         return;
     }
 
-    MapPoint2D rightBottomPoint = mCoveredTiles[0]->mTileLocation;
-    MapPoint2D leftTopPoint = mCoveredTiles[0]->mTileLocation;
+    MapPoint2D rightBottomPoint = mCoveredTiles[0]->mLocation;
+    MapPoint2D leftTopPoint = mCoveredTiles[0]->mLocation;
 
     for (const MapTile* tile : mCoveredTiles)
     {
-        if (tile->mTileLocation.x < leftTopPoint.x) leftTopPoint.x = tile->mTileLocation.x;
-        else rightBottomPoint.x = tile->mTileLocation.x;
+        if (tile->mLocation.x < leftTopPoint.x) leftTopPoint.x = tile->mLocation.x;
+        else rightBottomPoint.x = tile->mLocation.x;
 
-        if (tile->mTileLocation.y < leftTopPoint.y) leftTopPoint.y = tile->mTileLocation.y;
-        else rightBottomPoint.y = tile->mTileLocation.y;
+        if (tile->mLocation.y < leftTopPoint.y) leftTopPoint.y = tile->mLocation.y;
+        else rightBottomPoint.y = tile->mLocation.y;
     }
 
     mLocationArea.x = leftTopPoint.x;
@@ -293,7 +294,7 @@ void Room::ReevaluateWallSections()
             if (neighbourTile == nullptr)
                 continue; // something is wrong here - rooms cannot be built on map boundaries
 
-            if (!neighbourTile->IsTerrainSolid() || !neighbourTile->IsTerrainAllowRoomWalls())
+            if (!neighbourTile->IsSolidBlock() || !neighbourTile->IsAllowRoomWalls())
                 continue;
 
             eDirection inwardsDirection = GetOppositeDirection(outOfRoomDirection);
@@ -395,7 +396,7 @@ void Room::ReleaseWallSections()
             if (faceData.mWallExtendsRoom)
             {
                 faceData.mWallExtendsRoom = false;
-                GetGameWorld().InvalidateTile(currentTile);
+                gGameWorld.InvalidateTile(currentTile);
             }
         }
         currentSection->Reset();
@@ -439,7 +440,7 @@ void Room::FinalizeWallSection(RoomWallSection* section)
         TileFaceData& faceData = currTile->mFaces[tileFace];
         cxx_assert(!faceData.mWallExtendsRoom);
         faceData.mWallExtendsRoom = true;
-        GetGameWorld().InvalidateTile(currTile);
+        gGameWorld.InvalidateTile(currTile);
     }
 }
 
@@ -458,12 +459,12 @@ RoomWallSection* Room::FindWallSectionWithTile(MapTile* mapTile, eTileFace face)
 void Room::OnRecycle()
 {
     Entity::OnRecycle();
+    EnableEntityComponents::OnRecycle();
+    EnableEntityCapabilities::OnRecycle();
 
     mController = nullptr;
     mDefinition = nullptr;
     mTileConstructor = nullptr;
-    mComponents = {};
-    mCapabilities = {};
     mRoomDirection = {};
     cxx_assert(mInnerTiles.empty());
     cxx_assert(mWallSections.empty());
@@ -497,8 +498,8 @@ void Room::ReevaluateInnerSquares()
         if (isInnerTile != targetTile->mIsRoomInnerTile)
         {
             // invalidate tiles
-            GetGameWorld().InvalidateTile(targetTile);
-            GetGameWorld().InvalidateTileNeighbours(targetTile);
+            gGameWorld.InvalidateTile(targetTile);
+            gGameWorld.InvalidateTileNeighbours(targetTile);
         }
         targetTile->mIsRoomInnerTile = isInnerTile;
         if (isInnerTile)
@@ -514,14 +515,14 @@ bool Room::TransferRoomObjectsTo(Room* receiver, cxx::span<MapTile*> targetTiles
     cxx_assert(receiver != this);
     if ((receiver == this) || (receiver == nullptr)) return false;
 
-    GameObjectManager& gobjects = GetObjectManager();
+    GameObjectManager& gobjects = gGameObjectManager;
 
     Temp_List<EntityHandle> objectsTransferred;
 
     // floor furniture
     for (auto roller_it = mFloorFurniture.begin(); roller_it != mFloorFurniture.end(); )
     {
-        if (cxx::contains_if(targetTiles, [&roller_it](MapTile* mapTile) { return mapTile->mTileLocation == roller_it->mTileLocation; }))
+        if (cxx::contains_if(targetTiles, [&roller_it](MapTile* mapTile) { return mapTile->mLocation == roller_it->mTileLocation; }))
         {
             objectsTransferred.push_back(roller_it->mObjectHandle);
             receiver->mFloorFurniture.push_back(*roller_it);
@@ -535,7 +536,7 @@ bool Room::TransferRoomObjectsTo(Room* receiver, cxx::span<MapTile*> targetTiles
     // wall furniture
     for (auto roller_it = mWallsFurniture.begin(); roller_it != mWallsFurniture.end(); )
     {
-        if (cxx::contains_if(targetTiles, [&roller_it](MapTile* mapTile) { return mapTile->mTileLocation == roller_it->mTileLocation; }))
+        if (cxx::contains_if(targetTiles, [&roller_it](MapTile* mapTile) { return mapTile->mLocation == roller_it->mTileLocation; }))
         {
             objectsTransferred.push_back(roller_it->mObjectHandle);
             receiver->mWallsFurniture.push_back(*roller_it);
@@ -549,7 +550,7 @@ bool Room::TransferRoomObjectsTo(Room* receiver, cxx::span<MapTile*> targetTiles
     // pillars
     for (auto roller_it = mPillars.begin(); roller_it != mPillars.end(); )
     {
-        if (cxx::contains_if(targetTiles, [&roller_it](MapTile* mapTile) { return mapTile->mTileLocation == roller_it->mTileLocation; }))
+        if (cxx::contains_if(targetTiles, [&roller_it](MapTile* mapTile) { return mapTile->mLocation == roller_it->mTileLocation; }))
         {
             objectsTransferred.push_back(roller_it->mObjectHandle);
             receiver->mPillars.push_back(*roller_it);
@@ -563,7 +564,7 @@ bool Room::TransferRoomObjectsTo(Room* receiver, cxx::span<MapTile*> targetTiles
     // stored objects
     for (auto roller_it = mStorageSlots.begin(); roller_it != mStorageSlots.end(); )
     {
-        if (cxx::contains_if(targetTiles, [&roller_it](MapTile* mapTile) { return mapTile->mTileLocation == roller_it->mTileLocation; }))
+        if (cxx::contains_if(targetTiles, [&roller_it](MapTile* mapTile) { return mapTile->mLocation == roller_it->mTileLocation; }))
         {
             objectsTransferred.push_back(roller_it->mObjectHandle);
             receiver->mStorageSlots.push_back(*roller_it);
@@ -646,7 +647,7 @@ bool Room::TransferRoomObjectsTo(Room* receiver)
     // notify parent room changed
     if (!objectsTransferred.empty())
     {
-        GameObjectManager& gobjects = GetObjectManager();
+        GameObjectManager& gobjects = gGameObjectManager;
         for (EntityHandle objectHandle: objectsTransferred)
         {
             GameObject* objectPtr = gobjects.GetObjectPtr(objectHandle);
@@ -683,7 +684,7 @@ void Room::NeighbourTileChanged(MapTile* targetTile)
 
 void Room::DeleteFurnitureObjects()
 {
-    GameObjectManager& gobjects = GetObjectManager();
+    GameObjectManager& gobjects = gGameObjectManager;
 
     // floor furniture
     for (const auto& roller: mFloorFurniture)
@@ -709,46 +710,45 @@ void Room::DeleteFurnitureObjects()
 
 void Room::RearrangeObjects()
 {
-    RoomController::FurnitureEvaluationResult evaluationObjects;
-    evaluationObjects.reserve(32);
+    mTempFurnitureEvaluation.reserve(32);
 
     // floor furniture
     {
-        mController->EvaluateFloorFurniture(evaluationObjects);
-        HandleRoomFurnitureObjects(evaluationObjects, mFloorFurniture);
+        mController->EvaluateFloorFurniture(mTempFurnitureEvaluation);
+        HandleRoomFurnitureObjects(mTempFurnitureEvaluation, mFloorFurniture);
 
         cxx_assert(mFloorFurniture.empty());
 
-        mFloorFurniture.assign(evaluationObjects.begin(), evaluationObjects.end());
-        evaluationObjects.clear();
+        mFloorFurniture.assign(mTempFurnitureEvaluation.begin(), mTempFurnitureEvaluation.end());
+        mTempFurnitureEvaluation.clear();
     }
 
     // wall furniture
     {
-        mController->EvaluateWallFurniture(evaluationObjects);
-        HandleRoomFurnitureObjects(evaluationObjects, mWallsFurniture);
+        mController->EvaluateWallFurniture(mTempFurnitureEvaluation);
+        HandleRoomFurnitureObjects(mTempFurnitureEvaluation, mWallsFurniture);
         
         cxx_assert(mWallsFurniture.empty());
 
-        mWallsFurniture.assign(evaluationObjects.begin(), evaluationObjects.end());
-        evaluationObjects.clear();
+        mWallsFurniture.assign(mTempFurnitureEvaluation.begin(), mTempFurnitureEvaluation.end());
+        mTempFurnitureEvaluation.clear();
     }
 
     // pillars
     {
-        mController->EvaluatePillars(evaluationObjects);
-        HandleRoomFurnitureObjects(evaluationObjects, mPillars);
+        mController->EvaluatePillars(mTempFurnitureEvaluation);
+        HandleRoomFurnitureObjects(mTempFurnitureEvaluation, mPillars);
 
         cxx_assert(mPillars.empty());
 
-        mPillars.assign(evaluationObjects.begin(), evaluationObjects.end());
-        evaluationObjects.clear();
+        mPillars.assign(mTempFurnitureEvaluation.begin(), mTempFurnitureEvaluation.end());
+        mTempFurnitureEvaluation.clear();
     }
 
     PostRearrangeObjects();
 }
 
-void Room::HandleRoomFurnitureObjects(cxx::span<RoomFurnitureSlot> newObjects, std::vector<RoomFurnitureSlot>& prevObjects)
+void Room::HandleRoomFurnitureObjects(cxx::span<RoomFurnitureSlot> newObjects, RoomFurnitureSlots& prevObjects)
 {
     auto CamReuse = [](const RoomFurnitureSlot& lhs, const RoomFurnitureSlot& rhs)
         {
@@ -756,7 +756,7 @@ void Room::HandleRoomFurnitureObjects(cxx::span<RoomFurnitureSlot> newObjects, s
                 (lhs.mObjectRotation == rhs.mObjectRotation) && (lhs.mTileLocation == rhs.mTileLocation);
         };
 
-    GameObjectManager& gobjects = GetObjectManager();
+    GameObjectManager& gobjects = gGameObjectManager;
     for (RoomFurnitureSlot& currentObject: newObjects)
     {
         // try reuse prev
@@ -869,7 +869,7 @@ void Room::AssignObjectToStorageSlot(const MapPoint2D& tileLocation, EntityHandl
     storageSlot.mObjectHandle = entityHandle;
 
     // notify room changed
-    GameObject* gameObject = GetObjectManager().GetObjectPtr(entityHandle);
+    GameObject* gameObject = gGameObjectManager.GetObjectPtr(entityHandle);
     cxx_assert(gameObject && !gameObject->GetParentRoom());
     if (gameObject)
     {
@@ -894,7 +894,7 @@ void Room::UnassignStorageSlotObject(const MapPoint2D& tileLocation, EntityHandl
     mStorageSlots.erase(mStorageSlots.begin() + slotIndex);
 
     // notify room changed
-    GameObject* gameObject = GetObjectManager().GetObjectPtr(entityHandle);
+    GameObject* gameObject = gGameObjectManager.GetObjectPtr(entityHandle);
     if (gameObject && (gameObject->GetParentRoom() == GetOwnHandle()))
     {
         gameObject->ParentRoomChanged({});

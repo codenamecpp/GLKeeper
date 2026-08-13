@@ -23,8 +23,8 @@ void RoomTileConstructor_5_by_5::ConstructRoomFloor(Room* roomInstance, cxx::spa
         const glm::mat3* rotation = nullptr;
 
         // get tile offset
-        const int ioffsetx = mapTile->mTileLocation.x - locationArea.x;
-        const int ioffsety = mapTile->mTileLocation.y - locationArea.y;
+        const int ioffsetx = mapTile->mLocation.x - locationArea.x;
+        const int ioffsety = mapTile->mLocation.y - locationArea.y;
         const int ioffset = (ioffsety * 5) + ioffsetx;
 
         // corner

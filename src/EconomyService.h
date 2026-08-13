@@ -4,11 +4,10 @@
 
 #include "GameDefs.h"
 #include "PlayerDefs.h"
-#include "GameSessionAware.h"
 
 //////////////////////////////////////////////////////////////////////////
 
-class EconomyService final: private GameSessionAware
+class EconomyService final: public cxx::noncopyable
 {
 public:
 
@@ -25,7 +24,7 @@ public:
     long TakeResource(Player& player, eGameResource resourceType, long resourceAmount);
 
     // notifications
-    void StoredGoldAmountChanged(ePlayerID playerId, EntityHandle roomHandle, long amountDelta);
+    void StoredMoneyAmountChanged(ePlayerID playerId, EntityHandle roomHandle, long amountDelta);
 
 private:
     void IssueStartingResources();
@@ -33,5 +32,9 @@ private:
 
 private:
 };
+
+//////////////////////////////////////////////////////////////////////////
+
+extern EconomyService gEconomyService;
 
 //////////////////////////////////////////////////////////////////////////

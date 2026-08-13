@@ -27,7 +27,9 @@ protected:
     long GetStoredGoldAmount() const override;
     long GetStoredGoldCapacity() const override;
     long StoreGold(long goldAmount) override;
+    long StoreGold(long goldAmount, const MapPoint2D& tileLocation) override;
     long DisposeGold(long goldAmount) override;
+    bool GetTileToStoreGold(MapPoint2D& tileLocation) override;
     long GetFreeStorageSpace() const;
 
     // override StorageRoomController
@@ -38,7 +40,7 @@ protected:
     void SetMoneyStorageMaxGoldPerTile(long maxGoldPerTile);
 
     void SetObjectPlacementToTileCenter(EntityHandle entityHandle, const MapPoint2D& tileLocation, bool setRandomOrientation);
-    void SyncStoredGoldAmount();
+    void SyncStoredMoneyAmount();
     void ScanForLooseGold();
 
     long StoreGoldOnStorageTile(const MapPoint2D& tileLocation, long goldAmount, bool canCreateChest);
@@ -47,7 +49,7 @@ protected:
     long DistributeGoldBetweenChests(long goldAmount, bool canCreateAdditionalChests);
 
 protected:
-    GoldStorageComponent* mGoldComponent = nullptr;
+    MoneyComponent* mMoneyComponent = nullptr;
 
 private:
     long mMoneyStorageMaxGoldPerTile;

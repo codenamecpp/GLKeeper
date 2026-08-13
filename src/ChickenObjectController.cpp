@@ -4,6 +4,7 @@
 #include "GameMain.h"
 #include "Room.h"
 #include "GameObjectManager.h"
+#include "GameMap.h"
 
 void ChickenObjectController::ConfigureInstance(GameObject* objectInstance)
 {
@@ -64,13 +65,13 @@ void ChickenObjectController::UpdateLogic(float stepDeltaTime)
 
             // spawn chicken
             GetGameObject().SetCurrentState(eGameObjectState_None);
-            EntityHandle chickenHandle = GetObjectManager().CreateObject(GameObjectClassId_Chicken);
-            if (GameObject* chickenObject = GetObjectManager().GetObjectPtr(chickenHandle))
+            EntityHandle chickenHandle = gGameObjectManager.CreateObject(GameObjectClassId_Chicken);
+            if (GameObject* chickenObject = gGameObjectManager.GetObjectPtr(chickenHandle))
             {
                 chickenObject->SetTransform(GetGameObject().GetTransform());
-                GetObjectManager().ActivateObject(chickenHandle);
+                gGameObjectManager.ActivateObject(chickenHandle);
             }
-            GetObjectManager().DeleteObject(GetGameObject().GetInstanceUid());
+            gGameObjectManager.DeleteObject(GetGameObject().GetInstanceUid());
             return;
         }
 
@@ -151,7 +152,7 @@ void ChickenObjectController::Die()
 {
     mLifetimeTicks = 0;
 
-    GetObjectManager().DeleteObject(GetGameObject().GetInstanceUid());
+    gGameObjectManager.DeleteObject(GetGameObject().GetInstanceUid());
 }
 
 void ChickenObjectController::StartHatching()
@@ -202,7 +203,7 @@ bool ChickenObjectController::TrySelectRandomMovePoint(glm::vec2& nextMovePoint)
     // todo: move to navigation service
 
     MapPoint2D currentTilePosition = GetGameObject().GetTilePosition();
-    if (MapTile* currentTile = GetGameWorld().GetGameMap().GetMapTile(currentTilePosition))
+    if (MapTile* currentTile = gGameMap.GetMapTile(currentTilePosition))
     {
         RoomDefinition* roomDefinition = currentTile->mRoomInstance ? 
             currentTile->mRoomInstance->GetDefinition() : nullptr;
@@ -226,7 +227,7 @@ bool ChickenObjectController::TrySelectRandomMovePoint(glm::vec2& nextMovePoint)
             else
             {
                 if (neighbourTile->IsBaseTerrainWaterOrLava()) continue;
-                if (neighbourTile->IsTerrainSolid()) continue;
+                if (neighbourTile->IsSolidBlock()) continue;
             }
             candidateTiles.push_back(neighbourTile);
         }
@@ -241,7 +242,7 @@ bool ChickenObjectController::TrySelectRandomMovePoint(glm::vec2& nextMovePoint)
 
     if (tileToGo)
     {
-        glm::vec3 tileCenterPosition = MapUtils::ComputeTileCenter(tileToGo->mTileLocation);
+        glm::vec3 tileCenterPosition = MapUtils::ComputeTileCenter(tileToGo->mLocation);
         nextMovePoint = glm::vec2
         {
             tileCenterPosition.x + ((Random::GenerateFloat01() * MAP_TILE_SIZE) - MAP_TILE_HALF_SIZE) * 0.8f,

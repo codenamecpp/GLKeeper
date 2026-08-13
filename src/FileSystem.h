@@ -18,6 +18,8 @@ public:
     bool Initialize();
     void Shutdown();
 
+    void InitTextLocation(const std::string_view& folderName);
+
     // Find path to dungeon keeper 2 engine textures cache
     bool LocateEngineTexturesCache(std::string& thePath) const;
 
@@ -56,7 +58,7 @@ public:
     std::deque<std::string> mSearchPlaces;
     std::string mExecutablePath;
     std::string mWorkingDirectoryPath;
-    std::string mDungeonKeeperContentPath;
+    std::string mTextFolder;
 };
 
 extern FileSystem gFiles;

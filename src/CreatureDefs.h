@@ -3,17 +3,20 @@
 //////////////////////////////////////////////////////////////////////////
 
 class CreatureController;
+using CreatureControllerPtr = cxx::uniqueptr<CreatureController>;
+
 class CreatureManager;
 class Creature;
+class CreatureTaskManager;
 
-class CreatureActivity_None;
-class CreatureActivity_GoTo;
-class CreatureActivity_GoToBed;
-class CreatureActivity_GoToFood;
-class CreatureActivity_Idle;
-class CreatureActivity_Explore;
-class CreatureActivity_Sleep;
-class CreatureActivity_Eat;
+class CreatureTask;
+using CreatureTaskPtr = cxx::uniqueptr<CreatureTask>;
+
+class CreatureState;
+using CreatureStatePtr = cxx::uniqueptr<CreatureState>;
+
+class CreatureAction;
+using CreatureActionPtr = cxx::uniqueptr<CreatureAction>;
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -37,13 +40,17 @@ enum eCreatureJobClass
 enum eCreatureJob
 {
     eCreatureJob_None,
+
+    eCreatureJob_Wander,
     eCreatureJob_Sleep,
     eCreatureJob_Eat,
     eCreatureJob_Research,
     eCreatureJob_Train,
     eCreatureJob_Manufacture,
     eCreatureJob_Guard,
-    eCreatureJob_Torture,
+    eCreatureJob_Flee,
+    eCreatureJob_Torture, // torture a captive
+    eCreatureJob_TortureVolunteer,
     eCreatureJob_Pray,
     eCreatureJob_Drink,
     eCreatureJob_Leave,
@@ -51,20 +58,86 @@ enum eCreatureJob
     eCreatureJob_DestroyWalls,
     eCreatureJob_StealGold,
     eCreatureJob_StealSpells,
-    eCreatureJob_StealManufactureCrates,
+    eCreatureJob_StealCrates, // worker job?
     eCreatureJob_StealEnemyGold,
     eCreatureJob_Sulk,
     eCreatureJob_Rebel,
     eCreatureJob_KillCreatures,
     eCreatureJob_KillPlayer,
-    eCreatureJob_Tunnelling,
     eCreatureJob_Wait,
     eCreatureJob_SendToActionPoint,
     eCreatureJob_Explore,
     eCreatureJob_CombatPitSpectate,
+    eCreatureJob_CombatPitFight,
     eCreatureJob_JailBreak,
+    eCreatureJob_Gamble,
+    eCreatureJob_Dance,
+    eCreatureJob_Celebrate,
+    eCreatureJob_CallToArms,
+    eCreatureJob_CollectWages,
+    eCreatureJob_MakeHome,
+    eCreatureJob_DisarmTraps,
+
+    // worker jobs
+    eCreatureJob_Dig,
+    eCreatureJob_Mine,
+    eCreatureJob_Claim,
+    eCreatureJob_ReinforceWall,
+    eCreatureJob_RepairWall,
+    eCreatureJob_CarryCorpseToGraveyard,
+    eCreatureJob_CarryEnemyToPrison,
+    eCreatureJob_CarryFallenToLair,
+    eCreatureJob_CarrySpecialToLibrary,
+    eCreatureJob_CarryGoldToTreasury,
+    eCreatureJob_CarryCrateToWorkshop,
+    eCreatureJob_InstallTrap,
+    eCreatureJob_InstallDoor,
+
+    // add more
 
     eCreatureJob_COUNT
+};
+
+enum eCreatureState
+{
+    eCreatureState_None, // init state
+
+    eCreatureState_Idle,
+    eCreatureState_Working,
+    eCreatureState_Stunned,
+    eCreatureState_Frozen,
+    eCreatureState_Unconscious,
+    eCreatureState_Tortured,
+    eCreatureState_Dead,
+    eCreatureState_InHand,
+    eCreatureState_InPrison,
+    eCreatureState_Dropped,
+    eCreatureState_Slapped,
+    eCreatureState_GetUp,
+    eCreatureState_EnteringDungeon,
+
+    // add more
+
+    eCreatureState_COUNT
+};
+
+enum eCreatureAction
+{
+    eCreatureAction_IdleStanding,
+    eCreatureAction_Wander,
+    eCreatureAction_WalkToPoint,
+    eCreatureAction_FaceTarget,
+
+    // worker actions
+    eCreatureAction_Digging,
+    eCreatureAction_Mining,
+    eCreatureAction_CarryGoldToTreasury,
+    eCreatureAction_ReinforceWall,
+    eCreatureAction_ClaimFloor,
+
+    // add more
+
+    eCreatureAction_COUNT
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -73,6 +146,7 @@ using CreatureTypeId = unsigned int;
 enum : CreatureTypeId
 {
     CreatureTypeId_Null = 0, // not valid id
+    CreatureTypeId_Imp = 1,
     // todo
     CreatureTypeId_COUNT 
 };
@@ -172,37 +246,8 @@ enum_serialize_decl(CreatureAnimationID);
 
 //////////////////////////////////////////////////////////////////////////
 
-enum eCreatureActivity
-{
-    eCreatureActivity_None,
-    eCreatureActivity_GoToLocation,
-    eCreatureActivity_GoToBed,
-    eCreatureActivity_GoToFood,
-    eCreatureActivity_Idle,
-    eCreatureActivity_Explore,
-    eCreatureActivity_Sleep,
-    eCreatureActivity_Eat,
-};
-
-//////////////////////////////////////////////////////////////////////////
-
-// activity runtime status
-enum eCreatureActivityStatus: unsigned char
-{
-    eCreatureActivityStatus_Init, // initial state
-    eCreatureActivityStatus_Running, // in progress
-    eCreatureActivityStatus_Cancelling, // interruption requested
-    eCreatureActivityStatus_Finished, // completed
-};
-
-// activity completion result
-enum eCreatureActivityResult: unsigned char
-{
-    eCreatureActivityResult_None, // activity was not completed
-    eCreatureActivityResult_Success,
-    eCreatureActivityResult_Failed,
-    eCreatureActivityResult_Cancelled
-};
+// unique identifier of creature task
+using CreatureTaskUid = uint64_t;
 
 //////////////////////////////////////////////////////////////////////////
 

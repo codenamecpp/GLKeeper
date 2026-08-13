@@ -22,16 +22,53 @@ const glm::vec3 g_SubTileTranslations[4] =
 
 MapTile::MapTile()
     : mBaseTerrain()
-    , mTerrain()
-    , mOwnerID(ePlayerID_Null)
-    , mTileLocation()
+    , mRoomTerrain()
+    , mOwnerId(ePlayerID_Null)
+    , mLocation()
     , mRoomInstance()
     , mNeighbours()
     , mFaces()
-    , mIsTagged()
     , mIsRoomInnerTile()
     , mIsRoomEntrance()
 {
+}
+
+void MapTile::SetBaseTerrain(TerrainDefinition* terrainDef)
+{
+    if (mBaseTerrain == terrainDef)
+        return;
+
+    mBaseTerrain = terrainDef;
+    cxx_assert(mBaseTerrain);
+
+    RestoreHitPoints();
+}
+
+void MapTile::SetRoomTerrain(TerrainDefinition* terrainDef)
+{
+    if (mRoomTerrain == terrainDef)
+        return;
+
+    mRoomTerrain = terrainDef;
+    if (mRoomTerrain)
+    {
+        cxx_assert(mRoomTerrain != mBaseTerrain);
+    }
+    RestoreHitPoints();
+}
+
+int MapTile::ChangeHitPoints(int deltaHp)
+{
+    const int maxHitPoints = GetHitPointsMax();
+    const int prevHitPoints = mHitPoints;
+    mHitPoints = std::clamp(mHitPoints + deltaHp, 0, maxHitPoints);
+    return abs(prevHitPoints - mHitPoints);
+}
+
+void MapTile::RestoreHitPoints()
+{
+    TerrainDefinition* terrainDef = GetTerrain();
+    mHitPoints = terrainDef->mHealthInitial;
 }
 
 void MapTile::ClearTileMesh()
@@ -61,5 +98,13 @@ void MapTile::ClearFloorHeightmap()
     for (float& roller: mFloorHeightmap.mSamples)
     {
         roller = MAP_FLOOR_LEVEL;
+    }
+}
+
+void MapTile::ClearAreaCode()
+{
+    for (int i = 0; i < ePassabilityType_COUNT; ++i)
+    {
+        mAreaCode[i] = 0;
     }
 }

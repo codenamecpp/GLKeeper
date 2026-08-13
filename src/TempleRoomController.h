@@ -17,8 +17,8 @@ public:
     void SpawnInstance() override;
     void DespawnInstance() override;
     void PostReconfigureRoom() override;
-    void EvaluateFloorFurniture(FurnitureEvaluationResult& evaluation) override;
-    void EvaluatePillars(FurnitureEvaluationResult& evaluation) override;
+    void EvaluateFloorFurniture(RoomFurnitureSlots& evaluation) override;
+    void EvaluatePillars(RoomFurnitureSlots& evaluation) override;
 
 private:
     void ReevaluateWaterPoolTiles();

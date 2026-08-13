@@ -122,14 +122,17 @@
     <Filter Include="Source\World\Entity">
       <UniqueIdentifier>{6b1a758d-2ee7-4093-9759-74909a290c61}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\World\Creatures\Activities">
-      <UniqueIdentifier>{fff2d468-29c2-4528-a018-f9b4e2386592}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\World\Navigation">
       <UniqueIdentifier>{eef4ee5b-060b-4b7f-9d77-450d9703bc70}</UniqueIdentifier>
     </Filter>
     <Filter Include="Data\Gameplay">
       <UniqueIdentifier>{e514f89a-ea6e-4394-9399-62a236dc204d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\World\Creatures\States">
+      <UniqueIdentifier>{eef7b63b-a5b1-4117-955c-be0d3050bc91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\World\Creatures\Actions">
+      <UniqueIdentifier>{fff2d468-29c2-4528-a018-f9b4e2386592}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -583,9 +586,6 @@
     <ClInclude Include="GameEvent.h">
       <Filter>Source</Filter>
     </ClInclude>
-    <ClInclude Include="GameSessionAware.h">
-      <Filter>Source\Session</Filter>
-    </ClInclude>
     <ClInclude Include="GameSessionController.h">
       <Filter>Source\Session</Filter>
     </ClInclude>
@@ -679,17 +679,8 @@
     <ClInclude Include="EntityDefs.h">
       <Filter>Source\World\Entity</Filter>
     </ClInclude>
-    <ClInclude Include="EntityNotification.h">
-      <Filter>Source\World\Entity</Filter>
-    </ClInclude>
     <ClInclude Include="WeightSelector.h">
       <Filter>Source\Base</Filter>
-    </ClInclude>
-    <ClInclude Include="CreatureActivityUtils.h">
-      <Filter>Source\World\Creatures\Activities</Filter>
-    </ClInclude>
-    <ClInclude Include="CreatureActivity.h">
-      <Filter>Source\World\Creatures\Activities</Filter>
     </ClInclude>
     <ClInclude Include="CreatureAnimConst.h">
       <Filter>Source\World\Creatures</Filter>
@@ -705,6 +696,69 @@
     </ClInclude>
     <ClInclude Include="Locomotion.h">
       <Filter>Source\World\Locomotion</Filter>
+    </ClInclude>
+    <ClInclude Include="PathFindEngine.h">
+      <Filter>Source\World\Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="PathFindUtils.h">
+      <Filter>Source\World\Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="PathFindRequest.h">
+      <Filter>Source\World\Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="CreatureTask.h">
+      <Filter>Source\World\Creatures</Filter>
+    </ClInclude>
+    <ClInclude Include="CreatureTaskManager.h">
+      <Filter>Source\World\Creatures</Filter>
+    </ClInclude>
+    <ClInclude Include="CreatureState.h">
+      <Filter>Source\World\Creatures\States</Filter>
+    </ClInclude>
+    <ClInclude Include="EntityMsg.h">
+      <Filter>Source\World\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="CreatureState_Idle.h">
+      <Filter>Source\World\Creatures\States</Filter>
+    </ClInclude>
+    <ClInclude Include="CreatureState_Working.h">
+      <Filter>Source\World\Creatures\States</Filter>
+    </ClInclude>
+    <ClInclude Include="CreatureAction.h">
+      <Filter>Source\World\Creatures\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="CreatureAction_IdleStanding.h">
+      <Filter>Source\World\Creatures\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="CreatureAction_WalkToPoint.h">
+      <Filter>Source\World\Creatures\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="CreatureAction_Wander.h">
+      <Filter>Source\World\Creatures\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="CreatureAction_Digging.h">
+      <Filter>Source\World\Creatures\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="ImpCreatureController.h">
+      <Filter>Source\World\Creatures\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="CreatureAction_FaceTarget.h">
+      <Filter>Source\World\Creatures\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="CreatureAction_Mining.h">
+      <Filter>Source\World\Creatures\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="CreatureComponents.h">
+      <Filter>Source\World\Creatures</Filter>
+    </ClInclude>
+    <ClInclude Include="CreatureAction_CarryGoldToTreasury.h">
+      <Filter>Source\World\Creatures\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="CreatureAction_ReinforceWall.h">
+      <Filter>Source\World\Creatures\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="CreatureAction_ClaimFloor.h">
+      <Filter>Source\World\Creatures\Actions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1035,9 +1089,6 @@
     <ClCompile Include="GameEventBus.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="GameSessionAware.cpp">
-      <Filter>Source\Session</Filter>
-    </ClCompile>
     <ClCompile Include="GameSessionController.cpp">
       <Filter>Source\Session</Filter>
     </ClCompile>
@@ -1095,26 +1146,74 @@
     <ClCompile Include="CreatureController.cpp">
       <Filter>Source\World\Creatures\Controllers</Filter>
     </ClCompile>
-    <ClCompile Include="CreatureActivity_Idle.cpp">
-      <Filter>Source\World\Creatures\Activities</Filter>
-    </ClCompile>
     <ClCompile Include="CreatureAnimConst.cpp">
       <Filter>Source\World\Creatures</Filter>
     </ClCompile>
     <ClCompile Include="NavigationService.cpp">
       <Filter>Source\World\Navigation</Filter>
     </ClCompile>
-    <ClCompile Include="CreatureActivity_GoTo.cpp">
-      <Filter>Source\World\Creatures\Activities</Filter>
-    </ClCompile>
-    <ClCompile Include="CreatureActivityUtils.cpp">
-      <Filter>Source\World\Creatures\Activities</Filter>
-    </ClCompile>
     <ClCompile Include="Animator.cpp">
       <Filter>Source\World\View</Filter>
     </ClCompile>
     <ClCompile Include="Locomotion.cpp">
       <Filter>Source\World\Locomotion</Filter>
+    </ClCompile>
+    <ClCompile Include="PathFindEngine.cpp">
+      <Filter>Source\World\Navigation</Filter>
+    </ClCompile>
+    <ClCompile Include="PathFindUtils.cpp">
+      <Filter>Source\World\Navigation</Filter>
+    </ClCompile>
+    <ClCompile Include="PathFindRequest.cpp">
+      <Filter>Source\World\Navigation</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatureTask.cpp">
+      <Filter>Source\World\Creatures</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatureTaskManager.cpp">
+      <Filter>Source\World\Creatures</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatureState.cpp">
+      <Filter>Source\World\Creatures\States</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatureState_Idle.cpp">
+      <Filter>Source\World\Creatures\States</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatureState_Working.cpp">
+      <Filter>Source\World\Creatures\States</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatureAction.cpp">
+      <Filter>Source\World\Creatures\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatureAction_IdleStanding.cpp">
+      <Filter>Source\World\Creatures\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatureAction_WalkToPoint.cpp">
+      <Filter>Source\World\Creatures\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatureAction_Wander.cpp">
+      <Filter>Source\World\Creatures\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatureAction_Digging.cpp">
+      <Filter>Source\World\Creatures\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="ImpCreatureController.cpp">
+      <Filter>Source\World\Creatures\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatureAction_FaceTarget.cpp">
+      <Filter>Source\World\Creatures\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatureAction_Mining.cpp">
+      <Filter>Source\World\Creatures\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatureAction_CarryGoldToTreasury.cpp">
+      <Filter>Source\World\Creatures\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatureAction_ReinforceWall.cpp">
+      <Filter>Source\World\Creatures\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatureAction_ClaimFloor.cpp">
+      <Filter>Source\World\Creatures\Actions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1175,9 +1274,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\docs\engine_textures.txt">
-      <Filter>Docs</Filter>
-    </Text>
-    <Text Include="..\docs\jobs.txt">
       <Filter>Docs</Filter>
     </Text>
     <Text Include="..\docs\mesh_format.txt">

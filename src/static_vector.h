@@ -164,12 +164,12 @@ namespace cxx
         inline const_iterator cbegin() const noexcept { return data(); }
         inline const_iterator cend() const noexcept { return data() + mSize; }
 
-        inline reference operator[](size_t index) noexcept 
+        inline reference operator[](size_type index) noexcept 
         {
             cxx_assert((index >= 0) && (index < size()));
             return data(index); 
         }
-        inline const_reference operator[](size_t index) const noexcept 
+        inline const_reference operator[](size_type index) const noexcept 
         {
             cxx_assert((index >= 0) && (index < size()));
             return data(index);
@@ -277,11 +277,11 @@ namespace cxx
 
     private:
 
-        inline reference data(size_t index) noexcept 
+        inline reference data(size_type index) noexcept 
         { 
             return *reinterpret_cast<pointer>(&mData[index]); 
         }
-        inline const_reference data(size_t index) const noexcept 
+        inline const_reference data(size_type index) const noexcept 
         { 
             return *reinterpret_cast<const_pointer>(&mData[index]); 
         }

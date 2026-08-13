@@ -26,12 +26,12 @@ void TortureChamberRoomController::PostReconfigureRoom()
 
 }
 
-void TortureChamberRoomController::EvaluateFloorFurniture(FurnitureEvaluationResult& evaluation)
+void TortureChamberRoomController::EvaluateFloorFurniture(RoomFurnitureSlots& evaluation)
 {
 
 }
 
-void TortureChamberRoomController::EvaluateWallFurniture(FurnitureEvaluationResult& evaluation)
+void TortureChamberRoomController::EvaluateWallFurniture(RoomFurnitureSlots& evaluation)
 {
     RoomDefinition* roomDefinition = GetRoom().GetDefinition();
     for (const RoomWallSection* wallSection: GetRoom().GetWallSections())
@@ -44,7 +44,7 @@ void TortureChamberRoomController::EvaluateWallFurniture(FurnitureEvaluationResu
 
             RoomFurnitureSlot& roomObject = evaluation.emplace_back();
             roomObject.mObjectClassId = roomDefinition->mObjectIds[4];
-            roomObject.mTileLocation = wallTile->mNeighbours[wallFaceDirection]->mTileLocation;
+            roomObject.mTileLocation = wallTile->mNeighbours[wallFaceDirection]->mLocation;
             switch (wallFaceDirection)
             {
                 case eDirection_N: 

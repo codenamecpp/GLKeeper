@@ -3,6 +3,13 @@
 #include "SimplePool.h"
 #include "GameWorld.h"
 #include "Entity.h"
+#include "GameMap.h"
+
+//////////////////////////////////////////////////////////////////////////
+
+Physics gPhysics;
+
+//////////////////////////////////////////////////////////////////////////
 
 void Physics::EnterWorld()
 {
@@ -120,7 +127,7 @@ PhysicsObject* Physics::GetPhysicsObject(Entity* entity) const
     return physicsObject;
 }
 
-cxx::uniqueptr<PhysicsObject> Physics::CreatePhysicsObject()
+PhysicsObjectPtr Physics::CreatePhysicsObject() const
 {
     static SimplePool<PhysicsObject> objectsPool = (
         [](PhysicsObject* object)
@@ -129,7 +136,7 @@ cxx::uniqueptr<PhysicsObject> Physics::CreatePhysicsObject()
         });
 
     PhysicsObject* objectPtr = objectsPool.Acquire();
-    return std::move(cxx::uniqueptr<PhysicsObject> (objectPtr, [](PhysicsObject* object)
+    return std::move(PhysicsObjectPtr (objectPtr, [](PhysicsObject* object)
     {
         if (object)
         {
@@ -168,7 +175,7 @@ void Physics::InterpolationStep(PhysicsObject* object, float t)
     // notify
     if (object->mEntity)
     {
-        object->mEntity->Notify(EntityNotification::ForSyncWithPhysics());
+        object->mEntity->ReceiveMsg(EntityMsg_SyncWithPhysics{});
     }
 }
 
@@ -197,7 +204,7 @@ void Physics::SimulationStep(PhysicsObject* object)
         const glm::vec2& linearVelocity = object->GetLinearVelocity();
         object->mNextTransform.mPosition.x = object->mCurrTransform.mPosition.x + linearVelocity.x * mSimulationStepDelta;
         object->mNextTransform.mPosition.z = object->mCurrTransform.mPosition.z + linearVelocity.y * mSimulationStepDelta;
-        object->mNextTransform.mPosition.y = GetGameWorld().GetGameMap().GetFloorHeightAt(object->mNextTransform.mPosition);
+        object->mNextTransform.mPosition.y = gGameMap.GetFloorHeightAt(object->mNextTransform.mPosition);
 
         simulated = true;
 
@@ -208,7 +215,7 @@ void Physics::SimulationStep(PhysicsObject* object)
     if (!isMoving)
     {
         float prevFloorHeight = object->mCurrTransform.mPosition.y;
-        float currFloorHeight = GetGameWorld().GetGameMap().GetFloorHeightAt(object->mCurrTransform.mPosition);
+        float currFloorHeight = gGameMap.GetFloorHeightAt(object->mCurrTransform.mPosition);
         if (!cxx::eps_equals(currFloorHeight, prevFloorHeight))
         {
             object->mNextTransform.mPosition.y = currFloorHeight;

@@ -206,6 +206,74 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 
+template<typename TEnumType, typename TBitmaskType = uint32_t>
+struct EnumSet
+{
+public:
+    using EnumType = TEnumType;
+    using EnumUnderlyingType = std::underlying_type_t<EnumType>;
+    using BitmaskType = TBitmaskType;
+
+public:
+    constexpr EnumSet() = default;
+    constexpr EnumSet(EnumType enumValue)
+    {
+        Set(enumValue);
+    }
+    constexpr EnumSet(std::initializer_list<EnumType> enumValues)
+    {
+        Set(enumValues);
+    }
+    constexpr void Set(EnumType enumValue)
+    {
+        mBits = ToBit(enumValue);
+    }
+    constexpr void Set(std::initializer_list<EnumType> enumValues)
+    {
+        mBits = 0;
+        for (EnumType roller: enumValues)
+        {
+            mBits |= ToBit(roller);
+        }
+    }
+    constexpr void Clear()
+    {
+        mBits = 0;
+    }
+    constexpr bool Empty() const { return mBits == 0; }
+    constexpr bool Contains(EnumType enumValue) const { return (mBits & ToBit(enumValue)) != 0; }
+
+    constexpr EnumSet& Include(EnumType enumValue) { mBits |= ToBit(enumValue); return *this; }
+    constexpr EnumSet& Exclude(EnumType enumValue) { mBits &= ~ToBit(enumValue); return *this; }
+
+    constexpr EnumSet operator | (EnumType enumValue) const { return EnumSet{mBits | ToBit(enumValue)}; }
+    constexpr EnumSet operator & (EnumType enumValue) const { return EnumSet{mBits & ToBit(enumValue)}; }
+    constexpr EnumSet operator | (const EnumSet& other) const { return EnumSet{mBits | other.mBits}; }
+    constexpr EnumSet operator & (const EnumSet& other) const { return EnumSet{mBits & other.mBits}; }
+
+    constexpr EnumSet& operator |= (EnumType enumValue) { mBits |= ToBit(enumValue); return *this; }
+    constexpr EnumSet& operator &= (EnumType enumValue) { mBits &= ToBit(enumValue); return *this; }
+    constexpr EnumSet& operator |= (const EnumSet& other) { mBits |= other.mBits; return *this; }
+    constexpr EnumSet& operator &= (const EnumSet& other) { mBits &= other.mBits; return *this; }
+
+    constexpr EnumSet operator ~ () const { return EnumSet{~mBits}; }
+
+private:
+    constexpr explicit EnumSet(BitmaskType rawBits)
+        : mBits(rawBits)
+    {
+    }
+    constexpr static BitmaskType ToBit(EnumType enumValue)
+    {
+        cxx_assert(enumValue < sizeof(BitmaskType) * 8);
+        return static_cast<BitmaskType>(1) << static_cast<EnumUnderlyingType>(enumValue);
+    }
+private:
+    BitmaskType mBits {};
+};
+
+//////////////////////////////////////////////////////////////////////////
+
 // dynamic transient buffer
 // warning: all allocated data is invalidated at the start of the next frame
 // memory is reclaimed every update frame, see FrameMemoryManager
@@ -220,7 +288,7 @@ template<typename T>
 using Temp_List = std::pmr::list<T>;
 
 template<typename T, typename TContainer>
-inline auto MakeTempVector(const TContainer& sourceContainer)
+inline auto TempVectorFrom(const TContainer& sourceContainer)
 {
     Temp_Vector<T> tempVector;
     tempVector.assign(std::begin(sourceContainer), std::end(sourceContainer));
@@ -228,7 +296,7 @@ inline auto MakeTempVector(const TContainer& sourceContainer)
 }
 
 template<typename T>
-inline auto MakeTempVector(const cxx::span<T>& sourceContainer)
+inline auto TempVectorFrom(const cxx::span<T>& sourceContainer)
 {
     Temp_Vector<T> tempVector;
     tempVector.assign(std::begin(sourceContainer), std::end(sourceContainer));

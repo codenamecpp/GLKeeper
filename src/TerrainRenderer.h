@@ -4,7 +4,6 @@
 #include "MapTile.h"
 #include "ShaderProgram.h"
 #include "SceneDefs.h"
-#include "GameSessionAware.h"
 
 class Camera;
 
@@ -12,7 +11,7 @@ class Camera;
 // Dungeon Render Mesh 
 //////////////////////////////////////////////////////////////////////////
 
-class TerrainRenderer final: private GameSessionAware
+class TerrainRenderer final: public cxx::noncopyable
 {
 public:
     TerrainRenderer();
@@ -36,7 +35,7 @@ public:
     void InvalidateTile(const MapPoint2D& theTileLocation);
     void InvalidateTile(const MapTile* theTile)
     {
-        InvalidateTile(theTile->mTileLocation);
+        InvalidateTile(theTile->mLocation);
     }
 
     void TileHighlightChanged(MapTile* mapTile);

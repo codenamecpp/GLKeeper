@@ -12,6 +12,18 @@ void CreatureController::ConfigureInstance(Creature* creatureInstance)
 {
     cxx_assert((mCreature == nullptr) && creatureInstance);
     mCreature = creatureInstance;
+
+    CreatureDefinition* definition = GetCreature().GetDefinition();
+
+    // add common components
+
+    if ((definition->mMaxGoldHeld > 0) || (definition->mInitialGoldHeld))
+    {
+        MoneyComponent* moneyComponent = GetCreature().AddComponent<MoneyComponent>();
+        cxx_assert(moneyComponent);
+        moneyComponent->mAmount = definition->mInitialGoldHeld;
+        moneyComponent->mCapacity = definition->mMaxGoldHeld;
+    }
 }
 
 void CreatureController::SpawnInstance()
@@ -28,32 +40,7 @@ void CreatureController::DespawnInstance()
 
 void CreatureController::UpdateLogic(float stepDeltaTime)
 {
-    // update current activity
-    if (CreatureActivity* currentActivity = GetCreature().GetCurrentActivity())
-    {
-        HandleActivity(*currentActivity);
-    }
 
-    // check current activity finish
-    if (CreatureActivity* currentActivity = GetCreature().GetCurrentActivity())
-    {
-        if (CreatureActivityUtils::IsFinished(*currentActivity))
-        {
-            GetCreature().ClearCurrentActivity();
-        }
-    }
-
-    // try start next activity
-    if (!GetCreature().HasActivity())
-    {
-        GetCreature().SwitchToRequestActivity();
-    }
-
-    // look for new activities
-    if (!GetCreature().HasActivity())
-    {
-        SelectNextActivity();
-    }
 }
 
 void CreatureController::ConfigureCreatureAnimationStates()
@@ -62,12 +49,9 @@ void CreatureController::ConfigureCreatureAnimationStates()
 
     CreatureDefinition* definition = GetCreature().GetDefinition();
 
-    auto GetAnimResource = [definition](CreatureAnimationID animID) -> const ArtResourceDefinition&
+    auto GetAnimResource = [definition](CreatureAnimationID animID)
         {
-            const ArtResourceDefinition& animResource = definition->mAnimationResources[animID];
-            if (animResource.IsDefined()) return animResource;
-            // fallback to pose frame
-            return definition->mAnimationResources[CreatureAnimation_Pose_Frame];
+            return definition->GetAnimResourceOrPoseFrame(animID);
         };
 
     // configure common states
@@ -120,21 +104,6 @@ void CreatureController::ConfigureCreatureAnimationStates()
             animator.DefineTransition(CreatureAnimConst::StateIdle2, CreatureAnimConst::StatePose, {});
         }
     }
-
-}
-
-bool CreatureController::SelectNextActivity()
-{
-    GetCreature().RequestActivity<CreatureActivity_Idle>();
-    return true;
-}
-
-void CreatureController::HandleNotification(const EntityNotification& notification)
-{
-    if (CreatureActivity* currentActivity = GetCreature().GetCurrentActivity())
-    {
-        HandleActivityNotification(*currentActivity, notification);
-    }
 }
 
 void CreatureController::OnRecycle()
@@ -148,79 +117,6 @@ void CreatureController::UpdateFrame(float deltaTime)
     // 
 }
 
-bool CreatureController::HandleActivityNotification(CreatureActivity_None& activity, const EntityNotification& notification)
+void CreatureController::HandleMessage(const EntityMsg& msgData)
 {
-    return false;
-}
-
-bool CreatureController::HandleActivityNotification(CreatureActivity_GoToBed& activity, const EntityNotification& notification)
-{
-    return false;
-}
-
-bool CreatureController::HandleActivityNotification(CreatureActivity_GoToFood& activity, const EntityNotification& notification)
-{
-    return false;
-}
-
-bool CreatureController::HandleActivityNotification(CreatureActivity_Explore& activity, const EntityNotification& notification)
-{
-    return false;
-}
-
-bool CreatureController::HandleActivityNotification(CreatureActivity_Sleep& activity, const EntityNotification& notification)
-{
-    return false;
-}
-
-bool CreatureController::HandleActivityNotification(CreatureActivity_Eat& activity, const EntityNotification& notification)
-{
-    return false;
-}
-
-bool CreatureController::HandleActivityNotification(CreatureActivity& activity, const EntityNotification& notification)
-{
-    bool canHandle = false;
-    std::visit([this, &notification, &canHandle](auto& a) { canHandle = this->HandleActivityNotification(a, notification); }, activity);
-    return canHandle;
-}
-
-bool CreatureController::HandleActivity(CreatureActivity& activity)
-{
-    bool canHandle = false;
-    std::visit([this, &canHandle](auto& a) { canHandle = this->HandleActivity(a); }, activity);
-    return canHandle;
-}
-
-bool CreatureController::HandleActivity(CreatureActivity_None& activity)
-{
-    activity.SetResult((activity.GetStatus() == eCreatureActivityStatus_Cancelling) ?
-        eCreatureActivityResult_Cancelled :
-        eCreatureActivityResult_Success);
-    return true;
-}
-
-bool CreatureController::HandleActivity(CreatureActivity_GoToBed& activity)
-{
-    return false;
-}
-
-bool CreatureController::HandleActivity(CreatureActivity_GoToFood& activity)
-{
-    return false;
-}
-
-bool CreatureController::HandleActivity(CreatureActivity_Explore& activity)
-{
-    return false;
-}
-
-bool CreatureController::HandleActivity(CreatureActivity_Sleep& activity)
-{
-    return false;
-}
-
-bool CreatureController::HandleActivity(CreatureActivity_Eat& activity)
-{
-    return false;
 }

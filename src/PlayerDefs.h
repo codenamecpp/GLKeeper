@@ -8,7 +8,7 @@ class EconomyService;
 //////////////////////////////////////////////////////////////////////////
 
 // Possible player identifiers
-enum ePlayerID : unsigned int
+enum ePlayerID : uint8_t
 {
     ePlayerID_Null, // not an identifier
     ePlayerID_Good,
@@ -25,6 +25,8 @@ enum ePlayerID : unsigned int
 };
 
 enum_serialize_decl(ePlayerID);
+
+using PlayerIdSet = EnumSet<ePlayerID, uint16_t>;
 
 //////////////////////////////////////////////////////////////////////////
 
