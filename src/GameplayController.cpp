@@ -17,7 +17,6 @@ GameplayController::GameplayController()
     , mHoveredTile()
     , mSelectionStartTile()
 {
-
 }
 
 void GameplayController::OnSessionLoaded()
@@ -29,8 +28,7 @@ void GameplayController::OnSessionStart()
 {
     Player& localPlayer = gGameSession.GetLocalPlayer();
 
-    glm::vec3 cameraTileCoord = MapUtils::ComputeTileCenter(localPlayer.GetStartCameraTilePosition());
-    cameraTileCoord[1] = 7.0f; // height
+    glm::vec2 cameraTileCoord = MapUtils::ComputeTileCenter2d(localPlayer.GetStartCameraTilePosition());
     mWorldViewCamera.SetStartPosition(cameraTileCoord);
     mWorldViewCamera.CaptureCamera(&gScene.GetCamera());
     if (!mHUDScreen.IsActive())

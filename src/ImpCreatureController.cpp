@@ -62,7 +62,7 @@ void ImpCreatureController::ConfigureCreatureAnimationStates()
             {
                 Animator::ConditionForBool(CreatureAnimConst::ParamIsClaimFloor, false)
             },
-            Animator::eTransitionMode_Immediate,
+            Animator::eTransitionMode_WaitAnimation,
             Animator::eTransitionInterruptionSource_None);
     }
 }

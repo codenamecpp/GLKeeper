@@ -33,22 +33,24 @@ public:
     void StopCamera();
 
     // Set camera start position
-    // @param position: Position
-    void SetStartPosition(const glm::vec3& position);
+    void SetStartPosition(const glm::vec2& position);
 
 private:
-    glm::vec3 GetMoveDirectionFromInputs() const;
+    glm::vec2 GetMoveDirectionFromInputs() const;
 
     float GetRotateDirectionFromInputs() const;
     float GetZoomDirectionFromInputs();
+
+    void ApplyPositionAndRotation();
 
 private:
     Camera* mCamera = nullptr;
 
     glm::vec3 mRotationAngles;
-    glm::vec3 mStartPosition;
-
-    glm::vec3 mMoveVelocity {};
+    glm::vec2 mStartPosition;
+    glm::vec2 mCurrentPosition;
+    glm::vec2 mMoveVelocity {};
+    float mCameraHeight {};
 
     // states
     bool mIncreasingFov;
