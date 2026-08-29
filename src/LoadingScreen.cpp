@@ -1,14 +1,14 @@
 #include "stdafx.h"
-#include "LoadingScreenView.h"
+#include "LoadingScreen.h"
 #include "TextureManager.h"
 #include "UiRenderContext.h"
 
-LoadingScreenView::LoadingScreenView() 
+LoadingScreen::LoadingScreen() 
     : UiView(eUiViewLayer_Loadscreen)
 {
 }
 
-void LoadingScreenView::StartLoading()
+void LoadingScreen::StartLoading()
 {
     if (!Activate())
     {
@@ -18,19 +18,19 @@ void LoadingScreenView::StartLoading()
     mLoadingProgress = 0.0f;
 }
 
-void LoadingScreenView::FinishLoading()
+void LoadingScreen::FinishLoading()
 {
     Deactivate();
 
     mLoadingProgress = 0.0f;
 }
 
-void LoadingScreenView::UpdateLoadingProgress(float progress)
+void LoadingScreen::UpdateLoadingProgress(float progress)
 {
     mLoadingProgress = std::clamp(progress, 0.0f, 1.0f);
 }
 
-bool LoadingScreenView::LoadContent()
+bool LoadingScreen::LoadContent()
 {
     if (IsHierarchyLoaded())
         return true;
@@ -46,19 +46,19 @@ bool LoadingScreenView::LoadContent()
     return true;
 }
 
-void LoadingScreenView::Cleanup()
+void LoadingScreen::Cleanup()
 {
     UiView::Cleanup();
 
     mBackgroundTexture = nullptr;
 }
 
-void LoadingScreenView::UpdateFrame(float deltaTime)
+void LoadingScreen::UpdateFrame(float deltaTime)
 {
 
 }
 
-void LoadingScreenView::RenderFrame(UiRenderContext& renderContext)
+void LoadingScreen::RenderFrame(UiRenderContext& renderContext)
 {
     const Rect2D& screenRect = renderContext.GetScreenRect();
 

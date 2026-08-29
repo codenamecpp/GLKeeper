@@ -30,14 +30,14 @@ void GameObject::ConfigureInstance(EntityUid instanceUid, GameObjectController* 
 
 void GameObject::SpawnInstance()
 {
-    cxx_assert(!mLifecycleFlags.mWasSpawned);
-    cxx_assert(!mLifecycleFlags.mWasDespawned);
-    cxx_assert(!mLifecycleFlags.mWasDeleted);
+    cxx_assert(!mEntityFlags.mWasSpawned);
+    cxx_assert(!mEntityFlags.mWasDespawned);
+    cxx_assert(!mEntityFlags.mWasDeleted);
 
-    if (mLifecycleFlags.mWasSpawned) 
+    if (mEntityFlags.mWasSpawned) 
         return;
 
-    mLifecycleFlags.mWasSpawned = true;
+    mEntityFlags.mWasSpawned = true;
 
     mOwnHandle = gGameObjectManager.FindObject(mInstanceUid);
 
@@ -48,7 +48,11 @@ void GameObject::SpawnInstance()
         mLocomotion.SetArriveSpeed(mDefinition->mSpeed);
     }
 
-    EnableMeshObject(true);
+    // init mesh
+    if (mDefinition->mResourceMesh.IsDefined())
+    {
+        ConfigureMeshResource(mDefinition->mResourceMesh);
+    }
 
     if (mController)
     {
@@ -58,9 +62,10 @@ void GameObject::SpawnInstance()
 
 void GameObject::DespawnInstance()
 {
-    cxx_assert(mLifecycleFlags.mWasSpawned);
+    cxx_assert(mEntityFlags.mWasSpawned);
 
-    if (mLifecycleFlags.mWasDespawned) return;
+    if (mEntityFlags.mWasDespawned) 
+        return;
 
     if (mController)
     {
@@ -71,11 +76,50 @@ void GameObject::DespawnInstance()
     mLocomotion.ResetToDefaults();
 
     EnablePhysics(false);
-    EnableMeshObject(false);
+    ShowMesh(false);
 
     mOwnHandle = {};
 
-    mLifecycleFlags.mWasDespawned = true;
+    mEntityFlags.mWasDespawned = true;
+}
+
+void GameObject::InitMesh()
+{
+    if (mMeshObject)
+        return;
+
+    mMeshObject = gScene.CreateAnimatingMesh();
+    cxx_assert(mMeshObject);
+
+    if (mMeshObject)
+    {
+        // sync mesh transformation with object
+        mMeshObject->ResetTransformation();
+        mMeshObject->SetPosition(mTransform.mPosition);
+        mMeshObject->RotateAroundAxis(WorldAxes::Y, mTransform.mOrientation);
+
+        // params
+        mMeshObject->SetHighlighted(IsHighlighted());
+        mMeshObject->SetOwnerEntity(GetOwnHandle());
+        mMeshObject->SetObjectActive(true);    
+    }
+}
+
+void GameObject::FreeMesh()
+{
+    mMeshObject.reset();
+}
+
+void GameObject::ShowMesh(bool isEnabled)
+{
+    if (mMeshObject)
+    {
+        bool wasEnabled = mMeshObject->IsObjectActive();
+        if (wasEnabled != isEnabled)
+        {
+            mMeshObject->SetObjectActive(isEnabled);
+        }
+    }
 }
 
 void GameObject::SetPosition(const glm::vec3& position)
@@ -164,7 +208,7 @@ const cxx::aabbox& GameObject::GetMeshWorldBounds() const
     return nullBounds;
 }
 
-MapPoint2D GameObject::GetTilePosition() const
+Point2D GameObject::GetTilePosition() const
 {
     const glm::vec3 position = GetPosition();
     return MapUtils::ComputeTileFromPosition(position);
@@ -173,50 +217,17 @@ MapPoint2D GameObject::GetTilePosition() const
 void GameObject::OnRecycle()
 {
     Entity::OnRecycle();
-    EnableEntityComponents::OnRecycle();
-    EnableEntityCapabilities::OnRecycle();
 
     mController = nullptr;
-    cxx_assert(mPhysicsObject == nullptr);
-    mPhysicsObject = nullptr;
     mCurrentState = eGameObjectState_None;
     mParentRoom = {};
     mDefinition = nullptr;
     mMeshResourceId = eGameObjectMeshId_Main;
-}
 
-void GameObject::EnableMeshObject(bool isEnabled)
-{
-    bool wasEnabled = (mMeshObject != nullptr);
-    if (wasEnabled == isEnabled) return;
+    FreeMesh();
+    FreePhysics();
 
-    if (wasEnabled)
-    {
-        // cleanup
-        mMeshObject->SetObjectActive(false);
-        mMeshObject.reset();
-
-        return;
-    }
-
-    // try init mesh object
-    if (!mDefinition->mResourceMesh.IsDefined())
-        return;
-
-    mMeshObject = gScene.CreateAnimatingMesh();
-    cxx_assert(mMeshObject);
-
-    if (mMeshObject)
-    {
-        // sync mesh transformation with object
-        mMeshObject->ResetTransformation();
-        mMeshObject->SetPosition(mTransform.mPosition);
-        mMeshObject->RotateAroundAxis(WorldAxes::Y, mTransform.mOrientation);
-
-        ConfigureMeshResource(mDefinition->mResourceMesh);
-
-        mMeshObject->SetObjectActive(true);    
-    }
+    mIsHighlighted = {};
 }
 
 bool GameObject::HasMeshResource(eGameObjectMeshId meshId) const
@@ -235,7 +246,8 @@ bool GameObject::HasMeshResource(eGameObjectMeshId meshId) const
 
 bool GameObject::SetMeshResource(eGameObjectMeshId meshId)
 {
-    if (mMeshResourceId == meshId) return true;
+    if (mMeshResourceId == meshId) 
+        return true;
 
     std::reference_wrapper<ArtResourceDefinition> artResource = mDefinition->mResourceMesh;
 
@@ -259,7 +271,7 @@ bool GameObject::SetMeshResource(eGameObjectMeshId meshId)
     {
         mMeshResourceId = meshId;
 
-        EnableMeshObject(true);
+        ShowMesh(true);
         ConfigureMeshResource(artResource.get());
         return true;
     }
@@ -268,7 +280,10 @@ bool GameObject::SetMeshResource(eGameObjectMeshId meshId)
 
 void GameObject::ConfigureMeshResource(const ArtResourceDefinition& artResource)
 {
-    if (mMeshObject == nullptr) return;
+    InitMesh();
+
+    if (!mMeshObject) 
+        return;
 
     bool isSucess = false;
 
@@ -347,6 +362,18 @@ void GameObject::ResetAnimationDuration()
     }
 }
 
+void GameObject::SetHighlighted(bool isHighlighted)
+{
+    if (isHighlighted == mIsHighlighted)
+        return;
+
+    mIsHighlighted = isHighlighted;
+    if (mMeshObject)
+    {
+        mMeshObject->SetHighlighted(isHighlighted);
+    }
+}
+
 void GameObject::ParentRoomChanged(EntityHandle roomHandle)
 {
     if (mParentRoom == roomHandle) return;
@@ -365,18 +392,24 @@ void GameObject::ParentRoomChanged(EntityHandle roomHandle)
 void GameObject::EnablePhysics(bool isEnabled)
 {
     bool wasEnabled = (mPhysicsObject != nullptr);
-    if (wasEnabled == isEnabled) return;
-
-    if (wasEnabled)
+    if (wasEnabled != isEnabled)
     {
-        // cleanup
-        gPhysics.DetachUser(this);
-        mPhysicsObject = nullptr;
-
-        return;
+        if (isEnabled)
+        {
+            InitPhysics();
+        }
+        else
+        {
+            FreePhysics();
+        }
     }
+}
 
-    // init physics
+void GameObject::InitPhysics()
+{
+    if (mPhysicsObject)
+        return;
+
     gPhysics.AttachUser(this);
 
     mPhysicsObject = gPhysics.GetPhysicsObject(this);
@@ -385,9 +418,18 @@ void GameObject::EnablePhysics(bool isEnabled)
     mPhysicsObject->ClearLinearVelocity();
 }
 
+void GameObject::FreePhysics()
+{
+    if (mPhysicsObject)
+    {
+        gPhysics.DetachUser(this);
+        mPhysicsObject = nullptr;
+    }
+}
+
 void GameObject::MarkDeleted()
 {
-    mLifecycleFlags.mWasDeleted = true;
+    mEntityFlags.mWasDeleted = true;
 }
 
 void GameObject::UpdateLogic(float stepDeltaTime)
@@ -418,7 +460,7 @@ void GameObject::UpdatePhysics(float stepDeltaTime)
 
 void GameObject::ReceiveMsg(EntityMsg& msgData)
 {
-    if (WasDeleted()) 
+    if (!Exists()) 
         return;
 
     if (msgData.Is(EntityMsg::eID_LocoApplyVelocities))
@@ -459,3 +501,4 @@ void GameObject::ReceiveMsg(EntityMsg& msgData)
         return;
     }
 }
+

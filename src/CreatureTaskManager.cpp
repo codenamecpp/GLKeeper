@@ -70,7 +70,7 @@ void CreatureTaskManager::EnterWorld()
             mapTile = tilesIterator.NextTile())
         {
             InitReinforceWallTasks(mapTile, playersRoller.GetPlayerId());
-            InitClaimFloorTasks(mapTile, playersRoller.GetPlayerId());
+            InitClaimTerritoryTasks(mapTile, playersRoller.GetPlayerId());
         }
     }
 }
@@ -110,8 +110,7 @@ bool CreatureTaskManager::IsWorkerJob(eCreatureJob jobType) const
 
 void CreatureTaskManager::UpdateFrame(float deltaTime)
 {
-    ProcessTileTaggedStateChanges();
-    ProcessTileTerrainTypeChanges();
+    ProcessChanges();
 }
 
 void CreatureTaskManager::UpdateLogic(float stepDeltaTime)
@@ -159,7 +158,7 @@ CreatureTaskPtr CreatureTaskManager::GetReinforceWallTask(Creature* assignee)
     return GetWorkerTask(assignee, eCreatureJob_ReinforceWall);
 }
 
-CreatureTaskPtr CreatureTaskManager::GetClaimFloorTask(Creature* assignee)
+CreatureTaskPtr CreatureTaskManager::GetClaimTerritoryTask(Creature* assignee)
 {
     return GetWorkerTask(assignee, eCreatureJob_Claim);
 }
@@ -506,7 +505,7 @@ void CreatureTaskManager::ProcessTileTerrainTypeChanges()
             const ePlayerID playerId = playersRoller.GetPlayerId();
             UpdateTaggedTileTasks(tilesRoller, playerId);
             UpdateReinforceWallTasks(tilesRoller, playerId);
-            UpdateClaimFloorTasks(tilesRoller, playerId);
+            UpdateClaimTerritoryTasks(tilesRoller, playerId);
 
             // process neighbour tiles
             for (eDirection dirsRoller: gStraightDirections)
@@ -517,7 +516,7 @@ void CreatureTaskManager::ProcessTileTerrainTypeChanges()
 
                 UpdateTaggedTileTasks(neighbourTile, playerId);
                 UpdateReinforceWallTasks(neighbourTile, playerId);
-                UpdateClaimFloorTasks(neighbourTile, playerId);
+                UpdateClaimTerritoryTasks(neighbourTile, playerId);
             }
         }
     }
@@ -530,12 +529,15 @@ CreatureTaskPtr CreatureTaskManager::GetWorkerTask(Creature* assignee, eCreature
     if (assignee == nullptr)
         return nullptr;
 
+    // force process changes
+    ProcessChanges();
+
     cxx_assert(IsWorkerJob(jobType));
 
     const ePlayerID playerId = assignee->GetOwnerId();
     const ePassabilityType passabilityType = assignee->GetPassabilityType();
     const glm::vec2 creaturePosition = assignee->GetPosition2d();
-    const MapPoint2D creatureTile = assignee->GetTilePosition();
+    const Point2D creatureTile = assignee->GetTilePosition();
 
     WorkerSlot* bestCandidateSlot = nullptr;
     MapTile* bestCandidateTargetTile = nullptr;
@@ -578,7 +580,7 @@ CreatureTaskPtr CreatureTaskManager::GetWorkerTask(Creature* assignee, eCreature
                     continue;
 
                 // skip if not accessible
-                const MapPoint2D slotTile = MapUtils::ComputeTileFromPosition(slotsRoller.mPosition);
+                const Point2D slotTile = MapUtils::ComputeTileFromPosition(slotsRoller.mPosition);
                 if (!gNavigationService.CheckPathExists(creatureTile, slotTile, passabilityType))
                     continue;
 
@@ -613,13 +615,13 @@ CreatureTaskPtr CreatureTaskManager::GetCarryGoldToTreasuryTask(Creature* assign
     if (assignee == nullptr)
         return nullptr;
 
-    Temp_Vector<EntityHandle> roomEntities;
+    cxx::temp_vector<EntityHandle> roomEntities;
     if (!gGameWorld.QueryAccessibleMoneyStorageRoomsForDeposit(assignee->GetOwnerId(), assignee->GetOwnHandle(), 0, roomEntities))
         return nullptr;
 
-    const MapPoint2D creatureTile = assignee->GetTilePosition();
+    const Point2D creatureTile = assignee->GetTilePosition();
 
-    std::optional<MapPoint2D> closestStorageTile {};
+    std::optional<Point2D> closestStorageTile {};
     long long closestStorageDistance2 = 0;
 
     // find tile to store gold
@@ -641,7 +643,7 @@ CreatureTaskPtr CreatureTaskManager::GetCarryGoldToTreasuryTask(Creature* assign
         if (storage == nullptr)
             continue;
 
-        MapPoint2D storageTile;
+        Point2D storageTile;
         if (!storage->GetTileToStoreGold(storageTile))
             continue;
 
@@ -724,8 +726,7 @@ bool CreatureTaskManager::CanReinforceWall(MapTile* mapTile, ePlayerID playerId,
         return false;
 
     const TerrainTypeId nextTerrainTypeId = terrainDef->mBecomesTerrainTypeWhenMaxHealth;
-    if (nextTerrainTypeId == TerrainTypeId_Null)
-        return false;
+    cxx_assert (nextTerrainTypeId != TerrainTypeId_Null);
 
     const TerrainDefinition* nextTerrainDef = gGameSession.GetScenarioDefinition().GetTerrainDefinition(nextTerrainTypeId);
     cxx_assert(nextTerrainDef);
@@ -754,61 +755,23 @@ bool CreatureTaskManager::CanReinforceWall(MapTile* mapTile, ePlayerID playerId,
     return !faceSet.Empty();
 }
 
-bool CreatureTaskManager::CanClaimFloor(MapTile* mapTile, ePlayerID playerId) const
+bool CreatureTaskManager::CanClaimTerritory(MapTile* mapTile, ePlayerID playerId) const
 {
     cxx_assert(mapTile);
-
-    if (!IsKeeperPlayerId(playerId))
-        return false;
-
-    // skip tile if it already at max health
-    if (mapTile->GetHitPoints() >= mapTile->GetHitPointsMax())
-        return false;
-
-    // todo: implement claim for owned enemy tiles including rooms
-
-    const TerrainDefinition* terrainDef = mapTile->GetTerrain();
-    if (terrainDef->mIsSolid || terrainDef->mIsOwnable)
-        return false;
-
-    const TerrainTypeId nextTerrainTypeId = terrainDef->mBecomesTerrainTypeWhenMaxHealth;
-    if (nextTerrainTypeId == TerrainTypeId_Null)
-        return false;
-
-    const TerrainDefinition* nextTerrainDef = gGameSession.GetScenarioDefinition().GetTerrainDefinition(nextTerrainTypeId);
-    cxx_assert(nextTerrainDef);
-    if (nextTerrainDef->mIsSolid || !nextTerrainDef->mIsOwnable)
-        return false;
-
-    // check if connected with own territory
-    for (eDirection dir: gStraightDirections)
-    {
-        const MapTile* neighbourTile = mapTile->mNeighbours[dir];
-        if (neighbourTile == nullptr)
-            continue;
-
-        const TerrainDefinition* neighbourTileDef = neighbourTile->GetTerrain();
-
-        if (neighbourTileDef->mIsSolid)
-            continue;
-
-        if (neighbourTileDef->mIsOwnable && neighbourTile->HasOwner(playerId))
-            return true;
-    }
-    return false;
+    return IsKeeperPlayerId(playerId) && gGameWorld.CanClaimTile(mapTile, playerId);
 }
 
-void CreatureTaskManager::InitClaimFloorTasks(MapTile* mapTile, ePlayerID playerId)
+void CreatureTaskManager::InitClaimTerritoryTasks(MapTile* mapTile, ePlayerID playerId)
 {
-    if (CanClaimFloor(mapTile, playerId))
+    if (CanClaimTerritory(mapTile, playerId))
     {
         CreateWorkerSlotsForJob(mapTile, eCreatureJob_Claim, eTileFace_Floor, playerId);
     }
 }
 
-void CreatureTaskManager::UpdateClaimFloorTasks(MapTile* mapTile, ePlayerID playerId)
+void CreatureTaskManager::UpdateClaimTerritoryTasks(MapTile* mapTile, ePlayerID playerId)
 {
-    if (!CanClaimFloor(mapTile, playerId))
+    if (!CanClaimTerritory(mapTile, playerId))
     {
         RemoveWorkerSlotsForJob(mapTile, eCreatureJob_Claim, playerId);
     }
@@ -816,4 +779,10 @@ void CreatureTaskManager::UpdateClaimFloorTasks(MapTile* mapTile, ePlayerID play
     {
         CreateWorkerSlotsForJob(mapTile, eCreatureJob_Claim, eTileFace_Floor, playerId);
     }
+}
+
+void CreatureTaskManager::ProcessChanges()
+{
+    ProcessTileTaggedStateChanges();
+    ProcessTileTerrainTypeChanges();
 }

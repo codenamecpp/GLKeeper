@@ -16,10 +16,15 @@ public:
     // override RoomController
     void SpawnInstance() override;
     void DespawnInstance() override;
+    void OnRecycle() override;
     void EvaluateFloorFurniture(RoomFurnitureSlots& evaluation) override;
     void PostReconfigureRoom() override;
     void PostRearrangeObjects() override;
 
+protected:
+    void Init3dMap();
+
 private:
-    cxx::uniqueptr<AnimatingMeshObject> mCampaignLevelsTable;
+    cxx::uniqueptr<AnimatingMeshObject> m3dMapTable;
+    std::vector<cxx::uniqueptr<AnimatingMeshObject>> m3dMapTablePieces;
 };

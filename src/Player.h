@@ -10,7 +10,7 @@
 class Player final: public cxx::noncopyable
 {
 public:
-    void Configure(ePlayerID playerId, ePlayerType playerType, const std::string_view& playerName);
+    void Configure(ePlayerID playerId, ePlayerType playerType, std::string_view playerName);
     void Cleanup();
 
     void SetStartingResourceAmount(eGameResource resourceType, long resourceAmount);
@@ -20,8 +20,8 @@ public:
         return mStartingResourceAmount[resourceType];
     }
 
-    void SetStartCameraTilePosition(const MapPoint2D& tileLocation);
-    const MapPoint2D& GetStartCameraTilePosition() const 
+    void SetStartCameraTilePosition(const Point2D& tileLocation);
+    const Point2D& GetStartCameraTilePosition() const 
     { 
         return mStartCameraTilePos; 
     }
@@ -41,7 +41,7 @@ public:
     }
 
     // manage player's inventory:
-    // rooms, objects, etc.
+    // owned rooms, objects, etc.
     void AddToInventory(EntityHandle entity);
     void RemoveFromInventory(EntityHandle entity);
 
@@ -49,14 +49,12 @@ public:
     EntityHandle GetFirstOwnedRoomOfType(RoomTypeId roomType) const;
     EntityHandle GetNextOwnedRoomOfType(RoomTypeId roomType, EntityHandle prevHandle) const;
     EntityHandle GetLastOwnedRoomOfType(RoomTypeId roomType) const;
-    inline cxx::span<const EntityHandle> GetOwnedMoneyStorageRooms() const { return mMoneyStorageRooms; }
-    inline cxx::span<const EntityHandle> GetOwnedRoomOfType(RoomTypeId roomType) const
+    const auto& GetOwnedMoneyStorageRooms() const { return mMoneyStorageRooms; }
+    const auto& GetOwnedRoomOfType(RoomTypeId roomType) const
     {
+        static const std::vector<EntityHandle> nullresult;
         auto it = mRoomsByType.find(roomType);
-        if (it != mRoomsByType.end())
-            return it->second;
-
-        return {};
+        return (it != mRoomsByType.end()) ? it->second : nullresult;
     }
     bool HasOwnedRoomsOfType(RoomTypeId roomType) const;
 
@@ -71,6 +69,23 @@ public:
         cxx_assert(resourceType < eGameResource_COUNT);
         return mResourceAmount[resourceType];
     }
+
+    //////////////////////////////////////////////////////////////////////////
+
+    // in hand
+
+    void AddHeldEntity(EntityHandle entity);
+    void RemoveHeldEntity(EntityHandle entity);
+    bool HasSomethingInHand() const;
+    bool HasInHand(EntityHandle entity) const;
+
+    EntityHandle GetFirstHeldEntity() const;
+    EntityHandle GetNextHeldEntity(EntityHandle prevHandle) const;
+    EntityHandle GetLastHeldEntity() const;
+
+    inline const auto& GetHeldEntities() const { return mHeldEntities; }
+
+    //////////////////////////////////////////////////////////////////////////
 
     // current defeated state
     void SetDefeated();
@@ -93,20 +108,20 @@ public:
     }
 
 private:
-    using EntitiesList = std::vector<EntityHandle>;
-
     // properties
     ePlayerID mPlayerId = ePlayerID_Null;
     ePlayerType mPlayerType = ePlayerType_Null;
     std::string mPlayerName;
 
     // start config
-    MapPoint2D mStartCameraTilePos;
+    Point2D mStartCameraTilePos;
 
     // inventory
-    EntitiesList mRoomsOwned;
-    EntitiesList mMoneyStorageRooms;
-    std::map<RoomTypeId, EntitiesList> mRoomsByType;
+    std::vector<EntityHandle> mRoomsOwned;
+    std::vector<EntityHandle> mMoneyStorageRooms;
+    std::map<RoomTypeId, std::vector<EntityHandle>> mRoomsByType;
+
+    std::vector<EntityHandle> mHeldEntities;
 
     long mResourceAmount[eGameResource_COUNT]; // cache
     long mStartingResourceAmount[eGameResource_COUNT];

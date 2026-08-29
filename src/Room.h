@@ -7,8 +7,6 @@
 #include "ScenarioDefs.h"
 #include "RoomWallSection.h"
 #include "Entity.h"
-#include "RoomComponents.h"
-#include "RoomCapabilities.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -19,10 +17,7 @@ class RoomTileConstructor;
     
 // Generic Room
 
-class Room final 
-    : public Entity
-    , public EnableEntityComponents<RoomComponents>
-    , public EnableEntityCapabilities<RoomCapabilities>
+class Room final: public Entity
 {
 public:
 
@@ -89,22 +84,20 @@ public:
     inline RoomTypeId GetTypeId() const { return mDefinition->mRoomType; }
 
     // accessing room wall sections for reading
-    inline cxx::span<const RoomWallSection*> GetWallSections() const { return mWallSections; }
+    inline const auto& GetWallSections() const { return mWallSections; }
 
     // accessing room floor tiles
-    inline cxx::span<MapTile*> GetFloorTiles() const { return mCoveredTiles; }
-    inline cxx::span<MapTile*> GetInnerTiles() const { return mInnerTiles; }
+    inline const auto& GetFloorTiles() const { return mCoveredTiles; }
+    inline const auto& GetInnerTiles() const { return mInnerTiles; }
 
-    inline cxx::span<const RoomFurnitureSlot> GetFloorFurniture() const { return mFloorFurniture; }
-    inline cxx::span<const RoomFurnitureSlot> GetWallsFurniture() const { return mWallsFurniture; }
-    inline cxx::span<const RoomFurnitureSlot> GetPillars() const { return mPillars; }
+    inline const auto& GetFloorFurniture() const { return mFloorFurniture; }
+    inline const auto& GetWallsFurniture() const { return mWallsFurniture; }
+    inline const auto& GetPillars() const { return mPillars; }
 
-    inline cxx::span<const RoomStorageSlot> GetStorageSlots() const { return mStorageSlots; }
+    inline const auto& GetStorageSlots() const { return mStorageSlots; }
 
     // approximate room size in tiles
-    const MapArea2D& GetLocationArea() const { return mLocationArea; }
-
-    inline ePlayerID GetOwnerId() const { return mOwnerId; }
+    const Rect2D& GetLocationArea() const { return mLocationArea; }
 
     inline eDirection GetRoomDirection() const { return mRoomDirection; }
 
@@ -153,21 +146,19 @@ private:
 
     // storage slots
     friend class StorageRoomController;
-    void AssignObjectToStorageSlot(const MapPoint2D& tileLocation, EntityHandle entityHandle);
-    void UnassignStorageSlotObject(const MapPoint2D& tileLocation, EntityHandle entityHandle);
-    void ReassignStorageSlotObject(const MapPoint2D& tileLocation, EntityHandle entityHandle, const MapPoint2D& newLocation);
+    void AssignObjectToStorageSlot(const Point2D& tileLocation, EntityHandle entityHandle);
+    void UnassignStorageSlotObject(const Point2D& tileLocation, EntityHandle entityHandle);
+    void ReassignStorageSlotObject(const Point2D& tileLocation, EntityHandle entityHandle, const Point2D& newLocation);
     int GetStorageSlotIndex(EntityHandle entityHandle) const;
 
-private:   
-    ePlayerID mOwnerId = ePlayerID_Null;
-
+private:
     eDirection mRoomDirection = eDirection_N;
 
     RoomDefinition* mDefinition = nullptr;
     RoomTileConstructor* mTileConstructor = nullptr;
     RoomController* mController = nullptr;
 
-    MapArea2D mLocationArea; // approximate room size in tiles
+    Rect2D mLocationArea; // approximate room size in tiles
     std::vector<MapTile*> mInnerTiles;
     std::vector<MapTile*> mCoveredTiles;
     std::vector<RoomWallSection*> mWallSections;

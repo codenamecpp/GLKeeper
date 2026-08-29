@@ -31,7 +31,7 @@ public:
 
     CreatureTaskPtr GetDiggingTask(Creature* assignee);
     CreatureTaskPtr GetMiningTask(Creature* assignee);
-    CreatureTaskPtr GetClaimFloorTask(Creature* assignee);
+    CreatureTaskPtr GetClaimTerritoryTask(Creature* assignee);
     CreatureTaskPtr GetReinforceWallTask(Creature* assignee);
     CreatureTaskPtr GetCarryGoldToTreasuryTask(Creature* assignee);
 
@@ -59,8 +59,8 @@ private:
 
     bool IsWorkerJob(eCreatureJob jobType) const;
 
+    void ProcessChanges();
     void ProcessTileTerrainTypeChanges();
-
     void ProcessTileTaggedStateChanges();
     void UpdateTaggedTileTasks(MapTile* mapTile, ePlayerID playerId);
     void RemoveTaggedTileTasks(MapTile* mapTile, ePlayerID playerId);
@@ -69,9 +69,9 @@ private:
     void UpdateReinforceWallTasks(MapTile* mapTile, ePlayerID playerId);
     bool CanReinforceWall(MapTile* mapTile, ePlayerID playerId, TileFaceIdSet& faceSet) const;
 
-    void InitClaimFloorTasks(MapTile* mapTile, ePlayerID playerId);
-    void UpdateClaimFloorTasks(MapTile* mapTile, ePlayerID playerId);
-    bool CanClaimFloor(MapTile* mapTile, ePlayerID playerId) const;
+    void InitClaimTerritoryTasks(MapTile* mapTile, ePlayerID playerId);
+    void UpdateClaimTerritoryTasks(MapTile* mapTile, ePlayerID playerId);
+    bool CanClaimTerritory(MapTile* mapTile, ePlayerID playerId) const;
 
     void CreateWorkerSlotsForJob(MapTile* mapTile, eCreatureJob jobType, eTileFace tileFace, ePlayerID playerId);
     void RemoveWorkerSlotsForJob(MapTile* mapTile, eCreatureJob jobType, eTileFace tileFace, ePlayerID playerId);

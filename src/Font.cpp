@@ -116,7 +116,7 @@ void Font::InitRenderData()
     cxx_assert(!!mGpuTextureResource);
 }
 
-void Font::BuildTextMesh(const std::wstring_view& wideString, const Point2D& pos, Color32 color, std::vector<Quad2D>& outQuads) const
+void Font::BuildTextMesh(std::wstring_view wideString, const Point2D& pos, Color32 color, std::vector<Quad2D>& outQuads) const
 {
     outQuads.clear();
 
@@ -183,7 +183,7 @@ void Font::BuildTextMesh(const std::wstring_view& wideString, const Point2D& pos
     }
 }
 
-void Font::BuildTextMesh(const std::wstring_view& wideString, const Rect2D& rect, 
+void Font::BuildTextMesh(std::wstring_view wideString, const Rect2D& rect, 
     eTextHorzAlignment horzAlign, 
     eTextVertAlignment vertAlign, Color32 color, std::vector<Quad2D>& outQuads) const
 {
@@ -209,11 +209,11 @@ void Font::BuildTextMesh(const std::wstring_view& wideString, const Rect2D& rect
 
     struct LineEntry
     {
-        Temp_List<LineWord> wordsList;
+        cxx::temp_list<LineWord> wordsList;
         int lineWidth = 0;
     };
 
-    Temp_List<LineEntry> linesList;
+    cxx::temp_list<LineEntry> linesList;
     linesList.emplace_back();
 
     for (auto curr_char_it = wideString.begin(), string_end_it = wideString.end(); 
@@ -331,7 +331,7 @@ void Font::BuildTextMesh(const std::wstring_view& wideString, const Rect2D& rect
     }
 }
 
-Point2D Font::ComputeTextDims(const std::wstring_view& wideString) const
+Point2D Font::ComputeTextDims(std::wstring_view wideString) const
 {
     Point2D resultDims { 0, 0 };
 
@@ -362,7 +362,7 @@ Point2D Font::ComputeTextDims(const std::wstring_view& wideString) const
     return resultDims;
 }
 
-int Font::CountPrintableCharacters(const std::wstring_view& wideString) const
+int Font::CountPrintableCharacters(std::wstring_view wideString) const
 {
     int printablesCount = 0;
     for (wchar_t wideChar: wideString)

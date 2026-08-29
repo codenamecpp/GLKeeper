@@ -9,6 +9,9 @@ Camera::Camera()
     , mProjectionParams()
     , mProjMatrixDirty()
     , mViewMatrixDirty()
+    , mProjectionOffset(0.0f)
+    , mProjectionOffsetMatrix(1.0f)
+    , mProjectionOffsetDirty()
 {
     ResetOrientation();
 }
@@ -24,7 +27,7 @@ void Camera::ComputeMatricesAndFrustum(const Viewport& viewport)
         mProjMatrixDirty = true; // force recompute projection matrix
     }
 
-    bool computeViewProjectionMatrix = mProjMatrixDirty || mViewMatrixDirty;
+    bool computeViewProjectionMatrix = mProjMatrixDirty || mViewMatrixDirty || mProjectionOffsetDirty;
     if (mProjMatrixDirty)
     {
         mProjectionMatrix = glm::perspective(glm::radians(mProjectionParams.mFovy), 
@@ -32,6 +35,12 @@ void Camera::ComputeMatricesAndFrustum(const Viewport& viewport)
             mProjectionParams.mNearDistance, 
             mProjectionParams.mFarDistance);
         mProjMatrixDirty = false;
+    }
+
+    if (mProjectionOffsetDirty)
+    {
+        mProjectionOffsetMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(mProjectionOffset, 0.0f));
+        mProjectionOffsetDirty = false;
     }
 
     if (mViewMatrixDirty)
@@ -42,7 +51,7 @@ void Camera::ComputeMatricesAndFrustum(const Viewport& viewport)
 
     if (computeViewProjectionMatrix)
     {
-        mViewProjectionMatrix = mProjectionMatrix * mViewMatrix;
+        mViewProjectionMatrix = mProjectionOffsetMatrix * mProjectionMatrix * mViewMatrix;
         // recompute frustum planes
         mFrustum.compute_from_viewproj_matrix(mViewProjectionMatrix);
     }
@@ -96,5 +105,14 @@ void Camera::Translate(const glm::vec3& direction)
     {
         mPosition += direction;
         mViewMatrixDirty = true;
+    }
+}
+
+void Camera::SetProjectionOffset(const glm::vec2& offset)
+{
+    if (mProjectionOffsetDirty || (offset != mProjectionOffset))
+    {
+        mProjectionOffsetDirty = true;
+        mProjectionOffset = offset;
     }
 }

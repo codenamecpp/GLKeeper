@@ -221,8 +221,8 @@ void EnvironmentMeshObject::RefreshLocalBounds()
 
     if (!mCoveredTiles.empty())
     {
-        MapPoint2D minTilePos = mCoveredTiles.front()->mLocation;
-        MapPoint2D maxTilePos = mCoveredTiles.front()->mLocation;
+        Point2D minTilePos = mCoveredTiles.front()->mLocation;
+        Point2D maxTilePos = mCoveredTiles.front()->mLocation;
 
         for (MapTile* currentTile: mCoveredTiles)
         {
@@ -258,7 +258,7 @@ void EnvironmentMeshObject::ReBuildMesh()
     // generate geometry
     for (MapTile* tile : mCoveredTiles)
     {
-        const MapPoint2D& mapPos = tile->mLocation;
+        const Point2D& mapPos = tile->mLocation;
         const glm::vec3 middlep = { mapPos.x * 1.0f, 0.0f, mapPos.y * 1.0f };
 
         const glm::vec3 positions[9] = {

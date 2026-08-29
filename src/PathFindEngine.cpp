@@ -184,7 +184,7 @@ bool PathFindEngine::IsSearching() const
     return !mFringeList.Empty();
 }
 
-bool PathFindEngine::StartPathFind(const MapPoint2D& srcCoord, const MapPoint2D& dstCoord, ePassabilityType passabilityType, unsigned int cyclesLimit)
+bool PathFindEngine::StartPathFind(const Point2D& srcCoord, const Point2D& dstCoord, ePassabilityType passabilityType, unsigned int cyclesLimit)
 {
     ClearPathFind();
 
@@ -351,7 +351,7 @@ void PathFindEngine::ResetNodesProblemId()
     }
 }
 
-bool PathFindEngine::CheckWithinBounds(const MapPoint2D& coord) const
+bool PathFindEngine::CheckWithinBounds(const Point2D& coord) const
 {
     if ((coord.x < 0) || (coord.y < 0)) 
         return false;
@@ -359,7 +359,7 @@ bool PathFindEngine::CheckWithinBounds(const MapPoint2D& coord) const
     return (coord.x < mMapDims.x) && (coord.y < mMapDims.y);
 }
 
-PathFindEngine::PathFindNode* PathFindEngine::GetPathFindNode(const MapPoint2D& coord)
+PathFindEngine::PathFindNode* PathFindEngine::GetPathFindNode(const Point2D& coord)
 {
     if (!CheckWithinBounds(coord))
         return nullptr;

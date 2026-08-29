@@ -34,7 +34,7 @@ void DungeonHeartRoomController::DespawnInstance()
 
 void DungeonHeartRoomController::EvaluateFloorFurniture(RoomFurnitureSlots& evaluation)
 {
-    const MapArea2D& locationArea = GetRoom().GetLocationArea();
+    const Rect2D& locationArea = GetRoom().GetLocationArea();
 
     RoomFurnitureSlot& objectSlot = evaluation.emplace_back();
     objectSlot.mObjectClassId = GameObjectClassId_DungeonHeart;
@@ -73,9 +73,8 @@ void DungeonHeartRoomController::OnRecycle()
     MoneyStorageRoomController::OnRecycle();
 }
 
-void DungeonHeartRoomController::EvaluateStorageTiles(StorageTilesEvaluationResult& evaluationResult) const
+void DungeonHeartRoomController::EvaluateStorageTiles(cxx::any_vector<Point2D> evaluationResult) const
 {
-    evaluationResult.clear();
     evaluationResult.reserve(16);
 
     for (MapTile* floorTile: GetRoom().GetFloorTiles())

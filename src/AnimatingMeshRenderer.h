@@ -7,7 +7,6 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-// Defines renderer class that can handle static mesh scene obejcts
 class AnimatingMeshRenderer: public cxx::noncopyable
 {
 public:
@@ -25,3 +24,5 @@ public:
 private:
     ShaderProgram_BlendFrames* mShaderProgram = nullptr;
 };
+
+//////////////////////////////////////////////////////////////////////////

@@ -38,6 +38,7 @@ UiWidget::UiWidget(const std::string& widgetClassName)
     , mUserData()
     , mClassName(widgetClassName)
     , mScale(1.0f)
+    , mTransformInvalidated(true)
 {
 }
 
@@ -63,6 +64,7 @@ UiWidget::UiWidget(const UiWidget& sourceWidget)
     , mAnchorMax(sourceWidget.mAnchorMax)
     , mAnchorPointMin(sourceWidget.mAnchorMin)
     , mAnchorPointMax(sourceWidget.mAnchorMax)
+    , mInputPassThrough(sourceWidget.mInputPassThrough)
 {
     InvalidateTransform();
 }
@@ -102,6 +104,9 @@ void UiWidget::InputEvent(MouseButtonInputEvent& inputEvent)
     if (!IsEnabledInHierarchy())
         return;
 
+    if (mInputPassThrough.Contains(eUiInputPassThrough_MouseButtons))
+        return;
+
     HandleInputEvent(inputEvent);
 }
 
@@ -124,6 +129,9 @@ void UiWidget::InputEvent(MouseMovedInputEvent& inputEvent)
     if (!IsEnabledInHierarchy())
         return;
 
+    if (mInputPassThrough.Contains(eUiInputPassThrough_MouseMotion))
+        return;
+
     HandleInputEvent(inputEvent);
 }
 
@@ -133,6 +141,9 @@ void UiWidget::InputEvent(MouseScrollInputEvent& inputEvent)
         return;
 
     if (!IsEnabledInHierarchy())
+        return;
+
+    if (mInputPassThrough.Contains(eUiInputPassThrough_MouseScroll))
         return;
 
     HandleInputEvent(inputEvent);
@@ -151,45 +162,60 @@ void UiWidget::InputEvent(KeyCharEvent& inputEvent)
 
 void UiWidget::Deserialize(const JsonElement& jsonElement)
 {
-    if (!jsonElement) return;
+    if (!jsonElement) 
+        return;
 
     JsonQuery(jsonElement, "id", mName);
-
-    mSize = {0, 0};
     JsonQuery(jsonElement, "size", mSize);
-
-    mPosition = {0, 0};
     JsonQuery(jsonElement, "pos", mPosition);
-
-    mScale = {1.0f, 1.0f};
     JsonQuery(jsonElement, "scale", mScale);
-
-    mRelativePivot = {0.0f, 0.0f};
     JsonQuery(jsonElement, "pivot", mRelativePivot);
-
-    mAnchorMin = {0.0f, 0.0f};
-    mAnchorMax = {0.0f, 0.0f};
     JsonQuery(jsonElement, "anchor_min", mAnchorMin);
     JsonQuery(jsonElement, "anchor_max", mAnchorMax);
     
     mAnchorMax = glm::max(mAnchorMin, mAnchorMax);
 
-    mVisible = true;
-    JsonQuery(jsonElement, "visible", mVisible);
-    
-    mEnabled = true;
-    JsonQuery(jsonElement, "enabled", mEnabled);
+    bool flagValue {};
+    if (JsonQuery(jsonElement, "visible", flagValue))
+    {
+        mVisible = flagValue;
+    }
+    if (JsonQuery(jsonElement, "enabled", flagValue))
+    {
+        mEnabled = flagValue;
+    }
 
     bool isEnablePickChildren = true;
-    JsonQuery(jsonElement, "pick_children", isEnablePickChildren);
+    if (JsonQuery(jsonElement, "pick_children", isEnablePickChildren))
+    {
+        mEnablePickChildren = isEnablePickChildren;
+    }
 
     bool isEnableClipChildren = false;
-    JsonQuery(jsonElement, "clip_children", isEnableClipChildren);
+    if (JsonQuery(jsonElement, "clip_children", isEnableClipChildren))
+    {
+        mEnableClipChildren = isEnableClipChildren;
+    }
 
-    mEnablePickChildren = isEnablePickChildren;
-    mEnableClipChildren = isEnableClipChildren;
+    if (JsonQuery(jsonElement, "interactive", flagValue))
+    {
+        mInteractive = flagValue;
+    }
 
-    JsonQuery(jsonElement, "interactive", mInteractive);
+    if (JsonQuery(jsonElement, "ignore_mscroll", flagValue))
+    {
+        mInputPassThrough.Change(eUiInputPassThrough_MouseScroll, flagValue);
+    }
+
+    if (JsonQuery(jsonElement, "ignore_mbuttons", flagValue))
+    {
+        mInputPassThrough.Change(eUiInputPassThrough_MouseButtons, flagValue);
+    }
+
+    if (JsonQuery(jsonElement, "ignore_mmove", flagValue))
+    {
+        mInputPassThrough.Change(eUiInputPassThrough_MouseMotion, flagValue);
+    }
 
     RecomputeLocalPivotPoint();
     
@@ -199,7 +225,8 @@ void UiWidget::Deserialize(const JsonElement& jsonElement)
 
 UiWidget* UiWidget::PickWidget(const Point2D& screenPosition)
 {
-    if (!IsVisibleInHierarchy()) return nullptr;
+    if (!IsVisibleInHierarchy()) 
+        return nullptr;
 
     if (mEnablePickChildren)
     {
@@ -225,7 +252,8 @@ void UiWidget::RenderFrame(UiRenderContext& uiRenderContext)
 {
     ComputeTransform();
 
-    if (!IsVisibleInHierarchy()) return;
+    if (!IsVisibleInHierarchy()) 
+        return;
 
     uiRenderContext.SetTransform(&mTransform);
 
@@ -280,10 +308,12 @@ void UiWidget::UpdateFrame(float deltaTime)
 
 void UiWidget::SetParentWidget(UiWidget* newParent)
 {
-    if (mParent == newParent) return;
+    if (mParent == newParent) 
+        return;
 
     cxx_assert(newParent != this);
-    if (newParent == this) return;
+    if (newParent == this) 
+        return;
     // change parent
     if (mParent)
     {
@@ -475,6 +505,27 @@ Point2D UiWidget::ComputeNewSize(const Point2D& desiredSize) const
     return correctedSize;
 }
 
+void UiWidget::HandleInputEvent(MouseScrollInputEvent& inputEvent)
+{
+    const UiEvent_OnWheel eventDesc {inputEvent.mScroll, inputEvent.mMousePosition};
+    mEventListeners.IterateListeners([this, &eventDesc](UiEventListener* listener)
+        {
+            listener->HandleUiEvent(this, eventDesc);
+        });
+    inputEvent.SetConsumed();
+}
+
+
+void UiWidget::HandleInputEvent(MouseMovedInputEvent& inputEvent)
+{
+    const UiEvent_OnMouseMove eventDesc {inputEvent.mDelta, inputEvent.mMousePosition};
+    mEventListeners.IterateListeners([this, &eventDesc](UiEventListener* listener)
+        {
+            listener->HandleUiEvent(this, eventDesc);
+        });
+    inputEvent.SetConsumed();
+}
+
 void UiWidget::SetEnabled(bool isEnabled)
 {
     if (mEnabled == isEnabled)
@@ -579,14 +630,16 @@ UiWidget* UiWidget::NextSibling() const
 
     int index = cxx::get_item_index(mParent->mChildren, this);
     cxx_assert(index != -1);
-    if (index == -1) return nullptr;
+    if (index == -1) 
+        return nullptr;
 
     return mParent->mChildren[index + 1];
 }
 
 UiWidget* UiWidget::PrevSibling() const
 {
-    if (mParent == nullptr) return nullptr;
+    if (mParent == nullptr) 
+        return nullptr;
 
     if (mParent->mChildren.empty())
     {
@@ -606,13 +659,15 @@ UiWidget* UiWidget::PrevSibling() const
 
 UiWidget* UiWidget::FirstChild() const
 {
-    if (mChildren.empty()) return nullptr;
+    if (mChildren.empty()) 
+        return nullptr;
     return mChildren.front();
 }
 
 UiWidget* UiWidget::LastChild() const
 {
-    if (mChildren.empty()) return nullptr;
+    if (mChildren.empty()) 
+        return nullptr;
     return mChildren.back();
 }
 
@@ -621,11 +676,12 @@ UiWidget* UiWidget::GetParent() const
     return mParent;
 }
 
-UiWidget* UiWidget::GetChild(const std::string_view& name) const
+UiWidget* UiWidget::GetChild(std::string_view name) const
 {
     for (UiWidget* roller: mChildren)
     {
-        if (roller->mName == name) return roller;
+        if (roller->mName == name) 
+            return roller;
     }
     return nullptr;
 }
@@ -639,11 +695,12 @@ UiWidget* UiWidget::GetChild(int index) const
     return nullptr;
 }
 
-UiWidget* UiWidget::FindChildWithName(const std::string_view& name) const
+UiWidget* UiWidget::FindChildWithName(std::string_view name) const
 {
     for (UiWidget* roller: mChildren)
     {
-        if (roller->mName == name) return roller;
+        if (roller->mName == name) 
+            return roller;
     }
     // scan in depth
     for (UiWidget* roller: mChildren)
@@ -658,7 +715,7 @@ bool UiWidget::IsScreenPointInsideRect(const Point2D& screenPosition) const
 {
     Point2D localPoint = ScreenToLocal(screenPosition);
     Rect2D localRect = GetLocalBounds();
-    return localRect.PointWithin(localPoint);
+    return localRect.ContainsPoint(localPoint);
 }
 
 Point2D UiWidget::LocalToScreen(const Point2D& position) const

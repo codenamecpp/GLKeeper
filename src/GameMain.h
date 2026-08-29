@@ -2,10 +2,10 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-#include "ConsoleScreenView.h"
-#include "LoadingScreenView.h"
-#include "TitleScreenView.h"
-#include "TestScreenView.h"
+#include "ConsoleScreen.h"
+#include "LoadingScreen.h"
+#include "TitleScreen.h"
+#include "TestScreen.h"
 #include "GameSessionDefs.h"
 #include "GameEvent.h"
 
@@ -20,9 +20,6 @@ public:
 
     // entry point
     void Run();
-
-    // change game state requests
-    void RequestReturnToFrontend();
 
     // set exit request flag, execution will be interrupted soon
     void RequestQuit();
@@ -46,7 +43,7 @@ public:
 
 public:
     // notifications
-    void ScreenResolutionChanged();
+    void ScreenSizeChanged(const Point2D& screenSize);
 
 private:
     void StartCampaignScenario();
@@ -76,10 +73,10 @@ private:
     eGamestate mCurrentGamestate = eGamestate::None;
 
     // screens
-    ConsoleScreenView mConsoleScreen;
-    LoadingScreenView mLoadingScreen;
-    TitleScreenView mTitleScreen;
-    TestScreenView mTestScreen;
+    ConsoleScreen mConsoleScreen;
+    LoadingScreen mLoadingScreen;
+    TitleScreen mTitleScreen;
+    TestScreen mTestScreen;
 };
 
 //////////////////////////////////////////////////////////////////////////

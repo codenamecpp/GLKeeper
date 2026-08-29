@@ -233,7 +233,7 @@ bool DK2_BF4_LoadFromStream(std::istream& fileStream, DK2FontDesc& theFont)
         // invalid header
         return false;
     }
-    theFont = {};
+    theFont.Clear();
     theFont.mMaxWidth = cxx::read_int8(fileStream);
     theFont.mMaxHeight = cxx::read_int8(fileStream);
     int numEntries = cxx::read_int16(fileStream);

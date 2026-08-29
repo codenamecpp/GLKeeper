@@ -15,8 +15,8 @@ void SurfaceMaterial::BindMaterial(ShaderProgram& shaderProgram) const
 
 void SurfaceMaterial::Clear()
 {
-    mDiffuseTexture = {};
-    mEnvMappingTexture = {};
+    mDiffuseTexture = nullptr;
+    mEnvMappingTexture = nullptr;
 
     mBaseColor = COLOR_WHITE;
     //mSpecularColor = COLOR_WHITE;

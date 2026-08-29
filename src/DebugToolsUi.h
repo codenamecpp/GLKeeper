@@ -40,7 +40,7 @@ private:
 
 private:
     cxx::uniqueptr<AnimatingMeshObject> mPreviewMeshObject;
-    RenderView* mPreviewMeshRenderView = nullptr;
+    cxx::uniqueptr<RenderView> mPreviewMeshRenderView;
 
     bool mIsMeshPreviewActive = false;
     bool mRotatePreviewMesh = true;

@@ -26,7 +26,7 @@ public:
         if (table_it != mTextTableMap.end())
         {
             const TextTable& textTable = table_it->second;
-            if ((stringIndex > 0) && (stringIndex < static_cast<int>(textTable.size())))
+            if (stringIndex < static_cast<int>(textTable.size()))
                 return textTable[stringIndex];
         }
         return {};

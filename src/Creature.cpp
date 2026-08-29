@@ -41,18 +41,19 @@ void Creature::ConfigureInstance(EntityUid instanceUid, CreatureController* cont
 
 void Creature::SpawnInstance()
 {
-    cxx_assert(!mLifecycleFlags.mWasSpawned);
-    cxx_assert(!mLifecycleFlags.mWasDespawned);
-    cxx_assert(!mLifecycleFlags.mWasDeleted);
+    cxx_assert(!mEntityFlags.mWasSpawned);
+    cxx_assert(!mEntityFlags.mWasDespawned);
+    cxx_assert(!mEntityFlags.mWasDeleted);
 
-    if (mLifecycleFlags.mWasSpawned) 
+    if (mEntityFlags.mWasSpawned) 
         return;
 
-    mLifecycleFlags.mWasSpawned = true;
+    mEntityFlags.mWasSpawned = true;
 
     mOwnHandle = gCreatureManager.FindCreature(mInstanceUid);
 
-    EnableMeshObject(true);
+    InitMesh();
+    EnableMesh(true);
     
     // configure locomotion
     {
@@ -60,6 +61,7 @@ void Creature::SpawnInstance()
         mLocomotion.SetArriveSpeed(mDefinition->mSpeed);
     }
 
+    InitPhysics();
     EnablePhysics(true);
 
     if (mController)
@@ -75,9 +77,9 @@ void Creature::SpawnInstance()
 
 void Creature::DespawnInstance()
 {
-    cxx_assert(mLifecycleFlags.mWasSpawned);
+    cxx_assert(mEntityFlags.mWasSpawned);
 
-    if (mLifecycleFlags.mWasDespawned)
+    if (mEntityFlags.mWasDespawned)
         return;
 
     ChangeState(eCreatureState_None);
@@ -96,11 +98,11 @@ void Creature::DespawnInstance()
     mLocomotion.ClearGoals();
 
     EnablePhysics(false);
-    EnableMeshObject(false);
+    EnableMesh(false);
 
     UnassignCurrentTask();
 
-    mLifecycleFlags.mWasDespawned = true;
+    mEntityFlags.mWasDespawned = true;
 }
 
 void Creature::UpdateLogic(float stepDeltaTime)
@@ -211,7 +213,7 @@ void Creature::SetOrientation(cxx::angle_t orientation)
     }
 }
 
-MapPoint2D Creature::GetTilePosition() const
+Point2D Creature::GetTilePosition() const
 {
     const glm::vec3 position = GetPosition();
     return MapUtils::ComputeTileFromPosition(position);
@@ -295,15 +297,26 @@ long Creature::WithdrawMoney(long moneyAmount)
     return currentAmount;
 }
 
+void Creature::SetHighlighted(bool isHighlighted)
+{
+    if (mStateFlags.mIsHighlighted == isHighlighted)
+        return;
+
+    mStateFlags.mIsHighlighted = isHighlighted;
+    if (mMeshObject)
+    {
+        mMeshObject->SetHighlighted(isHighlighted);
+    }
+}
+
 void Creature::MarkDeleted()
 {
-    mLifecycleFlags.mWasDeleted = true;
+    mEntityFlags.mWasDeleted = true;
 }
 
 void Creature::OnRecycle()
 {
     Entity::OnRecycle();
-    EnableEntityComponents::OnRecycle();
 
     mController = nullptr;
     mDefinition = nullptr;
@@ -314,9 +327,6 @@ void Creature::OnRecycle()
     cxx_assert(mCurrState == nullptr);
     mCurrState.reset();
 
-    cxx_assert(mPhysicsObject == nullptr);
-    mPhysicsObject = nullptr;
-
     cxx_assert(mAssignedTask == nullptr);
     mAssignedTask = nullptr;
 
@@ -325,23 +335,16 @@ void Creature::OnRecycle()
     mLocomotion.ResetToDefaults();
     mLocomotion.ClearGoals();
 
-    mAnimator.Clear();
+    FreePhysics();
+    FreeMesh();
+
+    mStateFlags = {};
 }
 
-void Creature::EnableMeshObject(bool isEnabled)
+void Creature::InitMesh()
 {
-    bool wasEnabled = (mMeshObject != nullptr);
-    if (wasEnabled == isEnabled) 
+    if (mMeshObject)
         return;
-
-    // cleanup
-    if (wasEnabled)
-    {
-        mMeshObject.reset();
-        mAnimator.Clear();
-
-        return;
-    }
 
     // init mesh
     mMeshObject = gScene.CreateAnimatingMesh();
@@ -358,27 +361,36 @@ void Creature::EnableMeshObject(bool isEnabled)
     // init animator
     if (mMeshObject)
     {
+        mMeshObject->SetHighlighted(IsHighlighted());
+        mMeshObject->SetOwnerEntity(GetOwnHandle());
         mMeshObject->SetObjectActive(true);
     }
     mAnimator.Configure(mMeshObject.get());
 }
 
-void Creature::EnablePhysics(bool isEnabled)
+void Creature::FreeMesh()
 {
-    bool wasEnabled = (mPhysicsObject != nullptr);
-    if (wasEnabled == isEnabled) 
-        return;
+    mMeshObject.reset();
+    mAnimator.Clear();
+}
 
-    if (wasEnabled)
+void Creature::EnableMesh(bool isEnabled)
+{
+    if (mMeshObject)
     {
-        // cleanup
-        gPhysics.DetachUser(this);
-        mPhysicsObject = nullptr;
-
-        return;
+        bool wasEnabled = mMeshObject->IsObjectActive();
+        if (wasEnabled != isEnabled)
+        {
+            mMeshObject->SetObjectActive(isEnabled);
+        }
     }
+}
 
-    // init physics
+void Creature::InitPhysics()
+{
+    if (mPhysicsObject)
+        return;
+
     gPhysics.AttachUser(this);
 
     mPhysicsObject = gPhysics.GetPhysicsObject(this);
@@ -387,9 +399,34 @@ void Creature::EnablePhysics(bool isEnabled)
     mPhysicsObject->ClearLinearVelocity();
 }
 
+void Creature::FreePhysics()
+{
+    if (mPhysicsObject)
+    {
+        gPhysics.DetachUser(this);
+        mPhysicsObject = nullptr;
+    }
+}
+
+void Creature::EnablePhysics(bool isEnabled)
+{
+    bool wasEnabled = (mPhysicsObject != nullptr);
+    if (wasEnabled != isEnabled) 
+    {
+        if (isEnabled)
+        {
+            InitPhysics();
+        }
+        else
+        {
+            FreePhysics();
+        }
+    }
+}
+
 void Creature::ReceiveMsg(EntityMsg& msgData)
 {
-    if (WasDeleted()) 
+    if (!Exists())
         return;
 
     if (msgData.Is(EntityMsg::eID_SyncWithPhysicsTransform))
@@ -556,7 +593,7 @@ bool Creature::SelectBestTask()
 
         if (assignTask == nullptr)
         {
-            assignTask = gCreatureTaskManager.GetClaimFloorTask(this);
+            assignTask = gCreatureTaskManager.GetClaimTerritoryTask(this);
         }
 
         if ((assignTask == nullptr) && !CanCarryMoreMoney())
@@ -612,7 +649,7 @@ bool Creature::SelectTaskForJob(eCreatureJob jobType)
             {
                 if (assignTask == nullptr)
                 {
-                    assignTask = gCreatureTaskManager.GetClaimFloorTask(this);
+                    assignTask = gCreatureTaskManager.GetClaimTerritoryTask(this);
                 }
             }
             // fallthrough ->
@@ -658,3 +695,43 @@ bool Creature::SelectTaskForJob(eCreatureJob jobType)
 
     return false;
 }
+
+bool Creature::CanPickUp() const
+{
+    if (!ExistsOnMap())
+        return false;
+
+    // todo: check state / flags
+
+    return true;
+}
+
+bool Creature::PickUp()
+{
+    if (!CanPickUp())
+        return false;
+
+    mStateFlags.mInHand = true;
+    SetEntityUnplaced(true);
+
+    ChangeState(eCreatureState_InHand);
+    return true;
+}
+
+bool Creature::DropOn(const glm::vec2& position)
+{
+    if (!IsPickedUp())
+        return false;
+
+    SetEntityUnplaced(false);
+
+    mStateFlags.mInHand = false;
+
+    float dropHeight = MAP_FLOOR_LEVEL + MAP_BLOCK_HEIGHT;
+
+    SetPosition(glm::vec3{position.x, dropHeight, position.y});
+
+    ChangeState(eCreatureState_Idle);
+    return true;
+}
+

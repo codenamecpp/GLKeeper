@@ -16,6 +16,7 @@ UiTextBox::UiTextBox(const std::string& widgetClassName)
     , mHorzAlignment(eTextHorzAlignment_Left)
     , mTextColorDefault(COLOR_WHITE)
     , mTextColorHovered(COLOR_WHITE)
+    , mTextColorDisabled(COLOR_LIGHT_GRAY)
     , mTextColor(COLOR_WHITE)
 {
 }
@@ -26,11 +27,13 @@ UiTextBox::UiTextBox(const UiTextBox& sourceWidget)
     , mVertAlignment(sourceWidget.mVertAlignment)
     , mTextColorDefault(sourceWidget.mTextColorDefault)
     , mTextColorHovered(sourceWidget.mTextColorHovered)
+    , mTextColorDisabled(sourceWidget.mTextColorDisabled)
     , mTextColor(sourceWidget.mTextColor)
     , mTextContent(sourceWidget.mTextContent)
     , mTextFont(sourceWidget.mTextFont)
     , mTextBatchDirty(true) // force
     , mStringId(sourceWidget.mStringId)
+    , mTextTableId(sourceWidget.mTextTableId)
 {
 }
 
@@ -55,17 +58,20 @@ void UiTextBox::Refresh()
 
 void UiTextBox::SetText(const std::wstring& text)
 {
-    if (mTextContent == text) return;
+    if (mTextContent == text) 
+        return;
 
     mTextContent = text;
-    mStringId = 0; // reset text table text
+    mTextTableId = TextTableId_Null;
     InvalidateCache();
 }
 
-void UiTextBox::SetStringId(int stringId)
+void UiTextBox::SetStringId(TextTableId textTableId, int stringId)
 {
-    if (mStringId == stringId) return;
+    if ((mStringId == stringId) && (mTextTableId == textTableId)) 
+        return;
 
+    mTextTableId = textTableId;
     mStringId = stringId;
     InvalidateCache();
 }
@@ -152,7 +158,11 @@ void UiTextBox::Deserialize(const JsonElement& jsonElement)
 
     JsonQuery(jsonElement, "color", mTextColorDefault);
     JsonQuery(jsonElement, "color_hovered", mTextColorHovered);
-    JsonQuery(jsonElement, "string_id", mStringId);
+    JsonQuery(jsonElement, "color_disabled", mTextColorDisabled);
+    if (JsonQuery(jsonElement, "string_id", mStringId))
+    {
+        mTextTableId = TextTableId_Main;
+    }
 
     RefreshColor();
     InvalidateCache();
@@ -164,8 +174,6 @@ void UiTextBox::RenderSelf(UiRenderContext& uiRenderContext)
         return;
 
     Refresh();
-    //uiRenderContext.DrawRect(GetLocalBounds(), COLOR_PINK);
-
     uiRenderContext.DrawTextQuads(mTextFont, mTextBatch);
 }
 
@@ -194,18 +202,17 @@ void UiTextBox::HandleVisibilityChanged()
     RefreshColor();
 }
 
-
 void UiTextBox::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
     if (inputEvent.IsButtonPressed(MBUTTON_LEFT))
     {
         // notify
-        const UiEvent_OnPress eventDesc (MBUTTON_LEFT);
+        const UiEvent_OnPress eventDesc (MBUTTON_LEFT, inputEvent.mMousePosition);
         mEventListeners.IterateListeners([this, &eventDesc](UiEventListener* listener)
             {
-                listener->HandleUiEvent(this, &eventDesc);
+                listener->HandleUiEvent(this, eventDesc);
             });
-        inputEvent.mConsumed = true;
+        inputEvent.SetConsumed();
     }
 }
 
@@ -213,14 +220,16 @@ void UiTextBox::RecomptuteCache()
 {
     mTextBatch.clear();
 
-    if (mTextFont == nullptr) return;
+    if (mTextFont == nullptr) 
+        return;
 
-    if (mStringId > 0)
+    if (mTextTableId != TextTableId_Null)
     {
-        mTextContent = gTexts.GetString(TextTableId_Main, mStringId);
+        mTextContent = gTexts.GetString(mTextTableId, mStringId);
     }
 
-    if (mTextContent.empty()) return;
+    if (mTextContent.empty()) 
+        return;
 
     Rect2D localBounds = GetLocalBounds();
     if ((localBounds.w > 0) || (localBounds.h > 0))
@@ -240,8 +249,11 @@ void UiTextBox::InvalidateCache()
 
 void UiTextBox::RefreshColor()
 {
-    Color32 currentColor = IsHovered() ? mTextColorHovered : mTextColorDefault;
-    if (mTextColor == currentColor) return;
+    const Color32 currentColor = !IsEnabledInHierarchy() ? mTextColorDisabled :
+        (IsHovered() ? mTextColorHovered : mTextColorDefault);
+
+    if (mTextColor == currentColor) 
+        return;
 
     mTextColor = currentColor;
 

@@ -251,3 +251,58 @@ using CreatureTaskUid = uint64_t;
 
 //////////////////////////////////////////////////////////////////////////
 
+union CreatureStateFlags
+{
+    struct
+    {
+        bool mInHand : 1;
+        bool mContributesToPortalLimit : 1;
+        bool mRebelActive : 1;
+        bool mRebelLeader : 1;
+        bool mDeadBodyOnDestroy : 1;
+        bool mLeaveNoTrace : 1;
+        bool mPossessed : 1;
+        bool mBeingElectrocuted : 1;
+        bool mVampireIsBat : 1;
+        bool mCreeping : 1;
+        bool mPraying : 1;
+        bool mLeaving : 1;
+        bool mCombatPitFighter : 1;
+        bool mCannotLeaveHealthLoss : 1;
+        bool mIgnoringDoors : 1;
+        bool mIgnoringLockedRegion : 1;
+        bool mCallToArmsOn : 1;
+        bool mCreatureDying : 1;
+        bool mFightProcessCounter : 1;
+        bool mWasLastDroppedOnARoom : 1;
+        bool mShouldDelayGetUp : 1;
+        bool mFlyingCreatureMovingUp : 1;
+        bool mLeavingLava : 1;
+        bool mSkeletonFromSkeletonArmy : 1;
+        bool mSniperMode : 1;
+        bool mHypnotised : 1;
+        bool mAnimBackwards : 1;
+        bool mCantBeResurrected : 1;
+        bool mHasBeenConverted : 1;
+        bool mSkipNextPayment : 1;
+        bool mAttackable : 1;
+        bool mDestroysRooms : 1;
+        bool mMercenary : 1;
+        bool mHasBeenKnockedOut : 1;
+        bool mDieInstantly : 1;
+        bool mPlayInstanceAnimation : 1;
+        bool mCasinoGamblingFearless : 1;
+        bool mTortureVoluntary : 1;
+        bool mHasted : 1;
+        bool mSlowed : 1;
+        bool mOneShotReaper : 1;
+        bool mReaperComplete : 1;
+        bool mFleeing : 1;
+        bool mInWater : 1;
+
+        bool mIsHighlighted : 1;
+    };
+};
+
+//////////////////////////////////////////////////////////////////////////
+

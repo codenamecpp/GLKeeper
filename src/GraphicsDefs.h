@@ -82,11 +82,15 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 
-using RenderLayerMask = unsigned int;
+enum eSceneRenderLayer
+{
+    eSceneRenderLayer_World,
+    eSceneRenderLayer_WorldOverlay,
+    eSceneRenderLayer_UiOverlay,
+    eSceneRenderLayer_DebugOverlay
+};
 
-static const RenderLayerMask RenderLayer_WorldTerrain = (1 << 0);
-static const RenderLayerMask RenderLayer_WorldObjects = (1 << 1);
-static const RenderLayerMask RenderLayer_MeshPreview = (1 << 10);
+using SceneRenderLayerSet = EnumSet<eSceneRenderLayer>;
 
 //////////////////////////////////////////////////////////////////////////
 

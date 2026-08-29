@@ -10,7 +10,7 @@ class CreatureAction_CarryGoldToTreasury: public CreatureAction
 {
 public:
     CreatureAction_CarryGoldToTreasury();
-    void Configure(Creature* creature, const MapPoint2D& targetTile);
+    void Configure(Creature* creature, const Point2D& targetTile);
 
     // override CreatureAction
     void OnRecycle() override;

@@ -28,7 +28,7 @@ void PathFindRequest::SetStatus(ePathFindStatus status)
     mStatus = status;
 }
 
-void PathFindRequest::SetResultPathFromTiles(cxx::span<const MapPoint2D> pathTiles)
+void PathFindRequest::SetResultPathFromTiles(cxx::span<const Point2D> pathTiles)
 {
     mPathWaypoints.clear();
     mPathTiles.clear();
@@ -55,10 +55,10 @@ void PathFindRequest::SetResultPathFromTiles(cxx::span<const MapPoint2D> pathTil
 
     for (int i = 1; i < NumPathTiles - 1; ++i)
     {
-        const MapPoint2D& currTile = mPathTiles[i];
+        const Point2D& currTile = mPathTiles[i];
 
-        const MapPoint2D prevDelta = (currTile - mPathTiles[i - 1]);
-        const MapPoint2D nextDelta = (mPathTiles[i + 1] - currTile);
+        const Point2D prevDelta = (currTile - mPathTiles[i - 1]);
+        const Point2D nextDelta = (mPathTiles[i + 1] - currTile);
         if (prevDelta != nextDelta)
         {
             // waypoint to tile center

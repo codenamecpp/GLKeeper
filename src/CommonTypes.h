@@ -139,6 +139,11 @@ enum_serialize_decl(eLogLevel);
 
 using Point2D = glm::ivec2;
 
+inline bool operator < (const Point2D& lhs, const Point2D& rhs)
+{
+    return (lhs.y != rhs.y) ? (lhs.y < rhs.y) : (lhs.x < rhs.x);
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 // defines rectangle in 2d space
@@ -152,6 +157,37 @@ public:
     {
     }
 
+    static Rect2D FromPoints(const Point2D& pta, const Point2D& ptb)
+    {
+        Rect2D rc;
+        rc.SetFromPoints(pta, ptb);
+        return rc;
+    }
+
+    inline void SetFromPoints(const Point2D& pta, const Point2D& ptb)
+    {
+        const Point2D pmin = glm::min(pta, ptb);
+        const Point2D pmax = glm::max(pta, ptb);
+        x = pmin.x;
+        y = pmin.y;
+        w = pmax.x - pmin.x + 1;
+        h = pmax.y - pmin.y + 1;
+    }
+
+    inline void SetSize(const Point2D& rectSize)
+    {
+        w = std::max(0, rectSize.x);
+        h = std::max(0, rectSize.y);
+    }
+
+    inline bool Empty() const { return !HasSize(); }
+    inline bool HasSize() const
+    {
+        return (w > 0) && (h > 0);
+    }
+
+    inline bool IsPoint() const { return (w == 1) && (h == 1); }
+
     inline void SetToZero()
     {
         x = 0;
@@ -159,13 +195,35 @@ public:
         w = 0;
         h = 0;
     }
-    // test whether point is within rect
-    inline bool PointWithin(const Point2D& point) const
+
+    inline void Inflate(const Point2D& inflateSize)
     {
-        return point.x >= x && point.y >= y &&
-            point.x < (x + w - 1) &&
-            point.y < (y + h - 1);
+        x -= inflateSize.x;
+        y -= inflateSize.y;
+        w += inflateSize.x * 2;
+        h += inflateSize.y * 2;
     }
+
+    inline Point2D GetCenter() const
+    {
+        return Point2D 
+        { 
+            x + (w >> 1),
+            y + (h >> 1) 
+        };
+    }
+
+    inline Point2D GetPosition() const { return {x, y}; }
+    inline Point2D GetSize() const { return {w, h}; }
+
+    // whether point is within rect
+    inline bool ContainsPoint(const Point2D& point) const
+    {
+        if (point.x < x) return false;
+        if (point.y < y) return false;
+        return ((point.x - x) < w) && ((point.y - y) < h);
+    }
+
     // get union area of two rectangles
     inline Rect2D GetUnion(const Rect2D& rc) const
     {
@@ -181,20 +239,27 @@ public:
 
         return rcOutput;
     }
-    // get intersection area of two rectangles
-    inline Rect2D GetIntersection(const Rect2D& rc) const
-    {        
-        Rect2D rcOutput;
 
-        int minx = glm::min(x + w, rc.x + rc.w);
-        int miny = glm::min(y + h, rc.y + rc.h);
+    // get intersection area of two rectangular map areas
+    inline Rect2D GetIntersection(const Rect2D& rhs) const
+    {
+        // make sure both rectangles has area
+        if (HasSize() && rhs.HasSize())
+        {
+            // calc boundaries of the intersection interval [x1, x2), [y1, y2)
 
-        rcOutput.x = glm::max(x, rc.x);
-        rcOutput.y = glm::max(y, rc.y);
-        rcOutput.w = glm::max(minx - rcOutput.x, 0);
-        rcOutput.h = glm::max(miny - rcOutput.y, 0);
+            const int x1 = std::max(x, rhs.x);
+            const int y1 = std::max(y, rhs.y);
+            const int x2 = std::min(x + w, rhs.x + rhs.w);
+            const int y2 = std::min(y + h, rhs.y + rhs.h);
 
-        return rcOutput;
+            // check intersection
+            if ((x1 < x2) && (y1 < y2))
+            {
+                return Rect2D {x1, y1, x2 - x1, y2 - y1};
+            }
+        }
+        return Rect2D {0, 0, 0, 0};
     }
 
     inline bool operator == (const Rect2D& rhs) const { return (x == rhs.x) && (y == rhs.y) && (w == rhs.w) && (h == rhs.h); }
@@ -242,7 +307,19 @@ public:
     }
     constexpr bool Empty() const { return mBits == 0; }
     constexpr bool Contains(EnumType enumValue) const { return (mBits & ToBit(enumValue)) != 0; }
+    constexpr bool HasAny(const EnumSet& other) const
+    {
+        return (mBits & other.mBits) > 0;
+    }
+    constexpr bool HasAll(const EnumSet& other) const
+    {
+        return (mBits & other.mBits) == mBits;
+    }
 
+    constexpr EnumSet& Change(EnumType enumValue, bool state)
+    {
+        return state ? Include(enumValue) : Exclude(enumValue);
+    }
     constexpr EnumSet& Include(EnumType enumValue) { mBits |= ToBit(enumValue); return *this; }
     constexpr EnumSet& Exclude(EnumType enumValue) { mBits &= ~ToBit(enumValue); return *this; }
 
@@ -274,33 +351,40 @@ private:
 
 //////////////////////////////////////////////////////////////////////////
 
-// dynamic transient buffer
-// warning: all allocated data is invalidated at the start of the next frame
-// memory is reclaimed every update frame, see FrameMemoryManager
+//////////////////////////////////////////////////////////////////////////
 
-template<typename T>
-using Temp_Vector = std::pmr::vector<T>;
-
-template<typename T>
-using Temp_Set = std::pmr::set<T>;
-
-template<typename T>
-using Temp_List = std::pmr::list<T>;
-
-template<typename T, typename TContainer>
-inline auto TempVectorFrom(const TContainer& sourceContainer)
+namespace cxx
 {
-    Temp_Vector<T> tempVector;
-    tempVector.assign(std::begin(sourceContainer), std::end(sourceContainer));
-    return std::move(tempVector);
-}
 
-template<typename T>
-inline auto TempVectorFrom(const cxx::span<T>& sourceContainer)
-{
-    Temp_Vector<T> tempVector;
-    tempVector.assign(std::begin(sourceContainer), std::end(sourceContainer));
-    return std::move(tempVector);
-}
+    // temporary / frame / transient containers
+
+    // warning: all allocated data is invalidated at the start of the next frame
+    // memory is reclaimed every update frame, see FrameMemoryManager
+
+    template<typename T> using temp_vector = std::pmr::vector<T>;
+    template<typename T> using temp_set = std::pmr::set<T>;
+    template<typename T> using temp_list = std::pmr::list<T>;
+
+    // helpers
+
+    template<template<typename...> class TContainer, typename T, typename... Args>
+    inline auto temp_vector_from(const TContainer<T, Args...>& sourceContainer)
+    {
+        temp_vector<T> tempVector;
+        tempVector.assign(std::begin(sourceContainer), std::end(sourceContainer));
+        return std::move(tempVector);
+    }
+
+    template<typename T>
+    inline auto temp_vector_from(const cxx::span<T>& sourceContainer)
+    {
+        temp_vector<T> tempVector;
+        tempVector.assign(std::begin(sourceContainer), std::end(sourceContainer));
+        return std::move(tempVector);
+    }
+
+} // namespace cxx
+
+//////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////

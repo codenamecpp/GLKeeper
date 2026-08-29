@@ -16,6 +16,7 @@ public:
 
     // Extract texture resource data
     bool LoadImageData(const std::string& theTextureName, BitmapImage& outputBitmap);
+    bool IsImageExists(const std::string& imageName) const;
 
     // Extract mesh resource data
     bool LoadKMFModelData(const std::string& theMeshName, DK2KMFModel& outputModel);

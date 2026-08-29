@@ -83,15 +83,16 @@ public:
     inline const glm::vec3& GetUpward() const { return mUpward; }
 
     // get visibility layers
-    inline RenderLayerMask GetRenderLayers() const { return mRenderLayerMask; }
-    inline void SetRenderLayers(RenderLayerMask layers) { mRenderLayerMask = layers; }
-    inline void ChangeRenderLayers(RenderLayerMask enableLayers, RenderLayerMask disableLayers)
+    inline SceneRenderLayerSet& GetRenderLayers() { return mRenderLayers; }
+    inline const SceneRenderLayerSet& GetRenderLayers() const { return mRenderLayers; }
+
+    inline const EntityHandle& GetOwnerEntity() const { return mOwnerEntity; }
+    inline void SetOwnerEntity(EntityHandle entityHandle)
     {
-        mRenderLayerMask = (mRenderLayerMask & ~disableLayers) | enableLayers;
+        mOwnerEntity = entityHandle;
     }
 
 public:
-
     // pool
     virtual void OnRecycle();
 
@@ -114,8 +115,10 @@ protected:
     // transformed bounds should be manually updated so make sure to ComputeTransformation
     cxx::aabbox mBoundsTransformed; // world space
     cxx::aabbox mBounds; // untransformed, used for culling and mouse tests
+
+    EntityHandle mOwnerEntity {};
     
-    RenderLayerMask mRenderLayerMask = RenderLayer_WorldObjects;
+    SceneRenderLayerSet mRenderLayers {eSceneRenderLayer_World};
 
     // flags
     bool mIsObjectActive : 1;

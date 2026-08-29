@@ -1,14 +1,14 @@
 #include "stdafx.h"
-#include "ImpCreatureController.h"
+#include "WorkerCreatureController.h"
 #include "CreatureAnimConst.h"
 
-void ImpCreatureController::OnRecycle()
+void WorkerCreatureController::OnRecycle()
 {
     CreatureController::OnRecycle();
 
 }
 
-void ImpCreatureController::SpawnInstance()
+void WorkerCreatureController::SpawnInstance()
 {
     CreatureController::SpawnInstance();
 
@@ -17,7 +17,7 @@ void ImpCreatureController::SpawnInstance()
     GetCreature().GetLocomotion().SetOrientSpeed(glm::radians(560.0f));
 }
 
-void ImpCreatureController::ConfigureCreatureAnimationStates()
+void WorkerCreatureController::ConfigureCreatureAnimationStates()
 {
     CreatureController::ConfigureCreatureAnimationStates();
 

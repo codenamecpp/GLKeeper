@@ -202,7 +202,7 @@ bool ChickenObjectController::TrySelectRandomMovePoint(glm::vec2& nextMovePoint)
 
     // todo: move to navigation service
 
-    MapPoint2D currentTilePosition = GetGameObject().GetTilePosition();
+    Point2D currentTilePosition = GetGameObject().GetTilePosition();
     if (MapTile* currentTile = gGameMap.GetMapTile(currentTilePosition))
     {
         RoomDefinition* roomDefinition = currentTile->mRoomInstance ? 
@@ -211,7 +211,7 @@ bool ChickenObjectController::TrySelectRandomMovePoint(glm::vec2& nextMovePoint)
         bool insideHatchery = roomDefinition && (roomDefinition->mRoomType == RoomTypeId_Hatchery);
 
         // select good tiles 
-        Temp_Vector<MapTile*> candidateTiles;
+        cxx::temp_vector<MapTile*> candidateTiles;
         candidateTiles.reserve(5);
         candidateTiles.push_back(currentTile);
         for (eDirection dir: gStraightDirections)

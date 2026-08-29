@@ -7,6 +7,7 @@ class SceneObject;
 class EnvironmentMeshObject;
 class AnimatingMeshObject;
 class ProceduralMeshObject;
+class RenderView;
 
 //////////////////////////////////////////////////////////////////////////
 

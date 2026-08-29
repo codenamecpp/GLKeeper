@@ -41,14 +41,14 @@ void Room::ConfigureInstance(EntityUid instanceUid,
 
 void Room::SpawnInstance()
 {
-    cxx_assert(!mLifecycleFlags.mWasSpawned);
-    cxx_assert(!mLifecycleFlags.mWasDespawned);
-    cxx_assert(!mLifecycleFlags.mWasDeleted);
+    cxx_assert(!mEntityFlags.mWasSpawned);
+    cxx_assert(!mEntityFlags.mWasDespawned);
+    cxx_assert(!mEntityFlags.mWasDeleted);
 
-    if (mLifecycleFlags.mWasSpawned) 
+    if (mEntityFlags.mWasSpawned) 
         return;
 
-    mLifecycleFlags.mWasSpawned = true;
+    mEntityFlags.mWasSpawned = true;
 
     mLocationArea = {};
     mOwnHandle = gRoomManager.FindRoom(mInstanceUid);
@@ -58,9 +58,10 @@ void Room::SpawnInstance()
 
 void Room::DespawnInstance()
 {
-    cxx_assert(mLifecycleFlags.mWasSpawned);
+    cxx_assert(mEntityFlags.mWasSpawned);
 
-    if (mLifecycleFlags.mWasDespawned) return;
+    if (mEntityFlags.mWasDespawned) 
+        return;
 
     mController->DespawnInstance();
 
@@ -73,7 +74,7 @@ void Room::DespawnInstance()
     mInnerTiles.clear();
     mStorageSlots.clear();
 
-    mLifecycleFlags.mWasDespawned = true;
+    mEntityFlags.mWasDespawned = true;
 }
 
 void Room::UpdateLogic(float stepDeltaTime)
@@ -97,7 +98,7 @@ void Room::AbsorbRoom(Room* sourceRoom)
     {
         cxx_assert(false);
     }
-    auto tilesToAbsorb = TempVectorFrom<MapTile*>(sourceRoom->mCoveredTiles);
+    auto tilesToAbsorb = cxx::temp_vector_from(sourceRoom->mCoveredTiles);
     sourceRoom->ReleaseTiles(tilesToAbsorb);
     EnlargeRoom(tilesToAbsorb);
 }
@@ -210,7 +211,7 @@ void Room::ReleaseTiles(cxx::span<MapTile*> targetTiles)
 
 void Room::ReleaseTiles()
 {
-    auto releasedTiles = TempVectorFrom<MapTile*>(mCoveredTiles);
+    auto releasedTiles = cxx::temp_vector_from(mCoveredTiles);
     mCoveredTiles.clear();
     ReleaseTiles(releasedTiles);
 }
@@ -254,8 +255,8 @@ void Room::ReevaluateOccupationArea()
         return;
     }
 
-    MapPoint2D rightBottomPoint = mCoveredTiles[0]->mLocation;
-    MapPoint2D leftTopPoint = mCoveredTiles[0]->mLocation;
+    Point2D rightBottomPoint = mCoveredTiles[0]->mLocation;
+    Point2D leftTopPoint = mCoveredTiles[0]->mLocation;
 
     for (const MapTile* tile : mCoveredTiles)
     {
@@ -459,8 +460,6 @@ RoomWallSection* Room::FindWallSectionWithTile(MapTile* mapTile, eTileFace face)
 void Room::OnRecycle()
 {
     Entity::OnRecycle();
-    EnableEntityComponents::OnRecycle();
-    EnableEntityCapabilities::OnRecycle();
 
     mController = nullptr;
     mDefinition = nullptr;
@@ -517,7 +516,7 @@ bool Room::TransferRoomObjectsTo(Room* receiver, cxx::span<MapTile*> targetTiles
 
     GameObjectManager& gobjects = gGameObjectManager;
 
-    Temp_List<EntityHandle> objectsTransferred;
+    cxx::temp_list<EntityHandle> objectsTransferred;
 
     // floor furniture
     for (auto roller_it = mFloorFurniture.begin(); roller_it != mFloorFurniture.end(); )
@@ -598,7 +597,7 @@ bool Room::TransferRoomObjectsTo(Room* receiver)
     cxx_assert(receiver != this);
     if ((receiver == this) || (receiver == nullptr)) return false;
 
-    Temp_List<EntityHandle> objectsTransferred;
+    cxx::temp_list<EntityHandle> objectsTransferred;
 
     // floor furniture
     if (!mFloorFurniture.empty())
@@ -853,7 +852,7 @@ void Room::HandleRoomFurnitureObjects(cxx::span<RoomFurnitureSlot> newObjects, R
     }
 }
 
-void Room::AssignObjectToStorageSlot(const MapPoint2D& tileLocation, EntityHandle entityHandle)
+void Room::AssignObjectToStorageSlot(const Point2D& tileLocation, EntityHandle entityHandle)
 {
     if (!entityHandle.IsGameObject())
     {
@@ -877,7 +876,7 @@ void Room::AssignObjectToStorageSlot(const MapPoint2D& tileLocation, EntityHandl
     }
 }
 
-void Room::UnassignStorageSlotObject(const MapPoint2D& tileLocation, EntityHandle entityHandle)
+void Room::UnassignStorageSlotObject(const Point2D& tileLocation, EntityHandle entityHandle)
 {
     if (!entityHandle.IsGameObject())
     {
@@ -905,7 +904,7 @@ void Room::UnassignStorageSlotObject(const MapPoint2D& tileLocation, EntityHandl
     }
 }
 
-void Room::ReassignStorageSlotObject(const MapPoint2D& tileLocation, EntityHandle entityHandle, const MapPoint2D& newLocation)
+void Room::ReassignStorageSlotObject(const Point2D& tileLocation, EntityHandle entityHandle, const Point2D& newLocation)
 {
     cxx_assert(tileLocation != newLocation);
     if (tileLocation == newLocation) return;
@@ -937,5 +936,5 @@ int Room::GetStorageSlotIndex(EntityHandle entityHandle) const
 
 void Room::MarkDeleted()
 {
-    mLifecycleFlags.mWasDeleted = true;
+    mEntityFlags.mWasDeleted = true;
 }

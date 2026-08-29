@@ -35,7 +35,7 @@ bool CreatureTask::GetTargetPosition(glm::vec2& targetPosition) const
     return false;
 }
 
-bool CreatureTask::GetTargetTile(MapPoint2D& targetTile) const
+bool CreatureTask::GetTargetTile(Point2D& targetTile) const
 {
     if (mTargetTile)
     {
@@ -49,7 +49,7 @@ bool CreatureTask::HasTargetTile() const
     return mTargetTile.has_value();
 }
 
-void CreatureTask::ConfigureTargetTile(const MapPoint2D& targetTile)
+void CreatureTask::ConfigureTargetTile(const Point2D& targetTile)
 {
     mTargetTile.emplace(targetTile);
 }

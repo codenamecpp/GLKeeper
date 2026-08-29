@@ -13,7 +13,7 @@ void RoomTileConstructor_5_by_5::ConstructRoomFloor(Room* roomInstance, cxx::spa
 {
     cxx_assert(roomInstance);
 
-    const MapArea2D& locationArea = roomInstance->GetLocationArea();
+    const Rect2D& locationArea = roomInstance->GetLocationArea();
 
     RoomDefinition* definition = roomInstance->GetDefinition();
 

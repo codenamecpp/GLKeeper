@@ -23,7 +23,7 @@ public:
 
 private:
     // override StorageRoomController
-    void EvaluateStorageTiles(StorageTilesEvaluationResult& evaluationResult) const override;
+    void EvaluateStorageTiles(cxx::any_vector<Point2D> evaluationResult) const override;
 };
 
 //////////////////////////////////////////////////////////////////////////

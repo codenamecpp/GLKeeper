@@ -207,7 +207,7 @@ enum : ScenarioVariableType
     ScenarioVariableType_CreaturePool = 1,
     ScenarioVariableType_Availability = 2,
     ScenarioVariableType_EntranceGenerationSpeedSeconds = 3,
-    ScenarioVariableType_ClaimTileHealth = 4, // value=825
+    ScenarioVariableType_ClaimTileHealth = 4, 
     ScenarioVariableType_AttackTileHealth = 5,
     ScenarioVariableType_RepairTileHealth = 6,
     ScenarioVariableType_MineGoldHealth = 7,
@@ -693,6 +693,83 @@ inline bool KWDRoomThingToRoomType(int inputValue, RoomTypeId& outputValue)
     return outputValue != RoomTypeId_Null;
 }
 
+inline bool KWDParseTextTableId(unsigned char inputValue, TextTableId& textTableId, TextTableId& briefingTableId)
+{
+    textTableId = TextTableId_Null;
+    briefingTableId = TextTableId_Null;
+
+    static const std::pair<TextTableId, TextTableId> convTable[] =
+    {
+        {TextTableId_Null, TextTableId_Null }, //NO_TEXT,
+        {TextTableId_Level1, TextTableId_Level1_Briefing }, //LEVEL_1,
+        {TextTableId_Level2, TextTableId_Level2_Briefing }, //LEVEL_2,
+        {TextTableId_Level3, TextTableId_Level3_Briefing }, //LEVEL_3,
+        {TextTableId_Level4, TextTableId_Level4_Briefing }, //LEVEL_4,
+        {TextTableId_Level5, TextTableId_Level5_Briefing }, //LEVEL_5,
+        {TextTableId_Level6A, TextTableId_Level6A_Briefing }, //LEVEL_6A,
+        {TextTableId_Level6B, TextTableId_Level6B_Briefing }, //LEVEL_6B,
+        {TextTableId_Level7, TextTableId_Level7_Briefing }, //LEVEL_7,
+        {TextTableId_Level8, TextTableId_Level8_Briefing }, //LEVEL_8,
+        {TextTableId_Level9, TextTableId_Level9_Briefing }, //LEVEL_9,
+        {TextTableId_Level10, TextTableId_Level10_Briefing }, //LEVEL_10,
+        {TextTableId_Level11A, TextTableId_Level11A_Briefing }, //LEVEL_11A,
+        {TextTableId_Level11B, TextTableId_Level11B_Briefing }, //LEVEL_11B,
+        {TextTableId_Level11C, TextTableId_Level11C_Briefing }, //LEVEL_11C,
+        {TextTableId_Level12, TextTableId_Level12_Briefing }, //LEVEL_12,
+        {TextTableId_Level13, TextTableId_Level13_Briefing }, //LEVEL_13,
+        {TextTableId_Level14, TextTableId_Level14_Briefing }, //LEVEL_14,
+        {TextTableId_Level15A, TextTableId_Level15A_Briefing }, //LEVEL_15A,
+        {TextTableId_Level15B, TextTableId_Level15B_Briefing }, //LEVEL_15B,
+        {TextTableId_Level16, TextTableId_Level16_Briefing }, //LEVEL_16,
+        {TextTableId_Level17, TextTableId_Level17_Briefing }, //LEVEL_17,
+        {TextTableId_Level18, TextTableId_Level18_Briefing }, //LEVEL_18,
+        {TextTableId_Level19, TextTableId_Level19_Briefing }, //LEVEL_19,
+        {TextTableId_Level20, TextTableId_Level20_Briefing }, //LEVEL_20,
+        {TextTableId_Multiplayer, TextTableId_Null }, //MULTI_PLAYER_1,
+        {TextTableId_MyPetDungeon, TextTableId_Mpd1_Briefing}, //MY_PET_DUNGEON_1,
+        {TextTableId_Secret1, TextTableId_Secret1_Briefing }, //SECRET_1,
+        {TextTableId_Secret2, TextTableId_Secret2_Briefing }, //SECRET_2,
+        {TextTableId_Secret3, TextTableId_Secret3_Briefing }, //SECRET_3,
+        {TextTableId_Secret4, TextTableId_Secret4_Briefing }, //SECRET_4,
+        {TextTableId_Secret5, TextTableId_Secret5_Briefing }, //SECRET_5,
+        {TextTableId_Demo1, TextTableId_Null }, //DEMO_1,
+        {TextTableId_Demo2, TextTableId_Null }, //DEMO_2,
+        {TextTableId_Demo3, TextTableId_Null }, //DEMO_3,
+        {TextTableId_MyPetDungeon, TextTableId_Mpd2_Briefing }, //MY_PET_DUNGEON_2,
+        {TextTableId_MyPetDungeon, TextTableId_Mpd3_Briefing }, //MY_PET_DUNGEON_3,
+        {TextTableId_MyPetDungeon, TextTableId_Mpd4_Briefing }, //MY_PET_DUNGEON_4,
+        {TextTableId_MyPetDungeon, TextTableId_Mpd5_Briefing }, //MY_PET_DUNGEON_5,
+        {TextTableId_MyPetDungeon, TextTableId_Mpd6_Briefing }, //MY_PET_DUNGEON_6,
+        {TextTableId_MyPetDungeon, TextTableId_Mpd7_Briefing }, //MY_PET_DUNGEON_7,
+        {TextTableId_Main, TextTableId_Null }, //MULTI_PLAYER_2,
+        {TextTableId_Main, TextTableId_Null }, //MULTI_PLAYER_3,
+        {TextTableId_Main, TextTableId_Null }, //MULTI_PLAYER_4,
+        {TextTableId_Main, TextTableId_Null }, //MULTI_PLAYER_5,
+        {TextTableId_Main, TextTableId_Null }, //MULTI_PLAYER_6,
+        {TextTableId_Main, TextTableId_Null }, //MULTI_PLAYER_7,
+        {TextTableId_Main, TextTableId_Null }, //MULTI_PLAYER_8,
+        {TextTableId_Main, TextTableId_Null }, //MULTI_PLAYER_9,
+        {TextTableId_Main, TextTableId_Null }, //MULTI_PLAYER_10,
+        {TextTableId_Main, TextTableId_Null }, //MULTI_PLAYER_11,
+        {TextTableId_Main, TextTableId_Null }, //MULTI_PLAYER_12,
+        {TextTableId_Main, TextTableId_Null }, //MULTI_PLAYER_13,
+        {TextTableId_Main, TextTableId_Null }, //MULTI_PLAYER_14,
+        {TextTableId_Main, TextTableId_Null }, //MULTI_PLAYER_15,
+        {TextTableId_Main, TextTableId_Null }, //MULTI_PLAYER_16,
+        {TextTableId_Main, TextTableId_Null }, //MULTI_PLAYER_17,
+        {TextTableId_Main, TextTableId_Null }, //MULTI_PLAYER_18,
+        {TextTableId_Main, TextTableId_Null }, //MULTI_PLAYER_19,
+        {TextTableId_Main, TextTableId_Null }, //MULTI_PLAYER_20
+    };
+    if (inputValue < CountOf(convTable))
+    {
+        const auto& convTableEntry = convTable[inputValue];
+        textTableId = convTableEntry.first;
+        briefingTableId = convTableEntry.second;
+    }
+    return true;
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 bool DK2ScenarioReader::ReadString(unsigned int stringLength, std::wstring& wideString)
@@ -711,6 +788,24 @@ bool DK2ScenarioReader::ReadString(unsigned int stringLength, std::wstring& wide
         wideString.end());
 
     return true;
+}
+
+void DK2ScenarioReader::CleanLevelName(std::wstring& levelName)
+{
+    const std::wstring_view extensionName = L".kwd";
+
+    if (levelName.length() < extensionName.length())
+        return;
+
+    bool hasExtension = std::equal(extensionName.rbegin(), extensionName.rend(), levelName.rbegin(),
+        [](wchar_t lhs, wchar_t rhs)
+        {
+            return towlower(lhs) == towlower(rhs);
+        });
+    if (hasExtension)
+    {
+        levelName.resize(levelName.length() - extensionName.length());
+    }
 }
 
 bool DK2ScenarioReader::ReadString8(unsigned int stringLength, std::string& ansiString)
@@ -1033,31 +1128,35 @@ bool DK2ScenarioReader::ReadStringId()
 
 bool DK2ScenarioReader::ReadMapData(ScenarioDefinition& scenarioData)
 {
-    scenarioData.mMapTiles.resize(scenarioData.mLevelDimensionX * scenarioData.mLevelDimensionY);
+    const int MapDimsX = scenarioData.mLevelInfo.mMapDimsX;
+    const int MapDimsY = scenarioData.mLevelInfo.mMapDimsY;
+
+    scenarioData.mMapTiles.resize(MapDimsX * MapDimsY);
 
     // read tiles
-    for (int tiley = 0; tiley < scenarioData.mLevelDimensionY; ++tiley)
-    for (int tilex = 0; tilex < scenarioData.mLevelDimensionX; ++tilex)
+    for (int tiley = 0; tiley < MapDimsY; ++tiley)
     {
-        const int tileIndex = (tiley * scenarioData.mLevelDimensionX) + tilex;
+        for (int tilex = 0; tilex < MapDimsX; ++tilex)
+        {
+            const int tileIndex = (tiley * MapDimsX) + tilex;
 
-        // terrain type is not mapped to internal id so it can be red as is
-        READ_FSTREAM_U8(mFileStream, scenarioData.mMapTiles[tileIndex].mTerrainType);
+            // terrain type is not mapped to internal id so it can be red as is
+            READ_FSTREAM_U8(mFileStream, scenarioData.mMapTiles[tileIndex].mTerrainType);
 
-        unsigned char playerID;
-        READ_FSTREAM_U8(mFileStream, playerID);
-        if (!KWDParseENUM(playerID, scenarioData.mMapTiles[tileIndex].mOwnerId))
-            return false;
+            unsigned char playerID;
+            READ_FSTREAM_U8(mFileStream, playerID);
+            if (!KWDParseENUM(playerID, scenarioData.mMapTiles[tileIndex].mOwnerId))
+                return false;
 
-        unsigned char bridgeTerrain;
-        READ_FSTREAM_U8(mFileStream, bridgeTerrain);
-        if (!KWDParseENUM(bridgeTerrain, scenarioData.mMapTiles[tileIndex].mTerrainUnderTheBridge))
-            return false;
+            unsigned char bridgeTerrain;
+            READ_FSTREAM_U8(mFileStream, bridgeTerrain);
+            if (!KWDParseENUM(bridgeTerrain, scenarioData.mMapTiles[tileIndex].mTerrainUnderTheBridge))
+                return false;
 
-        unsigned char filler;
-        READ_FROM_FSTREAM(mFileStream, filler);
+            unsigned char filler;
+            READ_FROM_FSTREAM(mFileStream, filler);
+        }
     }
-
     return true;
 }
 
@@ -1135,13 +1234,31 @@ bool DK2ScenarioReader::ReadScenarioVariables(int numElements, ScenarioDefinitio
                 scenarioVars.mDigEnemyWallHealth = intValue;
             break;
             case ScenarioVariableType_ClaimTileHealth:
-                scenarioVars.mClaimFloorHealth = intValue;
+                scenarioVars.mClaimTileHealth = intValue;
+            break;
+            case ScenarioVariableType_AttackTileHealth:
+                scenarioVars.mAttackTileHealth = intValue;
+            break;
+            case ScenarioVariableType_RepairTileHealth:
+                scenarioVars.mRepairTileHealth = intValue;
             break;
             case ScenarioVariableType_MineGoldHealth:
                 scenarioVars.mMineGoldHealth = intValue;
             break;
             case ScenarioVariableType_ReinforceWallHealth:
                 scenarioVars.mReinforceWallHealth = intValue;
+            break;
+            case ScenarioVariableType_RepairWallHealth:
+                scenarioVars.mRepairWallHealth = intValue;
+            break;
+            case ScenarioVariableType_ConvertRoomHealth:
+                scenarioVars.mConvertRoomHealth = intValue;
+            break;
+            case ScenarioVariableType_AttackRoomHealth:
+                scenarioVars.mAttackRoomHealth = intValue;
+            break;
+            case ScenarioVariableType_RepairRoomHealth:
+                scenarioVars.mRepairRoomHealth = intValue;
             break;
             case ScenarioVariableType_GoldMinedFromGems:
                 scenarioVars.mGoldMinedFromGems = intValue;
@@ -2262,6 +2379,28 @@ bool DK2ScenarioReader::ReadCreatureFlags(CreatureDefinition& creatureDef)
     return true;
 }
 
+bool DK2ScenarioReader::ReadLevelFlags(ScenarioLevelInfo& levelInfo)
+{
+    unsigned short flagsWord;
+    READ_FROM_FSTREAM(mFileStream, flagsWord);
+
+    ScenarioLevelFlags& levelFlags = levelInfo.mFlags;
+
+    levelFlags.mAlwaysImprisonEnemies = CHECK_BIT_ON(flagsWord, 3);
+    levelFlags.mOneShotHornySpellAvailable = CHECK_BIT_ON(flagsWord, 4);
+    levelFlags.mIsSecretLevel = CHECK_BIT_ON(flagsWord, 5);
+    levelFlags.mIsSpecialLevel = CHECK_BIT_ON(flagsWord, 6);
+    levelFlags.mDisplayHeroesKilledTally = CHECK_BIT_ON(flagsWord, 7);
+    levelFlags.mAutomaticallyShowObjectiveBox = CHECK_BIT_ON(flagsWord, 8);
+    levelFlags.mLastHeartGeneratesPortalGem = CHECK_BIT_ON(flagsWord, 9);
+    levelFlags.mIsMultiplayerLevel = CHECK_BIT_ON(flagsWord, 10);
+    levelFlags.mIsSkirmishLevel = CHECK_BIT_ON(flagsWord, 11);
+    levelFlags.mFreezeGameOptions = CHECK_BIT_ON(flagsWord, 12);
+    levelFlags.mIsMyPetDungeonLevel = CHECK_BIT_ON(flagsWord, 13);
+
+    return true;
+}
+
 bool DK2ScenarioReader::ReadCreatureJobAlternative()
 {
     unsigned int jobType;
@@ -2363,85 +2502,7 @@ bool DK2ScenarioReader::ReadTerrainData(int numElements, ScenarioDefinition& sce
     return true;
 }
 
-bool DK2ScenarioReader::ReadLevelVariables(ScenarioDefinition& scenarioData)
-{
-    unsigned short fillerWord;
-    unsigned int fillerDword;
-
-    READ_FROM_FSTREAM(mFileStream, fillerWord); // trigger id
-
-    unsigned short ticksPerSecond;
-    READ_FROM_FSTREAM(mFileStream, ticksPerSecond);
-
-    scenarioData.mTicksPerSecond = 4.0f; // fixed tick rate
-
-    SKIP_FSTREAM_BYTES(mFileStream, 520); // unknown data
-
-    // read text messages
-    std::vector<std::wstring> levelMessages;
-    levelMessages.resize(20);
-    for (std::wstring& messageEntry: levelMessages)
-    {
-        if (!ReadString(512, messageEntry))
-            return false;
-    }
-
-    READ_FROM_FSTREAM(mFileStream, fillerWord); // flags
-
-    std::string speechString;
-    if (!ReadString8(32, speechString))
-        return false;
-
-    unsigned char talismanPieces;
-    READ_FROM_FSTREAM(mFileStream, talismanPieces);
-    READ_FROM_FSTREAM(mFileStream, fillerDword);
-    READ_FROM_FSTREAM(mFileStream, fillerDword);
-
-    unsigned char soundtrack;
-    unsigned char textTableId;
-    READ_FROM_FSTREAM(mFileStream, soundtrack);
-    READ_FROM_FSTREAM(mFileStream, textTableId);
-    READ_FROM_FSTREAM(mFileStream, fillerWord); // textTitleId
-    READ_FROM_FSTREAM(mFileStream, fillerWord); // textPlotId
-    READ_FROM_FSTREAM(mFileStream, fillerWord); // textDebriefId
-    READ_FROM_FSTREAM(mFileStream, fillerWord); // textObjectvId
-    READ_FROM_FSTREAM(mFileStream, fillerWord);
-    READ_FROM_FSTREAM(mFileStream, fillerWord);
-    READ_FROM_FSTREAM(mFileStream, fillerWord);
-    READ_FROM_FSTREAM(mFileStream, fillerWord);
-    READ_FROM_FSTREAM(mFileStream, fillerWord); // speclvlIdx
-
-    // unknown data
-    SKIP_FSTREAM_BYTES(mFileStream, 8 * sizeof(unsigned char));
-    SKIP_FSTREAM_BYTES(mFileStream, 8 * sizeof(unsigned short));
-
-    // path
-    std::string terrainPath;
-    if (!ReadString8(32, terrainPath))
-        return false;
-
-    unsigned char oneShotHornyLev;
-    unsigned char fillerByte;
-    READ_FROM_FSTREAM(mFileStream, oneShotHornyLev);
-    READ_FROM_FSTREAM(mFileStream, fillerByte);
-    READ_FROM_FSTREAM(mFileStream, fillerByte);
-    READ_FROM_FSTREAM(mFileStream, fillerByte);
-
-    READ_FROM_FSTREAM(mFileStream, fillerWord);
-    READ_FROM_FSTREAM(mFileStream, fillerWord);
-    READ_FROM_FSTREAM(mFileStream, fillerWord);
-    READ_FROM_FSTREAM(mFileStream, fillerWord);
-    READ_FROM_FSTREAM(mFileStream, fillerWord);
-    READ_FROM_FSTREAM(mFileStream, fillerWord);
-
-    std::wstring heroName;
-    if (!ReadString(32, heroName))
-        return false;
-
-    return true;
-}
-
-bool DK2ScenarioReader::ReadMapInfo(ScenarioDefinition& scenarioData, std::vector<LevelDataFilePath>& paths)
+bool DK2ScenarioReader::ReadLevelInfo(ScenarioLevelInfo& levelInfo, std::vector<LevelDataFilePath>& paths)
 {
     mFileStream.seekg(20); // end of header
 
@@ -2467,23 +2528,102 @@ bool DK2ScenarioReader::ReadMapInfo(ScenarioDefinition& scenarioData, std::vecto
     READ_FROM_FSTREAM(mFileStream, fillerDword);
 
     // property data
-    if (!ReadString(64, scenarioData.mLevelName))
+    std::wstring& levelName = levelInfo.mLevelName;
+    if (!ReadString(64, levelName))
         return false;
 
-    if (!ReadString(1024, scenarioData.mLevelDescription))
+    CleanLevelName(levelName);
+
+    if (!ReadString(1024, levelInfo.mDescription))
         return false;
 
-    if (!ReadString(64, scenarioData.mLevelAuthor))
+    if (!ReadString(64, levelInfo.mAuthorName))
         return false;
 
-    if (!ReadString(64, scenarioData.mLevelEmail))
+    if (!ReadString(64, levelInfo.mEmailAddress))
         return false;
 
-    if (!ReadString(1024, scenarioData.mLevelInformation))
+    if (!ReadString(1024, levelInfo.mInformation))
         return false;
 
-    // variables
-    if (!ReadLevelVariables(scenarioData))
+    unsigned short fillerWord;
+    READ_FROM_FSTREAM(mFileStream, fillerWord); // trigger id
+
+    unsigned short ticksPerSecond;
+    READ_FROM_FSTREAM(mFileStream, ticksPerSecond);
+
+    levelInfo.mTicksPerSecond = 4.0f; // fixed tick rate
+
+    SKIP_FSTREAM_BYTES(mFileStream, 520); // unknown data
+
+    // read text messages
+    std::vector<std::wstring> levelMessages;
+    levelMessages.resize(20);
+    for (std::wstring& messageEntry: levelMessages)
+    {
+        if (!ReadString(512, messageEntry))
+            return false;
+    }
+
+    if (!ReadLevelFlags(levelInfo))
+        return false;
+
+    std::string speechString;
+    if (!ReadString8(32, speechString))
+        return false;
+
+    unsigned char talismanPieces;
+    READ_FROM_FSTREAM(mFileStream, talismanPieces);
+    READ_FROM_FSTREAM(mFileStream, fillerDword);
+    READ_FROM_FSTREAM(mFileStream, fillerDword);
+
+    unsigned char soundtrack;
+    unsigned char textTableId;
+    READ_FROM_FSTREAM(mFileStream, soundtrack);
+    READ_FROM_FSTREAM(mFileStream, textTableId);
+    if (!KWDParseTextTableId(textTableId, 
+        levelInfo.mTextTableId, 
+        levelInfo.mBriefingTableId))
+    {
+        cxx_assert(false);
+    }
+    READ_FROM_FSTREAM(mFileStream, fillerWord); // textTitleId
+    READ_FROM_FSTREAM(mFileStream, fillerWord); // textPlotId
+    READ_FROM_FSTREAM(mFileStream, fillerWord); // textDebriefId
+    READ_FROM_FSTREAM(mFileStream, fillerWord); // textObjectvId
+    READ_FROM_FSTREAM(mFileStream, fillerWord);
+    READ_FROM_FSTREAM(mFileStream, fillerWord);
+    READ_FROM_FSTREAM(mFileStream, fillerWord);
+    READ_FROM_FSTREAM(mFileStream, fillerWord);
+    READ_FROM_FSTREAM(mFileStream, fillerWord); // speclvlIdx
+
+    // unknown data
+    SKIP_FSTREAM_BYTES(mFileStream, 8 * sizeof(unsigned char));
+    SKIP_FSTREAM_BYTES(mFileStream, 8 * sizeof(unsigned short));
+
+    // path
+    std::string terrainPath;
+    if (!ReadString8(32, terrainPath))
+        return false;
+
+    unsigned char oneShotHornyLev;
+    READ_FROM_FSTREAM(mFileStream, oneShotHornyLev);
+
+    unsigned char fillerByte;
+    READ_FSTREAM_U8(mFileStream, levelInfo.mMaxPlayerCount);
+
+    READ_FROM_FSTREAM(mFileStream, fillerByte); // rewardPrevious
+    READ_FROM_FSTREAM(mFileStream, fillerByte); // rewardNext
+
+    READ_FROM_FSTREAM(mFileStream, fillerWord); // speechHornyId
+    READ_FROM_FSTREAM(mFileStream, fillerWord); // speechPrelevelId
+    READ_FROM_FSTREAM(mFileStream, fillerWord); // speechPostlevelWin
+    READ_FROM_FSTREAM(mFileStream, fillerWord); // speechPostlevelLost
+    READ_FROM_FSTREAM(mFileStream, fillerWord); // speechPostlevelNews
+    READ_FROM_FSTREAM(mFileStream, fillerWord); // speechPrelevelGenr
+
+    std::wstring heroName;
+    if (!ReadString(32, heroName))
         return false;
 
     SKIP_FSTREAM_BYTES(mFileStream, 8); // unknown data
@@ -2492,7 +2632,7 @@ bool DK2ScenarioReader::ReadMapInfo(ScenarioDefinition& scenarioData, std::vecto
     paths.resize(pathCount);
     for (LevelDataFilePath& pathEntry : paths)
     {
-        READ_FSTREAM_U32(mFileStream, pathEntry.nDataTypeId);
+        READ_FSTREAM_U32(mFileStream, pathEntry.mDataTypeId);
         READ_FROM_FSTREAM(mFileStream, fillerDword);
 
         if (!ReadString8(64, pathEntry.mFilePath))
@@ -2503,9 +2643,8 @@ bool DK2ScenarioReader::ReadMapInfo(ScenarioDefinition& scenarioData, std::vecto
     return !!mFileStream;
 }
 
-bool DK2ScenarioReader::ReadDataFile(KWDFileHeader& fileHeader, ScenarioDefinition& scenarioData)
+bool DK2ScenarioReader::ReadDataFileHeader(KWDFileHeader& fileHeader, ScenarioDefinition& scenarioData)
 {
-    // read header
     READ_FSTREAM_U32(mFileStream, fileHeader.mTypeId);
 
     unsigned int byteSize = 0;
@@ -2521,8 +2660,8 @@ bool DK2ScenarioReader::ReadDataFile(KWDFileHeader& fileHeader, ScenarioDefiniti
     {
         case DKLD_MAP:
         {
-            READ_FROM_FSTREAM(mFileStream, scenarioData.mLevelDimensionX);
-            READ_FROM_FSTREAM(mFileStream, scenarioData.mLevelDimensionY);           
+            READ_FROM_FSTREAM(mFileStream, scenarioData.mLevelInfo.mMapDimsX);
+            READ_FROM_FSTREAM(mFileStream, scenarioData.mLevelInfo.mMapDimsY);           
         }
         break;
         case DKLD_TRIGGERS:
@@ -2565,7 +2704,12 @@ bool DK2ScenarioReader::ReadDataFile(KWDFileHeader& fileHeader, ScenarioDefiniti
     unsigned int checkTwo;
     READ_FSTREAM_U32(mFileStream, checkTwo);
     READ_FSTREAM_U32(mFileStream, fileHeader.mContentSize);
+    return true;
+}
 
+
+bool DK2ScenarioReader::ReadDataFileContent(KWDFileHeader& fileHeader, ScenarioDefinition& scenarioData)
+{
     // read body
     switch (fileHeader.mTypeId)
     {
@@ -2649,7 +2793,10 @@ bool DK2ScenarioReader::ReadDataFile(ScenarioDefinition& scenarioData)
         KWDFileHeader fileHeader;
 
         std::streamoff startoffset = mFileStream.tellg();
-        if (!ReadDataFile(fileHeader, scenarioData))
+        if (!ReadDataFileHeader(fileHeader, scenarioData))
+            return false;
+
+        if (!ReadDataFileContent(fileHeader, scenarioData))
             return false;
 
         if (!mFileStream.seekg(startoffset + fileHeader.mFileSize, std::ios::beg))
@@ -2713,9 +2860,41 @@ bool DK2ScenarioReader::ExploreTerrainTypes(ScenarioDefinition& scenarioData) co
         {
             scenarioData.mPlayerColouredWallTerrainType = terrainDefinition.mTerrainType;
         }
+
+        if (terrainDefinition.mBecomesTerrainTypeWhenDestroyed == TerrainTypeId_Null ||
+            terrainDefinition.mBecomesTerrainTypeWhenMaxHealth == TerrainTypeId_Null)
+        {
+            cxx_assert(false);
+        }
     }
 
     return true;
+}
+
+void DK2ScenarioReader::FixLevelInfo(ScenarioLevelInfo& levelInfo) const
+{
+    // check well-known names
+    if (!levelInfo.mFlags.mIsMyPetDungeonLevel)
+    {
+        static const std::set<std::wstring> names =
+        {
+            L"MPD1",
+            L"MPD2",
+            L"MPD3",
+            L"MPD4",
+            L"MPD5",
+            L"MPD6",
+            L"MPD7"
+        };
+
+        levelInfo.mFlags.mIsMyPetDungeonLevel = (names.find(levelInfo.mLevelName) != names.end());
+    }
+
+    if (levelInfo.mFlags.mIsMyPetDungeonLevel && (levelInfo.mLevelName == L"MPD7"))
+    {
+        // fix mpd7 briefing texts table
+        levelInfo.mBriefingTableId = TextTableId_Mpd7_Briefing;
+    }
 }
 
 void DK2ScenarioReader::ApplyExtensions(JsonDocument& extensionsData, ScenarioDefinition& scenarioData) const
@@ -2815,13 +2994,15 @@ bool DK2ScenarioReader::ReadScenarioData(const std::string& filePath, ScenarioDe
     if (!mFileStream.is_open())
         return false;
 
+    scenarioData.mLevelInfo.mFileName = levelName;
+
     std::vector<LevelDataFilePath> paths;
-    if (!ReadMapInfo(scenarioData, paths))
+    if (!ReadLevelInfo(scenarioData.mLevelInfo, paths))
     {
         gConsole.LogMessage(eLogLevel_Warning, "Error reading scenario data info from '%s'", levelName.c_str());
         return false;
     }
-
+    FixLevelInfo(scenarioData.mLevelInfo);
     mFileStream.close();
 
     // read data from data files
@@ -2830,14 +3011,14 @@ bool DK2ScenarioReader::ReadScenarioData(const std::string& filePath, ScenarioDe
         std::string dataFilePath;
 
         bool isPathLocated = gFiles.LocateMapData(pathEntry.mFilePath, dataFilePath);
-        if (isPathLocated && (pathEntry.nDataTypeId == DKLD_GLOBALS))
+        if (isPathLocated && (pathEntry.mDataTypeId == DKLD_GLOBALS))
         {
             gConsole.LogMessage(eLogLevel_Info, "Scanario overrides globals");
         }
 
         if (!isPathLocated)
         {
-            if (pathEntry.nDataTypeId != DKLD_GLOBALS)
+            if (pathEntry.mDataTypeId != DKLD_GLOBALS)
             {
                 gConsole.LogMessage(eLogLevel_Warning, "Cannot locate scenario data file '%s'", pathEntry.mFilePath.c_str());
             }
@@ -2870,5 +3051,51 @@ bool DK2ScenarioReader::ReadScenarioData(const std::string& filePath, ScenarioDe
     }
 
     ApplyExtensions(extensionsData, scenarioData);
+    return true;
+}
+
+bool DK2ScenarioReader::ReadScenarioShortInfo(const std::string& filePath, ScenarioLevelInfo& levelInfo)
+{
+    const std::string levelName = FSGetFileNameWithoutExtension(filePath);
+
+    // open file stream
+    mFileStream.open(filePath, std::ios::in | std::ios::binary);
+    if (!mFileStream.is_open())
+        return false;
+
+    ScenarioDefinition scenarioData;
+    scenarioData.mLevelInfo.mFileName = levelName;
+
+    std::vector<LevelDataFilePath> paths;
+    if (!ReadLevelInfo(scenarioData.mLevelInfo, paths))
+    {
+        gConsole.LogMessage(eLogLevel_Warning, "Error reading scenario data info from '%s'", levelName.c_str());
+        return false;
+    }
+    FixLevelInfo(scenarioData.mLevelInfo);
+    mFileStream.close();
+
+    // get map dimensions info
+    bool hasMapDimensions = false;
+    {
+        int eIndex = cxx::get_first_index_if(paths, [](const LevelDataFilePath& e) { return e.mDataTypeId == DKLD_MAP; });
+        if (eIndex != -1)
+        {
+            std::string dataFilePath;
+            if (gFiles.LocateMapData(paths[eIndex].mFilePath, dataFilePath))
+            {
+                mFileStream.open(dataFilePath, std::ios::in | std::ios::binary);
+                if (mFileStream.is_open())
+                {
+                    KWDFileHeader fileHeader;
+                    hasMapDimensions = ReadDataFileHeader(fileHeader, scenarioData);
+                    mFileStream.close();
+                }
+            }
+        }
+        cxx_assert(hasMapDimensions);
+    }
+
+    levelInfo = std::move(scenarioData.mLevelInfo);
     return true;
 }

@@ -29,7 +29,7 @@ bool GameWorld::LoadScenario(const ScenarioDefinition& scenarioDefinition, GameL
 
     // configure game time
     gTime.ResetFixedClock(eFixedClock::GameLogic);
-    gTime.SetFixedClockFramerate(eFixedClock::GameLogic, scenarioDefinition.mTicksPerSecond);
+    gTime.SetFixedClockFramerate(eFixedClock::GameLogic, scenarioDefinition.mLevelInfo.mTicksPerSecond);
 
     mTileConstructionSet.Initialize(scenarioDefinition);
 
@@ -111,7 +111,7 @@ bool GameWorld::LoadScenario(const ScenarioDefinition& scenarioDefinition, GameL
     gCreatureManager.LoadScenario(scenarioDefinition);
     gCreatureTaskManager.LoadScenario(scenarioDefinition);
 
-    mTileSelectionOutline.Init(gScene);
+    mMapSelectionCursor.Init(gScene);
 
     gScene.GetCamera().ResetOrientation();
 
@@ -137,7 +137,7 @@ void GameWorld::EnterWorld()
 void GameWorld::ClearWorld()
 {   
     mEnvironmentObjects.clear();
-    mTileSelectionOutline.Deinit();
+    mMapSelectionCursor.Deinit();
     gRoomManager.ClearWorld();
     gCreatureManager.ClearWorld();
     gCreatureTaskManager.ClearWorld();
@@ -160,7 +160,7 @@ void GameWorld::UpdateFrame(float deltaTime)
     mCurrentFrameStats.Clear();
     mCurrentFrameStats.mNumSceneObjectsActive = gScene.GetActiveSceneObjectCount();
 
-    mTileSelectionOutline.UpdateFrame();
+    mMapSelectionCursor.UpdateFrame();
 
     BuildInvalidatedTiles();
 
@@ -188,31 +188,6 @@ void GameWorld::UpdatePhysics(float stepDeltaTime)
     gCreatureManager.UpdatePhysics(stepDeltaTime);
     gGameObjectManager.UpdatePhysics(stepDeltaTime);
     gPhysics.UpdatePhysics(stepDeltaTime);
-}
-
-bool GameWorld::CastRayFromScreenPoint(const Point2D& screenCoordinate, cxx::ray3d_t& resultRay)
-{
-    const Viewport& viewport = gRenderDevice.GetViewport();
-
-    Camera& sceneCamera = gScene.GetCamera();
-    sceneCamera.ComputeMatricesAndFrustum(gRenderDevice.GetViewport());
-
-    // wrap y
-    const int mouseY = viewport.mScreenArea.h - screenCoordinate.y;
-
-    glm::ivec4 vp ( viewport.mScreenArea.x, viewport.mScreenArea.y, viewport.mScreenArea.w, viewport.mScreenArea.h );
-    //unproject twice to build a ray from near to far plane
-    const glm::vec3 v0 = glm::unProject(glm::vec3{screenCoordinate.x * 1.0f, mouseY * 1.0f, 0.0f}, 
-        sceneCamera.mViewMatrix, 
-        sceneCamera.mProjectionMatrix, vp); // near plane
-
-    const glm::vec3 v1 = glm::unProject(glm::vec3{screenCoordinate.x * 1.0f, mouseY * 1.0f, 1.0f}, 
-        sceneCamera.mViewMatrix, 
-        sceneCamera.mProjectionMatrix, vp); // far plane
-
-    resultRay.mOrigin = v0;
-    resultRay.mDirection = glm::normalize(v1 - v0);
-    return true;
 }
 
 void GameWorld::InvalidateTile(MapTile* mapTile)
@@ -272,9 +247,9 @@ EntityUid GameWorld::GenerateEntityUid()
 
 void GameWorld::CreateEnvironmentEntities()
 {
-    Temp_Vector<MapTile*> lavaTiles;
-    Temp_Vector<MapTile*> waterTiles;
-    Temp_Vector<MapTile*> tempTiles;
+    cxx::temp_vector<MapTile*> lavaTiles;
+    cxx::temp_vector<MapTile*> waterTiles;
+    cxx::temp_vector<MapTile*> tempTiles;
 
     lavaTiles.reserve(128);
     waterTiles.reserve(128);
@@ -364,18 +339,18 @@ void GameWorld::CreateRoomFromUnexploredTiles(MapTile* startTile, const Scenario
     if (!roomDefinition)
         return;
 
-    Temp_Vector<MapTile*> floodTiles;
+    cxx::temp_vector<MapTile*> floodTiles;
     gGameMap.FloodFill4(floodTiles, startTile);
 
     // get room extents
-    MapPoint2D minPoint = startTile->mLocation;
-    MapPoint2D maxPoint = startTile->mLocation;
+    Point2D minPoint = startTile->mLocation;
+    Point2D maxPoint = startTile->mLocation;
     for (MapTile* roller: floodTiles)
     {
         minPoint = glm::min(minPoint, roller->mLocation);
         maxPoint = glm::max(maxPoint, roller->mLocation);
     }
-    MapPoint2D roomCenter = (minPoint + maxPoint) / 2;
+    Point2D roomCenter = (minPoint + maxPoint) / 2;
     // check for init params
     int initParamsIdx = cxx::get_first_index_if(scenarioDefinition.mRoomThings, 
         [&roomCenter, roomDefinition](const ScenarioRoomThing& initParams)
@@ -406,168 +381,210 @@ void GameWorld::CreateRoomFromUnexploredTiles(MapTile* startTile, const Scenario
     }
 }
 
-bool GameWorld::DigTile(MapTile* mapTile, ePlayerID playerId, long& outGoldMined)
+bool GameWorld::CanMineBlock(MapTile* mapTile, ePlayerID playerId) const
 {
     cxx_assert(mapTile);
+    TerrainDefinition* terrainDef = mapTile->GetTerrain();
+    return terrainDef->mIsSolid && (terrainDef->mGoldValue > 0);
+}
 
-    if (mapTile == nullptr)
+bool GameWorld::MineBlock(MapTile* mapTile, ePlayerID playerId, long& goldMined, float changeHealthMultiplier)
+{
+    if (!CanMineBlock(mapTile, playerId))
         return false;
 
     TerrainDefinition* terrainDef = mapTile->GetTerrain();
-    if (!terrainDef->mIsSolid)
+
+    const ScenarioVariables& scenarioVars = gGameSession.GetScenarioVariables();
+    // gems ?
+    if (terrainDef->mIsImpenetrable)
+    {
+        goldMined = scenarioVars.mGoldMinedFromGems;
+    }
+    else // gold
+    {
+        int tileHealth = static_cast<int> ((scenarioVars.mMineGoldHealth * changeHealthMultiplier) + 0.5f);
+        cxx_assert(tileHealth < 0);
+        int deltaHitPoints = 0;
+        if (ChangeTileHealth(mapTile, playerId, tileHealth, deltaHitPoints))
+        {
+            cxx_assert(terrainDef->mHealthMax > 0);
+            goldMined = static_cast<int>(((deltaHitPoints * 1.0f) / (terrainDef->mHealthMax * 1.0f)) * terrainDef->mGoldValue + 0.5f);
+        }
+        cxx_assert(deltaHitPoints > 0);
+    }
+    return true;
+}
+
+bool GameWorld::CanDigBlock(MapTile* mapTile, ePlayerID playerId) const
+{
+    cxx_assert(mapTile);
+    TerrainDefinition* terrainDef = mapTile->GetTerrain();
+    return terrainDef->mIsSolid && !terrainDef->mIsImpenetrable && !CanMineBlock(mapTile, playerId);
+}
+
+bool GameWorld::DigBlock(MapTile* mapTile, ePlayerID playerId, float changeHealthMultiplier)
+{
+    if (!CanDigBlock(mapTile, playerId))
         return false;
+
+    TerrainDefinition* terrainDef = mapTile->GetTerrain();
 
     const ScenarioVariables& scenarioVars = gGameSession.GetScenarioVariables();
 
-    outGoldMined = 0;
-
-    const bool isTileImpenetrable = terrainDef->mIsImpenetrable;
-    // mining gold?
-    if (mapTile->IsMoneySource())
+    int digHealth = scenarioVars.mDigRockHealth;
+    // reinforced wall?
+    if (terrainDef->mIsOwnable)
     {
-        // gems ?
-        if (isTileImpenetrable)
-        {
-            outGoldMined = scenarioVars.mGoldMinedFromGems;
-        }
-        else // regular gold
-        {
-            const int deltaHitPoints = ChangeTileHealth(mapTile, playerId, scenarioVars.mMineGoldHealth);
-            if (deltaHitPoints > 0)
-            {
-                cxx_assert(terrainDef->mHealthMax);
-                outGoldMined = static_cast<int>(((deltaHitPoints * 1.0f) / (terrainDef->mHealthMax * 1.0f)) * terrainDef->mGoldValue + 0.5f);
-            }
-            cxx_assert(deltaHitPoints > 0);
-        }
-        return outGoldMined > 0;
+        digHealth = mapTile->HasOwner(playerId) ? 
+            scenarioVars.mDigOwnWallHealth : 
+            scenarioVars.mDigEnemyWallHealth;
     }
-
-    if (!isTileImpenetrable)
+    digHealth = static_cast<int>((digHealth * changeHealthMultiplier) + 0.5f);
+    int deltaHitPoints = 0;
+    if (!ChangeTileHealth(mapTile, playerId, digHealth, deltaHitPoints))
     {
-        outGoldMined = 0;
-
-        int digHealth = scenarioVars.mDigRockHealth;
-        // reinforced wall?
-        if (terrainDef->mIsOwnable)
-        {
-            digHealth = mapTile->HasOwner(playerId) ? 
-                scenarioVars.mDigOwnWallHealth : 
-                scenarioVars.mDigEnemyWallHealth;
-        }
-
-        const int deltaHitPoints = ChangeTileHealth(mapTile, playerId, digHealth);
-        if (deltaHitPoints > 0)
-            return true;
-
         cxx_assert(false);
     }
-    return false;
+    return true;
 }
 
-bool GameWorld::ReinforceWall(MapTile* mapTile, ePlayerID playerId, bool& outCompleted)
+bool GameWorld::CanReinforceWall(MapTile* mapTile, ePlayerID playerId) const
 {
-    outCompleted = false;
-
     cxx_assert(mapTile);
-    if (mapTile == nullptr)
-        return false;
-
     TerrainDefinition* terrainDef = mapTile->GetTerrain();
     if (!terrainDef->mIsSolid || terrainDef->mIsOwnable || terrainDef->mIsImpenetrable)
         return false;
 
     const TerrainTypeId nextTerrainTypeId = terrainDef->mBecomesTerrainTypeWhenMaxHealth;
-    if ((nextTerrainTypeId == TerrainTypeId_Null) || 
-        (nextTerrainTypeId == terrainDef->mTerrainType))
-    {
-        return false;
-    }
-
     const TerrainDefinition* nextTerrainDef = gGameSession.GetScenarioDefinition().GetTerrainDefinition(nextTerrainTypeId);
     cxx_assert(nextTerrainDef);
-    if (!nextTerrainDef->mIsSolid || !nextTerrainDef->mIsOwnable)
+    return nextTerrainDef->mIsSolid && nextTerrainDef->mIsOwnable;
+}
+
+bool GameWorld::ReinforceWall(MapTile* mapTile, ePlayerID playerId)
+{
+    if (!CanReinforceWall(mapTile, playerId))
         return false;
 
     const ScenarioVariables& scenarioVars = gGameSession.GetScenarioVariables();
-
-    const int deltaHitPoints = ChangeTileHealth(mapTile, playerId, scenarioVars.mReinforceWallHealth);
-    // reinforced?
-    if (mapTile->GetTerrain() == nextTerrainDef)
+    int deltaHitPoints = 0;
+    if (!ChangeTileHealth(mapTile, playerId, scenarioVars.mReinforceWallHealth, deltaHitPoints))
     {
-        outCompleted = true;
-        return true;
+        cxx_assert(false);
     }
-    return (deltaHitPoints != 0);
+    return true;
 }
 
-bool GameWorld::ClaimFloor(MapTile* mapTile, ePlayerID playerId, bool& outCompleted)
+bool GameWorld::CanClaimTile(MapTile* mapTile, ePlayerID playerId) const
 {
-    outCompleted = false;
-
     cxx_assert(mapTile);
-    if (mapTile == nullptr)
+    if (mapTile->mRoomInstance)
         return false;
 
     TerrainDefinition* terrainDef = mapTile->GetTerrain();
-    if (terrainDef->mIsSolid || terrainDef->mIsOwnable)
+    if (terrainDef->mIsSolid || terrainDef->mIsImpenetrable)
         return false;
 
-    const TerrainTypeId nextTerrainTypeId = terrainDef->mBecomesTerrainTypeWhenMaxHealth;
-    if ((nextTerrainTypeId == TerrainTypeId_Null) || 
-        (nextTerrainTypeId == terrainDef->mTerrainType))
+    if (terrainDef->mIsOwnable)
     {
-        return false;
-    }
+        // already owned?
+        if (mapTile->HasOwner(playerId))
+            return false;
 
-    const TerrainDefinition* nextTerrainDef = gGameSession.GetScenarioDefinition().GetTerrainDefinition(nextTerrainTypeId);
-    cxx_assert(nextTerrainDef);
-    if (nextTerrainDef->mIsSolid || !nextTerrainDef->mIsOwnable)
-        return false;
+        if (terrainDef->mBecomesTerrainTypeWhenDestroyed == terrainDef->mTerrainType)
+            return false;
+    }
+    else
+    {
+        const TerrainTypeId nextTerrainTypeId = terrainDef->mBecomesTerrainTypeWhenMaxHealth;
+        const TerrainDefinition* nextTerrainDef = gGameSession.GetScenarioDefinition().GetTerrainDefinition(nextTerrainTypeId);
+        cxx_assert(nextTerrainDef);
+        if (terrainDef->mIsSolid || !nextTerrainDef->mIsOwnable)
+            return false;
+    }
 
     // must be adjacent to owned territory
-    bool bordersWithOwnedTerritory = false;
-    for (eDirection dir: gStraightDirections)
-    {
-        const MapTile* neighbourTile = mapTile->mNeighbours[dir];
-        if (neighbourTile == nullptr)
-            continue;
+    bool bordersWithOwnedTerritory = CheckBordersWithOwnedTerritory(mapTile, playerId);
+    return bordersWithOwnedTerritory;
+}
 
-        const TerrainDefinition* neighbourTileDef = neighbourTile->GetTerrain();
-        if (neighbourTileDef->mIsOwnable && neighbourTile->HasOwner(playerId))
-        {
-            bordersWithOwnedTerritory = true;
-            break;
-        }
-    }
-
-    if (!bordersWithOwnedTerritory)
+bool GameWorld::ClaimTile(MapTile* mapTile, ePlayerID playerId)
+{
+    if (!CanClaimTile(mapTile, playerId))
         return false;
 
     const ScenarioVariables& scenarioVars = gGameSession.GetScenarioVariables();
-    const int deltaHitPoints = ChangeTileHealth(mapTile, playerId, scenarioVars.mClaimFloorHealth);
-    // reinforced?
-    if (mapTile->GetTerrain() == nextTerrainDef)
+
+    int damageHealth = scenarioVars.mClaimTileHealth;
+    cxx_assert(damageHealth > 0);
+    // destroy before claim
+    TerrainDefinition* terrainDef = mapTile->GetTerrain();
+    if (terrainDef->mIsOwnable)
     {
-        outCompleted = true;
-        return true;
+        damageHealth = scenarioVars.mAttackTileHealth;
+        cxx_assert(damageHealth < 0);
     }
-    return (deltaHitPoints != 0);
+    int deltaHitPoints = 0;
+    return ChangeTileHealth(mapTile, playerId, damageHealth, deltaHitPoints);
 }
 
-void GameWorld::DamageTile(MapTile* mapTile, ePlayerID playerId, int hitPoints)
+bool GameWorld::DamageTile(MapTile* mapTile, ePlayerID playerId, float changeHealthMultiplier)
 {
-    cxx_assert(hitPoints > 0);
-    ChangeTileHealth(mapTile, playerId, -hitPoints);
+    if (!CanDamageTile(mapTile, playerId))
+        return false;
+
+    TerrainDefinition* terrainDef = mapTile->GetTerrain();
+
+    const ScenarioVariables& scenarioVars = gGameSession.GetScenarioVariables();
+
+    const bool isRoomTile = (mapTile->mRoomInstance != nullptr);
+
+    int damageHealth = isRoomTile ? 
+        scenarioVars.mAttackRoomHealth : 
+        scenarioVars.mAttackTileHealth;
+    // wall?
+    if (terrainDef->mIsSolid)
+    {
+        cxx_assert(!isRoomTile);
+        cxx_assert(terrainDef->mIsOwnable);
+        damageHealth = mapTile->HasOwner(playerId) ? 
+            scenarioVars.mDigOwnWallHealth : 
+            scenarioVars.mDigEnemyWallHealth;
+    }
+
+    damageHealth = static_cast<int>((damageHealth * changeHealthMultiplier) + 0.5f);
+    cxx_assert(damageHealth < 0);
+
+    int deltaHitPoints = 0;
+    if (!ChangeTileHealth(mapTile, playerId, damageHealth, deltaHitPoints))
+        return false;
+
+    if (isRoomTile && (mapTile->GetHitPoints() == 0))
+    {
+        ReleaseRoomTiles(mapTile->mRoomInstance, {&mapTile, 1});
+    }
+    return true;
 }
 
-void GameWorld::RepairTile(MapTile* mapTile, ePlayerID playerId, int hitPoints)
+bool GameWorld::CanDamageTile(MapTile* mapTile, ePlayerID playerId) const
 {
-    cxx_assert(hitPoints > 0);
-    ChangeTileHealth(mapTile, playerId, hitPoints);
+    cxx_assert(mapTile);
+
+    TerrainDefinition* terrainDef = mapTile->GetTerrain();
+    if (terrainDef->mIsImpenetrable)
+        return false;
+
+    if (!terrainDef->mIsAttackable)
+        return false;
+
+    if (terrainDef->mBecomesTerrainTypeWhenDestroyed == terrainDef->mTerrainType)
+        return false;
+
+    return true;
 }
 
-void GameWorld::TagTilesForDigging(const MapArea2D& tileArea, ePlayerID playerId, bool setTagged)
+void GameWorld::TagTilesForDigging(const Rect2D& tileArea, ePlayerID playerId, bool setTagged)
 {
     auto tilesIterator = gGameMap.IterateTiles(tileArea);
     for (MapTile* mapTile = tilesIterator.NextTile(); mapTile; 
@@ -589,118 +606,102 @@ void GameWorld::TagTilesForDigging(const MapArea2D& tileArea, ePlayerID playerId
     }
 }
 
-bool GameWorld::CanPlaceRoomOnLocation(MapTile* mapTile, ePlayerID playerId, RoomDefinition* roomDefinition) const
+bool GameWorld::TestConstructRooms(ePlayerID playerId, RoomDefinition* roomDefinition, const Rect2D& mapArea, 
+    cxx::any_vector<MapTile*> constructionTiles) const
 {
-    cxx_assert(mapTile);
+    cxx_assert(roomDefinition);
 
-    TerrainDefinition* tileTerrain = mapTile->GetTerrain();
-    if (gGameSession.GetScenarioDefinition().IsRoomTypeTerrain(tileTerrain))
-        return false;
-
-    // cannot place on mana vault
-    if (tileTerrain->mTerrainType == TerrainTypeId_ClaimedVault) 
-        return false;
-
-    if (roomDefinition->mPlaceableOnLand)
-    {
-        if (!tileTerrain->mIsSolid && tileTerrain->mIsOwnable && mapTile->HasOwner(playerId))
-            return true;
-    }
-
-    if (roomDefinition->mPlaceableOnLava && tileTerrain->mIsLava)
-        return true;
-
-    if (roomDefinition->mPlaceableOnWater && tileTerrain->mIsWater)
-        return true;
-
-    return false;
-}
-
-bool GameWorld::CanSellRoomOnLocation(MapTile* mapTile, ePlayerID playerId) const
-{
-    cxx_assert(mapTile);
-
-    Room* roomInstance = mapTile->mRoomInstance;
-    if (!roomInstance || (playerId != mapTile->mOwnerId))
-        return false;
-
-    RoomDefinition* roomDefinition = roomInstance->GetDefinition();
-    return (roomDefinition->mBuildable == true);
-}
-
-void GameWorld::SellEntities(ePlayerID playerId, const MapArea2D& tilesArea)
-{
-    Temp_Vector<MapTile*> roomTiles;
-    roomTiles.reserve(64);
-
-    auto tilesIterator = gGameMap.IterateTiles(tilesArea);
-    for (MapTile* mapTile = tilesIterator.NextTile(); mapTile; 
-        mapTile = tilesIterator.NextTile())
-    {
-        if (CanSellRoomOnLocation(mapTile, playerId))
+    // check tile helper
+    auto canPlaceRoomOnTile = [playerId, roomDefinition](MapTile* mapTile)
         {
-            roomTiles.push_back(mapTile);
-        }
-    }
+            TerrainDefinition* tileTerrain = mapTile->GetTerrain();
+            if (gGameSession.GetScenarioDefinition().IsRoomTypeTerrain(tileTerrain))
+                return false;
 
-    if (roomTiles.empty()) return;
-
-    // sort by room instance
-    std::sort(roomTiles.begin(), roomTiles.end(), [](MapTile* lhs, MapTile* rhs) 
-        { 
-            return lhs->mRoomInstance < rhs->mRoomInstance; 
-        });
-
-    // helper
-    auto countRoomTiles = [](cxx::span<MapTile*> tiles)
-        {
-            int counter = 0;
-            Room* roomInstance = tiles[0]->mRoomInstance;
-            for (MapTile* roller: tiles) 
+            // cannot place on solid block / mana vault
+            if (tileTerrain->mIsSolid || 
+                (tileTerrain->mTerrainType == TerrainTypeId_ClaimedVault))
             {
-                if (roller->mRoomInstance != roomInstance) break; 
-                ++counter; 
+                return false;
             }
-            return counter;
+            cxx_assert(mapTile->mRoomInstance == nullptr);
+            if (mapTile->mRoomInstance)
+                return false;
+
+            if (roomDefinition->mPlaceableOnLand)
+            {
+                if (tileTerrain->mIsOwnable && mapTile->HasOwner(playerId))
+                    return true;
+            }
+
+            if (roomDefinition->mPlaceableOnLava && tileTerrain->mIsLava)
+                return true;
+
+            if (roomDefinition->mPlaceableOnWater && tileTerrain->mIsWater)
+                return true;
+
+            return false;
         };
 
-    for (int itile = 0, NumTiles = roomTiles.size(); itile < NumTiles; )
+    constructionTiles.reserve(mapArea.w * mapArea.h);
+
+    // bridge requires be adjacent to owned territory
+    bool isBridgeLogic = !roomDefinition->mPlaceableOnLand && 
+        (roomDefinition->mPlaceableOnLava || roomDefinition->mPlaceableOnWater);
+
+    // scan candidates
+    auto tilesIterator = gGameMap.IterateTiles(mapArea);
+    for (MapTile* candidate = tilesIterator.NextTile(); candidate; 
+        candidate = tilesIterator.NextTile())
     {
-        Room* roomInstance = roomTiles[itile]->mRoomInstance;
-        // count tiles of same room
-        int numReleaseRoomTiles = countRoomTiles({
-            roomTiles.data() + itile, 
-            roomTiles.data() + NumTiles});
-        ReleaseRoomTiles(roomInstance, {
-            roomTiles.data() + itile, 
-            roomTiles.data() + itile + numReleaseRoomTiles});
-        itile += numReleaseRoomTiles;
+        if (!canPlaceRoomOnTile(candidate))
+            continue;
+
+        if (isBridgeLogic && !CheckBordersWithOwnedTerritory(candidate, playerId))
+            continue;
+
+        constructionTiles.push_back(candidate);
     }
-}
 
-void GameWorld::ConstructRoom(ePlayerID playerId, RoomDefinition* roomDefinition, const MapArea2D& tilesArea)
-{
-    // collect all tiles available to construction, output array is sorted
+    if (constructionTiles.empty()) 
+        return false;
 
-    Temp_Vector<MapTile*> constructionTiles;
-    constructionTiles.reserve(tilesArea.w * tilesArea.h);
-
-    auto tilesIterator = gGameMap.IterateTiles(tilesArea);
-    for (MapTile* mapTile = tilesIterator.NextTile(); mapTile; 
-        mapTile = tilesIterator.NextTile())
+    if (isBridgeLogic)
     {
-        if (CanPlaceRoomOnLocation(mapTile, playerId, roomDefinition))
+        // floodfill
+        for (int icand = 0; icand < static_cast<int>(constructionTiles.size()); ++icand)
         {
-            constructionTiles.push_back(mapTile);
+            MapTile* candidate = constructionTiles[icand];
+            for (eDirection dir: gStraightDirections)
+            {
+                MapTile* neighbourTile = candidate->mNeighbours[dir];
+                if ((neighbourTile == nullptr) || !mapArea.ContainsPoint(neighbourTile->mLocation))
+                    continue;
+
+                if (cxx::contains(constructionTiles, neighbourTile))
+                    continue;
+
+                if (!canPlaceRoomOnTile(neighbourTile))
+                    continue;
+
+                constructionTiles.push_back(neighbourTile);
+            }
         }
     }
-    
-    if (constructionTiles.empty()) return; // nothing to construct
+    return true;
+}
 
-    Temp_Set<MapTile*> processedTiles;
-    Temp_List<Room*> adjacentRooms;
+bool GameWorld::ConstructRooms(ePlayerID playerId, RoomDefinition* roomDefinition, const Rect2D& mapArea, 
+    cxx::any_vector<MapTile*> constructionTiles)
+{
+    constructionTiles.clear();
 
-    Temp_Vector<MapTile*> segmentTiles;
+    if (!TestConstructRooms(playerId, roomDefinition, mapArea, constructionTiles))
+        return false;
+
+    cxx::temp_set<MapTile*> processedTiles;
+    cxx::temp_list<Room*> adjacentRooms;
+    cxx::temp_vector<MapTile*> segmentTiles;
 
     // scan for contiguous segments
     for (MapTile* currentTile: constructionTiles)
@@ -710,7 +711,7 @@ void GameWorld::ConstructRoom(ePlayerID playerId, RoomDefinition* roomDefinition
             continue;
 
         segmentTiles.clear();
-        gGameMap.FloodFill4(segmentTiles, currentTile, tilesArea);
+        gGameMap.FloodFill4(segmentTiles, currentTile, mapArea);
         // put into processed set
         for (MapTile* processedTile: segmentTiles)
         {
@@ -760,12 +761,88 @@ void GameWorld::ConstructRoom(ePlayerID playerId, RoomDefinition* roomDefinition
         // absorb adjacent rooms
         for (Room* adjacentRoom: adjacentRooms)
         {
-            if (adjacentRoom == absorberRoom) continue;
+            if (adjacentRoom == absorberRoom) 
+                continue;
 
             absorberRoom->AbsorbRoom(adjacentRoom);
             HandleRoomAbsorbed(adjacentRoom);
         }
     }
+    return true;
+}
+
+bool GameWorld::DemolishRooms(ePlayerID playerId, const Rect2D& mapArea, cxx::any_vector<MapTile*> demolishTiles)
+{
+    if (!TestDemolishRooms(playerId, mapArea, demolishTiles))
+        return false;
+
+    // sort by room instance
+    std::sort(demolishTiles.begin(), demolishTiles.end(), [](MapTile* lhs, MapTile* rhs) 
+        { 
+            return lhs->mRoomInstance < rhs->mRoomInstance; 
+        });
+
+    // helper
+    auto countRoomTiles = [](cxx::span<MapTile*> tiles)
+        {
+            int counter = 0;
+            Room* roomInstance = tiles[0]->mRoomInstance;
+            for (MapTile* roller: tiles) 
+            {
+                if (roller->mRoomInstance != roomInstance) 
+                    break; 
+                ++counter; 
+            }
+            return counter;
+        };
+
+    for (int itile = 0, NumTiles = demolishTiles.size(); itile < NumTiles; )
+    {
+        Room* roomInstance = demolishTiles[itile]->mRoomInstance;
+        // count tiles of same room
+        int numReleaseRoomTiles = countRoomTiles({
+            demolishTiles.data() + itile, 
+            demolishTiles.data() + NumTiles});
+        ReleaseRoomTiles(roomInstance, {
+            demolishTiles.data() + itile, 
+            demolishTiles.data() + itile + numReleaseRoomTiles});
+        itile += numReleaseRoomTiles;
+    }
+    return true;
+}
+
+bool GameWorld::TestDemolishRooms(ePlayerID playerId, const Rect2D& mapArea, cxx::any_vector<MapTile*> demolishTiles) const
+{
+    // helper
+    auto canDemolishRoomOnTile = [playerId](MapTile* mapTile)
+        {
+            Room* roomInstance = mapTile->mRoomInstance;
+            if ((roomInstance == nullptr) || !roomInstance->ExistsOnMap() || !roomInstance->HasOwner(playerId))
+            {
+                return false;
+            }
+            TerrainDefinition* terrainDef = mapTile->GetTerrain();
+            if (!terrainDef->mIsOwnable || !mapTile->HasOwner(playerId))
+            {
+                cxx_assert(false);
+                return false;
+            }
+            RoomDefinition* roomDefinition = roomInstance->GetDefinition();
+            return (roomDefinition->mBuildable == true);
+        };
+
+    demolishTiles.reserve(mapArea.w * mapArea.h);
+
+    auto tilesIterator = gGameMap.IterateTiles(mapArea);
+    for (MapTile* mapTile = tilesIterator.NextTile(); mapTile; 
+        mapTile = tilesIterator.NextTile())
+    {
+        if (canDemolishRoomOnTile(mapTile))
+        {
+            demolishTiles.push_back(mapTile);
+        }
+    }
+    return !demolishTiles.empty();
 }
 
 void GameWorld::ReleaseRoomTiles(Room* currentRoom, cxx::span<MapTile*> roomTiles)
@@ -844,7 +921,7 @@ void GameWorld::BuildInvalidatedTiles()
     if (mInvalidatedTiles.empty())
         return;
 
-    Temp_Set<Room*> invalidateRooms;
+    cxx::temp_set<Room*> invalidateRooms;
 
     // build terrain tiles and collect invalidated rooms
     
@@ -1002,10 +1079,7 @@ void GameWorld::UpdateTileTaggedState(MapTile* mapTile, ePlayerID playerId, bool
 
             mapTile->SetTaggedForDigging(pid, isTagged);
             gCreatureTaskManager.OnTileTaggedStateChanged(mapTile, pid);
-            if (pid == gGameSession.GetLocalPlayerId())
-            {
-                gGameRenderer.mTerrainRenderer.TileHighlightChanged(mapTile);
-            }
+            gGameRenderer.mTerrainRenderer.OnTileTaggedStateChanged(mapTile, pid);
         };
 
     // force for all players
@@ -1054,11 +1128,9 @@ template<typename TEnumProc>
 void GameWorld::EnumRoomSegments(Room* roomInstance, TEnumProc enumProc)
 {
     cxx_assert(roomInstance);
-
-    // todo: optimize
-    Temp_Set<MapTile*> processedTiles;
-    Temp_Vector<MapTile*> segmentTiles;
-    Temp_Vector<MapTile*> coveredTiles = TempVectorFrom(roomInstance->GetFloorTiles());// intent copy
+    cxx::temp_set<MapTile*> processedTiles;
+    cxx::temp_vector<MapTile*> segmentTiles;
+    cxx::temp_vector<MapTile*> coveredTiles = cxx::temp_vector_from(roomInstance->GetFloorTiles()); // intent copy
     for (MapTile* targetTile: coveredTiles)
     {
         if (processedTiles.find(targetTile) != processedTiles.end()) // already processed
@@ -1072,7 +1144,7 @@ void GameWorld::EnumRoomSegments(Room* roomInstance, TEnumProc enumProc)
     }
 }
 
-bool GameWorld::CanTagTileForDigging(const MapPoint2D& mapLocation) const
+bool GameWorld::CanTagTileForDigging(const Point2D& mapLocation) const
 {
     return gGameMap.WithinMap(mapLocation) && CanTagTileForDigging(gGameMap.GetMapTile(mapLocation));
 }
@@ -1087,39 +1159,35 @@ bool GameWorld::CanTagTileForDigging(MapTile* mapTile) const
     return false;
 }
 
-int GameWorld::ChangeTileHealth(MapTile* mapTile, ePlayerID playerId, int hitpoints)
+bool GameWorld::ChangeTileHealth(MapTile* mapTile, ePlayerID playerId, int hitpoints, int& healthDelta)
 {
     cxx_assert(mapTile);
 
-    if (mapTile == nullptr)
-        return 0;
-
     TerrainDefinition* terrainDef = mapTile->GetTerrain();
     if (terrainDef->mIsImpenetrable)
-        return 0;
+        return false;
 
-    int deltaHitPoints = mapTile->ChangeHitPoints(hitpoints);
-    if (deltaHitPoints == 0)
-        return 0;
-
-    // always invalidate
-    InvalidateTile(mapTile);
+    healthDelta = mapTile->ChangeHitPoints(hitpoints);
+    if (healthDelta == 0)
+        return false;
 
     // handle terrain type changed
-    TerrainTypeId changeTerrainType = TerrainTypeId_Null;
-    if (mapTile->GetHitPoints() == 0)
+    TerrainTypeId newTerrainId = TerrainTypeId_Null;
+    if (mapTile->mRoomInstance == nullptr)
     {
-        changeTerrainType = terrainDef->mBecomesTerrainTypeWhenDestroyed;
+        if (mapTile->GetHitPoints() == 0)
+        {
+            newTerrainId = terrainDef->mBecomesTerrainTypeWhenDestroyed;
+        }
+        if (mapTile->GetHitPoints() == mapTile->GetHitPointsMax())
+        {
+            newTerrainId = terrainDef->mBecomesTerrainTypeWhenMaxHealth;
+        }
     }
-    if (mapTile->GetHitPoints() == mapTile->GetHitPointsMax())
+    bool terrainChanged = (newTerrainId != TerrainTypeId_Null) && (newTerrainId != terrainDef->mTerrainType);
+    if (terrainChanged)
     {
-        changeTerrainType = terrainDef->mBecomesTerrainTypeWhenMaxHealth;
-    }
-
-    if ((changeTerrainType != TerrainTypeId_Null) && 
-        (changeTerrainType != terrainDef->mTerrainType))
-    {
-        TerrainDefinition* newTerrain = gGameSession.GetScenarioDefinition().GetTerrainDefinition(changeTerrainType);
+        TerrainDefinition* newTerrain = gGameSession.GetScenarioDefinition().GetTerrainDefinition(newTerrainId);
         cxx_assert(newTerrain);
         mapTile->SetBaseTerrain(newTerrain);
         // change owner
@@ -1132,7 +1200,7 @@ int GameWorld::ChangeTileHealth(MapTile* mapTile, ePlayerID playerId, int hitpoi
             UpdateTileTaggedState(mapTile, ePlayerID_COUNT, false);
         }
 
-        Temp_Set<Room*> rooms;
+        cxx::temp_set<Room*> rooms;
         for (eDirection direction: gStraightDirections)
         {
             MapTile* neighbourTile = mapTile->mNeighbours[direction];
@@ -1149,15 +1217,18 @@ int GameWorld::ChangeTileHealth(MapTile* mapTile, ePlayerID playerId, int hitpoi
 
         gCreatureTaskManager.OnTileTerrainTypeChanged(mapTile);
     }
-    return deltaHitPoints;
+
+    if (terrainChanged || terrainDef->mIsDecay)
+    {
+        InvalidateTile(mapTile);
+    }
+    return true;
 }
 
 bool GameWorld::QueryAccessibleMoneyStorageRoomsForDeposit(ePlayerID playerId, EntityHandle agentEntity, int maxRooms, 
-    std::vector<EntityHandle>& outEntities)
+    cxx::any_vector<EntityHandle> outEntities)
 {
-    outEntities.clear();
     outEntities.reserve(16);
-
     // process creature
     if (agentEntity.IsCreature())
     {
@@ -1165,22 +1236,24 @@ bool GameWorld::QueryAccessibleMoneyStorageRoomsForDeposit(ePlayerID playerId, E
         cxx_assert(!player.IsNonPlayer());
 
         Creature* creature = gCreatureManager.GetCreaturePtr(agentEntity);
-        if ((creature == nullptr) || creature->WasDeleted())
+        if ((creature == nullptr) || !creature->ExistsOnMap())
+        {
             return false;
+        }
 
-        const MapPoint2D startTileCoord = creature->GetTilePosition();
+        const Point2D startTileCoord = creature->GetTilePosition();
         const ePassabilityType passabilityType = creature->GetPassabilityType();
 
         for (const EntityHandle& roomHandle: player.GetOwnedMoneyStorageRooms())
         {
-            Room* roomInstance = gRoomManager.GetRoomPtr(roomHandle);
-            if ((roomInstance == nullptr) || roomInstance->WasDeleted())
+            Room* room = gRoomManager.GetRoomPtr(roomHandle);
+            if ((room == nullptr) || !room->ExistsOnMap())
             {
                 continue;
             }
 
             // check if room is reachable
-            cxx::span<MapTile*> roomTiles = roomInstance->GetFloorTiles();
+            cxx::span<MapTile*> roomTiles = room->GetFloorTiles();
             if (roomTiles.empty())
             {
                 continue;
@@ -1189,7 +1262,7 @@ bool GameWorld::QueryAccessibleMoneyStorageRoomsForDeposit(ePlayerID playerId, E
             if (!gNavigationService.CheckPathExists(startTileCoord, roomTiles[0]->mLocation, passabilityType))
                 continue;
            
-            auto* moneyStorage = roomInstance->GetCapability<MoneyStorageRoomCapability>();
+            auto* moneyStorage = room->GetCapability<MoneyStorageRoomCapability>();
             cxx_assert(moneyStorage);
             if (moneyStorage == nullptr)
             {
@@ -1202,20 +1275,43 @@ bool GameWorld::QueryAccessibleMoneyStorageRoomsForDeposit(ePlayerID playerId, E
             {
                 continue;
             }
-            outEntities.push_back(roomInstance->GetOwnHandle());
+            outEntities.push_back(room->GetOwnHandle());
             
             // check limits
             if (maxRooms == static_cast<int>(outEntities.size()))
             {
                 break;
             }
-        }
+        } // for
     }
     else
     {
         cxx_assert(false);
     }
-    return !outEntities.empty();
+    bool isSuccess = !outEntities.empty();
+    return isSuccess;
+}
+
+bool GameWorld::CheckBordersWithOwnedTerritory(MapTile* mapTile, ePlayerID playerId) const
+{
+    cxx_assert(mapTile);
+
+    for (eDirection dir: gStraightDirections)
+    {
+        const MapTile* neighbourTile = mapTile->mNeighbours[dir];
+        if (neighbourTile == nullptr)
+        {
+            continue;
+        }
+
+        const TerrainDefinition* neighbourTileDef = neighbourTile->GetTerrain();
+        if (!neighbourTileDef->mIsSolid && neighbourTileDef->mIsOwnable && neighbourTile->HasOwner(playerId))
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 

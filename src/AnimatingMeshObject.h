@@ -74,6 +74,10 @@ public:
     int GetAnimationFrame() const;
     void SetAnimationFrame(int frame);
 
+    // highlight control
+    void SetHighlighted(bool isHighlighted);
+    bool IsHighlighted() const { return mIsHighlighted; }
+
     // override SceneObject
     void UpdateFrame(float deltaTime) override;
     void RegisterForRendering(SceneRenderLists& renderLists, float distanceToCamera2) override;
@@ -93,4 +97,7 @@ private:
     AnimationState mAnimState;
     AnimationParams mAnimParams;
     AnimationInfo mAnimInfo;
+
+    // flags
+    bool mIsHighlighted {};
 };

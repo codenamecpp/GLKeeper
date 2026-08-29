@@ -16,6 +16,10 @@ public:
     void ShutdownSession();
 
     inline eGameSessionState GetSessionState() const { return mSessionState; }
+    inline bool IsInState(eGameSessionState sessionState) const
+    {
+        return mSessionState == sessionState;
+    }
 
     void UpdateFrame(float deltaTime);
     void UpdateLogic(float stepDeltaTime);

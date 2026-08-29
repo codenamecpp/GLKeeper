@@ -4,6 +4,8 @@
 
 #include "EntityDefs.h"
 #include "EntityMsg.h"
+#include "EntityComponents.h"
+#include "EntityCapabilities.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -18,28 +20,49 @@ class Entity: public cxx::noncopyable
 {
 public:
 
+    //////////////////////////////////////////////////////////////////////////
+
     // check whether entity marked as pending deletion
-    inline bool WasDeleted() const { return mLifecycleFlags.mWasDeleted; }
+    inline bool WasDeleted() const { return mEntityFlags.mWasDeleted; }
 
     // check whether entity was activated in world
-    inline bool WasSpawned() const { return mLifecycleFlags.mWasSpawned; }
+    inline bool WasSpawned() const { return mEntityFlags.mWasSpawned; }
 
     // check whether entity was deactivated in world
-    inline bool WasDespawned() const { return mLifecycleFlags.mWasDespawned; }
+    inline bool WasDespawned() const { return mEntityFlags.mWasDespawned; }
 
-    // accessing internal lifecycle flags
-    const EntityLifecycleFlags& GetLifecycleFlags() const 
-    { 
-        return mLifecycleFlags; 
+    // check whether entity was spawned and has not been despawned or deleted
+    inline bool Exists() const
+    {
+        return mEntityFlags.mWasSpawned && 
+            !mEntityFlags.mWasDespawned &&
+            !mEntityFlags.mWasDeleted;
     }
+    // same as Exists and placed on game map
+    inline bool ExistsOnMap() const
+    {
+        return mEntityFlags.mWasSpawned &&  
+            !mEntityFlags.mWasDespawned && 
+            !mEntityFlags.mWasDeleted &&
+            !mEntityFlags.mIsUnplaced;
+    }
+
+    //////////////////////////////////////////////////////////////////////////
 
     // accessing instance handle / unique id
     inline EntityHandle GetOwnHandle() const { return mOwnHandle; }
     inline EntityUid GetInstanceUid() const { return mInstanceUid; }
 
+    // accessing owner player
+    // the owner may change as a result of conversion
+    inline ePlayerID GetOwnerId() const { return mOwnerId; }
+
+    inline bool HasOwner(ePlayerID playerId) const { return mOwnerId == playerId; }
+
+    //////////////////////////////////////////////////////////////////////////
+
     // accessing current object transformation
     const EntityTransform& GetTransform() const { return mTransform; }
-
     inline glm::vec3 GetPosition() const { return mTransform.mPosition; }
     inline glm::vec2 GetPosition2d() const
     {
@@ -47,40 +70,9 @@ public:
     }
     inline cxx::angle_t GetOrientation() const { return mTransform.mOrientation; }
 
-    // handle message
-    virtual void ReceiveMsg(EntityMsg& msgData) 
-    {
-    }
-
-protected:
-
-    Entity() {}
-    virtual ~Entity() {}
-
-    // pool
-    inline void OnRecycle()
-    {
-        mLifecycleFlags     = {};
-        mOwnHandle          = {};
-        mInstanceUid        = {};
-        mTransform          = {};
-    }
-
-protected:
-    EntityLifecycleFlags    mLifecycleFlags {};
-    EntityHandle            mOwnHandle;
-    EntityUid               mInstanceUid = 0; // unique within game world
-    EntityTransform         mTransform; // has no meaning for rooms
-};
-
-//////////////////////////////////////////////////////////////////////////
-
-template<typename TComponentsList>
-class EnableEntityComponents
-{
-public:
-
-    // accessing components
+    //////////////////////////////////////////////////////////////////////////
+    // components
+    //////////////////////////////////////////////////////////////////////////
 
     template<typename TComponent>
     inline bool HasComponent() const
@@ -105,6 +97,7 @@ public:
     template<typename TComponent>
     inline TComponent* AddComponent()
     {
+        cxx_assert(!HasComponent<TComponent>());
         auto& component = std::get<std::optional<TComponent>>(mComponents);
         component.emplace();
         return &(*component);
@@ -116,28 +109,9 @@ public:
         std::get<std::optional<TComponent>>(mComponents).reset();
     }
 
-protected:
-    EnableEntityComponents() {}
-    ~EnableEntityComponents() {}
-
-    // pool
-    inline void OnRecycle()
-    {
-        mComponents = {};
-    }
-
-protected:
-    TComponentsList mComponents;
-};
-
-//////////////////////////////////////////////////////////////////////////
-
-template<typename TCapabilitiesList>
-class EnableEntityCapabilities
-{
-public:
-
-    // accessing capabilities
+    //////////////////////////////////////////////////////////////////////////
+    // capabilities
+    //////////////////////////////////////////////////////////////////////////
 
     template<typename TCapability>
     inline bool HasCapability() const 
@@ -152,22 +126,64 @@ public:
     }
 
     template<typename TCapability>
-    inline void AddCapability(TCapability* capability)
+    inline void SetCapability(TCapability* capability)
     {
+        cxx_assert(!HasCapability<TCapability>());
         std::get<TCapability*>(mCapabilities) = capability;
     }
 
+    //////////////////////////////////////////////////////////////////////////
+
+    // handle message
+    virtual void ReceiveMsg(EntityMsg& msgData) 
+    {
+    }
+
 protected:
-    EnableEntityCapabilities() {}
-    ~EnableEntityCapabilities() {}
+    Entity() = default;
+    virtual ~Entity() {}
 
     // pool
     inline void OnRecycle()
     {
-        mCapabilities = {};
+        mEntityFlags = {};
+        mOwnHandle      = {};
+        mInstanceUid    = {};
+        mTransform      = {};
+        mOwnerId        = ePlayerID_Neutral;
+        mCapabilities   = {};
+        // reset components
+        std::apply([](auto&... roller) {((roller.reset()), ...);}, mComponents);
+    }
+
+    // helpers
+
+    inline void SetEntityUnplaced(bool isUnplaced)
+    {
+        mEntityFlags.mIsUnplaced = isUnplaced;
     }
 
 protected:
+    EntityHandle    mOwnHandle;
+    EntityUid       mInstanceUid = 0; // unique within game world
+    EntityFlags     mEntityFlags {};
+    ePlayerID       mOwnerId = ePlayerID_Neutral;
+    EntityTransform mTransform; // has no meaning for rooms
+
+    //////////////////////////////////////////////////////////////////////////
+
+    using TComponentsList = std::tuple<
+            std::optional<MoneyComponent>
+        >;
+    TComponentsList mComponents;
+
+    //////////////////////////////////////////////////////////////////////////
+
+    using TCapabilitiesList = std::tuple<
+            MoneyStorageRoomCapability*,
+            ObjectStorageRoomCapability*,
+            GoldContainerCapability*
+        >;
     TCapabilitiesList mCapabilities;
 };
 

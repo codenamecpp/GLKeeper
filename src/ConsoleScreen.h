@@ -7,11 +7,11 @@
 // UiDebugConsoleScreen
 //////////////////////////////////////////////////////////////////////////
 
-class ConsoleScreenView: public UiView
+class ConsoleScreen: public UiView
     , private IConsoleListener
 {
 public:
-    ConsoleScreenView();
+    ConsoleScreen();
 
     // Show or hide console screen with animation
     void ToggleConsole();

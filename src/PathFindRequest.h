@@ -34,8 +34,8 @@ public:
         return !mPathWaypoints.empty();
     }
 
-    inline const MapPoint2D& GetSrcTile() const { return mSrcTile; }
-    inline const MapPoint2D& GetDstTile() const { return mDstTile; }
+    inline const Point2D& GetSrcTile() const { return mSrcTile; }
+    inline const Point2D& GetDstTile() const { return mDstTile; }
 
     inline const glm::vec2& GetSrcPosition() const { return mSrcPos; }
     inline const glm::vec2& GetDstPosition() const { return mDstPos; }
@@ -57,16 +57,16 @@ private:
     void OnRecycle();
 
     void SetStatus(ePathFindStatus status);
-    void SetResultPathFromTiles(cxx::span<const MapPoint2D> pathTiles);
+    void SetResultPathFromTiles(cxx::span<const Point2D> pathTiles);
 
 private:
     ePathFindStatus mStatus = ePathFindStatus_Pending;
     ePassabilityType mPassabilityType = ePassabilityType_Land;
     glm::vec2 mSrcPos {};
     glm::vec2 mDstPos {};
-    MapPoint2D mSrcTile {};
-    MapPoint2D mDstTile {};
-    std::vector<MapPoint2D> mPathTiles; // for debug
+    Point2D mSrcTile {};
+    Point2D mDstTile {};
+    std::vector<Point2D> mPathTiles; // for debug
     std::vector<glm::vec2> mPathWaypoints;
 };
 

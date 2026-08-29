@@ -20,22 +20,7 @@
 
 void HeroGateFrontendRoomController::PostReconfigureRoom()
 {
-    if (mCampaignLevelsTable == nullptr)
-    {
-        // TODO : 
-
-        const MapArea2D& locationArea = GetRoom().GetLocationArea();
-
-        MapPoint2D tileLocation {locationArea.x + 1, locationArea.y + 3};
-        glm::vec3 tablePosition = MapUtils::ComputeTileCenter(tileLocation);
-
-        MeshAsset* tableMesh = gMeshAssetManager.GetMesh(FRONT_END_LEVELS_TABLE_MESH);
-
-        mCampaignLevelsTable = gScene.CreateAnimatingMesh();
-        mCampaignLevelsTable->Configure(tableMesh);
-        mCampaignLevelsTable->SetPosition(tablePosition);
-        mCampaignLevelsTable->SetObjectActive(true);
-    }
+    Init3dMap();
 }
 
 void HeroGateFrontendRoomController::SpawnInstance()
@@ -46,25 +31,33 @@ void HeroGateFrontendRoomController::SpawnInstance()
 void HeroGateFrontendRoomController::DespawnInstance()
 {
     RoomController::DespawnInstance();
-    mCampaignLevelsTable.reset();
+    m3dMapTable.reset();
+    m3dMapTablePieces.clear();
+}
+
+void HeroGateFrontendRoomController::OnRecycle()
+{
+    RoomController::OnRecycle();
+    m3dMapTable.reset();
+    m3dMapTablePieces.clear();
 }
 
 void HeroGateFrontendRoomController::EvaluateFloorFurniture(RoomFurnitureSlots& evaluation)
 {
     // TODO : temporary implementation
 
-    const MapArea2D& locationArea = GetRoom().GetLocationArea();
+    const Rect2D& locationArea = GetRoom().GetLocationArea();
 
-    MapPoint2D baseLocation {locationArea.x, locationArea.y};
+    Point2D baseLocation {locationArea.x, locationArea.y};
 
-    auto PutObject = [&evaluation](const MapPoint2D& tileLocation, GameObjectClassId objectId)
+    auto PutObject = [&evaluation](const Point2D& tileLocation, GameObjectClassId objectId)
         {
             RoomFurnitureSlot& objectSlot = evaluation.emplace_back();
             objectSlot.mObjectClassId = objectId;
             objectSlot.mTileLocation = tileLocation;
         };
 
-    auto PutCandle = [&evaluation](const MapPoint2D& tileLocation, RoomFurnitureSlot::eFaceRotation rotation)
+    auto PutCandle = [&evaluation](const Point2D& tileLocation, RoomFurnitureSlot::eFaceRotation rotation)
         {
             RoomFurnitureSlot& objectSlot = evaluation.emplace_back();
             objectSlot.mObjectClassId = GameObjectClassId_3DFrontEndChain;
@@ -107,5 +100,68 @@ void HeroGateFrontendRoomController::PostRearrangeObjects()
                 meshObject->SetAnimationProgress(Random::GenerateFloat01());
             }
         }
+    }
+}
+
+void HeroGateFrontendRoomController::Init3dMap()
+{
+    if (m3dMapTable)
+        return;
+
+    const Rect2D& locationArea = GetRoom().GetLocationArea();
+
+    Point2D tileLocation {locationArea.x + 1, locationArea.y + 3};
+    glm::vec3 tablePosition = MapUtils::ComputeTileCenter(tileLocation);
+
+    MeshAsset* tableMesh = gMeshAssetManager.GetMesh(FRONT_END_LEVELS_TABLE_MESH);
+
+    m3dMapTable = gScene.CreateAnimatingMesh();
+    m3dMapTable->Configure(tableMesh);
+    m3dMapTable->SetPosition(tablePosition);
+    m3dMapTable->SetObjectActive(true);
+
+    // todo: refactore
+
+    const std::string pieces[] =
+    {
+        "3dmap_level1",
+        "3dmap_level2",
+        "3dmap_level3",
+        "3dmap_level4",
+        "3dmap_level5",
+        "3dmap_level6",
+        "3dmap_level6a",
+        "3dmap_level6b",
+        "3dmap_level7",
+        "3dmap_level8",
+        "3dmap_level9",
+        "3dmap_level10",
+        "3dmap_level11",
+        "3dmap_level11a",
+        "3dmap_level11b",
+        "3dmap_level11c",
+        "3dmap_level12",
+        "3dmap_level13",
+        "3dmap_level14",
+        "3dmap_level15",
+        "3dmap_level15a",
+        "3dmap_level15b",
+        "3dmap_level16",
+        "3dmap_level17",
+        "3dmap_level18",
+        "3dmap_level19",
+        "3dmap_level20"
+    };
+
+    for (const std::string& roller: pieces)
+    {
+        auto& piecePtr = m3dMapTablePieces.emplace_back();
+
+        MeshAsset* pieceMesh = gMeshAssetManager.GetMesh(roller);
+
+        piecePtr = gScene.CreateAnimatingMesh();
+        piecePtr->Configure(pieceMesh);
+        piecePtr->SetPosition(tablePosition);
+        piecePtr->SetObjectActive(true);
     }
 }

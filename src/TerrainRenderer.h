@@ -32,18 +32,19 @@ public:
     void Render(Camera& camera);
 
     // Notify render that tile mesh was modified and should be upload to video card
-    void InvalidateTile(const MapPoint2D& theTileLocation);
+    void InvalidateTile(const Point2D& theTileLocation);
     void InvalidateTile(const MapTile* theTile)
     {
         InvalidateTile(theTile->mLocation);
     }
 
-    void TileHighlightChanged(MapTile* mapTile);
+    void OnTileTaggedStateChanged(MapTile* mapTile, ePlayerID playerId);
 
 private:
     // Processing geometries
     bool BuildSector(int theSectorX, int theSectorY);
 
+    void InitHighlightTilesTexture();
     // Force update highhlight tiles texture
     void CommitHighlightTiles();
 
@@ -74,7 +75,7 @@ private:
     std::unique_ptr<GpuTexture2D> mHighlightTilesTexture;
     BitmapImage mHighlightTilesBitmap;
 
-    std::vector<MapTile*> mHighlightTilesChanged;
+    bool mHighlightTilesTextureDirty = false;
 
     int mLevelSizeX; // blocks per width
     int mLevelSizeY; // blocks per height

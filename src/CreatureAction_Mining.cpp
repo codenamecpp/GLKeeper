@@ -12,7 +12,7 @@ CreatureAction_Mining::CreatureAction_Mining()
 {
 }
 
-void CreatureAction_Mining::Configure(Creature* creature, const glm::vec2& workPoint, const MapPoint2D& targetTile)
+void CreatureAction_Mining::Configure(Creature* creature, const glm::vec2& workPoint, const Point2D& targetTile)
 {
     CreatureAction::Configure(creature);
     mWorkPoint = workPoint;
@@ -73,7 +73,7 @@ void CreatureAction_Mining::HandleResumeAction(eCreatureAction subActionId, eRes
         }
 
         // check distance
-        const MapPoint2D currentTile = GetCreature().GetTilePosition();
+        const Point2D currentTile = GetCreature().GetTilePosition();
         if (!MapUtils::AreTilesAdjacent(currentTile, mTargetTile))
         {
             cxx_assert(false);
@@ -125,7 +125,8 @@ bool CreatureAction_Mining::ProcessTileMining(float stepDeltaTime)
     if (mMineTimer.TickAndCheckExpire(stepDeltaTime))
     {
         long goldMined = 0;
-        if (!gGameWorld.DigTile(targetTile, GetCreature().GetOwnerId(), goldMined))
+
+        if (!gGameWorld.MineBlock(targetTile, GetCreature().GetOwnerId(), goldMined))
             return false;
 
         cxx_assert(goldMined > 0);
@@ -155,7 +156,7 @@ bool CreatureAction_Mining::ProcessTileMining(float stepDeltaTime)
                 return false;
 
             // in case there are available storage for deposit, stop mining
-            Temp_Vector<EntityHandle> roomEntities;
+            cxx::temp_vector<EntityHandle> roomEntities;
             if (gGameWorld.QueryAccessibleMoneyStorageRoomsForDeposit(
                 GetCreature().GetOwnerId(), 
                 GetCreature().GetOwnHandle(), 1, roomEntities))
@@ -163,7 +164,9 @@ bool CreatureAction_Mining::ProcessTileMining(float stepDeltaTime)
                 return false;
             }
 
-            // otherwise, keep digging
+            // can continue mining?
+            if (!gGameWorld.CanMineBlock(targetTile, GetCreature().GetOwnerId()))
+                return false;
         }
 
         mMineTimer.Start();

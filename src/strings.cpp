@@ -120,7 +120,7 @@ int str_wprintf(std::wstring& stringBuffer, const wchar_t* format_string, ...)
 
 //////////////////////////////////////////////////////////////////////////
 
-bool string_to_wide_string(const std::string_view& srcString, std::wstring& resultString)
+bool string_to_wide_string(std::string_view srcString, std::wstring& resultString)
 {
     if (srcString.empty())
     {

@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "ConsoleScreenView.h"
+#include "ConsoleScreen.h"
 #include "UiTextBox.h"
 #include "UiPanel.h"
 #include "UiWidgetManager.h"
@@ -21,12 +21,12 @@ enum
 
 //////////////////////////////////////////////////////////////////////////
 
-ConsoleScreenView::ConsoleScreenView()
+ConsoleScreen::ConsoleScreen()
     : UiView(eUiViewLayer_Overlay)
 {
 }
 
-void ConsoleScreenView::ToggleConsole()
+void ConsoleScreen::ToggleConsole()
 {
     if (IsActive())
     {
@@ -37,7 +37,7 @@ void ConsoleScreenView::ToggleConsole()
     Activate();
 }
 
-bool ConsoleScreenView::LoadContent()
+bool ConsoleScreen::LoadContent()
 {
     if (IsHierarchyLoaded())
         return true;
@@ -60,14 +60,14 @@ bool ConsoleScreenView::LoadContent()
     return true;
 }
 
-void ConsoleScreenView::Cleanup()
+void ConsoleScreen::Cleanup()
 {
     UiView::Cleanup();
 
     mHistoryTextBatch.clear();
 }
 
-void ConsoleScreenView::RenderFrame(UiRenderContext& renderContext)
+void ConsoleScreen::RenderFrame(UiRenderContext& renderContext)
 {
     // animate with transform
     if (mShowStatus != CurrentShowStatus_Open)
@@ -88,7 +88,7 @@ void ConsoleScreenView::RenderFrame(UiRenderContext& renderContext)
     renderContext.SetTransform(nullptr);
 }
 
-void ConsoleScreenView::UpdateFrame(float deltaTime)
+void ConsoleScreen::UpdateFrame(float deltaTime)
 {
     if (mShowStatus == CurrentShowStatus_FadeIn)
     {
@@ -119,12 +119,12 @@ void ConsoleScreenView::UpdateFrame(float deltaTime)
     }
 }
 
-void ConsoleScreenView::InputEvent(KeyCharEvent& inputEvent)
+void ConsoleScreen::InputEvent(KeyCharEvent& inputEvent)
 {
     inputEvent.SetConsumed();
 }
 
-void ConsoleScreenView::InputEvent(KeyInputEvent& inputEvent)
+void ConsoleScreen::InputEvent(KeyInputEvent& inputEvent)
 {
     inputEvent.SetConsumed();
 
@@ -142,7 +142,7 @@ void ConsoleScreenView::InputEvent(KeyInputEvent& inputEvent)
     }
 }
 
-void ConsoleScreenView::ScrollConsole(int delta)
+void ConsoleScreen::ScrollConsole(int delta)
 {
     const int ConsoleNumLines = gConsole.mRecords.size();
     if (ConsoleNumLines <= UI_CONSOLE_NUM_TEXTLINES)
@@ -166,7 +166,7 @@ void ConsoleScreenView::ScrollConsole(int delta)
     mConsoleTextInvalidated = true;
 }
 
-void ConsoleScreenView::OnActivated()
+void ConsoleScreen::OnActivated()
 {
     gConsole.Subscribe(this);
 
@@ -179,17 +179,17 @@ void ConsoleScreenView::OnActivated()
     mConsoleTextInvalidated = false;
 }
 
-void ConsoleScreenView::OnDeactivated() 
+void ConsoleScreen::OnDeactivated() 
 {
     gConsole.Unsubscribe(this);
 }
 
-void ConsoleScreenView::OnConsoleMessagesAdded(Console* sender)
+void ConsoleScreen::OnConsoleMessagesAdded(Console* sender)
 {
     mConsoleTextInvalidated = true;
 }
 
-void ConsoleScreenView::OnConsoleTextChange()
+void ConsoleScreen::OnConsoleTextChange()
 {
     mHistoryTextBatch.clear();
 

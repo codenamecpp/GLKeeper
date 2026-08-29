@@ -4,7 +4,7 @@
 
 #include "GameWorldDefs.h"
 #include "SceneObject.h"
-#include "TileSelectionOutline.h"
+#include "MapSelectionCursor.h"
 #include "TileConstructor.h"
 #include "TileConstructionSet.h"
 #include "GameObjectDefs.h"
@@ -31,59 +31,68 @@ public:
 
     // accessing world related managers
     inline TileConstructionSet& GetTileConstructionSet() { return mTileConstructionSet; }
-    inline TileSelectionOutline& GetTileSelectionOutline() { return mTileSelectionOutline; }
+    inline MapSelectionCursor& GetMapSelectionCursor() { return mMapSelectionCursor; }
 
     // get frame statistics
     const WorldStatistics& GetStatistics() const { return mPrevFrameStats; }
 
-    // Test whether room is buildable on specific spot
-    bool CanPlaceRoomOnLocation(MapTile* mapTile, ePlayerID playerId, RoomDefinition* roomDefinition) const;
+    // demolish rooms on the specified map tiles
+    // operation fails if at least one tile is not suitable for demolishing
+    // adjacent rooms may be split, shrunk or destructed
+    bool DemolishRooms(ePlayerID playerId, const Rect2D& mapArea, cxx::any_vector<MapTile*> demolishTiles);
+    bool TestDemolishRooms(ePlayerID playerId, const Rect2D& mapArea, cxx::any_vector<MapTile*> demolishTiles) const;
 
-    // Test whether room is sellable on specific spot
-    bool CanSellRoomOnLocation(MapTile* mapTile, ePlayerID playerId) const;
+    // constructs a room on the specified map tiles
+    // operation fails if at least one tile is not suitable for construction
+    // adjacent rooms may be merged, split, or absorbed
+    bool ConstructRooms(ePlayerID playerId, RoomDefinition* roomDefinition, const Rect2D& mapArea, 
+        cxx::any_vector<MapTile*> constructionTiles);
+    bool TestConstructRooms(ePlayerID playerId, RoomDefinition* roomDefinition, const Rect2D& mapArea, cxx::any_vector<MapTile*> 
+        constructionTiles) const;
 
     // check whether tiles tile can be tagged for digging for player
-    bool CanTagTileForDigging(const MapPoint2D& mapLocation) const;
+    bool CanTagTileForDigging(const Point2D& mapLocation) const;
     bool CanTagTileForDigging(MapTile* mapTile) const;
 
     // mark tiles as tagged for digging for player
-    void TagTilesForDigging(const MapArea2D& tileArea, ePlayerID playerId, bool setTagged);
+    void TagTilesForDigging(const Rect2D& tileArea, ePlayerID playerId, bool setTagged);
 
-    // Sell rooms and objects within specified area, will split rooms
-    void SellEntities(ePlayerID playerId, const MapArea2D& tilesArea);
+    // Process mining on a solid block if it is a mineable vein (gold, gems)
+    // Out param 'goldMined' contains the amount of resource mined
+    // Returns false if the operation cannot be performed
+    bool MineBlock(MapTile* mapTile, ePlayerID playerId, long& goldMined, float changeHealthMultiplier = 1.0f);
+    bool CanMineBlock(MapTile* mapTile, ePlayerID playerId) const;
 
-    // Build room within specified area, will merge contiguous rooms
-    void ConstructRoom(ePlayerID playerId, RoomDefinition* roomDefinition, const MapArea2D& tilesArea);
+    // Process digging on a non-impenetrable solid block (rock, reinforced wall etc)
+    // Does nothing if it's mineable vein
+    // Returns false if the operation cannot be performed
+    bool DigBlock(MapTile* mapTile, ePlayerID playerId, float changeHealthMultiplier = 1.0f);
+    bool CanDigBlock(MapTile* mapTile, ePlayerID playerId) const;
 
-    // Process digging operation on a solid block
-    // outGoldMined contains the amount of gold mined, if any
-    // Returns false if the operation cannot be performed on the tile
-    bool DigTile(MapTile* mapTile, ePlayerID playerId, long& outGoldMined);
+    // Process wall reinforcement on a solid block (rock)
+    // Does nothing if it is already already reinforced wall
+    // Returns false if the operation cannot be performed
+    bool ReinforceWall(MapTile* mapTile, ePlayerID playerId);
+    bool CanReinforceWall(MapTile* mapTile, ePlayerID playerId) const;
 
-    // Process wall reinforcement on a solid block
-    // outCompleted will be set to true if wall reinforcement is finished
-    // Returns false if the operation cannot be performed on the tile
-    bool ReinforceWall(MapTile* mapTile, ePlayerID playerId, bool& outCompleted);
+    // Process floor tile claiming (dirt path, mana vault)
+    // Does nothing if it's a room tile or claimed path
+    // Returns false if the operation cannot be performed
+    bool ClaimTile(MapTile* mapTile, ePlayerID playerId);
+    bool CanClaimTile(MapTile* mapTile, ePlayerID playerId) const;
 
-    // Process claim floor on tile
-    // outCompleted will be set to true if floor claimed
-    // Returns false if the operation cannot be performed on the tile
-    bool ClaimFloor(MapTile* mapTile, ePlayerID playerId, bool& outCompleted);
-
-    // Do damage/repair tile
-    void DamageTile(MapTile* mapTile, ePlayerID playerId, int hitPoints);
-    void RepairTile(MapTile* mapTile, ePlayerID playerId, int hitPoints);
-
-    // Cast ray in specific viewport coordinate using current camera
-    bool CastRayFromScreenPoint(const Point2D& screenCoordinate, cxx::ray3d_t& resultRay);
+    // Process attack damage on attackable tile (reinforced wall or claimed path, including room tile)
+    // Does nothing if it's not a room tile or room is not attackable
+    // Returns false if the operation cannot be performed
+    bool DamageTile(MapTile* mapTile, ePlayerID playerId, float changeHealthMultiplier = 1.0f);
+    bool CanDamageTile(MapTile* mapTile, ePlayerID playerId) const;
 
     //////////////////////////////////////////////////////////////////////////
 
     // Queries
 
-    template<typename TEntitiesList>
-    bool QueryAccessibleMoneyStorageRoomsForDeposit(ePlayerID playerId, EntityHandle agentEntity, int maxRooms, TEntitiesList& outEntities);
-    bool QueryAccessibleMoneyStorageRoomsForDeposit(ePlayerID playerId, EntityHandle agentEntity, int maxRooms, std::vector<EntityHandle>& outEntities);
+    bool QueryAccessibleMoneyStorageRoomsForDeposit(ePlayerID playerId, EntityHandle agentEntity, int maxRooms, 
+        cxx::any_vector<EntityHandle> outEntities);
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -115,6 +124,8 @@ private:
 
     void CreateEnvironmentEntities();
 
+    bool CheckBordersWithOwnedTerritory(MapTile* mapTile, ePlayerID playerId) const;
+
     // Tiles will be no more part of specified room instance
     // Will create additional rooms for separated parts of original room
     void ReleaseRoomTiles(Room* roomInstance, cxx::span<MapTile*> roomTiles);
@@ -123,7 +134,7 @@ private:
     void HandleRoomCollapsed(Room* roomInstance);
 
     // returns delta hitpoints applied
-    int ChangeTileHealth(MapTile* mapTile, ePlayerID playerId, int hitpoints);
+    bool ChangeTileHealth(MapTile* mapTile, ePlayerID playerId, int hitpoints, int& healthDelta);
 
     void BuildInvalidatedTiles();
     void ResetInvalidatedTiles();
@@ -137,7 +148,7 @@ private:
 private:
     EntityUid mNextEntityUid = 1;
 
-    TileSelectionOutline mTileSelectionOutline;
+    MapSelectionCursor mMapSelectionCursor;
     TileConstructionSet mTileConstructionSet;
 
     std::vector<MapTile*> mInvalidatedTiles;
@@ -145,27 +156,11 @@ private:
     WorldStatistics mCurrentFrameStats;
     WorldStatistics mPrevFrameStats;
 
-    std::vector<EntityHandle> mTempQueryEntities;
-
     std::vector<cxx::uniqueptr<EnvironmentMeshObject>> mEnvironmentObjects;
 };
 
 //////////////////////////////////////////////////////////////////////////
 
 extern GameWorld gGameWorld;
-
-//////////////////////////////////////////////////////////////////////////
-
-template<typename TEntitiesList>
-bool GameWorld::QueryAccessibleMoneyStorageRoomsForDeposit(ePlayerID playerId, EntityHandle agentEntity, int maxRooms, TEntitiesList& outEntities)
-{
-    bool isSuccess = QueryAccessibleMoneyStorageRoomsForDeposit(playerId, agentEntity, maxRooms, mTempQueryEntities);
-    if (isSuccess)
-    {
-        outEntities.assign(std::begin(mTempQueryEntities), std::end(mTempQueryEntities));
-        mTempQueryEntities.clear();
-    }
-    return isSuccess;
-}
 
 //////////////////////////////////////////////////////////////////////////

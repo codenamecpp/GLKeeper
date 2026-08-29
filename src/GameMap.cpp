@@ -18,7 +18,7 @@ GameMap gGameMap;
 
 //////////////////////////////////////////////////////////////////////////
 
-GameMap::TilesIterator::TilesIterator(MapTile* initialTile, const MapArea2D& mapArea)
+GameMap::TilesIterator::TilesIterator(MapTile* initialTile, const Rect2D& mapArea)
     : mInitialTile(initialTile)
     , mCurrentTile(initialTile)
     , mFromRowTile(initialTile)
@@ -68,7 +68,7 @@ void GameMap::TilesIterator::Restart()
 void GameMap::LoadScenario(const ScenarioDefinition& scenarioData)
 {
     cxx_assert(mTiles == nullptr);
-    mDimensions = { scenarioData.mLevelDimensionX, scenarioData.mLevelDimensionY };
+    mDimensions = { scenarioData.mLevelInfo.mMapDimsX, scenarioData.mLevelInfo.mMapDimsY };
 
     cxx_assert(mDimensions.x <= MAX_DUNGEON_MAP_DIMENSIONS);
     cxx_assert(mDimensions.y <= MAX_DUNGEON_MAP_DIMENSIONS);
@@ -194,28 +194,28 @@ void GameMap::Cleanup()
     mFloodFillCounter = 1;
 }
 
-GameMap::TilesIterator GameMap::IterateTiles(const MapArea2D& mapArea) const
+GameMap::TilesIterator GameMap::IterateTiles(const Rect2D& mapArea) const
 {
-    const MapArea2D fullMapArea {0, 0, mDimensions.x, mDimensions.y};
-    const MapArea2D insersetionArea = GetIntersection(fullMapArea, mapArea);
-    if ((insersetionArea.w == 0) || (insersetionArea.h == 0))
+    const Rect2D fullMapArea {0, 0, mDimensions.x, mDimensions.y};
+    const Rect2D insersetionArea = fullMapArea.GetIntersection(mapArea);
+    if (insersetionArea.Empty())
     {
         return TilesIterator(nullptr, {});
     }
-    const MapPoint2D initialTileLocation (insersetionArea.x, insersetionArea.y);
+    const Point2D initialTileLocation (insersetionArea.x, insersetionArea.y);
     MapTile* initialTile = GetMapTile(initialTileLocation);
     return TilesIterator(initialTile, insersetionArea);
 }
 
-GameMap::TilesIterator GameMap::IterateTiles(const MapPoint2D& startTile, const MapPoint2D& areaSize) const
+GameMap::TilesIterator GameMap::IterateTiles(const Point2D& startTile, const Point2D& areaSize) const
 {
-    MapArea2D rc ( startTile.x, startTile.y, areaSize.x, areaSize.y );
+    Rect2D rc ( startTile.x, startTile.y, areaSize.x, areaSize.y );
     return IterateTiles(rc);
 }
 
 GameMap::TilesIterator GameMap::IterateTiles() const
 {
-    MapArea2D rc ( 0, 0, mDimensions.x, mDimensions.y );
+    Rect2D rc ( 0, 0, mDimensions.x, mDimensions.y );
     return IterateTiles(rc);
 }
 
@@ -256,9 +256,16 @@ MapTile* GameMap::GetTileInitialize(int tilex, int tiley, unsigned int randomVal
     return currentTile;
 }
 
-void GameMap::FloodFill4Impl(MapTile* tileOrigin, MapArea2D scanArea, unsigned int floodFillFlags)
+void GameMap::FloodFill4(cxx::any_vector<MapTile*> outTiles, MapTile* tileOrigin, unsigned int flags)
+{
+    const Rect2D mapArea { 0, 0, mDimensions.x, mDimensions.y };
+    FloodFill4(outTiles, tileOrigin, mapArea, flags);
+}
+
+void GameMap::FloodFill4(cxx::any_vector<MapTile*> outTiles, MapTile* tileOrigin, Rect2D scanArea, unsigned int flags)
 {
     mFloodFillResultBuffer.clear();
+    mFloodFillResultBuffer.reserve(32);
 
     // explore tiles
     mFloodFillOpenListBuffer.clear();
@@ -295,15 +302,15 @@ void GameMap::FloodFill4Impl(MapTile* tileOrigin, MapArea2D scanArea, unsigned i
             if (tile->mLocation.x >= (scanArea.x + scanArea.w)) continue;
             if (tile->mLocation.y >= (scanArea.y + scanArea.h)) continue;
 
-            bool sameTerrain = (floodFillFlags & FLOOD_FILL4_SAME_BASE_TERRAIN) ? 
+            bool sameTerrain = (flags & FLOOD_FILL4_SAME_BASE_TERRAIN) ? 
                 tileOrigin->SameTileBaseTerrainType(tile) : 
                 tileOrigin->SameTileTerrainType(tile);
 
             if (sameTerrain)
             {
-                if (floodFillFlags & FLOOD_FILL4_SAME_OWNER)
+                if (flags & FLOOD_FILL4_SAME_OWNER)
                 {
-                    const TerrainDefinition* terrainDefinition = (floodFillFlags & FLOOD_FILL4_SAME_BASE_TERRAIN) ?
+                    const TerrainDefinition* terrainDefinition = (flags & FLOOD_FILL4_SAME_BASE_TERRAIN) ?
                         tile->GetBaseTerrain() : 
                         tile->GetTerrain();
 
@@ -328,6 +335,12 @@ void GameMap::FloodFill4Impl(MapTile* tileOrigin, MapArea2D scanArea, unsigned i
     {
         ++mFloodFillCounter;
         InitTilesFloodFillCounter();
+    }
+
+    if (!mFloodFillResultBuffer.empty())
+    {
+        outTiles.assign(mFloodFillResultBuffer);
+        mFloodFillResultBuffer.clear();
     }
 }
 

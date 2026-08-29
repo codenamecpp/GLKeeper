@@ -50,6 +50,8 @@ void AnimatingMeshRenderer::RenderInstance(eRenderPass currentPass, AnimatingMes
         meshAsset->InitRenderData();
     }
 
+    bool enableHighlight = object.IsHighlighted();
+    mShaderProgram->SetHighlight(enableHighlight);
     mShaderProgram->SetMixFrames(object.mAnimState.mFramesMixFactor);
     mShaderProgram->SetModelMatrix(object.mTransformation);
     

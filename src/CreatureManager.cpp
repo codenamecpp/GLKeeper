@@ -6,7 +6,7 @@
 #include "GameSession.h"
 
 #include "CreatureController.h"
-#include "ImpCreatureController.h"
+#include "WorkerCreatureController.h"
 
 #include "CreatureState_Idle.h"
 #include "CreatureState_Working.h"
@@ -20,6 +20,7 @@
 #include "CreatureAction_CarryGoldToTreasury.h"
 #include "CreatureAction_ReinforceWall.h"
 #include "CreatureAction_ClaimFloor.h"
+#include "CreatureState_InHand.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -66,7 +67,7 @@ void CreatureManager::UpdateFrame(float deltaTime)
     for (size_t i = 0, MaxUpdateCreatures = mActiveCreatures.size(); i < MaxUpdateCreatures; ++i)
     {
         Creature* creature = mActiveCreatures[i];
-        if (!creature->WasDeleted())
+        if (creature->Exists())
         {
             creature->UpdateFrame(deltaTime);
         }
@@ -79,7 +80,7 @@ void CreatureManager::UpdateLogic(float stepDeltaTime)
     for (size_t i = 0, MaxUpdateCreatures = mActiveCreatures.size(); i < MaxUpdateCreatures; ++i)
     {
         Creature* creature = mActiveCreatures[i];
-        if (!creature->WasDeleted())
+        if (creature->Exists())
         {
             creature->UpdateLogic(stepDeltaTime);
         }
@@ -92,7 +93,7 @@ void CreatureManager::UpdatePhysics(float stepDeltaTime)
     for (size_t i = 0, MaxUpdateCreatures = mActiveCreatures.size(); i < MaxUpdateCreatures; ++i)
     {
         Creature* creature = mActiveCreatures[i];
-        if (!creature->WasDeleted())
+        if (creature->ExistsOnMap())
         {
             creature->UpdatePhysics(stepDeltaTime);
         }
@@ -260,12 +261,11 @@ bool CreatureManager::DeleteCreature(EntityUid creatureUid)
     return DeleteCreature(creatureHandle);
 }
 
-bool CreatureManager::IsCreatureActive(const EntityHandle& creatureHandle) const
+bool CreatureManager::ExistsOnMap(const EntityHandle& creatureHandle) const
 {
     if (Creature* creature = GetCreaturePtr(creatureHandle))
     {
-        const EntityLifecycleFlags& lifecycleFlags = creature->GetLifecycleFlags();
-        return lifecycleFlags.mWasSpawned && !lifecycleFlags.mWasDeleted && !lifecycleFlags.mWasDespawned;
+        return creature->ExistsOnMap();
     }
     return false;
 }
@@ -316,12 +316,9 @@ CreatureControllerPtr CreatureManager::NewControllerInstance(CreatureDefinition*
 {
     cxx_assert(creatureDefinition);
 
-    switch (creatureDefinition->mCreatureTypeId)
+    if (creatureDefinition->mIsWorker)
     {
-        case CreatureTypeId_Imp:
-            cxx_assert(creatureDefinition->mIsWorker);
-            return NewControllerInstance<ImpCreatureController>();
-        break;
+        return NewControllerInstance<WorkerCreatureController>();
     }
 
     return NewControllerInstance<CreatureController>();
@@ -448,6 +445,7 @@ CreatureStatePtr CreatureManager::CreateState(Creature* creature, eCreatureState
         case eCreatureState_Dead:
         break;
         case eCreatureState_InHand:
+            stateInstance = NewStateInstance<CreatureState_InHand>();
         break;
         case eCreatureState_InPrison:
         break;
@@ -534,42 +532,42 @@ CreatureActionPtr CreatureManager::CreateWalkToPointAction(Creature* creature, c
     return instance;
 }
 
-CreatureActionPtr CreatureManager::CreateDiggingAction(Creature* creature, const glm::vec2& workPoint, const MapPoint2D& targetTile)
+CreatureActionPtr CreatureManager::CreateDiggingAction(Creature* creature, const glm::vec2& workPoint, const Point2D& targetTile)
 {
     CreatureActionPtr instance = NewActionInstance<CreatureAction_Digging>(creature, workPoint, targetTile);
     cxx_assert(instance);
     return instance;
 }
 
-CreatureActionPtr CreatureManager::CreateFaceTileAction(Creature* creature, const MapPoint2D& targetTile)
+CreatureActionPtr CreatureManager::CreateFaceTileAction(Creature* creature, const Point2D& targetTile)
 {
     CreatureActionPtr instance = NewActionInstance<CreatureAction_FaceTarget>(creature, targetTile);
     cxx_assert(instance);
     return instance;
 }
 
-CreatureActionPtr CreatureManager::CreateMiningAction(Creature* creature, const glm::vec2& workPoint, const MapPoint2D& targetTile)
+CreatureActionPtr CreatureManager::CreateMiningAction(Creature* creature, const glm::vec2& workPoint, const Point2D& targetTile)
 {
     CreatureActionPtr instance = NewActionInstance<CreatureAction_Mining>(creature, workPoint, targetTile);
     cxx_assert(instance);
     return instance;
 }
 
-CreatureActionPtr CreatureManager::CreateCarryGoldToTreasuryAction(Creature* creature, const MapPoint2D& targetTile)
+CreatureActionPtr CreatureManager::CreateCarryGoldToTreasuryAction(Creature* creature, const Point2D& targetTile)
 {
     CreatureActionPtr instance = NewActionInstance<CreatureAction_CarryGoldToTreasury>(creature, targetTile);
     cxx_assert(instance);
     return instance;
 }
 
-CreatureActionPtr CreatureManager::CreateReinforceWallAction(Creature* creature, const glm::vec2& workPoint, const MapPoint2D& targetTile)
+CreatureActionPtr CreatureManager::CreateReinforceWallAction(Creature* creature, const glm::vec2& workPoint, const Point2D& targetTile)
 {
     CreatureActionPtr instance = NewActionInstance<CreatureAction_ReinforceWall>(creature, workPoint, targetTile);
     cxx_assert(instance);
     return instance;
 }
 
-CreatureActionPtr CreatureManager::CreateClaimFloorAction(Creature* creature, const MapPoint2D& targetTile)
+CreatureActionPtr CreatureManager::CreateClaimFloorAction(Creature* creature, const Point2D& targetTile)
 {
     CreatureActionPtr instance = NewActionInstance<CreatureAction_ClaimFloor>(creature, targetTile);
     cxx_assert(instance);

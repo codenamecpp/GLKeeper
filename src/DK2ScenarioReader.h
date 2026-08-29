@@ -11,16 +11,17 @@ class DK2ScenarioReader: public cxx::noncopyable
 private:
 
     //////////////////////////////////////////////////////////////////////////
+
     struct LevelDataFilePath
     {
     public:
         LevelDataFilePath() = default;
         LevelDataFilePath(unsigned int dataTypeId, const std::string& fileName)
-            : nDataTypeId(dataTypeId)
+            : mDataTypeId(dataTypeId)
             , mFilePath(fileName)
         {}
     public:
-        unsigned int nDataTypeId;
+        unsigned int mDataTypeId;
         std::string mFilePath;
     };
 
@@ -41,13 +42,18 @@ public:
 
     bool ReadScenarioData(const std::string& filePath, ScenarioDefinition& scenarioData);
 
+    // get brief level info
+    bool ReadScenarioShortInfo(const std::string& filePath, ScenarioLevelInfo& levelInfo);
+
 private:
     void ApplyExtensions(JsonDocument& extensionsData, ScenarioDefinition& scenarioData) const;
     bool ExploreTerrainTypes(ScenarioDefinition& scenarioData) const;
-    bool ReadDataFile(KWDFileHeader& fileHeader, ScenarioDefinition& scenarioData);
     bool ReadDataFile(ScenarioDefinition& scenarioData);
-    bool ReadMapInfo(ScenarioDefinition& scenarioData, std::vector<LevelDataFilePath>& paths);
-    bool ReadLevelVariables(ScenarioDefinition& scenarioData);
+    bool ReadDataFileHeader(KWDFileHeader& fileHeader, ScenarioDefinition& scenarioData);
+    bool ReadDataFileContent(KWDFileHeader& fileHeader, ScenarioDefinition& scenarioData);
+    bool ReadLevelInfo(ScenarioLevelInfo& levelInfo, std::vector<LevelDataFilePath>& paths);
+    void FixLevelInfo(ScenarioLevelInfo& levelInfo) const;
+    bool ReadLevelFlags(ScenarioLevelInfo& levelInfo);
     bool ReadTerrainData(int numElements, ScenarioDefinition& scenarioData);
     bool ReadTerrainDefinition(TerrainDefinition& terrainDef);
     bool ReadCreatureFlags(CreatureDefinition& creatureDef);
@@ -82,6 +88,7 @@ private:
     bool ReadTimestamp();
     bool ReadString8(unsigned int stringLength, std::string& ansiString);
     bool ReadString(unsigned int stringLength, std::wstring& wideString);
+    void CleanLevelName(std::wstring& levelName);
 
 private:
     std::ifstream mFileStream;

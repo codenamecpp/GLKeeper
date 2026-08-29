@@ -1,5 +1,7 @@
 #pragma once
 
+//////////////////////////////////////////////////////////////////////////
+
 #include "UiWidget.h"
 #include "Texture.h"
 
@@ -45,6 +47,9 @@ protected:
 
 protected:
     Texture* mStates[eUiButtonState_COUNT];
+    Color32 mStatesTint[eUiButtonState_COUNT];
     eUiButtonState mButtonState = eUiButtonState_Normal;
     bool mPressed;
 };
+
+//////////////////////////////////////////////////////////////////////////

@@ -82,10 +82,10 @@ enum_serialize_impl(ePlayerID)
     {ePlayerID_Keeper2, "keeper2"},
     {ePlayerID_Keeper3, "keeper3"},
     {ePlayerID_Keeper4, "keeper4"},
-    {ePlayerID_Keeper5, "keeper5"},
-    {ePlayerID_Keeper6, "keeper6"},
-    {ePlayerID_Keeper7, "keeper7"},
-    {ePlayerID_Keeper8, "keeper8"},
+    //{ePlayerID_Keeper5, "keeper5"},
+    //{ePlayerID_Keeper6, "keeper6"},
+    //{ePlayerID_Keeper7, "keeper7"},
+    //{ePlayerID_Keeper8, "keeper8"},
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -169,7 +169,7 @@ enum_serialize_impl(eGamestate)
     {eGamestate::None, "none"},
     {eGamestate::LoadingFrontend, "loading_frontend"},
     {eGamestate::Frontend, "frontend"},
-    {eGamestate::LoadingScenario, "loading_scenario"},
+    {eGamestate::LoadingGameplay, "loading_gameplay"},
     {eGamestate::Gameplay, "gameplay"},
 };
 

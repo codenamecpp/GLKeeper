@@ -86,6 +86,9 @@ private:
     template<typename TCallback>
     void QueryObjectsRecursive(const TreeNode* exploreNode, const cxx::frustum_t& cameraFrustum, const TCallback& callback, int& maxObjects) const;
 
+    template<typename TCallback>
+    void QueryObjectsRecursive(const TreeNode* exploreNode, const cxx::ray3d_t& ray, const TCallback& callback, int& maxObjects) const;
+
     void DebugRenderNode(DebugRenderer& renderer, TreeNode& treeNode);
 
     //////////////////////////////////////////////////////////////////////////

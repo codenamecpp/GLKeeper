@@ -18,7 +18,7 @@ public:
     bool Initialize();
     void Shutdown();
 
-    void InitTextLocation(const std::string_view& folderName);
+    void InitTextLocation(std::string_view folderName);
 
     // Find path to dungeon keeper 2 engine textures cache
     bool LocateEngineTexturesCache(std::string& thePath) const;
@@ -44,6 +44,7 @@ public:
 
     // Find specified file in search places and return absolute path to it
     bool PathToFile(const std::string& theName, std::string& fullPath) const;
+    bool PathToFileExists(const std::string& theName) const;
 
     // Find specified directory in search places and return absolute path to it
     bool PathToDirectory(const std::string& theName, std::string& fullPath) const;

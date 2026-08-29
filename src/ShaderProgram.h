@@ -147,12 +147,14 @@ class ShaderProgram_BlendFrames: public ShaderProgram
 public:
     ShaderProgram_BlendFrames(const std::string& programName);
     void SetMixFrames(float mixFrames);
+    void SetHighlight(bool isEnabled);
 protected:
     // overrride ShaderProgram
     void HandleRenderDataInit() override;
     void HandleRenderDataPurge() override;
 protected:
     GpuVariableLocation mGpuUniform_MixFrames = GpuLocation_Null;
+    GpuVariableLocation mGpuUniform_Highlight = GpuLocation_Null;
 };
 
 //////////////////////////////////////////////////////////////////////////

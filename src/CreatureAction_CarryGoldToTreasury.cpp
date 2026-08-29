@@ -12,7 +12,7 @@ CreatureAction_CarryGoldToTreasury::CreatureAction_CarryGoldToTreasury()
 {
 }
 
-void CreatureAction_CarryGoldToTreasury::Configure(Creature* creature, const MapPoint2D& targetTile)
+void CreatureAction_CarryGoldToTreasury::Configure(Creature* creature, const Point2D& targetTile)
 {
     CreatureAction::Configure(creature);
     mTargetMapTile = gGameMap.GetMapTileOrNull(targetTile);
@@ -22,7 +22,7 @@ void CreatureAction_CarryGoldToTreasury::Configure(Creature* creature, const Map
 void CreatureAction_CarryGoldToTreasury::OnRecycle()
 {
     CreatureAction::OnRecycle();
-    mTargetMapTile = {};
+    mTargetMapTile = nullptr;
 }
 
 void CreatureAction_CarryGoldToTreasury::HandleEnterAction()
@@ -30,7 +30,7 @@ void CreatureAction_CarryGoldToTreasury::HandleEnterAction()
     cxx_assert(mTargetMapTile);
     if (mTargetMapTile)
     {
-        const MapPoint2D creatureTile = GetCreature().GetTilePosition();
+        const Point2D creatureTile = GetCreature().GetTilePosition();
         Room* targetRoom = mTargetMapTile->mRoomInstance;
         glm::vec2 destinationPoint;
         bool isSuccess = targetRoom && targetRoom->GetOwnerId() == GetCreature().GetOwnerId() &&
@@ -71,7 +71,7 @@ void CreatureAction_CarryGoldToTreasury::HandleResumeAction(eCreatureAction subA
         }
 
         // try store gold
-        const MapPoint2D tileCoord = GetCreature().GetTilePosition();
+        const Point2D tileCoord = GetCreature().GetTilePosition();
 
         MapTile* mapTile = gGameMap.GetMapTileOrNull(tileCoord);
         if (mapTile == nullptr)

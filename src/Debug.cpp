@@ -11,6 +11,7 @@ DebugEngine::DebugEngine()
     , mNoDrawWaterLava()
     , mNoDrawSceneObjects()
     , mDrawPhysics()
+    , mAllowDropHeldEntityOnAnyLand()
 {
 }
 

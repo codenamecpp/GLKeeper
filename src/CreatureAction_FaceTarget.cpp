@@ -8,7 +8,7 @@ CreatureAction_FaceTarget::CreatureAction_FaceTarget()
 {
 }
 
-void CreatureAction_FaceTarget::Configure(Creature* creature, const MapPoint2D& mapTile)
+void CreatureAction_FaceTarget::Configure(Creature* creature, const Point2D& mapTile)
 {
     CreatureAction::Configure(creature);
     mTargetMapTile.emplace(mapTile);
@@ -28,8 +28,8 @@ void CreatureAction_FaceTarget::HandleEnterAction()
     // face to target tile
     if (mTargetMapTile)
     {
-        const MapPoint2D currTile = GetCreature().GetTilePosition();
-        const MapPoint2D targetTile = *mTargetMapTile;
+        const Point2D currTile = GetCreature().GetTilePosition();
+        const Point2D targetTile = *mTargetMapTile;
 
         const int horz_delta = (targetTile.x - currTile.x);
         const int vert_delta = (targetTile.y - currTile.y);

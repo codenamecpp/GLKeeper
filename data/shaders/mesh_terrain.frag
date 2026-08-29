@@ -6,7 +6,6 @@ uniform sampler2D DIFFUSE_TEXTURE;
 // passed from vertex shader
 in vec2 Texcoord;
 in vec4 FragColor;
-in vec3 FragIllumination;
 in vec3 InPos;
 
 // result
@@ -24,6 +23,4 @@ void main()
     FinalColor = texelColor * (smoothstep(-2.0f, 2.0f, InPos.y));
     FinalColor += FragColor; // addtitive
     // <<
-
-    //FinalColor = texelColor + FragColor; // addtitive
 }

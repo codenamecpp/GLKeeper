@@ -23,17 +23,23 @@ public:
     void InputEvent(KeyInputEvent& inputEvent);
     void InputEvent(KeyCharEvent& inputEvent);
 
+    // whether some ui element under cursor right now
+    bool IsCursorOverUi() const; 
+
+    inline const Rect2D& GetScreenRect() const { return mScreenRect; }
+
     // font helpers
     Font* GetDefaultFont(eDefaultFont id) const;
 
 public:
     // notifications
-    void ScreenSizeChanged();
+    void ScreenSizeChanged(const Point2D& screenSize);
 
 private:
     void PreloadBaseFonts();
 
 private:
+    Rect2D mScreenRect {};
     Font* mFpsFont = nullptr;
     Font* mConsoleFont = nullptr;
 };

@@ -6,10 +6,10 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-class WorldViewCameraController: public cxx::noncopyable
+class GameplayCameraController: public cxx::noncopyable
 {
 public:
-    WorldViewCameraController();
+    GameplayCameraController();
 
     // Set controllable camera and setup it to initial state
     void CaptureCamera(Camera* camera);
@@ -37,12 +37,15 @@ public:
     void SetPositionBounds(const glm::vec2& boundsMin, const glm::vec2& boundsMax);
 
 private:
-    glm::vec2 GetMoveDirectionFromInputs() const;
+    glm::vec2 GetCameraMoveVectorFromInputs() const;
+
+    bool GetCameraMoveDirections(EnumSet<eDirection>& cardinalDirs) const;
 
     float GetRotateDirectionFromInputs() const;
     float GetZoomDirectionFromInputs();
 
     void ClampWithinBounds(glm::vec2& position) const;
+    void ClampCameraHeight(float& height) const;
 
     void ApplyPositionAndRotation();
 
@@ -61,4 +64,6 @@ private:
     // states
     bool mIncreasingFov;
     bool mDecreasingFov;
+
+    bool mEnableEdgeScrolling = true;
 };

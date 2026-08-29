@@ -49,8 +49,8 @@ public:
     bool DeleteRoom(const EntityHandle& roomHandle);
     bool DeleteRoom(EntityUid instanceUid);
 
-    // check whether the room was spawned and remains active
-    bool IsRoomActive(const EntityHandle& roomHandle) const;
+    // check whether the room was spawned and remains active on map
+    bool ExistsOnMap(const EntityHandle& roomHandle) const;
 
     // get all currently active rooms in game world
     // warning: do not store result

@@ -13,7 +13,7 @@ void RoomTileConstructor_HeroGateFrontend::ConstructRoomFloor(Room* roomInstance
 {
     cxx_assert(roomInstance);
 
-    const MapArea2D& locationArea = roomInstance->GetLocationArea();
+    const Rect2D& locationArea = roomInstance->GetLocationArea();
 
     RoomDefinition* definition = roomInstance->GetDefinition();
 

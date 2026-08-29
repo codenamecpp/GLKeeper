@@ -99,13 +99,6 @@ public:
         return tileTerrain->mIsSolid; 
     }
 
-    // Whether gold can be mined from tile
-    inline bool IsMoneySource() const
-    {
-        const TerrainDefinition* tileTerrain = GetTerrain();
-        return tileTerrain->mIsSolid && (tileTerrain->mGoldValue > 0);
-    }
-
     inline bool IsImpenetrable() const
     {
         const TerrainDefinition* tileTerrain = GetTerrain();
@@ -284,7 +277,7 @@ public:
 
     ePlayerID mOwnerId;
 
-    MapPoint2D mLocation; // logical tile coordinate
+    Point2D mLocation; // logical tile coordinate
     TileFaceData mFaces[eTileFace_COUNT];
     TileHeightmap mFloorHeightmap;
 

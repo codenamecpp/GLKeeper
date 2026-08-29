@@ -10,7 +10,7 @@ void GoldPileObjectController::ConfigureInstance(GameObject* objectInstance)
     cxx_assert(mMoneyComponent);
 
     // setup capabilities
-    GetGameObject().AddCapability<GoldContainerCapability>(this);
+    GetGameObject().SetCapability<GoldContainerCapability>(this);
 }
 
 void GoldPileObjectController::SpawnInstance()

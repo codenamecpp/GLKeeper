@@ -24,6 +24,9 @@ bool UiManager::Initialize()
         cxx_assert(false);
     }
 
+    mScreenRect.SetToZero();
+    mScreenRect.SetSize(gRenderDevice.GetScreenResolution());
+
     PreloadBaseFonts();
     return true;
 }
@@ -91,6 +94,11 @@ void UiManager::InputEvent(MouseScrollInputEvent& inputEvent)
     gWidgetManager.InputEvent(inputEvent);
 }
 
+bool UiManager::IsCursorOverUi() const
+{
+    return gWidgetManager.GetHoveredWidget() || gWidgetManager.GetFocusedWidget();
+}
+
 Font* UiManager::GetDefaultFont(eDefaultFont id) const
 {
     switch (id)
@@ -105,9 +113,13 @@ Font* UiManager::GetDefaultFont(eDefaultFont id) const
     return mConsoleFont;
 }
 
-void UiManager::ScreenSizeChanged()
+void UiManager::ScreenSizeChanged(const Point2D& screenSize)
 {
-    gWidgetManager.ScreenSizeChanged();
+    if (mScreenRect.GetCenter() != screenSize)
+    {
+        mScreenRect.SetSize(screenSize);
+        gWidgetManager.ScreenSizeChanged(screenSize);
+    }
 }
 
 void UiManager::PreloadBaseFonts()

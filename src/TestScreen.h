@@ -6,7 +6,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-class TestScreenView: public UiView, public UiEventListener
+class TestScreen: public UiView, public UiEventListener
 {
 public:
     // override UiView
@@ -17,7 +17,7 @@ public:
     void InputEvent(KeyInputEvent& inputEvent) override;
 
     // override UiEventListener
-    void HandleUiEvent(UiWidget* sender, const UiEventDesc* eventDesc) override;
+    void HandleUiEvent(UiWidget* sender, const UiEvent& eventDesc) override;
 };
 
 //////////////////////////////////////////////////////////////////////////

@@ -6,6 +6,7 @@
 #include "DK2ScenarioReader.h"
 #include "GameWorld.h"
 #include "EconomyService.h"
+#include "InteractionService.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -22,9 +23,9 @@ bool GameSession::Preload(GameLoadingAware& loadingContext, const GameSessionSta
     loadingContext.UpdateLoadingProgress(0.0f);
 
     std::string levelFile;
-    if (!gFiles.LocateMapData(startupParams.mScenarioName, levelFile))
+    if (!gFiles.LocateMapData(startupParams.mLevelName, levelFile))
     {
-        gConsole.LogMessage(eLogLevel_Warning, "Cannot locate level '%s'", startupParams.mScenarioName.c_str());
+        gConsole.LogMessage(eLogLevel_Warning, "Cannot locate level '%s'", startupParams.mLevelName.c_str());
         return false;
     }
 
@@ -32,7 +33,7 @@ bool GameSession::Preload(GameLoadingAware& loadingContext, const GameSessionSta
     DK2ScenarioReader scenarioLoader;
     if (!scenarioLoader.ReadScenarioData(levelFile, mScenarioData))
     {
-        gConsole.LogMessage(eLogLevel_Warning, "Cannot load scenario '%s'", startupParams.mScenarioName.c_str());
+        gConsole.LogMessage(eLogLevel_Warning, "Cannot load scenario '%s'", startupParams.mLevelName.c_str());
         return false;
     }
 
@@ -59,10 +60,11 @@ bool GameSession::Preload(GameLoadingAware& loadingContext, const GameSessionSta
     }
     else
     {
-        gConsole.LogMessage(eLogLevel_Error, "Cannot initialize scenario '%s'", mSessionStartupParams.mScenarioName.c_str());
+        gConsole.LogMessage(eLogLevel_Error, "Cannot initialize scenario '%s'", mSessionStartupParams.mLevelName.c_str());
     }
 
     gEconomyService.EnterWorld();
+    gInteractionService.EnterWorld();
 
     if (isSuccess && mSessionController)
     {
@@ -95,6 +97,7 @@ void GameSession::ShutdownSession()
         return;
 
     mSessionState = eGameSessionState_None;
+    gInteractionService.ClearWorld();
     gEconomyService.ClearWorld();
     if (mSessionController)
     {
@@ -119,6 +122,11 @@ void GameSession::UpdateFrame(float deltaTime)
 
 void GameSession::UpdateLogic(float stepDeltaTime)
 {
+    if (mSessionController)
+    {
+        mSessionController->UpdateLogic(stepDeltaTime);
+    }
+
     gGameWorld.UpdateLogic(stepDeltaTime);
     gEconomyService.UpdateLogic(stepDeltaTime);
 }

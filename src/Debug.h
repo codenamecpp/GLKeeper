@@ -26,6 +26,9 @@ public:
     int mFPSCounterLast;
     int mFPSCounterMin;
     int mFPSCounterMax;
+
+    // interaction
+    bool mAllowDropHeldEntityOnAnyLand;
 };
 
 extern DebugEngine gDebug;

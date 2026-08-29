@@ -33,10 +33,10 @@ void CreatureAction::RequestCancellation()
 void CreatureAction::OnRecycle()
 {
     cxx_assert(!HasStatus(eStatus_InProgress));
-    mCreature = {};
+    mCreature = nullptr;
     mStatus = {};
     mResult = {};
-    mIsCancellationRequested = {};
+    mIsCancellationRequested = false;
     cxx_assert(mSubAction == nullptr);
     mSubAction.reset();
 }

@@ -36,7 +36,7 @@ public:
     // depending on the task, a target tile might be specified
     //
     // once set it never changes
-    bool GetTargetTile(MapPoint2D& targetTile) const;
+    bool GetTargetTile(Point2D& targetTile) const;
     bool HasTargetTile() const;
 
     // depending on the task, a target entities might be specified
@@ -52,7 +52,7 @@ private:
     void ConfigureTargetObject(EntityHandle entityHandle);
     void ConfigureTargetCreature(EntityHandle entityHandle);
     void ConfigureTargetRoom(EntityHandle entityHandle);
-    void ConfigureTargetTile(const MapPoint2D& targetTile);
+    void ConfigureTargetTile(const Point2D& targetTile);
     void ConfigureTargetPosition(const glm::vec2& targetPosition);
 
     // pool
@@ -71,7 +71,7 @@ private:
     EntityHandle mTargetRoom {};
     EntityHandle mTargetCreature {};
 
-    std::optional<MapPoint2D> mTargetTile {};
+    std::optional<Point2D> mTargetTile {};
     std::optional<glm::vec2> mTargetPosition {};
 
     bool mIsExpired = false;

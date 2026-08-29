@@ -11,7 +11,7 @@ class CreatureAction_ClaimFloor: public CreatureAction
 {
 public:
     CreatureAction_ClaimFloor();
-    void Configure(Creature* creature, const MapPoint2D& targetTile);
+    void Configure(Creature* creature, const Point2D& targetTile);
 
     // override CreatureAction
     void OnRecycle() override;

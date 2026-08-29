@@ -221,8 +221,10 @@ void SceneObject::OnRecycle()
     mBoundsTransformed.set_to_zero();
     mBounds.set_to_zero();
 
-    mRenderLayerMask = RenderLayer_WorldObjects;
+    mRenderLayers.Set(eSceneRenderLayer_World);
 
     mScene = nullptr;
     mIsObjectActive = false;
+
+    mOwnerEntity = {};
 }

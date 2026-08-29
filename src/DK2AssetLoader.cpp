@@ -109,6 +109,23 @@ bool DK2AssetLoader::LoadImageData(const std::string& theTextureName, BitmapImag
     return false;
 }
 
+bool DK2AssetLoader::IsImageExists(const std::string& imageName) const
+{
+    // 1. search in engine textures cache
+    DK2EngineTextureID textureID;
+    if (mEngineTexturesCache.FindTextureByName(imageName, textureID))
+        return true;
+
+    // 2. search in wads
+    for (DK2WADArchive* wad_archive: mArchives)
+    {
+        DK2WADArchiveEntryID entry_id;
+        if (wad_archive->FindEntryByName(imageName, entry_id))
+            return true;
+    }
+    return false;
+}
+
 bool DK2AssetLoader::LoadKMFModelData(const std::string& theMeshName, DK2KMFModel& outputModel)
 {
     if (!LoadFromWADs(theMeshName, mReadBuffer))

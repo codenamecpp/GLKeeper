@@ -85,10 +85,10 @@ public:
     UiWidget* FirstChild() const;
     UiWidget* LastChild() const;
     UiWidget* GetParent() const;
-    UiWidget* GetChild(const std::string_view& name) const;
+    UiWidget* GetChild(std::string_view name) const;
     UiWidget* GetChild(int index) const;
 
-    UiWidget* FindChildWithName(const std::string_view& name) const;
+    UiWidget* FindChildWithName(std::string_view name) const;
 
     // deep clone
     UiWidget* CloneWidget() const;
@@ -185,14 +185,14 @@ protected:
     virtual void HandleVisibilityChanged() {}
     virtual void HandlePositionChanged(const Point2D& prevPosition) {}
     virtual void HandleSizeChanged(const Point2D& prevSize) {}
-    virtual void HandleFocusGained() {}
+    virtual void HandleFocusGain() {}
     virtual void HandleFocusLost() {}
     virtual void HandleMouseEnter() {}
     virtual void HandleMouseLeave() {}
     virtual void HandleInputEvent(MouseButtonInputEvent& inputEvent) {}
     virtual void HandleInputEvent(KeyInputEvent& inputEvent) {}
-    virtual void HandleInputEvent(MouseMovedInputEvent& inputEvent) {}
-    virtual void HandleInputEvent(MouseScrollInputEvent& inputEvent) {}
+    virtual void HandleInputEvent(MouseMovedInputEvent& inputEvent);
+    virtual void HandleInputEvent(MouseScrollInputEvent& inputEvent);
     virtual void HandleInputEvent(KeyCharEvent& inputEvent) {}
 
 private:
@@ -239,14 +239,17 @@ protected:
 
     glm::mat4 mTransform; // current transformations matrix, screen space
 
-    bool mVisible;
-    bool mVisible_Inherited;
-    bool mEnabled;
-    bool mEnabled_Inherited;
-    bool mEnablePickChildren; // prevent children widgets from mouse interaction
-    bool mEnableClipChildren; // clipping enabled
-    bool mTransformInvalidated = true; // transformations matrix dirty
-    bool mInteractive = true; // process input events
+    EnumSet<eUiInputPassThrough> mInputPassThrough {};
 
     int mChildrenLocksCount = 0;
+
+    // flags
+    bool mVisible : 1;
+    bool mVisible_Inherited : 1;
+    bool mEnabled : 1;
+    bool mEnabled_Inherited : 1;
+    bool mEnablePickChildren : 1; // prevent children widgets from mouse interaction
+    bool mEnableClipChildren : 1; // clipping enabled
+    bool mTransformInvalidated : 1; // transformations matrix dirty
+    bool mInteractive : 1; // process input events
 };

@@ -18,13 +18,20 @@ public:
     {
         mIsActive = isActive;
     }
-    // get render view camera
-    inline Camera& GetCamera() { return mCamera; }
+
     inline const Camera& GetCamera() const { return mCamera; }
 
+    inline Camera& GetCamera() { return mCamera; }
+
+    // pool
+    inline void OnRecycle()
+    {
+        mCamera = {};
+        mIsActive = true;
+    }
 private:
     Camera mCamera;
-
-    // render view state
     bool mIsActive = true;
 };
+
+//////////////////////////////////////////////////////////////////////////

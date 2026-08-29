@@ -56,7 +56,7 @@ void GameObjectManager::UpdateLogic(float stepDeltaTime)
     for (size_t i = 0, MaxUpdateObjects = mActiveObjects.size(); i < MaxUpdateObjects; ++i)
     {
         GameObject* gameObject = mActiveObjects[i];
-        if (!gameObject->WasDeleted())
+        if (gameObject->Exists())
         {
             gameObject->UpdateLogic(stepDeltaTime);
         }
@@ -69,7 +69,7 @@ void GameObjectManager::UpdatePhysics(float stepDeltaTime)
     for (size_t i = 0, MaxUpdateObjects = mActiveObjects.size(); i < MaxUpdateObjects; ++i)
     {
         GameObject* gameObject = mActiveObjects[i];
-        if (!gameObject->WasDeleted())
+        if (gameObject->ExistsOnMap())
         {
             gameObject->UpdatePhysics(stepDeltaTime);
         }
@@ -281,12 +281,11 @@ bool GameObjectManager::DeleteObject(EntityUid objectUid)
     return DeleteObject(objectHandle);
 }
 
-bool GameObjectManager::IsObjectActive(const EntityHandle& objectHandle) const
+bool GameObjectManager::ExistsOnMap(const EntityHandle& objectHandle) const
 {
     if (GameObject* objectInstance = GetObjectPtr(objectHandle))
     {
-        const EntityLifecycleFlags& lifecycleFlags = objectInstance->GetLifecycleFlags();
-        return lifecycleFlags.mWasSpawned && !lifecycleFlags.mWasDeleted && !lifecycleFlags.mWasDespawned;
+        return objectInstance->ExistsOnMap();
     }
     return false;
 }

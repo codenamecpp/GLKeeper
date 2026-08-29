@@ -19,18 +19,12 @@ protected:
         static const int MaxObjectsPerTile = 3;
 
     public:
-        MapPoint2D mTileLocation {};
+        Point2D mTileLocation {};
 
         // single storage tile can hold up to MaxObjectsPerTile objects 
         // depending on the room type the limit may be less than the MaxObjectsPerTile
         cxx::static_vector<EntityHandle, MaxObjectsPerTile> mObjects;
     };
-
-    //////////////////////////////////////////////////////////////////////////
-
-    // temporary array for storage tiles evaluation
-
-    using StorageTilesEvaluationResult = Temp_Vector<MapPoint2D>;
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -53,12 +47,12 @@ protected:
     {
         return static_cast<int>(mStorageTiles.size());
     }
-    int GetRoomStorageTileIndex(const MapPoint2D& tileLocation) const;
-    RoomStorageTile* GetRoomStorageTileFromLocation(const MapPoint2D& tileLocation);
+    int GetRoomStorageTileIndex(const Point2D& tileLocation) const;
+    RoomStorageTile* GetRoomStorageTileFromLocation(const Point2D& tileLocation);
     RoomStorageTile* GetRoomStorageTileWithObject(EntityHandle entityHandle);
     RoomStorageTile* GetFirstAvailableStorageTile();
 
-    inline cxx::span<const RoomStorageTile> GetStorageTiles() const { return mStorageTiles; }
+    inline const auto& GetStorageTiles() const { return mStorageTiles; }
 
     // assing/unassign stored objects manually
     // note: will fail if the object is already stored elsewhere
@@ -67,14 +61,14 @@ protected:
     bool UnassignObjectFromStorage(EntityHandle entityHandle);
 
     // overridables
-    virtual void EvaluateStorageTiles(StorageTilesEvaluationResult& evaluationResult) const = 0;
+    virtual void EvaluateStorageTiles(cxx::any_vector<Point2D> evaluationResult) const = 0;
     virtual void StoredObjectUnassigned(EntityHandle entityHandle) = 0;
     virtual void StoredObjectReassigned(EntityHandle entityHandle, const RoomStorageTile& newStorageTile) = 0;
     virtual void StoredObjectAssigned(EntityHandle entityHandle, const RoomStorageTile& newStorageTile) = 0;
 
 private:
     void SyncStorageTilesCacheAfterRoomReconfigure();
-    void HandleRoomStorageTiles(cxx::span<MapPoint2D> evaluatedTiles);
+    void HandleRoomStorageTiles(cxx::span<Point2D> evaluatedTiles);
 
 private:
     const int mMaxObjectsPerStorageTile;

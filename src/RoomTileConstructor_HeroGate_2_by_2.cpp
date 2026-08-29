@@ -30,7 +30,7 @@ void RoomTileConstructor_HeroGate_2_by_2::ConstructRoomFloor(Room* roomInstance,
         gMeshAssetManager.GetMesh(completeResourceName + "2"),
         gMeshAssetManager.GetMesh(completeResourceName + "3"),
     };
-    const MapArea2D& locationArea = roomInstance->GetLocationArea();
+    const Rect2D& locationArea = roomInstance->GetLocationArea();
     for (MapTile* targetTile : floorTiles)
     {
         const int ioffsetx = targetTile->mLocation.x - locationArea.x;

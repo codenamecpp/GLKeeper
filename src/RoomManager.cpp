@@ -50,7 +50,7 @@ void RoomManager::UpdateLogic(float stepDeltaTime)
     for (size_t i = 0, MaxUpdateRooms = mActiveRooms.size(); i < MaxUpdateRooms; ++i)
     {
         Room* room = mActiveRooms[i];
-        if (!room->WasDeleted())
+        if (room->Exists())
         {
             room->UpdateLogic(stepDeltaTime);
         }
@@ -215,12 +215,11 @@ bool RoomManager::DeleteRoom(EntityUid instanceUid)
     return DeleteRoom(roomHandle);
 }
 
-bool RoomManager::IsRoomActive(const EntityHandle& roomHandle) const
+bool RoomManager::ExistsOnMap(const EntityHandle& roomHandle) const
 {
     if (Room* roomInstance = GetRoomPtr(roomHandle))
     {
-        const EntityLifecycleFlags& lifecycleFlags = roomInstance->GetLifecycleFlags();
-        return lifecycleFlags.mWasSpawned && !lifecycleFlags.mWasDeleted && !lifecycleFlags.mWasDespawned;
+        return roomInstance->ExistsOnMap();
     }
     return false;
 }

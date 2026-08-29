@@ -15,15 +15,14 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-class Creature final
-    : public Entity
-    , public EnableEntityComponents<CreatureComponents>
+class Creature final: public Entity
 {
     friend class CreatureController;
 
     // states
     friend class CreatureState_Idle;
     friend class CreatureState_Working;
+    friend class CreatureState_InHand;
 
 public:
     Creature();
@@ -69,7 +68,7 @@ public:
     void SnapPositionToFloor(bool withRespectToMeshBounds = false);
     void SetOrientation(cxx::angle_t orientation);
 
-    MapPoint2D GetTilePosition() const;
+    Point2D GetTilePosition() const;
 
     // scene object shortcuts
     const cxx::aabbox& GetMeshLocalBounds() const;
@@ -87,9 +86,7 @@ public:
     // depending on creature's abilities its passability type may change
     ePassabilityType GetPassabilityType() const;
 
-    // get current owner player
-    // the owner may change as a result of conversion
-    inline ePlayerID GetOwnerId() const { return mOwnerId; }
+    //////////////////////////////////////////////////////////////////////////
 
     // get current held amount of gold
     long GetMoneyCarried() const;
@@ -98,6 +95,26 @@ public:
     long ReceiveMoney(long moneyAmount, long& leftoverAmount);
     // take gold from creature, returns current held amount of gold
     long WithdrawMoney(long moneyAmount);
+
+    //////////////////////////////////////////////////////////////////////////
+
+    // highlight control
+    bool IsHighlighted() const { return mStateFlags.mIsHighlighted; }
+
+    void SetHighlighted(bool isHighlighted);
+
+    //////////////////////////////////////////////////////////////////////////
+
+    // pick control
+
+    // during pickup/dropon only basic rules are checked (state-dependent)
+    // ignores special rules like creature ownership or tile availability
+    bool CanPickUp() const;
+    bool IsPickedUp() const { return mStateFlags.mInHand; }
+    bool PickUp();
+    bool DropOn(const glm::vec2& position);
+
+    //////////////////////////////////////////////////////////////////////////
 
     // get current / previous state
     inline bool InState(eCreatureState stateId) const { return GetStateId() == stateId; }
@@ -132,8 +149,19 @@ public:
     void ReceiveMsg(EntityMsg& msgData) override;
 
 private:
-    // enable or disable primary components
-    void EnableMeshObject(bool isEnabled);
+
+    //////////////////////////////////////////////////////////////////////////
+
+    // mesh control
+    void InitMesh();
+    void FreeMesh();
+    void EnableMesh(bool isEnabled);
+
+    //////////////////////////////////////////////////////////////////////////
+
+    // physics control
+    void InitPhysics();
+    void FreePhysics();
     void EnablePhysics(bool isEnabled);
 
     //////////////////////////////////////////////////////////////////////////
@@ -154,8 +182,6 @@ private:
     //////////////////////////////////////////////////////////////////////////
 
 private:
-    ePlayerID mOwnerId = ePlayerID_Null;
-
     CreatureDefinition* mDefinition = nullptr; // never changes
     CreatureController* mController = nullptr;
     PhysicsObject* mPhysicsObject = nullptr; // optional
@@ -169,6 +195,8 @@ private:
 
     CreatureStatePtr mCurrState;
     CreatureStatePtr mPrevState;
+
+    CreatureStateFlags mStateFlags {};
 };
 
 //////////////////////////////////////////////////////////////////////////

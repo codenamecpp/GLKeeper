@@ -30,8 +30,8 @@ public:
     virtual long GetStoredGoldCapacity() const = 0; // returns 0 if capacity is unlimited
     virtual long StoreGold(long goldAmount) = 0; // returns amount of gold actually stored
     virtual long DisposeGold(long goldAmount) = 0; // returns amount of gold actually disposed
-    virtual long StoreGold(long goldAmount, const MapPoint2D& tileLocation) = 0;
-    virtual bool GetTileToStoreGold(MapPoint2D& tileLocation) = 0;
+    virtual long StoreGold(long goldAmount, const Point2D& tileLocation) = 0;
+    virtual bool GetTileToStoreGold(Point2D& tileLocation) = 0;
 };
 
 //////////////////////////////////////////////////////////////////////////

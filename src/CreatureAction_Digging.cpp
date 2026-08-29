@@ -11,7 +11,7 @@ CreatureAction_Digging::CreatureAction_Digging()
 {
 }
 
-void CreatureAction_Digging::Configure(Creature* creature, const glm::vec2& workPoint, const MapPoint2D& targetTile)
+void CreatureAction_Digging::Configure(Creature* creature, const glm::vec2& workPoint, const Point2D& targetTile)
 {
     CreatureAction::Configure(creature);
     mWorkPoint = workPoint;
@@ -74,7 +74,7 @@ void CreatureAction_Digging::HandleResumeAction(eCreatureAction subActionId, eRe
         }
 
         // check distance
-        const MapPoint2D currentTile = GetCreature().GetTilePosition();
+        const Point2D currentTile = GetCreature().GetTilePosition();
         if (!MapUtils::AreTilesAdjacent(currentTile, mTargetTile))
         {
             cxx_assert(false);
@@ -125,11 +125,11 @@ bool CreatureAction_Digging::ProcessTileDigging(float stepDeltaTime)
 
     if (mDigTimer.TickAndCheckExpire(stepDeltaTime))
     {
-        long goldMined = 0;
-        if (!gGameWorld.DigTile(targetTile, GetCreature().GetOwnerId(), goldMined))
+        if (!gGameWorld.DigBlock(targetTile, GetCreature().GetOwnerId()) ||
+            !gGameWorld.CanDigBlock(targetTile, GetCreature().GetOwnerId()))
+        {
             return false;
-
-        cxx_assert(goldMined == 0);
+        }
         mDigTimer.Start();
     }
     return true;

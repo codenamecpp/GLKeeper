@@ -25,7 +25,7 @@ void MoneyStorageRoomController::ConfigureInstance(Room* roomInstance)
     cxx_assert(mMoneyComponent);
 
     // setup capabilities
-    GetRoom().AddCapability<MoneyStorageRoomCapability>(this);
+    GetRoom().SetCapability<MoneyStorageRoomCapability>(this);
 }
 
 void MoneyStorageRoomController::SpawnInstance()
@@ -93,7 +93,7 @@ long MoneyStorageRoomController::StoreGold(long goldAmount)
     return distributedAmount;
 }
 
-long MoneyStorageRoomController::StoreGold(long goldAmount, const MapPoint2D& tileLocation)
+long MoneyStorageRoomController::StoreGold(long goldAmount, const Point2D& tileLocation)
 {
     if ((goldAmount < 1) || (GetFreeStorageSpace() == 0)) 
         return 0;
@@ -115,7 +115,7 @@ long MoneyStorageRoomController::DisposeGold(long goldAmount)
     if ((goldAmount < 0) || (GetStoredGoldAmount() == 0)) 
         return 0;
 
-    Temp_List<EntityHandle> releaseObjects;
+    cxx::temp_list<EntityHandle> releaseObjects;
 
     long resultAmount = 0;
     // dispose gold from chests
@@ -162,7 +162,7 @@ long MoneyStorageRoomController::DisposeGold(long goldAmount)
     return resultAmount;
 }
 
-bool MoneyStorageRoomController::GetTileToStoreGold(MapPoint2D& tileLocation)
+bool MoneyStorageRoomController::GetTileToStoreGold(Point2D& tileLocation)
 {
     if (GetFreeStorageSpace() == 0)
         return false;
@@ -250,7 +250,7 @@ void MoneyStorageRoomController::SetMoneyStorageMaxGoldPerTile(long maxGoldPerTi
     cxx_assert(mMoneyStorageMaxGoldPerTile > 0);
 }
 
-void MoneyStorageRoomController::SetObjectPlacementToTileCenter(EntityHandle entityHandle, const MapPoint2D& tileLocation, bool setRandomOrientation)
+void MoneyStorageRoomController::SetObjectPlacementToTileCenter(EntityHandle entityHandle, const Point2D& tileLocation, bool setRandomOrientation)
 {
     GameObject* gameObject = gGameObjectManager.GetObjectPtr(entityHandle);
     cxx_assert(gameObject);
@@ -304,14 +304,14 @@ void MoneyStorageRoomController::ScanForLooseGold()
 
     for (GameObject* gameObject: gGameObjectManager.GetGoldContainers())
     {
-        // ignore deleted
-        if (gameObject->WasDeleted()) continue;
-
-        // ingore owned
-        if (gameObject->GetParentRoom().IsRoom()) continue;
+        // ignore inactive / owned
+        if (!gameObject->ExistsOnMap() || gameObject->GetParentRoom().IsRoom()) 
+        {
+            continue;
+        }
 
         // whether object is on one of storage tiles
-        MapPoint2D mapLocation = gameObject->GetTilePosition();
+        Point2D mapLocation = gameObject->GetTilePosition();
 
         RoomStorageTile* storageTile = GetRoomStorageTileFromLocation(mapLocation);
         if (storageTile == nullptr) continue;
@@ -354,7 +354,7 @@ void MoneyStorageRoomController::ScanForLooseGold()
     }
 }
 
-long MoneyStorageRoomController::StoreGoldOnStorageTile(const MapPoint2D& tileLocation, long goldAmount, bool canCreateChest)
+long MoneyStorageRoomController::StoreGoldOnStorageTile(const Point2D& tileLocation, long goldAmount, bool canCreateChest)
 {
     long resultAmount = 0;
     if (RoomStorageTile* storageTile = GetRoomStorageTileFromLocation(tileLocation))

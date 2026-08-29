@@ -18,7 +18,7 @@ void StorageRoomController::PostReconfigureRoom()
 
     // process storage tiles
     {  
-        StorageTilesEvaluationResult evaluationResult;
+        cxx::temp_vector<Point2D> evaluationResult;
         EvaluateStorageTiles(evaluationResult);
         HandleRoomStorageTiles(evaluationResult);
     }
@@ -42,7 +42,7 @@ void StorageRoomController::OnRecycle()
     mStorageTiles.clear();
 }
 
-int StorageRoomController::GetRoomStorageTileIndex(const MapPoint2D& tileLocation) const
+int StorageRoomController::GetRoomStorageTileIndex(const Point2D& tileLocation) const
 {
     const int itemIndex = cxx::get_first_index_if(mStorageTiles, [&tileLocation](const RoomStorageTile& storageTile)
         {
@@ -51,7 +51,7 @@ int StorageRoomController::GetRoomStorageTileIndex(const MapPoint2D& tileLocatio
     return itemIndex;
 }
 
-StorageRoomController::RoomStorageTile* StorageRoomController::GetRoomStorageTileFromLocation(const MapPoint2D& tileLocation)
+StorageRoomController::RoomStorageTile* StorageRoomController::GetRoomStorageTileFromLocation(const Point2D& tileLocation)
 {
     for (RoomStorageTile& roller: mStorageTiles)
     {
@@ -162,14 +162,14 @@ void StorageRoomController::SyncStorageTilesCacheAfterRoomReconfigure()
     }
 }
 
-void StorageRoomController::HandleRoomStorageTiles(cxx::span<MapPoint2D> evaluatedTiles)
+void StorageRoomController::HandleRoomStorageTiles(cxx::span<Point2D> evaluatedTiles)
 {
-    Temp_List<RoomStorageTile> removedStorageTiles;
-    Temp_List<RoomStorageTile> preservedStorageTiles;
-    Temp_List<MapPoint2D> addedStorageTiles;
+    cxx::temp_list<RoomStorageTile> removedStorageTiles;
+    cxx::temp_list<RoomStorageTile> preservedStorageTiles;
+    cxx::temp_list<Point2D> addedStorageTiles;
 
     // filter new and preserved tiles
-    for (const MapPoint2D& rollerLocation: evaluatedTiles)
+    for (const Point2D& rollerLocation: evaluatedTiles)
     {
         int tileIndex = GetRoomStorageTileIndex(rollerLocation);
         if (tileIndex == -1)
@@ -201,7 +201,7 @@ void StorageRoomController::HandleRoomStorageTiles(cxx::span<MapPoint2D> evaluat
     // add new tiles
     if (!addedStorageTiles.empty())
     {
-        for (const MapPoint2D& rollerLocation: addedStorageTiles)
+        for (const Point2D& rollerLocation: addedStorageTiles)
         {
             RoomStorageTile& storageTile = mStorageTiles.emplace_back();
             storageTile.mTileLocation = rollerLocation;
@@ -210,7 +210,7 @@ void StorageRoomController::HandleRoomStorageTiles(cxx::span<MapPoint2D> evaluat
         addedStorageTiles.clear();
     }
 
-    auto CheckTileWithinRoom = [this](const MapPoint2D& tileLocation)
+    auto CheckTileWithinRoom = [this](const Point2D& tileLocation)
         {
             return cxx::contains_if(this->GetRoom().GetFloorTiles(), [tileLocation](MapTile* mapTile)
                 {

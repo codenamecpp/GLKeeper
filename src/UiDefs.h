@@ -9,31 +9,48 @@ class UiTextBox;
 class UiGridLayout;
 class UiButton;
 class UiPanel;
+class UiScrollBar;
 class UiWidgetManager;
-template<typename TEventArgs> class UiEvent_Listener;
-template<typename TEventArgs> class UiEvent;
-class UiPropertyContext;
-class UiPropertyLink;
 class UiView;
 class UiDialogManager;
 class UiDialog;
+class UiHierarchy;
 
 //////////////////////////////////////////////////////////////////////////
 
-struct UiUserData
+union UiUserData
 {
 public:
     UiUserData() = default;
-    template<typename T> 
-    inline T GetValue() const { return (T) mRawValue; }
-    template<typename T>
-    inline void SetValue(T value) 
+    template<typename T> inline T GetValue() const { return (T) mRawValue; }
+    template<typename T> inline void SetValue(T value) 
     {
         static_assert(sizeof(T) <= sizeof(mRawValue), "Raw value data overflow");
         mRawValue = (uint64_t) value; 
     }
+
+    template<typename T> inline T GetParam0() const { return (T) mParam0; }
+    template<typename T> inline UiUserData& SetParam0(T value) 
+    {
+        static_assert(sizeof(T) <= sizeof(mParam0), "Raw value data overflow");
+        mParam0 = (uint32_t) value; 
+        return *this;
+    }
+
+    template<typename T> inline T GetParam1() const { return (T) mParam1; }
+    template<typename T> inline UiUserData& SetParam1(T value) 
+    {
+        static_assert(sizeof(T) <= sizeof(mParam1), "Raw value data overflow");
+        mParam1 = (uint32_t) value; 
+        return *this;
+    }
 public:
     uint64_t mRawValue = 0;
+    struct
+    {
+        uint32_t mParam0;
+        uint32_t mParam1;
+    };
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -104,4 +121,11 @@ enum eUiViewLayer
     eUiViewLayer_Foreground,
     eUiViewLayer_Loadscreen,
     eUiViewLayer_Overlay, // drawing on top
+};
+
+enum eUiInputPassThrough
+{
+    eUiInputPassThrough_MouseScroll,
+    eUiInputPassThrough_MouseButtons,
+    eUiInputPassThrough_MouseMotion,
 };

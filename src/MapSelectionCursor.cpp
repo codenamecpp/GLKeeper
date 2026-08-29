@@ -1,17 +1,17 @@
 #include "stdafx.h"
-#include "TileSelectionOutline.h"
+#include "MapSelectionCursor.h"
 #include "GameWorld.h"
 #include "MapUtils.h"
 #include "ProceduralMeshObject.h"
 #include "TextureManager.h"
 #include "Scene.h"
 
-void TileSelectionOutline::Init(Scene& scene)
+void MapSelectionCursor::Init(Scene& scene)
 {
     mMeshObject = scene.CreateProceduralMesh();
     cxx_assert(mMeshObject);
 
-    mSelectionTint = SelectionTint::Neutral; // set to default
+    mSelectionTint = eSelectionTint_Blue; // set to default
     mFadingTime = 0.0f;
 
     if (mMeshObject)
@@ -32,14 +32,14 @@ void TileSelectionOutline::Init(Scene& scene)
     UpdateFadingAnimation(0.0f);
 }
 
-void TileSelectionOutline::Deinit()
+void MapSelectionCursor::Deinit()
 {
     mSelectionArea.h = 0;
     mSelectionArea.w = 0;
     mMeshObject.reset();
 }
 
-void TileSelectionOutline::UpdateFrame()
+void MapSelectionCursor::UpdateFrame()
 {
     if (HasSelection())
     {
@@ -48,9 +48,9 @@ void TileSelectionOutline::UpdateFrame()
     }
 }
 
-void TileSelectionOutline::UpdateSelection(const MapPoint2D& selectionArea)
+void MapSelectionCursor::UpdateSelection(const Point2D& selectionArea)
 {
-    MapArea2D rcSelection;
+    Rect2D rcSelection;
     rcSelection.x = selectionArea.x;
     rcSelection.y = selectionArea.y;
     rcSelection.w = 1;
@@ -58,9 +58,11 @@ void TileSelectionOutline::UpdateSelection(const MapPoint2D& selectionArea)
     UpdateSelection(rcSelection);
 }
 
-void TileSelectionOutline::UpdateSelection(const MapArea2D& selectionArea)
+void MapSelectionCursor::UpdateSelection(const Rect2D& selectionArea)
 {
-    if (mSelectionArea == selectionArea) return;
+    if (mSelectionArea == selectionArea) 
+        return;
+
     if ((selectionArea.h == 0) || (selectionArea.w == 0))
     {
         ClearSelection();
@@ -70,9 +72,10 @@ void TileSelectionOutline::UpdateSelection(const MapArea2D& selectionArea)
     RebuildCursorMesh();
 }
 
-void TileSelectionOutline::ClearSelection()
+void MapSelectionCursor::ClearSelection()
 {
-    if (!HasSelection()) return;
+    if (!HasSelection()) 
+        return;
 
     mSelectionArea.h = 0;
     mSelectionArea.w = 0;
@@ -82,9 +85,10 @@ void TileSelectionOutline::ClearSelection()
     UpdateFadingAnimation(0.0f);
 }
 
-void TileSelectionOutline::SetSelectionTint(SelectionTint tint)
+void MapSelectionCursor::SetSelectionTint(eSelectionTint tint)
 {
-    if (mSelectionTint == tint) return;
+    if (mSelectionTint == tint) 
+        return;
 
     mSelectionTint = tint;
     if (mMeshObject)
@@ -94,9 +98,15 @@ void TileSelectionOutline::SetSelectionTint(SelectionTint tint)
     }
 }
 
-void TileSelectionOutline::RebuildCursorMesh()
+void MapSelectionCursor::ResetSelectionTint()
 {
-    if (mMeshObject == nullptr) return;
+    SetSelectionTint(eSelectionTint_Blue);
+}
+
+void MapSelectionCursor::RebuildCursorMesh()
+{
+    if (mMeshObject == nullptr) 
+        return;
 
     bool hasSelection = HasSelection();
 
@@ -198,7 +208,7 @@ void TileSelectionOutline::RebuildCursorMesh()
     mMeshObject->InvalidateMesh();
 }
 
-void TileSelectionOutline::UpdateFadingAnimation(float deltaTime)
+void MapSelectionCursor::UpdateFadingAnimation(float deltaTime)
 {
     mFadingTime += deltaTime;
 
@@ -209,8 +219,8 @@ void TileSelectionOutline::UpdateFadingAnimation(float deltaTime)
     }
 }
 
-Color32 TileSelectionOutline::GetColorForTint(SelectionTint tint)
+Color32 MapSelectionCursor::GetColorForTint(eSelectionTint tint)
 {
-    return (tint == SelectionTint::Dangerous) ? COLOR_RED : COLOR_BLUE;
+    return (tint == eSelectionTint_Red) ? COLOR_RED : COLOR_BLUE;
 }
 

@@ -28,9 +28,17 @@ public:
     // accessing scene main camera
     inline Camera& GetCamera() { return mCamera; }
 
+    inline const Camera& GetCamera() const { return mCamera; }
+
+    // cast ray in specific viewport coordinate using current camera
+    bool CastRayFromScreenPoint(const Point2D& screenCoordinate, cxx::ray3d_t& resultRay);
+
     // render lists querying
     void CollectObjectsForRender(SceneRenderLists& renderList);
     void CollectObjectsForRender(Camera& camera, SceneRenderLists& renderList);
+    
+    bool QueryObjects(const cxx::ray3d_t& ray, cxx::any_vector<SceneObject*> queryResult);
+    bool QueryObjects(const cxx::ray3d_t& ray, Camera& camera, cxx::any_vector<SceneObject*> queryResult);
 
     // create scene objects
 
@@ -78,3 +86,4 @@ private:
 extern Scene gScene;
 
 //////////////////////////////////////////////////////////////////////////
+

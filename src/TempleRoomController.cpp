@@ -130,11 +130,11 @@ void TempleRoomController::ReevaluateWaterPoolTiles()
 
 bool TempleRoomController::ReevaluateHandLocation()
 {
-    Temp_Vector<MapTile*> candidateTiles;
+    cxx::temp_vector<MapTile*> candidateTiles;
 
     auto roomInnerTiles = GetRoom().GetInnerTiles();
 
-    candidateTiles.reserve(std::min(roomInnerTiles.size(), 64));
+    candidateTiles.reserve(std::min(roomInnerTiles.size(), 64U));
 
     for (MapTile* currTile: roomInnerTiles)
     {
@@ -160,7 +160,7 @@ bool TempleRoomController::ReevaluateHandLocation()
     }
 
     // previous position still valid?
-    MapPoint2D prevHandPosition = *mHandLocation;
+    Point2D prevHandPosition = *mHandLocation;
     if (cxx::contains_if(candidateTiles, [prevHandPosition](MapTile* mapTile) { return mapTile->mLocation == prevHandPosition; }))
         return true;
 

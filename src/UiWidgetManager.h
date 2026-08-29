@@ -68,12 +68,9 @@ public:
     void DetachAllViews();
     bool ViewAttached(const UiView* view) const;
 
-    // Test whether cursor is over ui element
-    bool IsCursorOverUI() const;
-
 public:
     // notifications
-    void ScreenSizeChanged();
+    void ScreenSizeChanged(const Point2D& screenSize);
 
 private:
     template<typename TWidget>

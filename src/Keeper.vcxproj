@@ -100,11 +100,13 @@
   <ItemGroup>
     <ClInclude Include="AnimatingMeshObject.h" />
     <ClInclude Include="Animator.h" />
+    <ClInclude Include="AssetDefs.h" />
     <ClInclude Include="auxmath_angle.h" />
     <ClInclude Include="BinaryInputStream.h" />
     <ClInclude Include="BMFont.h" />
     <ClInclude Include="ChickenObjectController.h" />
     <ClInclude Include="CommonTypes.h" />
+    <ClInclude Include="container_adapter.h" />
     <ClInclude Include="Creature.h" />
     <ClInclude Include="CreatureAction.h" />
     <ClInclude Include="CreatureAction_CarryGoldToTreasury.h" />
@@ -122,6 +124,7 @@
     <ClInclude Include="CreatureManager.h" />
     <ClInclude Include="CreatureState.h" />
     <ClInclude Include="CreatureState_Idle.h" />
+    <ClInclude Include="CreatureState_InHand.h" />
     <ClInclude Include="CreatureState_Working.h" />
     <ClInclude Include="CreatureTask.h" />
     <ClInclude Include="CreatureTaskManager.h" />
@@ -141,11 +144,11 @@
     <ClInclude Include="Font.h" />
     <ClInclude Include="FontManager.h" />
     <ClInclude Include="FrameMemoryManager.h" />
+    <ClInclude Include="FrontendDefs.h" />
+    <ClInclude Include="FrontendMenuPage.h" />
     <ClInclude Include="FrontendScreen.h" />
     <ClInclude Include="GameEventBus.h" />
     <ClInclude Include="GameMapDefs.h" />
-    <ClInclude Include="GameObjectCapabilities.h" />
-    <ClInclude Include="GameObjectComponents.h" />
     <ClInclude Include="GameObjectController.h" />
     <ClInclude Include="GameObjectManager.h" />
     <ClInclude Include="GameplayController.h" />
@@ -154,7 +157,11 @@
     <ClInclude Include="GameSessionController.h" />
     <ClInclude Include="GameSessionDefs.h" />
     <ClInclude Include="GameWorld.h" />
-    <ClInclude Include="ImpCreatureController.h" />
+    <ClInclude Include="HeldThingView.h" />
+    <ClInclude Include="InteractionService.h" />
+    <ClInclude Include="LevelsDatabase.h" />
+    <ClInclude Include="UiScrollBar.h" />
+    <ClInclude Include="WorkerCreatureController.h" />
     <ClInclude Include="Locomotion.h" />
     <ClInclude Include="GoldPileObjectController.h" />
     <ClInclude Include="HatcheryRoomController.h" />
@@ -183,8 +190,6 @@
     <ClInclude Include="ProceduralMeshObject.h" />
     <ClInclude Include="ProceduralMeshRenderer.h" />
     <ClInclude Include="RenderView.h" />
-    <ClInclude Include="RoomCapabilities.h" />
-    <ClInclude Include="RoomComponents.h" />
     <ClInclude Include="RoomController.h" />
     <ClInclude Include="RoomDefs.h" />
     <ClInclude Include="RoomTileConstructor_DungeonHeart.h" />
@@ -205,10 +210,10 @@
     <ClInclude Include="static_vector.h" />
     <ClInclude Include="std_stream_helpers.h" />
     <ClInclude Include="StorageRoomController.h" />
-    <ClInclude Include="TestScreenView.h" />
+    <ClInclude Include="TestScreen.h" />
     <ClInclude Include="TextManager.h" />
     <ClInclude Include="TileConstructionSet.h" />
-    <ClInclude Include="TitleScreenView.h" />
+    <ClInclude Include="TitleScreen.h" />
     <ClInclude Include="ToolsUi.h" />
     <ClInclude Include="ToolsUiManager.h" />
     <ClInclude Include="TortureChamberRoomController.h" />
@@ -226,7 +231,7 @@
     <ClInclude Include="UiManager.h" />
     <ClInclude Include="FrontendCameraController.h" />
     <ClInclude Include="ListenersContainer.h" />
-    <ClInclude Include="LoadingScreenView.h" />
+    <ClInclude Include="LoadingScreen.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObjectDefs.h" />
     <ClInclude Include="HeroGateFrontendRoomController.h" />
@@ -241,8 +246,8 @@
     <ClInclude Include="Console.h" />
     <ClInclude Include="TerrainRenderer.h" />
     <ClInclude Include="GameEvent.h" />
-    <ClInclude Include="TileSelectionOutline.h" />
-    <ClInclude Include="ConsoleScreenView.h" />
+    <ClInclude Include="MapSelectionCursor.h" />
+    <ClInclude Include="ConsoleScreen.h" />
     <ClInclude Include="Version.h" />
     <ClInclude Include="SceneObject.h" />
     <ClInclude Include="GpuBuffer.h" />
@@ -270,13 +275,13 @@
     <ClInclude Include="AABBTree.h" />
     <ClInclude Include="DebugRenderer.h" />
     <ClInclude Include="WeightSelector.h" />
-    <ClInclude Include="WorldViewCameraController.h" />
+    <ClInclude Include="GameplayCameraController.h" />
     <ClInclude Include="TileConstructor.h" />
     <ClInclude Include="GameMap.h" />
     <ClInclude Include="MapTile.h" />
     <ClInclude Include="GameSession.h" />
     <ClInclude Include="UiView.h" />
-    <ClInclude Include="HUDScreenView.h" />
+    <ClInclude Include="HUDScreen.h" />
     <ClInclude Include="UiWidgetManager.h" />
     <ClInclude Include="intersection.h" />
     <ClInclude Include="plane.h" />
@@ -329,6 +334,7 @@
     <ClCompile Include="CreatureManager.cpp" />
     <ClCompile Include="CreatureState.cpp" />
     <ClCompile Include="CreatureState_Idle.cpp" />
+    <ClCompile Include="CreatureState_InHand.cpp" />
     <ClCompile Include="CreatureState_Working.cpp" />
     <ClCompile Include="CreatureTask.cpp" />
     <ClCompile Include="CreatureTaskManager.cpp" />
@@ -343,10 +349,15 @@
     <ClCompile Include="FontManager.cpp" />
     <ClCompile Include="FrameMemoryManager.cpp" />
     <ClCompile Include="FrontendCameraController.cpp" />
+    <ClCompile Include="FrontendMenuPage.cpp" />
     <ClCompile Include="FrontendScreen.cpp" />
     <ClCompile Include="GameEventBus.cpp" />
     <ClCompile Include="GameObjectController.cpp" />
-    <ClCompile Include="ImpCreatureController.cpp" />
+    <ClCompile Include="HeldThingView.cpp" />
+    <ClCompile Include="InteractionService.cpp" />
+    <ClCompile Include="LevelsDatabase.cpp" />
+    <ClCompile Include="UiScrollBar.cpp" />
+    <ClCompile Include="WorkerCreatureController.cpp" />
     <ClCompile Include="Locomotion.cpp" />
     <ClCompile Include="GameObjectManager.cpp" />
     <ClCompile Include="GameplayController.cpp" />
@@ -387,10 +398,10 @@
     <ClCompile Include="RoomWallSection.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="StorageRoomController.cpp" />
-    <ClCompile Include="TestScreenView.cpp" />
+    <ClCompile Include="TestScreen.cpp" />
     <ClCompile Include="TextManager.cpp" />
     <ClCompile Include="TileConstructionSet.cpp" />
-    <ClCompile Include="TitleScreenView.cpp" />
+    <ClCompile Include="TitleScreen.cpp" />
     <ClCompile Include="ToolsUiManager.cpp" />
     <ClCompile Include="EnvironmentMeshObject.cpp" />
     <ClCompile Include="MeshAssetManager.cpp" />
@@ -403,7 +414,7 @@
     <ClCompile Include="TrainingRoomController.cpp" />
     <ClCompile Include="TreasuryRoomController.cpp" />
     <ClCompile Include="UiManager.cpp" />
-    <ClCompile Include="LoadingScreenView.cpp" />
+    <ClCompile Include="LoadingScreen.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="HeroGateFrontendRoomController.cpp" />
     <ClCompile Include="FrontendController.cpp" />
@@ -418,8 +429,8 @@
     <ClCompile Include="strings.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="TerrainRenderer.cpp" />
-    <ClCompile Include="TileSelectionOutline.cpp" />
-    <ClCompile Include="ConsoleScreenView.cpp" />
+    <ClCompile Include="MapSelectionCursor.cpp" />
+    <ClCompile Include="ConsoleScreen.cpp" />
     <ClCompile Include="GpuBuffer.cpp" />
     <ClCompile Include="TimeManager.cpp" />
     <ClCompile Include="SceneObject.cpp" />
@@ -438,7 +449,7 @@
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="TempleRoomController.cpp" />
     <ClCompile Include="UiView.cpp" />
-    <ClCompile Include="HUDScreenView.cpp" />
+    <ClCompile Include="HUDScreen.cpp" />
     <ClCompile Include="UiTextBox.cpp" />
     <ClCompile Include="UiWidget.cpp" />
     <ClCompile Include="EnvironmentMeshRenderer.cpp" />
@@ -448,7 +459,7 @@
       <FileType>Document</FileType>
     </ClInclude>
     <ClCompile Include="DebugRenderer.cpp" />
-    <ClCompile Include="WorldViewCameraController.cpp" />
+    <ClCompile Include="GameplayCameraController.cpp" />
     <ClCompile Include="TileConstructor.cpp" />
     <ClCompile Include="GameMap.cpp" />
     <ClCompile Include="MapTile.cpp" />

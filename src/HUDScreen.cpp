@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "HUDScreenView.h"
+#include "HUDScreen.h"
 #include "UiWidgetManager.h"
 #include "UiHelpers.h"
 #include "GameSession.h"
@@ -28,7 +28,7 @@ enum
 
 //////////////////////////////////////////////////////////////////////////
 
-HUDScreenView::HUDScreenView(GameplayController& gameplay)
+HUDScreen::HUDScreen(GameplayController& gameplay)
     : mSellButton()
     , mDigButton()
     , mSelectedTab(UiKeeperTab_COUNT)
@@ -49,7 +49,7 @@ HUDScreenView::HUDScreenView(GameplayController& gameplay)
     mDebugStatsUpdateTimer.SetDuration(1.0f / 4.0f); // // times per second
 }
 
-void HUDScreenView::InputEvent(KeyInputEvent& inputEvent)
+void HUDScreen::InputEvent(KeyInputEvent& inputEvent)
 {
     if (inputEvent.mPressed)
     {
@@ -66,7 +66,7 @@ void HUDScreenView::InputEvent(KeyInputEvent& inputEvent)
     }
 }
 
-void HUDScreenView::UpdateFrame(float deltaTime)
+void HUDScreen::UpdateFrame(float deltaTime)
 {
     if (mDebugStatsUpdateTimer.TickAndCheckExpire(deltaTime))
     {
@@ -75,7 +75,7 @@ void HUDScreenView::UpdateFrame(float deltaTime)
     }
 }
 
-void HUDScreenView::UpdateDebugStatsText()
+void HUDScreen::UpdateDebugStatsText()
 {
     if (mDebugSceneStatsLabel && mDebugSceneStatsLabel->IsVisibleInHierarchy())
     {
@@ -126,7 +126,7 @@ void HUDScreenView::UpdateDebugStatsText()
     mDebugStrBuffer.clear();
 }
 
-void HUDScreenView::ShowDebugInfo(bool isShow)
+void HUDScreen::ShowDebugInfo(bool isShow)
 {
     if (mDebugFPSLabel)
     {
@@ -144,7 +144,7 @@ void HUDScreenView::ShowDebugInfo(bool isShow)
     }
 }
 
-bool HUDScreenView::LoadContent()
+bool HUDScreen::LoadContent()
 {
     if (IsHierarchyLoaded())
         return true;
@@ -166,7 +166,7 @@ bool HUDScreenView::LoadContent()
     return IsHierarchyLoaded();
 }
 
-bool HUDScreenView::BindControls()
+bool HUDScreen::BindControls()
 {
     mKeeperPanelTabs[UiKeeperTab_Creatures] = (UiProductionButton*) mHierarchy.GetWidgetByPath("tools_container.tabs_buttons.creatures_button");
     if (!mKeeperPanelTabs[UiKeeperTab_Creatures])
@@ -240,7 +240,7 @@ bool HUDScreenView::BindControls()
     return true;
 }
 
-void HUDScreenView::Cleanup()
+void HUDScreen::Cleanup()
 {
     UiView::Cleanup();
 
@@ -262,17 +262,17 @@ void HUDScreenView::Cleanup()
     mSelectedTab = UiKeeperTab_COUNT;
 }
 
-void HUDScreenView::OnActivated()
+void HUDScreen::OnActivated()
 {
     SelectKeeperPanelTab(UiKeeperTab_Rooms);
     mDebugStatsUpdateTimer.Start();
     UpdateDebugStatsText();
 }
 
-void HUDScreenView::OnDeactivated()
+void HUDScreen::OnDeactivated()
 {}
 
-void HUDScreenView::SelectKeeperPanelTab(UiKeeperTab panelTab)
+void HUDScreen::SelectKeeperPanelTab(UiKeeperTab panelTab)
 {
     if (mSelectedTab == panelTab)
         return;
@@ -281,7 +281,7 @@ void HUDScreenView::SelectKeeperPanelTab(UiKeeperTab panelTab)
     OnKeeperPanelTabSelected(mSelectedTab);
 }
 
-void HUDScreenView::OnKeeperPanelTabSelected(UiKeeperTab panelTab)
+void HUDScreen::OnKeeperPanelTabSelected(UiKeeperTab panelTab)
 {
     int numButtonsUsed = 0;
 
@@ -292,7 +292,7 @@ void HUDScreenView::OnKeeperPanelTabSelected(UiKeeperTab panelTab)
 
         const Player& localPlayer = gGameSession.GetLocalPlayer();
 
-        Temp_Vector<RoomDefinition*> availableRooms;
+        cxx::temp_vector<RoomDefinition*> availableRooms;
         availableRooms.reserve(16);
         for (RoomDefinition& roomDef: scenarioDefinitions.mRoomDefs)
         {
@@ -329,9 +329,9 @@ void HUDScreenView::OnKeeperPanelTabSelected(UiKeeperTab panelTab)
     UpdateHUDState();
 }
 
-void HUDScreenView::HandleUiEvent(UiWidget* eventSource, const UiEventDesc* eventDesc)
+void HUDScreen::HandleUiEvent(UiWidget* eventSource, const UiEvent& eventDesc)
 {
-    bool acceptEvent = (eventSource && eventDesc->mEventID == UiEventID_OnPress);
+    bool acceptEvent = (eventSource && eventDesc.IsEvent(UiEventId_OnPress));
     if (!acceptEvent)
         return;
 
@@ -389,17 +389,17 @@ void HUDScreenView::HandleUiEvent(UiWidget* eventSource, const UiEventDesc* even
     }
 }
 
-void HUDScreenView::OnKeeperPanelButtonClick(UiProductionButton* button)
+void HUDScreen::OnKeeperPanelButtonClick(UiProductionButton* button)
 {
     // room construction mode
     if (mSelectedTab == UiKeeperTab_Rooms)
     {
         RoomDefinition* roomDefinition = button->UserData().GetValue<RoomDefinition*>();
-        mGameplay.SetRoomConstruction(roomDefinition);
+        mGameplay.SetRoomConstructionMode(roomDefinition);
     }
 }
 
-void HUDScreenView::UpdateHUDState()
+void HUDScreen::UpdateHUDState()
 {
     // select keeper panel tab button
     for (UiProductionButton* button: mKeeperPanelTabs)
@@ -412,7 +412,8 @@ void HUDScreenView::UpdateHUDState()
     }
 
     // examine current interaction mode
-    if (mGameplay.mInteraction == eMapInteractionMode_Free || mGameplay.mInteraction == eMapInteractionMode_Sell)
+    if (mGameplay.IsInInteractionMode(eMapInteractionMode_Free) || 
+        mGameplay.IsInInteractionMode(eMapInteractionMode_Sell))
     {
         for (UiProductionButton* panelButton: mKeeperPanelButtons)
         {
@@ -425,16 +426,16 @@ void HUDScreenView::UpdateHUDState()
 
     if (mSellButton)
     {
-        mSellButton->SetSelected(mGameplay.mInteraction == eMapInteractionMode_Sell);
+        mSellButton->SetSelected(mGameplay.IsInInteractionMode(eMapInteractionMode_Sell));
     }
 
     if (mDigButton)
     {
-        mDigButton->SetSelected(mGameplay.mInteraction == eMapInteractionMode_Dig);
+        mDigButton->SetSelected(mGameplay.IsInInteractionMode(eMapInteractionMode_Dig));
     }
 
     // room construction
-    if (mGameplay.mInteraction == eMapInteractionMode_Build && mSelectedTab == UiKeeperTab_Rooms)
+    if (mGameplay.IsInInteractionMode(eMapInteractionMode_Build) && (mSelectedTab == UiKeeperTab_Rooms))
     {
         cxx_assert(mGameplay.mConstructRoomDef);
         for (UiProductionButton* panelButton: mKeeperPanelButtons)
@@ -448,7 +449,7 @@ void HUDScreenView::UpdateHUDState()
     UpdateManaInfo();
 }
 
-void HUDScreenView::UpdateMoneyInfo()
+void HUDScreen::UpdateMoneyInfo()
 {
     if (mMoneyAmountTextbox)
     {
@@ -457,7 +458,7 @@ void HUDScreenView::UpdateMoneyInfo()
     }
 }
 
-void HUDScreenView::UpdateManaInfo()
+void HUDScreen::UpdateManaInfo()
 {
     if (mManaAmountTextbox)
     {

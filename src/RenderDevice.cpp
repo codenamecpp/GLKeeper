@@ -131,20 +131,12 @@ bool RenderDevice::Initialize(const Point2D& screenResolution, bool fullscreen, 
         });
     ::glfwSetScrollCallback(graphicsWindow, [](GLFWwindow*, double xscroll, double yscroll)
         {
-            MouseScrollInputEvent ev 
-            { 
-                static_cast<int>(xscroll), 
-                static_cast<int>(yscroll) 
-            };
+            MouseScrollInputEvent ev {{ static_cast<int>(xscroll), static_cast<int>(yscroll) }};
             gGame.InputEvent(ev);
         });
     ::glfwSetCursorPosCallback(graphicsWindow, [](GLFWwindow*, double xposition, double yposition)
         {
-            MouseMovedInputEvent ev 
-            { 
-                static_cast<int>(xposition),
-                static_cast<int>(yposition),
-            };
+            MouseMovedInputEvent ev {{ static_cast<int>(xposition), static_cast<int>(yposition) }};
             gGame.InputEvent(ev);
         });
     ::glfwSetWindowSizeCallback(graphicsWindow, [](GLFWwindow*, int sizex, int sizey)
@@ -417,7 +409,7 @@ void RenderDevice::BeginFrame()
         ResetScissorRect();
 
         // notify
-        gGame.ScreenResolutionChanged();
+        gGame.ScreenSizeChanged(mScreenResolution);
     }
 }
 
@@ -448,7 +440,7 @@ void RenderDevice::SetViewportRect(const Rect2D& theRectangle)
 
 void RenderDevice::ResetViewportRect()
 {
-    Rect2D screenArea {0, 0, mScreenResolution.x, mScreenResolution.y};
+    const Rect2D screenArea {0, 0, mScreenResolution.x, mScreenResolution.y};
     SetViewportRect(screenArea);
 }
 

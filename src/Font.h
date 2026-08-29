@@ -62,13 +62,13 @@ public:
     inline int GetLineHeight() const { return mLineHeight; }
 
     // create string mesh
-    void BuildTextMesh(const std::wstring_view& wideString, const Point2D& pos, Color32 color, std::vector<Quad2D>& outQuads) const;
-    void BuildTextMesh(const std::wstring_view& wideString, const Rect2D& rect, 
+    void BuildTextMesh(std::wstring_view wideString, const Point2D& pos, Color32 color, std::vector<Quad2D>& outQuads) const;
+    void BuildTextMesh(std::wstring_view wideString, const Rect2D& rect, 
         eTextHorzAlignment horzAlign, 
         eTextVertAlignment vertAlign, Color32 color, std::vector<Quad2D>& outQuads) const;
 
     // compute text rect dimensions
-    Point2D ComputeTextDims(const std::wstring_view& wideString) const;
+    Point2D ComputeTextDims(std::wstring_view wideString) const;
 
     inline GpuTexture2D* GetGpuTexturePtr() const
     {
@@ -89,7 +89,7 @@ public:
         return fallbackEntry;
     }
 
-    int CountPrintableCharacters(const std::wstring_view& wideString) const;
+    int CountPrintableCharacters(std::wstring_view wideString) const;
 
 private:
     bool LoadFont_FromFile();

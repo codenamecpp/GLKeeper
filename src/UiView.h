@@ -38,7 +38,7 @@ public:
     virtual void InputEvent(MouseButtonInputEvent& inputEvent) {}
     virtual void InputEvent(KeyInputEvent& inputEvent) {}
     virtual void InputEvent(KeyCharEvent& inputEvent) {}
-    virtual void ResolutionChanged();
+    virtual void ScreenSizeChanged(const Point2D& screenSize);
 
     // Test whether current uilayer is active now
     bool IsActive() const;

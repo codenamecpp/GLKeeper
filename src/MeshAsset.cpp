@@ -189,7 +189,7 @@ bool MeshAsset::LoadMeshFromFile()
             dstMaterial.mDiffuseTextures.push_back(texture);
         }
 
-        dstMaterial.mEnvMappingTexture = {};
+        dstMaterial.mEnvMappingTexture = nullptr;
         if (!dstMaterial.mEnvMappingTextureName.empty())
         {
             dstMaterial.mEnvMappingTexture = gTextureManager.GetTexture(dstMaterial.mEnvMappingTextureName);

@@ -22,7 +22,7 @@ void Animator::Clear()
     mStartStateTransitions.clear();
 
     mStates.clear();
-    mParameters = {};
+    mParameters.Clear();
     mCurrentState = nullptr;
     mCurrentStatePhase = {};
 
@@ -40,7 +40,7 @@ void Animator::UpdateFrame(float deltaTime)
     }
 }
 
-size_t Animator::NameToHash(const std::string_view& name)
+size_t Animator::NameToHash(std::string_view name)
 {
     std::hash<std::string_view> strhash;
     return strhash(name);

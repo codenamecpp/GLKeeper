@@ -24,10 +24,10 @@ enum UiKeeperTab
 // Strategic mode screen
 //////////////////////////////////////////////////////////////////////////
 
-class HUDScreenView final: public UiView, public UiEventListener
+class HUDScreen final: public UiView, public UiEventListener
 {
 public:
-    HUDScreenView(GameplayController& gameplay);
+    HUDScreen(GameplayController& gameplay);
 
     // override UiView
     bool LoadContent() override;
@@ -59,7 +59,7 @@ private:
     void OnDeactivated() override;
 
     // override UiEventListener
-    void HandleUiEvent(UiWidget* sender, const UiEventDesc* eventDesc) override;
+    void HandleUiEvent(UiWidget* sender, const UiEvent& eventDesc) override;
 
 private:
     UiKeeperTab mSelectedTab;
@@ -75,3 +75,5 @@ private:
     SimpleTimer mDebugStatsUpdateTimer;
     std::wstring mDebugStrBuffer;
 };
+
+//////////////////////////////////////////////////////////////////////////

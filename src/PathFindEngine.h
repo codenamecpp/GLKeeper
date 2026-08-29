@@ -58,7 +58,7 @@ private:
         inline PathFindNode* GetListNext() const { return mListNext; }
         inline PathFindNode* GetListPrev() const { return mListPrev; }
     public:
-        MapPoint2D mCoord {};
+        Point2D mCoord {};
         MapTile* mMapTile = nullptr;
         PathFindNode* mParentNode = nullptr;
         PathFindNode* mListNext = nullptr;
@@ -71,7 +71,7 @@ private:
 
     //////////////////////////////////////////////////////////////////////////
 
-    inline float Heuristic(const MapPoint2D& src, const MapPoint2D& dst) const
+    inline float Heuristic(const Point2D& src, const Point2D& dst) const
     {
         // octile
         float dx = float(std::abs(src.x - dst.x));
@@ -89,7 +89,7 @@ public:
     void EnterWorld();
     void ClearWorld();
 
-    bool StartPathFind(const MapPoint2D& srcCoord, const MapPoint2D& dstCoord, ePassabilityType passabilityType, unsigned int cyclesLimit);
+    bool StartPathFind(const Point2D& srcCoord, const Point2D& dstCoord, ePassabilityType passabilityType, unsigned int cyclesLimit);
     void ClearPathFind();
     bool RunPathFind(unsigned int cyclesCount, unsigned int& cyclesTaken);
 
@@ -103,23 +103,23 @@ public:
     { 
         return !mResultPath.empty();
     }
-    const MapPoint2D& GetSrcCoord() const { return mSrcCoord; }
-    const MapPoint2D& GetDstCoord() const { return mDstCoord; }
+    const Point2D& GetSrcCoord() const { return mSrcCoord; }
+    const Point2D& GetDstCoord() const { return mDstCoord; }
 
 protected:
-    bool CheckWithinBounds(const MapPoint2D& coord) const;
+    bool CheckWithinBounds(const Point2D& coord) const;
     bool CalcStepCostG(PathFindNode* sourceNode, eDirection moveDirection, float& costG) const;
     void ResetNodesProblemId();
     void RunPathFindCycle();
     void FinishPathFind(PathFindNode* bestFinishNode);
 
-    PathFindNode* GetPathFindNode(const MapPoint2D& coord);
+    PathFindNode* GetPathFindNode(const Point2D& coord);
 
 private:
-    MapPoint2D mMapDims; // chache
+    Point2D mMapDims; // chache
     FringeList mFringeList {};
-    MapPoint2D mSrcCoord {}; // where from
-    MapPoint2D mDstCoord {}; // where to
+    Point2D mSrcCoord {}; // where from
+    Point2D mDstCoord {}; // where to
     PathFindNode* mLastBestNode = nullptr;
     PathFindNode* mExpandNode = nullptr;
     ePassabilityType mPassabilityType = ePassabilityType_Land;
@@ -129,7 +129,7 @@ private:
     unsigned int mCyclesLimit = 0;
     unsigned int mCurrentProblemId = 0;
     std::unique_ptr<PathFindNode[]> mNodes;
-    std::vector<MapPoint2D> mResultPath;
+    std::vector<Point2D> mResultPath;
 };
 
 //////////////////////////////////////////////////////////////////////////

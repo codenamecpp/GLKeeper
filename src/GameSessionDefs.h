@@ -38,7 +38,7 @@ struct GameSessionStartupParams
 public:
     GameSessionStartupParams()
         : mSessionType(eGameSession_None)
-        , mScenarioName()
+        , mLevelName()
     {
     }
 
@@ -46,13 +46,13 @@ public:
     inline void Clear()
     {
         mSessionType = eGameSession_None;
-        mScenarioName.clear();
+        mLevelName.clear();
     }
 
 public:
     eGameSessionType mSessionType;
 
-    std::string mScenarioName;
+    std::string mLevelName;
 };
 
 //////////////////////////////////////////////////////////////////////////

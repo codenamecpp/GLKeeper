@@ -16,7 +16,8 @@ enum { MAX_VBUFFER_LENGTH = 1024 * 1024 * 2 }; // max vertex buffer size in byte
 enum { MAX_IBUFFER_LENGTH = 1024 * 1024 * 2 }; // max index buffer size in bytes
 
 // color constants
-const Color32 TILE_TAGGED_COLOR = MAKE_RGBA(64, 64, 255, 0);
+const Color32 TILE_TAGGED_COLOR = MAKE_RGBA(64, 64, 255, 255);
+const Color32 TILE_CLEAR_COLOR = MAKE_RGBA(0, 0, 0, 0);
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -97,8 +98,6 @@ bool TerrainRenderer::Initialize()
     }
 
     mShaderProgram->InitRenderData();
-
-    mHighlightTilesChanged.reserve(1024);
     return true;
 }
 
@@ -173,7 +172,7 @@ void TerrainRenderer::Render(Camera& camera)
     CommitHighlightTiles();
 }
 
-void TerrainRenderer::InvalidateTile(const MapPoint2D& theTileLocation)
+void TerrainRenderer::InvalidateTile(const Point2D& theTileLocation)
 {
     int theSectorX = theTileLocation.x / SECTOR_SIZE;
     int theSectorY = theTileLocation.y / SECTOR_SIZE;
@@ -185,21 +184,30 @@ void TerrainRenderer::InvalidateTile(const MapPoint2D& theTileLocation)
     theSector.mDirty = 1; // will be rebuild next frame
 }
 
-void TerrainRenderer::TileHighlightChanged(MapTile* mapTile)
+void TerrainRenderer::OnTileTaggedStateChanged(MapTile* mapTile, ePlayerID playerId)
 {
     cxx_assert(mapTile);
 
-    if (mapTile == nullptr) return;
+    if ((mapTile == nullptr) || (playerId != gGameSession.GetLocalPlayerId())) 
+        return;
 
-    if (!cxx::contains(mHighlightTilesChanged, mapTile))
+    const Color32 setColor = mapTile->IsTaggedForDigging(playerId) ?
+        TILE_TAGGED_COLOR : 
+        TILE_CLEAR_COLOR;
+
+    Color32* pixels = reinterpret_cast<Color32*>(mHighlightTilesBitmap.GetMipPixels(0));
+
+    const int px_i = mapTile->mLocation.y * mHighlightTilesTexture->GetTextureWidth() + mapTile->mLocation.x;
+    if (pixels[px_i] != setColor)
     {
-        mHighlightTilesChanged.push_back(mapTile);
+        pixels[px_i] = setColor;
+        mHighlightTilesTextureDirty = true;
     }
 }
 
 void TerrainRenderer::CreateTerrainMesh()
 {
-    const MapPoint2D& mapDimensions = gGameMap.GetDimensions();
+    const Point2D& mapDimensions = gGameMap.GetDimensions();
 
     mLevelSizeX = mapDimensions.x;
     mLevelSizeY = mapDimensions.y;
@@ -219,18 +227,7 @@ void TerrainRenderer::CreateTerrainMesh()
         }
     }
 
-    // prepare highlight tiles texture
-    Point2D maxDims { MAX_DUNGEON_MAP_DIMENSIONS, MAX_DUNGEON_MAP_DIMENSIONS };
-    if (!mHighlightTilesBitmap.Create(ePixelFormat_RGB8, maxDims, COLOR_BLACK))
-    {
-        gConsole.LogMessage(eLogLevel_Warning, "Cannot allocate tiles highlight texture (1)");
-    }
-
-    mHighlightTilesTexture = gRenderDevice.CreateTexture2D(mHighlightTilesBitmap);
-    if (!mHighlightTilesTexture)
-    {
-        gConsole.LogMessage(eLogLevel_Warning, "Cannot allocate tiles highlight texture (2)");
-    }
+    InitHighlightTilesTexture();
 }
 
 bool TerrainRenderer::BuildSector(int theSectorX, int theSectorY)
@@ -250,7 +247,7 @@ bool TerrainRenderer::BuildSector(int theSectorX, int theSectorY)
     for (int blockY = 0; blockY < SECTOR_SIZE; ++blockY)
     for (int blockX = 0; blockX < SECTOR_SIZE; ++blockX)
     {
-        const MapPoint2D tileLocation {
+        const Point2D tileLocation {
             blockX + theSectorX * SECTOR_SIZE, 
             blockY + theSectorY * SECTOR_SIZE
         };
@@ -363,33 +360,17 @@ bool TerrainRenderer::BuildSector(int theSectorX, int theSectorY)
 
 void TerrainRenderer::CommitHighlightTiles()
 {
-    if (mHighlightTilesChanged.empty() || !mHighlightTilesTexture)
-        return;
-
-    unsigned char* pixels = mHighlightTilesBitmap.GetMipPixels(0);
-
-    int highlightTilesTextureWidth = mHighlightTilesTexture->GetTextureWidth();
-    for (MapTile* currentTile: mHighlightTilesChanged)
+    if (mHighlightTilesTextureDirty)
     {
-        int offset = currentTile->mLocation.y * highlightTilesTextureWidth + currentTile->mLocation.x;
-        if (currentTile->IsTaggedForDigging(gGameSession.GetLocalPlayerId()))
+        if (mHighlightTilesTexture)
         {
-            pixels[offset * 3 + 0] = TILE_TAGGED_COLOR.mR;
-            pixels[offset * 3 + 1] = TILE_TAGGED_COLOR.mG;
-            pixels[offset * 3 + 2] = TILE_TAGGED_COLOR.mB;
+            unsigned char* pixels = mHighlightTilesBitmap.GetMipPixels(0);
+            cxx_assert(pixels);
+            mHighlightTilesTexture->Invalidate();
+            mHighlightTilesTexture->Upload(pixels);
         }
-        else
-        {
-            pixels[offset * 3 + 0] = 0;
-            pixels[offset * 3 + 1] = 0;
-            pixels[offset * 3 + 2] = 0;
-        }
+        mHighlightTilesTextureDirty = false;
     }
-    mHighlightTilesChanged.clear();
-
-    // upload texture data
-    mHighlightTilesTexture->Invalidate();
-    mHighlightTilesTexture->Upload(pixels);
 }
 
 void TerrainRenderer::CleanupTerrainMesh()
@@ -401,5 +382,24 @@ void TerrainRenderer::CleanupTerrainMesh()
     mSectorArray.clear();
     mHighlightTilesBitmap.Clear();
     mHighlightTilesTexture.reset();
-    mHighlightTilesChanged.clear();
+    mHighlightTilesTextureDirty = false;
+}
+
+void TerrainRenderer::InitHighlightTilesTexture()
+{
+    Point2D maxDims { MAX_DUNGEON_MAP_DIMENSIONS, MAX_DUNGEON_MAP_DIMENSIONS };
+    if (!mHighlightTilesBitmap.Create(ePixelFormat_RGBA8, maxDims, TILE_CLEAR_COLOR))
+    {
+        cxx_assert(false);
+        gConsole.LogMessage(eLogLevel_Warning, "Cannot allocate tiles highlight texture (1)");
+    }
+
+    mHighlightTilesTexture = gRenderDevice.CreateTexture2D(mHighlightTilesBitmap);
+    if (!mHighlightTilesTexture)
+    {
+        cxx_assert(false);
+        gConsole.LogMessage(eLogLevel_Warning, "Cannot allocate tiles highlight texture (2)");
+    }
+
+    mHighlightTilesTextureDirty = false;
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+//////////////////////////////////////////////////////////////////////////
+
 #include "frustum.h"
 #include "GameWorldDefs.h"
 
@@ -42,7 +44,11 @@ public:
     glm::mat4 mViewMatrix, mViewProjectionMatrix;
     cxx::frustum_t mFrustum;
 
-    RenderLayerMask mRenderLayersMask = (RenderLayer_WorldObjects | RenderLayer_WorldTerrain);
+    // clip-space offset
+    glm::vec2 mProjectionOffset;
+    glm::mat4 mProjectionOffsetMatrix;
+
+    SceneRenderLayerSet mRenderLayers {eSceneRenderLayer_World};
 
 public:
     Camera();
@@ -64,13 +70,19 @@ public:
 
     // Move camera position
     void Translate(const glm::vec3& direction);
+
+    void SetProjectionOffset(const glm::vec2& offset);
        
     // Refresh view and projection matrices along with camera frustum
     // Will not do any unnecessary calculations if nothing changed
     void ComputeMatricesAndFrustum(const Viewport& viewport);
 
 private:
+    Point2D mViewportSizeCache {}; // previous viewport used for matrices and fructum computation
+
     bool mProjMatrixDirty; // projection matrix need recomputation
     bool mViewMatrixDirty; // view matrix need recomputation
-    Point2D mViewportSizeCache {}; // previous viewport used for matrices and fructum computation
+    bool mProjectionOffsetDirty;
 };
+
+//////////////////////////////////////////////////////////////////////////

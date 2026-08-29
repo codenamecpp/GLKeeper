@@ -11,20 +11,59 @@ static const std::string uiscreen_json_path = "ui/frontend_screen.json";
 
 //////////////////////////////////////////////////////////////////////////
 
-enum eMainMenuNotifictionId
-{
-    eMainMenuNotifictionId_None = 0,
-
-    eMainMenuNotifictionId_SinglePlayer = 100,
-    eMainMenuNotifictionId_Quit,
-};
-
-//////////////////////////////////////////////////////////////////////////
-
 FrontendScreen::FrontendScreen(FrontendController& frontend)
-    : mFrontend(frontend)
+    : mPages{}
+    , mFrontend(frontend)
+    , mPageMain(frontend)
+    , mPageQuit(frontend)
+    , mPageSinglePlayer(frontend)
+    , mPageSkirmishMaps(frontend)
+    , mPageMyPetDungeon(frontend)
+    , mPageMissionBriefing(frontend)
 {
+    RegisterPage(&mPageMain);
+    RegisterPage(&mPageQuit);
+    RegisterPage(&mPageSinglePlayer);
+    RegisterPage(&mPageSkirmishMaps);
+    RegisterPage(&mPageMyPetDungeon);
+    RegisterPage(&mPageMissionBriefing);
+}
 
+void FrontendScreen::ShowMenuPage(eFrontendMenuPage pageId)
+{
+    cxx_assert(pageId < eFrontendMenuPage_COUNT);
+    if (pageId < eFrontendMenuPage_COUNT)
+    {
+        FrontendMenuPage* nextPage = mPages[pageId];
+        cxx_assert(nextPage);
+        if ((nextPage == nullptr) || (nextPage == mCurrentPage))
+            return;
+
+        FrontendMenuPage* prevPage = mCurrentPage;
+        mCurrentPage = nullptr;
+        if (prevPage)
+        {
+            prevPage->HidePage();
+        }
+        cxx_assert(mCurrentPage == nullptr);
+        mCurrentPage = nextPage;
+        mCurrentPage->ShowPage();
+    }
+}
+
+void FrontendScreen::ConfigureSkirmishMaps(cxx::span<ScenarioLevelInfo> mapsList)
+{
+    mPageSkirmishMaps.ConfigureMaps(mapsList);
+}
+
+void FrontendScreen::ConfigureMyPetDungeonMaps(cxx::span<ScenarioLevelInfo> mapsList)
+{
+    mPageMyPetDungeon.ConfigureLevels(mapsList);
+}
+
+void FrontendScreen::ConfigureMissionBriefing(const ScenarioLevelInfo& levelInfo)
+{
+    mPageMissionBriefing.ConfigureBriefing(levelInfo);
 }
 
 bool FrontendScreen::LoadContent()
@@ -33,18 +72,7 @@ bool FrontendScreen::LoadContent()
     {
         if (mHierarchy.LoadFrom(uiscreen_json_path))
         {
-            if (UiWidget* uiWidget = mHierarchy.FindWidgetWithName("single_player"))
-            {
-                uiWidget->Subscribe(this);
-                uiWidget->UserData().SetValue(eMainMenuNotifictionId_SinglePlayer);
-            }
-
-            if (UiWidget* uiWidget = mHierarchy.FindWidgetWithName("quit"))
-            {
-                uiWidget->Subscribe(this);
-                uiWidget->UserData().SetValue(eMainMenuNotifictionId_Quit);
-            }
-
+            // bind common widgets
             if (UiWidget* uiWidget = mHierarchy.FindWidgetWithName("version_string"))
             {
                 UiTextBox* textBox = (UiTextBox*) uiWidget;
@@ -53,6 +81,17 @@ bool FrontendScreen::LoadContent()
                 std::wstring versionNumber {GAME_VERSION_STRING, GAME_VERSION_STRING + sizeof(GAME_VERSION_STRING)};
                 versionNumber.insert(versionNumber.begin(), L'V');
                 textBox->SetText(versionNumber);
+            }
+
+            // pages
+            for (FrontendMenuPage* pagesRoller: mPages)
+            {
+                bool isSuccess = false;
+                if (pagesRoller)
+                {
+                    isSuccess = pagesRoller->BindPageControls(&mHierarchy);
+                }
+                cxx_assert(isSuccess);
             }
         }
         else
@@ -66,6 +105,16 @@ bool FrontendScreen::LoadContent()
 void FrontendScreen::Cleanup()
 {
     UiView::Cleanup();
+
+    for (FrontendMenuPage* pagesRoller: mPages)
+    {
+        if (pagesRoller)
+        {
+            pagesRoller->CleanupPageContent();
+        }
+    }
+
+    mCurrentPage = nullptr;
 }
 
 void FrontendScreen::InputEvent(KeyInputEvent& inputEvent)
@@ -75,12 +124,11 @@ void FrontendScreen::InputEvent(KeyInputEvent& inputEvent)
 
 void FrontendScreen::UpdateFrame(float deltaTime)
 {
-
+    UiView::UpdateFrame(deltaTime);
 }
 
 void FrontendScreen::OnActivated()
 {
-
 }
 
 void FrontendScreen::OnDeactivated()
@@ -88,19 +136,12 @@ void FrontendScreen::OnDeactivated()
 
 }
 
-void FrontendScreen::HandleUiEvent(UiWidget* sender, const UiEventDesc* eventDesc)
+void FrontendScreen::RegisterPage(FrontendMenuPage* page)
 {
-    eMainMenuNotifictionId notificationId = sender->UserData().GetValue<eMainMenuNotifictionId>();
+    cxx_assert(page);
 
-    if (notificationId == eMainMenuNotifictionId_Quit)
-    {
-        mFrontend.OnQuitGameSelected();
-        return;
-    }
+    const eFrontendMenuPage pageId = page->GetPageId();
 
-    if (notificationId == eMainMenuNotifictionId_SinglePlayer)
-    {
-        mFrontend.OnStartSinglePlayerGameSelected();
-        return;
-    }
+    cxx_assert(mPages[pageId] == nullptr);
+    mPages[pageId] = page;
 }

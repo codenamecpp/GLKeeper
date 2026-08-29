@@ -55,7 +55,7 @@ void FileSystem::Shutdown()
     mWorkingDirectoryPath.clear();
 }
 
-void FileSystem::InitTextLocation(const std::string_view& folderName)
+void FileSystem::InitTextLocation(std::string_view folderName)
 {
     const char* textLocationPrefix = "Data/Text/";
 
@@ -94,14 +94,14 @@ bool FileSystem::LocateShader(const std::string& resourceName, std::string& reso
 bool FileSystem::LocateMapData(const std::string& resourceName, std::string& resourcePath) const
 {
     std::string subpath;
-    if (cxx::starts_with_icase(resourceName, "Data\\Editor\\") ||
-        cxx::starts_with_icase(resourceName, "Data/Editor/"))
+    if (cxx::starts_with_icase(resourceName, "Data\\editor\\") ||
+        cxx::starts_with_icase(resourceName, "Data/editor/"))
     {
         subpath = resourceName;
     }
     else
     {
-        subpath = cxx::va("Data/Editor/Maps/%s", resourceName.c_str());
+        subpath = cxx::va("Data/editor/maps/%s", resourceName.c_str());
     }
 
     if (PathToFile(subpath, resourcePath))
@@ -117,7 +117,7 @@ bool FileSystem::EnumMapFiles(EnumFilesCallback callback) const
     int filesFound = 0;
     for (const std::string& searchPlace : mSearchPlaces)
     {
-        const sys::path mapsDirectory = sys::path {searchPlace} / "Data/Editor/Maps";
+        const sys::path mapsDirectory = sys::path {searchPlace} / "Data/editor/maps";
         const sys::path mapsExtension = ".kwd";
         if (!sys::exists(mapsDirectory))
             continue;
@@ -200,6 +200,17 @@ bool FileSystem::PathToFile(const std::string& fileName, std::string& fullPath) 
             fullPath = pathto.generic_string();
             return true;
         }
+    }
+    return false;
+}
+
+bool FileSystem::PathToFileExists(const std::string& theName) const
+{
+    for (const std::string& searchPlace : mSearchPlaces)
+    {
+        const sys::path pathto = sys::path {searchPlace} / theName;
+        if (sys::is_regular_file(pathto))
+            return true;
     }
     return false;
 }

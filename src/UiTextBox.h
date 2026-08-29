@@ -15,7 +15,7 @@ public:
     // Setup textbox content and primary text color, text can contain formatting tags
     void SetTextFont(const std::string& textFontName);
     void SetText(const std::wstring& text);
-    void SetStringId(int stringId);
+    void SetStringId(TextTableId textTableId, int stringId);
 
     // Force rebuild text mesh
     // Normally vertices is being regenerated on widget render
@@ -55,6 +55,7 @@ protected:
 protected:
     Font* mTextFont = nullptr;
 
+    TextTableId mTextTableId = TextTableId_Null;
     int mStringId = 0; // from text table
 
     std::wstring mTextContent;
@@ -62,6 +63,7 @@ protected:
 
     Color32 mTextColorHovered;
     Color32 mTextColorDefault;
+    Color32 mTextColorDisabled;
     Color32 mTextColor; // one of default or hovered
     eTextHorzAlignment mHorzAlignment = eTextHorzAlignment_Left;
     eTextVertAlignment mVertAlignment = eTextVertAlignment_Top;

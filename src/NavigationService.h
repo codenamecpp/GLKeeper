@@ -20,14 +20,14 @@ public:
 
     // fast check whether a path exists between two tiles for a specific passability type
     // it uses the map area code to determine whether both tiles are connected
-    bool CheckPathExists(const MapPoint2D& srcCoord, const MapPoint2D& dstCoord, ePassabilityType passabilityType) const;
+    bool CheckPathExists(const Point2D& srcCoord, const Point2D& dstCoord, ePassabilityType passabilityType) const;
     bool CheckPathExists(const glm::vec2& srcPosition, const glm::vec2& dstPosition, ePassabilityType passabilityType) const;
 
     bool GetRandomWanderingPoint(const glm::vec2& srcPosition, ePassabilityType passabilityType,
         int minTilesDistance, 
         int maxTilesDistance, glm::vec2& resultPoint);
 
-    bool GetRandomPointWithinTile(const MapPoint2D& mapTile, glm::vec2& resultPoint);
+    bool GetRandomPointWithinTile(const Point2D& mapTile, glm::vec2& resultPoint);
 
     void UpdateAreaCodes(cxx::span<MapTile*> mapTiles);
 

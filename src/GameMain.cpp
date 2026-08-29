@@ -13,10 +13,7 @@
 #include "TextManager.h"
 #include "GameEventBus.h"
 #include "GameSession.h"
-
-//////////////////////////////////////////////////////////////////////////
-
-#define FRONT_END_3D_LEVEL "FrontEnd3DLevel"
+#include "LevelsDatabase.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -105,6 +102,11 @@ bool GameMain::Initialize()
         gConsole.LogMessage(eLogLevel_Warning, "Cannot initialize texts");
     }
 
+    if (!gLevelsDatabase.Initialize())
+    {
+        gConsole.LogMessage(eLogLevel_Error, "Cannot initialize levels database");
+    }
+
     mTitleScreen.Deactivate();
 
     mCurrentGamestate = eGamestate::None;
@@ -115,6 +117,8 @@ bool GameMain::Initialize()
     gGameEventBus.Subscribe(eGameEvent_ReturnToFrontendRequest, this);
 
     Random::SetLocalThreadSeed(12345); // todo: init seed properly
+
+    gConsole.LogMessage(eLogLevel_Info, "Ready");
     return true;
 }
 
@@ -125,6 +129,14 @@ void GameMain::Shutdown()
     SetGamestate(eGamestate::None);
     gGameSession.ShutdownSession();
 
+    //
+    if (mTestScreen.IsActive())
+    {
+        mTestScreen.Deactivate();
+        mTestScreen.Cleanup();
+    }
+    //
+
     gTexts.Shutdown();
     gGameRenderer.Shutdown();
     gUiManager.Shutdown();
@@ -134,6 +146,7 @@ void GameMain::Shutdown()
     gShadersManager.Shutdown();
     gDK2AssetLoader.Shutdown();
     gRenderDevice.Shutdown();
+    gLevelsDatabase.Shutdown();
     gFiles.Shutdown();
     gConsole.Shutdown();
     gDebug.Shutdown();
@@ -171,11 +184,6 @@ void GameMain::Run()
     Shutdown();
 }
 
-void GameMain::RequestReturnToFrontend()
-{
-
-}
-
 void GameMain::Terminate()
 {    
     Shutdown(); // leave gracefully
@@ -198,7 +206,13 @@ void GameMain::InputEvent(KeyInputEvent& inputEvent)
         inputEvent.SetConsumed();
     }
 
-    if (!inputEvent.mConsumed && (gGameSession.GetSessionState() == eGameSessionState_Active))
+    // toggle fullscreen
+    if (inputEvent.IsKeyPressed(KEYCODE_ENTER) && inputEvent.HasModifiers(KEYMOD_CTRL))
+    {
+        // todo:
+    }
+
+    if (!inputEvent.mConsumed && gGameSession.IsInState(eGameSessionState_Active))
     {
         gGameSession.InputEvent(inputEvent);
     }
@@ -212,9 +226,11 @@ void GameMain::InputEvent(KeyCharEvent& inputEvent)
 void GameMain::InputEvent(MouseButtonInputEvent& inputEvent)
 {
     gInputs.SetMouseButtonState(inputEvent.mButton, inputEvent.mPressed);
+
+    inputEvent.mMousePosition = gInputs.GetMousePosition();
     gUiManager.InputEvent(inputEvent);
 
-    if (!inputEvent.mConsumed && (gGameSession.GetSessionState() == eGameSessionState_Active))
+    if (!inputEvent.mConsumed && gGameSession.IsInState(eGameSessionState_Active))
     {
         gGameSession.InputEvent(inputEvent);
     }
@@ -222,10 +238,12 @@ void GameMain::InputEvent(MouseButtonInputEvent& inputEvent)
 
 void GameMain::InputEvent(MouseMovedInputEvent& inputEvent)
 {
-    gInputs.SetMousePosition(inputEvent.mCursorPositionX, inputEvent.mCursorPositionY);
+    inputEvent.mDelta = inputEvent.mMousePosition - gInputs.GetMousePosition();
+
+    gInputs.SetMousePosition(inputEvent.mMousePosition);
     gUiManager.InputEvent(inputEvent);
 
-    if (!inputEvent.mConsumed && (gGameSession.GetSessionState() == eGameSessionState_Active))
+    if (!inputEvent.mConsumed && gGameSession.IsInState(eGameSessionState_Active))
     {
         gGameSession.InputEvent(inputEvent);
     }
@@ -233,9 +251,11 @@ void GameMain::InputEvent(MouseMovedInputEvent& inputEvent)
 
 void GameMain::InputEvent(MouseScrollInputEvent& inputEvent)
 {
+    // plug in cursor position
+    inputEvent.mMousePosition = gInputs.GetMousePosition();
     gUiManager.InputEvent(inputEvent);
 
-    if (!inputEvent.mConsumed && (gGameSession.GetSessionState() == eGameSessionState_Active))
+    if (!inputEvent.mConsumed && gGameSession.IsInState(eGameSessionState_Active))
     {
         gGameSession.InputEvent(inputEvent);
     }
@@ -252,7 +272,7 @@ void GameMain::UpdateFrame()
     // variable delta time frame update
     {
         float gameDeltaTime = gTime.GetFrameDelta(eGameClock::Gametime);
-        if (gGameSession.GetSessionState() == eGameSessionState_Active)
+        if (gGameSession.IsInState(eGameSessionState_Active))
         {
             gGameSession.UpdateFrame(gameDeltaTime);
         }
@@ -295,9 +315,9 @@ void GameMain::HideConsoleScreen()
     }
 }
 
-void GameMain::ScreenResolutionChanged()
+void GameMain::ScreenSizeChanged(const Point2D& screenSize)
 {
-    gUiManager.ScreenSizeChanged();
+    gUiManager.ScreenSizeChanged(screenSize);
 }
 
 void GameMain::UpdateLoadingProgress(float progress)
@@ -358,13 +378,13 @@ bool GameMain::StartScenario(const std::string& scenarioName)
 
     gGameSession.ShutdownSession();
 
-    SetGamestate(eGamestate::LoadingScenario);
+    SetGamestate(eGamestate::LoadingGameplay);
 
     UpdateLoadingProgress(0.0f);
 
     GameSessionStartupParams sessionParams;
     sessionParams.mSessionType = eGameSession_Level;
-    sessionParams.mScenarioName = scenarioName;
+    sessionParams.mLevelName = scenarioName;
 
     bool isSuccess = gGameSession.Preload(*this, sessionParams);
 
@@ -374,7 +394,7 @@ bool GameMain::StartScenario(const std::string& scenarioName)
 
     if (isSuccess)
     {
-        cxx_assert(gGameSession.GetSessionState() == eGameSessionState_Loaded);
+        cxx_assert(gGameSession.IsInState(eGameSessionState_Loaded));
         SetGamestate(eGamestate::Gameplay);
 
         gGameSession.StartSession();
@@ -400,7 +420,7 @@ bool GameMain::StartFrontend()
 
     GameSessionStartupParams sessionParams;
     sessionParams.mSessionType = eGameSession_Frontend;
-    sessionParams.mScenarioName = FRONT_END_3D_LEVEL;
+    sessionParams.mLevelName = "FrontEnd3DLevel";
 
     bool isSuccess = gGameSession.Preload(*this, sessionParams);
 
@@ -410,7 +430,7 @@ bool GameMain::StartFrontend()
 
     if (isSuccess)
     {
-        cxx_assert(gGameSession.GetSessionState() == eGameSessionState_Loaded);
+        cxx_assert(gGameSession.IsInState(eGameSessionState_Loaded));
         SetGamestate(eGamestate::Frontend);
 
         gGameSession.StartSession();
@@ -441,7 +461,7 @@ void GameMain::SetGamestate(eGamestate newGamestate)
 
 void GameMain::UpdateLogic(float stepDeltaTime)
 {
-    if (gGameSession.GetSessionState() == eGameSessionState_Active)
+    if (gGameSession.IsInState(eGameSessionState_Active))
     {
         gGameSession.UpdateLogic(stepDeltaTime);
     }
@@ -449,7 +469,7 @@ void GameMain::UpdateLogic(float stepDeltaTime)
 
 void GameMain::UpdatePhysics(float stepDeltaTime)
 {
-    if (gGameSession.GetSessionState() == eGameSessionState_Active)
+    if (gGameSession.IsInState(eGameSessionState_Active))
     {
         gGameSession.UpdatePhysics(stepDeltaTime);
     }

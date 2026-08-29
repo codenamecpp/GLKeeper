@@ -75,6 +75,12 @@ namespace cxx
         return 0 == strcmp(c_str(lhs), c_str(rhs));
     }
 
+    template<typename TStringLHS, typename TStringRHS>
+    inline bool strings_eq_icase(const TStringLHS& lhs, const TStringRHS& rhs)
+    {
+        return 0 == _stricmp(c_str(lhs), c_str(rhs));
+    }
+
     template<typename TSrcString, typename TPrefixString>
     inline bool starts_with_icase(const TSrcString& sourceString, const TPrefixString& prefixString)
     {
@@ -139,7 +145,7 @@ namespace cxx
 
     // utf-8 to wide
 
-    bool string_to_wide_string(const std::string_view& srcString, std::wstring& resultString);
+    bool string_to_wide_string(std::string_view srcString, std::wstring& resultString);
 
     //////////////////////////////////////////////////////////////////////////
 

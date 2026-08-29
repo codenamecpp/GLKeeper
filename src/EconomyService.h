@@ -10,7 +10,6 @@
 class EconomyService final: public cxx::noncopyable
 {
 public:
-
     void EnterWorld();
     void ClearWorld();
 

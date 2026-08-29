@@ -10,7 +10,7 @@ CreatureAction_ClaimFloor::CreatureAction_ClaimFloor()
 {
 }
 
-void CreatureAction_ClaimFloor::Configure(Creature* creature, const MapPoint2D& targetTile)
+void CreatureAction_ClaimFloor::Configure(Creature* creature, const Point2D& targetTile)
 {
     CreatureAction::Configure(creature);
     mFloorTile = gGameMap.GetMapTileOrNull(targetTile);
@@ -20,7 +20,7 @@ void CreatureAction_ClaimFloor::Configure(Creature* creature, const MapPoint2D& 
 void CreatureAction_ClaimFloor::OnRecycle()
 {
     CreatureAction::OnRecycle();
-    mFloorTile = {};
+    mFloorTile = nullptr;
     mClaimTimer = {};
 }
 
@@ -77,7 +77,7 @@ void CreatureAction_ClaimFloor::HandleResumeAction(eCreatureAction subActionId, 
         }
 
         // check distance
-        const MapPoint2D currentTile = GetCreature().GetTilePosition();
+        const Point2D currentTile = GetCreature().GetTilePosition();
         if (currentTile != mFloorTile->mLocation)
         {
             cxx_assert(false);
@@ -116,13 +116,11 @@ bool CreatureAction_ClaimFloor::ProcessClaimFloor(float stepDeltaTime)
 
     if (mClaimTimer.TickAndCheckExpire(stepDeltaTime))
     {
-        bool wasCompleted = false;
-        if (!gGameWorld.ClaimFloor(mFloorTile, GetCreature().GetOwnerId(), wasCompleted))
+        if (!gGameWorld.ClaimTile(mFloorTile, GetCreature().GetOwnerId()) ||
+            !gGameWorld.CanClaimTile(mFloorTile, GetCreature().GetOwnerId()))
+        {
             return false;
-
-        if (wasCompleted)
-            return false;
-
+        }
         // continue with operation
         mClaimTimer.Start();
     }

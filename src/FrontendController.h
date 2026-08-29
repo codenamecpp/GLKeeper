@@ -2,9 +2,10 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-#include "FrontendCameraController.h"
 #include "GameSessionController.h"
+#include "FrontendCameraController.h"
 #include "FrontendScreen.h"
+#include "FrontendDefs.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -13,10 +14,6 @@ class FrontendController: public GameSessionController
 {
 public:
     FrontendController();
-
-    // notifications
-    void OnStartSinglePlayerGameSelected();
-    void OnQuitGameSelected();
 
     // override GameSessionController
     void OnSessionLoaded() override;
@@ -29,7 +26,25 @@ public:
     void InputEvent(MouseMovedInputEvent& inputEvent) override;
     void InputEvent(MouseScrollInputEvent& inputEvent) override;
 
+public:
+    // frontendscreen notifications
+    void OnOpenSinglePlayerMenuSelected();
+    void OnMyPetDungeonMenuSelected();
+    void OnMyPetDungeonMenuCancelled();
+    void OnMyPetDungeonLevelSelect(const std::string& fileName);
+    void OnOpenSkirmishMenuSelected();
+    void OnSinglePlayerCancelled();
+    void OnSkirmishMapSelectCancelled();
+    void OnSkirmishMapSelectConfirmed(const std::string& fileName);
+    void OnMissionBriefingCancelled(bool isMyPetDungeon);
+    void OnMissionBriefingConfirmed(const std::string& fileName);
+    void OnQuitGameConfirmed();
+    void OnQuitGameCancelled();
+    void OnQuitGameSelected();
+
 private:
     FrontendCameraController mCameraController;
-    FrontendScreen mMenuScreen;
+    FrontendScreen mFrontendScreen;
 };
+
+//////////////////////////////////////////////////////////////////////////

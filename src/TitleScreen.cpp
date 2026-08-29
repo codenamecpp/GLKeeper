@@ -1,15 +1,15 @@
 #include "stdafx.h"
-#include "TitleScreenView.h"
+#include "TitleScreen.h"
 
 #include "TextureManager.h"
 #include "UiRenderContext.h"
 
-TitleScreenView::TitleScreenView() 
+TitleScreen::TitleScreen() 
     : UiView(eUiViewLayer_Loadscreen)
 {
 }
 
-bool TitleScreenView::LoadContent()
+bool TitleScreen::LoadContent()
 {
     if (IsHierarchyLoaded())
         return true;
@@ -21,19 +21,19 @@ bool TitleScreenView::LoadContent()
     return true;
 }
 
-void TitleScreenView::Cleanup()
+void TitleScreen::Cleanup()
 {
     UiView::Cleanup();
 
     mBackgroundTexture = nullptr;
 }
 
-void TitleScreenView::UpdateFrame(float deltaTime)
+void TitleScreen::UpdateFrame(float deltaTime)
 {
 
 }
 
-void TitleScreenView::RenderFrame(UiRenderContext& renderContext)
+void TitleScreen::RenderFrame(UiRenderContext& renderContext)
 {
     const Rect2D& screenRect = renderContext.GetScreenRect();
 

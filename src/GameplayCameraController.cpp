@@ -1,7 +1,8 @@
 #include "stdafx.h"
-#include "WorldViewCameraController.h"
+#include "GameplayCameraController.h"
 #include "Camera.h"
 #include "GameWorld.h"
+#include "UiManager.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +18,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-WorldViewCameraController::WorldViewCameraController() 
+GameplayCameraController::GameplayCameraController() 
     : mRotationAngles(CAM_ANGLE, 0.0f, 0.0f)
     , mStartPosition()
     , mIncreasingFov()
@@ -26,19 +27,19 @@ WorldViewCameraController::WorldViewCameraController()
 {
 }
 
-void WorldViewCameraController::CaptureCamera(Camera* camera)
+void GameplayCameraController::CaptureCamera(Camera* camera)
 {
     mCamera = camera;
     cxx_assert(camera);
     ResetCamera();
 }
 
-void WorldViewCameraController::ReleaseCamera()
+void GameplayCameraController::ReleaseCamera()
 {
     mCamera = nullptr;
 }
 
-void WorldViewCameraController::UpdateFrame(float deltaTime)
+void GameplayCameraController::UpdateFrame(float deltaTime)
 {
     if (mCamera == nullptr) 
         return;
@@ -49,7 +50,7 @@ void WorldViewCameraController::UpdateFrame(float deltaTime)
 
     // move
     {
-        glm::vec2 inputDirection = GetMoveDirectionFromInputs();
+        glm::vec2 inputDirection = GetCameraMoveVectorFromInputs();
 
         glm::vec2 targetVelocity = inputDirection * CAM_MOTION_SPEED;
 
@@ -96,8 +97,7 @@ void WorldViewCameraController::UpdateFrame(float deltaTime)
     if (!cxx::eps_equals_zero(zoomDirection))
     {
         mCameraHeight -= zoomDirection * CAM_MOTION_SPEED * deltaTime;
-        // clamp height
-        mCameraHeight = std::clamp(mCameraHeight, CAM_MIN_HEIGHT, CAM_MAX_HEIGHT);
+        ClampCameraHeight(mCameraHeight);
         cameraHeightChanged = true;
     }
 
@@ -115,11 +115,11 @@ void WorldViewCameraController::UpdateFrame(float deltaTime)
     }
 }
 
-void WorldViewCameraController::InputEvent(MouseButtonInputEvent& inputEvent)
+void GameplayCameraController::InputEvent(MouseButtonInputEvent& inputEvent)
 {
 }
 
-void WorldViewCameraController::InputEvent(KeyInputEvent& inputEvent)
+void GameplayCameraController::InputEvent(KeyInputEvent& inputEvent)
 {
     if (mCamera == nullptr) 
         return;
@@ -140,59 +140,55 @@ void WorldViewCameraController::InputEvent(KeyInputEvent& inputEvent)
     }
 }
 
-void WorldViewCameraController::InputEvent(MouseMovedInputEvent& inputEvent)
+void GameplayCameraController::InputEvent(MouseMovedInputEvent& inputEvent)
 {
 }
 
-void WorldViewCameraController::InputEvent(MouseScrollInputEvent& inputEvent)
+void GameplayCameraController::InputEvent(MouseScrollInputEvent& inputEvent)
 {
+    mCameraHeight -= inputEvent.mScroll.y * 0.25f;
+    ClampCameraHeight(mCameraHeight);
+    ApplyPositionAndRotation();
 }
 
-void WorldViewCameraController::SetStartPosition(const glm::vec2& position)
+void GameplayCameraController::SetStartPosition(const glm::vec2& position)
 {
     mStartPosition = position;
 }
 
-void WorldViewCameraController::SetPositionBounds(const glm::vec2& boundsMin, const glm::vec2& boundsMax)
+void GameplayCameraController::SetPositionBounds(const glm::vec2& boundsMin, const glm::vec2& boundsMax)
 {
     mBoundsMin = glm::min(boundsMin, boundsMax);
     mBoundsMax = glm::max(boundsMin, boundsMax);
 }
 
-glm::vec2 WorldViewCameraController::GetMoveDirectionFromInputs() const
+glm::vec2 GameplayCameraController::GetCameraMoveVectorFromInputs() const
 {
     cxx_assert(mCamera);
 
-    bool ctrlPressed = (gInputs.GetKeyState(KEYCODE_LEFT_CTRL) || gInputs.GetKeyState(KEYCODE_RIGHT_CTRL));
-    if (ctrlPressed)
-        return glm::vec2{0.0f};
-
-    bool northPressed = gInputs.GetKeyState(KEYCODE_W) || gInputs.GetKeyState(KEYCODE_UP);
-    bool southPressed = gInputs.GetKeyState(KEYCODE_S) || gInputs.GetKeyState(KEYCODE_DOWN);
-    bool eastPressed  = gInputs.GetKeyState(KEYCODE_D) || gInputs.GetKeyState(KEYCODE_RIGHT);
-    bool westPressed  = gInputs.GetKeyState(KEYCODE_A) || gInputs.GetKeyState(KEYCODE_LEFT);
-
     glm::vec3 moveDirection {0.0f};
-    if (northPressed || southPressed || eastPressed || westPressed)
+
+    EnumSet<eDirection> cardinalDirs;
+    if (GetCameraMoveDirections(cardinalDirs))
     {
-        if (northPressed || southPressed)
+        if (cardinalDirs.Contains(eDirection_N) || cardinalDirs.Contains(eDirection_S))
         {
             const glm::vec3 vmove = glm::normalize(glm::cross(WorldAxes::Y, mCamera->mRight));
-            if (southPressed)
+            if (cardinalDirs.Contains(eDirection_S))
             {
                 moveDirection += vmove;
             }
-            if (northPressed)
+            if (cardinalDirs.Contains(eDirection_N))
             {
                 moveDirection -= vmove;
             }
         }
 
-        if (eastPressed)
+        if (cardinalDirs.Contains(eDirection_E))
         {
             moveDirection -= mCamera->mRight;
         }
-        if (westPressed)
+        if (cardinalDirs.Contains(eDirection_W))
         {
             moveDirection += mCamera->mRight;
         }
@@ -201,7 +197,67 @@ glm::vec2 WorldViewCameraController::GetMoveDirectionFromInputs() const
     return glm::vec2{moveDirection.x, moveDirection.z};
 }
 
-float WorldViewCameraController::GetRotateDirectionFromInputs() const
+bool GameplayCameraController::GetCameraMoveDirections(EnumSet<eDirection>& cardinalDirs) const
+{
+    cardinalDirs.Clear();
+
+    bool ctrlPressed = (gInputs.GetKeyState(KEYCODE_LEFT_CTRL) || gInputs.GetKeyState(KEYCODE_RIGHT_CTRL));
+    if (!ctrlPressed)
+    {
+        // north
+        if (gInputs.GetKeyState(KEYCODE_W) || gInputs.GetKeyState(KEYCODE_UP))
+        {
+            cardinalDirs.Include(eDirection_N);
+        }
+        // south
+        if (gInputs.GetKeyState(KEYCODE_S) || gInputs.GetKeyState(KEYCODE_DOWN))
+        {
+            cardinalDirs.Include(eDirection_S);
+        }
+        // east
+        if (gInputs.GetKeyState(KEYCODE_D) || gInputs.GetKeyState(KEYCODE_RIGHT))
+        {
+            cardinalDirs.Include(eDirection_E);
+        }
+        // west
+        if (gInputs.GetKeyState(KEYCODE_A) || gInputs.GetKeyState(KEYCODE_LEFT))
+        {
+            cardinalDirs.Include(eDirection_W);
+        }
+    }
+
+    // edge scrolling
+    if (mEnableEdgeScrolling)
+    {
+        const Point2D& mousePos = gInputs.GetMousePosition();
+        const Point2D edgeTolerance {2, 2};
+        Rect2D screenRect = gUiManager.GetScreenRect();
+        screenRect.Inflate(-edgeTolerance);
+        // north
+        if (mousePos.y < screenRect.y)
+        {
+            cardinalDirs.Include(eDirection_N);
+        }
+        // south
+        if (mousePos.y >= (screenRect.y + screenRect.h))
+        {
+            cardinalDirs.Include(eDirection_S);
+        }
+        // east
+        if (mousePos.x >= (screenRect.x + screenRect.w))
+        {
+            cardinalDirs.Include(eDirection_E);
+        }
+        // west
+        if (mousePos.x < screenRect.x)
+        {
+            cardinalDirs.Include(eDirection_W);
+        }
+    }
+    return !cardinalDirs.Empty();
+}
+
+float GameplayCameraController::GetRotateDirectionFromInputs() const
 {
     bool ctrlPressed = (gInputs.GetKeyState(KEYCODE_LEFT_CTRL) || gInputs.GetKeyState(KEYCODE_RIGHT_CTRL));
     if (ctrlPressed)
@@ -213,7 +269,7 @@ float WorldViewCameraController::GetRotateDirectionFromInputs() const
     return 0.0f;
 }
 
-float WorldViewCameraController::GetZoomDirectionFromInputs()
+float GameplayCameraController::GetZoomDirectionFromInputs()
 {
     bool ctrlPressed = (gInputs.GetKeyState(KEYCODE_LEFT_CTRL) || gInputs.GetKeyState(KEYCODE_RIGHT_CTRL));
     if (ctrlPressed)
@@ -231,12 +287,17 @@ float WorldViewCameraController::GetZoomDirectionFromInputs()
     return 0.0f;
 }
 
-void WorldViewCameraController::ClampWithinBounds(glm::vec2& position) const
+void GameplayCameraController::ClampWithinBounds(glm::vec2& position) const
 {
     position = glm::clamp(position, mBoundsMin, mBoundsMax);
 }
 
-void WorldViewCameraController::ApplyPositionAndRotation()
+void GameplayCameraController::ClampCameraHeight(float& height) const
+{
+    height = std::clamp(height, CAM_MIN_HEIGHT, CAM_MAX_HEIGHT);
+}
+
+void GameplayCameraController::ApplyPositionAndRotation()
 {
     mCamera->SetRotation(mRotationAngles);
 
@@ -251,7 +312,7 @@ void WorldViewCameraController::ApplyPositionAndRotation()
     mCamera->SetPosition(cameraPosition - worldForward * distanceFromTargetPoint);
 }
 
-void WorldViewCameraController::ResetCamera()
+void GameplayCameraController::ResetCamera()
 {
     if (mCamera == nullptr) 
         return;
@@ -269,7 +330,7 @@ void WorldViewCameraController::ResetCamera()
     ApplyPositionAndRotation();
 }
 
-void WorldViewCameraController::StopCamera()
+void GameplayCameraController::StopCamera()
 {
     mIncreasingFov = false;
     mDecreasingFov = false;

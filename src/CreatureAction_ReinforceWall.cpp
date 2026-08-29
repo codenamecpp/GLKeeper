@@ -11,7 +11,7 @@ CreatureAction_ReinforceWall::CreatureAction_ReinforceWall()
 
 }
 
-void CreatureAction_ReinforceWall::Configure(Creature* creature, const glm::vec2& workPoint, const MapPoint2D& targetTile)
+void CreatureAction_ReinforceWall::Configure(Creature* creature, const glm::vec2& workPoint, const Point2D& targetTile)
 {
     CreatureAction::Configure(creature);
     mWallTile = gGameMap.GetMapTileOrNull(targetTile);
@@ -22,7 +22,7 @@ void CreatureAction_ReinforceWall::Configure(Creature* creature, const glm::vec2
 void CreatureAction_ReinforceWall::OnRecycle()
 {
     CreatureAction::OnRecycle();
-    mWallTile = {};
+    mWallTile = nullptr;
     mWorkPoint = {};
     mReinforceTimer = {};
 }
@@ -79,7 +79,7 @@ void CreatureAction_ReinforceWall::HandleResumeAction(eCreatureAction subActionI
         }
 
         // check distance
-        const MapPoint2D currentTile = GetCreature().GetTilePosition();
+        const Point2D currentTile = GetCreature().GetTilePosition();
         if (!MapUtils::AreTilesAdjacent(currentTile, mWallTile->mLocation))
         {
             cxx_assert(false);
@@ -125,13 +125,11 @@ bool CreatureAction_ReinforceWall::ProcessReinforcingWall(float stepDeltaTime)
 
     if (mReinforceTimer.TickAndCheckExpire(stepDeltaTime))
     {
-        bool wasCompleted = false;
-        if (!gGameWorld.ReinforceWall(mWallTile, GetCreature().GetOwnerId(), wasCompleted))
+        if (!gGameWorld.ReinforceWall(mWallTile, GetCreature().GetOwnerId()) || 
+            !gGameWorld.CanReinforceWall(mWallTile, GetCreature().GetOwnerId()))
+        {
             return false;
-
-        if (wasCompleted)
-            return false;
-
+        }
         // continue with operation
         mReinforceTimer.Start();
     }

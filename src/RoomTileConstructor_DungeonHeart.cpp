@@ -13,7 +13,7 @@ void RoomTileConstructor_DungeonHeart::ConstructRoomFloor(Room* roomInstance, cx
 {
     RoomTileConstructor_5_by_5::ConstructRoomFloor(roomInstance, floorTiles);
 
-    const MapArea2D& locationArea = roomInstance->GetLocationArea();
+    const Rect2D& locationArea = roomInstance->GetLocationArea();
 
     // construct inner geometry
     for (MapTile* mapTile: floorTiles)

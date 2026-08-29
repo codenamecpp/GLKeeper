@@ -8,18 +8,13 @@
 #include "AnimatingMeshObject.h"
 #include "Entity.h"
 #include "PhysicsDefs.h"
-#include "GameObjectComponents.h"
-#include "GameObjectCapabilities.h"
 #include "Locomotion.h"
 
 //////////////////////////////////////////////////////////////////////////
 
 // Defines generic object in dungeon such as room furniture, pillar, crate, gold etc
 
-class GameObject final
-    : public Entity
-    , public EnableEntityComponents<GameObjectComponents>
-    , public EnableEntityCapabilities<GameObjectCapabilities>
+class GameObject final: public Entity
 {
 public:
 
@@ -61,7 +56,7 @@ public:
     void SetOrientation(cxx::angle_t orientation);
     void SetTransform(const EntityTransform& transform);
 
-    MapPoint2D GetTilePosition() const;
+    Point2D GetTilePosition() const;
 
     //////////////////////////////////////////////////////////////////////////
     // description
@@ -93,6 +88,12 @@ public:
     const cxx::aabbox& GetMeshWorldBounds() const;
 
     //////////////////////////////////////////////////////////////////////////
+
+    // highlight control
+    void SetHighlighted(bool isHighlighted);
+    bool IsHighlighted() const { return mIsHighlighted; }
+
+    //////////////////////////////////////////////////////////////////////////
     // notifications
     //////////////////////////////////////////////////////////////////////////
 
@@ -109,21 +110,25 @@ public:
     // part of the internal GameObject Controllers API, not intended for public use
     //////////////////////////////////////////////////////////////////////////
 
-    // enable or disable primary components
+    // physics control
+    void InitPhysics();
+    void FreePhysics();
     void EnablePhysics(bool isEnabled);
-    void EnableMeshObject(bool isEnabled);
 
-    // current state
-    void SetCurrentState(eGameObjectState stateId);
-    inline eGameObjectState GetCurrentState() const { return mCurrentState; }
-
-    // mesh resource
+    // mesh control
+    void InitMesh();
+    void FreeMesh();
+    void ShowMesh(bool isEnabled);
     bool HasMeshResource(eGameObjectMeshId meshId) const;
     bool SetMeshResource(eGameObjectMeshId meshId);
 
     // mesh animation params
     bool RescaleAnimationDuration(float animDuration);
     void ResetAnimationDuration();
+
+    // current state
+    void SetCurrentState(eGameObjectState stateId);
+    inline eGameObjectState GetCurrentState() const { return mCurrentState; }
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -140,6 +145,8 @@ private:
     Locomotion mLocomotion;
     cxx::uniqueptr<AnimatingMeshObject> mMeshObject; // optional
     eGameObjectMeshId mMeshResourceId = eGameObjectMeshId_Main;
+
+    bool mIsHighlighted {};
 };
 
 //////////////////////////////////////////////////////////////////////////

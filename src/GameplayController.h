@@ -3,11 +3,12 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "GameSessionController.h"
-#include "HUDScreenView.h"
-#include "WorldViewCameraController.h"
+#include "HUDScreen.h"
+#include "GameplayCameraController.h"
 #include "DebugToolsUi.h"
 #include "GameplayDefs.h"
 #include "GameEvent.h"
+#include "HeldThingView.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -16,7 +17,6 @@ class GameplayController: public GameSessionController
 {
 public:
     // public for convenience, don't change these fields directly
-    eMapInteractionMode mInteraction;
     MapTile* mHoveredTile; 
     RoomDefinition* mConstructRoomDef; // specified if mode eHandOfEvilMode_ConstructRoom
     GameObjectDefinition* mConstructTrapDef;  // specified if mode eHandOfEvilMode_ConstructTrap
@@ -24,22 +24,18 @@ public:
 public:
     GameplayController();
 
-    // Change current interaction mode to room construction
-    // @param roomDefinition: Specific room construction type
-    void SetRoomConstruction(RoomDefinition* roomDefinition);
-
-    // Change current interaction mode to trap construction
-    // @param trapDefinition: Specific trap construction type
-    void SetTrapConstruction(GameObjectDefinition* trapDefinition);
-
-    // Change current interaction mode to default
+    // Change current map interaction mode
+    void SetRoomConstructionMode(RoomDefinition* roomDefinition);
+    void SetTrapConstructionMode(GameObjectDefinition* trapDefinition);
     void SetFreeInteraction();
-
-    // Change current interaction mode to sell rooms and traps
     void SetRoomSellInteraction();
-
-    // Change current interaction mode to claim or destroy terrain tiles
     void SetDigTerrainInteraction();
+
+    inline eMapInteractionMode GetMapInteractionMode() const { return mMapInteractionMode; }
+    inline bool IsInInteractionMode(eMapInteractionMode mode) const
+    {
+        return mMapInteractionMode == mode;
+    }
 
     // override GameSessionController
     void OnSessionLoaded() override;
@@ -56,25 +52,38 @@ public:
     void HandleGameEvent(const GameEvent& eventData) override;
 
 private:
-    void ScanHoveredTile();
+    void UpdateHoveredTile();
+    MapTile* ScanHoveredTile() const;
     void BeginMultitileSelection();
     void EndMultitileSelection(bool success);
-    void OnSelectionChanged();
+    void OnMapSelectionChanged();
     bool NeedToShowSelection() const;
     bool CanMultitileSelect() const;
     bool IsMultitileSelectionStarted() const;
-    bool GetTerrainSelectionArea(MapArea2D* selectionArea) const;
+    bool GetMapSelectionArea(Rect2D& selectionArea) const;
     void OnInteractionModeChanged();   
-    void HandleInteractionOnArea(const MapArea2D& tilesArea);
-    bool HandleTagForDigging(const MapArea2D& tilesArea);
+    void HandleInteractionOnArea(const Rect2D& tilesArea);
+    bool HandleTagForDigging(const Rect2D& tilesArea);
+    
+    void UpdateMapSelectionTint();
+    void UpdateHeldThingView();
 
-    void HandleSingleTileInteraction();
-    void HandleSingleTileInteractionAlt();
+    void UpdateHoveredEntity();
+    void OnHoveredEntityChanged(EntityHandle prevEntity);
+
+    void HandleHoveredEntityInteraction(bool alt);
+    void HandleSingleTileInteraction(bool alt);
 
 private:
-    HUDScreenView mHUDScreen;
-    WorldViewCameraController mWorldViewCamera;
+    HUDScreen mHUDScreen;
+    GameplayCameraController mGameplayCamera;
     DebugToolsUi mDebugToolsUi;
+
+    eMapInteractionMode mMapInteractionMode;
+
+    EntityHandle mHoveredEntity;
+
+    HeldThingView mHeldEntityView;
 
     MapTile* mSelectionStartTile;
 };

@@ -1,62 +1,107 @@
 #pragma once
 
+//////////////////////////////////////////////////////////////////////////
+
 #include "UiDefs.h"
 
 //////////////////////////////////////////////////////////////////////////
 
-enum UiEventID
+enum UiEventId
 {
-    UiEventID_None,
-    UiEventID_Notification, // user defined event
+    UiEventId_None,
 
-    UiEventID_OnPress,
-    UiEventID_OnClick,
+    UiEventId_OnPress,
+    UiEventId_OnRelease,
+    UiEventId_OnClick,
+    UiEventId_OnMouseMove,
+    UiEventId_Wheel,
+    UiEventId_ChangeScroll,
 
-    // More widget events add here
-
-    UiEvent_COUNT // must be very last
+    UiEventId_COUNT // must be very last
 };
 
 //////////////////////////////////////////////////////////////////////////
 
-// Base Ui Event Desc
-struct UiEventDesc
+struct UiEvent
 {
-    UiEventDesc(UiEventID eventID): mEventID(eventID)
+public:
+    UiEvent(UiEventId eventId): mEventId(eventId)
     {}
-    UiEventID mEventID;
+    inline bool IsEvent(UiEventId eventId) const { return mEventId == eventId; }
+public:
+    const UiEventId mEventId;
+
+    // event-specific data
+
+    int mMouseButton {};
+
+    Point2D mDelta {};
+    Point2D mMouseScreenPosition {};
+    Point2D mScroll {};
 };
 
-//////////////////////////////////////////////////////////////////////////
-
-struct UiEvent_OnPress: public UiEventDesc
+struct UiEvent_OnPress: public UiEvent
 {
-    UiEvent_OnPress(int mouseIdx): UiEventDesc(UiEventID_OnPress)
-        , mMouseIdx(mouseIdx)
-    {}
-    int mMouseIdx;
+public:
+    UiEvent_OnPress(int mouseButton, const Point2D& cursorScreenPosition)
+        : UiEvent(UiEventId_OnPress)
+    {
+        mMouseButton = mouseButton;
+        mMouseScreenPosition = cursorScreenPosition;
+    }
 };
 
-//////////////////////////////////////////////////////////////////////////
-
-struct UiEvent_OnClick: public UiEventDesc
+struct UiEvent_OnRelease: public UiEvent
 {
-    UiEvent_OnClick(int mouseIdx): UiEventDesc(UiEventID_OnClick)
-        , mMouseIdx(mouseIdx)
-    {}
-    int mMouseIdx;
+public:
+    UiEvent_OnRelease(int mouseButton, const Point2D& cursorScreenPosition)
+        : UiEvent(UiEventId_OnRelease)
+    {
+        mMouseButton = mouseButton;
+        mMouseScreenPosition = cursorScreenPosition;
+    }
 };
 
-//////////////////////////////////////////////////////////////////////////
-
-struct UiEvent_Notification: public UiEventDesc
+struct UiEvent_OnClick: public UiEvent
 {
-    UiEvent_Notification(int code, int intParam): UiEventDesc(UiEventID_Notification)
-        , mCode(code)
-        , mParam(intParam)
-    {}
-    int mCode;
-    int mParam;
+public:
+    UiEvent_OnClick(int mouseButton)
+        : UiEvent(UiEventId_OnClick)
+    {
+        mMouseButton = mouseButton;
+    }
+};
+
+struct UiEvent_OnMouseMove: public UiEvent
+{
+public:
+    UiEvent_OnMouseMove(const Point2D& delta, const Point2D& cursorScreenPosition)
+        : UiEvent(UiEventId_OnMouseMove)
+    {
+        mDelta = delta;
+        mMouseScreenPosition = cursorScreenPosition;
+    }
+};
+
+struct UiEvent_OnWheel: public UiEvent
+{
+public:
+    UiEvent_OnWheel(const Point2D& delta, const Point2D& cursorScreenPosition)
+        : UiEvent(UiEventId_Wheel)
+    {
+        mDelta = delta;
+        mMouseScreenPosition = cursorScreenPosition;
+    }
+};
+
+struct UiEvent_OnChangeScroll: public UiEvent
+{
+public:
+    UiEvent_OnChangeScroll(const Point2D& scrollPosition)
+        : UiEvent(UiEventId_ChangeScroll)
+    {
+        mScroll = scrollPosition;
+    }
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -69,6 +114,8 @@ public:
     // Process event
     // @param sender: Event source
     // @param eventDesc: Event info
-    virtual void HandleUiEvent(UiWidget* sender, const UiEventDesc* eventDesc)
+    virtual void HandleUiEvent(UiWidget* sender, const UiEvent& eventDesc)
     {}
 };
+
+//////////////////////////////////////////////////////////////////////////

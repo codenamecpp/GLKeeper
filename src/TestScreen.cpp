@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "TestScreenView.h"
+#include "TestScreen.h"
 #include "UiHelpers.h"
 #include "UiWidgetManager.h"
 #include "UiRenderContext.h"
@@ -11,7 +11,7 @@ static const std::string uiscreen_json_path = "ui/test_screen.json";
 
 //////////////////////////////////////////////////////////////////////////
 
-bool TestScreenView::LoadContent()
+bool TestScreen::LoadContent()
 {
     if (!UiView::LoadContent())
     {
@@ -27,23 +27,23 @@ bool TestScreenView::LoadContent()
     return IsHierarchyLoaded();
 }
 
-void TestScreenView::Cleanup()
+void TestScreen::Cleanup()
 {
     UiView::Cleanup();
 }
 
-void TestScreenView::UpdateFrame(float deltaTime)
+void TestScreen::UpdateFrame(float deltaTime)
 {
-
+    UiView::UpdateFrame(deltaTime);
 }
 
-void TestScreenView::RenderFrame(UiRenderContext& renderContext)
+void TestScreen::RenderFrame(UiRenderContext& renderContext)
 {
     renderContext.FillRect(renderContext.GetScreenRect(), COLOR_DARK_GRAY);
     UiView::RenderFrame(renderContext);
 }
 
-void TestScreenView::InputEvent(KeyInputEvent& inputEvent)
+void TestScreen::InputEvent(KeyInputEvent& inputEvent)
 {
     if (inputEvent.mPressed)
     {
@@ -60,7 +60,7 @@ void TestScreenView::InputEvent(KeyInputEvent& inputEvent)
     }
 }
 
-void TestScreenView::HandleUiEvent(UiWidget* sender, const UiEventDesc* eventDesc)
+void TestScreen::HandleUiEvent(UiWidget* sender, const UiEvent& eventDesc)
 {
 
 }

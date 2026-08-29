@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "UiView.h"
 #include "UiWidgetManager.h"
+#include "UiManager.h"
 
 UiView::UiView(eUiViewLayer viewLayer)
     : mViewLayer(viewLayer)
@@ -12,11 +13,10 @@ UiView::~UiView()
     mHierarchy.Cleanup();
 }
 
-void UiView::ResolutionChanged()
+void UiView::ScreenSizeChanged(const Point2D& screenSize)
 {
     if (UiWidget* rootWidget = mHierarchy.GetRootWidget())
     {
-        const Point2D& screenSize = gRenderDevice.GetScreenResolution();
         rootWidget->FitLayoutToScreen(screenSize);
     }
 }
@@ -62,7 +62,7 @@ bool UiView::Activate()
     gWidgetManager.AttachView(this);
 
     OnActivated();
-    ResolutionChanged();
+    ScreenSizeChanged(gUiManager.GetScreenRect().GetSize());
     return true;
 }
 

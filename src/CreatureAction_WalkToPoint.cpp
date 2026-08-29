@@ -83,7 +83,7 @@ void CreatureAction_WalkToPoint::HandleUpdateLogic(float stepDeltaTime)
 
         if (!locomotion.HasGoals())
         {
-            SetActionResult(CreatureAction::eResult_Failed);
+            SetActionResult(CreatureAction::eResult_Success);
             return;
         }
 

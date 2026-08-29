@@ -12,8 +12,10 @@
 
 void DebugToolsUi::DoUI(ImGuiIO& imguiContext, float deltaTime)
 {
-    const ImVec2 initialSize { 400.0f, 200.0f };
+    static const ImVec2 initialSize {400.0f, 200.0f};
+    static const ImVec2 initialPos {426.0f, 14.0f};
 
+    ImGui::SetNextWindowPos(initialPos, ImGuiCond_Once);
     ImGui::SetNextWindowSize(initialSize, ImGuiCond_Once);
     ImGui::SetNextWindowCollapsed(true, ImGuiCond_Once);
 
@@ -158,7 +160,7 @@ void DebugToolsUi::EnableMeshPreview()
     }
 
     mPreviewMeshObject->SetPosition({0.0f, 0.0f, 0.0f});
-    mPreviewMeshObject->SetRenderLayers(RenderLayer_MeshPreview);
+    mPreviewMeshObject->GetRenderLayers().Set(eSceneRenderLayer_DebugOverlay);
     mPreviewMeshObject->SetObjectActive(true);
 
     Camera& previewCamera = mPreviewMeshRenderView->GetCamera();
@@ -166,7 +168,7 @@ void DebugToolsUi::EnableMeshPreview()
     previewCamera.SetPosition(glm::vec3(0.0f, 0.0f, 3.0f));
     previewCamera.LookAt(mPreviewMeshObject->GetPosition(), WorldAxes::Y);
     previewCamera.Translate(glm::vec3{0.0f, 0.3f, 0.0f});
-    previewCamera.mRenderLayersMask = RenderLayer_MeshPreview;
+    previewCamera.mRenderLayers.Set(eSceneRenderLayer_DebugOverlay);
     mPreviewMeshRenderView->SetActive(true);
 }
 
@@ -174,14 +176,9 @@ void DebugToolsUi::DisableMeshPreview(bool forceUnloadResources)
 {
     if (forceUnloadResources)
     {
-        // destroy mesh preview object
+        // destroy mesh preview
         mPreviewMeshObject.reset();
-
-        if (mPreviewMeshRenderView)
-        {
-            gGameRenderer.DestroyRenderView(mPreviewMeshRenderView);
-            mPreviewMeshRenderView = nullptr;
-        }
+        mPreviewMeshRenderView.reset();
     }
 
     if (!mIsMeshPreviewActive) return;

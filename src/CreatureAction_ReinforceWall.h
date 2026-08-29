@@ -11,7 +11,7 @@ class CreatureAction_ReinforceWall: public CreatureAction
 {
 public:
     CreatureAction_ReinforceWall();
-    void Configure(Creature* creature, const glm::vec2& workPoint, const MapPoint2D& targetTile);
+    void Configure(Creature* creature, const glm::vec2& workPoint, const Point2D& targetTile);
 
     // override CreatureAction
     void OnRecycle() override;

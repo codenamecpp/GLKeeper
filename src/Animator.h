@@ -14,7 +14,7 @@ public:
 
     using NameHash = size_t;
 
-    static NameHash NameToHash(const std::string_view& name);
+    static NameHash NameToHash(std::string_view name);
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -149,6 +149,14 @@ private:
 
     struct Parameters
     {
+    public:
+        Parameters() = default;
+        inline void Clear()
+        {
+            mBooleans.clear();
+            mFloats.clear();
+            mTriggers.clear();
+        }
     public:
         std::unordered_map<NameHash, bool> mBooleans;
         std::unordered_map<NameHash, float> mFloats;

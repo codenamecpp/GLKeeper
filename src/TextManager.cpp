@@ -71,7 +71,7 @@ bool TextManager::LoadTextTable(const std::string& filePath)
         return false;
     }
 
-    TextTableId tableId = mTempEncodedStringsBuffer.GetStringsListKeyFromIndex();
+    const TextTableId tableId = mTempEncodedStringsBuffer.GetStringsListKeyFromIndex();
     if (HasTextTable(tableId))
     {
         gConsole.LogMessage(eLogLevel_Warning, "Text Table '%d' already exists", tableId);

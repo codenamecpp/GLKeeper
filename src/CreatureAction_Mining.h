@@ -12,7 +12,7 @@ class CreatureAction_Mining: public CreatureAction
 public:
     CreatureAction_Mining();
 
-    void Configure(Creature* creature, const glm::vec2& workPoint, const MapPoint2D& targetTile);
+    void Configure(Creature* creature, const glm::vec2& workPoint, const Point2D& targetTile);
 
     // override CreatureAction
     void OnRecycle() override;
@@ -28,7 +28,7 @@ private:
 
 private:
     glm::vec2 mWorkPoint {};
-    MapPoint2D mTargetTile {};
+    Point2D mTargetTile {};
     SimpleTimer mMineTimer {};
 };
 

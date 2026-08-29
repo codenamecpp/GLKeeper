@@ -6,7 +6,6 @@
 
 UiButton::UiButton(): UiButton("button")
 {
-    memset(mStates, 0, sizeof(mStates));
 }
 
 UiButton::UiButton(const std::string& widgetClassName)
@@ -14,8 +13,12 @@ UiButton::UiButton(const std::string& widgetClassName)
     , mPressed()
 {
     memset(mStates, 0, sizeof(mStates));
-}
 
+    for (Color32& roller: mStatesTint)
+    {
+        roller = COLOR_WHITE;
+    }
+}
 
 UiButton::UiButton(const UiButton& sourceWidget)
     : UiWidget(sourceWidget)
@@ -24,6 +27,7 @@ UiButton::UiButton(const UiButton& sourceWidget)
     for (int iroller = 0; iroller < eUiButtonState_COUNT; ++iroller)
     {
         mStates[iroller] = sourceWidget.mStates[iroller];
+        mStatesTint[iroller] = sourceWidget.mStatesTint[iroller];
     }
 }
 
@@ -42,7 +46,6 @@ void UiButton::SetButtonStatePicture(eUiButtonState uiButtonState, const std::st
         TextureManager::LoadParams params;
         params.mConvertNPOT = true; // for ui textures always perform resize
         texture = gTextureManager.GetTexture(pictureName, params);
-
         cxx_assert(texture);
     }
 
@@ -54,20 +57,40 @@ void UiButton::Deserialize(const JsonElement& jsonElement)
     UiWidget::Deserialize(jsonElement);
 
     // loading picture property
-    auto GetPicturePath = [this, &jsonElement](const std::string& pictureName) -> std::string
+    auto InitButtonStatePicture = [this, &jsonElement](eUiButtonState stateId, const std::string& pictureName)
         {
             std::string picture_path;
             if (JsonElement stateProperty = jsonElement.FindElement(pictureName))
             {
                 picture_path = stateProperty.GetValueString();
             }
-            return picture_path;
+            if (!picture_path.empty())
+            {
+                this->SetButtonStatePicture(stateId, picture_path);
+            }
         };
 
-    SetButtonStatePicture(eUiButtonState_Normal, GetPicturePath("i_state_normal"));
-    SetButtonStatePicture(eUiButtonState_Hovered, GetPicturePath("i_state_hovered"));
-    SetButtonStatePicture(eUiButtonState_Disabled, GetPicturePath("i_state_disabled"));
-    SetButtonStatePicture(eUiButtonState_Pressed, GetPicturePath("i_state_pressed"));
+    InitButtonStatePicture(eUiButtonState_Normal, "i_state_normal");
+    InitButtonStatePicture(eUiButtonState_Hovered, "i_state_hovered");
+    InitButtonStatePicture(eUiButtonState_Disabled, "i_state_disabled");
+    InitButtonStatePicture(eUiButtonState_Pressed, "i_state_pressed");
+
+    // init tint
+    auto InitButtonStateTint = [this, &jsonElement](eUiButtonState stateId, const std::string& propName)
+        {
+            if (JsonElement stateProperty = jsonElement.FindElement(propName))
+            {
+                if (!JsonReadValue(stateProperty, mStatesTint[stateId]))
+                {
+                    cxx_assert(false);
+                }
+            }
+        };
+
+    InitButtonStateTint(eUiButtonState_Normal, "tint_normal");
+    InitButtonStateTint(eUiButtonState_Hovered, "tint_hovered");
+    InitButtonStateTint(eUiButtonState_Disabled, "tint_disabled");
+    InitButtonStateTint(eUiButtonState_Pressed, "tint_pressed");
 
     ButtonStateChanged(); // reset to initial state
 }
@@ -91,7 +114,7 @@ void UiButton::RenderSelf(UiRenderContext& uiRenderContext)
         // scale
         Rect2D rcDestination = GetLocalBounds();
 
-        uiRenderContext.DrawTexture(mStates[stateToDraw], COLOR_WHITE, rcDestination);
+        uiRenderContext.DrawTexture(mStates[stateToDraw], mStatesTint[mButtonState], rcDestination);
     }
 }
 
@@ -107,12 +130,15 @@ void UiButton::SetPressed(bool isPressed)
 
 void UiButton::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
+    inputEvent.SetConsumed();
+
+    bool wasClicked = false;
+
     if (inputEvent.mButton == MBUTTON_LEFT)
     {
-        bool wasClicked = false;
         if (!inputEvent.mPressed)
         {
-            wasClicked = IsPressed() && IsScreenPointInsideRect({gInputs.mCursorPositionX, gInputs.mCursorPositionY});
+            wasClicked = IsPressed() && IsScreenPointInsideRect(gInputs.GetMousePosition());
         }
         SetPressed(inputEvent.mPressed);
         if (inputEvent.mPressed)
@@ -123,21 +149,28 @@ void UiButton::HandleInputEvent(MouseButtonInputEvent& inputEvent)
         {
             gWidgetManager.ReleaseFocus(this);
         }
+    }
 
-        if (inputEvent.mPressed)
-        {
-            // notify
-            const UiEvent_OnPress eventDesc (MBUTTON_LEFT);
-            mEventListeners.IterateListeners([this, &eventDesc](UiEventListener* listener)
-                {
-                    listener->HandleUiEvent(this, &eventDesc);
-                });
-        }
-        if (wasClicked)
-        {
-            Click(MBUTTON_LEFT);
-        }
-        inputEvent.mConsumed = true;
+    if (inputEvent.mPressed)
+    {
+        const UiEvent_OnPress eventDesc {inputEvent.mButton, inputEvent.mMousePosition};
+        mEventListeners.IterateListeners([this, &eventDesc](UiEventListener* listener)
+            {
+                listener->HandleUiEvent(this, eventDesc);
+            });
+    }
+    else
+    {
+        const UiEvent_OnRelease eventDesc {inputEvent.mButton, inputEvent.mMousePosition};
+        mEventListeners.IterateListeners([this, &eventDesc](UiEventListener* listener)
+            {
+                listener->HandleUiEvent(this, eventDesc);
+            });
+    }
+
+    if (wasClicked)
+    {
+        Click(inputEvent.mButton);
     }
 }
 
@@ -196,6 +229,6 @@ void UiButton::Click(int mouseButton)
     const UiEvent_OnClick eventDesc (mouseButton);
     mEventListeners.IterateListeners([this, &eventDesc](UiEventListener* listener)
         {
-            listener->HandleUiEvent(this, &eventDesc);
+            listener->HandleUiEvent(this, eventDesc);
         });
 }

@@ -51,7 +51,7 @@ bool NavigationService::GetRandomWanderingPoint(const glm::vec2& srcPosition, eP
     int minTilesDistance, 
     int maxTilesDistance, glm::vec2& resultPoint) 
 {
-    const MapPoint2D srcTileLocation = MapUtils::ComputeTileFromPosition(srcPosition);
+    const Point2D srcTileLocation = MapUtils::ComputeTileFromPosition(srcPosition);
     cxx_assert(maxTilesDistance >= minTilesDistance);
     if ((minTilesDistance < 1) || !gGameMap.WithinMap(srcTileLocation))
     {
@@ -68,13 +68,13 @@ bool NavigationService::GetRandomWanderingPoint(const glm::vec2& srcPosition, eP
 
     // collect all reachable tiles around
     GameMap::TilesIterator tilesIterator = gGameMap.IterateTiles(
-        MapArea2D { srcTileLocation.x - maxTilesDistance, srcTileLocation.y - maxTilesDistance, 
+        Rect2D { srcTileLocation.x - maxTilesDistance, srcTileLocation.y - maxTilesDistance, 
             maxTilesDistance * 2 + 1, 
             maxTilesDistance * 2 + 1 });
     for (MapTile* mapTile = tilesIterator.NextTile(); mapTile; 
         mapTile = tilesIterator.NextTile())
     {
-        MapPoint2D tileDist = mapTile->mLocation - srcTileLocation;
+        Point2D tileDist = mapTile->mLocation - srcTileLocation;
         if ((abs(tileDist.x) < minTilesDistance) &&
             (abs(tileDist.y) < minTilesDistance))
         {
@@ -323,12 +323,12 @@ void NavigationService::UpdateMapAreaCodes(MapTile* startTile, ePassabilityType 
 
 bool NavigationService::CheckPathExists(const glm::vec2& srcPosition, const glm::vec2& dstPosition, ePassabilityType passabilityType) const
 {
-    const MapPoint2D srcTileCoord = MapUtils::ComputeTileFromPosition(srcPosition);
-    const MapPoint2D dstTileCoord = MapUtils::ComputeTileFromPosition(dstPosition);
+    const Point2D srcTileCoord = MapUtils::ComputeTileFromPosition(srcPosition);
+    const Point2D dstTileCoord = MapUtils::ComputeTileFromPosition(dstPosition);
     return CheckPathExists(srcTileCoord, dstTileCoord, passabilityType);
 }
 
-bool NavigationService::CheckPathExists(const MapPoint2D& srcCoord, const MapPoint2D& dstCoord, ePassabilityType passabilityType) const
+bool NavigationService::CheckPathExists(const Point2D& srcCoord, const Point2D& dstCoord, ePassabilityType passabilityType) const
 {
     if (srcCoord == dstCoord) return true;
 
@@ -456,7 +456,7 @@ PathFindRequestPtr NavigationService::RequestPath(const glm::vec2& srcPosition, 
     return std::move(request);
 }
 
-bool NavigationService::GetRandomPointWithinTile(const MapPoint2D& mapTile, glm::vec2& resultPoint)
+bool NavigationService::GetRandomPointWithinTile(const Point2D& mapTile, glm::vec2& resultPoint)
 {
     resultPoint = MapUtils::ComputeTileCenter2d(mapTile);
 

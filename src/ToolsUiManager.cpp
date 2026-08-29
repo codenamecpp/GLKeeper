@@ -2,6 +2,7 @@
 #include "ToolsUiManager.h"
 #include "imgui.h"
 #include "FileSystem.h"
+#include "UiManager.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -182,10 +183,10 @@ void ToolsUiManager::UpdateFrame(float deltaTime)
 {
     ImGuiIO& io = ImGui::GetIO();
 
-    Point2D screenSize = gRenderDevice.GetScreenResolution();
+    const Rect2D screenRect = gUiManager.GetScreenRect();
     io.DeltaTime = deltaTime; // set the time elapsed since the previous frame (in seconds)
-    io.DisplaySize.x = screenSize.x * 1.0f;
-    io.DisplaySize.y = screenSize.y * 1.0f;
+    io.DisplaySize.x = screenRect.w * 1.0f;
+    io.DisplaySize.y = screenRect.h * 1.0f;
 
     Point2D mousePosition = gInputs.GetMousePosition();
 
@@ -236,8 +237,8 @@ void ToolsUiManager::InputEvent(MouseScrollInputEvent& inputEvent)
 {
     ImGuiIO& io = ImGui::GetIO();
 
-    io.MouseWheelH += inputEvent.mScrollX * 1.0f;
-    io.MouseWheel += inputEvent.mScrollY * 1.0f;
+    io.MouseWheelH += inputEvent.mScroll.x * 1.0f;
+    io.MouseWheel += inputEvent.mScroll.y * 1.0f;
 
     if (io.WantCaptureMouse)
     {

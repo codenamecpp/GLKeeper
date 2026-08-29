@@ -43,7 +43,7 @@ void Scene::Initialize()
 void Scene::Shutdown()
 {
     ClearScene();
-    gGameRenderer.UnregisterDebugVisualizer(this);
+    gGameRenderer.UnRegisterDebugVisualizer(this);
 }
 
 void Scene::ClearScene()
@@ -54,6 +54,31 @@ void Scene::ClearScene()
     cxx_assert(mActiveObjects.empty());
 
     mAABBTree.Cleanup();
+}
+
+bool Scene::CastRayFromScreenPoint(const Point2D& screenCoordinate, cxx::ray3d_t& resultRay)
+{
+    const Viewport& viewport = gRenderDevice.GetViewport();
+
+    Camera& sceneCamera = GetCamera();
+    sceneCamera.ComputeMatricesAndFrustum(viewport);
+
+    // wrap y
+    const int mouseY = viewport.mScreenArea.h - screenCoordinate.y;
+
+    glm::ivec4 vp ( viewport.mScreenArea.x, viewport.mScreenArea.y, viewport.mScreenArea.w, viewport.mScreenArea.h );
+    //unproject twice to build a ray from near to far plane
+    const glm::vec3 v0 = glm::unProject(glm::vec3{screenCoordinate.x * 1.0f, mouseY * 1.0f, 0.0f}, 
+        sceneCamera.mViewMatrix, 
+        sceneCamera.mProjectionMatrix, vp); // near plane
+
+    const glm::vec3 v1 = glm::unProject(glm::vec3{screenCoordinate.x * 1.0f, mouseY * 1.0f, 1.0f}, 
+        sceneCamera.mViewMatrix, 
+        sceneCamera.mProjectionMatrix, vp); // far plane
+
+    resultRay.mOrigin = v0;
+    resultRay.mDirection = glm::normalize(v1 - v0);
+    return true;
 }
 
 void Scene::CollectObjectsForRender(SceneRenderLists& renderList)
@@ -68,7 +93,8 @@ void Scene::CollectObjectsForRender(Camera& camera, SceneRenderLists& renderList
     mAABBTree.QueryObjects(camera.mFrustum, [&camera, &renderList, this](SceneObject* object)
     {
         // check object visibility for camera
-        if ((camera.mRenderLayersMask & object->GetRenderLayers()) == 0) return;
+        if (!camera.mRenderLayers.HasAny(object->GetRenderLayers()))
+            return;
 
         // submit for render
         float distanceToCamera2 = glm::length2(object->GetPosition() - camera.mPosition);
@@ -86,6 +112,29 @@ void Scene::BuildObjectsAABBTree()
         // refresh aabbtree node
         mAABBTree.UpdateObject(object);
     }
+}
+
+bool Scene::QueryObjects(const cxx::ray3d_t& ray, cxx::any_vector<SceneObject*> queryResult)
+{
+    return QueryObjects(ray, mCamera, queryResult);
+}
+
+bool Scene::QueryObjects(const cxx::ray3d_t& ray, Camera& camera, cxx::any_vector<SceneObject*> queryResult)
+{
+    queryResult.reserve(32);
+
+    BuildObjectsAABBTree(); // force update aabbtree
+    camera.ComputeMatricesAndFrustum(gRenderDevice.GetViewport());
+    mAABBTree.QueryObjects(ray, [&camera, this, &queryResult](SceneObject* object)
+    {
+        // check object visibility for camera
+        if (!camera.mRenderLayers.HasAny(object->GetRenderLayers()))
+            return;
+
+        queryResult.push_back(object);
+    });
+    bool isSuccess = !queryResult.empty();
+    return isSuccess;
 }
 
 cxx::uniqueptr<EnvironmentMeshObject> Scene::CreateLavaMesh(cxx::span<MapTile*> mapTiles)

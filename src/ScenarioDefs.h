@@ -64,6 +64,10 @@ public:
 
     // Test whether resource is defined
     inline bool IsDefined() const { return mResourceType > eArtResource_Null; }
+    inline bool HasResource(eArtResource resourceType) const
+    {
+        return mResourceType == resourceType;
+    }
 
     // ArtResource detailed description depends on resource type
     union
@@ -480,11 +484,17 @@ struct ScenarioVariables
 {
 public:
     int mDigRockHealth = 0;
+    int mAttackTileHealth = 0;
+    int mRepairTileHealth = 0;
+    int mClaimTileHealth = 0;
+    int mMineGoldHealth = 0;
     int mDigOwnWallHealth = 0;
     int mDigEnemyWallHealth = 0;
-    int mClaimFloorHealth = 0;
-    int mMineGoldHealth = 0;
     int mReinforceWallHealth = 0;
+    int mRepairWallHealth = 0;
+    int mConvertRoomHealth = 0;
+    int mAttackRoomHealth = 0;
+    int mRepairRoomHealth = 0;
     int mGoldMinedFromGems = 0;
     int mMaxGoldPerTreasuryTile = 0;
     int mSpecialIncreaseGoldAmount = 0;
@@ -682,6 +692,44 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////
+
+struct ScenarioLevelFlags
+{
+public:
+    bool mAlwaysImprisonEnemies {};
+    bool mOneShotHornySpellAvailable {};
+    bool mIsSecretLevel {};
+    bool mIsSpecialLevel {};
+    bool mDisplayHeroesKilledTally {};
+    bool mAutomaticallyShowObjectiveBox {};
+    bool mLastHeartGeneratesPortalGem {};
+    bool mFreezeGameOptions {};
+    bool mIsMultiplayerLevel {};
+    bool mIsSkirmishLevel {};
+    bool mIsMyPetDungeonLevel {};
+};
+
+//////////////////////////////////////////////////////////////////////////
+
+struct ScenarioLevelInfo
+{
+public:
+    std::string mFileName;
+    std::wstring mLevelName;
+    std::wstring mDescription;
+    std::wstring mAuthorName;
+    std::wstring mEmailAddress;
+    std::wstring mInformation;
+    ScenarioLevelFlags mFlags {};
+    TextTableId mTextTableId = TextTableId_Null;
+    TextTableId mBriefingTableId = TextTableId_Null;
+    int mMapDimsX {}; // width in tiles
+    int mMapDimsY {}; // height in tiles
+    int mMaxPlayerCount = 1;
+    float mTicksPerSecond = 1.0f;
+};
+
+//////////////////////////////////////////////////////////////////////////
 // Contains all information about level and world
 //////////////////////////////////////////////////////////////////////////
 
@@ -689,8 +737,7 @@ struct ScenarioDefinition
 {
 public:
     ScenarioDefinition()
-        : mLevelDimensionX()
-        , mLevelDimensionY()
+        : mLevelInfo()
         , mLavaTerrainType(TerrainTypeId_Null)
         , mWaterTerrainType(TerrainTypeId_Null)
         , mPlayerColouredPathTerrainType(TerrainTypeId_Null)
@@ -810,14 +857,7 @@ public:
     }
 
 public:
-    std::wstring mLevelName;
-    std::wstring mLevelDescription;
-    std::wstring mLevelAuthor;
-    std::wstring mLevelEmail;
-    std::wstring mLevelInformation;
-    int mLevelDimensionX; // width in tiles
-    int mLevelDimensionY; // height in tiles
-    float mTicksPerSecond = 1.0f;
+    ScenarioLevelInfo mLevelInfo;
     ScenarioVariables mVariables;
     TerrainTypeId mLavaTerrainType;
     TerrainTypeId mWaterTerrainType;

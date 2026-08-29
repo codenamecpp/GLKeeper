@@ -1,6 +1,6 @@
 {
 
-"widget": {"class": "dummy", "id": "root", "pos":[0,0], "size":[1024,768], "anchor_min":[0,0], "anchor_max":[1,1], 
+"widget": {"class": "dummy", "id": "root", "pos":[0,0], "size":[1024,768], "anchor_min":[0,0], "anchor_max":[1,1], "interactive":false,
     "children": [
         {"class":"panel", "id":"tools_container", "pos":[0,0], "size":[0,180], "pivot":[0,1], "anchor_min":[0,1], "anchor_max":[1,1], "fill_color":[0,0,0,0], "border_color":[0,0,0,0],
             "children": [

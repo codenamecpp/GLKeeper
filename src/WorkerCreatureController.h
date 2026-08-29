@@ -6,7 +6,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-class ImpCreatureController: public CreatureController
+class WorkerCreatureController: public CreatureController
 {
 public:
 

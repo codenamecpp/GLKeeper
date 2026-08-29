@@ -9,6 +9,7 @@
 #include "UiPanel.h"
 #include "UiTextBox.h"
 #include "UiGridLayout.h"
+#include "UiScrollBar.h"
 
 UiWidgetManager gWidgetManager;
 
@@ -80,6 +81,7 @@ void UiWidgetManager::RegisterWidgetClasses()
     RegisterWidgetClass<UiProductionButton>();
     RegisterWidgetClass<UiTextBox>();
     RegisterWidgetClass<UiGridLayout>();
+    RegisterWidgetClass<UiScrollBar>();
 }
 
 template<typename TWidget>
@@ -96,141 +98,108 @@ bool UiWidgetManager::RegisterWidgetClass()
 
 void UiWidgetManager::InputEvent(MouseMovedInputEvent& inputEvent)
 {
-    if (mFocusedWidget)
+    if (UiWidget* eventHandler = mFocusedWidget ? mFocusedWidget : mHoveredWidget)
     {
-        mFocusedWidget->InputEvent(inputEvent);
-        inputEvent.SetConsumed(true); // force
-        return;
-    }
-
-    if (mHoveredWidget)
-    {
-        mHoveredWidget->InputEvent(inputEvent);
-        return;
+        eventHandler->InputEvent(inputEvent);
+        inputEvent.SetConsumed(true);
     }
 
     // process interactive layers in reverse order
     for (auto it = mViews.rbegin(); it != mViews.rend(); ++it)
     {
+        if (inputEvent.mConsumed)
+            break;
+
         UiView* currentView = *it;
         currentView->InputEvent(inputEvent);
-        if (inputEvent.mConsumed)
-            return;
-    }
-
-    if (IsCursorOverUI())
-    {
-        inputEvent.SetConsumed(true);
     }
 }
 
 void UiWidgetManager::InputEvent(MouseScrollInputEvent& inputEvent)
 {
-    if (mFocusedWidget)
+    // process focused
+    if (UiWidget* eventHandler = mFocusedWidget)
     {
         mFocusedWidget->InputEvent(inputEvent);
-        return;
     }
 
-    if (mHoveredWidget)
+    // process hovered
+    if (UiWidget* eventHandler = mHoveredWidget)
     {
-        mHoveredWidget->InputEvent(inputEvent);
-        return;
+        for (UiWidget* roller = eventHandler; roller; roller = roller->GetParent())
+        {
+            if (inputEvent.mConsumed)
+                break;
+
+            roller->InputEvent(inputEvent);
+        }
     }
 
     // process interactive layers in reverse order
     for (auto it = mViews.rbegin(); it != mViews.rend(); ++it)
     {
+        if (inputEvent.mConsumed)
+            break;
+
         UiView* currentView = *it;
         currentView->InputEvent(inputEvent);
-        if (inputEvent.mConsumed)
-            return;
-    }
-
-    if (IsCursorOverUI())
-    {
-        inputEvent.SetConsumed(true);
     }
 }
 
 void UiWidgetManager::InputEvent(MouseButtonInputEvent& inputEvent)
 {
-    if (mFocusedWidget)
+    if (UiWidget* eventHandler = mFocusedWidget ? mFocusedWidget : mHoveredWidget)
     {
-        mFocusedWidget->InputEvent(inputEvent);
-        return;
-    }
-
-    if (mHoveredWidget)
-    {
-        mHoveredWidget->InputEvent(inputEvent);
-        return;
+        eventHandler->InputEvent(inputEvent);
+        inputEvent.SetConsumed(true);
     }
 
     // process interactive layers in reverse order
     for (auto it = mViews.rbegin(); it != mViews.rend(); ++it)
     {
+        if (inputEvent.mConsumed)
+            break;
+
         UiView* currentView = *it;
         currentView->InputEvent(inputEvent);
-        if (inputEvent.mConsumed)
-            return;
-    }
-
-    if (IsCursorOverUI())
-    {
-        inputEvent.SetConsumed(true);
     }
 }
 
 void UiWidgetManager::InputEvent(KeyCharEvent& inputEvent)
 {
-    if (mFocusedWidget)
+    if (UiWidget* eventHandler = mFocusedWidget ? mFocusedWidget : mHoveredWidget)
     {
-        mFocusedWidget->InputEvent(inputEvent);
-        if (inputEvent.mConsumed)
-            return;
-    }
-
-    if (mHoveredWidget)
-    {
-        mHoveredWidget->InputEvent(inputEvent);
-        if (inputEvent.mConsumed)
-            return;
+        eventHandler->InputEvent(inputEvent);
+        inputEvent.SetConsumed(true);
     }
 
     // process interactive layers in reverse order
     for (auto it = mViews.rbegin(); it != mViews.rend(); ++it)
     {
+        if (inputEvent.mConsumed)
+            break;
+
         UiView* currentView = *it;
         currentView->InputEvent(inputEvent);
-        if (inputEvent.mConsumed)
-            return;
     }
 }
 
 void UiWidgetManager::InputEvent(KeyInputEvent& inputEvent)
 {
-    if (mFocusedWidget)
+    if (UiWidget* eventHandler = mFocusedWidget ? mFocusedWidget : mHoveredWidget)
     {
-        mFocusedWidget->InputEvent(inputEvent);
-        if (inputEvent.mConsumed)
-            return;
-    }
-
-    if (mHoveredWidget)
-    {
-        mHoveredWidget->InputEvent(inputEvent);
-        if (inputEvent.mConsumed)
-            return;
+        eventHandler->InputEvent(inputEvent);
+        //inputEvent.SetConsumed(true);
     }
 
     // process interactive layers in reverse order
     for (auto it = mViews.rbegin(); it != mViews.rend(); ++it)
     {
+        if (inputEvent.mConsumed)
+            break;
+
         UiView* currentView = *it;
         currentView->InputEvent(inputEvent);
-        if (inputEvent.mConsumed)
-            return;
     }
 }
 
@@ -270,7 +239,7 @@ void UiWidgetManager::UpdateCurrentHovered()
         // cannot pick widget of invisible uistate
         if (hierarchyRoot)
         {
-            currentHovered = hierarchyRoot->PickWidget({gInputs.mCursorPositionX, gInputs.mCursorPositionY});
+            currentHovered = hierarchyRoot->PickWidget(gInputs.GetMousePosition());
         }
     }
     SetHoverWidget(currentHovered);
@@ -329,7 +298,7 @@ void UiWidgetManager::CaptureFocus(UiWidget* focusWidget)
     }
 
     mFocusedWidget = focusWidget;
-    mFocusedWidget->HandleFocusGained();
+    mFocusedWidget->HandleFocusGain();
 }
 
 void UiWidgetManager::ReleaseFocus(UiWidget* focusWidget)
@@ -381,16 +350,11 @@ bool UiWidgetManager::ViewAttached(const UiView* view) const
     return views_it != mViews.end();
 }
 
-bool UiWidgetManager::IsCursorOverUI() const
-{
-    return mHoveredWidget != nullptr;
-}
-
-void UiWidgetManager::ScreenSizeChanged()
+void UiWidgetManager::ScreenSizeChanged(const Point2D& screenSize)
 {
     for (UiView* roller: mViews)
     {
-        roller->ResolutionChanged();
+        roller->ScreenSizeChanged(screenSize);
     }
 }
 

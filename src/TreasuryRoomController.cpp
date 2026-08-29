@@ -40,11 +40,10 @@ void TreasuryRoomController::OnRecycle()
     MoneyStorageRoomController::OnRecycle();
 }
 
-void TreasuryRoomController::EvaluateStorageTiles(StorageTilesEvaluationResult& evaluationResult) const
+void TreasuryRoomController::EvaluateStorageTiles(cxx::any_vector<Point2D> evaluationResult) const
 {
-    evaluationResult.clear();
-
     cxx::span<MapTile*> floorTilesSpan = GetRoom().GetFloorTiles();
+
     evaluationResult.reserve(floorTilesSpan.size());
     for (MapTile* rollerTile: floorTilesSpan)
     {

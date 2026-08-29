@@ -3,7 +3,7 @@
 #define GAME_VERSION_MAJOR  0
 #define GAME_VERSION_MINOR  1
 #define GAME_VERSION_BUILD  0
-#define GAME_VERSION_TAG    "dev.6"
+#define GAME_VERSION_TAG    "dev.7"
 
 #define STRINGIZE_NX(A) #A
 #define STRINGIZE(A) STRINGIZE_NX(A)

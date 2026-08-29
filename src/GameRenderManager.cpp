@@ -6,6 +6,8 @@
 #include "GameWorld.h"
 #include "ToolsUiManager.h"
 #include "Scene.h"
+#include "SimplePool.h"
+#include "RenderView.h"
 
 GameRenderManager gGameRenderer;
 
@@ -49,15 +51,16 @@ void GameRenderManager::RenderFrame()
     gRenderDevice.BeginFrame();
 
     gRenderDevice.SetClearColor(COLOR_BLACK);
-    gRenderDevice.ClearScreen();
+    gRenderDevice.ClearScreen(eDeviceClear_ColorBuffer);
 
-    Camera& camera = gScene.GetCamera();
-    RenderWorld(camera, gScene);
+    // world / world overlay
+    RenderWorld(gScene, eSceneRenderLayer_World);
+    RenderWorld(gScene, eSceneRenderLayer_WorldOverlay);
 
     // Debug information
     if (!mDebugVisializers.empty())
     {
-        mDebugRenderer.BeginFrame(camera);
+        mDebugRenderer.BeginFrame(gScene.GetCamera());
         for (IDebugVisualizer* visualizer : mDebugVisializers) 
         {
             visualizer->OnDebugDraw(mDebugRenderer);
@@ -65,12 +68,14 @@ void GameRenderManager::RenderFrame()
         mDebugRenderer.EndFrame();
     }
 
-    RenderCustomViews(gScene);
-
     // render gui
     mUiRenderContext.BeginFrame();
     gWidgetManager.RenderFrame(mUiRenderContext);
     mUiRenderContext.EndFrame();
+
+    // overlays
+    RenderWorld(gScene, eSceneRenderLayer_UiOverlay);
+    RenderWorld(gScene, eSceneRenderLayer_DebugOverlay);
 
     // render tools ui
     mUiRenderContext.BeginFrame();
@@ -80,7 +85,7 @@ void GameRenderManager::RenderFrame()
     gRenderDevice.EndFrame();
 }
 
-void GameRenderManager::RenderWorld(Camera& camera, Scene& scene)
+void GameRenderManager::RenderWorld(Camera& camera, Scene& scene, eSceneRenderLayer renderLayer)
 {
     camera.ComputeMatricesAndFrustum(gRenderDevice.GetViewport());
 
@@ -88,7 +93,7 @@ void GameRenderManager::RenderWorld(Camera& camera, Scene& scene)
     mEnvironmentMeshRenderer.BeginFrame(camera);
     mProceduralMeshRenderer.BeginFrame(camera);
 
-    if ((camera.mRenderLayersMask & RenderLayer_WorldTerrain) != 0)
+    if (renderLayer == eSceneRenderLayer_World)
     {
         mTerrainRenderer.Render(camera);
     }
@@ -101,6 +106,34 @@ void GameRenderManager::RenderWorld(Camera& camera, Scene& scene)
     mProceduralMeshRenderer.EndFrame();
     mEnvironmentMeshRenderer.EndFrame();
     mAnimatingMeshlRenderer.EndFrame();
+}
+
+void GameRenderManager::RenderWorld(Scene& scene, eSceneRenderLayer renderLayer)
+{
+    // main
+    {
+        Camera& camera = gScene.GetCamera();
+        if (camera.mRenderLayers.Contains(renderLayer))
+        {
+            gRenderDevice.ClearScreen(eDeviceClear_DepthBuffer);
+            RenderWorld(camera, scene, renderLayer);
+        }
+    }
+
+    // custom views
+    for (RenderView* roller: mRenderViews)
+    {
+        if (!roller->IsActive())
+            continue;
+
+        Camera& camera = roller->GetCamera();
+        if (!camera.mRenderLayers.Contains(renderLayer))
+        {
+            continue;
+        }
+        gRenderDevice.ClearScreen(eDeviceClear_DepthBuffer);
+        RenderWorld(camera, scene, renderLayer);
+    }
 }
 
 void GameRenderManager::RenderScene(Camera& camera, SceneRenderLists& renderLists)
@@ -205,17 +238,10 @@ void GameRenderManager::RenderScene(Camera& camera, SceneRenderLists& renderList
     // done
 }
 
-void GameRenderManager::RenderCustomViews(Scene& scene)
+void GameRenderManager::UnRegisterRenderView(RenderView* renderView)
 {
-    if (mRenderViews.empty()) return;
-
-    for (const auto& roller: mRenderViews)
-    {
-        if (!roller->IsActive()) continue;
-
-        gRenderDevice.ClearScreen(eDeviceClear_DepthBuffer);
-        RenderWorld(roller->GetCamera(), scene);
-    }
+    cxx_assert(renderView);
+    cxx::erase_elements(mRenderViews, renderView);
 }
 
 void GameRenderManager::RegisterDebugVisualizer(IDebugVisualizer* theVisualizer)
@@ -227,26 +253,30 @@ void GameRenderManager::RegisterDebugVisualizer(IDebugVisualizer* theVisualizer)
     }
 }
 
-void GameRenderManager::UnregisterDebugVisualizer(IDebugVisualizer* theVisualizer)
+void GameRenderManager::UnRegisterDebugVisualizer(IDebugVisualizer* theVisualizer)
 {
     cxx::erase(mDebugVisializers, theVisualizer);
 }
 
-RenderView* GameRenderManager::CreateRenderView()
+cxx::uniqueptr<RenderView> GameRenderManager::CreateRenderView()
 {
-    auto& element = mRenderViews.emplace_back(std::make_unique<RenderView>());
-    return element.get();
-}
-
-void GameRenderManager::DestroyRenderView(RenderView* renderView)
-{
-    int itemIndex = cxx::get_first_index_if(mRenderViews, [renderView](const std::unique_ptr<RenderView>& element)
+    static SimplePool<RenderView> viewsPool = (
+        [](RenderView* renderView)
         {
-            return renderView == element.get();
+            renderView->OnRecycle();
         });
-    cxx_assert(itemIndex != -1);
-    if (itemIndex != -1)
-    {
-        mRenderViews.erase(mRenderViews.begin() + itemIndex);
-    }
+
+    RenderView* renderViewPtr = viewsPool.Acquire();
+    // sanity check
+    cxx_assert(!cxx::contains(mRenderViews, renderViewPtr));
+    // register
+    mRenderViews.push_back(renderViewPtr);
+    return std::move(cxx::uniqueptr<RenderView> (renderViewPtr, [](RenderView* renderView)
+        {
+            if (renderView)
+            {
+                gGameRenderer.UnRegisterRenderView(renderView);
+                viewsPool.Return(renderView);
+            }
+        }));
 }

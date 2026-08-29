@@ -6,7 +6,7 @@ namespace MapUtils
 {
 
     // compute block bounding box within world
-    inline cxx::aabbox ComputeBlockBounds(const MapPoint2D& location)
+    inline cxx::aabbox ComputeBlockBounds(const Point2D& location)
     {
         cxx::aabbox outputBounds;
         // min
@@ -28,7 +28,7 @@ namespace MapUtils
           /_______/
          3       2
     */
-    inline void ComputeTileEdges2d(const MapPoint2D& location, glm::vec2 edges[4])
+    inline void ComputeTileEdges2d(const Point2D& location, glm::vec2 edges[4])
     {
         const glm::vec2 minPoint
         {
@@ -47,7 +47,7 @@ namespace MapUtils
     }
 
     // compute blocks area bounding box within world
-    inline cxx::aabbox ComputeBlocksAreaBounds(const MapArea2D& area)
+    inline cxx::aabbox ComputeBlocksAreaBounds(const Rect2D& area)
     {
         cxx::aabbox outputBounds;
         // min
@@ -63,7 +63,7 @@ namespace MapUtils
     }
 
     // compute map block center in world coordinates
-    inline glm::vec3 ComputeBlockCenter(const MapPoint2D& blockLocation)
+    inline glm::vec3 ComputeBlockCenter(const Point2D& blockLocation)
     {
         return glm::vec3 
         { 
@@ -75,7 +75,7 @@ namespace MapUtils
 
     // compute game map block position in world coordinates
     // corner
-    inline glm::vec3 ComputeBlockCoordinate(const MapPoint2D& blockLocation)
+    inline glm::vec3 ComputeBlockCoordinate(const Point2D& blockLocation)
     {
         return glm::vec3
         {
@@ -86,7 +86,7 @@ namespace MapUtils
     }
 
     // compute tile center coord 3d
-    inline glm::vec3 ComputeTileCenter(const MapPoint2D& tileLocation)
+    inline glm::vec3 ComputeTileCenter(const Point2D& tileLocation)
     {
         return glm::vec3
         {
@@ -96,7 +96,7 @@ namespace MapUtils
         };
     }
 
-    inline glm::vec2 ComputeTileCenter2d(const MapPoint2D& tileLocation)
+    inline glm::vec2 ComputeTileCenter2d(const Point2D& tileLocation)
     {
         return glm::vec2
         {
@@ -108,9 +108,9 @@ namespace MapUtils
     // convert world coordinate to game map block logical location
     // @param coordinate: World space
     // @param blockLocation: Logical x,y
-    inline MapPoint2D ComputeTileFromPosition(const glm::vec3& coordinate)
+    inline Point2D ComputeTileFromPosition(const glm::vec3& coordinate)
     {
-        return MapPoint2D
+        return Point2D
         {
             static_cast<int>((coordinate.x + MAP_TILE_HALF_SIZE) / MAP_TILE_SIZE),
             static_cast<int>((coordinate.z + MAP_TILE_HALF_SIZE) / MAP_TILE_SIZE)
@@ -120,9 +120,9 @@ namespace MapUtils
     // convert world coordinate to game map block logical location
     // @param coordinate: World space
     // @param blockLocation: Logical x,y
-    inline MapPoint2D ComputeTileFromPosition(const glm::vec2& coordinate)
+    inline Point2D ComputeTileFromPosition(const glm::vec2& coordinate)
     {
-        return MapPoint2D
+        return Point2D
         {
             static_cast<int>((coordinate.x + MAP_TILE_HALF_SIZE) / MAP_TILE_SIZE),
             static_cast<int>((coordinate.y + MAP_TILE_HALF_SIZE) / MAP_TILE_SIZE)
@@ -149,7 +149,7 @@ namespace MapUtils
     }
 
     // check whether two tiles are adjacent to each other
-    inline bool AreTilesAdjacent(const MapPoint2D& lhs, const MapPoint2D& rhs)
+    inline bool AreTilesAdjacent(const Point2D& lhs, const Point2D& rhs)
     {
         return (abs(lhs.x - rhs.x) < 2) && (abs(lhs.y - rhs.y) < 2);
     }

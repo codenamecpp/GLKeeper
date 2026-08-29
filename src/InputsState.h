@@ -1,5 +1,7 @@
 #pragma once
 
+#include "CommonTypes.h"
+
 // Key codes
 
 enum
@@ -133,6 +135,7 @@ public:
     inline bool IsButtonReleased(int button) const { return !mPressed && (button == mButton); }
     inline bool HasModifiers(int bits) const { return (mMods & bits) == bits; }
 public:
+    Point2D mMousePosition;
     int mButton;
     int mMods;
     bool mPressed;
@@ -142,30 +145,26 @@ struct MouseMovedInputEvent : public BaseInputEvent
 {
 public:
     MouseMovedInputEvent() = default;
-    MouseMovedInputEvent(int argPositionX, int argPositionY)
-        : mCursorPositionX(argPositionX)
-        , mCursorPositionY(argPositionY)
-        , mDeltaX()
-        , mDeltaY()
+    MouseMovedInputEvent(const Point2D& mousePosition)
+        : mMousePosition(mousePosition)
+        , mDelta(0, 0)
     {}
 public:
-    int mCursorPositionX;
-    int mCursorPositionY;
-    int mDeltaX;
-    int mDeltaY;
+    Point2D mMousePosition;
+    Point2D mDelta;
 };
 
 struct MouseScrollInputEvent : public BaseInputEvent
 {
 public:
     MouseScrollInputEvent() = default;
-    MouseScrollInputEvent(int argScrollX, int argScrollY)
-        : mScrollX(argScrollX)
-        , mScrollY(argScrollY)
+    MouseScrollInputEvent(const Point2D& scroll)
+        : mMousePosition(0, 0)
+        , mScroll(scroll)
     {}
 public:
-    int mScrollX;
-    int mScrollY;
+    Point2D mMousePosition;
+    Point2D mScroll;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -181,13 +180,12 @@ public:
     void Cleanup();
 
     // Set current mouse position
-    inline void SetMousePosition(int positionx, int positiony)
+    inline void SetMousePosition(const Point2D& mousePosition)
     {
-        mCursorPositionX = positionx;
-        mCursorPositionY = positiony;
+        mMousePosition = mousePosition;
     }
 
-    inline Point2D GetMousePosition() const { return { mCursorPositionX, mCursorPositionY };}
+    inline const Point2D& GetMousePosition() const { return mMousePosition; }
 
     // Set current mouse button state
     inline void SetMouseButtonState(int button, bool state)
@@ -222,11 +220,10 @@ public:
         return mMouseButtons[button];
     }
 
-public:
+private:
     bool mMouseButtons[GLFW_MOUSE_BUTTON_LAST + 1];
     bool mKeyboardKeys[GLFW_KEY_LAST + 1];
-    int mCursorPositionX;
-    int mCursorPositionY;
+    Point2D mMousePosition {};
 };
 
 extern InputsState gInputs;

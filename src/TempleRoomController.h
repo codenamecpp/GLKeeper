@@ -28,5 +28,5 @@ private:
 private:
     cxx::uniqueptr<EnvironmentMeshObject> mWaterPool;
     std::vector<MapTile*> mWaterPoolTiles;
-    std::optional<MapPoint2D> mHandLocation;
+    std::optional<Point2D> mHandLocation;
 };

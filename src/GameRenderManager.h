@@ -5,12 +5,11 @@
 #include "TerrainRenderer.h"
 #include "EnvironmentMeshRenderer.h"
 #include "UiRenderContext.h"
-#include "TileSelectionOutline.h"
+#include "MapSelectionCursor.h"
 #include "AnimatingMeshRenderer.h"
 #include "ProceduralMeshRenderer.h"
 #include "ShaderProgram.h"
 #include "SceneDefs.h"
-#include "RenderView.h"
 
 //////////////////////////////////////////////////////////////////////////
 // RenderEngine class
@@ -38,23 +37,24 @@ public:
     // Do not perform these operations while rendering in progress
     // @param theVisualizer: Entity
     void RegisterDebugVisualizer(IDebugVisualizer* theVisualizer);
-    void UnregisterDebugVisualizer(IDebugVisualizer* theVisualizer);
+    void UnRegisterDebugVisualizer(IDebugVisualizer* theVisualizer);
 
     // create new render view of game world
-    RenderView* CreateRenderView();
-    void DestroyRenderView(RenderView* renderView);
+    cxx::uniqueptr<RenderView> CreateRenderView();
 
 private:
-    void RenderWorld(Camera& camera, Scene& scene);
+    void RenderWorld(Scene& scene, eSceneRenderLayer renderLayer);
+    void RenderWorld(Camera& camera, Scene& scene, eSceneRenderLayer renderLayer);
     void RenderScene(Camera& camera, SceneRenderLists& renderLists);
-    void RenderCustomViews(Scene& scene);
+
+    void UnRegisterRenderView(RenderView* renderView);
 
 private:
     DebugRenderer mDebugRenderer;
     UiRenderContext mUiRenderContext;
     SceneRenderLists mRenderLists;
     std::vector<IDebugVisualizer*> mDebugVisializers;
-    std::vector<std::unique_ptr<RenderView>> mRenderViews;
+    std::vector<RenderView*> mRenderViews;
 
     AnimatingMeshRenderer mAnimatingMeshlRenderer;
     EnvironmentMeshRenderer mEnvironmentMeshRenderer;

@@ -432,6 +432,15 @@ void ShaderProgram_BlendFrames::SetMixFrames(float mixFrames)
     }
 }
 
+void ShaderProgram_BlendFrames::SetHighlight(bool isEnabled)
+{
+    GpuProgram* gpuProgramResource = GetGpuProgramPtr();
+    if (gpuProgramResource)
+    {
+        gpuProgramResource->SetUniform(mGpuUniform_Highlight, isEnabled);
+    }
+}
+
 void ShaderProgram_BlendFrames::HandleRenderDataInit()
 {
     ShaderProgram::HandleRenderDataInit();
@@ -440,6 +449,7 @@ void ShaderProgram_BlendFrames::HandleRenderDataInit()
     cxx_assert(gpuProgramResource);
 
     mGpuUniform_MixFrames = gpuProgramResource->QueryUniformLocation("u_mixFrames");
+    mGpuUniform_Highlight = gpuProgramResource->QueryUniformLocation("u_highlight");
 }
 
 void ShaderProgram_BlendFrames::HandleRenderDataPurge()
@@ -447,6 +457,7 @@ void ShaderProgram_BlendFrames::HandleRenderDataPurge()
     ShaderProgram::HandleRenderDataPurge();
 
     mGpuUniform_MixFrames = GpuLocation_Null;
+    mGpuUniform_Highlight = GpuLocation_Null;
 }
 
 //////////////////////////////////////////////////////////////////////////

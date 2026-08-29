@@ -6,21 +6,92 @@
 #include "GameEventBus.h"
 #include "GameSession.h"
 #include "Scene.h"
+#include "LevelsDatabase.h"
 
 FrontendController::FrontendController()
-    : mMenuScreen(*this)
+    : mFrontendScreen(*this)
 {
 }
 
-void FrontendController::OnStartSinglePlayerGameSelected()
+void FrontendController::OnOpenSinglePlayerMenuSelected()
 {
-    gGameEventBus.Send_StartScenarioRequest("level1");
-    //gGameEventBus.Send_StartScenarioRequest("Devmap");
+    mFrontendScreen.ShowMenuPage(eFrontendMenuPage_SinglePlayer);
+}
+
+void FrontendController::OnMyPetDungeonMenuSelected()
+{   
+    mFrontendScreen.ShowMenuPage(eFrontendMenuPage_MyPetDungeon);
+}
+
+void FrontendController::OnMyPetDungeonMenuCancelled()
+{
+    mFrontendScreen.ShowMenuPage(eFrontendMenuPage_Main);
+}
+
+void FrontendController::OnMyPetDungeonLevelSelect(const std::string& fileName)
+{
+    ScenarioLevelInfo levelInfo;
+    if (gLevelsDatabase.GetLevelInfo(fileName, levelInfo))
+    {
+        mFrontendScreen.ConfigureMissionBriefing(levelInfo);
+        mFrontendScreen.ShowMenuPage(eFrontendMenuPage_MissionBriefing);
+    }
+    else
+    {
+        cxx_assert(false);
+    }
+}
+
+void FrontendController::OnOpenSkirmishMenuSelected()
+{
+    mFrontendScreen.ShowMenuPage(eFrontendMenuPage_SkirmishMaps);
+}
+
+void FrontendController::OnSinglePlayerCancelled()
+{
+    mFrontendScreen.ShowMenuPage(eFrontendMenuPage_Main);
+}
+
+void FrontendController::OnSkirmishMapSelectCancelled()
+{
+    mFrontendScreen.ShowMenuPage(eFrontendMenuPage_SinglePlayer);
+}
+
+void FrontendController::OnSkirmishMapSelectConfirmed(const std::string& fileName)
+{
+    gGameEventBus.Send_StartScenarioRequest(fileName);  
+}
+
+void FrontendController::OnMissionBriefingCancelled(bool isMyPetDungeon)
+{
+    if (isMyPetDungeon)
+    {
+        mFrontendScreen.ShowMenuPage(eFrontendMenuPage_MyPetDungeon);
+    }
+    else
+    {
+        mFrontendScreen.ShowMenuPage(eFrontendMenuPage_Main);
+    }
+}
+
+void FrontendController::OnMissionBriefingConfirmed(const std::string& fileName)
+{
+    gGameEventBus.Send_StartScenarioRequest(fileName);  
+}
+
+void FrontendController::OnQuitGameConfirmed()
+{
+    gGameEventBus.Send_QuitGameRequest();
+}
+
+void FrontendController::OnQuitGameCancelled()
+{
+    mFrontendScreen.ShowMenuPage(eFrontendMenuPage_Main);
 }
 
 void FrontendController::OnQuitGameSelected()
 {
-    gGameEventBus.Send_QuitGameRequest();
+    mFrontendScreen.ShowMenuPage(eFrontendMenuPage_QuitGame);
 }
 
 void FrontendController::OnSessionLoaded()
@@ -40,19 +111,38 @@ void FrontendController::OnSessionLoaded()
 
 void FrontendController::OnSessionStart()
 {
-    if (!mMenuScreen.IsActive())
-    {
-        mMenuScreen.Activate();
-    }
+    if (mFrontendScreen.IsActive())
+        return;
+
+    // prepare screen
+
+    mFrontendScreen.Activate();
+
+    cxx::temp_vector<ScenarioLevelInfo> mapsList;
+    mapsList.reserve(32);
+    gLevelsDatabase.EnumSkirmishLevels([&mapsList](const ScenarioLevelInfo& levelInfo)
+        {
+            mapsList.push_back(levelInfo);
+        });
+    mFrontendScreen.ConfigureSkirmishMaps(mapsList);
+
+    mapsList.clear();
+    gLevelsDatabase.EnumMyPetDungeonLevels([&mapsList](const ScenarioLevelInfo& levelInfo)
+        {
+            mapsList.push_back(levelInfo);
+        });
+    mFrontendScreen.ConfigureMyPetDungeonMaps(mapsList);
+
+    mFrontendScreen.ShowMenuPage(eFrontendMenuPage_Main);
 }
 
 void FrontendController::OnSessionShutdown()
 {
     mCameraController.ReleaseCamera();
-    if (mMenuScreen.IsActive())
+    if (mFrontendScreen.IsActive())
     {
-        mMenuScreen.Deactivate();
-        mMenuScreen.Cleanup();
+        mFrontendScreen.Deactivate();
+        mFrontendScreen.Cleanup();
     }
 }
 

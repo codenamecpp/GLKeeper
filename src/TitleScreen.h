@@ -6,15 +6,11 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-// Loading level ui screen
-class LoadingScreenView: public UiView
+// game title screen
+class TitleScreen: public UiView
 {
 public:
-    LoadingScreenView();
-
-    void StartLoading();
-    void FinishLoading();
-    void UpdateLoadingProgress(float progress);
+    TitleScreen();
 
     // override UiView
     bool LoadContent() override;
@@ -24,11 +20,6 @@ public:
 
 private:
     Texture* mBackgroundTexture = nullptr;
-
-    Rect2D mProgressBarSrcRect;
-    Color32 mProgressBarFillColor;
-
-    float mLoadingProgress = 0.0f;
 };
 
 //////////////////////////////////////////////////////////////////////////

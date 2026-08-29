@@ -76,7 +76,7 @@ public:
 public:
     // note: 
     // - multiple objects can share a single tile, but each one gets its own slot
-    MapPoint2D mTileLocation {};
+    Point2D mTileLocation {};
 
     eFaceRotation mObjectRotation = eFaceRotation_0; // rotate object arount world Y (UP) axis
     GameObjectClassId mObjectClassId = GameObjectClassId_Null;
@@ -95,7 +95,7 @@ struct RoomStorageSlot
 public:
     // note: 
     // - multiple objects can share a single tile, but each one gets its own slot
-    MapPoint2D mTileLocation {};
+    Point2D mTileLocation {};
 
     EntityHandle mObjectHandle {};
 };

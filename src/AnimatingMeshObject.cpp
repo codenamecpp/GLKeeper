@@ -202,6 +202,11 @@ void AnimatingMeshObject::SetAnimationFrame(int frame)
     }
 }
 
+void AnimatingMeshObject::SetHighlighted(bool isHighlighted)
+{
+    mIsHighlighted = isHighlighted;
+}
+
 void AnimatingMeshObject::UpdateFrame(float deltaTime)
 {
     if (HasAnimation())
@@ -272,6 +277,8 @@ void AnimatingMeshObject::OnRecycle()
 
     ResetAnimation();
     mMeshAsset = nullptr;
+
+    mIsHighlighted = false;
 }
 
 void AnimatingMeshObject::ResetAnimation()

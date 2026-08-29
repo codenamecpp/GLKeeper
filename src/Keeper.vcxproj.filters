@@ -8,9 +8,6 @@
     <Filter Include="Data">
       <UniqueIdentifier>{33b2679b-25e8-48ef-af03-b0c083dcf046}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Data\UI">
-      <UniqueIdentifier>{7681bfad-9cfa-48a5-b7b8-db37504ac463}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Data\Shaders">
       <UniqueIdentifier>{6e7e58c9-0326-4ef9-ba61-932df19f1ec7}</UniqueIdentifier>
     </Filter>
@@ -31,9 +28,6 @@
     </Filter>
     <Filter Include="Source\World">
       <UniqueIdentifier>{aa3eb950-02f0-4ec2-968f-3347f30659c2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source\MainMenu">
-      <UniqueIdentifier>{7b590171-f903-4063-a98c-7de4f2ea08b9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\Session">
       <UniqueIdentifier>{ccbfe626-f8f6-4e93-8e3b-57a21c9ef9ad}</UniqueIdentifier>
@@ -98,9 +92,6 @@
     <Filter Include="Source\ToolsUi">
       <UniqueIdentifier>{83f2dbb3-4a71-42e3-910f-239d6f0b6cb5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source\Gameplay">
-      <UniqueIdentifier>{8f283cf0-1eb2-4e96-95c9-8271ea1434f3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Docs">
       <UniqueIdentifier>{0203d8a5-6b32-4dce-811a-f69715906f85}</UniqueIdentifier>
     </Filter>
@@ -133,6 +124,18 @@
     </Filter>
     <Filter Include="Source\World\Creatures\Actions">
       <UniqueIdentifier>{fff2d468-29c2-4528-a018-f9b4e2386592}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\Screens">
+      <UniqueIdentifier>{7681bfad-9cfa-48a5-b7b8-db37504ac463}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Session\Frontend">
+      <UniqueIdentifier>{7b590171-f903-4063-a98c-7de4f2ea08b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Session\Gameplay">
+      <UniqueIdentifier>{8f283cf0-1eb2-4e96-95c9-8271ea1434f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Session\Services">
+      <UniqueIdentifier>{c4be406f-662a-449e-8d08-2e552848f8de}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -332,7 +335,7 @@
       <Filter>Source</Filter>
     </ClInclude>
     <ClInclude Include="FrontendCameraController.h">
-      <Filter>Source\MainMenu</Filter>
+      <Filter>Source\Session\Frontend</Filter>
     </ClInclude>
     <ClInclude Include="GameSession.h">
       <Filter>Source\Session</Filter>
@@ -372,9 +375,6 @@
     </ClInclude>
     <ClInclude Include="GameMapDefs.h">
       <Filter>Source\World\Map</Filter>
-    </ClInclude>
-    <ClInclude Include="TileSelectionOutline.h">
-      <Filter>Source\World</Filter>
     </ClInclude>
     <ClInclude Include="Room.h">
       <Filter>Source\World\Rooms</Filter>
@@ -553,21 +553,6 @@
     <ClInclude Include="UiView.h">
       <Filter>Source\Ui</Filter>
     </ClInclude>
-    <ClInclude Include="LoadingScreenView.h">
-      <Filter>Source\Ui\Screens</Filter>
-    </ClInclude>
-    <ClInclude Include="HUDScreenView.h">
-      <Filter>Source\Ui\Screens</Filter>
-    </ClInclude>
-    <ClInclude Include="ConsoleScreenView.h">
-      <Filter>Source\Ui\Screens</Filter>
-    </ClInclude>
-    <ClInclude Include="TestScreenView.h">
-      <Filter>Source\Ui\Screens</Filter>
-    </ClInclude>
-    <ClInclude Include="WorldViewCameraController.h">
-      <Filter>Source\World\View</Filter>
-    </ClInclude>
     <ClInclude Include="SurfaceMaterial.h">
       <Filter>Source\Graphics</Filter>
     </ClInclude>
@@ -590,10 +575,10 @@
       <Filter>Source\Session</Filter>
     </ClInclude>
     <ClInclude Include="GameplayController.h">
-      <Filter>Source\Gameplay</Filter>
+      <Filter>Source\Session\Gameplay</Filter>
     </ClInclude>
     <ClInclude Include="FrontendController.h">
-      <Filter>Source\MainMenu</Filter>
+      <Filter>Source\Session\Frontend</Filter>
     </ClInclude>
     <ClInclude Include="TextManager.h">
       <Filter>Source\Assets</Filter>
@@ -605,13 +590,7 @@
       <Filter>Source\Lib</Filter>
     </ClInclude>
     <ClInclude Include="GameplayDefs.h">
-      <Filter>Source\Gameplay</Filter>
-    </ClInclude>
-    <ClInclude Include="TitleScreenView.h">
-      <Filter>Source\Ui\Screens</Filter>
-    </ClInclude>
-    <ClInclude Include="FrontendScreen.h">
-      <Filter>Source\Ui\Screens</Filter>
+      <Filter>Source\Session\Gameplay</Filter>
     </ClInclude>
     <ClInclude Include="ScenarioDefs.h">
       <Filter>Source\World</Filter>
@@ -622,20 +601,8 @@
     <ClInclude Include="DK2WADArchive.h">
       <Filter>Source\Assets\Formats</Filter>
     </ClInclude>
-    <ClInclude Include="GameObjectComponents.h">
-      <Filter>Source\World\GameObjects</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObjectCapabilities.h">
-      <Filter>Source\World\GameObjects</Filter>
-    </ClInclude>
     <ClInclude Include="GoldPileObjectController.h">
       <Filter>Source\World\GameObjects\Controllers</Filter>
-    </ClInclude>
-    <ClInclude Include="RoomComponents.h">
-      <Filter>Source\World\Rooms</Filter>
-    </ClInclude>
-    <ClInclude Include="RoomCapabilities.h">
-      <Filter>Source\World\Rooms</Filter>
     </ClInclude>
     <ClInclude Include="StorageRoomController.h">
       <Filter>Source\World\Rooms\Controllers</Filter>
@@ -645,9 +612,6 @@
     </ClInclude>
     <ClInclude Include="static_vector.h">
       <Filter>Source\Lib</Filter>
-    </ClInclude>
-    <ClInclude Include="EconomyService.h">
-      <Filter>Source\Session</Filter>
     </ClInclude>
     <ClInclude Include="MoneyStorageRoomController.h">
       <Filter>Source\World\Rooms\Controllers</Filter>
@@ -739,9 +703,6 @@
     <ClInclude Include="CreatureAction_Digging.h">
       <Filter>Source\World\Creatures\Actions</Filter>
     </ClInclude>
-    <ClInclude Include="ImpCreatureController.h">
-      <Filter>Source\World\Creatures\Controllers</Filter>
-    </ClInclude>
     <ClInclude Include="CreatureAction_FaceTarget.h">
       <Filter>Source\World\Creatures\Actions</Filter>
     </ClInclude>
@@ -759,6 +720,63 @@
     </ClInclude>
     <ClInclude Include="CreatureAction_ClaimFloor.h">
       <Filter>Source\World\Creatures\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="WorkerCreatureController.h">
+      <Filter>Source\World\Creatures\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="CreatureState_InHand.h">
+      <Filter>Source\World\Creatures\States</Filter>
+    </ClInclude>
+    <ClInclude Include="FrontendScreen.h">
+      <Filter>Source\Session\Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="FrontendDefs.h">
+      <Filter>Source\Session\Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelsDatabase.h">
+      <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="FrontendMenuPage.h">
+      <Filter>Source\Session\Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="UiScrollBar.h">
+      <Filter>Source\Ui\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="container_adapter.h">
+      <Filter>Source\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="MapSelectionCursor.h">
+      <Filter>Source\World</Filter>
+    </ClInclude>
+    <ClInclude Include="AssetDefs.h">
+      <Filter>Source\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="HeldThingView.h">
+      <Filter>Source\Session\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="HUDScreen.h">
+      <Filter>Source\Session\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="ConsoleScreen.h">
+      <Filter>Source\Ui\Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadingScreen.h">
+      <Filter>Source\Ui\Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="TestScreen.h">
+      <Filter>Source\Ui\Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleScreen.h">
+      <Filter>Source\Ui\Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="GameplayCameraController.h">
+      <Filter>Source\Session\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="EconomyService.h">
+      <Filter>Source\Session\Services</Filter>
+    </ClInclude>
+    <ClInclude Include="InteractionService.h">
+      <Filter>Source\Session\Services</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -892,7 +910,7 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="FrontendCameraController.cpp">
-      <Filter>Source\MainMenu</Filter>
+      <Filter>Source\Session\Frontend</Filter>
     </ClCompile>
     <ClCompile Include="GameSession.cpp">
       <Filter>Source\Session</Filter>
@@ -920,9 +938,6 @@
     </ClCompile>
     <ClCompile Include="ProceduralMeshRenderer.cpp">
       <Filter>Source\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="TileSelectionOutline.cpp">
-      <Filter>Source\World</Filter>
     </ClCompile>
     <ClCompile Include="Room.cpp">
       <Filter>Source\World\Rooms</Filter>
@@ -1062,21 +1077,6 @@
     <ClCompile Include="UiView.cpp">
       <Filter>Source\Ui</Filter>
     </ClCompile>
-    <ClCompile Include="LoadingScreenView.cpp">
-      <Filter>Source\Ui\Screens</Filter>
-    </ClCompile>
-    <ClCompile Include="HUDScreenView.cpp">
-      <Filter>Source\Ui\Screens</Filter>
-    </ClCompile>
-    <ClCompile Include="ConsoleScreenView.cpp">
-      <Filter>Source\Ui\Screens</Filter>
-    </ClCompile>
-    <ClCompile Include="TestScreenView.cpp">
-      <Filter>Source\Ui\Screens</Filter>
-    </ClCompile>
-    <ClCompile Include="WorldViewCameraController.cpp">
-      <Filter>Source\World\View</Filter>
-    </ClCompile>
     <ClCompile Include="SurfaceMaterial.cpp">
       <Filter>Source\Graphics</Filter>
     </ClCompile>
@@ -1093,22 +1093,16 @@
       <Filter>Source\Session</Filter>
     </ClCompile>
     <ClCompile Include="GameplayController.cpp">
-      <Filter>Source\Gameplay</Filter>
+      <Filter>Source\Session\Gameplay</Filter>
     </ClCompile>
     <ClCompile Include="FrontendController.cpp">
-      <Filter>Source\MainMenu</Filter>
+      <Filter>Source\Session\Frontend</Filter>
     </ClCompile>
     <ClCompile Include="TextManager.cpp">
       <Filter>Source\Assets</Filter>
     </ClCompile>
     <ClCompile Include="DK2Text.cpp">
       <Filter>Source\Assets\Formats</Filter>
-    </ClCompile>
-    <ClCompile Include="TitleScreenView.cpp">
-      <Filter>Source\Ui\Screens</Filter>
-    </ClCompile>
-    <ClCompile Include="FrontendScreen.cpp">
-      <Filter>Source\Ui\Screens</Filter>
     </ClCompile>
     <ClCompile Include="DK2AssetLoader.cpp">
       <Filter>Source\Assets\Formats</Filter>
@@ -1124,9 +1118,6 @@
     </ClCompile>
     <ClCompile Include="Random.cpp">
       <Filter>Source\Base</Filter>
-    </ClCompile>
-    <ClCompile Include="EconomyService.cpp">
-      <Filter>Source\Session</Filter>
     </ClCompile>
     <ClCompile Include="MoneyStorageRoomController.cpp">
       <Filter>Source\World\Rooms\Controllers</Filter>
@@ -1197,9 +1188,6 @@
     <ClCompile Include="CreatureAction_Digging.cpp">
       <Filter>Source\World\Creatures\Actions</Filter>
     </ClCompile>
-    <ClCompile Include="ImpCreatureController.cpp">
-      <Filter>Source\World\Creatures\Controllers</Filter>
-    </ClCompile>
     <ClCompile Include="CreatureAction_FaceTarget.cpp">
       <Filter>Source\World\Creatures\Actions</Filter>
     </ClCompile>
@@ -1214,6 +1202,54 @@
     </ClCompile>
     <ClCompile Include="CreatureAction_ClaimFloor.cpp">
       <Filter>Source\World\Creatures\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="WorkerCreatureController.cpp">
+      <Filter>Source\World\Creatures\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="CreatureState_InHand.cpp">
+      <Filter>Source\World\Creatures\States</Filter>
+    </ClCompile>
+    <ClCompile Include="FrontendScreen.cpp">
+      <Filter>Source\Session\Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelsDatabase.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="FrontendMenuPage.cpp">
+      <Filter>Source\Session\Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="UiScrollBar.cpp">
+      <Filter>Source\Ui\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="MapSelectionCursor.cpp">
+      <Filter>Source\World</Filter>
+    </ClCompile>
+    <ClCompile Include="HeldThingView.cpp">
+      <Filter>Source\Session\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="HUDScreen.cpp">
+      <Filter>Source\Session\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="ConsoleScreen.cpp">
+      <Filter>Source\Ui\Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadingScreen.cpp">
+      <Filter>Source\Ui\Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScreen.cpp">
+      <Filter>Source\Ui\Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleScreen.cpp">
+      <Filter>Source\Ui\Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="GameplayCameraController.cpp">
+      <Filter>Source\Session\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="EconomyService.cpp">
+      <Filter>Source\Session\Services</Filter>
+    </ClCompile>
+    <ClCompile Include="InteractionService.cpp">
+      <Filter>Source\Session\Services</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1260,13 +1296,13 @@
       <Filter>Data\Shaders</Filter>
     </None>
     <None Include="..\data\ui\test_screen.json">
-      <Filter>Data\UI</Filter>
+      <Filter>Data\Screens</Filter>
     </None>
     <None Include="..\data\ui\gameplay_screen.json">
-      <Filter>Data\UI</Filter>
+      <Filter>Data\Screens</Filter>
     </None>
     <None Include="..\data\ui\frontend_screen.json">
-      <Filter>Data\UI</Filter>
+      <Filter>Data\Screens</Filter>
     </None>
     <None Include="..\data\gameplay\extensions.json">
       <Filter>Data\Gameplay</Filter>

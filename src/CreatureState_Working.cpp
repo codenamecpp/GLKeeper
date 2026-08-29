@@ -27,19 +27,21 @@ void CreatureState_Working::HandleLeaveState(eCreatureState nextState)
 
 void CreatureState_Working::HandleUpdateLogic(float stepDeltaTime)
 {
-    CreatureAction* creatureAction = GetStateAction();
-    if (creatureAction && creatureAction->InProgress())
+    if (CreatureAction* creatureAction = GetStateAction())
     {
-        // handle interruption
-        CreatureTask* assignedTask = GetCreature().GetAssignedTask();
-        if ((assignedTask == nullptr) || assignedTask->IsExpired())
+        if (creatureAction->InProgress())
         {
-            creatureAction->RequestCancellation();
+            // handle interruption
+            CreatureTask* assignedTask = GetCreature().GetAssignedTask();
+            if ((assignedTask == nullptr) || assignedTask->IsExpired())
+            {
+                creatureAction->RequestCancellation();
+            }
+            return;
         }
-        return;
-    }
 
-    StartStateAction(nullptr);
+        StartStateAction(nullptr);
+    }
 
     // try find new task right away
     if (GetCreature().SelectTaskForJob(GetCreature().GetLastAssignedJob()))
@@ -80,7 +82,7 @@ bool CreatureState_Working::StartActionForTask(CreatureTask* creatureTask)
         case eCreatureJob_Dig:
         {
             glm::vec2 workPoint {};
-            MapPoint2D targetTile {};
+            Point2D targetTile {};
             if (creatureTask->GetTargetPosition(workPoint) && 
                 creatureTask->GetTargetTile(targetTile))
             {
@@ -93,7 +95,7 @@ bool CreatureState_Working::StartActionForTask(CreatureTask* creatureTask)
         case eCreatureJob_Mine:
         {
             glm::vec2 workPoint {};
-            MapPoint2D targetTile {};
+            Point2D targetTile {};
             if (creatureTask->GetTargetPosition(workPoint) && 
                 creatureTask->GetTargetTile(targetTile))
             {
@@ -105,7 +107,7 @@ bool CreatureState_Working::StartActionForTask(CreatureTask* creatureTask)
 
         case eCreatureJob_CarryGoldToTreasury:
         {
-            MapPoint2D targetTile {};
+            Point2D targetTile {};
             if (creatureTask->GetTargetTile(targetTile))
             {
                 StartStateAction(gCreatureManager.CreateCarryGoldToTreasuryAction(GetCreaturePtr(), targetTile));
@@ -117,7 +119,7 @@ bool CreatureState_Working::StartActionForTask(CreatureTask* creatureTask)
         case eCreatureJob_ReinforceWall:
         {
             glm::vec2 workPoint {};
-            MapPoint2D targetTile {};
+            Point2D targetTile {};
             if (creatureTask->GetTargetPosition(workPoint) && 
                 creatureTask->GetTargetTile(targetTile))
             {
@@ -129,7 +131,7 @@ bool CreatureState_Working::StartActionForTask(CreatureTask* creatureTask)
 
         case eCreatureJob_Claim:
         {
-            MapPoint2D targetTile {};
+            Point2D targetTile {};
             if (creatureTask->GetTargetTile(targetTile))
             {
                 StartStateAction(gCreatureManager.CreateClaimFloorAction(GetCreaturePtr(), targetTile));

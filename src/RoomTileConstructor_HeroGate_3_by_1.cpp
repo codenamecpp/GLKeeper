@@ -50,7 +50,7 @@ void RoomTileConstructor_HeroGate_3_by_1::ConstructRoomFloor(Room* roomInstance,
         case eDirection_W: break; // default pieces rotation - West
     }
 
-    const MapArea2D& locationArea = roomInstance->GetLocationArea();
+    const Rect2D& locationArea = roomInstance->GetLocationArea();
     for (MapTile* targetTile : floorTiles)
     {
         const int ioffsetx = targetTile->mLocation.x - locationArea.x;

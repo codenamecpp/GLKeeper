@@ -86,17 +86,19 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 
-struct EntityLifecycleFlags
+struct EntityFlags
 {
 public:
-    EntityLifecycleFlags()
+    EntityFlags()
         : mWasSpawned(false)
         , mWasDeleted(false)
         , mWasDespawned(false)
+        , mIsUnplaced(false)
     {}
-    unsigned char mWasSpawned : 1; // whether entity was activated
-    unsigned char mWasDeleted : 1; // whether entity marked as pending deletion
-    unsigned char mWasDespawned : 1; // whether entity was completely removed from world
+    bool mWasSpawned : 1; // whether entity was activated
+    bool mWasDeleted : 1; // whether entity marked as pending deletion
+    bool mWasDespawned : 1; // whether entity was completely removed from world
+    bool mIsUnplaced : 1; // whether entity has no world placement (e.g., in hand)
 };
 
 //////////////////////////////////////////////////////////////////////////

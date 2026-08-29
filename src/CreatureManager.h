@@ -45,8 +45,8 @@ public:
     bool DeleteCreature(const EntityHandle& creatureHandle);
     bool DeleteCreature(EntityUid creatureUid);
 
-    // check whether the creature was spawned and remains active
-    bool IsCreatureActive(const EntityHandle& creatureHandle) const;
+    // check whether the creature was spawned and remains active on map
+    bool ExistsOnMap(const EntityHandle& creatureHandle) const;
 
     // get all currently active creatures in game world
     // warning: do not store result
@@ -76,12 +76,12 @@ public:
     CreatureActionPtr CreateIdleStandingAction(Creature* creature);
     CreatureActionPtr CreateWanderAction(Creature* creature, const glm::vec2& destination);
     CreatureActionPtr CreateWalkToPointAction(Creature* creature, const glm::vec2& destination);
-    CreatureActionPtr CreateDiggingAction(Creature* creature, const glm::vec2& workPoint, const MapPoint2D& targetTile);
-    CreatureActionPtr CreateMiningAction(Creature* creature, const glm::vec2& workPoint, const MapPoint2D& targetTile);
-    CreatureActionPtr CreateFaceTileAction(Creature* creature, const MapPoint2D& targetTile);
-    CreatureActionPtr CreateCarryGoldToTreasuryAction(Creature* creature, const MapPoint2D& targetTile);
-    CreatureActionPtr CreateReinforceWallAction(Creature* creature, const glm::vec2& workPoint, const MapPoint2D& targetTile);
-    CreatureActionPtr CreateClaimFloorAction(Creature* creature, const MapPoint2D& targetTile);
+    CreatureActionPtr CreateDiggingAction(Creature* creature, const glm::vec2& workPoint, const Point2D& targetTile);
+    CreatureActionPtr CreateMiningAction(Creature* creature, const glm::vec2& workPoint, const Point2D& targetTile);
+    CreatureActionPtr CreateFaceTileAction(Creature* creature, const Point2D& targetTile);
+    CreatureActionPtr CreateCarryGoldToTreasuryAction(Creature* creature, const Point2D& targetTile);
+    CreatureActionPtr CreateReinforceWallAction(Creature* creature, const glm::vec2& workPoint, const Point2D& targetTile);
+    CreatureActionPtr CreateClaimFloorAction(Creature* creature, const Point2D& targetTile);
 
     //////////////////////////////////////////////////////////////////////////
 

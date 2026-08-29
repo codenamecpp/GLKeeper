@@ -3,7 +3,7 @@
 #include "RoomManager.h"
 #include "GameSession.h"
 
-void Player::Configure(ePlayerID playerId, ePlayerType playerType, const std::string_view& playerName)
+void Player::Configure(ePlayerID playerId, ePlayerType playerType, std::string_view playerName)
 {
     Cleanup();
 
@@ -22,6 +22,7 @@ void Player::Cleanup()
     mRoomsOwned.clear();
     mRoomsByType.clear();
     mMoneyStorageRooms.clear();
+    mHeldEntities.clear();
 
     mIsDefeated = false;
 
@@ -45,7 +46,7 @@ void Player::SetStartingResourceAmount(eGameResource resourceType, long resource
     mStartingResourceAmount[resourceType] = resourceAmount;
 }
 
-void Player::SetStartCameraTilePosition(const MapPoint2D& tileLocation)
+void Player::SetStartCameraTilePosition(const Point2D& tileLocation)
 {
     mStartCameraTilePos = tileLocation;
 }
@@ -94,7 +95,7 @@ void Player::RemoveFromInventory(EntityHandle entity)
 
         for (auto& roller: mRoomsByType)
         {
-            EntitiesList& entitiesList = roller.second;
+            std::vector<EntityHandle>& entitiesList = roller.second;
             if (cxx::erase(entitiesList, entity))
                 break;
         }
@@ -109,7 +110,7 @@ bool Player::HasOwnedRoomsOfType(RoomTypeId roomType) const
     auto it = mRoomsByType.find(roomType);
     if (it != mRoomsByType.end())
     {
-        const EntitiesList& entitiesList = it->second;
+        const std::vector<EntityHandle>& entitiesList = it->second;
         return !entitiesList.empty();
     }
     return false;
@@ -120,7 +121,7 @@ EntityHandle Player::GetFirstOwnedRoomOfType(RoomTypeId roomType) const
     auto it = mRoomsByType.find(roomType);
     if (it != mRoomsByType.end())
     {
-        const EntitiesList& entitiesList = it->second;
+        const std::vector<EntityHandle>& entitiesList = it->second;
         if (!entitiesList.empty())
             return entitiesList.front();
     }
@@ -132,7 +133,7 @@ EntityHandle Player::GetNextOwnedRoomOfType(RoomTypeId roomType, EntityHandle pr
     auto it = mRoomsByType.find(roomType);
     if (it != mRoomsByType.end())
     {
-        const EntitiesList& entitiesList = it->second;
+        const std::vector<EntityHandle>& entitiesList = it->second;
         if (!entitiesList.empty())
         {
             int index = cxx::get_item_index(entitiesList, prevHandle);
@@ -151,7 +152,7 @@ EntityHandle Player::GetLastOwnedRoomOfType(RoomTypeId roomType) const
     auto it = mRoomsByType.find(roomType);
     if (it != mRoomsByType.end())
     {
-        const EntitiesList& entitiesList = it->second;
+        const std::vector<EntityHandle>& entitiesList = it->second;
         if (!entitiesList.empty())
             return entitiesList.back();
     }
@@ -189,4 +190,58 @@ void Player::SetResourceAmount(eGameResource resourceType, long resourceAmount)
 void Player::SetDefeated()
 {
     mIsDefeated = true;
+}
+
+void Player::AddHeldEntity(EntityHandle entity)
+{
+    if (!entity.IsCreature() && !entity.IsGameObject())
+    {
+        cxx_assert(false);
+        return;
+    }
+
+    if (!cxx::contains(mHeldEntities, entity))
+    {
+        mHeldEntities.push_back(entity);
+    }
+}
+
+void Player::RemoveHeldEntity(EntityHandle entity)
+{
+    cxx::erase(mHeldEntities, entity);
+}
+
+EntityHandle Player::GetFirstHeldEntity() const
+{
+    return !mHeldEntities.empty() ? mHeldEntities.front() : EntityHandle {};
+}
+
+EntityHandle Player::GetNextHeldEntity(EntityHandle prevHandle) const
+{
+    if (!mHeldEntities.empty())
+    {
+        int index = cxx::get_item_index(mHeldEntities, prevHandle);
+        if (index == -1)
+        {
+            return mHeldEntities.back();
+        }
+        int nextIndex = (index + 1) % mHeldEntities.size();
+        return mHeldEntities[nextIndex];
+    }
+    return EntityHandle {};
+}
+
+EntityHandle Player::GetLastHeldEntity() const
+{
+    return !mHeldEntities.empty() ? mHeldEntities.back() : EntityHandle {};
+}
+
+bool Player::HasInHand(EntityHandle entity) const
+{
+    return cxx::contains(mHeldEntities, entity);
+}
+
+bool Player::HasSomethingInHand() const
+{
+    return !mHeldEntities.empty();
 }

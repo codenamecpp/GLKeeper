@@ -11,7 +11,7 @@ class CreatureAction_FaceTarget: public CreatureAction
 public:
     CreatureAction_FaceTarget();
 
-    void Configure(Creature* creature, const MapPoint2D& mapTile);
+    void Configure(Creature* creature, const Point2D& mapTile);
 
     // override CreatureAction
     void OnRecycle() override;
@@ -21,7 +21,7 @@ public:
     void HandleResumeAction(eCreatureAction subActionId, eResult subActionResult) override;
 
 private:
-    std::optional<MapPoint2D> mTargetMapTile;
+    std::optional<Point2D> mTargetMapTile;
 };
 
 //////////////////////////////////////////////////////////////////////////

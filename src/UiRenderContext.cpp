@@ -3,6 +3,7 @@
 #include "GameRenderManager.h"
 #include "ShadersManager.h"
 #include "TextureManager.h"
+#include "UiManager.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -66,9 +67,7 @@ void UiRenderContext::BeginFrame()
     gRenderDevice.SetRenderState(guiRenderStates);
 
     mCurrentBlendingMode = guiRenderStates.mBlendingMode;
-
-    const Viewport& viewport = gRenderDevice.GetViewport();
-    mScreenRect = viewport.mScreenArea;
+    mScreenRect = gUiManager.GetScreenRect();
 
     mProjectionMatrix2D = glm::ortho(mScreenRect.x * 1.0f, 
         (mScreenRect.x + mScreenRect.w) * 1.0f, 

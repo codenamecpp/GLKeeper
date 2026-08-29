@@ -51,8 +51,8 @@ public:
     bool DeleteObject(const EntityHandle& objectHandle);
     bool DeleteObject(EntityUid objectUid);
 
-    // check whether the game object was spawned and remains active
-    bool IsObjectActive(const EntityHandle& objectHandle) const;
+    // check whether the game object was spawned and remains active on map
+    bool ExistsOnMap(const EntityHandle& objectHandle) const;
 
     // get all currently active gameobjects in game world
     // warning: do not store result
