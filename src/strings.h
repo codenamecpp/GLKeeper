@@ -59,12 +59,10 @@ namespace cxx
     //////////////////////////////////////////////////////////////////////////
 
     // helpers
-    template<typename TString>
-    inline int string_length(const TString& srcString) { return static_cast<int>(srcString.length()); }
+    inline int string_length(const std::string& srcString) { return static_cast<int>(srcString.length()); }
     inline int string_length(const char* srcString) { return static_cast<int>(strlen(srcString)); }
 
-    template<typename TString>
-    inline const char* c_str(const TString& srcString) { return srcString.c_str(); }
+    inline const char* c_str(const std::string& srcString) { return srcString.c_str(); }
     inline const char* c_str(const char* srcString) { return srcString; }
 
     //////////////////////////////////////////////////////////////////////////
@@ -97,20 +95,40 @@ namespace cxx
         return (stringLength >= prefixLength) && (0 == strncmp(c_str(sourceString), c_str(prefixString), prefixLength));
     }
 
-    template<typename TSrcString, typename TSuffixString>
-    inline bool ends_with_icase(const TSrcString& sourceString, const TSuffixString& suffixString)
+    inline bool ends_with_icase(std::wstring_view sourceString, std::wstring_view suffixString)
     {
-        int stringLength = string_length(sourceString);
-        int suffixLength = string_length(suffixString);
-        return (stringLength >= suffixLength) && (0 == _stricmp(c_str(sourceString) + stringLength - suffixLength, c_str(suffixString)));
+        return (sourceString.length() >= suffixString.length()) && 
+            std::equal(suffixString.rbegin(), suffixString.rend(), sourceString.rbegin(), [](wchar_t lhs, wchar_t rhs) 
+        { 
+            return towlower(lhs) == towlower(rhs); 
+        });
     }
 
-    template<typename TSrcString, typename TSuffixString>
-    inline bool ends_with(const TSrcString& sourceString, const TSuffixString& suffixString)
+    inline bool ends_with_icase(std::string_view sourceString, std::string_view suffixString)
     {
-        int stringLength = string_length(sourceString);
-        int suffixLength = string_length(suffixString);
-        return (stringLength >= suffixLength) && (0 == strcmp(c_str(sourceString) + stringLength - suffixLength, c_str(suffixString)));
+        return (sourceString.length() >= suffixString.length()) && 
+            std::equal(suffixString.rbegin(), suffixString.rend(), sourceString.rbegin(), [](char lhs, char rhs) 
+        { 
+            return towlower(lhs) == towlower(rhs); 
+        });
+    }
+
+    inline bool ends_with(std::string_view sourceString, std::string_view suffixString)
+    {
+        return (sourceString.length() >= suffixString.length()) && 
+            std::equal(suffixString.rbegin(), suffixString.rend(), sourceString.rbegin(), [](char lhs, char rhs) 
+        { 
+            return lhs == rhs;
+        });
+    }
+
+    inline bool ends_with(std::wstring_view sourceString, std::wstring_view suffixString)
+    {
+        return (sourceString.length() >= suffixString.length()) && 
+            std::equal(suffixString.rbegin(), suffixString.rend(), sourceString.rbegin(), [](wchar_t lhs, wchar_t rhs) 
+        { 
+            return lhs == rhs;
+        });
     }
 
     //////////////////////////////////////////////////////////////////////////

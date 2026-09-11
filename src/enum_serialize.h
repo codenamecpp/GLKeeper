@@ -6,7 +6,7 @@ template<typename TEnum>
 struct cxx_enum_serialize_props
 {
     // string value should be statically allocated
-    struct container_entry { TEnum mEnumValue; const char* mEnumString; };
+    struct container_entry { TEnum mEnumValue; std::string_view mEnumString; };
     using container_type = std::vector<container_entry>;
     static const container_type mEnumValueStrings;
 };
@@ -24,7 +24,7 @@ namespace cxx
 {
 
     template<typename TEnum>
-    inline const char* enum_to_string(TEnum enum_value)
+    inline std::string_view enum_to_string(TEnum enum_value)
     {
         using enum_props_t = cxx_enum_serialize_props<TEnum>;
         for (const auto& roller: enum_props_t::mEnumValueStrings)
@@ -36,12 +36,12 @@ namespace cxx
     }
 
     template<typename TEnum>
-    inline bool parse_enum(const char* string_value, TEnum& enum_value)
+    inline bool parse_enum(std::string_view string_value, TEnum& enum_value)
     {
         using enum_props_t = cxx_enum_serialize_props<TEnum>;
         for (const auto& roller: enum_props_t::mEnumValueStrings)
         {
-            if (strcmp(roller.mEnumString, string_value) == 0)
+            if (string_value == roller.mEnumString)
             {
                 enum_value = roller.mEnumValue;
                 return true;
@@ -66,7 +66,7 @@ namespace cxx
     }
 
     template<typename TEnum>
-    inline void get_enum_strings(std::vector<const char*>& out_values)
+    inline void get_enum_strings(std::vector<std::string_view>& out_values)
     {
         using enum_props_t = cxx_enum_serialize_props<TEnum>;
         out_values.clear();

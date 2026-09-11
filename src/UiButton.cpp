@@ -11,6 +11,7 @@ UiButton::UiButton(): UiButton("button")
 UiButton::UiButton(const std::string& widgetClassName)
     : UiWidget(widgetClassName)
     , mPressed()
+    , mPressInset(0, 0)
 {
     memset(mStates, 0, sizeof(mStates));
 
@@ -23,6 +24,7 @@ UiButton::UiButton(const std::string& widgetClassName)
 UiButton::UiButton(const UiButton& sourceWidget)
     : UiWidget(sourceWidget)
     , mPressed()
+    , mPressInset(sourceWidget.mPressInset)
 {
     for (int iroller = 0; iroller < eUiButtonState_COUNT; ++iroller)
     {
@@ -92,6 +94,8 @@ void UiButton::Deserialize(const JsonElement& jsonElement)
     InitButtonStateTint(eUiButtonState_Disabled, "tint_disabled");
     InitButtonStateTint(eUiButtonState_Pressed, "tint_pressed");
 
+    JsonQuery(jsonElement, "press_inset", mPressInset);
+
     ButtonStateChanged(); // reset to initial state
 }
 
@@ -104,17 +108,19 @@ UiButton* UiButton::CloneSelf() const
 void UiButton::RenderSelf(UiRenderContext& uiRenderContext)
 {
     eUiButtonState stateToDraw = mButtonState;
-    if (!mStates[stateToDraw])
+    if (mStates[stateToDraw] == nullptr)
     {
         stateToDraw = eUiButtonState_Normal;
     }
 
-    if (mStates[stateToDraw])
+    if (Texture* statePicture = mStates[stateToDraw])
     {
-        // scale
-        Rect2D rcDestination = GetLocalBounds();
-
-        uiRenderContext.DrawTexture(mStates[stateToDraw], mStatesTint[mButtonState], rcDestination);
+        Rect2D bounds = GetLocalBounds();
+        if (IsPressed())
+        {
+            bounds.Inflate(-mPressInset);
+        }
+        uiRenderContext.DrawTexture(statePicture, mStatesTint[mButtonState], bounds);
     }
 }
 
@@ -154,18 +160,12 @@ void UiButton::HandleInputEvent(MouseButtonInputEvent& inputEvent)
     if (inputEvent.mPressed)
     {
         const UiEvent_OnPress eventDesc {inputEvent.mButton, inputEvent.mMousePosition};
-        mEventListeners.IterateListeners([this, &eventDesc](UiEventListener* listener)
-            {
-                listener->HandleUiEvent(this, eventDesc);
-            });
+        NotifyListeners(eventDesc);
     }
     else
     {
         const UiEvent_OnRelease eventDesc {inputEvent.mButton, inputEvent.mMousePosition};
-        mEventListeners.IterateListeners([this, &eventDesc](UiEventListener* listener)
-            {
-                listener->HandleUiEvent(this, eventDesc);
-            });
+        NotifyListeners(eventDesc);
     }
 
     if (wasClicked)
@@ -211,24 +211,20 @@ void UiButton::HandleMouseLeave()
     }
 }
 
-void UiButton::HandleEnableStateChanged()
+void UiButton::HandleEnabledChanged()
 {
-    mPressed = 0;
+    mPressed = {};
     ButtonStateChanged();
 }
 
-void UiButton::HandleVisibilityChanged()
+void UiButton::HandleVisibleChanged()
 {
-    mPressed = 0;
+    mPressed = {};
     ButtonStateChanged();
 }
 
 void UiButton::Click(int mouseButton)
 {
-    // notify listeners
     const UiEvent_OnClick eventDesc (mouseButton);
-    mEventListeners.IterateListeners([this, &eventDesc](UiEventListener* listener)
-        {
-            listener->HandleUiEvent(this, eventDesc);
-        });
+    NotifyListeners(eventDesc);
 }

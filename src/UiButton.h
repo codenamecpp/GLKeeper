@@ -24,7 +24,7 @@ public:
     // Click the button
     virtual void Click(int mouseButton = MBUTTON_LEFT);
 
-    // Load widget properties from json
+    // override UiWidget
     void Deserialize(const JsonElement& jsonElement) override;
 
 protected:
@@ -39,8 +39,8 @@ protected:
 
     // override UiWidget
     void RenderSelf(UiRenderContext& uiRenderContext) override;
-    void HandleEnableStateChanged() override;
-    void HandleVisibilityChanged() override;
+    void HandleEnabledChanged() override;
+    void HandleVisibleChanged() override;
     void HandleMouseEnter() override;
     void HandleMouseLeave() override;
     void HandleInputEvent(MouseButtonInputEvent& inputEvent) override;
@@ -48,8 +48,9 @@ protected:
 protected:
     Texture* mStates[eUiButtonState_COUNT];
     Color32 mStatesTint[eUiButtonState_COUNT];
+    Point2D mPressInset;
     eUiButtonState mButtonState = eUiButtonState_Normal;
-    bool mPressed;
+    bool mPressed {};
 };
 
 //////////////////////////////////////////////////////////////////////////

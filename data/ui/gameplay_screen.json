@@ -1,78 +1,205 @@
 {
 
 "widget": {"class": "dummy", "id": "root", "pos":[0,0], "size":[1024,768], "anchor_min":[0,0], "anchor_max":[1,1], "interactive":false,
-    "children": [
-        {"class":"panel", "id":"tools_container", "pos":[0,0], "size":[0,180], "pivot":[0,1], "anchor_min":[0,1], "anchor_max":[1,1], "fill_color":[0,0,0,0], "border_color":[0,0,0,0],
-            "children": [
+    "children": 
+    [
+        {"class":"panel", "id":"control_panel", "size":[0,180], "pivot":[0,1], "anchor_min":[0,1], "anchor_max":[1,1], "fill_color":[0,0,0,0], "border_color":[0,0,0,0],
+            "children": 
+            [
                 {"class":"panel", "id":"bg_fill", "pos":[0,0], "pivot":[0.5,1], "size":[0,20], "anchor_min":[0,1], "anchor_max":[1,1], "fill_color":[0,0,0,255]},
                 {"class":"picture", "id":"bg", "path":"GUI\\Windows\\Panel-BG", "stretch_mode":"tile_horizontal", "pos":[0,56], "size":[0,115], "anchor_min":[0,0], "anchor_max":[1,0]},
                 {"class":"picture", "id":"bg_bar_1", "path":"GUI\\Windows\\Bar-00", "stretch_mode":"tile_horizontal", "pos":[0,8], "size":[0,35], "anchor_min":[0,0], "anchor_max":[1,0]},
                 {"class":"picture", "id":"bg_bar_2", "path":"GUI\\Windows\\Bar-02", "stretch_mode":"scale", "pos":[-192,0], "size":[128,51], "anchor_min":[1,0]},
                 {"class":"picture", "id":"bg_bar_3", "path":"GUI\\Windows\\Bar-03", "stretch_mode":"scale", "pos":[-64,0], "size":[128,51], "anchor_min":[1,0]},
 
-                {"class":"picture", "id":"minimap_bg", "path":"GUI\\Map\\Map-BG", "stretch_mode":"scale", "pos":[16,8], "size":[164,164]},
-                {"class":"picture", "id":"minimap", "path":"GUI\\Map\\map-2", "stretch_mode":"scale", "pos":[8,0], "size":[205,205]},
+                {"class":"dummy", "id":"pages_buttons", "pos":[192,0], "size":[328,52],
+                    "children": 
+                    [
 
-                {"class":"dummy", "pos":[188,0], "size":[328,52], "id":"tabs_buttons",
-                    "children": [
-                        {"class":"production_button", "id":"creatures_button", "pos":[0,0], "size":[52,52], 
-                            "i_state_normal":"GUI\\Tabs\\t-creatures",
-                            "i_hovered_frame":"GUI\\Icons\\frame",
-                            "i_selected_frame":"GUI\\Icons\\selected-creature"
-                        },
-                        {"class":"production_button", "id":"rooms_button", "pos":[55,0], "size":[52,52], 
-                            "i_state_normal":"GUI\\Tabs\\t-rooms",
-                            "i_hovered_frame":"GUI\\Icons\\frame",
-                            "i_selected_frame":"GUI\\Icons\\selected-room"
-                        },
-                        {"class":"production_button", "id":"spells_button", "pos":[110,0], "size":[52,52], 
-                            "i_state_normal":"GUI\\Tabs\\t-spells",
-                            "i_hovered_frame":"GUI\\Icons\\frame",
-                            "i_selected_frame":"GUI\\Icons\\selected-spell"
-                        },
-                        {"class":"production_button", "id":"traps_button", "pos":[165,0], "size":[52,52], 
-                            "i_state_normal":"GUI\\Tabs\\t-workshop",
-                            "i_hovered_frame":"GUI\\Icons\\frame",
-                            "i_selected_frame":"GUI\\Icons\\selected-trap"
-                        },
-                        {"class":"production_button", "id":"sell_button", "pos":[220,0], "size":[52,52], 
-                            "i_state_normal":"GUI\\Tabs\\T-Sell",
-                            "i_hovered_frame":"GUI\\Icons\\frame",
-                            "i_selected_frame":"GUI\\Icons\\selected-door"
-                        },
-                        {"class":"production_button", "id":"dig_button", "pos":[275,0], "size":[52,52], 
-                            "i_state_normal":"GUI\\Icons\\1st-person\\m-imp",
-                            "i_hovered_frame":"GUI\\Icons\\frame",
-                            "i_selected_frame":"GUI\\Icons\\selected-door"
+                        {"template":"cp_creatures_page_button", "id":"creatures_page_button"},
+                        {"template":"cp_rooms_page_button", "id":"rooms_page_button", "pos":[55,0]},
+                        {"template":"cp_spells_page_button", "id":"spells_page_button", "pos":[110,0]},
+                        {"template":"cp_workshop_page_button", "id":"workshop_page_button", "pos":[165,0]},
+
+                        {"class":"cbutton", "id":"minimize", "pos":[240,0], "size":[52,52], "i_state_normal":"GUI\\Icons\\i-mise", 
+                            "children":
+                            [
+                                {"class":"picture", "id":"overlay", "path":"GUI\\Icons\\i-mise", "stretch_mode":"scale", "size":[52,52], "anchor_min":[0,0], "anchor_max":[1,1], "blendmode":"add", 
+                                    "props":
+                                    [
+                                        {"id":"show_states", "value":"hovered pressed"}
+                                    ]
+                                }
+                            ]
                         }
+
                     ]
                 },
 
-                {"class":"grid_layout", "id":"production_buttons", "pos":[220,60], "size":[700,120], "layout_orientation":"vertical", "num_rows":2, "spacing_x":3, "spacing_y":2}
+                {"class":"dummy", "id":"pages_content", "pos":[192,60], "size":[800,120], 
+                    "children":
+                    [
+                        {"class":"dummy", "id":"creatures_page", "size":[700,120], 
+                            "children":
+                            [
+                                {"class":"picture", "id":"imp_tasks", "path":"GUI\\Tabs\\t-cp-imp", "stretch_mode":"scale", "pos":[0,0], "size":[26,106]},
+                                {"class":"picture", "id":"imp_bg", "path":"GUI\\Creatures\\Evil\\imp-bg", "stretch_mode":"scale", "pos":[26,0], "size":[52,106]},
+                                {"class":"picture", "id":"c_modes_bg", "path":"GUI\\Tabs\\t-creature_panel", "stretch_mode":"scale", "pos":[82,0], "size":[26,106]},
+                                {"template":"cp_page_forward", "id":"page_forward", "pos":[116,0]},
+                                {"template":"cp_page_back", "id":"page_back", "pos":[116,54]},
+                                {"class":"picture", "id":"c_total_bg", "path":"GUI\\Tabs\\t-cp-total", "stretch_mode":"scale", "pos":[150,0], "size":[26,110]}
+                            ]
+                        },
 
+                        {"class":"dummy", "id":"rooms_page", "size":[700,120], 
+                            "children":
+                            [
+                                {"template":"cp_page_forward", "id":"page_forward"},
+                                {"template":"cp_page_back", "id":"page_back", "pos":[0,54]},
+
+                                {"class":"grid_layout", "id":"items", "pos":[32,0], "size":[700,120], "layout_orientation":"vertical", "num_rows":2, "spacing_x":3, "spacing_y":2}
+                            ],
+                            "props":
+                            [
+                                {"id":"item_button_tid", "value":"cp_rooms_page_button"}
+                            ]
+                        },
+
+                        {"class":"dummy", "id":"spells_page", "size":[700,120],
+                            "children":
+                            [
+                                {"template":"cp_page_forward", "id":"page_forward"},
+                                {"template":"cp_page_back", "id":"page_back", "pos":[0,54]} 
+                            ]
+                        },
+
+                        {"class":"dummy", "id":"workshop_page", "size":[700,120],
+                            "children":
+                            [
+                                {"template":"cp_page_forward", "id":"page_forward"},
+                                {"template":"cp_page_back", "id":"page_back", "pos":[0,54]} 
+                            ]
+                        }
+                    ]
+                }
+
+            ],
+            "props":
+            [
+                {"id":"minimized_vert_offset", "type":"int", "value":124}
+            ]
+        },
+
+        {"class":"dummy", "id":"minimap_container", "interactive":false, "pos":[0,0], "size":[0,180], "pivot":[0,1], "anchor_min":[0,1], "anchor_max":[1,1],
+            "children": 
+            [
+                {"class":"dummy", "id":"minimap", "pos":[8,0], "size":[180,180], 
+                    "children":
+                    [
+                        {"class":"picture", "id":"bg", "path":"GUI\\Map\\Map-BG", "stretch_mode":"scale", "pos":[8,8], "size":[164,164]},
+                        {"class":"dummy", "id":"mmview", "pos":[26,26], "size":[124,124]},
+                        {"class":"picture", "id":"frame", "path":"GUI\\Map\\map", "stretch_mode":"scale", "size":[205,205]},
+                        {"class":"cbutton", "id":"sell_button", "pos":[142,1], "size":[35,35], 
+                            "children":
+                            [
+                                {"class":"picture", "id":"hovered_frame", "interactive":false, "path":"GUI\\Map\\mapbf-01", "stretch_mode":"scale", "pivot":[1,0], "pos":[36,-1], "size":[52,52],
+                                    "props":
+                                    [
+                                        {"id":"show_states", "value":"hovered pressed"},
+                                        {"id":"hide_states", "value":"selected"}
+                                    ]
+                                },
+                                {"class":"picture", "id":"selected", "interactive":false, "path":"GUI\\Map\\selected-mapbf-01", "stretch_mode":"scale", "pivot":[1,0], "pos":[36,-1], "size":[52,52],
+                                    "props":
+                                    [
+                                        {"id":"show_states", "value":"selected"}
+                                    ]
+                                }
+                            ]
+                        },
+                        {"class":"cbutton", "id":"options_button", "pos":[1,141], "size":[35,35], 
+                            "children":
+                            [
+                                {"class":"picture", "id":"hovered_frame", "visible":true, "interactive":false, "path":"GUI\\Map\\mapbf-02", "stretch_mode":"scale", "pivot":[0,1], "pos":[0,36], "size":[52,52],
+                                    "props":
+                                    [
+                                        {"id":"show_states", "value":"hovered pressed"},
+                                        {"id":"hide_states", "value":"selected"}
+                                    ]
+                                },
+                                {"class":"picture", "id":"selected", "visible":false, "interactive":true, "path":"GUI\\Map\\selected-mapbf-02", "stretch_mode":"scale", "pivot":[0,1], "pos":[0,36], "size":[52,52],
+                                    "props":
+                                    [
+                                        {"id":"show_states", "value":"selected"}
+                                    ]
+                                }
+                            ]
+                        },
+                        {"class":"cbutton", "id":"info_button", "pos":[1,1], "size":[35,35], 
+                            "children":
+                            [
+                                {"class":"picture", "id":"hovered_frame", "interactive":false, "path":"GUI\\Map\\mapbf-00", "stretch_mode":"scale", "pos":[-1,-1], "size":[52,52],
+                                    "props":
+                                    [
+                                        {"id":"show_states", "value":"hovered pressed"},
+                                        {"id":"hide_states", "value":"selected"}
+                                    ]
+                                },
+                                {"class":"picture", "id":"selected", "interactive":true, "path":"GUI\\Map\\selected-mapbf-00", "stretch_mode":"scale", "pos":[-1,-1], "size":[52,52],
+                                    "props":
+                                    [
+                                        {"id":"show_states", "value":"selected"}
+                                    ]
+                                }
+                            ]
+                        },
+                        {"class":"cbutton", "id":"zoom_button", "pos":[142,141], "size":[35,35], 
+                            "children":
+                            [
+                                {"class":"picture", "id":"hovered_frame", "interactive":false, "path":"GUI\\Map\\mapbf-03", "stretch_mode":"scale", "pivot":[0,1], "pos":[-16,36], "size":[52,52],
+                                    "props":
+                                    [
+                                        {"id":"show_states", "value":"hovered pressed"},
+                                        {"id":"hide_states", "value":"selected"}
+                                    ]
+                                },
+                                {"class":"picture", "id":"selected", "interactive":true, "path":"GUI\\Map\\selected-mapbf-03", "stretch_mode":"scale", "pivot":[0,1], "pos":[-16,36], "size":[52,52],
+                                    "props":
+                                    [
+                                        {"id":"show_states", "value":"selected"}
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
             ]
         },
 
         {"class":"dummy", "id":"status_container", "pos":[0,0], "size":[0,78], "anchor_min":[0,0], "anchor_max":[1,0], 
-            "children": [
+            "children": 
+            [
                 {"class":"picture", "id":"bg_bar_1", "path":"GUI\\Windows\\Bar-00", "stretch_mode":"tile_horizontal", "pos":[0,8], "size":[0,35], "anchor_min":[0,0], "anchor_max":[1,0]},
                 {"class":"picture", "id":"bg_bar_2", "path":"GUI\\Windows\\Bar-01", "stretch_mode":"scale", "pos":[-32,0], "size":[52,52], "anchor_min":[1,0], "anchor_max":[0,0]},
                 {"class":"dummy", "id":"mana_block", "pos":[0,0], "size":[206,68],
-                    "children":[
+                    "children":
+                    [
                         {"class":"picture", "id":"bar_1", "path":"GUI\\Windows\\Mana-Bg-00", "stretch_mode":"scale", "pos":[16,4], "size":[90,45]},
                         {"class":"picture", "id":"bar_1", "path":"GUI\\Windows\\Mana-Bg-01", "stretch_mode":"scale", "pos":[103,4], "size":[90,45]},
                         {"class":"picture", "id":"heart_hp", "path":"GUI\\Windows\\heart-hp", "stretch_mode":"scale", "pos":[0,4], "size":[65,65]},
                         {"class":"picture", "id":"heart_bg", "path":"GUI\\Windows\\heart-bg", "stretch_mode":"scale", "pos":[0,4], "size":[65,65]},
-                        {"class":"textbox", "id":"mana_amount", "pos":[80,10], "size":[100,65], "font":"FONT_INGAME18", "horz_align":"right", "text":"159350", "color":[0,231,143,255]}
+                        {"class":"button", "id":"focus_on_heart", "pos":[10,14], "size":[44,46]},
+                        {"class":"textbox", "id":"mana_amount", "pos":[80,16], "size":[100,32], "font":"counters_font", "font_scale":0.62, "horz_align":"right", "text":"159350", "color":[0,250,160,255]}
                     ]
                 },
                 {"class":"dummy", "id":"gold_block", "pos":[208,0], "size":[206,68],
-                    "children":[
+                    "children":
+                    [
                         {"class":"picture", "id":"bar_1", "path":"GUI\\Windows\\Mana-Bg-00", "stretch_mode":"scale", "pos":[16,4], "size":[90,45]},
                         {"class":"picture", "id":"bar_1", "path":"GUI\\Windows\\Mana-Bg-01", "stretch_mode":"scale", "pos":[103,4], "size":[90,45]},
                         {"class":"picture", "id":"payday_hp", "path":"GUI\\Windows\\payday-Hp", "stretch_mode":"scale", "pos":[0,4], "size":[65,65]},
                         {"class":"picture", "id":"payday_bg", "path":"GUI\\Windows\\payday-BG", "stretch_mode":"scale", "pos":[0,4], "size":[65,65]},
-                        {"class":"textbox", "id":"money_amount", "pos":[80,10], "size":[100,65], "font":"FONT_INGAME18", "horz_align":"right", "text":"159350", "color":[229,174,0,255]}
+                        {"class":"textbox", "id":"money_amount", "pos":[80,16], "size":[100,32], "font":"counters_font", "font_scale":0.62, "horz_align":"right", "text":"159350", "color":[255,195,0,255]}
                     ]
                 }
             ]
@@ -82,7 +209,126 @@
         {"class":"textbox", "id":"scenestats", "pos":[10,90], "font":"console_font", "text":"Scene stats",  "color":[255,255,0,255]}
 
     ]
-}
+},
+
+"templates": 
+[
+    {"class":"cbutton", "id":"cp_creatures_page_button", "size":[52,52], "press_inset":[1,1], "i_state_normal":"GUI\\Tabs\\t-creatures", 
+        "children":
+        [
+            {"class":"picture", "id":"darken", "path":"White", "stretch_mode":"scale", "anchor_min":[0,0], "anchor_max":[1,1], "size":[52,52], "tint":[0,0,0,130],
+                "props":
+                [
+                    {"id":"hide_states", "value":"affordable"}
+                ]
+            },
+            {"class":"picture", "id":"frame_s", "path":"GUI\\Icons\\selected-creature", "stretch_mode":"scale", "anchor_min":[0,0], "anchor_max":[1,1], "size":[52,52],
+                "props":
+                [
+                    {"id":"show_states", "value":"selected"}
+                ]
+            },
+            {"class":"picture", "id":"frame_h", "path":"GUI\\Icons\\frame", "stretch_mode":"scale", "anchor_min":[0,0], "anchor_max":[1,1], "size":[52,52],
+                "props":
+                [
+                    {"id":"show_states", "value":"hovered pressed"}
+                ]
+            }
+        ]
+    },
+    {"class":"cbutton", "id":"cp_rooms_page_button", "size":[52,52], "press_inset":[1,1], "i_state_normal":"GUI\\Tabs\\t-rooms", 
+        "children":
+        [
+            {"class":"picture", "id":"darken", "path":"White", "stretch_mode":"scale", "anchor_min":[0,0], "anchor_max":[1,1], "size":[52,52], "tint":[0,0,0,130],
+                "props":
+                [
+                    {"id":"hide_states", "value":"affordable"}
+                ]
+            },
+            {"class":"picture", "id":"frame_s", "path":"GUI\\Icons\\selected-room", "stretch_mode":"scale", "anchor_min":[0,0], "anchor_max":[1,1], "size":[52,52],
+                "props":
+                [
+                    {"id":"show_states", "value":"selected"}
+                ]
+            },
+            {"class":"picture", "id":"frame_h", "path":"GUI\\Icons\\frame", "stretch_mode":"scale", "anchor_min":[0,0], "anchor_max":[1,1], "size":[52,52],
+                "props":
+                [
+                    {"id":"show_states", "value":"hovered pressed"}
+                ]
+            }
+        ]
+    },
+    {"class":"cbutton", "id":"cp_spells_page_button", "size":[52,52], "press_inset":[1,1], "i_state_normal":"GUI\\Tabs\\t-spells", 
+        "children":
+        [
+            {"class":"picture", "id":"darken", "path":"White", "stretch_mode":"scale", "anchor_min":[0,0], "anchor_max":[1,1], "size":[52,52], "tint":[0,0,0,130],
+                "props":
+                [
+                    {"id":"hide_states", "value":"affordable"}
+                ]
+            },
+            {"class":"picture", "id":"frame_s", "path":"GUI\\Icons\\selected-spell", "stretch_mode":"scale", "anchor_min":[0,0], "anchor_max":[1,1], "size":[52,52],
+                "props":
+                [
+                    {"id":"show_states", "value":"selected"}
+                ]
+            },
+            {"class":"picture", "id":"frame_h", "path":"GUI\\Icons\\frame", "stretch_mode":"scale", "anchor_min":[0,0], "anchor_max":[1,1], "size":[52,52],
+                "props":
+                [
+                    {"id":"show_states", "value":"hovered pressed"}
+                ]
+            }
+        ]
+    },
+    {"class":"cbutton", "id":"cp_workshop_page_button", "size":[52,52], "press_inset":[1,1], "i_state_normal":"GUI\\Tabs\\t-workshop", 
+        "children":
+        [
+            {"class":"picture", "id":"darken", "path":"White", "stretch_mode":"scale", "anchor_min":[0,0], "anchor_max":[1,1], "size":[52,52], "tint":[0,0,0,130],
+                "props":
+                [
+                    {"id":"hide_states", "value":"affordable"}
+                ]
+            },
+            {"class":"picture", "id":"frame_s", "path":"GUI\\Icons\\selected-trap", "stretch_mode":"scale", "anchor_min":[0,0], "anchor_max":[1,1], "size":[52,52],
+                "props":
+                [
+                    {"id":"show_states", "value":"selected"}
+                ]
+            },
+            {"class":"picture", "id":"frame_h", "path":"GUI\\Icons\\frame", "stretch_mode":"scale", "anchor_min":[0,0], "anchor_max":[1,1], "size":[52,52],
+                "props":
+                [
+                    {"id":"show_states", "value":"hovered pressed"}
+                ]
+            }
+        ]
+    },
+    {"class":"cbutton", "id":"cp_page_forward", "size":[26,54], "i_state_normal":"GUI\\Pages\\page_forward", "tint_disabled":[120,120,120], 
+        "children":
+        [
+            {"class":"picture", "id":"overlay", "path":"GUI\\Pages\\page_forward", "stretch_mode":"scale", "size":[26,54], "anchor_min":[0,0], "anchor_max":[1,1], "blendmode":"add", 
+                "props":
+                [
+                    {"id":"show_states", "value":"hovered pressed"}
+                ]
+            }
+        ]
+    },
+    {"class":"cbutton", "id":"cp_page_back", "size":[26,54], "i_state_normal":"GUI\\Pages\\page_back", "tint_disabled":[120,120,120], 
+        "children":
+        [
+            {"class":"picture", "id":"overlay", "path":"GUI\\Pages\\page_back", "stretch_mode":"scale", "size":[26,54], "anchor_min":[0,0], "anchor_max":[1,1], "blendmode":"add", 
+                "props":
+                [
+                    {"id":"show_states", "value":"hovered pressed"}
+                ]
+            }
+        ]
+    }
+
+]
 
 
 }

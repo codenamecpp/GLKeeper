@@ -23,7 +23,7 @@ void UiView::ScreenSizeChanged(const Point2D& screenSize)
 
 bool UiView::IsActive() const
 {
-    bool isAttached = gWidgetManager.ViewAttached(this);
+    bool isAttached = gWidgetManager.HasViewAttached(this);
     return isAttached;
 }
 

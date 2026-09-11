@@ -9,7 +9,6 @@ FontManager gFontManager;
 
 void FontManager::Initialize()
 {
-
 }
 
 void FontManager::Shutdown()

@@ -36,7 +36,7 @@ bool GameProfile::LoadGameProfile(const std::string& filepath)
     JsonQuery(jsonSettings.GetRootElement(), "screen.resolution", mUserSettings.mScreenResolution);
     JsonQuery(jsonSettings.GetRootElement(), "screen.fullscreen", mUserSettings.mEnableFullscreen);
     JsonQuery(jsonSettings.GetRootElement(), "screen.vsync", mUserSettings.mEnableVSync);
-    JsonQuery(jsonSettings.GetRootElement(), "hardware_cursor", mUserSettings.mEnableHwCursor);
+    JsonQuery(jsonSettings.GetRootElement(), "screen.hardware_cursor", mUserSettings.mEnableHwCursor);
     JsonQuery(jsonSettings.GetRootElement(), "game_root", mUserSettings.mGameRootFolder);
     JsonQuery(jsonSettings.GetRootElement(), "language", mUserSettings.mLanguage);
     // user progress

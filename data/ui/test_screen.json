@@ -3,7 +3,6 @@
 "widget": {"class": "dummy",  "id": "root", "pos":[0,0], "size":[1024,768], "anchor_min":[0,0], "anchor_max":[1,1], "children": 
     [
         {"class":"picture", "id":"logo", "path":"Logo.png", "visible":false, "stretch_mode":"scale", "pos":[0,40], "size":[526,198], "anchor_min":[0.5,0], "pivot":[0.5,0]},
-
         {"class":"dummy", "id":"menu_page_1", "visible":false, "pos":[0,0], "size":[0,410], "anchor_min":[0,0.6], "anchor_max":[1,0.6], "pivot":[0.5,0.5], "fill_color":[60,60,60,110], "children":
             [
                 {"class":"textbox", "id":"single_player", "interactive":true, "pos":[0,0], "size":[0,48], "anchor_min":[0.0,0.0], "anchor_max":[1.0,0.0], "horz_align":"center", "font":"FONT_FRONTEND28", "text":"#Single Player Game#", "string_id":71, "color":[190,190,190,255], "color_hovered":[255,255,255,255]},
@@ -13,8 +12,6 @@
                 {"template":"selectable_text_28", "id":"quit", "pos":[0,362], "text":"#Quit#", "string_id":28}
             ]
         },
-
-
         {"class":"dummy", "id":"items", "pos":[0,0], "visible":false, "size":[0,410], "anchor_min":[0,0.6], "anchor_max":[1,0.6], "pivot":[0.5,0.5], "fill_color":[60,60,60,110], "children":
             [
                 {"class":"textbox", "id":"single_player_title", "size":[0,48], "anchor_min":[0.0,0], "anchor_max":[1.0,0], "pivot":[0,1], "horz_align":"center", "font":"FONT_INGAME48", "text":"#Single Player Game#", "string_id":71, "color":[220,150,40,200]},
@@ -25,9 +22,7 @@
                 {"template":"selectable_text_28", "id":"load_game", "pos":[0,350], "text":"#Load Game#", "string_id":145}
             ]
         },
-
-
-        {"class":"dummy", "id":"mpd", "visible":true, "pos":[0,0], "size":[0,410], "anchor_min":[0,0.6], "anchor_max":[1,0.6], "pivot":[0.5,0.5], "fill_color":[60,60,60,110], "children":
+        {"class":"dummy", "id":"mpd", "visible":false, "pos":[0,0], "size":[0,410], "anchor_min":[0,0.6], "anchor_max":[1,0.6], "pivot":[0.5,0.5], "fill_color":[60,60,60,110], "children":
             [
                 {"class":"textbox", "id":"mpd_title", "size":[0,48], "anchor_min":[0.0,0], "anchor_max":[1.0,0], "pivot":[0,1], "horz_align":"center", "font":"FONT_INGAME48", "text":"#My Pet Dungeon#", "string_id":1675, "color":[220,150,40,200]},
                 
@@ -40,7 +35,6 @@
                 {"template":"selectable_text_28", "id":"mpd7", "pos":[0,350], "text":"#MPD7#", "string_id":0}
             ]
         },
-
         {"class":"dummy", "id":"menu_page_6", "visible":false, "pos":[0,0], "size":[1000,600], "anchor_min":[0.5,0.45], "anchor_max":[0.5,0.45], "pivot":[0.5,0.5], "fill_color":[128,10,50,255], "children":
             [
                 {"class":"textbox", "id":"page_title", "size":[0,48], "anchor_min":[0.0,0], "anchor_max":[1.0,0], "pivot":[0,1], "horz_align":"center", "font":"FONT_INGAME48", "text":"#Mission Briefing#", "string_id":1476, "color":[220,150,40,200]},
@@ -73,7 +67,6 @@
                 {"class":"picture", "id":"obj_pic2", "path":"Level1-1.png", "stretch_mode":"scale", "pos":[10,320], "size":[230,180]}
             ]
         },
-
         {"class":"dummy", "id":"skirmish_maps", "visible":false, "pos":[0,0], "size":[1000,410], "anchor_min":[0.5,0.6], "anchor_max":[0.5,0.6], "pivot":[0.5,0.5], "fill_color":[128,10,50,255], "children":
             [
                 {"class":"textbox", "id":"single_player_title", "size":[0,48], "anchor_min":[0.0,0], "anchor_max":[1.0,0], "pivot":[0,1], "horz_align":"center", "font":"FONT_INGAME48", "text":"#Select Map#", "string_id":2800, "color":[220,150,40,200]},
@@ -125,17 +118,53 @@
                 }
             ]
         },
-
         {"class":"panel", "id":"buttons", "pos":[0,0], "size":[880,100], "anchor_min":[0.5,1], "anchor_max":[0.5,1], "pivot":[0.5,1], "fill_color":[60,60,60,110], "children": 
             [
                 {"class":"button", "id":"cancel", "interactive":true, "pos":[-88,0], "size":[78,78], "anchor_min":[1,0], "anchor_max":[1,0], "pivot":[1,0], "i_state_normal":"Cancel-Over.png", "i_state_hovered":"Cancel-Click.png", "i_state_pressed":"Cancel-Click.png"},
                 {"class":"button", "id":"confirm", "interactive":true, "pos":[0,0], "size":[78,78], "anchor_min":[1,0], "anchor_max":[1,0], "pivot":[1,0], "i_state_normal":"Confirm-Over.png", "i_state_hovered":"Confirm-Click.png", "i_state_pressed":"Confirm-Click.png"}
             ]
         },
+        {"class":"textbox", "id":"version_string", "pos":[0,-20], "size":[300,30], "pivot":[0,1], "anchor_min":[0,1], "text":"#version:#", "font":"FONT_FRONTEND20", "color":[255,255,255,255]},
 
 
-        {"class":"textbox", "id":"version_string", "pos":[0,-20], "size":[300,30], "pivot":[0,1], "anchor_min":[0,1], "text":"#version:#", "font":"FONT_FRONTEND20", "color":[255,255,255,255]}
+        {"class":"panel", "id":"control_panel", "pos":[0,0], "size":[0,180], "pivot":[0,1], "anchor_min":[0,1], "anchor_max":[1,1], "fill_color":[0,0,0,0], "border_color":[0,0,0,0],
+            "children": [
+                {"class":"panel", "id":"bg_fill", "pos":[0,0], "pivot":[0.5,1], "size":[0,20], "anchor_min":[0,1], "anchor_max":[1,1], "fill_color":[0,0,0,255]},
+                {"class":"picture", "id":"bg", "path":"GUI\\Windows\\Panel-BG", "stretch_mode":"tile_horizontal", "pos":[0,56], "size":[0,115], "anchor_min":[0,0], "anchor_max":[1,0]},
+                {"class":"picture", "id":"bg_bar_1", "path":"GUI\\Windows\\Bar-00", "stretch_mode":"tile_horizontal", "pos":[0,8], "size":[0,35], "anchor_min":[0,0], "anchor_max":[1,0]},
+                {"class":"picture", "id":"bg_bar_2", "path":"GUI\\Windows\\Bar-02", "stretch_mode":"scale", "pos":[-192,0], "size":[128,51], "anchor_min":[1,0]},
+                {"class":"picture", "id":"bg_bar_3", "path":"GUI\\Windows\\Bar-03", "stretch_mode":"scale", "pos":[-64,0], "size":[128,51], "anchor_min":[1,0]},
 
+                {"class":"cbutton", "id":"control_panel_page_forward", "pos":[300,0], "size":[26,54], "i_state_normal":"GUI\\Pages\\page_forward", "tint_disabled":[120,120,120], "children":
+                    [
+                        {"class":"picture", "id":"overlay", "path":"GUI\\Pages\\page_forward", "stretch_mode":"scale", "size":[26,54], "anchor_min":[0,0], "anchor_max":[1,1], "blendmode":"add", "props":
+                            [
+                                {"id":"show_states", "value":"hovered pressed"}
+                            ]
+                        }
+                    ]
+                },
+
+                {"class":"dummy", "id":"minimap", "pos":[8,0], "size":[180,180], "children":
+                    [
+                        {"class":"picture", "id":"bg", "path":"GUI\\Map\\Map-BG", "stretch_mode":"scale", "pos":[8,8], "size":[164,164]},
+                        {"class":"picture", "id":"frame", "path":"GUI\\Map\\map", "stretch_mode":"scale", "size":[205,205]},
+                        {"class":"button", "id":"sell_button", "pos":[142,1], "size":[35,35], "children":
+                            [
+                                {"class":"picture", "id":"hovered_frame", "interactive":false, "path":"GUI\\Map\\mapbf-01", "stretch_mode":"scale", "pivot":[1,0], "pos":[36,-1], "size":[52,52]},
+                                {"class":"picture", "id":"active", "interactive":false, "path":"GUI\\Map\\selected-mapbf-01", "stretch_mode":"scale", "pivot":[1,0], "pos":[36,-1], "size":[52,52]}
+                            ]
+                        },
+                        {"class":"panel", "id":"zoom_button", "pos":[142,141], "size":[35,35], "children":
+                            [
+                                {"class":"picture", "id":"hovered_frame", "interactive":false, "path":"GUI\\Map\\mapbf-03", "stretch_mode":"scale", "pivot":[0,1], "pos":[-16,36], "size":[52,52]},
+                                {"class":"picture", "id":"selected", "interactive":true, "path":"GUI\\Map\\selected-mapbf-03", "stretch_mode":"scale", "pivot":[0,1], "pos":[-16,36], "size":[52,52]}
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
     ]
 },
 
@@ -150,5 +179,8 @@
             {"class":"textbox", "id":"mapsize", "interactive":false, "pos":[380,2], "size":[110,30], "horz_align":"center", "font":"FONT_INGAME16", "text":"#Map Size#", "color":[250,250,250,255]}
         ]
     }
+
+
+
 ]
 }

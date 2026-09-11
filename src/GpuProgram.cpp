@@ -237,7 +237,7 @@ bool GpuProgram::CompileShader(const std::string& vertShaderSrc, const std::stri
     for (int iattribute = 0; iattribute < eVertexAttribute_COUNT; ++iattribute)
     {
         eVertexAttribute vertexAttribute = (eVertexAttribute) iattribute;
-        mAttributes[iattribute] = ::glGetAttribLocation(mResourceHandle, cxx::enum_to_string(vertexAttribute));
+        mAttributes[iattribute] = ::glGetAttribLocation(mResourceHandle, cxx::enum_to_string(vertexAttribute).data());
         if (mAttributes[iattribute] != -1)
         {
             mInputLayout.IncludeAttribute(vertexAttribute);

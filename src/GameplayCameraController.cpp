@@ -3,6 +3,7 @@
 #include "Camera.h"
 #include "GameWorld.h"
 #include "UiManager.h"
+#include "MapUtils.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -111,7 +112,13 @@ void GameplayCameraController::UpdateFrame(float deltaTime)
 
     if (cameraPositionChanged || cameraHeightChanged || cameraRotationChanged)
     {
+        // stop auto scroll
+        mAutoScroll = {};
         ApplyPositionAndRotation();
+    }
+    else
+    {
+        UpdateAutoScroll(deltaTime);
     }
 }
 
@@ -312,6 +319,21 @@ void GameplayCameraController::ApplyPositionAndRotation()
     mCamera->SetPosition(cameraPosition - worldForward * distanceFromTargetPoint);
 }
 
+void GameplayCameraController::UpdateAutoScroll(float deltaTime)
+{
+    if (!mAutoScroll)
+        return;
+
+    AutoScrollState& autoScrollState = *mAutoScroll;
+
+    mCurrentPosition = cxx::smooth_damp(mCurrentPosition, autoScrollState.mTargetPosition, autoScrollState.mCurrentVelocity, 0.35f, deltaTime);
+    if (glm::length(autoScrollState.mTargetPosition - mCurrentPosition) < 0.01f)
+    {
+        mAutoScroll = {};
+    }
+    ApplyPositionAndRotation();
+}
+
 void GameplayCameraController::ResetCamera()
 {
     if (mCamera == nullptr) 
@@ -336,4 +358,24 @@ void GameplayCameraController::StopCamera()
     mDecreasingFov = false;
 
     mMoveVelocity = {};
+    mAutoScroll = {};
+}
+
+void GameplayCameraController::FocusOnMapLocation(const Point2D& tileLocation)
+{
+    if (mCamera == nullptr)
+        return;
+
+    const glm::vec2 cameraPosition = MapUtils::ComputeTileCenter2d(tileLocation);
+    if (cameraPosition == mCurrentPosition)
+        return;
+
+    if (mAutoScroll && (mAutoScroll->mTargetPosition == cameraPosition))
+        return;
+
+    StopCamera();
+
+    AutoScrollState& autoScrollState = mAutoScroll.emplace();
+    autoScrollState.mTargetPosition = cameraPosition;
+    autoScrollState.mCurrentVelocity = {};
 }

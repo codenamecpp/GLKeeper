@@ -85,10 +85,7 @@ void UiScrollBar::ProcessScrollChanged(int prevScroll)
 
     // notify
     const UiEvent_OnChangeScroll eventDesc {Point2D{0, mScrollCurr}};
-    mEventListeners.IterateListeners([this, &eventDesc](UiEventListener* listener)
-        {
-            listener->HandleUiEvent(this, eventDesc);
-        });
+    NotifyListeners(eventDesc);
 }
 
 void UiScrollBar::SetSliderPositionFromCurrScroll()

@@ -1,13 +1,13 @@
 #include "stdafx.h"
 #include "GameRenderManager.h"
 #include "GameMain.h"
-#include "UiWidgetManager.h"
 #include "ShadersManager.h"
 #include "GameWorld.h"
-#include "ToolsUiManager.h"
 #include "Scene.h"
 #include "SimplePool.h"
 #include "RenderView.h"
+#include "UiManager.h"
+#include "ToolsUiManager.h"
 
 GameRenderManager gGameRenderer;
 
@@ -70,17 +70,25 @@ void GameRenderManager::RenderFrame()
 
     // render gui
     mUiRenderContext.BeginFrame();
-    gWidgetManager.RenderFrame(mUiRenderContext);
+    gUiManager.RenderFrame(mUiRenderContext);
     mUiRenderContext.EndFrame();
 
     // overlays
     RenderWorld(gScene, eSceneRenderLayer_UiOverlay);
     RenderWorld(gScene, eSceneRenderLayer_DebugOverlay);
 
-    // render tools ui
+    // ui overlay
     mUiRenderContext.BeginFrame();
-    gToolsUiManager.RenderFrame();
+    gUiManager.RenderFrameOverlay(mUiRenderContext);
     mUiRenderContext.EndFrame();
+
+    // tools
+    if (gToolsUiManager.IsInitialized())
+    {
+        mUiRenderContext.BeginFrame();
+        gToolsUiManager.RenderFrame();
+        mUiRenderContext.EndFrame();
+    }
 
     gRenderDevice.EndFrame();
 }

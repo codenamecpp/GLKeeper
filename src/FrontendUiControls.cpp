@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "FrontendMenuPage.h"
+#include "FrontendUiControls.h"
 #include "UiWidget.h"
 #include "FrontendController.h"
 #include "UiTextBox.h"
@@ -10,27 +10,27 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-enum FrontendActionTypeId : unsigned int
+enum ActionTypeId : unsigned int
 {
-    FrontendActionTypeId_None = 0,
-    FrontendActionTypeId_MyPetDungeonLevelSelect,
+    ActionTypeId_None = 0,
+    ActionTypeId_MyPetDungeonLevelSelect,
 };
 
 //////////////////////////////////////////////////////////////////////////
 
-static const char* FrontendPagesCancel = "cancel";
-static const char* FrontendPagesConfirm = "confirm";
+static const char* PagesCancel = "cancel";
+static const char* PagesConfirm = "confirm";
 
 //////////////////////////////////////////////////////////////////////////
 
-FrontendMenuPage::FrontendMenuPage(FrontendController& frontend, eFrontendMenuPage pageId, std::string_view pageRootName)
+FrontendUi::MenuPage::MenuPage(FrontendController& frontend, eMenuPage pageId, std::string_view pageRootName)
     : mPageId(pageId)
     , mFrontend(frontend)
     , mPageRootName(pageRootName)
 {
 }
 
-bool FrontendMenuPage::BindPageControls(UiHierarchy* hier)
+bool FrontendUi::MenuPage::BindPageControls(UiHierarchy* hier)
 {
     mHierarchy = hier;
     cxx_assert(mHierarchy);
@@ -46,17 +46,17 @@ bool FrontendMenuPage::BindPageControls(UiHierarchy* hier)
     if (mHierarchy)
     {
         // common buttons
-        mPageCancelButton = mHierarchy->FindWidgetWithName(FrontendPagesCancel);
+        mPageCancelButton = mHierarchy->FindWidgetWithName(PagesCancel);
         if (mPageCancelButton)
         {
-            mPageCancelButton->UserData().SetValue(FrontendPagesCancel);
+            mPageCancelButton->UserData().SetValue(PagesCancel);
         }
         cxx_assert(mPageCancelButton);
 
-        mPageConfirmButton = mHierarchy->FindWidgetWithName(FrontendPagesConfirm);
+        mPageConfirmButton = mHierarchy->FindWidgetWithName(PagesConfirm);
         if (mPageConfirmButton)
         {
-            mPageConfirmButton->UserData().SetValue(FrontendPagesConfirm);
+            mPageConfirmButton->UserData().SetValue(PagesConfirm);
         }
         cxx_assert(mPageConfirmButton);
 
@@ -66,7 +66,7 @@ bool FrontendMenuPage::BindPageControls(UiHierarchy* hier)
     return true;
 }
 
-void FrontendMenuPage::CleanupPageContent()
+void FrontendUi::MenuPage::CleanupPageContent()
 {
     SubscribePageButtons(false);
     mHierarchy = nullptr;
@@ -76,7 +76,7 @@ void FrontendMenuPage::CleanupPageContent()
     mMainLogo = nullptr;
 }
 
-void FrontendMenuPage::ShowPage()
+void FrontendUi::MenuPage::ShowPage()
 {
     if (mPageRoot && !mPageRoot->IsVisibleSelf())
     {
@@ -87,7 +87,7 @@ void FrontendMenuPage::ShowPage()
     }
 }
 
-void FrontendMenuPage::HidePage()
+void FrontendUi::MenuPage::HidePage()
 {
     if (mPageRoot && mPageRoot->IsVisibleSelf())
     {
@@ -97,28 +97,28 @@ void FrontendMenuPage::HidePage()
     }
 }
 
-void FrontendMenuPage::PageCancelled()
+void FrontendUi::MenuPage::PageCancelled()
 {
     cxx_assert(false);
 }
 
-void FrontendMenuPage::PageConfirmed()
+void FrontendUi::MenuPage::PageConfirmed()
 {
     cxx_assert(false);
 }
 
-void FrontendMenuPage::HandleUiEvent(UiWidget* sender, const UiEvent& eventDesc)
+void FrontendUi::MenuPage::HandleUiEvent(UiWidget* sender, const UiEvent& eventDesc)
 {
     const char* menuItemId = sender->UserData().GetValue<const char*>();
     if (eventDesc.IsEvent(UiEventId_OnPress))
     {
-        if (menuItemId == FrontendPagesCancel)
+        if (menuItemId == PagesCancel)
         {
             PageCancelled();
             return;
         }
 
-        if (menuItemId == FrontendPagesConfirm)
+        if (menuItemId == PagesConfirm)
         {
             PageConfirmed();
             return;
@@ -126,7 +126,7 @@ void FrontendMenuPage::HandleUiEvent(UiWidget* sender, const UiEvent& eventDesc)
     }
 }
 
-void FrontendMenuPage::SubscribePageButtons(bool isSubscribe)
+void FrontendUi::MenuPage::SubscribePageButtons(bool isSubscribe)
 {
     if (UiWidget* button = mPageCancelButton)
     {
@@ -153,7 +153,7 @@ void FrontendMenuPage::SubscribePageButtons(bool isSubscribe)
     }
 }
 
-void FrontendMenuPage::SetPageButtons(ePageButtons pageButtons)
+void FrontendUi::MenuPage::SetPageButtons(ePageButtons pageButtons)
 {
     if (mPageCancelButton)
     {
@@ -166,7 +166,7 @@ void FrontendMenuPage::SetPageButtons(ePageButtons pageButtons)
     }
 }
 
-void FrontendMenuPage::ShowMainLogo(bool showLogo)
+void FrontendUi::MenuPage::ShowMainLogo(bool showLogo)
 {
     if (mMainLogo)
     {
@@ -176,150 +176,150 @@ void FrontendMenuPage::ShowMainLogo(bool showLogo)
 
 //////////////////////////////////////////////////////////////////////////
 
-static const char* FrontendMainPageSinglePlayer = "single_player";
-static const char* FrontendMainPageQuit = "quit";
-static const char* FrontendMainPageMpd = "mpd";
+static const char* MainPageSinglePlayer = "single_player";
+static const char* MainPageQuit = "quit";
+static const char* MainPageMpd = "mpd";
 
 //////////////////////////////////////////////////////////////////////////
 
-FrontendMenuPage_Main::FrontendMenuPage_Main(FrontendController& frontend)
-    : FrontendMenuPage(frontend, eFrontendMenuPage_Main, "menu_page_1")
+FrontendUi::MenuPageMain::MenuPageMain(FrontendController& frontend)
+    : MenuPage(frontend, eMenuPage_Main, "menu_page_1")
 {
 }
 
-bool FrontendMenuPage_Main::BindPageControls(UiHierarchy* hier)
+bool FrontendUi::MenuPageMain::BindPageControls(UiHierarchy* hier)
 {
-    bool isSuccess = FrontendMenuPage::BindPageControls(hier);
+    bool isSuccess = MenuPage::BindPageControls(hier);
     if (isSuccess)
     {
-        if (UiWidget* uiWidget = mPageRoot->FindChildWithName(FrontendMainPageSinglePlayer))
+        if (UiWidget* uiWidget = mPageRoot->FindChildWithName(MainPageSinglePlayer))
         {
             uiWidget->Subscribe(this);
-            uiWidget->UserData().SetValue(FrontendMainPageSinglePlayer);
+            uiWidget->UserData().SetValue(MainPageSinglePlayer);
         }
 
-        if (UiWidget* uiWidget = mPageRoot->FindChildWithName(FrontendMainPageQuit))
+        if (UiWidget* uiWidget = mPageRoot->FindChildWithName(MainPageQuit))
         {
             uiWidget->Subscribe(this);
-            uiWidget->UserData().SetValue(FrontendMainPageQuit);
+            uiWidget->UserData().SetValue(MainPageQuit);
         }
 
-        if (UiWidget* uiWidget = mPageRoot->FindChildWithName(FrontendMainPageMpd))
+        if (UiWidget* uiWidget = mPageRoot->FindChildWithName(MainPageMpd))
         {
             uiWidget->Subscribe(this);
-            uiWidget->UserData().SetValue(FrontendMainPageMpd);
+            uiWidget->UserData().SetValue(MainPageMpd);
         }
     }
     return isSuccess;
 }
 
-void FrontendMenuPage_Main::HandleUiEvent(UiWidget* sender, const UiEvent& eventDesc)
+void FrontendUi::MenuPageMain::HandleUiEvent(UiWidget* sender, const UiEvent& eventDesc)
 {
     const char* menuItemId = sender->UserData().GetValue<const char*>();
     if (eventDesc.IsEvent(UiEventId_OnPress))
     {
-        if (menuItemId == FrontendMainPageSinglePlayer)
+        if (menuItemId == MainPageSinglePlayer)
         {
             mFrontend.OnOpenSinglePlayerMenuSelected();
             return;
         }
 
-        if (menuItemId == FrontendMainPageQuit)
+        if (menuItemId == MainPageQuit)
         {
             mFrontend.OnQuitGameSelected();
             return;
         }
 
-        if (menuItemId == FrontendMainPageMpd)
+        if (menuItemId == MainPageMpd)
         {
             mFrontend.OnMyPetDungeonMenuSelected();
             return;
         }
     }
-    FrontendMenuPage::HandleUiEvent(sender, eventDesc);
+    MenuPage::HandleUiEvent(sender, eventDesc);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-FrontendMenuPage_QuitGame::FrontendMenuPage_QuitGame(FrontendController& frontend)
-    : FrontendMenuPage(frontend, eFrontendMenuPage_QuitGame, "menu_page_3")
+FrontendUi::MenuPageQuitGame::MenuPageQuitGame(FrontendController& frontend)
+    : MenuPage(frontend, eMenuPage_QuitGame, "menu_page_3")
 {
 }
 
-void FrontendMenuPage_QuitGame::ShowPage()
+void FrontendUi::MenuPageQuitGame::ShowPage()
 {
-    FrontendMenuPage::ShowPage();
+    MenuPage::ShowPage();
     SetPageButtons(ePageButtons_Both);
 }
 
-void FrontendMenuPage_QuitGame::PageCancelled()
+void FrontendUi::MenuPageQuitGame::PageCancelled()
 {
     mFrontend.OnQuitGameCancelled();
 }
 
-void FrontendMenuPage_QuitGame::PageConfirmed()
+void FrontendUi::MenuPageQuitGame::PageConfirmed()
 {
     mFrontend.OnQuitGameConfirmed();
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-static const char* FrontendSinglePlayerPageSkirmish = "skirmish";
+static const char* SinglePlayerPageSkirmish = "skirmish";
 
 //////////////////////////////////////////////////////////////////////////
 
-FrontendMenuPage_SinglePlayer::FrontendMenuPage_SinglePlayer(FrontendController& frontend)
-    : FrontendMenuPage(frontend, eFrontendMenuPage_SinglePlayer, "menu_page_2")
+FrontendUi::MenuPageSinglePlayer::MenuPageSinglePlayer(FrontendController& frontend)
+    : MenuPage(frontend, eMenuPage_SinglePlayer, "menu_page_2")
 {
 }
 
-bool FrontendMenuPage_SinglePlayer::BindPageControls(UiHierarchy* hier)
+bool FrontendUi::MenuPageSinglePlayer::BindPageControls(UiHierarchy* hier)
 {
-    bool isSuccess = FrontendMenuPage::BindPageControls(hier);
+    bool isSuccess = MenuPage::BindPageControls(hier);
     if (isSuccess)
     {
-        if (UiWidget* uiWidget = mPageRoot->FindChildWithName(FrontendSinglePlayerPageSkirmish))
+        if (UiWidget* uiWidget = mPageRoot->FindChildWithName(SinglePlayerPageSkirmish))
         {
             uiWidget->Subscribe(this);
-            uiWidget->UserData().SetValue(FrontendSinglePlayerPageSkirmish);
+            uiWidget->UserData().SetValue(SinglePlayerPageSkirmish);
         }
     }
     return isSuccess;
 }
 
-void FrontendMenuPage_SinglePlayer::ShowPage()
+void FrontendUi::MenuPageSinglePlayer::ShowPage()
 {
-    FrontendMenuPage::ShowPage();
+    MenuPage::ShowPage();
     SetPageButtons(ePageButtons_Cancel);
 }
 
-void FrontendMenuPage_SinglePlayer::PageCancelled()
+void FrontendUi::MenuPageSinglePlayer::PageCancelled()
 {
     mFrontend.OnSinglePlayerCancelled();
 }
 
-void FrontendMenuPage_SinglePlayer::HandleUiEvent(UiWidget* sender, const UiEvent& eventDesc)
+void FrontendUi::MenuPageSinglePlayer::HandleUiEvent(UiWidget* sender, const UiEvent& eventDesc)
 {
     const char* menuItemId = sender->UserData().GetValue<const char*>();
     if (eventDesc.IsEvent(UiEventId_OnPress))
     {
-        if (menuItemId == FrontendSinglePlayerPageSkirmish)
+        if (menuItemId == SinglePlayerPageSkirmish)
         {
             mFrontend.OnOpenSkirmishMenuSelected();
             return;
         }
     }
-    FrontendMenuPage::HandleUiEvent(sender, eventDesc);
+    MenuPage::HandleUiEvent(sender, eventDesc);
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-FrontendMenuPage_SkirmishMaps::FrontendMenuPage_SkirmishMaps(FrontendController& frontend)
-    : FrontendMenuPage(frontend, eFrontendMenuPage_SkirmishMaps, "menu_page_4")
+FrontendUi::MenuPageSkirmishMaps::MenuPageSkirmishMaps(FrontendController& frontend)
+    : MenuPage(frontend, eMenuPage_SkirmishMaps, "menu_page_4")
 {
 }
 
-void FrontendMenuPage_SkirmishMaps::ConfigureMaps(cxx::span<ScenarioLevelInfo> mapsList)
+void FrontendUi::MenuPageSkirmishMaps::ConfigureMaps(cxx::span<ScenarioLevelInfo> mapsList)
 {
     mMapsList.assign(mapsList.begin(), mapsList.end());
 
@@ -327,17 +327,17 @@ void FrontendMenuPage_SkirmishMaps::ConfigureMaps(cxx::span<ScenarioLevelInfo> m
     ResetMapsSelectedItem();
 }
 
-void FrontendMenuPage_SkirmishMaps::ResetMapsScroll()
+void FrontendUi::MenuPageSkirmishMaps::ResetMapsScroll()
 {
     mTableFirstItem = 0;
 }
 
-void FrontendMenuPage_SkirmishMaps::ResetMapsSelectedItem()
+void FrontendUi::MenuPageSkirmishMaps::ResetMapsSelectedItem()
 {
     mTableSelectedItem = 0;
 }
 
-void FrontendMenuPage_SkirmishMaps::SetMapsScrollPosition(int position, bool fromScrollBar)
+void FrontendUi::MenuPageSkirmishMaps::SetMapsScrollPosition(int position, bool fromScrollBar)
 {
     if ((position == mTableFirstItem) || mMapsList.empty())
         return;
@@ -361,7 +361,7 @@ void FrontendMenuPage_SkirmishMaps::SetMapsScrollPosition(int position, bool fro
     }
 }
 
-void FrontendMenuPage_SkirmishMaps::SetSelectedItem(int itemIndex)
+void FrontendUi::MenuPageSkirmishMaps::SetSelectedItem(int itemIndex)
 {
     if (itemIndex == mTableSelectedItem)
         return;
@@ -371,9 +371,9 @@ void FrontendMenuPage_SkirmishMaps::SetSelectedItem(int itemIndex)
     RefreshSelectionInfo();
 }
 
-bool FrontendMenuPage_SkirmishMaps::BindPageControls(UiHierarchy* hier)
+bool FrontendUi::MenuPageSkirmishMaps::BindPageControls(UiHierarchy* hier)
 {
-    bool isSuccess = FrontendMenuPage::BindPageControls(hier);
+    bool isSuccess = MenuPage::BindPageControls(hier);
     if (isSuccess)
     {
         UiWidget* tableGrid = mPageRoot->FindChildWithName("grid");
@@ -410,9 +410,9 @@ bool FrontendMenuPage_SkirmishMaps::BindPageControls(UiHierarchy* hier)
     return isSuccess;
 }
 
-void FrontendMenuPage_SkirmishMaps::CleanupPageContent()
+void FrontendUi::MenuPageSkirmishMaps::CleanupPageContent()
 {
-    FrontendMenuPage::CleanupPageContent();
+    MenuPage::CleanupPageContent();
     mMapsList.clear();
     mTableRows.clear();
     mTableFirstItem = 0;
@@ -422,9 +422,9 @@ void FrontendMenuPage_SkirmishMaps::CleanupPageContent()
     mMapsListScrollBar = nullptr;
 }
 
-void FrontendMenuPage_SkirmishMaps::ShowPage()
+void FrontendUi::MenuPageSkirmishMaps::ShowPage()
 {
-    FrontendMenuPage::ShowPage();
+    MenuPage::ShowPage();
     SetPageButtons(ePageButtons_Both);
 
     RefreshTable();
@@ -432,12 +432,12 @@ void FrontendMenuPage_SkirmishMaps::ShowPage()
     RefreshMapsScrollBar();
 }
 
-void FrontendMenuPage_SkirmishMaps::PageCancelled()
+void FrontendUi::MenuPageSkirmishMaps::PageCancelled()
 {
     mFrontend.OnSkirmishMapSelectCancelled();
 }
 
-void FrontendMenuPage_SkirmishMaps::PageConfirmed()
+void FrontendUi::MenuPageSkirmishMaps::PageConfirmed()
 {
     if (mMapsList.empty())
     {
@@ -448,9 +448,9 @@ void FrontendMenuPage_SkirmishMaps::PageConfirmed()
     mFrontend.OnSkirmishMapSelectConfirmed(mMapsList[mTableSelectedItem].mFileName);
 }
 
-void FrontendMenuPage_SkirmishMaps::HandleUiEvent(UiWidget* sender, const UiEvent& eventDesc)
+void FrontendUi::MenuPageSkirmishMaps::HandleUiEvent(UiWidget* sender, const UiEvent& eventDesc)
 {
-    FrontendMenuPage::HandleUiEvent(sender, eventDesc);
+    MenuPage::HandleUiEvent(sender, eventDesc);
 
     if (eventDesc.IsEvent(UiEventId_OnPress))
     {
@@ -465,7 +465,7 @@ void FrontendMenuPage_SkirmishMaps::HandleUiEvent(UiWidget* sender, const UiEven
         return;
     }
 
-    if (eventDesc.IsEvent(UiEventId_Wheel))
+    if (eventDesc.IsEvent(UiEventId_OnMouseWheel))
     {
         SetMapsScrollPosition(mTableFirstItem - eventDesc.mDelta.y, false);
         return;
@@ -478,7 +478,7 @@ void FrontendMenuPage_SkirmishMaps::HandleUiEvent(UiWidget* sender, const UiEven
     }
 }
 
-void FrontendMenuPage_SkirmishMaps::RefreshTable()
+void FrontendUi::MenuPageSkirmishMaps::RefreshTable()
 {
     int rowsCounter = 0;
     int mapsCount = static_cast<int>(mMapsList.size());
@@ -494,7 +494,7 @@ void FrontendMenuPage_SkirmishMaps::RefreshTable()
     }
 }
 
-void FrontendMenuPage_SkirmishMaps::RefreshTableRow(int rowIndex, bool isSelected, const ScenarioLevelInfo& levelInfo)
+void FrontendUi::MenuPageSkirmishMaps::RefreshTableRow(int rowIndex, bool isSelected, const ScenarioLevelInfo& levelInfo)
 {
     const TableRow& tableRow = mTableRows[rowIndex];
     if (UiTextBox* mapNameText = tableRow.mMapNameTextBox)
@@ -515,7 +515,7 @@ void FrontendMenuPage_SkirmishMaps::RefreshTableRow(int rowIndex, bool isSelecte
     }
 }
 
-void FrontendMenuPage_SkirmishMaps::RefreshSelectionInfo()
+void FrontendUi::MenuPageSkirmishMaps::RefreshSelectionInfo()
 {
     if (mMapsList.empty())
         return;
@@ -537,7 +537,7 @@ void FrontendMenuPage_SkirmishMaps::RefreshSelectionInfo()
     }
 }
 
-void FrontendMenuPage_SkirmishMaps::RefreshMapsScrollBar()
+void FrontendUi::MenuPageSkirmishMaps::RefreshMapsScrollBar()
 {
     if (mMapsListScrollBar == nullptr)
         return;
@@ -552,7 +552,7 @@ void FrontendMenuPage_SkirmishMaps::RefreshMapsScrollBar()
     mMapsListScrollBar->SetScrollPosition(mTableFirstItem);
 }
 
-void FrontendMenuPage_SkirmishMaps::ShowTableRow(int rowIndex, bool isShown)
+void FrontendUi::MenuPageSkirmishMaps::ShowTableRow(int rowIndex, bool isShown)
 {
     if (UiWidget* rowWidget = mTableRows[rowIndex].mWidget)
     {
@@ -560,7 +560,7 @@ void FrontendMenuPage_SkirmishMaps::ShowTableRow(int rowIndex, bool isShown)
     }
 }
 
-void FrontendMenuPage_SkirmishMaps::NewTableRow(UiWidget* table, UiWidget* tableRowTemplate)
+void FrontendUi::MenuPageSkirmishMaps::NewTableRow(UiWidget* table, UiWidget* tableRowTemplate)
 {
     cxx_assert(table);
     cxx_assert(tableRowTemplate);
@@ -594,21 +594,21 @@ void FrontendMenuPage_SkirmishMaps::NewTableRow(UiWidget* table, UiWidget* table
 
 //////////////////////////////////////////////////////////////////////////
 
-FrontendMenuPage_MyPetDungeon::FrontendMenuPage_MyPetDungeon(FrontendController& frontend)
-    : FrontendMenuPage(frontend, eFrontendMenuPage_MyPetDungeon, "menu_page_5")
+FrontendUi::MenuPageMyPetDungeon::MenuPageMyPetDungeon(FrontendController& frontend)
+    : MenuPage(frontend, eMenuPage_MyPetDungeon, "menu_page_5")
 {
 
 }
 
-void FrontendMenuPage_MyPetDungeon::ConfigureLevels(cxx::span<ScenarioLevelInfo> levelsList)
+void FrontendUi::MenuPageMyPetDungeon::ConfigureLevels(cxx::span<ScenarioLevelInfo> levelsList)
 {
     mLevelsList.assign(levelsList.begin(), levelsList.end());
     RefreshLevelsList();
 }
 
-bool FrontendMenuPage_MyPetDungeon::BindPageControls(UiHierarchy* hier)
+bool FrontendUi::MenuPageMyPetDungeon::BindPageControls(UiHierarchy* hier)
 {
-    bool isSuccess = FrontendMenuPage::BindPageControls(hier);
+    bool isSuccess = MenuPage::BindPageControls(hier);
     if (isSuccess)
     {
         std::string textid;
@@ -620,7 +620,7 @@ bool FrontendMenuPage_MyPetDungeon::BindPageControls(UiHierarchy* hier)
             if (textbox == nullptr)
                 break;
 
-            textbox->UserData().SetParam0(FrontendActionTypeId_MyPetDungeonLevelSelect);
+            textbox->UserData().SetParam0(ActionTypeId_MyPetDungeonLevelSelect);
             textbox->UserData().SetParam1(icounter);
             textbox->Subscribe(this);
 
@@ -630,32 +630,32 @@ bool FrontendMenuPage_MyPetDungeon::BindPageControls(UiHierarchy* hier)
     return isSuccess;
 }
 
-void FrontendMenuPage_MyPetDungeon::CleanupPageContent()
+void FrontendUi::MenuPageMyPetDungeon::CleanupPageContent()
 {
-    FrontendMenuPage::CleanupPageContent();
+    MenuPage::CleanupPageContent();
     mNamesList.clear();
 }
 
-void FrontendMenuPage_MyPetDungeon::ShowPage()
+void FrontendUi::MenuPageMyPetDungeon::ShowPage()
 {
-    FrontendMenuPage::ShowPage();
+    MenuPage::ShowPage();
     SetPageButtons(ePageButtons_Cancel);
     RefreshLevelsList();
 }
 
-void FrontendMenuPage_MyPetDungeon::PageCancelled()
+void FrontendUi::MenuPageMyPetDungeon::PageCancelled()
 {
     mFrontend.OnMyPetDungeonMenuCancelled();
 }
 
-void FrontendMenuPage_MyPetDungeon::HandleUiEvent(UiWidget* sender, const UiEvent& eventDesc)
+void FrontendUi::MenuPageMyPetDungeon::HandleUiEvent(UiWidget* sender, const UiEvent& eventDesc)
 {
-    FrontendMenuPage::HandleUiEvent(sender, eventDesc);
+    MenuPage::HandleUiEvent(sender, eventDesc);
 
     if (eventDesc.IsEvent(UiEventId_OnPress))
     {
-        const FrontendActionTypeId actionId = sender->UserData().GetParam0<FrontendActionTypeId>();
-        if (actionId == FrontendActionTypeId_MyPetDungeonLevelSelect)
+        const ActionTypeId actionId = sender->UserData().GetParam0<ActionTypeId>();
+        if (actionId == ActionTypeId_MyPetDungeonLevelSelect)
         {
             const int ilevel = sender->UserData().GetParam1<int>();
 
@@ -666,7 +666,7 @@ void FrontendMenuPage_MyPetDungeon::HandleUiEvent(UiWidget* sender, const UiEven
     }
 }
 
-void FrontendMenuPage_MyPetDungeon::RefreshLevelsList()
+void FrontendUi::MenuPageMyPetDungeon::RefreshLevelsList()
 {
     const int MaxLevels = static_cast<int>(std::min(mNamesList.size(), mLevelsList.size()));
 
@@ -686,21 +686,21 @@ void FrontendMenuPage_MyPetDungeon::RefreshLevelsList()
 
 //////////////////////////////////////////////////////////////////////////
 
-FrontendMenuPage_MissionBriefing::FrontendMenuPage_MissionBriefing(FrontendController& frontend)
-    : FrontendMenuPage(frontend, eFrontendMenuPage_MissionBriefing, "menu_page_6")
+FrontendUi::MenuPageMissionBriefing::MenuPageMissionBriefing(FrontendController& frontend)
+    : MenuPage(frontend, eMenuPage_MissionBriefing, "menu_page_6")
 {
 
 }
 
-void FrontendMenuPage_MissionBriefing::ConfigureBriefing(const ScenarioLevelInfo& levelInfo)
+void FrontendUi::MenuPageMissionBriefing::ConfigureBriefing(const ScenarioLevelInfo& levelInfo)
 {
     mLevelInfo = levelInfo;
     RefreshBriefing();
 }
 
-bool FrontendMenuPage_MissionBriefing::BindPageControls(UiHierarchy* hier)
+bool FrontendUi::MenuPageMissionBriefing::BindPageControls(UiHierarchy* hier)
 {
-    bool isSuccess = FrontendMenuPage::BindPageControls(hier);
+    bool isSuccess = MenuPage::BindPageControls(hier);
     if (isSuccess)
     {
         mSubtitleTextBox = (UiTextBox*) mPageRoot->FindChildWithName("page_subtitle");
@@ -725,39 +725,39 @@ bool FrontendMenuPage_MissionBriefing::BindPageControls(UiHierarchy* hier)
     return isSuccess;
 }
 
-void FrontendMenuPage_MissionBriefing::CleanupPageContent()
+void FrontendUi::MenuPageMissionBriefing::CleanupPageContent()
 {
-    FrontendMenuPage::CleanupPageContent();
+    MenuPage::CleanupPageContent();
     mSubtitleTextBox = nullptr;
     mMainObjectiveTextBox = nullptr;
     mSubObjectiveTextBox = nullptr;
     mObjectivePics.clear();
 }
 
-void FrontendMenuPage_MissionBriefing::ShowPage()
+void FrontendUi::MenuPageMissionBriefing::ShowPage()
 {
-    FrontendMenuPage::ShowPage();
+    MenuPage::ShowPage();
     SetPageButtons(ePageButtons_Both);
     ShowMainLogo(false);
     RefreshBriefing();
 }
 
-void FrontendMenuPage_MissionBriefing::PageCancelled()
+void FrontendUi::MenuPageMissionBriefing::PageCancelled()
 {
     mFrontend.OnMissionBriefingCancelled(mLevelInfo.mFlags.mIsMyPetDungeonLevel);
 }
 
-void FrontendMenuPage_MissionBriefing::PageConfirmed()
+void FrontendUi::MenuPageMissionBriefing::PageConfirmed()
 {
     mFrontend.OnMissionBriefingConfirmed(mLevelInfo.mFileName);
 }
 
-void FrontendMenuPage_MissionBriefing::HandleUiEvent(UiWidget* sender, const UiEvent& eventDesc)
+void FrontendUi::MenuPageMissionBriefing::HandleUiEvent(UiWidget* sender, const UiEvent& eventDesc)
 {
-    FrontendMenuPage::HandleUiEvent(sender, eventDesc);
+    MenuPage::HandleUiEvent(sender, eventDesc);
 }
 
-void FrontendMenuPage_MissionBriefing::RefreshBriefing()
+void FrontendUi::MenuPageMissionBriefing::RefreshBriefing()
 {
     if (mLevelInfo.mBriefingTableId != TextTableId_Null)
     {
@@ -809,3 +809,5 @@ void FrontendMenuPage_MissionBriefing::RefreshBriefing()
         }
     }
 }
+
+//////////////////////////////////////////////////////////////////////////

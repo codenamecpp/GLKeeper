@@ -8,6 +8,7 @@
 #define STB_RECT_PACK_IMPLEMENTATION
 #define STBRP_STATIC
 #include "stb_rect_pack.h"
+#include "DK2AssetLoader.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -183,14 +184,12 @@ void Font::BuildTextMesh(std::wstring_view wideString, const Point2D& pos, Color
     }
 }
 
-void Font::BuildTextMesh(std::wstring_view wideString, const Rect2D& rect, 
-    eTextHorzAlignment horzAlign, 
-    eTextVertAlignment vertAlign, Color32 color, std::vector<Quad2D>& outQuads) const
+void Font::BuildTextMesh(std::wstring_view wideString, const BuildTextMeshParams& params, Color32 color, std::vector<Quad2D>& outQuads) const
 {
     outQuads.clear();
 
-    bool hasHorzBounds = (rect.w > 0);
-    bool hasVertBounds = (rect.h > 0);
+    bool hasHorzBounds = (params.mBounds.w > 0);
+    bool hasVertBounds = (params.mBounds.h > 0);
 
     const int printablesCount = CountPrintableCharacters(wideString);
     if (printablesCount == 0)
@@ -229,7 +228,7 @@ void Font::BuildTextMesh(std::wstring_view wideString, const Rect2D& rect,
             int spacew = (fontchar.mRect.w == 0) ? fontchar.mOuterWidth : fontchar.mRect.w;
             if (spacew > 0)
             {
-                currWord.wordWidth += fontchar.mOuterWidth;
+                currWord.wordWidth += static_cast<int>(params.mFontScale * fontchar.mOuterWidth);
             }
         }
 
@@ -239,7 +238,7 @@ void Font::BuildTextMesh(std::wstring_view wideString, const Rect2D& rect,
             if (hasHorzBounds)
             {
                 int currWidth = linesList.back().lineWidth;
-                if ((currWidth > 0) && ((currWidth + currWord.wordWidth) > rect.w))
+                if ((currWidth > 0) && ((currWidth + currWord.wordWidth) > params.mBounds.w))
                 {
                     // line overflow, move to next line
                     LineEntry& nextLine = linesList.emplace_back();
@@ -260,20 +259,22 @@ void Font::BuildTextMesh(std::wstring_view wideString, const Rect2D& rect,
         }
     }
 
-    int currY = rect.y;
+    int currY = params.mBounds.y;
+
+    const int LineHeightWithScale = static_cast<int>(params.mFontScale * mLineHeight);
 
     for (const LineEntry& currLine: linesList)
     {
-        int currX = rect.x;
-        if (hasHorzBounds && (currLine.lineWidth <= rect.w))
+        int currX = params.mBounds.x;
+        if (hasHorzBounds && (currLine.lineWidth <= params.mBounds.w))
         {
-            switch (horzAlign)
+            switch (params.mHorzAlign)
             {
                 case eTextHorzAlignment_Center:
-                    currX = (rect.w / 2) - currLine.lineWidth / 2;
+                    currX = (params.mBounds.w / 2) - currLine.lineWidth / 2;
                 break;
                 case eTextHorzAlignment_Right:
-                    currX = (rect.x + rect.w - 1) - currLine.lineWidth;
+                    currX = (params.mBounds.x + params.mBounds.w - 1) - currLine.lineWidth;
                 break;
             }
         }
@@ -283,11 +284,14 @@ void Font::BuildTextMesh(std::wstring_view wideString, const Rect2D& rect,
             {
                 wchar_t wideChar = *it;
 
-                if (wideChar < L' ') continue;
+                if (wideChar < L' ') 
+                    continue;
 
                 const CharEntry& fontchar = GetCharEntry(wideChar);
 
-                int spacew = (fontchar.mRect.w == 0) ? fontchar.mOuterWidth : fontchar.mRect.w;
+                const int spacew = static_cast<int>(params.mFontScale * ((fontchar.mRect.w == 0) ? 
+                    fontchar.mOuterWidth : 
+                    fontchar.mRect.w));
                 if (spacew == 0)
                     continue;
 
@@ -298,6 +302,8 @@ void Font::BuildTextMesh(std::wstring_view wideString, const Rect2D& rect,
                 }
 
                 Quad2D& characterQuad = outQuads.emplace_back();
+
+                const int fontcharH = static_cast<int>(params.mFontScale * fontchar.mRect.h);
 
                 // setup quad vertices in specific order
                 characterQuad.mPoints[0].mColor         = color;
@@ -310,13 +316,13 @@ void Font::BuildTextMesh(std::wstring_view wideString, const Rect2D& rect,
                 characterQuad.mPoints[1].mTexcoord[0]   = fontchar.mTexcoords.mU0;
                 characterQuad.mPoints[1].mTexcoord[1]   = fontchar.mTexcoords.mV1;
                 characterQuad.mPoints[1].mPosition.x    = (currX + fontchar.mOffset.x) * 1.0f;
-                characterQuad.mPoints[1].mPosition.y    = (currY + fontchar.mRect.h + fontchar.mOffset.y) * 1.0f;
+                characterQuad.mPoints[1].mPosition.y    = (currY + fontcharH + fontchar.mOffset.y) * 1.0f;
 
                 characterQuad.mPoints[2].mColor         = color;
                 characterQuad.mPoints[2].mTexcoord[0]   = fontchar.mTexcoords.mU1;
                 characterQuad.mPoints[2].mTexcoord[1]   = fontchar.mTexcoords.mV1;
                 characterQuad.mPoints[2].mPosition.x    = (currX + fontchar.mOffset.x + spacew) * 1.0f;
-                characterQuad.mPoints[2].mPosition.y    = (currY + fontchar.mRect.h + fontchar.mOffset.y) * 1.0f;
+                characterQuad.mPoints[2].mPosition.y    = (currY + fontcharH + fontchar.mOffset.y) * 1.0f;
 
                 characterQuad.mPoints[3].mColor         = color;
                 characterQuad.mPoints[3].mTexcoord[0]   = fontchar.mTexcoords.mU1;
@@ -324,10 +330,10 @@ void Font::BuildTextMesh(std::wstring_view wideString, const Rect2D& rect,
                 characterQuad.mPoints[3].mPosition.x    = (currX + fontchar.mOffset.x + spacew) * 1.0f;
                 characterQuad.mPoints[3].mPosition.y    = (currY + fontchar.mOffset.y) * 1.0f;
 
-                currX += fontchar.mOuterWidth;
+                currX += static_cast<int>(params.mFontScale * fontchar.mOuterWidth);
             }
         }
-        currY += mLineHeight;
+        currY += LineHeightWithScale;
     }
 }
 
@@ -383,8 +389,6 @@ int Font::CountPrintableCharacters(std::wstring_view wideString) const
 
 bool Font::LoadFont_FromFile()
 {
-    bool bmfont = false;
-
     const std::string& fontName = mFontName;
 
     if (fontName.empty())
@@ -394,29 +398,52 @@ bool Font::LoadFont_FromFile()
     }
 
     std::string fontFilePath;
-    if (!gFiles.LocateFont(fontName + ".bf4", fontFilePath))
-    {
-        if (gFiles.LocateFont(fontName + ".fnt", fontFilePath))
-        {
-            bmfont = true;
-        }
-        else
-        {
-            gConsole.LogMessage(eLogLevel_Warning, "Cannot locate font file '%s'", fontName.c_str());
-            return false;
-        }
-    }
 
-    std::ifstream fileStream(fontFilePath, std::ios::in | std::ios::binary);
-    if (!fileStream.is_open())
+    enum font_t { font_unknown, font_bf4, font_bm, font_json } fontType = font_unknown;
+    if (gFiles.LocateFont(fontName + ".bf4", fontFilePath))
     {
-        gConsole.LogMessage(eLogLevel_Warning, "Cannot open font file '%s'", fontName.c_str());
+        fontType = font_bf4;
+    }
+    else if (gFiles.LocateFont(fontName + ".fnt", fontFilePath))
+    {
+        fontType = font_bm;
+    }
+    else if (gFiles.LocateFont(fontName + ".json", fontFilePath))
+    {
+        fontType = font_json;
+    }
+    else // unknown
+    {
+        gConsole.LogMessage(eLogLevel_Warning, "Cannot locate font file '%s'", fontName.c_str());
         return false;
     }
 
-    bool isSuccess = bmfont ? 
-        LoadFont_BMF(fileStream) : 
-        LoadFont_BF4(fileStream);
+    bool isSuccess = false;
+
+    if (fontType == font_json)
+    {
+        JsonDocument fontDocument;
+        if (!FSLoadJSON(fontFilePath, fontDocument))
+        {
+            gConsole.LogMessage(eLogLevel_Warning, "Cannot open font file '%s'", fontName.c_str());
+            return false;
+        }
+        isSuccess = LoadFont_Json(fontDocument.GetRootElement());
+    }
+    else
+    {
+        std::ifstream fileStream (fontFilePath, std::ios::in | std::ios::binary);
+        if (!fileStream.is_open())
+        {
+            gConsole.LogMessage(eLogLevel_Warning, "Cannot open font file '%s'", fontName.c_str());
+            return false;
+        }
+        switch (fontType)
+        {
+            case font_bf4: isSuccess = LoadFont_BF4(fileStream); break;
+            case font_bm : isSuccess = LoadFont_BMF(fileStream); break;
+        }
+    }
 
     if (isSuccess)
     {
@@ -495,7 +522,7 @@ bool Font::LoadFont_BF4(std::istream& bitstream)
             if ((currentAtlasSizeX > MaxAtlasSize) || 
                 (currentAtlasSizeY > MaxAtlasSize)) 
             {
-                gConsole.LogMessage(eLogLevel_Warning, "BF4 font atlas generation exceeds size limit");
+                gConsole.LogMessage(eLogLevel_Warning, "Font atlas generation exceeds size limit");
                 return false;
             }
         }
@@ -515,8 +542,8 @@ bool Font::LoadFont_BF4(std::istream& bitstream)
     Point2D atlasDims { currentAtlasSizeX, currentAtlasSizeY };
     if (!mAtlasBitmap.Create(ePixelFormat_R8, atlasDims, nullptr))
     {
-        gConsole.LogMessage(eLogLevel_Warning, "BM4 font atlas pixels allocation failed");
-        return nullptr;
+        gConsole.LogMessage(eLogLevel_Warning, "Font atlas pixels allocation failed");
+        return false;
     }
 
     mAtlasBitmap.SetHasAlphaHint(true);
@@ -591,6 +618,191 @@ bool Font::LoadFont_BMF(std::istream& bitstream)
         dstChar.mOuterWidth = srcChar.mAdvanceX;
     }
     mLineHeight = metadata.mCommon.mLineHeight;
+    return true;
+}
+
+bool Font::LoadFont_Json(JsonElement node)
+{
+    cxx_assert(node);
+
+    int spaceWidth = 0;
+    JsonQuery(node, "line_height", mLineHeight);
+    JsonQuery(node, "space_width", spaceWidth);
+
+    JsonElement glyphsNode = node.FindElement("glyphs");
+    if (!glyphsNode)
+    {
+        cxx_assert(false);
+        return false;
+    }
+
+    int mipsCount = 0;
+
+    // helper
+    struct glyphs_map_entry
+    {
+        Rect2D mRect;
+        BitmapImage mBitmap;
+    };
+
+    cxx::temp_map<int, glyphs_map_entry> glyphsMap;
+    std::string glyphPath;
+    for (JsonElement element = glyphsNode.FirstChild(); element;
+        element = element.NextSibling())
+    {
+        glyphPath.clear();
+        int glyphCode = 0;
+        if (!JsonQuery(element, "code", glyphCode) ||
+            !JsonQuery(element, "image", glyphPath))
+        {
+            cxx_assert(false);
+            continue;
+        }
+        if (glyphsMap.find(glyphCode) != glyphsMap.end())
+        {
+            cxx_assert(false);
+            continue;
+        }
+
+        glyphs_map_entry& mapEntry = glyphsMap[glyphCode];
+
+        bool imageLoaded = gDK2AssetLoader.LoadImageData(glyphPath, mapEntry.mBitmap);
+        cxx_assert(imageLoaded);
+        if (!imageLoaded)
+        {
+            glyphsMap.erase(glyphCode);
+            continue;
+        }
+
+        mipsCount = (mipsCount == 0) ? mapEntry.mBitmap.GetMipsCount() : 
+            std::min(mapEntry.mBitmap.GetMipsCount(), mipsCount);
+
+        if (!JsonQuery(element, "rect", mapEntry.mRect))
+        {
+            mapEntry.mRect.SetPosition({});
+            mapEntry.mRect.SetSize(mapEntry.mBitmap.GetDimensions());
+        }
+    }
+
+    if (glyphsMap.empty() || (mipsCount < 1))
+    {
+        cxx_assert(false);
+        return false;
+    }
+
+    // setup glyphs
+    for (const auto& roller: glyphsMap)
+    {
+        cxx_assert(roller.second.mBitmap.GetPixelFormat() == ePixelFormat_RGBA8);
+
+        CharEntry& charEntry = (roller.first < AnsiCharsCount) ?
+            mAnsiChars[roller.first] : 
+            mWideChars[roller.first];
+        charEntry.mOffset.x = 0;
+        charEntry.mOffset.y = 0;
+        charEntry.mRect = roller.second.mRect;
+        charEntry.mOuterWidth = charEntry.mRect.w;
+    }
+
+    std::vector<stbrp_node> stbrp_nodes(MaxAtlasSize);
+    std::vector<stbrp_rect> stbrp_rects(glyphsMap.size());
+
+    // prepare characters
+    int icounter = 0;
+    for (const auto& roller: glyphsMap)
+    {
+        const Point2D dims = roller.second.mBitmap.GetDimensions();
+        stbrp_rects[icounter].id = roller.first;
+        stbrp_rects[icounter].w = dims.x;
+        stbrp_rects[icounter].h = dims.y;
+        ++icounter;
+    }
+
+    int currentAtlasSizeX = 128;
+    int currentAtlasSizeY = 128;
+    int nn = 0;
+
+    for (bool isPacked = false; !isPacked; ++nn)
+    {
+        // reset status
+        for (stbrp_rect& rc: stbrp_rects)
+        {
+            rc.was_packed = 0;
+        }
+
+        stbrp_context context;
+        stbrp_init_target(&context, currentAtlasSizeX, currentAtlasSizeY, stbrp_nodes.data(), stbrp_nodes.size());
+        isPacked = stbrp_pack_rects(&context, stbrp_rects.data(), stbrp_rects.size()) > 0;
+        if (!isPacked)
+        {
+            if (nn & 1) { currentAtlasSizeY <<= 1; } // increase size
+            else { currentAtlasSizeX <<= 1; } // increase size
+
+            if ((currentAtlasSizeX > MaxAtlasSize) || 
+                (currentAtlasSizeY > MaxAtlasSize)) 
+            {
+                gConsole.LogMessage(eLogLevel_Warning, "Font atlas generation exceeds size limit");
+                return false;
+            }
+        }
+    }
+
+    for (const stbrp_rect& rc: stbrp_rects)
+    {
+        CharEntry& charEntry = (rc.id < AnsiCharsCount) ? mAnsiChars[rc.id] : mWideChars[rc.id];
+        charEntry.mRect.x += rc.x;
+        charEntry.mRect.y += rc.y;
+    }
+
+    // generate atlas
+
+    Point2D atlasDims { currentAtlasSizeX, currentAtlasSizeY };
+    if (!mAtlasBitmap.Create(ePixelFormat_RGBA8, atlasDims, nullptr))
+    {
+        gConsole.LogMessage(eLogLevel_Warning, "Font atlas pixels allocation failed");
+        return false;
+    }
+
+    mAtlasBitmap.SetHasAlphaHint(true);
+
+    for (int imipLevel = 0; imipLevel < mipsCount; ++imipLevel)
+    {
+        const Point2D dstDims { currentAtlasSizeX >> imipLevel, currentAtlasSizeY >> imipLevel };
+        cxx_assert((dstDims.x > 0) && (dstDims.y > 0));
+        if ((imipLevel > 0) && !mAtlasBitmap.AddMipLevel(dstDims, nullptr))
+        {
+            cxx_assert(false);
+            return false;
+        }
+
+        Color32* dstPixels = (Color32*)mAtlasBitmap.GetMipPixels(imipLevel);
+        cxx_assert(dstPixels);
+
+        memset(dstPixels, 0, dstDims.x * dstDims.y * 4);
+
+        for (stbrp_rect& rc: stbrp_rects)
+        {
+            const BitmapImage& srcBitmap = glyphsMap[rc.id].mBitmap;
+            const Point2D srcDims = srcBitmap.GetDimensions(imipLevel);
+            const Color32* srcPixels = (const Color32*) srcBitmap.GetMipPixels(imipLevel);
+            // copy pixels
+            for (int iy = 0; iy < srcDims.y; ++iy)
+            {
+                memcpy(dstPixels + ((iy + (rc.y >> imipLevel)) * dstDims.x + (rc.x >> imipLevel)), 
+                    srcPixels + (iy * srcDims.x), srcDims.x * 4);
+            }
+        }
+    }
+
+    // space char
+    const wchar_t spaceChar = L' ';
+    if (glyphsMap.find(spaceChar) == glyphsMap.end())
+    {
+        mAnsiChars[spaceChar].mOffset = {};
+        mAnsiChars[spaceChar].mRect = {};
+        mAnsiChars[spaceChar].mOuterWidth = spaceWidth;
+    }
+
     return true;
 }
 

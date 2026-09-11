@@ -4,14 +4,18 @@
 #include "UiWidget.h"
 #include "UiPicture.h"
 #include "UiButton.h"
-#include "UiProductionButton.h"
 #include "UiView.h"
 #include "UiPanel.h"
 #include "UiTextBox.h"
 #include "UiGridLayout.h"
 #include "UiScrollBar.h"
+#include "UiCompositeButton.h"
+
+//////////////////////////////////////////////////////////////////////////
 
 UiWidgetManager gWidgetManager;
+
+//////////////////////////////////////////////////////////////////////////
 
 bool UiWidgetManager::Initialize()
 {
@@ -25,7 +29,9 @@ void UiWidgetManager::Shutdown()
     mHoveredWidget = nullptr;
     mFocusedWidget = nullptr;
 
-    DetachAllViews();
+    mViewsToAttach.clear();
+    mViewsToDetach.clear();
+    mViews.clear();
 
     // cleanup prototypes
     for (const auto& roller: mWidgetClassPrototypes)
@@ -78,10 +84,10 @@ void UiWidgetManager::RegisterWidgetClasses()
     RegisterWidgetClass<UiPicture>();
     RegisterWidgetClass<UiButton>();
     RegisterWidgetClass<UiPanel>();
-    RegisterWidgetClass<UiProductionButton>();
     RegisterWidgetClass<UiTextBox>();
     RegisterWidgetClass<UiGridLayout>();
     RegisterWidgetClass<UiScrollBar>();
+    RegisterWidgetClass<UiCompositeButton>();
 }
 
 template<typename TWidget>
@@ -105,14 +111,14 @@ void UiWidgetManager::InputEvent(MouseMovedInputEvent& inputEvent)
     }
 
     // process interactive layers in reverse order
-    for (auto it = mViews.rbegin(); it != mViews.rend(); ++it)
-    {
-        if (inputEvent.mConsumed)
-            break;
-
-        UiView* currentView = *it;
-        currentView->InputEvent(inputEvent);
-    }
+    IterateViews(true, [&inputEvent](UiView* uiview) -> bool
+        {
+            if (!inputEvent.mConsumed)
+            {
+                uiview->InputEvent(inputEvent);
+            }
+            return !inputEvent.mConsumed;
+        });
 }
 
 void UiWidgetManager::InputEvent(MouseScrollInputEvent& inputEvent)
@@ -136,14 +142,14 @@ void UiWidgetManager::InputEvent(MouseScrollInputEvent& inputEvent)
     }
 
     // process interactive layers in reverse order
-    for (auto it = mViews.rbegin(); it != mViews.rend(); ++it)
-    {
-        if (inputEvent.mConsumed)
-            break;
-
-        UiView* currentView = *it;
-        currentView->InputEvent(inputEvent);
-    }
+    IterateViews(true, [&inputEvent](UiView* uiview) -> bool
+        {
+            if (!inputEvent.mConsumed)
+            {
+                uiview->InputEvent(inputEvent);
+            }
+            return !inputEvent.mConsumed;
+        });
 }
 
 void UiWidgetManager::InputEvent(MouseButtonInputEvent& inputEvent)
@@ -155,14 +161,14 @@ void UiWidgetManager::InputEvent(MouseButtonInputEvent& inputEvent)
     }
 
     // process interactive layers in reverse order
-    for (auto it = mViews.rbegin(); it != mViews.rend(); ++it)
-    {
-        if (inputEvent.mConsumed)
-            break;
-
-        UiView* currentView = *it;
-        currentView->InputEvent(inputEvent);
-    }
+    IterateViews(true, [&inputEvent](UiView* uiview) -> bool
+        {
+            if (!inputEvent.mConsumed)
+            {
+                uiview->InputEvent(inputEvent);
+            }
+            return !inputEvent.mConsumed;
+        });
 }
 
 void UiWidgetManager::InputEvent(KeyCharEvent& inputEvent)
@@ -174,14 +180,14 @@ void UiWidgetManager::InputEvent(KeyCharEvent& inputEvent)
     }
 
     // process interactive layers in reverse order
-    for (auto it = mViews.rbegin(); it != mViews.rend(); ++it)
-    {
-        if (inputEvent.mConsumed)
-            break;
-
-        UiView* currentView = *it;
-        currentView->InputEvent(inputEvent);
-    }
+    IterateViews(true, [&inputEvent](UiView* uiview) -> bool
+        {
+            if (!inputEvent.mConsumed)
+            {
+                uiview->InputEvent(inputEvent);
+            }
+            return !inputEvent.mConsumed;
+        });
 }
 
 void UiWidgetManager::InputEvent(KeyInputEvent& inputEvent)
@@ -193,36 +199,36 @@ void UiWidgetManager::InputEvent(KeyInputEvent& inputEvent)
     }
 
     // process interactive layers in reverse order
-    for (auto it = mViews.rbegin(); it != mViews.rend(); ++it)
-    {
-        if (inputEvent.mConsumed)
-            break;
-
-        UiView* currentView = *it;
-        currentView->InputEvent(inputEvent);
-    }
+    IterateViews(true, [&inputEvent](UiView* uiview) -> bool
+        {
+            if (!inputEvent.mConsumed)
+            {
+                uiview->InputEvent(inputEvent);
+            }
+            return !inputEvent.mConsumed;
+        });
 }
 
 void UiWidgetManager::RenderFrame(UiRenderContext& renderContext)
 {
     // render interactive ui layers
-    for (UiView* roller: mViews)
-    {
-        renderContext.SetTransform(nullptr);
-        roller->RenderFrame(renderContext);
-    }
+    IterateViews(false, [&renderContext](UiView* uiview) -> bool
+        {
+            renderContext.SetTransform(nullptr);
+            uiview->RenderFrame(renderContext);
+            return true;
+        });
 }
 
 void UiWidgetManager::UpdateFrame(float deltaTime)
 {
     ProcessWidgetToDelete();
-
-    // update interactive ui layers
-    for (UiView* roller: mViews)
-    {
-        roller->UpdateFrame(deltaTime);
-    }
-
+    ProcessViewListChanges();
+    IterateViews(false, [deltaTime](UiView* uiview) -> bool
+        {
+            uiview->UpdateFrame(deltaTime);
+            return true;
+        });
     UpdateCurrentHovered();
     UpdateCurrentFocused();
 }
@@ -230,18 +236,16 @@ void UiWidgetManager::UpdateFrame(float deltaTime)
 void UiWidgetManager::UpdateCurrentHovered()
 {
     UiWidget* currentHovered = nullptr;
-
-    if (!mViews.empty())
-    {
-        // find current hovered widget at top-most layer only
-        UiView* currentView = mViews.back();
-        UiWidget* hierarchyRoot = currentView->GetHierarchy().GetRootWidget();
-        // cannot pick widget of invisible uistate
-        if (hierarchyRoot)
+    // process interactive layers in reverse order
+    IterateViews(true, [&currentHovered](UiView* uiview) -> bool
         {
-            currentHovered = hierarchyRoot->PickWidget(gInputs.GetMousePosition());
-        }
-    }
+            UiWidget* hierarchyRoot = uiview->GetHierarchy().GetRootWidget();
+            if (hierarchyRoot && hierarchyRoot->IsVisibleSelf())
+            {
+                currentHovered = hierarchyRoot->PickWidget(gInputs.GetMousePosition());
+            }
+            return (currentHovered == nullptr);
+        });
     SetHoverWidget(currentHovered);
 }
 
@@ -259,6 +263,26 @@ void UiWidgetManager::UpdateCurrentFocused()
     }
 }
 
+void UiWidgetManager::ProcessViewListChanges()
+{
+    if (!mViewsToDetach.empty())
+    {
+        cxx::erase_elements(mViews, mViewsToDetach);
+
+        mViewsToDetach.clear();
+    }
+
+    if (!mViewsToAttach.empty())
+    {
+        mViews.insert(mViews.end(), mViewsToAttach.begin(), mViewsToAttach.end());
+        std::stable_sort(mViews.begin(), mViews.end(), [](UiView* lhs, UiView* rhs) 
+            { 
+                return lhs->mViewLayer < rhs->mViewLayer; 
+            });
+        mViewsToAttach.clear();
+    }
+}
+
 void UiWidgetManager::SetHoverWidget(UiWidget* hoverWidget)
 {
     if (mHoveredWidget == hoverWidget)
@@ -269,19 +293,19 @@ void UiWidgetManager::SetHoverWidget(UiWidget* hoverWidget)
 
     if (prevHovered)
     {
-        prevHovered->HandleMouseLeave();
+        prevHovered->MouseLeave();
     }
 
     if (mHoveredWidget)
     {
-        mHoveredWidget->HandleMouseEnter();
+        mHoveredWidget->MouseEnter();
     }
 }
 
 UiWidget* UiWidgetManager::ConstructWidget(const std::string& className) const
 {
     UiWidget* instance = nullptr;
-    if (UiWidget* prototype = GetWidgetClassPrototype(className))
+    if (UiWidget* prototype = GetWidgetPrototype(className))
     {
         instance = prototype->CloneWidget();
     }
@@ -314,53 +338,48 @@ void UiWidgetManager::ReleaseFocus(UiWidget* focusWidget)
 void UiWidgetManager::AttachView(UiView* view)
 {
     cxx_assert(view);
-    bool canAppend = std::find(mViews.begin(), mViews.end(), view) == mViews.end();
-    if (canAppend && view)
-    {
-        // find right place to insert
-        auto insertPosition = std::find_if(mViews.begin(), mViews.end(), 
-            [view](UiView* currentLayer)
-            {
-                return currentLayer->mViewLayer > view->mViewLayer;
-            });
+    if (view == nullptr)
+        return;
 
-        mViews.insert(insertPosition, view);
+    cxx::erase(mViewsToDetach, view);
+    if (!cxx::contains(mViews, view))
+    {
+        mViewsToAttach.push_back(view);
     }
-    cxx_assert(canAppend);
 }
 
 void UiWidgetManager::DetachView(UiView* view)
 {
-    auto views_it = std::find(mViews.begin(), mViews.end(), view);
-    cxx_assert(views_it != mViews.end());
-    if (views_it != mViews.end())
+    cxx_assert(view);
+    if (view == nullptr)
+        return;
+
+    cxx::erase(mViewsToAttach, view);
+    if (cxx::contains(mViews, view))
     {
-        mViews.erase(views_it);
+        mViewsToDetach.push_back(view);
     }
 }
 
-void UiWidgetManager::DetachAllViews()
+bool UiWidgetManager::HasViewAttached(const UiView* view) const
 {
-    mViews.clear();
-}
-
-bool UiWidgetManager::ViewAttached(const UiView* view) const
-{
-    auto views_it = std::find(mViews.begin(), mViews.end(), view);
-    return views_it != mViews.end();
+    return cxx::contains(mViewsToAttach, view) || 
+        (cxx::contains(mViews, view) && !cxx::contains(mViewsToDetach, view));
 }
 
 void UiWidgetManager::ScreenSizeChanged(const Point2D& screenSize)
 {
-    for (UiView* roller: mViews)
-    {
-        roller->ScreenSizeChanged(screenSize);
-    }
+    ProcessViewListChanges();
+    IterateViews(false, [&screenSize](UiView* uiview) -> bool
+        {
+            uiview->ScreenSizeChanged(screenSize);
+            return true;
+        });
 }
 
 bool UiWidgetManager::RegisterWidgetClass(const std::string& widgetClassName, UiWidget* prototype)
 {
-    if ((prototype == nullptr) || GetWidgetClassPrototype(widgetClassName))
+    if ((prototype == nullptr) || GetWidgetPrototype(widgetClassName))
     {
         cxx_assert(false);
         return false;
@@ -373,7 +392,7 @@ bool UiWidgetManager::RegisterWidgetClass(const std::string& widgetClassName, Ui
     return true;
 }
 
-UiWidget* UiWidgetManager::GetWidgetClassPrototype(const std::string& className) const
+UiWidget* UiWidgetManager::GetWidgetPrototype(const std::string& className) const
 {
     auto proto_it = mWidgetClassPrototypes.find(className);
     if (proto_it != mWidgetClassPrototypes.end())
@@ -381,4 +400,33 @@ UiWidget* UiWidgetManager::GetWidgetClassPrototype(const std::string& className)
         return proto_it->second;
     }
     return nullptr;
+}
+
+
+template<typename TProc>
+void UiWidgetManager::IterateViews(bool inReverse, TProc proc)
+{
+    if (inReverse)
+    {
+        for (auto it = mViews.rbegin(); it != mViews.rend(); ++it)
+        {
+            UiView* currentView = *it;
+            if (cxx::contains(mViewsToDetach, currentView))
+                continue;
+
+            if (!proc(currentView))
+                break;
+        }
+    }
+    else // forward
+    {
+        for (UiView* roller: mViews)
+        {
+            if (cxx::contains(mViewsToDetach, roller))
+                continue;
+            
+            if (!proc(roller))
+                break;
+        }
+    }
 }

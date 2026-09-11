@@ -11,6 +11,7 @@ UiPicture::UiPicture(): UiPicture("picture")
 UiPicture::UiPicture(const std::string& widgetClassName) 
     : UiWidget(widgetClassName)
     , mPicTexture()
+    , mTintColor(COLOR_WHITE)
 {
 }
 
@@ -18,6 +19,8 @@ UiPicture::UiPicture(const UiPicture& sourceWidget)
     : UiWidget(sourceWidget)
     , mPicTexture(sourceWidget.mPicTexture)
     , mPicStretchMode(sourceWidget.mPicStretchMode)
+    , mTintColor(sourceWidget.mTintColor)
+    , mBlendingMode(sourceWidget.mBlendingMode)
 {
     InvalidateCache();
 }
@@ -79,6 +82,31 @@ void UiPicture::Deserialize(const JsonElement& jsonElement)
         cxx_assert(isSuccess);
     }
 
+    JsonQuery(jsonElement, "tint", mTintColor);
+    
+    std::string blendmodeProp;
+    if (JsonQuery(jsonElement, "blendmode", blendmodeProp))
+    {
+        static const std::pair<std::string, eBlendingMode> blendmodes[] =
+        {
+            {"alpha",       RENDER_STATES_BLENDMODE_ALPHA},
+            {"add",         RENDER_STATES_BLENDMODE_ADDITIVE},
+            {"alpha_add",   RENDER_STATES_BLENDMODE_ALPHA_ADDITIVE},
+            {"multiply",    RENDER_STATES_BLENDMODE_MULTIPLY},
+        };
+        bool isPropValid = false;
+        for (const auto& roller: blendmodes)
+        {
+            if (blendmodeProp == roller.first)
+            {
+                mBlendingMode = roller.second;
+                isPropValid = true;
+                break;
+            }
+        }
+        cxx_assert(isPropValid);
+    }
+
     InvalidateCache();
 }
 
@@ -92,6 +120,8 @@ void UiPicture::RenderSelf(UiRenderContext& uiRenderContext)
 {
     if (!mPicTexture)
         return;
+
+    const eBlendingMode prevBlendingMode = uiRenderContext.BeginBlendingMode(mBlendingMode);
 
     if (mPicStretchMode == eUiStretchMode_Scale || mPicStretchMode == eUiStretchMode_Keep || mPicStretchMode == eUiStretchMode_KeepCentered)
     {
@@ -128,7 +158,7 @@ void UiPicture::RenderSelf(UiRenderContext& uiRenderContext)
             break;
         }
 
-        uiRenderContext.DrawTexture(mPicTexture, COLOR_WHITE, rcDestination);
+        uiRenderContext.DrawTexture(mPicTexture, mTintColor, rcDestination);
     }
     else if (mPicStretchMode == eUiStretchMode_TileHorizontal || mPicStretchMode == eUiStretchMode_TileVertical || mPicStretchMode == eUiStretchMode_Tile)
     {
@@ -143,6 +173,11 @@ void UiPicture::RenderSelf(UiRenderContext& uiRenderContext)
         {
             uiRenderContext.DrawQuads(mPicTexture, &mCachedQuads[0], NumQuads);
         }
+    }
+
+    if (prevBlendingMode != mBlendingMode)
+    {
+        uiRenderContext.BeginBlendingMode(prevBlendingMode);
     }
 }
 
@@ -219,7 +254,7 @@ void UiPicture::RecomptuteCache()
                 CurrentTilePixels_X, 
                 CurrentTilePixels_Y
             };
-            mCachedQuads[currentY * NumTiles_X + currentX].BuildTextureQuad(imageSize, rcSrc, rcDest, COLOR_WHITE);
+            mCachedQuads[currentY * NumTiles_X + currentX].BuildTextureQuad(imageSize, rcSrc, rcDest, mTintColor);
         }
     }
     else if (mPicStretchMode == eUiStretchMode_TileHorizontal)
@@ -236,7 +271,7 @@ void UiPicture::RecomptuteCache()
                 currentTile * TileSize_X, 0, 
                 isExtraTile ? ExtraTileSize_X : TileSize_X, TileSize_Y
             };
-            mCachedQuads[currentTile].BuildTextureQuad(imageSize, rcSrc, rcDest, COLOR_WHITE);
+            mCachedQuads[currentTile].BuildTextureQuad(imageSize, rcSrc, rcDest, mTintColor);
         }
     }
     else if (mPicStretchMode == eUiStretchMode_TileVertical)
@@ -253,7 +288,7 @@ void UiPicture::RecomptuteCache()
                 0, currentTile * TileSize_Y, 
                 TileSize_X, isExtraTile ? ExtraTileSize_Y : TileSize_Y
             };
-            mCachedQuads[currentTile].BuildTextureQuad(imageSize, rcSrc, rcDest, COLOR_WHITE);
+            mCachedQuads[currentTile].BuildTextureQuad(imageSize, rcSrc, rcDest, mTintColor);
         }
     } // if
 }

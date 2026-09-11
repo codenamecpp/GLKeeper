@@ -61,11 +61,17 @@ public:
 
     inline int GetLineHeight() const { return mLineHeight; }
 
+    struct BuildTextMeshParams
+    {
+        Rect2D mBounds {};
+        eTextHorzAlignment mHorzAlign = eTextHorzAlignment_Left;
+        eTextVertAlignment mVertAlign = eTextVertAlignment_Top;
+        float mFontScale = 1.0f;
+    };
     // create string mesh
     void BuildTextMesh(std::wstring_view wideString, const Point2D& pos, Color32 color, std::vector<Quad2D>& outQuads) const;
-    void BuildTextMesh(std::wstring_view wideString, const Rect2D& rect, 
-        eTextHorzAlignment horzAlign, 
-        eTextVertAlignment vertAlign, Color32 color, std::vector<Quad2D>& outQuads) const;
+    void BuildTextMesh(std::wstring_view wideString, const BuildTextMeshParams& params, Color32 color, 
+        std::vector<Quad2D>& outQuads) const;
 
     // compute text rect dimensions
     Point2D ComputeTextDims(std::wstring_view wideString) const;
@@ -95,6 +101,7 @@ private:
     bool LoadFont_FromFile();
     bool LoadFont_BF4(std::istream& bitstream);
     bool LoadFont_BMF(std::istream& bitstream);
+    bool LoadFont_Json(JsonElement node);
 
     void InitTexcoords();
 

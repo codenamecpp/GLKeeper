@@ -7,13 +7,13 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-// in-hand creature/object view
+// held creature/object view
 
-class HeldThingView
+class InHandThingView
 {
 public:
-    HeldThingView() = default;
-    ~HeldThingView();
+    InHandThingView() = default;
+    ~InHandThingView();
 
     void SetHeldThing(EntityHandle entHandle);
     bool HasHeldThing() const;

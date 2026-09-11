@@ -3,20 +3,20 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-const Animator::NameHash CreatureAnimConst::StatePose = Animator::NameToHash("pose_frame");
-const Animator::NameHash CreatureAnimConst::StateWalk = Animator::NameToHash("walk");
-const Animator::NameHash CreatureAnimConst::StateIdleSelector = Animator::NameToHash("idle_selector");
-const Animator::NameHash CreatureAnimConst::StateIdle1 = Animator::NameToHash("idle_1");
-const Animator::NameHash CreatureAnimConst::StateIdle2 = Animator::NameToHash("idle_2");
-const Animator::NameHash CreatureAnimConst::StateDigging = Animator::NameToHash("digging");
-const Animator::NameHash CreatureAnimConst::StateReinforceWall = Animator::NameToHash("reinforce_wall");
-const Animator::NameHash CreatureAnimConst::StateClaimFloor = Animator::NameHash("claim_floor");
+const StringHash CreatureAnimConst::StatePose = HashForString("pose_frame");
+const StringHash CreatureAnimConst::StateWalk = HashForString("walk");
+const StringHash CreatureAnimConst::StateIdleSelector = HashForString("idle_selector");
+const StringHash CreatureAnimConst::StateIdle1 = HashForString("idle_1");
+const StringHash CreatureAnimConst::StateIdle2 = HashForString("idle_2");
+const StringHash CreatureAnimConst::StateDigging = HashForString("digging");
+const StringHash CreatureAnimConst::StateReinforceWall = HashForString("reinforce_wall");
+const StringHash CreatureAnimConst::StateClaimFloor = HashForString("claim_floor");
 
 //////////////////////////////////////////////////////////////////////////
 
-const Animator::NameHash CreatureAnimConst::ParamIsWalk = Animator::NameToHash("is_walk");
-const Animator::NameHash CreatureAnimConst::ParamIsDigging = Animator::NameToHash("is_digging");
-const Animator::NameHash CreatureAnimConst::ParamIsReinforceWall = Animator::NameToHash("is_reinforce_wall");
-const Animator::NameHash CreatureAnimConst::ParamIsClaimFloor = Animator::NameToHash("is_claim_floor");
+const StringHash CreatureAnimConst::ParamIsWalk = HashForString("is_walk");
+const StringHash CreatureAnimConst::ParamIsDigging = HashForString("is_digging");
+const StringHash CreatureAnimConst::ParamIsReinforceWall = HashForString("is_reinforce_wall");
+const StringHash CreatureAnimConst::ParamIsClaimFloor = HashForString("is_claim_floor");
 
 //////////////////////////////////////////////////////////////////////////

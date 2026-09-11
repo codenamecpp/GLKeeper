@@ -119,10 +119,10 @@ enum_serialize_impl(eTextHorzAlignment)
 
 enum_serialize_impl(eUiButtonState)
 {
-    {eUiButtonState_Normal, "state_normal"},
-    {eUiButtonState_Hovered, "state_hover"},
-    {eUiButtonState_Disabled, "state_disabled"},
-    {eUiButtonState_Pressed, "state_pressed"},
+    {eUiButtonState_Normal, "normal"},
+    {eUiButtonState_Hovered, "hovered"},
+    {eUiButtonState_Disabled, "disabled"},
+    {eUiButtonState_Pressed, "pressed"},
 };
 
 //////////////////////////////////////////////////////////////////////////

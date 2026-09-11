@@ -792,19 +792,10 @@ bool DK2ScenarioReader::ReadString(unsigned int stringLength, std::wstring& wide
 
 void DK2ScenarioReader::CleanLevelName(std::wstring& levelName)
 {
-    const std::wstring_view extensionName = L".kwd";
-
-    if (levelName.length() < extensionName.length())
-        return;
-
-    bool hasExtension = std::equal(extensionName.rbegin(), extensionName.rend(), levelName.rbegin(),
-        [](wchar_t lhs, wchar_t rhs)
-        {
-            return towlower(lhs) == towlower(rhs);
-        });
-    if (hasExtension)
+    const std::wstring_view fileExtension = L".kwd";
+    if (cxx::ends_with_icase(levelName, fileExtension))
     {
-        levelName.resize(levelName.length() - extensionName.length());
+        levelName.resize(levelName.length() - fileExtension.length());
     }
 }
 
@@ -1277,6 +1268,9 @@ bool DK2ScenarioReader::ReadScenarioVariables(int numElements, ScenarioDefinitio
             break;
             case ScenarioVariableType_MaximumManaThreshold:
                 scenarioVars.mMaximumManaThreshold = intValue;
+            break;
+            case ScenarioVariableType_RoomSellValuePercentageOfCost:
+                scenarioVars.mRoomSellValuePercentageOfCost = intValue;
             break;
         }
     }

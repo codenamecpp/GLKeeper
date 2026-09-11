@@ -41,6 +41,8 @@ protected:
 protected:
     Texture* mPicTexture = nullptr;
     eUiStretchMode mPicStretchMode = eUiStretchMode_KeepCentered;
+    eBlendingMode mBlendingMode = RENDER_STATES_BLENDMODE_ALPHA;
+    Color32 mTintColor;
     std::vector<Quad2D> mCachedQuads;
     bool mQuadsCacheDirty = true;
 };

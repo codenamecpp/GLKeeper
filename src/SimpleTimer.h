@@ -29,6 +29,12 @@ public:
         Start();
     }
 
+    // Restart timer with previously configured duration, preserving the overtime
+    inline void Restart()
+    {
+        mElapsedTime = GetOvertime();
+    }
+
     inline bool ConsumeOvertime(float overtime)
     {
         if (overtime > 0.0f)

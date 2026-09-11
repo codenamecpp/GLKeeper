@@ -278,8 +278,9 @@ void UiRenderContext::DrawTextQuads(Font* font, const std::vector<Quad2D>& quads
 
 eBlendingMode UiRenderContext::BeginBlendingMode(eBlendingMode newBlendingMode)
 {
+    const eBlendingMode prevBlendingMode = mCurrentBlendingMode;
     SwitchBlendingMode(newBlendingMode);
-    return mCurrentBlendingMode;
+    return prevBlendingMode;
 }
 
 void UiRenderContext::ResetBlendingMode()
@@ -347,7 +348,8 @@ void UiRenderContext::SwitchTexture(Texture* texture)
         texture = mWhiteTexture; // use fallback
     }
 
-    if (mCurrentTexture == texture) return;
+    if (mCurrentTexture == texture) 
+        return;
 
     FlushDeferred();
     mCurrentTexture = texture;
@@ -368,7 +370,8 @@ void UiRenderContext::SwitchFont(Font* font)
         mCurrentTexture = nullptr;
     }
 
-    if ((font == nullptr) || (font == mCurrentFont)) return;
+    if ((font == nullptr) || (font == mCurrentFont)) 
+        return;
 
     FlushDeferred();
     mCurrentFont = font;
@@ -382,7 +385,8 @@ void UiRenderContext::SwitchFont(Font* font)
 
 void UiRenderContext::SwitchCurrentTextureIsA8(bool isAlphaTexture)
 {
-    if (mCurrentTextureIsA8 == isAlphaTexture) return;
+    if (mCurrentTextureIsA8 == isAlphaTexture) 
+        return;
 
     FlushDeferred();
     mCurrentTextureIsA8 = isAlphaTexture;
@@ -391,7 +395,8 @@ void UiRenderContext::SwitchCurrentTextureIsA8(bool isAlphaTexture)
 
 void UiRenderContext::SwitchBlendingMode(eBlendingMode newBlendingMode)
 {
-    if (mCurrentBlendingMode == newBlendingMode) return;
+    if (mCurrentBlendingMode == newBlendingMode) 
+        return;
 
     FlushDeferred();
     mCurrentBlendingMode = newBlendingMode;

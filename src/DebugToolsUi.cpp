@@ -543,11 +543,11 @@ void DebugToolsUi::ChangeGoldAmount(long amount)
 
     if (amount > 0)
     {
-        gEconomyService.GiveResource(gGameSession.GetLocalPlayer(), eGameResource_Gold, amount);
+        gEconomyService.GiveResource(gGameSession.GetLocalPlayerId(), eGameResource_Gold, amount);
     }
     else
     {
-        gEconomyService.TakeResource(gGameSession.GetLocalPlayer(), eGameResource_Gold, -amount);
+        gEconomyService.TakeResource(gGameSession.GetLocalPlayerId(), eGameResource_Gold, -amount);
     }
 }
 

@@ -48,12 +48,14 @@ protected:
     void HandleSizeChanged(const Point2D& prevSize) override;
     void HandleMouseEnter() override;
     void HandleMouseLeave() override;
-    void HandleEnableStateChanged() override;
-    void HandleVisibilityChanged() override;
+    void HandleEnabledChanged() override;
+    void HandleVisibleChanged() override;
     void HandleInputEvent(MouseButtonInputEvent& inputEvent) override;
 
 protected:
     Font* mTextFont = nullptr;
+
+    float mFontScale = 1.0f;
 
     TextTableId mTextTableId = TextTableId_Null;
     int mStringId = 0; // from text table

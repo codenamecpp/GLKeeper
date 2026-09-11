@@ -3,11 +3,13 @@
 //////////////////////////////////////////////////////////////////////////
 
 class UiRenderContext;
+class UiPainter;
 class UiWidget;
 class UiPicture;
 class UiTextBox;
 class UiGridLayout;
 class UiButton;
+class UiCompositeButton;
 class UiPanel;
 class UiScrollBar;
 class UiWidgetManager;
@@ -51,6 +53,58 @@ public:
         uint32_t mParam0;
         uint32_t mParam1;
     };
+};
+
+//////////////////////////////////////////////////////////////////////////
+
+struct UiCustomProps
+{
+public:
+    //////////////////////////////////////////////////////////////////////////
+    using PropValue = std::variant<std::string, float, int, bool, glm::vec2, Point2D, Rect2D, Color32>;
+    //////////////////////////////////////////////////////////////////////////
+public:
+    UiCustomProps() = default;
+    inline void Clear()
+    {
+        mPropsMap.clear();
+    }
+    template<typename TProp>
+    inline bool GetProperty(std::string_view propName, TProp& propValue) const
+    {
+        auto it = mPropsMap.find(std::string(propName));
+        if (it == mPropsMap.end())
+            return false;
+
+        if (const TProp* valPtr = std::get_if<TProp>(&it->second))
+        {
+            propValue = *valPtr;
+            return true;
+        }
+        cxx_assert(false);
+        return false;
+    }
+    template<typename TProp>
+    inline auto GetPropertyOrDefault(std::string_view propName, TProp&& defaultValue) const
+    {
+        using CleanType = std::decay_t<TProp>;
+        CleanType result {};
+        if (GetProperty<CleanType>(propName, result))
+        {
+            return std::move(result);
+        }
+        return std::forward<CleanType>(defaultValue);
+    }
+    inline bool HasProperty(std::string_view propName) const
+    {
+        return mPropsMap.find(std::string(propName)) != mPropsMap.end();
+    }
+    inline void Emplace(std::string_view propName, PropValue&& value)
+    {
+        mPropsMap.insert_or_assign(std::string(propName), std::move(value));
+    }
+private:
+    std::unordered_map<std::string, PropValue> mPropsMap;
 };
 
 //////////////////////////////////////////////////////////////////////////

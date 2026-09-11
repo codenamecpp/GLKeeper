@@ -40,13 +40,7 @@ void Animator::UpdateFrame(float deltaTime)
     }
 }
 
-size_t Animator::NameToHash(std::string_view name)
-{
-    std::hash<std::string_view> strhash;
-    return strhash(name);
-}
-
-void Animator::ResetTrigger(NameHash paramId)
+void Animator::ResetTrigger(StringHash paramId)
 {
     auto param_it = mParameters.mTriggers.find(paramId);
     if (param_it == mParameters.mTriggers.find(paramId))
@@ -57,7 +51,7 @@ void Animator::ResetTrigger(NameHash paramId)
     param_it->second = false;
 }
 
-void Animator::SetTrigger(NameHash paramId)
+void Animator::SetTrigger(StringHash paramId)
 {
     auto param_it = mParameters.mTriggers.find(paramId);
     if (param_it == mParameters.mTriggers.find(paramId))
@@ -68,7 +62,7 @@ void Animator::SetTrigger(NameHash paramId)
     param_it->second = true;
 }
 
-void Animator::SetParamValue(NameHash paramId, bool value)
+void Animator::SetParamValue(StringHash paramId, bool value)
 {
     auto param_it = mParameters.mBooleans.find(paramId);
     if (param_it == mParameters.mBooleans.end())
@@ -79,7 +73,7 @@ void Animator::SetParamValue(NameHash paramId, bool value)
     param_it->second = value;
 }
 
-void Animator::SetParamValue(NameHash paramId, float value)
+void Animator::SetParamValue(StringHash paramId, float value)
 {
     auto param_it = mParameters.mFloats.find(paramId);
     if (param_it == mParameters.mFloats.end())
@@ -412,7 +406,7 @@ void Animator::ChangeState(State* targetState, eStatePhase statePhase)
     UpdateState();
 }
 
-void Animator::ChangeState(NameHash stateId, eStatePhase statePhase)
+void Animator::ChangeState(StringHash stateId, eStatePhase statePhase)
 {
     State* targetState = GetState(stateId);
     ChangeState(targetState, statePhase);
@@ -441,7 +435,7 @@ void Animator::ChangeAnimationClip(const Clip& animationClip)
     }
 }
 
-Animator::State* Animator::GetState(NameHash stateId)
+Animator::State* Animator::GetState(StringHash stateId)
 {
     auto states_it = mStates.find(stateId);
     if (states_it != mStates.end())
@@ -472,7 +466,7 @@ void Animator::Restart()
     Start();
 }
 
-Animator& Animator::DefineState(NameHash stateId, const ArtResourceDefinition& resourceDefinition, std::optional<eAnimationLoopMode> overrideLoopMode)
+Animator& Animator::DefineState(StringHash stateId, const ArtResourceDefinition& resourceDefinition, std::optional<eAnimationLoopMode> overrideLoopMode)
 {
     cxx_assert(stateId != 0);
 
@@ -568,7 +562,7 @@ Animator& Animator::DefineState(NameHash stateId, const ArtResourceDefinition& r
     return *this;
 }
 
-Animator& Animator::DefineTransition(NameHash fromStateId, NameHash toStateId, std::vector<Condition>&& conditions, 
+Animator& Animator::DefineTransition(StringHash fromStateId, StringHash toStateId, std::vector<Condition>&& conditions, 
     eTransitionMode transitionMode,
     eTransitionInterruptionSource interruptionSource)
 {
@@ -592,7 +586,7 @@ Animator& Animator::DefineTransition(NameHash fromStateId, NameHash toStateId, s
     return *this;
 }
 
-Animator& Animator::DefineTransition(NameHash fromStateId, NameHash toStateId, float selectionWeight)
+Animator& Animator::DefineTransition(StringHash fromStateId, StringHash toStateId, float selectionWeight)
 {
     cxx_assert((toStateId > 0) && (fromStateId > 0));
 
@@ -611,7 +605,7 @@ Animator& Animator::DefineTransition(NameHash fromStateId, NameHash toStateId, f
     return *this;
 }
 
-Animator& Animator::DefineTransitionFromStart(NameHash toStateId, float selectionWeight)
+Animator& Animator::DefineTransitionFromStart(StringHash toStateId, float selectionWeight)
 {
     cxx_assert(toStateId > 0);
 
@@ -628,7 +622,7 @@ Animator& Animator::DefineTransitionFromStart(NameHash toStateId, float selectio
     return *this;
 }
 
-Animator& Animator::DefineTransitionFromAnyState(NameHash toStateId, std::vector<Condition>&& conditions, 
+Animator& Animator::DefineTransitionFromAnyState(StringHash toStateId, std::vector<Condition>&& conditions, 
     eTransitionMode transitionMode,
     eTransitionInterruptionSource interruptionSource)
 {
@@ -709,7 +703,7 @@ void Animator::PostUpdateState()
     }
 }
 
-void Animator::SetAnimSpeedFactor(NameHash stateId, float speedFactor)
+void Animator::SetAnimSpeedFactor(StringHash stateId, float speedFactor)
 {
     if (State* state = GetState(stateId))
     {
@@ -743,7 +737,7 @@ void Animator::SetAnimSpeedFactor(NameHash stateId, float speedFactor)
     }
 }
 
-void Animator::SetAnimSpeedFactor(NameHash stateId, eStatePhase statePhase, float speedFactor)
+void Animator::SetAnimSpeedFactor(StringHash stateId, eStatePhase statePhase, float speedFactor)
 {
     if (statePhase == eStatePhase_Stop) 
     {
@@ -797,12 +791,12 @@ void Animator::SetAnimSpeedFactor(NameHash stateId, eStatePhase statePhase, floa
     }
 }
 
-void Animator::ResetAnimSpeedFactor(NameHash stateId)
+void Animator::ResetAnimSpeedFactor(StringHash stateId)
 {
     SetAnimSpeedFactor(stateId, 1.0f);
 }
 
-void Animator::ResetAnimSpeedFactor(NameHash stateId, eStatePhase statePhase)
+void Animator::ResetAnimSpeedFactor(StringHash stateId, eStatePhase statePhase)
 {
     SetAnimSpeedFactor(stateId, statePhase, 1.0f);
 }
@@ -843,7 +837,7 @@ bool Animator::ExecuteTransition()
     return isTransitionRequested;
 }
 
-bool Animator::HasState(NameHash stateId) const
+bool Animator::HasState(StringHash stateId) const
 {
     return mStates.find(stateId) != mStates.end();
 }

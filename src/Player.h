@@ -49,6 +49,7 @@ public:
     EntityHandle GetFirstOwnedRoomOfType(RoomTypeId roomType) const;
     EntityHandle GetNextOwnedRoomOfType(RoomTypeId roomType, EntityHandle prevHandle) const;
     EntityHandle GetLastOwnedRoomOfType(RoomTypeId roomType) const;
+
     const auto& GetOwnedMoneyStorageRooms() const { return mMoneyStorageRooms; }
     const auto& GetOwnedRoomOfType(RoomTypeId roomType) const
     {
@@ -59,7 +60,7 @@ public:
     bool HasOwnedRoomsOfType(RoomTypeId roomType) const;
 
     // tech availability
-    bool CanBuildRoomOfType(RoomTypeId roomType) const;
+    bool CanBuildRoomOfType(RoomDefinition* roomDefinition) const;
 
     // resource management
     void ChangeResourceAmount(eGameResource resourceType, long deltaAmount);

@@ -1,9 +1,10 @@
 #include "stdafx.h"
-#include "FrontendScreen.h"
+#include "FrontendUi.h"
 #include "FrontendController.h"
 #include "GameMain.h"
 #include "Version.h"
 #include "UiTextBox.h"
+#include "FrontendUiControls.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -11,35 +12,46 @@ static const std::string uiscreen_json_path = "ui/frontend_screen.json";
 
 //////////////////////////////////////////////////////////////////////////
 
-FrontendScreen::FrontendScreen(FrontendController& frontend)
+FrontendUi::FrontendUi(FrontendController& frontend)
     : mPages{}
     , mFrontend(frontend)
-    , mPageMain(frontend)
-    , mPageQuit(frontend)
-    , mPageSinglePlayer(frontend)
-    , mPageSkirmishMaps(frontend)
-    , mPageMyPetDungeon(frontend)
-    , mPageMissionBriefing(frontend)
 {
-    RegisterPage(&mPageMain);
-    RegisterPage(&mPageQuit);
-    RegisterPage(&mPageSinglePlayer);
-    RegisterPage(&mPageSkirmishMaps);
-    RegisterPage(&mPageMyPetDungeon);
-    RegisterPage(&mPageMissionBriefing);
+    mPageMain = std::make_unique<MenuPageMain>(frontend);
+    mPageQuit = std::make_unique<MenuPageQuitGame>(frontend);
+    mPageSinglePlayer = std::make_unique<MenuPageSinglePlayer>(frontend);
+    mPageSkirmishMaps = std::make_unique<MenuPageSkirmishMaps>(frontend);
+    mPageMyPetDungeon = std::make_unique<MenuPageMyPetDungeon>(frontend);
+    mPageMissionBriefing = std::make_unique<MenuPageMissionBriefing>(frontend);
+
+    RegisterPage(mPageMain.get());
+    RegisterPage(mPageQuit.get());
+    RegisterPage(mPageSinglePlayer.get());
+    RegisterPage(mPageSkirmishMaps.get());
+    RegisterPage(mPageMyPetDungeon.get());
+    RegisterPage(mPageMissionBriefing.get());
 }
 
-void FrontendScreen::ShowMenuPage(eFrontendMenuPage pageId)
+FrontendUi::~FrontendUi()
 {
-    cxx_assert(pageId < eFrontendMenuPage_COUNT);
-    if (pageId < eFrontendMenuPage_COUNT)
+    mPageMain.reset();
+    mPageQuit.reset();
+    mPageSinglePlayer.reset();
+    mPageSkirmishMaps.reset();
+    mPageMyPetDungeon.reset();
+    mPageMissionBriefing.reset();
+}
+
+void FrontendUi::ShowMenuPage(eMenuPage pageId)
+{
+    cxx_assert(pageId < eMenuPage_COUNT);
+    if (pageId < eMenuPage_COUNT)
     {
-        FrontendMenuPage* nextPage = mPages[pageId];
+        MenuPage* nextPage = mPages[pageId];
         cxx_assert(nextPage);
         if ((nextPage == nullptr) || (nextPage == mCurrentPage))
             return;
 
-        FrontendMenuPage* prevPage = mCurrentPage;
+        MenuPage* prevPage = mCurrentPage;
         mCurrentPage = nullptr;
         if (prevPage)
         {
@@ -51,22 +63,22 @@ void FrontendScreen::ShowMenuPage(eFrontendMenuPage pageId)
     }
 }
 
-void FrontendScreen::ConfigureSkirmishMaps(cxx::span<ScenarioLevelInfo> mapsList)
+void FrontendUi::ConfigureSkirmishMaps(cxx::span<ScenarioLevelInfo> mapsList)
 {
-    mPageSkirmishMaps.ConfigureMaps(mapsList);
+    mPageSkirmishMaps->ConfigureMaps(mapsList);
 }
 
-void FrontendScreen::ConfigureMyPetDungeonMaps(cxx::span<ScenarioLevelInfo> mapsList)
+void FrontendUi::ConfigureMyPetDungeonMaps(cxx::span<ScenarioLevelInfo> mapsList)
 {
-    mPageMyPetDungeon.ConfigureLevels(mapsList);
+    mPageMyPetDungeon->ConfigureLevels(mapsList);
 }
 
-void FrontendScreen::ConfigureMissionBriefing(const ScenarioLevelInfo& levelInfo)
+void FrontendUi::ConfigureMissionBriefing(const ScenarioLevelInfo& levelInfo)
 {
-    mPageMissionBriefing.ConfigureBriefing(levelInfo);
+    mPageMissionBriefing->ConfigureBriefing(levelInfo);
 }
 
-bool FrontendScreen::LoadContent()
+bool FrontendUi::LoadContent()
 {
     if (!UiView::LoadContent())
     {
@@ -84,7 +96,7 @@ bool FrontendScreen::LoadContent()
             }
 
             // pages
-            for (FrontendMenuPage* pagesRoller: mPages)
+            for (MenuPage* pagesRoller: mPages)
             {
                 bool isSuccess = false;
                 if (pagesRoller)
@@ -102,11 +114,11 @@ bool FrontendScreen::LoadContent()
     return IsHierarchyLoaded();
 }
 
-void FrontendScreen::Cleanup()
+void FrontendUi::Cleanup()
 {
     UiView::Cleanup();
 
-    for (FrontendMenuPage* pagesRoller: mPages)
+    for (MenuPage* pagesRoller: mPages)
     {
         if (pagesRoller)
         {
@@ -117,30 +129,30 @@ void FrontendScreen::Cleanup()
     mCurrentPage = nullptr;
 }
 
-void FrontendScreen::InputEvent(KeyInputEvent& inputEvent)
+void FrontendUi::InputEvent(KeyInputEvent& inputEvent)
 {
 
 }
 
-void FrontendScreen::UpdateFrame(float deltaTime)
+void FrontendUi::UpdateFrame(float deltaTime)
 {
     UiView::UpdateFrame(deltaTime);
 }
 
-void FrontendScreen::OnActivated()
+void FrontendUi::OnActivated()
 {
 }
 
-void FrontendScreen::OnDeactivated()
+void FrontendUi::OnDeactivated()
 {
 
 }
 
-void FrontendScreen::RegisterPage(FrontendMenuPage* page)
+void FrontendUi::RegisterPage(MenuPage* page)
 {
     cxx_assert(page);
 
-    const eFrontendMenuPage pageId = page->GetPageId();
+    const eMenuPage pageId = page->GetPageId();
 
     cxx_assert(mPages[pageId] == nullptr);
     mPages[pageId] = page;

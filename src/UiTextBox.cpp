@@ -34,6 +34,7 @@ UiTextBox::UiTextBox(const UiTextBox& sourceWidget)
     , mTextBatchDirty(true) // force
     , mStringId(sourceWidget.mStringId)
     , mTextTableId(sourceWidget.mTextTableId)
+    , mFontScale(sourceWidget.mFontScale)
 {
 }
 
@@ -163,6 +164,7 @@ void UiTextBox::Deserialize(const JsonElement& jsonElement)
     {
         mTextTableId = TextTableId_Main;
     }
+    JsonQuery(jsonElement, "font_scale", mFontScale);
 
     RefreshColor();
     InvalidateCache();
@@ -192,12 +194,12 @@ void UiTextBox::HandleMouseLeave()
     RefreshColor();
 }
 
-void UiTextBox::HandleEnableStateChanged()
+void UiTextBox::HandleEnabledChanged()
 {
     RefreshColor();
 }
 
-void UiTextBox::HandleVisibilityChanged()
+void UiTextBox::HandleVisibleChanged()
 {
     RefreshColor();
 }
@@ -206,13 +208,10 @@ void UiTextBox::HandleInputEvent(MouseButtonInputEvent& inputEvent)
 {
     if (inputEvent.IsButtonPressed(MBUTTON_LEFT))
     {
+        inputEvent.SetConsumed();
         // notify
         const UiEvent_OnPress eventDesc (MBUTTON_LEFT, inputEvent.mMousePosition);
-        mEventListeners.IterateListeners([this, &eventDesc](UiEventListener* listener)
-            {
-                listener->HandleUiEvent(this, eventDesc);
-            });
-        inputEvent.SetConsumed();
+        NotifyListeners(eventDesc);
     }
 }
 
@@ -234,11 +233,16 @@ void UiTextBox::RecomptuteCache()
     Rect2D localBounds = GetLocalBounds();
     if ((localBounds.w > 0) || (localBounds.h > 0))
     {
-        mTextFont->BuildTextMesh(mTextContent, localBounds, mHorzAlignment, mVertAlignment, mTextColor, mTextBatch);
+        Font::BuildTextMeshParams params;
+        params.mBounds = localBounds;
+        params.mHorzAlign = mHorzAlignment;
+        params.mVertAlign = mVertAlignment;
+        params.mFontScale = mFontScale;
+        mTextFont->BuildTextMesh(mTextContent, params, mTextColor, mTextBatch);
     }
     else
     {
-        mTextFont->BuildTextMesh(mTextContent, {}, mTextColor, mTextBatch);
+        mTextFont->BuildTextMesh(mTextContent, localBounds.GetPosition(), mTextColor, mTextBatch);
     }
 }
 

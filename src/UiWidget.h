@@ -68,12 +68,22 @@ public:
     void InputEvent(MouseScrollInputEvent& inputEvent);
     void InputEvent(KeyCharEvent& inputEvent);
 
+    void MouseEnter();
+    void MouseLeave();
+
     // accessing user data
     inline UiUserData& UserData() { return mUserData; }
     inline const UiUserData& UserData() const { return mUserData; }
 
+    // accessing custom properties
+    inline const UiCustomProps& CustomProps() const { return mCustomProps; }
+
     // Load widget properties from json
     virtual void Deserialize(const JsonElement& jsonElement);
+
+    // custom draw
+    inline UiPainter* GetCustomPainter() const { return mCustomPainter; }
+    void SetCustomPainter(UiPainter* painter);
 
     // Find child widget at specified screen coordinate, ignores invisible widgets
     // Return self if no one child can be picked
@@ -159,6 +169,15 @@ protected:
 
     virtual UiWidget* CloneSelf() const;
 
+    template<typename TEvent>
+    inline void NotifyListeners(const TEvent& eventDesc)
+    {
+        mEventListeners.IterateListeners([this, &eventDesc](UiEventListener* listener)
+            {
+                listener->HandleUiEvent(this, eventDesc);
+            });
+    }
+
     // internals
     void SetParentWidget(UiWidget* theParentWidget);
     void PositionChanged(const Point2D& prevPosition);
@@ -181,14 +200,14 @@ protected:
     virtual void UpdateSelf(float deltaTime) {}
     virtual void HandleChildAttached(UiWidget* widget) {}
     virtual void HandleChildDetached(UiWidget* widget) {}
-    virtual void HandleEnableStateChanged() {}
-    virtual void HandleVisibilityChanged() {}
+    virtual void HandleEnabledChanged();
+    virtual void HandleVisibleChanged();
     virtual void HandlePositionChanged(const Point2D& prevPosition) {}
     virtual void HandleSizeChanged(const Point2D& prevSize) {}
     virtual void HandleFocusGain() {}
     virtual void HandleFocusLost() {}
-    virtual void HandleMouseEnter() {}
-    virtual void HandleMouseLeave() {}
+    virtual void HandleMouseEnter();
+    virtual void HandleMouseLeave();
     virtual void HandleInputEvent(MouseButtonInputEvent& inputEvent) {}
     virtual void HandleInputEvent(KeyInputEvent& inputEvent) {}
     virtual void HandleInputEvent(MouseMovedInputEvent& inputEvent);
@@ -198,6 +217,8 @@ protected:
 private:
     void UpdateInheritedVisibilityState();
     void UpdateInheritedEnabledState();
+
+    void DeserializeCustomProps(JsonElement propsRoot);
 
     //////////////////////////////////////////////////////////////////////////
     struct ScopedChildrenLocker
@@ -220,7 +241,10 @@ protected:
 
     std::string mName;
 
-    UiUserData mUserData;
+    UiUserData mUserData; // not cloned
+    UiCustomProps mCustomProps;
+
+    UiPainter* mCustomPainter = nullptr; // not cloned
 
     UiWidget* mParent = nullptr;
     std::vector<UiWidget*> mChildren;

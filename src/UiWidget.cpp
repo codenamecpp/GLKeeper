@@ -2,6 +2,7 @@
 #include "UiWidget.h"
 #include "UiRenderContext.h"
 #include "UiWidgetManager.h"
+#include "UiPainter.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -56,6 +57,7 @@ UiWidget::UiWidget(const UiWidget& sourceWidget)
     , mEnabled_Inherited(true) // force default
     , mTransformInvalidated(true) // force default
     , mUserData() // don't copy
+    , mCustomPainter() // don't copy
     , mClassName(sourceWidget.mClassName)
     , mScale(sourceWidget.mScale)
     , mRelativePivot(sourceWidget.mRelativePivot)
@@ -65,6 +67,7 @@ UiWidget::UiWidget(const UiWidget& sourceWidget)
     , mAnchorPointMin(sourceWidget.mAnchorMin)
     , mAnchorPointMax(sourceWidget.mAnchorMax)
     , mInputPassThrough(sourceWidget.mInputPassThrough)
+    , mCustomProps(sourceWidget.mCustomProps)
 {
     InvalidateTransform();
 }
@@ -133,6 +136,9 @@ void UiWidget::InputEvent(MouseMovedInputEvent& inputEvent)
         return;
 
     HandleInputEvent(inputEvent);
+
+    const UiEvent_OnMouseMove eventDesc {inputEvent.mDelta, inputEvent.mMousePosition};
+    NotifyListeners(eventDesc);
 }
 
 void UiWidget::InputEvent(MouseScrollInputEvent& inputEvent)
@@ -147,6 +153,9 @@ void UiWidget::InputEvent(MouseScrollInputEvent& inputEvent)
         return;
 
     HandleInputEvent(inputEvent);
+
+    const UiEvent_OnMouseWheel eventDesc {inputEvent.mScroll, inputEvent.mMousePosition};
+    NotifyListeners(eventDesc);
 }
 
 void UiWidget::InputEvent(KeyCharEvent& inputEvent)
@@ -158,6 +167,22 @@ void UiWidget::InputEvent(KeyCharEvent& inputEvent)
         return;
 
     HandleInputEvent(inputEvent);
+}
+
+void UiWidget::MouseEnter()
+{
+    HandleMouseEnter();
+
+    const UiEvent_OnMouseEnter eventDesc;
+    NotifyListeners(eventDesc);
+}
+
+void UiWidget::MouseLeave()
+{
+    HandleMouseLeave();
+
+    const UiEvent_OnMouseLeave eventDesc;
+    NotifyListeners(eventDesc);
 }
 
 void UiWidget::Deserialize(const JsonElement& jsonElement)
@@ -217,10 +242,20 @@ void UiWidget::Deserialize(const JsonElement& jsonElement)
         mInputPassThrough.Change(eUiInputPassThrough_MouseMotion, flagValue);
     }
 
+    if (JsonElement customPropsNode = jsonElement.FindElement("props"))
+    {
+        DeserializeCustomProps(customPropsNode);
+    }
+
     RecomputeLocalPivotPoint();
     
     mAnchorPointMin = {};
     mAnchorPointMax = {};
+}
+
+void UiWidget::SetCustomPainter(UiPainter* painter)
+{
+    mCustomPainter = painter;
 }
 
 UiWidget* UiWidget::PickWidget(const Point2D& screenPosition)
@@ -264,7 +299,19 @@ void UiWidget::RenderFrame(UiRenderContext& uiRenderContext)
             return;
     }
 
-    RenderSelf(uiRenderContext);
+    if (mCustomPainter)
+    {
+        if (!mCustomPainter->CustomDraw(*this, uiRenderContext))
+        {
+            mCustomPainter->CustomDrawBackground(*this, uiRenderContext);
+            RenderSelf(uiRenderContext);
+            mCustomPainter->CustomDrawOverlay(*this, uiRenderContext);
+        }
+    }
+    else
+    {
+        RenderSelf(uiRenderContext);
+    }
 
     // render debug info
     if (gDebug.mDrawUiBounds)
@@ -505,24 +552,29 @@ Point2D UiWidget::ComputeNewSize(const Point2D& desiredSize) const
     return correctedSize;
 }
 
+void UiWidget::HandleEnabledChanged()
+{
+}
+
+void UiWidget::HandleVisibleChanged()
+{
+}
+
+void UiWidget::HandleMouseEnter()
+{
+}
+
+void UiWidget::HandleMouseLeave()
+{
+}
+
 void UiWidget::HandleInputEvent(MouseScrollInputEvent& inputEvent)
 {
-    const UiEvent_OnWheel eventDesc {inputEvent.mScroll, inputEvent.mMousePosition};
-    mEventListeners.IterateListeners([this, &eventDesc](UiEventListener* listener)
-        {
-            listener->HandleUiEvent(this, eventDesc);
-        });
     inputEvent.SetConsumed();
 }
 
-
 void UiWidget::HandleInputEvent(MouseMovedInputEvent& inputEvent)
 {
-    const UiEvent_OnMouseMove eventDesc {inputEvent.mDelta, inputEvent.mMousePosition};
-    mEventListeners.IterateListeners([this, &eventDesc](UiEventListener* listener)
-        {
-            listener->HandleUiEvent(this, eventDesc);
-        });
     inputEvent.SetConsumed();
 }
 
@@ -545,7 +597,10 @@ void UiWidget::SetEnabled(bool isEnabled)
                 child->UpdateInheritedEnabledState();
             }
         }
-        HandleEnableStateChanged();
+        HandleEnabledChanged();
+
+        const UiEvent_OnEnabledChanged eventDesc;
+        NotifyListeners(eventDesc);
     }
 }
 
@@ -568,7 +623,10 @@ void UiWidget::SetVisible(bool isEnabled)
                 child->UpdateInheritedVisibilityState();
             }
         }
-        HandleVisibilityChanged();
+        HandleVisibleChanged();
+
+        const UiEvent_OnVisibleChanged eventDesc;
+        NotifyListeners(eventDesc);
     }
 }
 
@@ -821,7 +879,10 @@ void UiWidget::UpdateInheritedVisibilityState()
                 child->UpdateInheritedVisibilityState();
             }
         }
-        HandleVisibilityChanged();
+        HandleVisibleChanged();
+
+        const UiEvent_OnVisibleChanged eventDesc;
+        NotifyListeners(eventDesc);
     }
 }
 
@@ -845,7 +906,113 @@ void UiWidget::UpdateInheritedEnabledState()
                 child->UpdateInheritedEnabledState();
             }
         }
-        HandleEnableStateChanged();
+        HandleEnabledChanged();
+
+        const UiEvent_OnEnabledChanged eventDesc;
+        NotifyListeners(eventDesc);
+    }
+}
+
+void UiWidget::DeserializeCustomProps(JsonElement propsRoot)
+{
+    cxx_assert(propsRoot.IsArray());
+    if (!propsRoot.IsArray())
+        return;
+
+    using ParseFunc = UiCustomProps::PropValue (*)(JsonElement valueNode);
+    static const std::map<std::string, ParseFunc> ParseHandlers =
+    {
+        {"str", [](JsonElement valueNode) -> UiCustomProps::PropValue
+            {
+                cxx_assert(valueNode.IsString());
+                std::string stringProp = valueNode.GetValueString();
+                return stringProp;
+            }},
+        {"float", [](JsonElement valueNode) -> UiCustomProps::PropValue
+            {
+                cxx_assert(valueNode.IsNumber());
+                return valueNode.GetValueFloat();
+            }},
+        {"int", [](JsonElement valueNode) -> UiCustomProps::PropValue
+            {
+                cxx_assert(valueNode.IsNumber());
+                return valueNode.GetValueInteger();
+            }},
+        {"bool", [](JsonElement valueNode) -> UiCustomProps::PropValue
+            {
+                cxx_assert(valueNode.IsBoolean());
+                return valueNode.GetValueBoolean();
+            }},
+        {"vec2", [](JsonElement valueNode) -> UiCustomProps::PropValue
+            {
+                glm::vec2 propValue {};
+                if (!JsonReadValue(valueNode, propValue))
+                {
+                    cxx_assert(false);
+                }
+                return propValue;
+            }},
+        {"point", [](JsonElement valueNode) -> UiCustomProps::PropValue
+            {
+                Point2D propValue {};
+                if (!JsonReadValue(valueNode, propValue))
+                {
+                    cxx_assert(false);
+                }
+                return propValue;
+            }},
+        {"rect", [](JsonElement valueNode) -> UiCustomProps::PropValue
+            {
+                Rect2D propValue {};
+                if (!JsonReadValue(valueNode, propValue))
+                {
+                    cxx_assert(false);
+                }
+                return propValue;
+            }},
+        {"color", [](JsonElement valueNode) -> UiCustomProps::PropValue
+            {
+                Color32 propValue {};
+                if (!JsonReadValue(valueNode, propValue))
+                {
+                    cxx_assert(false);
+                }
+                return propValue;
+            }}
+    };
+
+    std::string propName;
+    std::string propType;
+    for (JsonElement propsNode = propsRoot.FirstChild();
+        propsNode;
+        propsNode = propsNode.NextSibling())
+    {
+        if (!propsNode.IsObject() || !JsonQuery(propsNode, "id", propName))
+        {
+            cxx_assert(false);
+            continue;
+        }
+
+        JsonElement valueNode = propsNode.FindElement("value");
+        if (!valueNode)
+        {
+            cxx_assert(false);
+            continue;
+        }
+
+        // string
+        if (!JsonQuery(propsNode, "type", propType))
+        { 
+            propType = "str";
+        }
+
+        auto handler_it = ParseHandlers.find(propType);
+        if (handler_it != ParseHandlers.end())
+        {
+            mCustomProps.Emplace(propName, handler_it->second(valueNode));
+            continue;
+        }
+        cxx_assert(false);
     }
 }
 

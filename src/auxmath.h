@@ -195,4 +195,18 @@ namespace cxx
 
     //////////////////////////////////////////////////////////////////////////
 
+    template<typename TVec>
+    inline TVec smooth_damp(const TVec& currentPosition, const TVec& targetPosition, TVec& currentVelocity, float smoothTime, float deltaTime)
+    {
+        const float omega = 2.0f / smoothTime;
+        const float x = omega * deltaTime;
+        const float exp = 1.0f / (1.0f + x + 0.48f * x * x + 0.235f * x * x * x);
+        const TVec change = currentPosition - targetPosition;
+        const TVec temp  = (currentVelocity + omega * change) * deltaTime;
+        currentVelocity = (currentVelocity - omega * temp) * exp;
+        return targetPosition + (change + temp) * exp;
+    }
+
+    //////////////////////////////////////////////////////////////////////////
+
 } // namespace cxx

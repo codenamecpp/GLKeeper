@@ -12,9 +12,11 @@
 #include "CreatureManager.h"
 #include "GameObjectManager.h"
 #include "InteractionService.h"
+#include "UiCursor.h"
+#include "RoomManager.h"
 
 GameplayController::GameplayController()
-    : mHUDScreen(*this)
+    : mGameplayUi(*this)
     , mMapInteractionMode(eMapInteractionMode_Free)
     , mConstructRoomDef()
     , mConstructTrapDef()
@@ -41,19 +43,19 @@ void GameplayController::OnSessionStart()
         MapUtils::ComputeTileCenter2d({0, 0}),
         MapUtils::ComputeTileCenter2d({gameMapDimensions.x - 1, gameMapDimensions.y - 1}));
     mGameplayCamera.CaptureCamera(&gScene.GetCamera());
-    if (!mHUDScreen.IsActive())
+
+    if (!mGameplayUi.IsActive())
     {
-        mHUDScreen.Activate();
+        mGameplayUi.Activate();
+        mGameplayUi.ConfigureUi();
+        mGameplayUi.SelectControlPanelPage(GameplayUi::eControlPanelPage_Rooms);
     }
 
     gToolsUiManager.RegisterUi(&mDebugToolsUi);
     mDebugToolsUi.SetActive(true);
 
     // listen game events
-    {
-        GameEventBus& eventBus = gGameEventBus;
-        eventBus.Subscribe(eGameEvent_ResourceAmountChanged, this);
-    }
+    gGameEventBus.Subscribe(eGameEvent_ResourceAmountChanged, this);
 }
 
 void GameplayController::OnSessionShutdown()
@@ -61,12 +63,12 @@ void GameplayController::OnSessionShutdown()
     mDebugToolsUi.SetActive(false);
     gToolsUiManager.UnregisterUi(&mDebugToolsUi);
 
-    if (mHUDScreen.IsActive())
+    if (mGameplayUi.IsActive())
     {
-        mHUDScreen.Deactivate();
-        mHUDScreen.Cleanup();
+        mGameplayUi.Deactivate();
+        mGameplayUi.Cleanup();
     }
-    mHeldEntityView.SetHeldNothing();
+    mInHandThingView.SetHeldNothing();
     mGameplayCamera.ReleaseCamera();
     mMapInteractionMode = eMapInteractionMode_Free;
     mHoveredTile = nullptr;
@@ -74,6 +76,7 @@ void GameplayController::OnSessionShutdown()
     mConstructTrapDef = nullptr;
     mSelectionStartTile = nullptr;
     mHoveredEntity = {};
+    mLastFocusedEntity = {};
     gGameEventBus.Unsubscribe(this);
 }
 
@@ -83,7 +86,7 @@ void GameplayController::UpdateFrame(float deltaTime)
 
     UpdateHoveredTile();
     UpdateHoveredEntity();
-    UpdateHeldThingView();
+    UpdateInHandThing();
 }
 
 void GameplayController::UpdateLogic(float stepDeltaTime)
@@ -133,7 +136,7 @@ void GameplayController::InputEvent(MouseButtonInputEvent& inputEvent)
             }
 
             // cancel current mode
-            if (mMapInteractionMode != eMapInteractionMode_Free && mMapInteractionMode != eMapInteractionMode_Dig)
+            if (mMapInteractionMode != eMapInteractionMode_Free)
             {
                 SetFreeInteraction();
                 return;
@@ -173,14 +176,34 @@ void GameplayController::HandleGameEvent(const GameEvent& eventData)
     {
         if (eventData.mResourceAmountChanged.mResourceType == eGameResource_Gold)
         {
-            mHUDScreen.UpdateMoneyInfo();
+            mGameplayUi.UpdateMoneyInfo();
         }
         if (eventData.mResourceAmountChanged.mResourceType == eGameResource_Mana)
         {
-            mHUDScreen.UpdateManaInfo();
+            mGameplayUi.UpdateManaInfo();
         }
         return;
     }
+}
+
+void GameplayController::OnRoomsPageSelected(bool isAlt)
+{
+    mGameplayUi.SelectControlPanelPage(GameplayUi::eControlPanelPage_Rooms);
+}
+
+void GameplayController::OnCreaturesPageSelected(bool isAlt)
+{
+    mGameplayUi.SelectControlPanelPage(GameplayUi::eControlPanelPage_Creatures);
+}
+
+void GameplayController::OnSpellsPageSelected(bool isAlt)
+{
+    mGameplayUi.SelectControlPanelPage(GameplayUi::eControlPanelPage_Spells);
+}
+
+void GameplayController::OnTrapsPageSelected(bool isAlt)
+{
+    mGameplayUi.SelectControlPanelPage(GameplayUi::eControlPanelPage_Workshop);
 }
 
 void GameplayController::UpdateHoveredTile()
@@ -251,25 +274,6 @@ void GameplayController::OnHoveredEntityChanged(EntityHandle prevEntity)
 {
     // todo: refactore
 
-    if (mHoveredEntity)
-    {
-        if (mHoveredEntity.IsCreature())
-        {
-            if (Creature* currCreature = gCreatureManager.GetCreaturePtr(mHoveredEntity))
-            {
-                currCreature->SetHighlighted(true);
-            }
-        }
-
-        if (mHoveredEntity.IsGameObject())
-        {
-            if (GameObject* currObject = gGameObjectManager.GetObjectPtr(mHoveredEntity))
-            {
-                currObject->SetHighlighted(true);
-            }
-        }
-    }
-
     if (prevEntity)
     {
         if (prevEntity.IsCreature())
@@ -287,6 +291,27 @@ void GameplayController::OnHoveredEntityChanged(EntityHandle prevEntity)
                 currObject->SetHighlighted(false);
             }
         }
+        gUiCursor.StateOff(UiCursor::eCursorState_PointOnThing);
+    }
+
+    if (mHoveredEntity)
+    {
+        if (mHoveredEntity.IsCreature())
+        {
+            if (Creature* currCreature = gCreatureManager.GetCreaturePtr(mHoveredEntity))
+            {
+                currCreature->SetHighlighted(true);
+            }
+        }
+
+        if (mHoveredEntity.IsGameObject())
+        {
+            if (GameObject* currObject = gGameObjectManager.GetObjectPtr(mHoveredEntity))
+            {
+                currObject->SetHighlighted(true);
+            }
+        }
+        gUiCursor.StateOn(UiCursor::eCursorState_PointOnThing);
     }
 }
 
@@ -294,14 +319,20 @@ void GameplayController::HandleHoveredEntityInteraction(bool alt)
 {
     // todo: refactore
 
-    if (!mHoveredEntity.IsCreature() || alt)
+    if (!mHoveredEntity.IsCreature())
         return;
+
+    if (alt)
+    {
+        gUiCursor.StateOn(UiCursor::eCursorState_Slap);
+        return;
+    }
 
     if (mMapInteractionMode == eMapInteractionMode_Free)
     {
-        if (gInteractionService.PickUpEntity(mHoveredEntity, gGameSession.GetLocalPlayerId()))
+        if (gInteractionService.TryPickUpEntity(mHoveredEntity, gGameSession.GetLocalPlayerId()))
         {
-            UpdateHeldThingView();
+            UpdateInHandThing();
         }
     }
 }
@@ -401,12 +432,6 @@ bool GameplayController::NeedToShowSelection() const
 
                 return terrainDef->mIsTaggable;
             }
-
-            case eMapInteractionMode_Dig:
-            {
-                return !terrainDef->mIsImpenetrable && !terrainDef->mIsWater && !terrainDef->mIsLava;
-            }
-
             case eMapInteractionMode_Build:
             case eMapInteractionMode_Sell:
             case eMapInteractionMode_PlaceTrap:
@@ -481,11 +506,30 @@ void GameplayController::SetRoomSellInteraction()
     OnInteractionModeChanged();
 }
 
-void GameplayController::SetDigTerrainInteraction()
+void GameplayController::FocusOnNextOwnedRoom(RoomDefinition* roomDefinition)
 {
-    mMapInteractionMode = eMapInteractionMode_Dig;
-    EndMultitileSelection(false);
-    OnInteractionModeChanged();
+    cxx_assert(roomDefinition);
+    if (roomDefinition)
+    {
+        FocusOnNextOwnedRoom(roomDefinition->mRoomType);
+    }
+}
+
+void GameplayController::FocusOnNextOwnedRoom(RoomTypeId roomTypeId)
+{
+    EntityHandle roomHandle = gGameSession.GetLocalPlayer().GetNextOwnedRoomOfType(roomTypeId, mLastFocusedEntity);
+    if (roomHandle)
+    {
+        if (Room* roomInstance = gRoomManager.GetRoomPtr(roomHandle))
+        {
+            if (roomInstance->ExistsOnMap())
+            {
+                mLastFocusedEntity = roomHandle;
+                Point2D focusPoint = roomInstance->GetLocationArea().GetCenter();
+                mGameplayCamera.FocusOnMapLocation(focusPoint);
+            }
+        }
+    }
 }
 
 void GameplayController::SetFreeInteraction()
@@ -498,7 +542,7 @@ void GameplayController::SetFreeInteraction()
 
 void GameplayController::OnInteractionModeChanged()
 {
-    mHUDScreen.UpdateHUDState();
+    mGameplayUi.UpdateHUDState();
 
     UpdateMapSelectionTint();
 }
@@ -530,8 +574,9 @@ void GameplayController::UpdateMapSelectionTint()
             Rect2D mapArea;
             if (GetMapSelectionArea(mapArea))
             {
-                cxx::temp_vector<MapTile*> constructionTiles;
-                if (gGameWorld.TestConstructRooms(gGameSession.GetLocalPlayerId(), mConstructRoomDef, mapArea, constructionTiles))
+                cxx::temp_vector<MapTile*> roomTiles;
+                long buildingCost = 0;
+                if (gInteractionService.CanBuildRoom(gGameSession.GetLocalPlayerId(), mConstructRoomDef, mapArea, buildingCost, roomTiles))
                 {
                     selectionTint = MapSelectionCursor::eSelectionTint_Blue;
                 }
@@ -546,8 +591,9 @@ void GameplayController::UpdateMapSelectionTint()
             Rect2D mapArea;
             if (GetMapSelectionArea(mapArea))
             {
-                cxx::temp_vector<MapTile*> demolishTiles;
-                if (gGameWorld.TestDemolishRooms(gGameSession.GetLocalPlayerId(), mapArea, demolishTiles))
+                cxx::temp_vector<MapTile*> roomTiles;
+                long moneyAmount;
+                if (gInteractionService.CanSellRoom(gGameSession.GetLocalPlayerId(), mapArea, moneyAmount, roomTiles))
                 {
                     selectionTint = MapSelectionCursor::eSelectionTint_Blue;
                 }
@@ -558,28 +604,38 @@ void GameplayController::UpdateMapSelectionTint()
         case eMapInteractionMode_Free:
         case eMapInteractionMode_CastSpell:
         case eMapInteractionMode_PlaceTrap:
-        case eMapInteractionMode_Dig:
         default:
         break;
     }
     mapCursor.SetSelectionTint(selectionTint);
 }
 
-void GameplayController::UpdateHeldThingView()
+void GameplayController::UpdateInHandThing()
 {
     const bool isCursorOverUi = gUiManager.IsCursorOverUi();
 
-    if (isCursorOverUi && mHeldEntityView.HasHeldThing())
+    gUiCursor.StateOff(UiCursor::eCursorState_PointOnUi);
+    gUiCursor.StateOff(UiCursor::eCursorState_HoldGold);
+    gUiCursor.StateOff(UiCursor::eCursorState_HoldThing);
+
+    if (isCursorOverUi)
     {
-        mHeldEntityView.SetHeldNothing();
+        gUiCursor.StateOn(UiCursor::eCursorState_PointOnUi);
+    }
+
+    if (isCursorOverUi && mInHandThingView.HasHeldThing())
+    {
+        mInHandThingView.SetHeldNothing();
     }
 
     if (!isCursorOverUi)
     {
-        mHeldEntityView.SetHeldThing(gGameSession.GetLocalPlayer().GetLastHeldEntity());
-        if (mHeldEntityView.HasHeldThing())
+        EntityHandle entityInHand = gGameSession.GetLocalPlayer().GetLastHeldEntity();
+        mInHandThingView.SetHeldThing(entityInHand);
+        if (mInHandThingView.HasHeldThing())
         {
-            mHeldEntityView.SetScreenPosition(gInputs.GetMousePosition());
+            mInHandThingView.SetScreenPosition(gInputs.GetMousePosition());
+            gUiCursor.StateOn(UiCursor::eCursorState_HoldThing);
         }
     }
 }
@@ -600,14 +656,16 @@ void GameplayController::HandleInteractionOnArea(const Rect2D& tilesArea)
             return;
 
         cxx::temp_vector<MapTile*> constructionTiles;
-        gGameWorld.ConstructRooms(gGameSession.GetLocalPlayerId(), mConstructRoomDef, tilesArea, constructionTiles);
+        long buildingCost = 0;
+        gInteractionService.TryBuildRoom(gGameSession.GetLocalPlayerId(), mConstructRoomDef, tilesArea, buildingCost, constructionTiles);
         return;
     }
 
     if (mMapInteractionMode == eMapInteractionMode_Sell)
     {
-        cxx::temp_vector<MapTile*> demolishTiles;
-        gGameWorld.DemolishRooms(gGameSession.GetLocalPlayerId(), tilesArea, demolishTiles);
+        cxx::temp_vector<MapTile*> roomTiles;
+        long moneyAmount;
+        gInteractionService.TrySellRoom(gGameSession.GetLocalPlayerId(), tilesArea, moneyAmount, roomTiles);
         return;
     }
 }
@@ -617,21 +675,6 @@ void GameplayController::HandleSingleTileInteraction(bool alt)
     if (mHoveredTile == nullptr)
         return;
 
-    if (mMapInteractionMode == eMapInteractionMode_Dig)
-    {
-        if (alt)
-        {
-            long goldMined = 0;
-            float healthMultiplier = 10000.0f;
-            bool success = gGameWorld.DamageTile(mHoveredTile, gGameSession.GetLocalPlayerId(), healthMultiplier) ||
-                gGameWorld.DigBlock(mHoveredTile, gGameSession.GetLocalPlayerId(), healthMultiplier) ||
-                gGameWorld.MineBlock(mHoveredTile, gGameSession.GetLocalPlayerId(), goldMined, healthMultiplier);
-        }
-
-        //gGameWorld.RepairTile(mHoveredTile, gGameSession.GetLocalPlayerId(), 999999);
-        return;
-    }
-
     // todo : refactore
     if ((mMapInteractionMode == eMapInteractionMode_Free) && alt)
     {
@@ -640,9 +683,10 @@ void GameplayController::HandleSingleTileInteraction(bool alt)
         if (entityInHand)
         {
             glm::vec2 dropOnPosition = MapUtils::ComputeTileCenter2d(mHoveredTile->mLocation);
-            if (gInteractionService.DropEntityOn(entityInHand, gGameSession.GetLocalPlayerId(), dropOnPosition))
+            if (gInteractionService.TryDropEntityOn(entityInHand, gGameSession.GetLocalPlayerId(), dropOnPosition))
             {
-                UpdateHeldThingView();
+                UpdateInHandThing();
+                gUiCursor.StateOn(UiCursor::eCursorState_DropThing);
             }
         }
     }

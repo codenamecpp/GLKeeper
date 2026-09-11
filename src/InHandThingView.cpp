@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "HeldThingView.h"
+#include "InHandThingView.h"
 #include "GameObjectManager.h"
 #include "CreatureManager.h"
 #include "RenderView.h"
@@ -8,12 +8,12 @@
 #include "MeshAssetManager.h"
 #include "UiManager.h"
 
-HeldThingView::~HeldThingView()
+InHandThingView::~InHandThingView()
 {
 
 }
 
-void HeldThingView::SetScreenPosition(const Point2D& screenPosition)
+void InHandThingView::SetScreenPosition(const Point2D& screenPosition)
 {
     // compute projection offset
     if (mRenderView && mRenderView->IsActive())
@@ -28,7 +28,7 @@ void HeldThingView::SetScreenPosition(const Point2D& screenPosition)
     }
 }
 
-void HeldThingView::SetHeldThing(EntityHandle entHandle)
+void InHandThingView::SetHeldThing(EntityHandle entHandle)
 {
     if (mEntityHandle == entHandle)
         return;
@@ -61,7 +61,7 @@ void HeldThingView::SetHeldThing(EntityHandle entHandle)
     SetHeldNothing();
 }
 
-void HeldThingView::SetHeldNothing()
+void InHandThingView::SetHeldNothing()
 {
     mEntityHandle = {};
     mMeshAsset = nullptr;
@@ -75,17 +75,17 @@ void HeldThingView::SetHeldNothing()
     }
 }
 
-bool HeldThingView::HasHeldThing() const
+bool InHandThingView::HasHeldThing() const
 {
     return mEntityHandle.WasSet();
 }
 
-bool HeldThingView::HasHeldThing(EntityHandle entHandle) const
+bool InHandThingView::HasHeldThing(EntityHandle entHandle) const
 {
     return mEntityHandle.WasSet() && (mEntityHandle == entHandle);
 }
 
-void HeldThingView::SetMeshAsset(const std::string& assetName)
+void InHandThingView::SetMeshAsset(const std::string& assetName)
 {
     // init resource
 
@@ -142,7 +142,7 @@ void HeldThingView::SetMeshAsset(const std::string& assetName)
     SetHeldNothing();
 }
 
-void HeldThingView::SetHeldThing(GameObjectDefinition* definition)
+void InHandThingView::SetHeldThing(GameObjectDefinition* definition)
 {
     cxx_assert(definition);
     if (definition)
@@ -158,7 +158,7 @@ void HeldThingView::SetHeldThing(GameObjectDefinition* definition)
     SetHeldNothing();
 }
 
-void HeldThingView::SetHeldThing(CreatureDefinition* definition)
+void InHandThingView::SetHeldThing(CreatureDefinition* definition)
 {
     cxx_assert(definition);
     if (definition)

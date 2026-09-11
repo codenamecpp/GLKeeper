@@ -30,6 +30,10 @@ public:
     void InputEvent(MouseScrollInputEvent& inputEvent);
 
     // accessing players
+    inline bool IsLocalPlayerId(ePlayerID playerId) const
+    {
+        return playerId == GetLocalPlayerId();
+    }
     inline ePlayerID GetLocalPlayerId() const { return ePlayerID_Keeper1; }
     inline Player& GetLocalPlayer()
     {

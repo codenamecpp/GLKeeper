@@ -1,0 +1,17 @@
+{
+    "line_height":32,
+    "space_width":28,
+    "glyphs": 
+    [
+        {"code":48, "image":"GUI\\Icons\\i-0", "rect":[1,1,27,31]},
+        {"code":49, "image":"GUI\\Icons\\i-1", "rect":[1,1,27,31]},
+        {"code":50, "image":"GUI\\Icons\\i-2", "rect":[1,1,27,31]},
+        {"code":51, "image":"GUI\\Icons\\i-3", "rect":[1,1,27,31]},
+        {"code":52, "image":"GUI\\Icons\\i-4", "rect":[1,1,27,31]},
+        {"code":53, "image":"GUI\\Icons\\i-5", "rect":[1,1,27,31]},
+        {"code":54, "image":"GUI\\Icons\\i-6", "rect":[1,1,27,31]},
+        {"code":55, "image":"GUI\\Icons\\i-7", "rect":[1,1,27,31]},
+        {"code":56, "image":"GUI\\Icons\\i-8", "rect":[1,1,27,31]},
+        {"code":57, "image":"GUI\\Icons\\i-9", "rect":[1,1,27,31]}
+    ]
+}

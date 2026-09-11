@@ -10,11 +10,19 @@ enum UiEventId
 {
     UiEventId_None,
 
+    UiEventId_OnEnabledChanged,
+    UiEventId_OnVisibleChanged,
+
     UiEventId_OnPress,
     UiEventId_OnRelease,
     UiEventId_OnClick,
+
     UiEventId_OnMouseMove,
-    UiEventId_Wheel,
+    UiEventId_OnMouseWheel,
+
+    UiEventId_OnMouseEnter,
+    UiEventId_OnMouseLeave,
+
     UiEventId_ChangeScroll,
 
     UiEventId_COUNT // must be very last
@@ -38,6 +46,18 @@ public:
     Point2D mDelta {};
     Point2D mMouseScreenPosition {};
     Point2D mScroll {};
+};
+
+struct UiEvent_OnEnabledChanged: public UiEvent
+{
+public:
+    UiEvent_OnEnabledChanged(): UiEvent(UiEventId_OnEnabledChanged) {}
+};
+
+struct UiEvent_OnVisibleChanged: public UiEvent
+{
+public:
+    UiEvent_OnVisibleChanged(): UiEvent(UiEventId_OnVisibleChanged) {}
 };
 
 struct UiEvent_OnPress: public UiEvent
@@ -83,11 +103,11 @@ public:
     }
 };
 
-struct UiEvent_OnWheel: public UiEvent
+struct UiEvent_OnMouseWheel: public UiEvent
 {
 public:
-    UiEvent_OnWheel(const Point2D& delta, const Point2D& cursorScreenPosition)
-        : UiEvent(UiEventId_Wheel)
+    UiEvent_OnMouseWheel(const Point2D& delta, const Point2D& cursorScreenPosition)
+        : UiEvent(UiEventId_OnMouseWheel)
     {
         mDelta = delta;
         mMouseScreenPosition = cursorScreenPosition;
@@ -102,6 +122,18 @@ public:
     {
         mScroll = scrollPosition;
     }
+};
+
+struct UiEvent_OnMouseEnter: public UiEvent
+{
+public:
+    UiEvent_OnMouseEnter() : UiEvent(UiEventId_OnMouseEnter) { }
+};
+
+struct UiEvent_OnMouseLeave: public UiEvent
+{
+public:
+    UiEvent_OnMouseLeave() : UiEvent(UiEventId_OnMouseLeave) { }
 };
 
 //////////////////////////////////////////////////////////////////////////

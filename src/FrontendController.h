@@ -4,7 +4,7 @@
 
 #include "GameSessionController.h"
 #include "FrontendCameraController.h"
-#include "FrontendScreen.h"
+#include "FrontendUi.h"
 #include "FrontendDefs.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ public:
 
 private:
     FrontendCameraController mCameraController;
-    FrontendScreen mFrontendScreen;
+    FrontendUi mFrontendUi;
 };
 
 //////////////////////////////////////////////////////////////////////////

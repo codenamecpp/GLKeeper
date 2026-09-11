@@ -208,9 +208,9 @@ public:
         return mKeyboardKeys[keycode];
     }
 
-    inline bool GetMouseLeftButton() const { return mMouseButtons[GLFW_MOUSE_BUTTON_LEFT]; }
-    inline bool GetMouseRightButton() const { return mMouseButtons[GLFW_MOUSE_BUTTON_RIGHT]; }
-    inline bool GetMouseMiddleButton() const { return mMouseButtons[GLFW_MOUSE_BUTTON_MIDDLE]; }
+    inline bool GetMouseLeftButton() const { return mMouseButtons[MBUTTON_LEFT]; }
+    inline bool GetMouseRightButton() const { return mMouseButtons[MBUTTON_RIGHT]; }
+    inline bool GetMouseMiddleButton() const { return mMouseButtons[MBUTTON_MIDDLE]; }
 
     // Get current mouse button state
     // @param button: mouse button index

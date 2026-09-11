@@ -40,14 +40,14 @@ public:
     // operation fails if at least one tile is not suitable for demolishing
     // adjacent rooms may be split, shrunk or destructed
     bool DemolishRooms(ePlayerID playerId, const Rect2D& mapArea, cxx::any_vector<MapTile*> demolishTiles);
-    bool TestDemolishRooms(ePlayerID playerId, const Rect2D& mapArea, cxx::any_vector<MapTile*> demolishTiles) const;
+    bool CanDemolishRooms(ePlayerID playerId, const Rect2D& mapArea, cxx::any_vector<MapTile*> demolishTiles) const;
 
     // constructs a room on the specified map tiles
     // operation fails if at least one tile is not suitable for construction
     // adjacent rooms may be merged, split, or absorbed
     bool ConstructRooms(ePlayerID playerId, RoomDefinition* roomDefinition, const Rect2D& mapArea, 
         cxx::any_vector<MapTile*> constructionTiles);
-    bool TestConstructRooms(ePlayerID playerId, RoomDefinition* roomDefinition, const Rect2D& mapArea, cxx::any_vector<MapTile*> 
+    bool CanConstructRooms(ePlayerID playerId, RoomDefinition* roomDefinition, const Rect2D& mapArea, cxx::any_vector<MapTile*> 
         constructionTiles) const;
 
     // check whether tiles tile can be tagged for digging for player

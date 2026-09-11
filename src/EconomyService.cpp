@@ -37,7 +37,8 @@ long EconomyService::GiveResource(ePlayerID playerId, eGameResource resourceType
 
 long EconomyService::GiveResource(Player& player, eGameResource resourceType, long resourceAmount)
 {
-    if (resourceAmount < 1) return 0;
+    if (resourceAmount < 1) 
+        return 0;
 
     if (player.IsNonPlayer())
     {
@@ -52,13 +53,15 @@ long EconomyService::GiveResource(Player& player, eGameResource resourceType, lo
         {
             Room* roomInstance = gRoomManager.GetRoomPtr(roomHandle);
             cxx_assert(roomInstance);
-            if (roomInstance == nullptr) continue;
+            if (roomInstance == nullptr) 
+                continue;
             if (auto* moneyStorage = roomInstance->GetCapability<MoneyStorageRoomCapability>())
             {
                 long storedMoney = moneyStorage->StoreGold(moneyAmountLeft);
                 moneyAmountLeft -= storedMoney;
 
-                if (moneyAmountLeft <= 0) break;
+                if (moneyAmountLeft <= 0) 
+                    break;
             }
         }
         cxx_assert(moneyAmountLeft >= 0);
@@ -80,7 +83,8 @@ long EconomyService::TakeResource(ePlayerID playerId, eGameResource resourceType
 
 long EconomyService::TakeResource(Player& player, eGameResource resourceType, long resourceAmount)
 {
-    if (resourceAmount < 1) return 0;
+    if (resourceAmount < 1) 
+        return 0;
 
     if (player.IsNonPlayer())
     {
@@ -95,13 +99,15 @@ long EconomyService::TakeResource(Player& player, eGameResource resourceType, lo
         {
             Room* roomInstance = gRoomManager.GetRoomPtr(roomHandle);
             cxx_assert(roomInstance);
-            if (roomInstance == nullptr) continue;
+            if (roomInstance == nullptr) 
+                continue;
             if (auto* moneyStorage = roomInstance->GetCapability<MoneyStorageRoomCapability>())
             {
                 long removedMoney = moneyStorage->DisposeGold(moneyAmountLeft);
                 moneyAmountLeft -= removedMoney;
 
-                if (moneyAmountLeft <= 0) break;
+                if (moneyAmountLeft <= 0) 
+                    break;
             }
         }
         cxx_assert(moneyAmountLeft >= 0);
@@ -134,7 +140,8 @@ void EconomyService::IssueStartingResources()
 {
     for (Player& player: gGameSession.GetPlayers())
     {
-        if (player.IsNonPlayer()) continue;
+        if (player.IsNonPlayer()) 
+            continue;
 
         // money
         long startingMoney = player.GetStartingResourceAmount(eGameResource_Gold);
@@ -143,4 +150,43 @@ void EconomyService::IssueStartingResources()
             GiveResource(player, eGameResource_Gold, startingMoney);
         }
     }
+}
+
+long EconomyService::CalculateBuildingCost(ePlayerID playerId, RoomDefinition* roomDefinition, int tileCount) const
+{
+    long resourceAmount = 0;
+    cxx_assert(roomDefinition);
+    if ((tileCount > 0) && roomDefinition)
+    {
+        resourceAmount = roomDefinition->mCost * tileCount;
+    }
+    return resourceAmount;
+}
+
+long EconomyService::CalculateSellingValue(ePlayerID playerId, RoomDefinition* roomDefinition, int tileCount) const
+{
+    long resourceAmount = 0;
+    cxx_assert(roomDefinition);
+    if ((tileCount > 0) && roomDefinition)
+    {
+        const ScenarioVariables& vars = gGameSession.GetScenarioVariables();
+        resourceAmount = (roomDefinition->mCost * vars.mRoomSellValuePercentageOfCost / 100) * tileCount;
+    }
+    return resourceAmount;
+}
+
+bool EconomyService::HasEnoughResources(ePlayerID playerId, eGameResource resourceType, long neededAmount) const
+{
+    cxx_assert(playerId < ePlayerID_COUNT);
+    cxx_assert(neededAmount >= 0);
+
+    const Player& player = gGameSession.GetPlayer(playerId);
+    if (player.IsNonPlayer())
+    {
+        cxx_assert(false);
+        return false;
+    }
+
+    const long playerResources = player.GetResourceAmount(resourceType);
+    return playerResources >= neededAmount;
 }

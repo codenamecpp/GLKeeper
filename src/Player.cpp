@@ -159,15 +159,10 @@ EntityHandle Player::GetLastOwnedRoomOfType(RoomTypeId roomType) const
     return {};
 }
 
-bool Player::CanBuildRoomOfType(RoomTypeId roomType) const
+bool Player::CanBuildRoomOfType(RoomDefinition* roomDefinition) const
 {
-    if (roomType == RoomTypeId_Null) return false;
-
-    if (RoomDefinition* roomDefinition = gGameSession.GetScenarioDefinition().GetRoomDefinition(roomType))
-    {
-        if (roomDefinition->mBuildable) return true;
-    }
-    return false;
+    cxx_assert(roomDefinition);
+    return (roomDefinition && roomDefinition->mBuildable);
 }
 
 void Player::ChangeResourceAmount(eGameResource resourceType, long deltaAmount)

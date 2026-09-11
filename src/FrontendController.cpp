@@ -7,25 +7,26 @@
 #include "GameSession.h"
 #include "Scene.h"
 #include "LevelsDatabase.h"
+#include "UiCursor.h"
 
 FrontendController::FrontendController()
-    : mFrontendScreen(*this)
+    : mFrontendUi(*this)
 {
 }
 
 void FrontendController::OnOpenSinglePlayerMenuSelected()
 {
-    mFrontendScreen.ShowMenuPage(eFrontendMenuPage_SinglePlayer);
+    mFrontendUi.ShowMenuPage(FrontendUi::eMenuPage_SinglePlayer);
 }
 
 void FrontendController::OnMyPetDungeonMenuSelected()
 {   
-    mFrontendScreen.ShowMenuPage(eFrontendMenuPage_MyPetDungeon);
+    mFrontendUi.ShowMenuPage(FrontendUi::eMenuPage_MyPetDungeon);
 }
 
 void FrontendController::OnMyPetDungeonMenuCancelled()
 {
-    mFrontendScreen.ShowMenuPage(eFrontendMenuPage_Main);
+    mFrontendUi.ShowMenuPage(FrontendUi::eMenuPage_Main);
 }
 
 void FrontendController::OnMyPetDungeonLevelSelect(const std::string& fileName)
@@ -33,8 +34,8 @@ void FrontendController::OnMyPetDungeonLevelSelect(const std::string& fileName)
     ScenarioLevelInfo levelInfo;
     if (gLevelsDatabase.GetLevelInfo(fileName, levelInfo))
     {
-        mFrontendScreen.ConfigureMissionBriefing(levelInfo);
-        mFrontendScreen.ShowMenuPage(eFrontendMenuPage_MissionBriefing);
+        mFrontendUi.ConfigureMissionBriefing(levelInfo);
+        mFrontendUi.ShowMenuPage(FrontendUi::eMenuPage_MissionBriefing);
     }
     else
     {
@@ -44,17 +45,17 @@ void FrontendController::OnMyPetDungeonLevelSelect(const std::string& fileName)
 
 void FrontendController::OnOpenSkirmishMenuSelected()
 {
-    mFrontendScreen.ShowMenuPage(eFrontendMenuPage_SkirmishMaps);
+    mFrontendUi.ShowMenuPage(FrontendUi::eMenuPage_SkirmishMaps);
 }
 
 void FrontendController::OnSinglePlayerCancelled()
 {
-    mFrontendScreen.ShowMenuPage(eFrontendMenuPage_Main);
+    mFrontendUi.ShowMenuPage(FrontendUi::eMenuPage_Main);
 }
 
 void FrontendController::OnSkirmishMapSelectCancelled()
 {
-    mFrontendScreen.ShowMenuPage(eFrontendMenuPage_SinglePlayer);
+    mFrontendUi.ShowMenuPage(FrontendUi::eMenuPage_SinglePlayer);
 }
 
 void FrontendController::OnSkirmishMapSelectConfirmed(const std::string& fileName)
@@ -66,11 +67,11 @@ void FrontendController::OnMissionBriefingCancelled(bool isMyPetDungeon)
 {
     if (isMyPetDungeon)
     {
-        mFrontendScreen.ShowMenuPage(eFrontendMenuPage_MyPetDungeon);
+        mFrontendUi.ShowMenuPage(FrontendUi::eMenuPage_MyPetDungeon);
     }
     else
     {
-        mFrontendScreen.ShowMenuPage(eFrontendMenuPage_Main);
+        mFrontendUi.ShowMenuPage(FrontendUi::eMenuPage_Main);
     }
 }
 
@@ -86,12 +87,12 @@ void FrontendController::OnQuitGameConfirmed()
 
 void FrontendController::OnQuitGameCancelled()
 {
-    mFrontendScreen.ShowMenuPage(eFrontendMenuPage_Main);
+    mFrontendUi.ShowMenuPage(FrontendUi::eMenuPage_Main);
 }
 
 void FrontendController::OnQuitGameSelected()
 {
-    mFrontendScreen.ShowMenuPage(eFrontendMenuPage_QuitGame);
+    mFrontendUi.ShowMenuPage(FrontendUi::eMenuPage_QuitGame);
 }
 
 void FrontendController::OnSessionLoaded()
@@ -111,12 +112,14 @@ void FrontendController::OnSessionLoaded()
 
 void FrontendController::OnSessionStart()
 {
-    if (mFrontendScreen.IsActive())
+    if (mFrontendUi.IsActive())
         return;
+
+    gUiCursor.StateOn(UiCursor::eCursorState_PointOnThing);
 
     // prepare screen
 
-    mFrontendScreen.Activate();
+    mFrontendUi.Activate();
 
     cxx::temp_vector<ScenarioLevelInfo> mapsList;
     mapsList.reserve(32);
@@ -124,26 +127,28 @@ void FrontendController::OnSessionStart()
         {
             mapsList.push_back(levelInfo);
         });
-    mFrontendScreen.ConfigureSkirmishMaps(mapsList);
+    mFrontendUi.ConfigureSkirmishMaps(mapsList);
 
     mapsList.clear();
     gLevelsDatabase.EnumMyPetDungeonLevels([&mapsList](const ScenarioLevelInfo& levelInfo)
         {
             mapsList.push_back(levelInfo);
         });
-    mFrontendScreen.ConfigureMyPetDungeonMaps(mapsList);
+    mFrontendUi.ConfigureMyPetDungeonMaps(mapsList);
 
-    mFrontendScreen.ShowMenuPage(eFrontendMenuPage_Main);
+    mFrontendUi.ShowMenuPage(FrontendUi::eMenuPage_Main);
 }
 
 void FrontendController::OnSessionShutdown()
 {
     mCameraController.ReleaseCamera();
-    if (mFrontendScreen.IsActive())
+    if (mFrontendUi.IsActive())
     {
-        mFrontendScreen.Deactivate();
-        mFrontendScreen.Cleanup();
+        mFrontendUi.Deactivate();
+        mFrontendUi.Cleanup();
     }
+
+    gUiCursor.StateOff(UiCursor::eCursorState_PointOnThing);
 }
 
 void FrontendController::UpdateFrame(float deltaTime)

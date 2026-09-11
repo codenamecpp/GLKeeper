@@ -9,7 +9,6 @@ enum eMapInteractionMode
     eMapInteractionMode_Build, // can tag terrain, construct rooms
     eMapInteractionMode_Sell, // can sell rooms
     eMapInteractionMode_PlaceTrap, // can place traps
-    eMapInteractionMode_Dig, // can claim or destroy terrain tiles
 };
 
 //////////////////////////////////////////////////////////////////////////

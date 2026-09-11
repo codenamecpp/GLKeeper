@@ -174,6 +174,12 @@ public:
         h = pmax.y - pmin.y + 1;
     }
 
+    inline void SetPosition(const Point2D& rectPosition)
+    {
+        x = rectPosition.x;
+        y = rectPosition.y;
+    }
+
     inline void SetSize(const Point2D& rectSize)
     {
         w = std::max(0, rectSize.x);
@@ -215,6 +221,24 @@ public:
 
     inline Point2D GetPosition() const { return {x, y}; }
     inline Point2D GetSize() const { return {w, h}; }
+
+    inline void Translate(const Point2D& offset)
+    {
+        x += offset.x;
+        y += offset.y;
+    }
+
+    inline Rect2D GetTranslated(const Point2D& offset) const
+    {
+        return Rect2D{ x + offset.x, y + offset.y, w, h };
+    }
+
+    inline Rect2D GetInflated(const Point2D& inflateSize) const
+    {
+        Rect2D rc {x, y, w, h}; 
+        rc.Inflate(inflateSize); 
+        return rc;
+    }
 
     // whether point is within rect
     inline bool ContainsPoint(const Point2D& point) const
@@ -333,6 +357,9 @@ public:
     constexpr EnumSet& operator |= (const EnumSet& other) { mBits |= other.mBits; return *this; }
     constexpr EnumSet& operator &= (const EnumSet& other) { mBits &= other.mBits; return *this; }
 
+    constexpr bool operator == (const EnumSet& other) const { return mBits == other.mBits; }
+    constexpr bool operator != (const EnumSet& other) const { return !(*this == other); }
+
     constexpr EnumSet operator ~ () const { return EnumSet{~mBits}; }
 
 private:
@@ -351,6 +378,15 @@ private:
 
 //////////////////////////////////////////////////////////////////////////
 
+using StringHash = size_t;
+
+inline StringHash HashForString(std::string_view srcString)
+{
+    return std::hash<std::string_view> {}(srcString);
+}
+
+//////////////////////////////////////////////////////////////////////////
+
 //////////////////////////////////////////////////////////////////////////
 
 namespace cxx
@@ -364,6 +400,7 @@ namespace cxx
     template<typename T> using temp_vector = std::pmr::vector<T>;
     template<typename T> using temp_set = std::pmr::set<T>;
     template<typename T> using temp_list = std::pmr::list<T>;
+    template<typename TKey, typename TValue> using temp_map = std::pmr::map<TKey, TValue>;
 
     // helpers
 

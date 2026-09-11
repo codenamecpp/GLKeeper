@@ -32,6 +32,8 @@ public:
     // Stop moving or rotating
     void StopCamera();
 
+    void FocusOnMapLocation(const Point2D& tileLocation);
+
     // Set camera start position / bounds
     void SetStartPosition(const glm::vec2& position);
     void SetPositionBounds(const glm::vec2& boundsMin, const glm::vec2& boundsMax);
@@ -48,6 +50,7 @@ private:
     void ClampCameraHeight(float& height) const;
 
     void ApplyPositionAndRotation();
+    void UpdateAutoScroll(float deltaTime);
 
 private:
     Camera* mCamera = nullptr;
@@ -61,9 +64,18 @@ private:
     glm::vec2 mBoundsMin {};
     glm::vec2 mBoundsMax {};
 
+    struct AutoScrollState
+    {
+        glm::vec2 mTargetPosition {};
+        glm::vec2 mCurrentVelocity {};
+    };
+    std::optional<AutoScrollState> mAutoScroll {};
+
     // states
     bool mIncreasingFov;
     bool mDecreasingFov;
 
     bool mEnableEdgeScrolling = true;
 };
+
+//////////////////////////////////////////////////////////////////////////

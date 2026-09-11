@@ -18,6 +18,9 @@ public:
     void RenderFrame(UiRenderContext& renderContext);
     void UpdateFrame(float deltaTime);
 
+    // notifications
+    void ScreenSizeChanged(const Point2D& screenSize);
+
     // Process input events
     // @param inputEvent: Input event data
     void InputEvent(MouseMovedInputEvent& inputEvent);
@@ -32,7 +35,7 @@ public:
 
     // Find widget class by its name
     // @param className: Widget class name
-    UiWidget* GetWidgetClassPrototype(const std::string& className) const;
+    UiWidget* GetWidgetPrototype(const std::string& className) const;
 
     // Construct widget of specified class, if it class registered
     UiWidget* ConstructWidget(const std::string& className) const;
@@ -65,25 +68,23 @@ public:
     // views management
     void AttachView(UiView* view);
     void DetachView(UiView* view);
-    void DetachAllViews();
-    bool ViewAttached(const UiView* view) const;
-
-public:
-    // notifications
-    void ScreenSizeChanged(const Point2D& screenSize);
+    bool HasViewAttached(const UiView* view) const;
 
 private:
     template<typename TWidget>
     bool RegisterWidgetClass();
 
+    template<typename TProc>
+    void IterateViews(bool inReverse, TProc proc);
+
     void MarkWidgetForDelete(UiWidget* widget);
     void ProcessWidgetToDelete();
+    void ProcessViewListChanges();
 
     void RegisterWidgetClasses();
     void UpdateCurrentHovered();
     void UpdateCurrentFocused();
 
-    // Change current hovered widget
     void SetHoverWidget(UiWidget* hoverWidget);
 
 private:
@@ -93,9 +94,17 @@ private:
     UiWidget* mHoveredWidget = nullptr;
     UiWidget* mFocusedWidget = nullptr;
 
+    //
     std::vector<UiView*> mViews;
+    std::vector<UiView*> mViewsToAttach; // deferred attach
+    std::vector<UiView*> mViewsToDetach; // deferred detach
+    //
 
     std::vector<UiWidget*> mWidgetsToDelete;
 };
 
+//////////////////////////////////////////////////////////////////////////
+
 extern UiWidgetManager gWidgetManager;
+
+//////////////////////////////////////////////////////////////////////////

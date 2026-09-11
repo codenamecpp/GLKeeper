@@ -34,6 +34,10 @@ public:
     // Clear color and depth of current framebuffer
     void ClearScreen(eDeviceClearMode clearMode = eDeviceClear_ColorDepthBuffers);
 
+    // turn hardware cursor on or off
+    void EnableHwCursor(bool hwCursorEnabled);
+    void SetHwCursorScreenPosition(const Point2D& screenPosition);
+
     // Turn vsync mode on or off
     void EnableVSync(bool vsyncEnabled);
 

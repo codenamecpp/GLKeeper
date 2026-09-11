@@ -5,16 +5,17 @@
 #include "UiDefs.h"
 #include "UiEvent.h"
 #include "FrontendDefs.h"
+#include "FrontendUi.h"
 
 //////////////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////
 
-class FrontendMenuPage: public UiEventListener
+class FrontendUi::MenuPage: public UiEventListener
 {
 public:
-    FrontendMenuPage(FrontendController& frontend, eFrontendMenuPage pageId, std::string_view pageRootName);
-    inline eFrontendMenuPage GetPageId() const { return mPageId; }
+    MenuPage(FrontendController& frontend, eMenuPage pageId, std::string_view pageRootName);
+    inline eMenuPage GetPageId() const { return mPageId; }
     // overridables
     virtual bool BindPageControls(UiHierarchy* hier);
     virtual void CleanupPageContent();
@@ -38,7 +39,7 @@ private:
     void SubscribePageButtons(bool isSubscribe);
 protected:
     FrontendController& mFrontend;
-    eFrontendMenuPage mPageId;
+    eMenuPage mPageId;
     std::string mPageRootName;
     UiHierarchy* mHierarchy {};
     UiWidget* mPageRoot {};
@@ -51,11 +52,11 @@ protected:
 
 //////////////////////////////////////////////////////////////////////////
 
-class FrontendMenuPage_Main: public FrontendMenuPage
+class FrontendUi::MenuPageMain: public FrontendUi::MenuPage
 {
 public:
-    FrontendMenuPage_Main(FrontendController& frontend);
-    // override FrontendMenuPage
+    MenuPageMain(FrontendController& frontend);
+    // override MenuPage
     bool BindPageControls(UiHierarchy* hier) override;
     void HandleUiEvent(UiWidget* sender, const UiEvent& eventDesc) override;
 };
@@ -64,11 +65,11 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 
-class FrontendMenuPage_QuitGame: public FrontendMenuPage
+class FrontendUi::MenuPageQuitGame: public FrontendUi::MenuPage
 {
 public:
-    FrontendMenuPage_QuitGame(FrontendController& frontend);
-    // override FrontendMenuPage
+    MenuPageQuitGame(FrontendController& frontend);
+    // override MenuPage
     void ShowPage() override;
     void PageCancelled() override;
     void PageConfirmed() override;
@@ -78,11 +79,11 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 
-class FrontendMenuPage_SinglePlayer: public FrontendMenuPage
+class FrontendUi::MenuPageSinglePlayer: public FrontendUi::MenuPage
 {
 public:
-    FrontendMenuPage_SinglePlayer(FrontendController& frontend);
-    // override FrontendMenuPage
+    MenuPageSinglePlayer(FrontendController& frontend);
+    // override MenuPage
     bool BindPageControls(UiHierarchy* hier) override;
     void ShowPage() override;
     void PageCancelled() override;
@@ -93,15 +94,15 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 
-class FrontendMenuPage_SkirmishMaps: public FrontendMenuPage
+class FrontendUi::MenuPageSkirmishMaps: public FrontendUi::MenuPage
 {
 public:
-    FrontendMenuPage_SkirmishMaps(FrontendController& frontend);
+    MenuPageSkirmishMaps(FrontendController& frontend);
     void ConfigureMaps(cxx::span<ScenarioLevelInfo> mapsList);
     void ResetMapsScroll();
     void ResetMapsSelectedItem();
     void SetSelectedItem(int itemIndex);
-    // override FrontendMenuPage
+    // override MenuPage
     bool BindPageControls(UiHierarchy* hier) override;
     void CleanupPageContent() override;
     void ShowPage() override;
@@ -138,12 +139,12 @@ private:
 
 //////////////////////////////////////////////////////////////////////////
 
-class FrontendMenuPage_MyPetDungeon: public FrontendMenuPage
+class FrontendUi::MenuPageMyPetDungeon: public FrontendUi::MenuPage
 {
 public:
-    FrontendMenuPage_MyPetDungeon(FrontendController& frontend);
+    MenuPageMyPetDungeon(FrontendController& frontend);
     void ConfigureLevels(cxx::span<ScenarioLevelInfo> levelsList);
-    // override FrontendMenuPage
+    // override MenuPage
     bool BindPageControls(UiHierarchy* hier) override;
     void CleanupPageContent() override;
     void ShowPage() override;
@@ -160,12 +161,12 @@ private:
 
 //////////////////////////////////////////////////////////////////////////
 
-class FrontendMenuPage_MissionBriefing: public FrontendMenuPage
+class FrontendUi::MenuPageMissionBriefing: public FrontendUi::MenuPage
 {
 public:
-    FrontendMenuPage_MissionBriefing(FrontendController& frontend);
+    MenuPageMissionBriefing(FrontendController& frontend);
     void ConfigureBriefing(const ScenarioLevelInfo& levelInfo);
-    // override FrontendMenuPage
+    // override MenuPage
     bool BindPageControls(UiHierarchy* hier) override;
     void CleanupPageContent() override;
     void ShowPage() override;

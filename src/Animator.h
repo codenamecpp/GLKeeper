@@ -12,12 +12,6 @@ public:
 
     //////////////////////////////////////////////////////////////////////////
 
-    using NameHash = size_t;
-
-    static NameHash NameToHash(std::string_view name);
-
-    //////////////////////////////////////////////////////////////////////////
-
     enum eStatePhase
     {
         eStatePhase_ClipStart,
@@ -66,7 +60,7 @@ public:
     {
     public:
         eConditionType mConditionType = eConditionType_True;
-        NameHash mParamId;
+        StringHash mParamId;
 
         // comparsion value used for eConditionType_LessThen, eConditionType_GreaterThen
         // has no meaning for eConditionType_True/eConditionType_False/eConditionType_Trigger
@@ -135,7 +129,7 @@ private:
     struct State
     {
     public:
-        NameHash mId {};
+        StringHash mId {};
 
         // animation clips
         std::optional<Clip> mClipStart;
@@ -158,9 +152,9 @@ private:
             mTriggers.clear();
         }
     public:
-        std::unordered_map<NameHash, bool> mBooleans;
-        std::unordered_map<NameHash, float> mFloats;
-        std::unordered_map<NameHash, bool> mTriggers;
+        std::unordered_map<StringHash, bool> mBooleans;
+        std::unordered_map<StringHash, float> mFloats;
+        std::unordered_map<StringHash, bool> mTriggers;
     };
 
     //////////////////////////////////////////////////////////////////////////
@@ -177,15 +171,15 @@ public:
     // setup states and transitions
     //////////////////////////////////////////////////////////////////////////
 
-    Animator& DefineState(NameHash stateId, const ArtResourceDefinition& resourceDefinition, 
+    Animator& DefineState(StringHash stateId, const ArtResourceDefinition& resourceDefinition, 
         std::optional<eAnimationLoopMode> overrideLoopMode = std::nullopt);
 
-    Animator& DefineTransition(NameHash fromStateId, NameHash toStateId, std::vector<Condition>&& conditions, 
+    Animator& DefineTransition(StringHash fromStateId, StringHash toStateId, std::vector<Condition>&& conditions, 
         eTransitionMode transitionMode,
         eTransitionInterruptionSource interruptionSource);
-    Animator& DefineTransition(NameHash fromStateId, NameHash toStateId, float selectionWeight);
-    Animator& DefineTransitionFromStart(NameHash toStateId, float selectionWeight);
-    Animator& DefineTransitionFromAnyState(NameHash toStateId, std::vector<Condition>&& conditions,
+    Animator& DefineTransition(StringHash fromStateId, StringHash toStateId, float selectionWeight);
+    Animator& DefineTransitionFromStart(StringHash toStateId, float selectionWeight);
+    Animator& DefineTransitionFromAnyState(StringHash toStateId, std::vector<Condition>&& conditions,
         eTransitionMode transitionMode,
         eTransitionInterruptionSource interruptionSource);
 
@@ -197,31 +191,31 @@ public:
     void Restart();
 
     // forcible change current state or current state phase
-    void ChangeState(NameHash stateId, eStatePhase statePhase = eStatePhase_ClipStart);
+    void ChangeState(StringHash stateId, eStatePhase statePhase = eStatePhase_ClipStart);
     void ChangePhase(eStatePhase nextPhase);
 
-    void SetAnimSpeedFactor(NameHash stateId, float speedFactor);
-    void SetAnimSpeedFactor(NameHash stateId, eStatePhase statePhase, float speedFactor);
+    void SetAnimSpeedFactor(StringHash stateId, float speedFactor);
+    void SetAnimSpeedFactor(StringHash stateId, eStatePhase statePhase, float speedFactor);
 
-    void ResetAnimSpeedFactor(NameHash stateId);
-    void ResetAnimSpeedFactor(NameHash stateId, eStatePhase statePhase);
+    void ResetAnimSpeedFactor(StringHash stateId);
+    void ResetAnimSpeedFactor(StringHash stateId, eStatePhase statePhase);
 
     //////////////////////////////////////////////////////////////////////////
     // parameters
     //////////////////////////////////////////////////////////////////////////
 
-    void ResetTrigger(NameHash paramId);
-    void SetTrigger(NameHash paramId);
-    void SetParamValue(NameHash paramId, bool value);
-    void SetParamValue(NameHash paramId, float value);
+    void ResetTrigger(StringHash paramId);
+    void SetTrigger(StringHash paramId);
+    void SetParamValue(StringHash paramId, bool value);
+    void SetParamValue(StringHash paramId, float value);
 
     //////////////////////////////////////////////////////////////////////////
     // status
     //////////////////////////////////////////////////////////////////////////
 
-    inline NameHash GetCurrentState() const { return mCurrentState ? mCurrentState->mId : 0; }
+    inline StringHash GetCurrentState() const { return mCurrentState ? mCurrentState->mId : 0; }
 
-    inline bool IsCurrentState(NameHash stateId) const 
+    inline bool IsCurrentState(StringHash stateId) const 
     { 
         return (stateId == (mCurrentState ? mCurrentState->mId : 0));
     }
@@ -232,25 +226,25 @@ public:
     }
 
     inline bool IsCurrentStateStopped() const { return IsCurrentPhase(eStatePhase_Stop); }
-    inline bool IsStateStopped(NameHash stateId) const 
+    inline bool IsStateStopped(StringHash stateId) const 
     { 
         return IsCurrentState(stateId) && IsCurrentPhase(eStatePhase_Stop); 
     }
 
-    bool HasState(NameHash stateId) const;
+    bool HasState(StringHash stateId) const;
 
     //////////////////////////////////////////////////////////////////////////
     // helpers
     //////////////////////////////////////////////////////////////////////////
 
-    static Condition ConditionForBool(NameHash paramId, bool paramValue)
+    static Condition ConditionForBool(StringHash paramId, bool paramValue)
     {
         Condition condition { paramValue ? eConditionType_True : eConditionType_False };
             condition.mParamId = paramId;
         return condition;
     }
 
-    static Condition ConditionForLessThan(NameHash paramId, float paramValue)
+    static Condition ConditionForLessThan(StringHash paramId, float paramValue)
     {
         Condition condition { eConditionType_LessThan };
             condition.mParamId = paramId;
@@ -258,7 +252,7 @@ public:
         return condition;
     }
 
-    static Condition ConditionForGreaterThan(NameHash paramId, float paramValue)
+    static Condition ConditionForGreaterThan(StringHash paramId, float paramValue)
     {
         Condition condition { eConditionType_GreaterThan };
             condition.mParamId = paramId;
@@ -266,7 +260,7 @@ public:
         return condition;
     }
 
-    static Condition ConditionForTrigger(NameHash triggerId)
+    static Condition ConditionForTrigger(StringHash triggerId)
     {
         Condition condition { eConditionType_Trigger };
             condition.mParamId = triggerId;
@@ -287,7 +281,7 @@ private:
     void CollectConditionParams(const std::vector<Condition>& conditions);
     void ConsumeTriggers(const ConditionalTransition& transition);
 
-    State* GetState(NameHash stateId);
+    State* GetState(StringHash stateId);
 
     void ChangeState(State* targetState, eStatePhase statePhase = eStatePhase_ClipStart);
 
@@ -301,7 +295,7 @@ private:
 private:
     AnimatingMeshObject* mAnimatingMesh = nullptr;
 
-    std::unordered_map<NameHash, State> mStates;
+    std::unordered_map<StringHash, State> mStates;
 
     ConditionalTransitions mAnyStateTransitions;
     SimpleTransitions mStartStateTransitions;

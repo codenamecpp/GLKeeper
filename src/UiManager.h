@@ -9,10 +9,12 @@
 class UiManager
 {
 public:
+
     bool Initialize();
     void Shutdown();
 
-    // Process gui logic
+    void RenderFrame(UiRenderContext& renderContext);
+    void RenderFrameOverlay(UiRenderContext& renderContext);
     void UpdateFrame(float deltaTime);
 
     // Process input events

@@ -501,6 +501,7 @@ public:
     int mMaxGoldPileOutsideTreasury = 0;
     int mMaxGoldPerDungeonHeartTile = 0;
     int mMaximumManaThreshold = 0;
+    int mRoomSellValuePercentageOfCost = 0;
 };
 
 //////////////////////////////////////////////////////////////////////////

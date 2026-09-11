@@ -9,23 +9,23 @@
 struct CreatureAnimConst
 {
     // animation states
-    static const Animator::NameHash StatePose;
-    static const Animator::NameHash StateWalk;
-    static const Animator::NameHash StateIdleSelector;
-    static const Animator::NameHash StateIdle1;
-    static const Animator::NameHash StateIdle2;
-    static const Animator::NameHash StateDigging;
-    static const Animator::NameHash StateReinforceWall;
-    static const Animator::NameHash StateClaimFloor;
+    static const StringHash StatePose;
+    static const StringHash StateWalk;
+    static const StringHash StateIdleSelector;
+    static const StringHash StateIdle1;
+    static const StringHash StateIdle2;
+    static const StringHash StateDigging;
+    static const StringHash StateReinforceWall;
+    static const StringHash StateClaimFloor;
 
     // animation parameters
-    static const Animator::NameHash ParamIsWalk;
-    static const Animator::NameHash ParamIsDigging;
-    static const Animator::NameHash ParamIsReinforceWall;
-    static const Animator::NameHash ParamIsClaimFloor;
+    static const StringHash ParamIsWalk;
+    static const StringHash ParamIsDigging;
+    static const StringHash ParamIsReinforceWall;
+    static const StringHash ParamIsClaimFloor;
 
     // helpers
-    static bool IsIdleState(Animator::NameHash stateId)
+    static bool IsIdleState(StringHash stateId)
     {
         return (stateId == StateIdleSelector) || (stateId == StateIdle1) || (stateId == StateIdle2);
     }

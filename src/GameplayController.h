@@ -3,12 +3,12 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "GameSessionController.h"
-#include "HUDScreen.h"
+#include "GameplayUi.h"
 #include "GameplayCameraController.h"
 #include "DebugToolsUi.h"
 #include "GameplayDefs.h"
 #include "GameEvent.h"
-#include "HeldThingView.h"
+#include "InHandThingView.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -29,7 +29,9 @@ public:
     void SetTrapConstructionMode(GameObjectDefinition* trapDefinition);
     void SetFreeInteraction();
     void SetRoomSellInteraction();
-    void SetDigTerrainInteraction();
+
+    void FocusOnNextOwnedRoom(RoomDefinition* roomDefinition);
+    void FocusOnNextOwnedRoom(RoomTypeId roomTypeId);
 
     inline eMapInteractionMode GetMapInteractionMode() const { return mMapInteractionMode; }
     inline bool IsInInteractionMode(eMapInteractionMode mode) const
@@ -51,6 +53,13 @@ public:
     // override GameEventListener
     void HandleGameEvent(const GameEvent& eventData) override;
 
+public:
+    // gameplayscreen notifications
+    void OnRoomsPageSelected(bool isAlt);
+    void OnCreaturesPageSelected(bool isAlt);
+    void OnSpellsPageSelected(bool isAlt);
+    void OnTrapsPageSelected(bool isAlt);
+
 private:
     void UpdateHoveredTile();
     MapTile* ScanHoveredTile() const;
@@ -66,7 +75,7 @@ private:
     bool HandleTagForDigging(const Rect2D& tilesArea);
     
     void UpdateMapSelectionTint();
-    void UpdateHeldThingView();
+    void UpdateInHandThing();
 
     void UpdateHoveredEntity();
     void OnHoveredEntityChanged(EntityHandle prevEntity);
@@ -75,15 +84,16 @@ private:
     void HandleSingleTileInteraction(bool alt);
 
 private:
-    HUDScreen mHUDScreen;
+    GameplayUi mGameplayUi;
     GameplayCameraController mGameplayCamera;
     DebugToolsUi mDebugToolsUi;
 
     eMapInteractionMode mMapInteractionMode;
 
     EntityHandle mHoveredEntity;
+    EntityHandle mLastFocusedEntity;
 
-    HeldThingView mHeldEntityView;
+    InHandThingView mInHandThingView;
 
     MapTile* mSelectionStartTile;
 };

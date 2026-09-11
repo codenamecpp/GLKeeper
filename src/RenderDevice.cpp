@@ -231,6 +231,15 @@ void RenderDevice::EnableVSync(bool vsyncEnabled)
     ::glfwSwapInterval(vsyncEnabled ? 1 : 0);
 }
 
+void RenderDevice::EnableHwCursor(bool hwCursorEnabled)
+{
+    cxx_assert(mGraphicsWindow);
+    if (mGraphicsWindow)
+    {
+        ::glfwSetInputMode(mGraphicsWindow, GLFW_CURSOR, hwCursorEnabled ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_HIDDEN);
+    }
+}
+
 void RenderDevice::EnableFullscreen(bool fullscreenEnabled)
 {
     cxx_assert(mGraphicsWindow);
@@ -860,6 +869,14 @@ void RenderDevice::WindowSizeChanged(int sizex, int sizey)
     if (mScreenResolution != newScreenSize)
     {
         mScreenSizeChanged.emplace(newScreenSize);
+    }
+}
+
+void RenderDevice::SetHwCursorScreenPosition(const Point2D& screenPosition)
+{
+    if (mGraphicsWindow)
+    {
+        ::glfwSetCursorPos(mGraphicsWindow, screenPosition.x * 1.0, screenPosition.y * 1.0);
     }
 }
 

@@ -606,7 +606,7 @@ void GameWorld::TagTilesForDigging(const Rect2D& tileArea, ePlayerID playerId, b
     }
 }
 
-bool GameWorld::TestConstructRooms(ePlayerID playerId, RoomDefinition* roomDefinition, const Rect2D& mapArea, 
+bool GameWorld::CanConstructRooms(ePlayerID playerId, RoomDefinition* roomDefinition, const Rect2D& mapArea, 
     cxx::any_vector<MapTile*> constructionTiles) const
 {
     cxx_assert(roomDefinition);
@@ -642,6 +642,10 @@ bool GameWorld::TestConstructRooms(ePlayerID playerId, RoomDefinition* roomDefin
 
             return false;
         };
+
+    constructionTiles.clear();
+    if ((roomDefinition == nullptr) || !roomDefinition->mBuildable)
+        return false;
 
     constructionTiles.reserve(mapArea.w * mapArea.h);
 
@@ -696,7 +700,7 @@ bool GameWorld::ConstructRooms(ePlayerID playerId, RoomDefinition* roomDefinitio
 {
     constructionTiles.clear();
 
-    if (!TestConstructRooms(playerId, roomDefinition, mapArea, constructionTiles))
+    if (!CanConstructRooms(playerId, roomDefinition, mapArea, constructionTiles))
         return false;
 
     cxx::temp_set<MapTile*> processedTiles;
@@ -773,7 +777,7 @@ bool GameWorld::ConstructRooms(ePlayerID playerId, RoomDefinition* roomDefinitio
 
 bool GameWorld::DemolishRooms(ePlayerID playerId, const Rect2D& mapArea, cxx::any_vector<MapTile*> demolishTiles)
 {
-    if (!TestDemolishRooms(playerId, mapArea, demolishTiles))
+    if (!CanDemolishRooms(playerId, mapArea, demolishTiles))
         return false;
 
     // sort by room instance
@@ -811,7 +815,7 @@ bool GameWorld::DemolishRooms(ePlayerID playerId, const Rect2D& mapArea, cxx::an
     return true;
 }
 
-bool GameWorld::TestDemolishRooms(ePlayerID playerId, const Rect2D& mapArea, cxx::any_vector<MapTile*> demolishTiles) const
+bool GameWorld::CanDemolishRooms(ePlayerID playerId, const Rect2D& mapArea, cxx::any_vector<MapTile*> demolishTiles) const
 {
     // helper
     auto canDemolishRoomOnTile = [playerId](MapTile* mapTile)

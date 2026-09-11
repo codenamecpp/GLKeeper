@@ -3,6 +3,8 @@
 #include "UiWidgetManager.h"
 #include "FontManager.h"
 #include "ToolsUiManager.h"
+#include "UiCursor.h"
+#include "UiRenderContext.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -27,6 +29,8 @@ bool UiManager::Initialize()
     mScreenRect.SetToZero();
     mScreenRect.SetSize(gRenderDevice.GetScreenResolution());
 
+    gUiCursor.Init();
+
     PreloadBaseFonts();
     return true;
 }
@@ -35,13 +39,24 @@ void UiManager::Shutdown()
 {
     gToolsUiManager.Shutdown();
     gWidgetManager.Shutdown();
+    gUiCursor.Deinit();
+}
+
+void UiManager::RenderFrame(UiRenderContext& renderContext)
+{
+    gWidgetManager.RenderFrame(renderContext);
+}
+
+void UiManager::RenderFrameOverlay(UiRenderContext& renderContext)
+{
+    gUiCursor.RenderFrame(renderContext);
 }
 
 void UiManager::UpdateFrame(float deltaTime)
 {
     gToolsUiManager.UpdateFrame(deltaTime);
-
     gWidgetManager.UpdateFrame(deltaTime);
+    gUiCursor.UpdateFrame(deltaTime);
 }
 
 void UiManager::InputEvent(KeyInputEvent& inputEvent)

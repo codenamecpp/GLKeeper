@@ -4,6 +4,9 @@
 #include "GameSession.h"
 #include "MapUtils.h"
 #include "GameMap.h"
+#include "GameWorld.h"
+#include "EconomyService.h"
+#include "Room.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -21,7 +24,7 @@ void InteractionService::ClearWorld()
 
 }
 
-bool InteractionService::TestPickUpEntity(EntityHandle entityHandle, ePlayerID playerId) const
+bool InteractionService::CanPickUpEntity(EntityHandle entityHandle, ePlayerID playerId) const
 {
     if (!gGameSession.GetPlayer(playerId).IsAlive())
         return false;
@@ -48,9 +51,9 @@ bool InteractionService::TestPickUpEntity(EntityHandle entityHandle, ePlayerID p
     return false;
 }
 
-bool InteractionService::PickUpEntity(EntityHandle entityHandle, ePlayerID playerId)
+bool InteractionService::TryPickUpEntity(EntityHandle entityHandle, ePlayerID playerId)
 {
-    if (!TestPickUpEntity(entityHandle, playerId))
+    if (!CanPickUpEntity(entityHandle, playerId))
         return false;
 
     // handle pickup creature
@@ -73,7 +76,7 @@ bool InteractionService::PickUpEntity(EntityHandle entityHandle, ePlayerID playe
     return false;
 }
 
-bool InteractionService::TestDropEntityOn(EntityHandle entityHandle, ePlayerID playerId, const glm::vec2& position) const
+bool InteractionService::CanDropEntityOn(EntityHandle entityHandle, ePlayerID playerId, const glm::vec2& position) const
 {
     // handle drop creature
     if (entityHandle.IsCreature())
@@ -118,9 +121,9 @@ bool InteractionService::TestDropEntityOn(EntityHandle entityHandle, ePlayerID p
     return false;
 }
 
-bool InteractionService::DropEntityOn(EntityHandle entityHandle, ePlayerID playerId, const glm::vec2& position)
+bool InteractionService::TryDropEntityOn(EntityHandle entityHandle, ePlayerID playerId, const glm::vec2& position)
 {
-    if (!TestDropEntityOn(entityHandle, playerId, position))
+    if (!CanDropEntityOn(entityHandle, playerId, position))
         return false;
 
     // handle drop creature
@@ -141,4 +144,87 @@ bool InteractionService::DropEntityOn(EntityHandle entityHandle, ePlayerID playe
     // todo: implement
     cxx_assert(false);
     return false;
+}
+
+bool InteractionService::CanBuildRoom(ePlayerID playerId, RoomDefinition* roomDefinition, const Rect2D& mapArea, long& outBuildingCost, 
+    cxx::any_vector<MapTile*> outRoomTiles) const
+{
+    outRoomTiles.clear();
+    outBuildingCost = 0;
+
+    cxx_assert(roomDefinition);
+    const Player& player = gGameSession.GetPlayer(playerId);
+    if (!player.CanBuildRoomOfType(roomDefinition))
+        return false;
+
+    bool isSuccess = gGameWorld.CanConstructRooms(playerId, roomDefinition, mapArea, outRoomTiles);
+
+    const int roomTilesCount = outRoomTiles.size();
+
+    outBuildingCost = gEconomyService.CalculateBuildingCost(playerId, roomDefinition, roomTilesCount);
+    if (isSuccess)
+    {
+        isSuccess = gEconomyService.HasEnoughResources(playerId, eGameResource_Gold, outBuildingCost);
+    }
+    return isSuccess;
+}
+
+bool InteractionService::TryBuildRoom(ePlayerID playerId, RoomDefinition* roomDefinition, const Rect2D& mapArea, long& outBuildingCost, 
+    cxx::any_vector<MapTile*> outRoomTiles)
+{
+    if (!CanBuildRoom(playerId, roomDefinition, mapArea, outBuildingCost, outRoomTiles))
+        return false;
+
+    outRoomTiles.clear();
+    if (!gGameWorld.ConstructRooms(playerId, roomDefinition, mapArea, outRoomTiles))
+    {
+        cxx_assert(false);
+        return false;
+    }
+    gEconomyService.TakeResource(playerId, eGameResource_Gold, outBuildingCost);
+    return true;
+}
+
+bool InteractionService::CanSellRoom(ePlayerID playerId, const Rect2D& mapArea, long& outMoney, cxx::any_vector<MapTile*> outRoomTiles) const
+{
+    outRoomTiles.clear();
+    outMoney = 0;
+
+    bool isSuccess = gGameWorld.CanDemolishRooms(playerId, mapArea, outRoomTiles);
+
+    for (MapTile* mapTile: outRoomTiles)
+    {
+        cxx_assert(mapTile->mRoomInstance);
+        if (mapTile->mRoomInstance == nullptr)
+            continue;
+
+        RoomDefinition* roomDefinition = mapTile->mRoomInstance->GetDefinition();
+        cxx_assert(roomDefinition);
+
+        const long sellValue = gEconomyService.CalculateSellingValue(playerId, roomDefinition, 1);
+        cxx_assert(sellValue > 0);
+        outMoney += sellValue;
+    }
+    return isSuccess;
+}
+
+bool InteractionService::TrySellRoom(ePlayerID playerId, const Rect2D& mapArea, long& outMoney, cxx::any_vector<MapTile*> outRoomTiles)
+{
+    if (!CanSellRoom(playerId, mapArea, outMoney, outRoomTiles))
+        return false;
+
+    outRoomTiles.clear();
+    if (!gGameWorld.DemolishRooms(playerId, mapArea, outRoomTiles))
+    {
+        cxx_assert(false);
+        return false;
+    }
+    long resourceStored = gEconomyService.GiveResource(playerId, eGameResource_Gold, outMoney);
+    if (resourceStored < outMoney)
+    {
+        // handle excess amount of resource that exceeds the storage capacity
+        long excessMoney = outMoney - resourceStored;
+        // todo
+    }
+    return true;
 }

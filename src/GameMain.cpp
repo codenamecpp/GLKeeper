@@ -14,6 +14,7 @@
 #include "GameEventBus.h"
 #include "GameSession.h"
 #include "LevelsDatabase.h"
+#include "UiCursor.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -67,6 +68,8 @@ bool GameMain::Initialize()
         return false;
     }
 
+    gRenderDevice.EnableHwCursor(userSettings.mEnableHwCursor);
+
     if (!gDK2AssetLoader.Initialize())
     {
         gConsole.LogMessage(eLogLevel_Warning, "Cannot initialize game assets data provider");
@@ -91,7 +94,7 @@ bool GameMain::Initialize()
     }
 
     // second phase initialization
-
+    SetGamestate(eGamestate::TitleScreen);
     if (mTitleScreen.Activate())
     {
         MiniUpdateFrame();
@@ -108,9 +111,7 @@ bool GameMain::Initialize()
     }
 
     mTitleScreen.Deactivate();
-
-    mCurrentGamestate = eGamestate::None;
-
+    SetGamestate(eGamestate::None);
     // subscribe to events
     gGameEventBus.Subscribe(eGameEvent_StartScenarioRequest, this);
     gGameEventBus.Subscribe(eGameEvent_QuitGameRequest, this);
@@ -398,6 +399,7 @@ bool GameMain::StartScenario(const std::string& scenarioName)
         SetGamestate(eGamestate::Gameplay);
 
         gGameSession.StartSession();
+        MiniUpdateFrame();
     }
     else
     {
@@ -434,6 +436,7 @@ bool GameMain::StartFrontend()
         SetGamestate(eGamestate::Frontend);
 
         gGameSession.StartSession();
+        MiniUpdateFrame();
     }
     else
     {
@@ -457,6 +460,16 @@ void GameMain::MiniUpdateFrame()
 void GameMain::SetGamestate(eGamestate newGamestate)
 {
     mCurrentGamestate = newGamestate;
+    // setup cursor
+    bool showCursor = (mCurrentGamestate == eGamestate::Gameplay) || (mCurrentGamestate == eGamestate::Frontend);
+    if (showCursor)
+    {
+        gUiCursor.StateOff(UiCursor::eCursorState_Hidden);
+    }
+    else
+    {
+        gUiCursor.StateOn(UiCursor::eCursorState_Hidden);
+    }
 }
 
 void GameMain::UpdateLogic(float stepDeltaTime)

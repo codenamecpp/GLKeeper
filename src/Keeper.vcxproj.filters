@@ -125,9 +125,6 @@
     <Filter Include="Source\World\Creatures\Actions">
       <UniqueIdentifier>{fff2d468-29c2-4528-a018-f9b4e2386592}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Data\Screens">
-      <UniqueIdentifier>{7681bfad-9cfa-48a5-b7b8-db37504ac463}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Session\Frontend">
       <UniqueIdentifier>{7b590171-f903-4063-a98c-7de4f2ea08b9}</UniqueIdentifier>
     </Filter>
@@ -136,6 +133,9 @@
     </Filter>
     <Filter Include="Source\Session\Services">
       <UniqueIdentifier>{c4be406f-662a-449e-8d08-2e552848f8de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data\Ui">
+      <UniqueIdentifier>{7681bfad-9cfa-48a5-b7b8-db37504ac463}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -179,9 +179,6 @@
       <Filter>Source\Ui\Widgets</Filter>
     </ClInclude>
     <ClInclude Include="UiGridLayout.h">
-      <Filter>Source\Ui\Widgets</Filter>
-    </ClInclude>
-    <ClInclude Include="UiProductionButton.h">
       <Filter>Source\Ui\Widgets</Filter>
     </ClInclude>
     <ClInclude Include="DK2ScenarioReader.h">
@@ -727,17 +724,11 @@
     <ClInclude Include="CreatureState_InHand.h">
       <Filter>Source\World\Creatures\States</Filter>
     </ClInclude>
-    <ClInclude Include="FrontendScreen.h">
-      <Filter>Source\Session\Frontend</Filter>
-    </ClInclude>
     <ClInclude Include="FrontendDefs.h">
       <Filter>Source\Session\Frontend</Filter>
     </ClInclude>
     <ClInclude Include="LevelsDatabase.h">
       <Filter>Source</Filter>
-    </ClInclude>
-    <ClInclude Include="FrontendMenuPage.h">
-      <Filter>Source\Session\Frontend</Filter>
     </ClInclude>
     <ClInclude Include="UiScrollBar.h">
       <Filter>Source\Ui\Widgets</Filter>
@@ -750,12 +741,6 @@
     </ClInclude>
     <ClInclude Include="AssetDefs.h">
       <Filter>Source\Assets</Filter>
-    </ClInclude>
-    <ClInclude Include="HeldThingView.h">
-      <Filter>Source\Session\Gameplay</Filter>
-    </ClInclude>
-    <ClInclude Include="HUDScreen.h">
-      <Filter>Source\Session\Gameplay</Filter>
     </ClInclude>
     <ClInclude Include="ConsoleScreen.h">
       <Filter>Source\Ui\Screens</Filter>
@@ -777,6 +762,30 @@
     </ClInclude>
     <ClInclude Include="InteractionService.h">
       <Filter>Source\Session\Services</Filter>
+    </ClInclude>
+    <ClInclude Include="UiCursor.h">
+      <Filter>Source\Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="InHandThingView.h">
+      <Filter>Source\Session\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="UiPainter.h">
+      <Filter>Source\Ui</Filter>
+    </ClInclude>
+    <ClInclude Include="UiCompositeButton.h">
+      <Filter>Source\Ui\Widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="FrontendUi.h">
+      <Filter>Source\Session\Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="FrontendUiControls.h">
+      <Filter>Source\Session\Frontend</Filter>
+    </ClInclude>
+    <ClInclude Include="GameplayUiControls.h">
+      <Filter>Source\Session\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="GameplayUi.h">
+      <Filter>Source\Session\Gameplay</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -811,9 +820,6 @@
       <Filter>Source\Ui\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="UiGridLayout.cpp">
-      <Filter>Source\Ui\Widgets</Filter>
-    </ClCompile>
-    <ClCompile Include="UiProductionButton.cpp">
       <Filter>Source\Ui\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="DK2ScenarioReader.cpp">
@@ -1209,26 +1215,14 @@
     <ClCompile Include="CreatureState_InHand.cpp">
       <Filter>Source\World\Creatures\States</Filter>
     </ClCompile>
-    <ClCompile Include="FrontendScreen.cpp">
-      <Filter>Source\Session\Frontend</Filter>
-    </ClCompile>
     <ClCompile Include="LevelsDatabase.cpp">
       <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="FrontendMenuPage.cpp">
-      <Filter>Source\Session\Frontend</Filter>
     </ClCompile>
     <ClCompile Include="UiScrollBar.cpp">
       <Filter>Source\Ui\Widgets</Filter>
     </ClCompile>
     <ClCompile Include="MapSelectionCursor.cpp">
       <Filter>Source\World</Filter>
-    </ClCompile>
-    <ClCompile Include="HeldThingView.cpp">
-      <Filter>Source\Session\Gameplay</Filter>
-    </ClCompile>
-    <ClCompile Include="HUDScreen.cpp">
-      <Filter>Source\Session\Gameplay</Filter>
     </ClCompile>
     <ClCompile Include="ConsoleScreen.cpp">
       <Filter>Source\Ui\Screens</Filter>
@@ -1250,6 +1244,27 @@
     </ClCompile>
     <ClCompile Include="InteractionService.cpp">
       <Filter>Source\Session\Services</Filter>
+    </ClCompile>
+    <ClCompile Include="UiCursor.cpp">
+      <Filter>Source\Ui</Filter>
+    </ClCompile>
+    <ClCompile Include="InHandThingView.cpp">
+      <Filter>Source\Session\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="UiCompositeButton.cpp">
+      <Filter>Source\Ui\Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="FrontendUi.cpp">
+      <Filter>Source\Session\Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="FrontendUiControls.cpp">
+      <Filter>Source\Session\Frontend</Filter>
+    </ClCompile>
+    <ClCompile Include="GameplayUiControls.cpp">
+      <Filter>Source\Session\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="GameplayUi.cpp">
+      <Filter>Source\Session\Gameplay</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1296,13 +1311,13 @@
       <Filter>Data\Shaders</Filter>
     </None>
     <None Include="..\data\ui\test_screen.json">
-      <Filter>Data\Screens</Filter>
+      <Filter>Data\Ui</Filter>
     </None>
     <None Include="..\data\ui\gameplay_screen.json">
-      <Filter>Data\Screens</Filter>
+      <Filter>Data\Ui</Filter>
     </None>
     <None Include="..\data\ui\frontend_screen.json">
-      <Filter>Data\Screens</Filter>
+      <Filter>Data\Ui</Filter>
     </None>
     <None Include="..\data\gameplay\extensions.json">
       <Filter>Data\Gameplay</Filter>
