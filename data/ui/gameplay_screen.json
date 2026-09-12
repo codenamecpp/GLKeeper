@@ -97,7 +97,13 @@
                     "children":
                     [
                         {"class":"picture", "id":"bg", "path":"GUI\\Map\\Map-BG", "stretch_mode":"scale", "pos":[8,8], "size":[164,164]},
-                        {"class":"dummy", "id":"mmview", "pos":[26,26], "size":[124,124]},
+                        {"class":"dummy", "id":"mmview_cliprect", "pos":[6,6], "size":[164,164], "clip_children":true,
+                            "children":
+                            [
+                                {"class":"dummy", "id":"mmview", "pos":[20,20], "size":[124,124]}
+                            ]
+                        },
+                        
                         {"class":"picture", "id":"frame", "path":"GUI\\Map\\map", "stretch_mode":"scale", "size":[205,205]},
                         {"class":"cbutton", "id":"sell_button", "pos":[142,1], "size":[35,35], 
                             "children":

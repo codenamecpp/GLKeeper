@@ -20,6 +20,27 @@
 
 //////////////////////////////////////////////////////////////////////////
 
+static const Point2D ZeroDimensions (0, 0);
+
+//////////////////////////////////////////////////////////////////////////
+
+// helper
+inline GpuTexture2D* GetTextureRenderData(Texture* texture)
+{
+    GpuTexture2D* gpuTexture = nullptr;
+    if (texture)
+    {
+        if (!texture->IsRenderDataInited())
+        {
+            texture->InitRenderData();
+        }
+        gpuTexture = texture->GetGpuTexturePtr();
+    }
+    return gpuTexture;
+}
+
+//////////////////////////////////////////////////////////////////////////
+
 bool UiRenderContext::Initialize()
 {
     mShaderProgram = gShadersManager.GetProgramOfType<ShaderProgram_UI>("ui");
@@ -37,6 +58,11 @@ bool UiRenderContext::Initialize()
 
     mWhiteTexture = gTextureManager.GetWhiteTexture();
     cxx_assert(mWhiteTexture);
+
+    if (mWhiteTexture && !mWhiteTexture->IsRenderDataInited())
+    {
+        mWhiteTexture->InitRenderData();
+    }
 
     mCurrentTextureIsA8 = false;
 
@@ -86,7 +112,6 @@ void UiRenderContext::EndFrame()
 {
     FlushDeferred();
 
-    mCurrentFont = nullptr;
     mCurrentTexture = nullptr;
 
     gRenderDevice.SetRenderState(mRestoreRenderStates);
@@ -153,79 +178,74 @@ void UiRenderContext::DrawRect(const Rect2D& rect, Color32 lineColor, int lineWi
 
 void UiRenderContext::DrawTexture(Texture* texture, Color32 theColor, const Rect2D& theDest, const Rect2D& theSrc)
 {
-    if (texture)
-    {
-        Quad2D quad;
-
-        quad.BuildTextureQuad(texture->GetTextureDimensions(), theSrc, theDest, theColor);
-        DrawQuads(texture, &quad, 1);
-    }
+    DrawTexture(GetTextureRenderData(texture), theColor, theDest, theSrc);
 }
 
 void UiRenderContext::DrawTexture(Texture* texture, Color32 theColor, const Point2D& theDest, const Rect2D& theSrc)
 {
-    if (texture)
-    {
-        Quad2D quad;
-
-        Rect2D destRect;
-        destRect.x = theDest.x;
-        destRect.y = theDest.y;
-        destRect.w = theSrc.w;
-        destRect.h = theSrc.h;
-
-        quad.BuildTextureQuad(texture->GetTextureDimensions(), theSrc, destRect, theColor);
-        DrawQuads(texture, &quad, 1);
-    }
+    const Rect2D dstRect { theDest.x, theDest.y, theSrc.w, theSrc.h };
+    DrawTexture(GetTextureRenderData(texture), theColor, dstRect, theSrc);
 }
 
 void UiRenderContext::DrawTexture(Texture* texture, Color32 theColor, const Rect2D& theDest)
 {
-    if (texture)
-    {
-        const Point2D& imageSize = texture->GetImageDimensions();
-
-        Quad2D quad;
-
-        Rect2D srcRect;
-        srcRect.x = 0;
-        srcRect.y = 0;
-        srcRect.w = imageSize.x;
-        srcRect.h = imageSize.y;
-
-        quad.BuildTextureQuad(texture->GetTextureDimensions(), srcRect, theDest, theColor);
-        DrawQuads(texture, &quad, 1);
-    }
+    const Point2D& imageDimensions = texture ? texture->GetImageDimensions() : ZeroDimensions;
+    const Rect2D srcRect { 0, 0, imageDimensions.x, imageDimensions.y };
+    DrawTexture(texture, theColor, theDest, srcRect);
 }
 
 void UiRenderContext::DrawTexture(Texture* texture, Color32 theColor, const Point2D& theDest)
 {
-    if (texture)
-    {
-        const Point2D& imageSize = texture->GetImageDimensions();
+    const Point2D& imageDimensions = texture ? texture->GetImageDimensions() : ZeroDimensions;
+    const Rect2D srcRect { 0, 0, imageDimensions.x, imageDimensions.y };
+    const Rect2D dstRect { theDest.x, theDest.y, srcRect.w, srcRect.h };
+    DrawTexture(texture, theColor, dstRect, srcRect);
+}
 
-        Quad2D quad;
+void UiRenderContext::DrawTexture(GpuTexture2D* texture, Color32 theColor, const Rect2D& theDest, const Rect2D& theSrc)
+{
+    const Point2D& dimensions = texture ? texture->GetTextureDimensions() : ZeroDimensions;
 
-        Rect2D srcRect;
-        srcRect.x = 0;
-        srcRect.y = 0;
-        srcRect.w = imageSize.x;
-        srcRect.h = imageSize.y;
+    Quad2D quad;
+    quad.BuildTextureQuad(dimensions, theSrc, theDest, theColor);
+    DrawQuads(texture, &quad, 1);
+}
 
-        Rect2D destRect;
-        destRect.x = theDest.x;
-        destRect.y = theDest.y;
-        destRect.w = srcRect.w;
-        destRect.h = srcRect.h;
+void UiRenderContext::DrawTexture(GpuTexture2D* texture, Color32 theColor, const Point2D& theDest, const Rect2D& theSrc)
+{
+    const Rect2D dstRect { theDest.x, theDest.y, theSrc.w, theSrc.h };
+    DrawTexture(texture, theColor, dstRect, theSrc);
+}
 
-        quad.BuildTextureQuad(texture->GetTextureDimensions(), srcRect, destRect, theColor);
-        DrawQuads(texture, &quad, 1);
-    }
+void UiRenderContext::DrawTexture(GpuTexture2D* texture, Color32 theColor, const Rect2D& theDest)
+{
+    const Point2D& dimensions = texture ? texture->GetTextureDimensions() : ZeroDimensions;
+    const Rect2D srcRect { 0, 0, dimensions.x, dimensions.y };
+
+    Quad2D quad;
+    quad.BuildTextureQuad(dimensions, srcRect, theDest, theColor);
+    DrawQuads(texture, &quad, 1);
+}
+
+void UiRenderContext::DrawTexture(GpuTexture2D* texture, Color32 theColor, const Point2D& theDest)
+{
+    const Point2D& dimensions = texture ? texture->GetTextureDimensions() : ZeroDimensions;
+    const Rect2D srcRect { 0, 0, dimensions.x, dimensions.y };
+    const Rect2D dstRect { theDest.x, theDest.y, srcRect.w, srcRect.h };
+
+    Quad2D quad;
+    quad.BuildTextureQuad(dimensions, srcRect, dstRect, theColor);
+    DrawQuads(texture, &quad, 1);
 }
 
 void UiRenderContext::DrawQuads(Texture* texture, const Quad2D* quads, int quadsCount)
 {
-    if (quads == nullptr || quadsCount < 1)
+    DrawQuads(GetTextureRenderData(texture), quads, quadsCount);
+}
+
+void UiRenderContext::DrawQuads(GpuTexture2D* texture, const Quad2D* quads, int quadsCount)
+{
+    if ((quads == nullptr) || (quadsCount < 1))
     {
         cxx_assert(false);
         return;
@@ -239,41 +259,26 @@ void UiRenderContext::DrawQuads(Texture* texture, const Quad2D* quads, int quads
     // push all quad vertices to vertex cache
     for (int iquad = 0; iquad < quadsCount; ++iquad)
     {
-        vertices[iquad * 6 + 0] = quads[iquad].mPoints[0];
-        vertices[iquad * 6 + 1] = quads[iquad].mPoints[1];
-        vertices[iquad * 6 + 2] = quads[iquad].mPoints[2];
-        vertices[iquad * 6 + 3] = quads[iquad].mPoints[0];
-        vertices[iquad * 6 + 4] = quads[iquad].mPoints[2];
-        vertices[iquad * 6 + 5] = quads[iquad].mPoints[3];
+        const auto& points = quads[iquad].mPoints;
+        const auto& qverts = vertices + (iquad * 6);
+        qverts[0] = points[0];
+        qverts[1] = points[1];
+        qverts[2] = points[2];
+        qverts[3] = points[0];
+        qverts[4] = points[2];
+        qverts[5] = points[3];
     }
     TransformVertices(vertices);
 }
 
-void UiRenderContext::DrawTextQuads(Font* font, const std::vector<Quad2D>& quads)
+void UiRenderContext::DrawTextQuads(Font* font, const Quad2D* quads, int quadsCount)
 {
-    cxx_assert(font);
-
-    if ((font == nullptr) || quads.empty())
-        return;
-
-    SwitchFont(font);
-
-    int quadsCount = static_cast<int>(quads.size());
-
-    Vertex2D* vertices = nullptr;
-    ALLOCATE_VERTICES(6 * quadsCount, vertices);
-
-    // push all quad vertices to vertex cache
-    for (int iquad = 0; iquad < quadsCount; ++iquad)
+    if (font && !font->IsRenderDataInited())
     {
-        vertices[iquad * 6 + 0] = quads[iquad].mPoints[0];
-        vertices[iquad * 6 + 1] = quads[iquad].mPoints[1];
-        vertices[iquad * 6 + 2] = quads[iquad].mPoints[2];
-        vertices[iquad * 6 + 3] = quads[iquad].mPoints[0];
-        vertices[iquad * 6 + 4] = quads[iquad].mPoints[2];
-        vertices[iquad * 6 + 5] = quads[iquad].mPoints[3];
+        font->InitRenderData();
     }
-    TransformVertices(vertices);
+    GpuTexture2D* gpuTexture = font ? font->GetGpuTexturePtr() : nullptr;
+    DrawQuads(gpuTexture, quads, quadsCount);
 }
 
 eBlendingMode UiRenderContext::BeginBlendingMode(eBlendingMode newBlendingMode)
@@ -317,14 +322,8 @@ void UiRenderContext::FlushDeferred()
     {
         if (mCurrentTexture)
         {
-            mCurrentTexture->BindTexture(eTextureUnit_0);
+            gRenderDevice.BindTexture2D(eTextureUnit_0, mCurrentTexture);
         }
-
-        if (mCurrentFont)
-        {
-            gRenderDevice.BindTexture2D(eTextureUnit_0, mCurrentFont->GetGpuTexturePtr());
-        }
-
         // draw
         gRenderDevice.BindVertexBuffer(mVertexBuffer.get());
         gRenderDevice.RenderPrimitives(ePrimitiveType_Triangles, mVertexBufferCursor, mBatchVertexCount);
@@ -334,18 +333,13 @@ void UiRenderContext::FlushDeferred()
     mBatchVertexCount = 0;
 }
 
-void UiRenderContext::SwitchTexture(Texture* texture)
+void UiRenderContext::SwitchTexture(GpuTexture2D* texture)
 {
-    // current mode - font?
-    if (mCurrentFont)
-    {
-        FlushDeferred();
-        mCurrentFont = nullptr;
-    }
-
     if (texture == nullptr)
     {
-        texture = mWhiteTexture; // use fallback
+        // use fallback
+        texture = mWhiteTexture ? mWhiteTexture->GetGpuTexturePtr() : nullptr;
+        cxx_assert(texture);
     }
 
     if (mCurrentTexture == texture) 
@@ -353,34 +347,7 @@ void UiRenderContext::SwitchTexture(Texture* texture)
 
     FlushDeferred();
     mCurrentTexture = texture;
-    // ensure texture data inited
-    if (!mCurrentTexture->IsRenderDataInited())
-    {
-        mCurrentTexture->InitRenderData();
-    }
-    SwitchCurrentTextureIsA8(mCurrentTexture->GetPixelFormat() == ePixelFormat_R8);
-}
-
-void UiRenderContext::SwitchFont(Font* font)
-{
-    // current mode - texture?
-    if (mCurrentTexture)
-    {
-        FlushDeferred();
-        mCurrentTexture = nullptr;
-    }
-
-    if ((font == nullptr) || (font == mCurrentFont)) 
-        return;
-
-    FlushDeferred();
-    mCurrentFont = font;
-    // ensure font data inited
-    if (!mCurrentFont->IsRenderDataInited())
-    {
-        mCurrentFont->InitRenderData();
-    }
-    SwitchCurrentTextureIsA8(mCurrentFont->GetTexturePixelFormat() == ePixelFormat_R8);
+    SwitchCurrentTextureIsA8(mCurrentTexture->GetTexturePixelFormat() == ePixelFormat_R8);
 }
 
 void UiRenderContext::SwitchCurrentTextureIsA8(bool isAlphaTexture)

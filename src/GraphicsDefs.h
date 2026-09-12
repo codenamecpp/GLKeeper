@@ -9,6 +9,7 @@ class GpuVertexBuffer;
 class GpuIndexBuffer;
 class GpuTexture;
 class GpuProgram;
+class GpuTexture2D;
 
 //////////////////////////////////////////////////////////////////////////
 

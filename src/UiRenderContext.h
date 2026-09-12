@@ -2,10 +2,9 @@
 
 #include "GraphicsDefs.h"
 #include "GpuBuffer.h"
-#include "ShaderProgram.h"
-#include "Font.h"
 #include "UiDefs.h"
-#include "Texture.h"
+#include "UiHelpers.h"
+#include "AssetDefs.h"
 
 //////////////////////////////////////////////////////////////////////////
 // Gui Render Context
@@ -36,20 +35,35 @@ public:
     void FillRect(const Rect2D& rect, Color32 fillColor);
     void DrawRect(const Rect2D& rect, Color32 lineColor, int lineWidth = 1);
 
+    //////////////////////////////////////////////////////////////////////////
+
     void DrawTexture(Texture* texture, Color32 theColor, const Rect2D& theDest, const Rect2D& theSrc);
     void DrawTexture(Texture* texture, Color32 theColor, const Point2D& theDest, const Rect2D& theSrc);
     void DrawTexture(Texture* texture, Color32 theColor, const Rect2D& theDest);
     void DrawTexture(Texture* texture, Color32 theColor, const Point2D& theDest);
-    
-    // draw quads
     void DrawQuads(Texture* texture, const Quad2D* quads, int quadsCount);
     void DrawQuad(Texture* texture, const Quad2D& quad)
     {
         DrawQuads(texture, &quad, 1);
     }
 
-    // Render 2D text on the screen, mesh should be initialized properly
-    void DrawTextQuads(Font* font, const std::vector<Quad2D>& quads);
+    //////////////////////////////////////////////////////////////////////////
+
+    void DrawTexture(GpuTexture2D* texture, Color32 theColor, const Rect2D& theDest, const Rect2D& theSrc);
+    void DrawTexture(GpuTexture2D* texture, Color32 theColor, const Point2D& theDest, const Rect2D& theSrc);
+    void DrawTexture(GpuTexture2D* texture, Color32 theColor, const Rect2D& theDest);
+    void DrawTexture(GpuTexture2D* texture, Color32 theColor, const Point2D& theDest);
+    void DrawQuads(GpuTexture2D* texture, const Quad2D* quads, int quadsCount);
+    void DrawQuad(GpuTexture2D* texture, const Quad2D& quad)
+    {
+        DrawQuads(texture, &quad, 1);
+    }
+
+    //////////////////////////////////////////////////////////////////////////
+
+    void DrawTextQuads(Font* font, const Quad2D* quads, int quadsCount);
+
+    //////////////////////////////////////////////////////////////////////////
 
     eBlendingMode BeginBlendingMode(eBlendingMode newBlendingMode);
     void ResetBlendingMode();
@@ -59,8 +73,7 @@ public:
 private:
     void FlushDeferred();
 
-    void SwitchTexture(Texture* texture);
-    void SwitchFont(Font* font);
+    void SwitchTexture(GpuTexture2D* texture);
     void SwitchCurrentTextureIsA8(bool isAlphaTexture);
     void SwitchBlendingMode(eBlendingMode newBlendingMode);
 
@@ -73,6 +86,7 @@ private:
     eBlendingMode mCurrentBlendingMode = RENDER_STATES_BLENDMODE_ALPHA;
 
     ShaderProgram_UI* mShaderProgram = nullptr;
+    Texture* mWhiteTexture = nullptr;
 
     glm::mat4 mProjectionMatrix2D;
     glm::mat4* mCurrentTransform = nullptr;
@@ -80,9 +94,7 @@ private:
     std::vector<Rect2D> mClipRectsStack;
     Rect2D mScreenRect;
 
-    Texture* mWhiteTexture = nullptr;
-    Texture* mCurrentTexture = nullptr;
-    Font* mCurrentFont = nullptr;
+    GpuTexture2D* mCurrentTexture = nullptr;
 
     bool mCurrentTextureIsA8 = false;
 

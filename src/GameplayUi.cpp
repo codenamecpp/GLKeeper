@@ -55,6 +55,8 @@ void GameplayUi::UpdateFrame(float deltaTime)
         UpdateDebugStatsText();
         mDebugStatsUpdateTimer.Start();
     }
+
+    mControlPanel->UpdateFrame(deltaTime);
 }
 
 void GameplayUi::UpdateDebugStatsText()

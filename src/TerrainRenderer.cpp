@@ -366,7 +366,6 @@ void TerrainRenderer::CommitHighlightTiles()
         {
             unsigned char* pixels = mHighlightTilesBitmap.GetMipPixels(0);
             cxx_assert(pixels);
-            mHighlightTilesTexture->Invalidate();
             mHighlightTilesTexture->Upload(pixels);
         }
         mHighlightTilesTextureDirty = false;

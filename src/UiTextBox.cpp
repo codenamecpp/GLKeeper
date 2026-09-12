@@ -176,7 +176,7 @@ void UiTextBox::RenderSelf(UiRenderContext& uiRenderContext)
         return;
 
     Refresh();
-    uiRenderContext.DrawTextQuads(mTextFont, mTextBatch);
+    uiRenderContext.DrawTextQuads(mTextFont, mTextBatch.data(), mTextBatch.size());
 }
 
 void UiTextBox::HandleSizeChanged(const Point2D& prevSize)

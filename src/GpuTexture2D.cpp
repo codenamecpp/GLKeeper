@@ -57,20 +57,23 @@ GpuTexture2D::~GpuTexture2D()
     glCheckErrors();
 }
 
-bool GpuTexture2D::Create(ePixelFormat textureFormat, int sizex, int sizey, const void* sourceData)
+bool GpuTexture2D::Create(ePixelFormat textureFormat, const Point2D& dimensions, const void* sourceData)
 {
-    GLuint formatGL = GetTextureInputFormatGL(textureFormat);
-    GLint internalFormatGL = GetTextureInternalFormatGL(textureFormat);
-    GLenum dataType = GetTextureDataTypeGL(textureFormat);
-    if (formatGL == 0 || internalFormatGL == 0 || dataType == 0)
+    cxx_assert(dimensions.x > 0);
+    cxx_assert(dimensions.y > 0);
+    cxx_assert(cxx::is_pot(dimensions.x) && cxx::is_pot(dimensions.y));
+
+    const GLint internalFormatGL = GetTextureInternalFormatGL(textureFormat);
+    const GLuint formatGL = GetTextureInputFormatGL(textureFormat);
+    const GLenum dataType = GetTextureDataTypeGL(textureFormat);
+    if ((formatGL == 0) || (internalFormatGL == 0) || (dataType == 0))
     {
         cxx_assert(false);
         return false;
     }
 
     mPixelFormat = textureFormat;
-    mDimensions.x = sizex;
-    mDimensions.y = sizey;
+    mDimensions = dimensions;
     mHasMipmaps = false;
     
     ScopedBinder scopedBinder(this);
@@ -99,19 +102,13 @@ bool GpuTexture2D::Create(ePixelFormat textureFormat, int numMipmaps, const Text
     
     ScopedBinder scopedBinder(this);
 
-    if (numMipmaps > 1)
-    {
-        ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, numMipmaps - 1);
-        glCheckErrors();
-    }
+    ::glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, numMipmaps - 1);
+    glCheckErrors();
 
     for (int imipmap = 0; imipmap < numMipmaps; ++imipmap)
     {
         cxx_assert(mipmaps[imipmap].mSizex > 0);
         cxx_assert(mipmaps[imipmap].mSizey > 0);
-        if (mipmaps[imipmap].mPixelsData == nullptr)
-            continue;
-
         ::glTexImage2D(GL_TEXTURE_2D, imipmap, internalFormatGL, 
             mipmaps[imipmap].mSizex, 
             mipmaps[imipmap].mSizey, 
@@ -204,38 +201,28 @@ bool GpuTexture2D::IsTextureBound(eTextureUnit textureUnit) const
     return sCurrentTextures2D[textureUnit] == this;
 }
 
-void GpuTexture2D::Invalidate()
+bool GpuTexture2D::Upload(const void* sourceData, int mipLevel)
 {
-    if (mResourceHandle == 0)
-        return;
-
-    GLuint formatGL = GetTextureInputFormatGL(mPixelFormat);
-    GLint internalFormatGL = GetTextureInternalFormatGL(mPixelFormat);
-    GLenum dataType = GetTextureDataTypeGL(mPixelFormat);
-
-    ScopedBinder scopedBinder(this);
-    ::glTexImage2D(GL_TEXTURE_2D, 0, internalFormatGL, 
-        mDimensions.x, 
-        mDimensions.y, 
-        0, 
-        formatGL, dataType, nullptr);
-    glCheckErrors();
+    static const Point2D zeroOffset {0, 0};
+    return Upload(zeroOffset, mDimensions, sourceData, mipLevel);
 }
 
-bool GpuTexture2D::Upload(const void* sourceData)
+bool GpuTexture2D::Upload(const Point2D& offset, const Point2D& dimensions, const void* sourceData, int mipLevel)
 {
-    if (mResourceHandle == 0 || sourceData == nullptr)
+    cxx_assert(mipLevel >= 0);
+    cxx_assert((offset.x >= 0) && (offset.y >= 0));
+    cxx_assert((dimensions.x > 0) && (dimensions.y > 0));
+
+    if ((mResourceHandle == 0) || (sourceData == nullptr))
         return false;
 
-    GLuint formatGL = GetTextureInputFormatGL(mPixelFormat);
-    GLint internalFormatGL = GetTextureInternalFormatGL(mPixelFormat);
-    GLenum dataType = GetTextureDataTypeGL(mPixelFormat);
+    const GLuint formatGL = GetTextureInputFormatGL(mPixelFormat);
+    const GLenum dataType = GetTextureDataTypeGL(mPixelFormat);
 
     ScopedBinder scopedBinder(this);
-    ::glTexImage2D(GL_TEXTURE_2D, 0, internalFormatGL, 
-        mDimensions.x, 
-        mDimensions.y, 
-        0, 
+    ::glTexSubImage2D(GL_TEXTURE_2D, mipLevel, offset.x, offset.y,
+        dimensions.x, 
+        dimensions.y, 
         formatGL, dataType, sourceData);
     glCheckErrors();
     return true;

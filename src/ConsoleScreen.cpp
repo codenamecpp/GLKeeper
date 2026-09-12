@@ -78,7 +78,7 @@ void ConsoleScreen::RenderFrame(UiRenderContext& renderContext)
     }
 
     renderContext.FillRect(mConsoleRect, MAKE_RGBA(28, 28, 28, 190));
-    renderContext.DrawTextQuads(mConsoleFont, mHistoryTextBatch);
+    renderContext.DrawTextQuads(mConsoleFont, mHistoryTextBatch.data(), mHistoryTextBatch.size());
 
     Rect2D frameRect = mConsoleRect;
     frameRect.y -= 10;

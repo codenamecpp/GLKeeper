@@ -26,10 +26,7 @@ public:
     ~GpuTexture2D();
 
     // Create texture of specified format and upload pixels data, no mipmaps
-    // @param textureFormat: Format
-    // @param sizex, sizey: Texture dimensions, must be POT!
-    // @param sourceData: Source data buffer
-    bool Create(ePixelFormat pixelFormat, int sizex, int sizey, const void* sourceData);
+    bool Create(ePixelFormat pixelFormat, const Point2D& dimensions, const void* sourceData);
 
     // Create texture of specified format with mipmaps
     // @param textureFormat: Format
@@ -37,12 +34,9 @@ public:
     // @param mipmaps: Mips entries including base texture level, all sizes must be POT!
     bool Create(ePixelFormat pixelFormat, int numMipmaps, const Texture2DMip* mipmaps);
 
-    // Free texture data but dont destroy hardware object
-    void Invalidate();
-
-    // Uploads pixels data for first mipmap, size of source bitmap should match current texture dimensions
-    // @param sourceData: Source data buffer
-    bool Upload(const void* sourceData);
+    // Uploads pixels data
+    bool Upload(const void* sourceData, int mipLevel = 0);
+    bool Upload(const Point2D& offset, const Point2D& dimensions, const void* sourceData, int mipLevel = 0);
 
     // Set texture filter and wrap parameters
     // @param filtering: Filtering mode
@@ -54,15 +48,14 @@ public:
     bool IsTextureBound(eTextureUnit textureUnit) const;
 
     const Point2D& GetTextureDimensions() const { return mDimensions; }
+    inline int GetTextureWidth() const { return mDimensions.x; }
+    inline int GetTextureHeight() const { return mDimensions.y; }
 
     inline ePixelFormat GetTexturePixelFormat() const { return mPixelFormat; }
     inline bool IsTexturePixelFormat(ePixelFormat pixelFormat) const
     {
         return mPixelFormat == pixelFormat;
     }
-    inline int GetTextureWidth() const { return mDimensions.x; }
-    inline int GetTextureHeight() const { return mDimensions.y; }
-
 private:
     // shared render device context data
     static eTextureUnit sCurrentTextureUnit;

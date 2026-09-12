@@ -44,6 +44,31 @@ public:
         mPoints[3].mPosition.y  = mPoints[0].mPosition.y;
     }
 
+    inline void RotateAroundCenter(cxx::angle_t rotationAngle)
+    {
+        glm::vec2 center {0.0f, 0.0f};
+        for (const Vertex2D& roller: mPoints)
+        {
+            center += roller.mPosition;
+        }
+        center /= 4.0f;
+
+        float cosA;
+        float sinA;
+        rotationAngle.get_sin_cos(sinA, cosA);
+
+        for (Vertex2D& roller: mPoints)
+        {
+            const glm::vec2 p = roller.mPosition - center;
+            const glm::vec2 new_p
+            {
+                p.x * cosA - p.y * sinA,
+                p.x * sinA + p.y * cosA
+            };
+            roller.mPosition = new_p + center;
+        }
+    }
+
 public:
     // Vertices has specific order:
     // 0 - TOP LEFT

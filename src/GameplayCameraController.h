@@ -3,6 +3,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "GameWorldDefs.h"
+#include "GameplayDefs.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -31,6 +32,14 @@ public:
 
     // Stop moving or rotating
     void StopCamera();
+
+    // get current camera info
+    inline void GetCameraInfo(GameplayCameraInfo& outInfo) const
+    {
+        outInfo.mPosition = mCurrentPosition;
+        outInfo.mHeight = mCameraHeight;
+        outInfo.mRotation = mRotationAngles.y;
+    }
 
     void FocusOnMapLocation(const Point2D& tileLocation);
 

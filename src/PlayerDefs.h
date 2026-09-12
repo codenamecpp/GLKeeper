@@ -17,10 +17,6 @@ enum ePlayerID : uint8_t
     ePlayerID_Keeper2,
     ePlayerID_Keeper3,
     ePlayerID_Keeper4,
-    //ePlayerID_Keeper5,
-    //ePlayerID_Keeper6,
-    //ePlayerID_Keeper7,
-    //ePlayerID_Keeper8,
     ePlayerID_COUNT
 };
 

@@ -14,14 +14,53 @@
 
 class GameplayUi::Minimap final: public UiEventListener, public UiPainter
 {
+private:
+    enum eTerrainColors
+    {
+        eTerrainColors_Invalid,
+        eTerrainColors_TaggedForMining,
+        eTerrainColors_Water,
+        eTerrainColors_Lava,
+        eTerrainColors_Gold,
+        eTerrainColors_Gems,
+        eTerrainColors_DirtPath,
+        eTerrainColors_Rock,
+        eTerrainColors_ImpenetrableRock,
+        eTerrainColors_COUNT
+    };
+    enum ePlayerColors
+    {
+        ePlayerColors_DungeonHeart,
+        ePlayerColors_ClaimedPath,
+        ePlayerColors_ReinforcedWall,
+        ePlayerColors_Creature,
+        ePlayerColors_COUNT
+    };
 public:
+    Minimap(GameplayController& gameplay);
     bool BindControls(UiWidget* minimapRoot);
     void Cleanup();
+    void UpdateFrame(float deltaTime);
+    void RequestUpdateMinimap();
     // override UiPainter
     bool CustomDraw(const UiWidget& widget, UiRenderContext& uiRenderContext) override;
 private:
+    void UpdateColorData();
+    void UpdateTexture();
+private:
+    GameplayController& mGameplay;
+    Color32 mPlayerColors[ePlayerID_COUNT][ePlayerColors_COUNT];
+    Color32 mTerrainColors[eTerrainColors_COUNT];
     UiWidget* mRootWidget {};
     UiWidget* mViewWidget {};
+    Point2D mDimensions {};
+    GameplayCameraInfo mLastCameraInfo;
+    std::unique_ptr<GpuTexture2D> mTexture;
+    BitmapImage mScratchBuffer;
+    cxx::static_vector<Color32, 6> mAnimCycleColors;
+    SimpleTimer mAnimCycleTimer {};
+    int mAnimCycleColorIndex = 0;
+    bool mTextureDirty = false;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -145,6 +184,7 @@ public:
     ControlPanel(GameplayController& gameplay);
     void ReConfigure(const SummaryInfo& summaryInfo);
     bool BindControls(UiHierarchy* hier);
+    void UpdateFrame(float deltaTime);
     void Cleanup();
     void SetMinimized(bool isMinimized);
     void SetSellButtonSelected(bool isSelected);

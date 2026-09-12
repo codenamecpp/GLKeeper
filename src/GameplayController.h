@@ -39,6 +39,11 @@ public:
         return mMapInteractionMode == mode;
     }
 
+    inline void GetCameraInfo(GameplayCameraInfo& cameraInfo) const
+    {
+        return mGameplayCamera.GetCameraInfo(cameraInfo);
+    }
+
     // override GameSessionController
     void OnSessionLoaded() override;
     void OnSessionStart() override;

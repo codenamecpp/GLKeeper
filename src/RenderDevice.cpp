@@ -515,7 +515,7 @@ std::unique_ptr<GpuTexture2D> RenderDevice::CreateTexture2D(const Point2D& textu
     }
 
     std::unique_ptr<GpuTexture2D> texture2D = std::make_unique<GpuTexture2D>();
-    if (texture2D->Create(pixelFormat, textureDims.x, textureDims.y, pixeldata))
+    if (texture2D->Create(pixelFormat, textureDims, pixeldata))
     {
         texture2D->SetSamplerState(filter, repeat);
     }

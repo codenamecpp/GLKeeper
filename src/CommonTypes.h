@@ -295,6 +295,28 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 
+inline Rect2D FitAspectContain(const Rect2D& src, const Rect2D& dst)
+{
+    if (dst.Empty() || src.Empty())
+    {
+        return {};
+    }
+
+    float scaleX = (dst.w * 1.0f) / (src.w * 1.0f);
+    float scaleY = (dst.h * 1.0f) / (src.h * 1.0f);
+
+    float minScale = std::min(scaleX, scaleY);
+
+    Rect2D rcResult;
+    rcResult.w = static_cast<int>(src.w * minScale);
+    rcResult.h = static_cast<int>(src.h * minScale);
+    rcResult.x = dst.x + ((dst.w - rcResult.w) >> 1);
+    rcResult.y = dst.y + ((dst.h - rcResult.h) >> 1);
+    return rcResult;
+}
+
+//////////////////////////////////////////////////////////////////////////
+
 template<typename TEnumType, typename TBitmaskType = uint32_t>
 struct EnumSet
 {
