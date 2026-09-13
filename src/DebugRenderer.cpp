@@ -84,8 +84,8 @@ void DebugRenderer::Shutdown()
 
 void DebugRenderer::BeginFrame(Camera& camera)
 {
-    mShaderProgram->SetViewProjectionMatrix(camera.mViewProjectionMatrix);
     mShaderProgram->BindProgram();
+    mShaderProgram->SetViewProjectionMatrix(camera.mViewProjectionMatrix);
   
     // setup render state
     RenderStates defaultRenderState;

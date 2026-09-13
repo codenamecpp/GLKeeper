@@ -43,15 +43,20 @@ void EnvironmentMeshRenderer::Shutdown()
     mWaterFrames.mTextures.clear();
 }
 
-void EnvironmentMeshRenderer::BeginFrame(Camera& camera)
+void EnvironmentMeshRenderer::BeginFrame()
 {
-    // prepare render program
-    mShaderProgram->SetViewProjectionMatrix(camera.mViewProjectionMatrix);
+    mFrameBatchCounter = 0;
 }
 
-void EnvironmentMeshRenderer::BeginBatch()
+void EnvironmentMeshRenderer::BeginBatch(Camera& camera)
 {
     mShaderProgram->BindProgram();
+
+    bool isFirstBatch = (mFrameBatchCounter == 0);
+    if (isFirstBatch)
+    {
+        mShaderProgram->SetViewProjectionMatrix(camera.mViewProjectionMatrix);
+    }
 }
 
 void EnvironmentMeshRenderer::RenderInstance(eRenderPass renderPass, EnvironmentMeshObject& object)
@@ -90,7 +95,7 @@ void EnvironmentMeshRenderer::RenderInstance(eRenderPass renderPass, Environment
 
 void EnvironmentMeshRenderer::EndBatch()
 {
-
+    ++mFrameBatchCounter;
 }
 
 void EnvironmentMeshRenderer::EndFrame()

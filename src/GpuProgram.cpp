@@ -4,7 +4,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-const char* gGLSL_version_string = "#version 330 core\n";
+const char* gGLSL_version_string = "#version 140\n";
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -71,6 +71,27 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 
+GpuProgram::ScopedBinder::ScopedBinder(GpuProgram* program)
+    : mProgram(program)
+{
+    mPreviousProgram = sCurrentProgram;
+    if (mProgram != mPreviousProgram)
+    {
+        ::glUseProgram(mProgram ? mProgram->mResourceHandle : 0);
+        glCheckErrors();
+    }
+}
+GpuProgram::ScopedBinder::~ScopedBinder()
+{
+    if (mProgram != mPreviousProgram)
+    {
+        ::glUseProgram(mPreviousProgram ? mPreviousProgram->mResourceHandle : 0);
+        glCheckErrors();
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////
+
 GpuProgram::GpuProgram()
     : mResourceHandle()
     , mInputLayout()
@@ -121,7 +142,8 @@ void GpuProgram::SetUniform(GpuVariableLocation uniformLocation, float param0)
 {
     cxx_assert(IsProgramCompiled());
     cxx_assert(uniformLocation != GpuLocation_Null);
-    ::glProgramUniform1f(mResourceHandle, uniformLocation, param0);
+    ScopedBinder scopedBinder(this);
+    ::glUniform1f(uniformLocation, param0);
     glCheckErrors();
 }
 
@@ -129,7 +151,8 @@ void GpuProgram::SetUniform(GpuVariableLocation uniformLocation, float param0, f
 {
     cxx_assert(IsProgramCompiled());
     cxx_assert(uniformLocation != GpuLocation_Null);
-    ::glProgramUniform2f(mResourceHandle, uniformLocation, param0, param1);
+    ScopedBinder scopedBinder(this);
+    ::glUniform2f(uniformLocation, param0, param1);
     glCheckErrors();
 }
 
@@ -137,7 +160,8 @@ void GpuProgram::SetUniform(GpuVariableLocation uniformLocation, float param0, f
 {
     cxx_assert(IsProgramCompiled());
     cxx_assert(uniformLocation != GpuLocation_Null);
-    ::glProgramUniform3f(mResourceHandle, uniformLocation, param0, param1, param2);
+    ScopedBinder scopedBinder(this);
+    ::glUniform3f(uniformLocation, param0, param1, param2);
     glCheckErrors();
 }
 
@@ -145,7 +169,8 @@ void GpuProgram::SetUniform(GpuVariableLocation uniformLocation, int param0)
 {
     cxx_assert(IsProgramCompiled());
     cxx_assert(uniformLocation != GpuLocation_Null);
-    ::glProgramUniform1i(mResourceHandle, uniformLocation, param0);
+    ScopedBinder scopedBinder(this);
+    ::glUniform1i(uniformLocation, param0);
     glCheckErrors();
 }
 
@@ -153,7 +178,8 @@ void GpuProgram::SetUniform(GpuVariableLocation uniformLocation, const glm::vec2
 {
     cxx_assert(IsProgramCompiled());
     cxx_assert(uniformLocation != GpuLocation_Null);
-    ::glProgramUniform2fv(mResourceHandle, uniformLocation, 1, &floatVector2.x);
+    ScopedBinder scopedBinder(this);
+    ::glUniform2fv(uniformLocation, 1, &floatVector2.x);
     glCheckErrors();
 }
 
@@ -161,7 +187,8 @@ void GpuProgram::SetUniform(GpuVariableLocation uniformLocation, const glm::vec3
 {
     cxx_assert(IsProgramCompiled());
     cxx_assert(uniformLocation != GpuLocation_Null);
-    ::glProgramUniform3fv(mResourceHandle, uniformLocation, 1, &floatVector3.x);
+    ScopedBinder scopedBinder(this);
+    ::glUniform3fv(uniformLocation, 1, &floatVector3.x);
     glCheckErrors();
 }
 
@@ -169,7 +196,8 @@ void GpuProgram::SetUniform(GpuVariableLocation uniformLocation, const glm::vec4
 {
     cxx_assert(IsProgramCompiled());
     cxx_assert(uniformLocation != GpuLocation_Null);
-    ::glProgramUniform4fv(mResourceHandle, uniformLocation, 1, &floatVector4.x);
+    ScopedBinder scopedBinder(this);
+    ::glUniform4fv(uniformLocation, 1, &floatVector4.x);
     glCheckErrors();
 }
 
@@ -177,7 +205,8 @@ void GpuProgram::SetUniform(GpuVariableLocation uniformLocation, const glm::mat3
 {
     cxx_assert(IsProgramCompiled());
     cxx_assert(uniformLocation != GpuLocation_Null);
-    ::glProgramUniformMatrix3fv(mResourceHandle, uniformLocation, 1, GL_FALSE, &floatMatrix3[0][0]);
+    ScopedBinder scopedBinder(this);
+    ::glUniformMatrix3fv(uniformLocation, 1, GL_FALSE, &floatMatrix3[0][0]);
     glCheckErrors();
 }
 
@@ -185,7 +214,8 @@ void GpuProgram::SetUniform(GpuVariableLocation uniformLocation, const glm::mat4
 {
     cxx_assert(IsProgramCompiled());
     cxx_assert(uniformLocation != GpuLocation_Null);
-    ::glProgramUniformMatrix4fv(mResourceHandle, uniformLocation, 1, GL_FALSE, &floatMatrix4[0][0]);
+    ScopedBinder scopedBinder(this);
+    ::glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, &floatMatrix4[0][0]);
     glCheckErrors();
 }
 
@@ -227,6 +257,7 @@ bool GpuProgram::CompileShader(const std::string& vertShaderSrc, const std::stri
     if (!isSuccessed)
         return false;
 
+
     // clear old program data
     mInputLayout.mEnabledAttributes = 0;
 
@@ -243,7 +274,7 @@ bool GpuProgram::CompileShader(const std::string& vertShaderSrc, const std::stri
             mInputLayout.IncludeAttribute(vertexAttribute);
         }        
     }
-
+    ScopedBinder scopedBinder(this);
     // query samplers
     for (int isampler = 0; isampler < eTextureUnit_COUNT; ++isampler)
     {
@@ -253,10 +284,11 @@ bool GpuProgram::CompileShader(const std::string& vertShaderSrc, const std::stri
         {
             mSamplers[isampler] = ilocation;
             // bind sampler to default slot
-            ::glProgramUniform1i(mResourceHandle, ilocation, isampler);
+            ::glUniform1i(ilocation, isampler);
             glCheckErrors();
         }
     }
+
 
     return true;
 }

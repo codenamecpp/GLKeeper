@@ -34,13 +34,13 @@ bool RenderDevice::Initialize(const Point2D& screenResolution, bool fullscreen, 
 
     if (::glfwInit() == GL_FALSE)
     {
-        gConsole.LogMessage(eLogLevel_Warning, "GLFW initialization failed");
+        gConsole.LogMessage(eLogLevel_Error, "GLFW initialization failed");
         return false;
     }
 
     // dump some information
     gConsole.LogMessage(eLogLevel_Info, "GLFW Information: %s", ::glfwGetVersionString());
-    gConsole.LogMessage(eLogLevel_Info, "Initialize OpenGL %d.%d (Core profile)",
+    gConsole.LogMessage(eLogLevel_Info, "Initialize OpenGL %d.%d",
         OPENGL_CONTEXT_MAJOR_VERSION, 
         OPENGL_CONTEXT_MINOR_VERSION);
 
@@ -54,11 +54,14 @@ bool RenderDevice::Initialize(const Point2D& screenResolution, bool fullscreen, 
         std::max(screenResolution.y, MIN_SCREEN_HEIGHT)
     };
 
-    gConsole.LogMessage(eLogLevel_Info, "Screen resolution (%dx%d)", mScreenResolution.x, mScreenResolution.y);
+    gConsole.LogMessage(eLogLevel_Info, "Screen resolution (%dx%d) %s", 
+        mScreenResolution.x, 
+        mScreenResolution.y, 
+        (fullscreen ? "Fullscreen" : "Windowed"));
 
     // opengl params
     ::glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    ::glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    ::glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_ANY_PROFILE);
     ::glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, OPENGL_CONTEXT_MAJOR_VERSION);
     ::glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, OPENGL_CONTEXT_MINOR_VERSION);
     // setup window params
@@ -82,7 +85,7 @@ bool RenderDevice::Initialize(const Point2D& screenResolution, bool fullscreen, 
     cxx_assert(graphicsWindow);
     if (!graphicsWindow)
     {
-        gConsole.LogMessage(eLogLevel_Warning, "glfwCreateWindow failed");
+        gConsole.LogMessage(eLogLevel_Error, "glfwCreateWindow failed");
         ::glfwTerminate();
         return false;
     }
@@ -158,12 +161,15 @@ bool RenderDevice::Initialize(const Point2D& screenResolution, bool fullscreen, 
     // clear opengl errors
     ClearGLError();
 
-    // create global vertex array object
-    ::glGenVertexArrays(1, &mVaoHandle);
-    glCheckErrors();
+    if (GLEW_ARB_vertex_array_object)
+    {
+        // create global vertex array object
+        ::glGenVertexArrays(1, &mVaoHandle);
+        glCheckErrors();
 
-    ::glBindVertexArray(mVaoHandle);
-    glCheckErrors();
+        ::glBindVertexArray(mVaoHandle);
+        glCheckErrors();
+    }
 
     // setup viewport
     mViewport.Configure(mScreenResolution);
@@ -200,12 +206,15 @@ bool RenderDevice::Initialize(const Point2D& screenResolution, bool fullscreen, 
 
 void RenderDevice::Shutdown()
 {
-    // destroy vertex array object
-    ::glBindVertexArray(0);
-    glCheckErrors();
+    if (GLEW_ARB_vertex_array_object)
+    {
+        // destroy vertex array object
+        ::glBindVertexArray(0);
+        glCheckErrors();
 
-    ::glDeleteVertexArrays(1, &mVaoHandle);
-    glCheckErrors();
+        ::glDeleteVertexArrays(1, &mVaoHandle);
+        glCheckErrors();
+    }
 
     if (mGraphicsWindow) // shutdown glfw system
     {
@@ -256,13 +265,13 @@ bool RenderDevice::InitializeOGLExtensions()
     GLenum resultCode = ::glewInit();
     if (resultCode != GLEW_OK)
     {
-        gConsole.LogMessage(eLogLevel_Warning, "Could not initialize OpenGL extensions (%s)", ::glewGetErrorString(resultCode));
+        gConsole.LogMessage(eLogLevel_Error, "Could not initialize OpenGL extensions (%s)", ::glewGetErrorString(resultCode));
         return false;
     }
 
-    if (!GLEW_VERSION_3_2)
+    if (!GLEW_VERSION_3_1)
     {
-        gConsole.LogMessage(eLogLevel_Warning, "OpenGL 3.2 API is not available");
+        gConsole.LogMessage(eLogLevel_Error, "OpenGL 3.1 API is not available");
         return false;
     }
 

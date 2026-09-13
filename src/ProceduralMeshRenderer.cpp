@@ -24,24 +24,29 @@ void ProceduralMeshRenderer::Shutdown()
     mShaderProgram = nullptr;
 }
 
-void ProceduralMeshRenderer::BeginFrame(Camera& camera)
+void ProceduralMeshRenderer::BeginFrame()
 {
-    // prepare render program
-    mShaderProgram->SetViewProjectionMatrix(camera.mViewProjectionMatrix);
+    mFrameBatchCounter = 0;
 }
 
 void ProceduralMeshRenderer::EndFrame()
 {
 }
 
-void ProceduralMeshRenderer::BeginBatch()
+void ProceduralMeshRenderer::BeginBatch(Camera& camera)
 {
     mShaderProgram->BindProgram();
+
+    bool isFirstBatch = (mFrameBatchCounter == 0);
+    if (isFirstBatch)
+    {
+        mShaderProgram->SetViewProjectionMatrix(camera.mViewProjectionMatrix);
+    }
 }
 
 void ProceduralMeshRenderer::EndBatch()
 {
-    
+    ++mFrameBatchCounter;
 }
 
 void ProceduralMeshRenderer::RenderInstance(eRenderPass currentPass, ProceduralMeshObject& object)

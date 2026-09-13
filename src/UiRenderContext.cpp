@@ -99,9 +99,9 @@ void UiRenderContext::BeginFrame()
         (mScreenRect.x + mScreenRect.w) * 1.0f, 
         (mScreenRect.y + mScreenRect.h) * 1.0f, mScreenRect.y * 1.0f);
 
+    mShaderProgram->BindProgram();
     mShaderProgram->SetViewProjectionMatrix(mProjectionMatrix2D);
     mShaderProgram->SetTextureAlpha(mCurrentTextureIsA8);
-    mShaderProgram->BindProgram();
     // set scissor box
     gRenderDevice.SetScissorRect(mScreenRect);
 

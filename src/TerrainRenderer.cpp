@@ -111,11 +111,11 @@ void TerrainRenderer::Render(Camera& camera)
 {
     gRenderDevice.BindTexture2D(eTextureUnit_DiffuseMap1, mHighlightTilesTexture.get());
 
+    mShaderProgram->BindProgram();
     // setup constants
     static glm::mat4 indentMatrix(1.0f);
     mShaderProgram->SetViewProjectionMatrix(camera.mViewProjectionMatrix);
     mShaderProgram->SetModelMatrix(indentMatrix);
-    mShaderProgram->BindProgram();
 
     int sectorsDirty = 0;
     for (int iSectorY = 0; iSectorY < mSectorsY; ++iSectorY)

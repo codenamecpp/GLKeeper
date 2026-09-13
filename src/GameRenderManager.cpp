@@ -97,9 +97,9 @@ void GameRenderManager::RenderWorld(Camera& camera, Scene& scene, eSceneRenderLa
 {
     camera.ComputeMatricesAndFrustum(gRenderDevice.GetViewport());
 
-    mAnimatingMeshlRenderer.BeginFrame(camera);
-    mEnvironmentMeshRenderer.BeginFrame(camera);
-    mProceduralMeshRenderer.BeginFrame(camera);
+    mAnimatingMeshlRenderer.BeginFrame();
+    mEnvironmentMeshRenderer.BeginFrame();
+    mProceduralMeshRenderer.BeginFrame();
 
     if (renderLayer == eSceneRenderLayer_World)
     {
@@ -194,7 +194,7 @@ void GameRenderManager::RenderScene(Camera& camera, SceneRenderLists& renderList
             // process water lava meshes
             if (roller_it->mWaterLavaMesh)
             {
-                mEnvironmentMeshRenderer.BeginBatch();
+                mEnvironmentMeshRenderer.BeginBatch(camera);
                 do
                 {
                     if (!gDebug.mNoDrawWaterLava)
@@ -211,7 +211,7 @@ void GameRenderManager::RenderScene(Camera& camera, SceneRenderLists& renderList
             // process animated models
             if (roller_it->mAnimatingMesh)
             {
-                mAnimatingMeshlRenderer.BeginBatch();
+                mAnimatingMeshlRenderer.BeginBatch(camera);
                 do
                 {
                     mAnimatingMeshlRenderer.RenderInstance(currentPass, *roller_it->mAnimatingMesh);
@@ -225,7 +225,7 @@ void GameRenderManager::RenderScene(Camera& camera, SceneRenderLists& renderList
             // process procedural mesh objects
             if (roller_it->mProceduralMesh)
             {
-                mProceduralMeshRenderer.BeginBatch();
+                mProceduralMeshRenderer.BeginBatch(camera);
                 do
                 {
                     mProceduralMeshRenderer.RenderInstance(currentPass, *roller_it->mProceduralMesh);

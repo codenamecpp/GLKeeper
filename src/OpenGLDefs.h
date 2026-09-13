@@ -13,7 +13,7 @@
 
 // target opengl version code
 #define OPENGL_CONTEXT_MAJOR_VERSION 3
-#define OPENGL_CONTEXT_MINOR_VERSION 2
+#define OPENGL_CONTEXT_MINOR_VERSION 1
 
 // reset current opengl error code
 inline void ClearGLError()

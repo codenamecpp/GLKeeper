@@ -7,6 +7,22 @@ class GpuProgram: public cxx::noncopyable
 {
     friend class RenderDevice;
 
+private:
+
+    //////////////////////////////////////////////////////////////////////////
+
+    class ScopedBinder
+    {
+    public:
+        ScopedBinder(GpuProgram* program);
+        ~ScopedBinder();
+    private:
+        GpuProgram* mPreviousProgram = nullptr;
+        GpuProgram* mProgram = nullptr;
+    };
+
+    //////////////////////////////////////////////////////////////////////////
+
 public:
     GpuProgram();
     ~GpuProgram();

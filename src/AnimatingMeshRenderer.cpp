@@ -21,23 +21,29 @@ void AnimatingMeshRenderer::Shutdown()
 {
 }
 
-void AnimatingMeshRenderer::BeginFrame(Camera& camera)
-{    
-    mShaderProgram->SetViewProjectionMatrix(camera.mViewProjectionMatrix);
+void AnimatingMeshRenderer::BeginFrame()
+{
+    mFrameBatchCounter = 0;
 }
 
 void AnimatingMeshRenderer::EndFrame()
 {
 }
 
-void AnimatingMeshRenderer::BeginBatch()
+void AnimatingMeshRenderer::BeginBatch(Camera& camera)
 {
     mShaderProgram->BindProgram();
+
+    bool isFirstBatch = (mFrameBatchCounter == 0);
+    if (isFirstBatch)
+    {
+        mShaderProgram->SetViewProjectionMatrix(camera.mViewProjectionMatrix);
+    }
 }
 
 void AnimatingMeshRenderer::EndBatch()
 {
-
+    ++mFrameBatchCounter;
 }
 
 void AnimatingMeshRenderer::RenderInstance(eRenderPass currentPass, AnimatingMeshObject& object)

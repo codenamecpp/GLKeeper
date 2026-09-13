@@ -13,14 +13,16 @@ public:
     bool Initialize();
     void Shutdown();
 
-    void BeginFrame(Camera& camera);
+    void BeginFrame();
     void EndFrame();
 
-    void BeginBatch();
+    void BeginBatch(Camera& camera);
     void EndBatch();
 
     void RenderInstance(eRenderPass currentPass, ProceduralMeshObject& object);
 
 private:
     ShaderProgram_StaticMesh* mShaderProgram = nullptr;
+
+    size_t mFrameBatchCounter {};
 };

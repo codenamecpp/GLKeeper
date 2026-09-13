@@ -15,10 +15,10 @@ public:
     bool Initialize();
     void Shutdown();
 
-    void BeginFrame(Camera& camera);
+    void BeginFrame();
     void EndFrame();
 
-    void BeginBatch();
+    void BeginBatch(Camera& camera);
     void EndBatch();
 
     void RenderInstance(eRenderPass renderPass, EnvironmentMeshObject& surface);
@@ -39,4 +39,6 @@ private:
     WaterFrames mWaterFrames;
 
     ShaderProgram_WaterLava* mShaderProgram = nullptr;
+
+    size_t mFrameBatchCounter {};
 };
