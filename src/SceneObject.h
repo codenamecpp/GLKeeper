@@ -15,7 +15,7 @@ public:
     Color32 mDebugColor; // debug draw tint
 
 public:
-    SceneObject();
+    SceneObject(eSceneObjectType objectTypeId);
 
     virtual ~SceneObject();
 
@@ -83,14 +83,16 @@ public:
     inline const glm::vec3& GetUpward() const { return mUpward; }
 
     // get visibility layers
-    inline SceneRenderLayerSet& GetRenderLayers() { return mRenderLayers; }
-    inline const SceneRenderLayerSet& GetRenderLayers() const { return mRenderLayers; }
+    inline RenderLayerSet& GetRenderLayers() { return mRenderLayers; }
+    inline const RenderLayerSet& GetRenderLayers() const { return mRenderLayers; }
 
     inline const EntityHandle& GetOwnerEntity() const { return mOwnerEntity; }
     inline void SetOwnerEntity(EntityHandle entityHandle)
     {
         mOwnerEntity = entityHandle;
     }
+
+    inline eSceneObjectType GetSceneObjectTypeId() const { return mSceneObjectType; }
 
 public:
     // pool
@@ -103,6 +105,8 @@ protected:
 
 protected:
     Scene* mScene = nullptr;
+
+    eSceneObjectType mSceneObjectType {};
 
     // current transformations
     glm::vec3 mRight; // direction vector along x axis, should be normalized
@@ -118,7 +122,7 @@ protected:
 
     EntityHandle mOwnerEntity {};
     
-    SceneRenderLayerSet mRenderLayers {eSceneRenderLayer_World};
+    RenderLayerSet mRenderLayers {eRenderLayer_World};
 
     // flags
     bool mIsObjectActive : 1;

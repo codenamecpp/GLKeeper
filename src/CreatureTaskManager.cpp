@@ -10,6 +10,7 @@
 #include "RoomManager.h"
 #include "GameSession.h"
 #include "GameMap.h"
+#include "QueryService.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -84,6 +85,7 @@ void CreatureTaskManager::ClearWorld()
     }
     mTaggedTileStateChanges.clear();
     mTileTerrainTypeChanges.clear();
+    mTileOwnershipChanges.clear();
 }
 
 bool CreatureTaskManager::IsWorkerJob(eCreatureJob jobType) const
@@ -490,6 +492,22 @@ void CreatureTaskManager::OnTileTerrainTypeChanged(MapTile* mapTile)
     }
 }
 
+void CreatureTaskManager::OnTileOwnershipChanged(MapTile* mapTile, ePlayerID previousOwnerId)
+{
+    cxx_assert(mapTile);
+    if (mapTile == nullptr)
+        return;
+
+    if (cxx::contains_if(mTileOwnershipChanges, [previousOwnerId, mapTile](const auto& roller)
+        {
+            return (roller.first == previousOwnerId) && (roller.second == mapTile);
+        }))
+    {
+        return;
+    }
+        mTileOwnershipChanges.emplace_back(previousOwnerId, mapTile);
+}
+
 void CreatureTaskManager::ProcessTileTerrainTypeChanges()
 {
     if (mTileTerrainTypeChanges.empty())
@@ -616,7 +634,7 @@ CreatureTaskPtr CreatureTaskManager::GetCarryGoldToTreasuryTask(Creature* assign
         return nullptr;
 
     cxx::temp_vector<EntityHandle> roomEntities;
-    if (!gGameWorld.QueryAccessibleMoneyStorageRoomsForDeposit(assignee->GetOwnerId(), assignee->GetOwnHandle(), 0, roomEntities))
+    if (!gQueryService.QueryAccessibleMoneyStorageRoomsForDeposit(assignee->GetOwnerId(), assignee->GetOwnHandle(), 0, roomEntities))
         return nullptr;
 
     const Point2D creatureTile = assignee->GetTilePosition();
@@ -785,4 +803,37 @@ void CreatureTaskManager::ProcessChanges()
 {
     ProcessTileTaggedStateChanges();
     ProcessTileTerrainTypeChanges();
+    ProcessTileOwnershipChanges();
+}
+
+void CreatureTaskManager::ProcessTileOwnershipChanges()
+{
+    if (mTileOwnershipChanges.empty())
+        return;
+
+    for (const auto& roller: mTileOwnershipChanges)
+    {
+        MapTile* mapTile = roller.second;
+        for (const Player& playersRoller: gGameSession.GetPlayers())
+        {
+            if (!playersRoller.IsKeeperPlayer())
+                continue;
+
+            const ePlayerID playerId = playersRoller.GetPlayerId();
+            UpdateReinforceWallTasks(mapTile, playerId);
+            UpdateClaimTerritoryTasks(mapTile, playerId);
+
+            // process neighbour tiles
+            for (eDirection dirsRoller: gStraightDirections)
+            {
+                MapTile* neighbourTile = mapTile->mNeighbours[dirsRoller];
+                if (neighbourTile == nullptr)
+                    continue;
+
+                UpdateReinforceWallTasks(neighbourTile, playerId);
+                UpdateClaimTerritoryTasks(neighbourTile, playerId);
+            }
+        }
+    }
+    mTileOwnershipChanges.clear();
 }

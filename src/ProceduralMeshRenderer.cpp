@@ -49,8 +49,10 @@ void ProceduralMeshRenderer::EndBatch()
     ++mFrameBatchCounter;
 }
 
-void ProceduralMeshRenderer::RenderInstance(eRenderPass currentPass, ProceduralMeshObject& object)
+void ProceduralMeshRenderer::RenderInstance(eRenderPass currentPass, SceneObject* objectptr)
 {
+    ProceduralMeshObject& object = *(ProceduralMeshObject*)objectptr;
+
     // validate render pass
     cxx_assert(object.mRenderMaterial.IsOpaque() ? (currentPass == eRenderPass_Opaque) : (currentPass == eRenderPass_Translucent));
 

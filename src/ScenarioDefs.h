@@ -381,6 +381,7 @@ public:
     int mOrderInEditor;
     GameObjectClassId mObjectIds[8];
     TerrainTypeId mTerrainType;
+    TerrainDefinition* mTerrainDefinition = nullptr;
     eRoomTileConstruction mTileConstruction;
     std::string mSoundCategory;
     int mRecommendedSizeX;

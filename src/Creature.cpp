@@ -731,6 +731,8 @@ bool Creature::DropOn(const glm::vec2& position)
 
     SetPosition(glm::vec3{position.x, dropHeight, position.y});
 
+    mLastAssignedJob = {};
+
     ChangeState(eCreatureState_Idle);
     return true;
 }

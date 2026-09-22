@@ -48,7 +48,7 @@ public:
     glm::vec2 mProjectionOffset;
     glm::mat4 mProjectionOffsetMatrix;
 
-    SceneRenderLayerSet mRenderLayers {eSceneRenderLayer_World};
+    RenderLayerSet mRenderLayers {eRenderLayer_World};
 
 public:
     Camera();

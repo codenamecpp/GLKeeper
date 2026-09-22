@@ -84,12 +84,11 @@ void UiCursor::InitCursorState(eCursorState stateId, const std::string& textureN
 
     CursorState& cursorState = mStates[stateId];
 
-    TextureManager::LoadParams loadParams;
-    loadParams.mConvertNPOT = true;
-    cursorState.mTexture = gTextureManager.GetTexture(textureName, loadParams);
+    cursorState.mTexture = gTextureManager.GetTexture(textureName, eTextureBacking_None);
     
     cxx_assert(frameCount > 0);
-    const Point2D imageSize = cursorState.mTexture->GetImageDimensions();
+    const TextureRegion& textureRegion = cursorState.mTexture->GetTextureRegion();
+    const Point2D imageSize = textureRegion.mRect.GetSize();
     const Point2D frameSize = { imageSize.x, imageSize.y / frameCount };
 
     cursorState.mAnimationFrames.clear();

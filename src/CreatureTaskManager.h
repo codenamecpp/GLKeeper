@@ -45,6 +45,7 @@ public:
 
     void OnTileTaggedStateChanged(MapTile* mapTile, ePlayerID playerId);
     void OnTileTerrainTypeChanged(MapTile* mapTile);
+    void OnTileOwnershipChanged(MapTile* mapTile, ePlayerID previousOwnerId);
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -62,6 +63,8 @@ private:
     void ProcessChanges();
     void ProcessTileTerrainTypeChanges();
     void ProcessTileTaggedStateChanges();
+    void ProcessTileOwnershipChanges();
+
     void UpdateTaggedTileTasks(MapTile* mapTile, ePlayerID playerId);
     void RemoveTaggedTileTasks(MapTile* mapTile, ePlayerID playerId);
 
@@ -82,6 +85,7 @@ private:
 
     std::vector<std::pair<ePlayerID, MapTile*>> mTaggedTileStateChanges;
     std::vector<MapTile*> mTileTerrainTypeChanges;
+    std::vector<std::pair<ePlayerID, MapTile*>> mTileOwnershipChanges;
 
     // some tasks allow up to 3 workers per tile face so each one gets its own slot
     struct WorkerSlot

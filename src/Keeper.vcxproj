@@ -163,6 +163,8 @@
     <ClInclude Include="InHandThingView.h" />
     <ClInclude Include="InteractionService.h" />
     <ClInclude Include="LevelsDatabase.h" />
+    <ClInclude Include="QueryService.h" />
+    <ClInclude Include="TextureAtlas.h" />
     <ClInclude Include="UiCompositeButton.h" />
     <ClInclude Include="UiCursor.h" />
     <ClInclude Include="UiScrollBar.h" />
@@ -362,6 +364,8 @@
     <ClCompile Include="InHandThingView.cpp" />
     <ClCompile Include="InteractionService.cpp" />
     <ClCompile Include="LevelsDatabase.cpp" />
+    <ClCompile Include="QueryService.cpp" />
+    <ClCompile Include="TextureAtlas.cpp" />
     <ClCompile Include="UiCompositeButton.cpp" />
     <ClCompile Include="UiCursor.cpp" />
     <ClCompile Include="UiScrollBar.cpp" />

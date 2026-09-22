@@ -32,6 +32,11 @@ bool RenderDevice::Initialize(const Point2D& screenResolution, bool fullscreen, 
     cxx_assert(mGraphicsWindow == nullptr);
     cxx_assert(mGraphicsMonitor == nullptr);
 
+    ::glfwSetErrorCallback([](int errorCode, const char* errorString)
+        {
+            gConsole.LogMessage(eLogLevel_Error, "GLFW error %d: '%s'", errorString);
+        });
+
     if (::glfwInit() == GL_FALSE)
     {
         gConsole.LogMessage(eLogLevel_Error, "GLFW initialization failed");
@@ -224,6 +229,8 @@ void RenderDevice::Shutdown()
         mGraphicsMonitor = nullptr;
         mGraphicsWindow = nullptr;
     }
+
+    ::glfwSetErrorCallback(nullptr);
 }
 
 void RenderDevice::EnableVSync(bool vsyncEnabled)
@@ -472,69 +479,9 @@ void RenderDevice::SetScissorRect(const Rect2D& sourceRectangle)
     glCheckErrors();
 }
 
-std::unique_ptr<GpuTexture2D> RenderDevice::CreateTexture2D(const BitmapImage& theSourceImage,
-    eTextureFiltering theFiltering, eTextureRepeating theRepeating)
+std::unique_ptr<GpuTexture2D> RenderDevice::CreateTexture2D()
 {
-    bool isGoodSource = theSourceImage.HasContent() && theSourceImage.IsPOT();
-    cxx_assert(isGoodSource);
-    if (!isGoodSource)
-        return nullptr;
-
-    // setup mipmaps info
-    std::vector<Texture2DMip> mips;
-    mips.reserve(theSourceImage.GetMipsCount());
-    for (int imipmap = 0; imipmap < theSourceImage.GetMipsCount(); ++imipmap)
-    {
-        Point2D mipDims = theSourceImage.GetDimensions(imipmap);
-
-        Texture2DMip& textureMip = mips.emplace_back();
-        textureMip.mSizex = mipDims.x;
-        textureMip.mSizey = mipDims.y;
-        textureMip.mPixelsData = theSourceImage.GetMipPixels(imipmap);
-    }
-
-    std::unique_ptr<GpuTexture2D> texture2D = std::make_unique<GpuTexture2D>();
-    if (texture2D->Create(theSourceImage.GetPixelFormat(), theSourceImage.GetMipsCount(), mips.data()))
-    {
-        texture2D->SetSamplerState(theFiltering, theRepeating);
-    }
-    else
-    {
-        // destroy texture on load error
-        texture2D.reset();
-    }
-
-    return std::move(texture2D);
-}
-
-std::unique_ptr<GpuTexture2D> RenderDevice::CreateTexture2D(const Point2D& textureDims, ePixelFormat pixelFormat, const void* pixeldata, 
-    eTextureFiltering filter, 
-    eTextureRepeating repeat)
-{
-    cxx_assert(cxx::is_pot(textureDims.x) && cxx::is_pot(textureDims.y));
-    if ((textureDims.x <= 0) || (textureDims.y <= 0))
-    {
-        cxx_assert(false);
-        return nullptr;
-    }
-    cxx_assert(pixelFormat != ePixelFormat_Null);
-    if (pixelFormat == ePixelFormat_Null)
-    {
-        return nullptr;
-    }
-
-    std::unique_ptr<GpuTexture2D> texture2D = std::make_unique<GpuTexture2D>();
-    if (texture2D->Create(pixelFormat, textureDims, pixeldata))
-    {
-        texture2D->SetSamplerState(filter, repeat);
-    }
-    else
-    {
-        // destroy texture on load error
-        texture2D.reset();
-    }
-
-    return std::move(texture2D);
+    return std::make_unique<GpuTexture2D>();
 }
 
 std::unique_ptr<GpuProgram> RenderDevice::CreateShaderProgram(const std::string& vertShaderSource, const std::string& fragShaderSource)

@@ -46,8 +46,10 @@ void AnimatingMeshRenderer::EndBatch()
     ++mFrameBatchCounter;
 }
 
-void AnimatingMeshRenderer::RenderInstance(eRenderPass currentPass, AnimatingMeshObject& object)
+void AnimatingMeshRenderer::RenderInstance(eRenderPass currentPass, SceneObject* objectptr)
 {
+    AnimatingMeshObject& object = *(AnimatingMeshObject*)objectptr;
+
     MeshAsset* meshAsset = object.mMeshAsset;
     cxx_assert(meshAsset);
 

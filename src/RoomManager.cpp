@@ -69,7 +69,7 @@ EntityHandle RoomManager::CreateScenarioRoom(const ScenarioRoomThing& roomThing)
     
     if (Room* roomInstance = GetRoomPtr(roomHandle))
     {
-        // todo: initial health
+        // todo: startup params
     }
     return roomHandle;
 }

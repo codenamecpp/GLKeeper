@@ -37,6 +37,8 @@ enum eDirection
     eDirection_COUNT
 };
 
+using DirectionEnumSet = EnumSet<eDirection_COUNT>;
+
 namespace
 {
     // directions in clockwise order
@@ -149,7 +151,7 @@ enum eTileFace
     eTileFace_COUNT
 };
 
-using TileFaceIdSet = EnumSet<eTileFace, uint8_t>;
+using TileFaceIdSet = EnumSet<eTileFace_COUNT>;
 
 namespace
 {

@@ -62,6 +62,27 @@ void MoneyStorageRoomController::PostReconfigureRoom()
     ScanForLooseGold();
 }
 
+void MoneyStorageRoomController::UpdateLogic(float stepDeltaTime)
+{
+    StorageRoomController::UpdateLogic(stepDeltaTime);
+    
+    ScanForLooseGold(); // todo: optimize
+}
+
+void MoneyStorageRoomController::RoomOwnershipChanged(ePlayerID previousOwnerId, ePlayerID ownerId)
+{
+    StorageRoomController::RoomOwnershipChanged(previousOwnerId, ownerId);
+
+    cxx_assert(previousOwnerId != ownerId);
+
+    if (mMoneyComponent)
+    {
+        const long moneyToTransfer = mMoneyComponent->mAmount;
+        gEconomyService.StoredMoneyAmountChanged(previousOwnerId, GetRoom().GetOwnHandle(), -moneyToTransfer);
+        gEconomyService.StoredMoneyAmountChanged(ownerId, GetRoom().GetOwnHandle(), moneyToTransfer);
+    }
+}
+
 void MoneyStorageRoomController::OnRecycle()
 {
     StorageRoomController::OnRecycle();
@@ -123,10 +144,12 @@ long MoneyStorageRoomController::DisposeGold(long goldAmount)
     {
         GameObject* objectInstance = gGameObjectManager.GetObjectPtr(storageSlot.mObjectHandle);
         cxx_assert(objectInstance);
-        if (objectInstance == nullptr) continue;
+        if (objectInstance == nullptr) 
+            continue;
 
         auto* storageCapability = objectInstance->GetCapability<GoldContainerCapability>();
-        if (storageCapability == nullptr) continue;
+        if (storageCapability == nullptr) 
+            continue;
 
         // trying use chest
         long removedFromChest = storageCapability->DisposeGold(goldAmount);
@@ -141,7 +164,8 @@ long MoneyStorageRoomController::DisposeGold(long goldAmount)
             releaseObjects.push_back(storageSlot.mObjectHandle);
         }
         // done?
-        if (goldAmount <= 0) break;
+        if (goldAmount <= 0) 
+            break;
     }
 
     // release objects
@@ -212,7 +236,8 @@ void MoneyStorageRoomController::StoredObjectUnassigned(EntityHandle entityHandl
     // delete chest and create gold pile
 
     GameObject* gameObject = gGameObjectManager.GetObjectPtr(entityHandle);
-    if (gameObject == nullptr) return;
+    if (gameObject == nullptr) 
+        return;
 
     if (gameObject->GetClassId() == GameObjectClassId_GoldPile) 
         return;
@@ -255,7 +280,8 @@ void MoneyStorageRoomController::SetObjectPlacementToTileCenter(EntityHandle ent
     GameObject* gameObject = gGameObjectManager.GetObjectPtr(entityHandle);
     cxx_assert(gameObject);
 
-    if (gameObject == nullptr) return;
+    if (gameObject == nullptr) 
+        return;
 
     glm::vec3 objectPosition = MapUtils::ComputeTileCenter(tileLocation);
     gameObject->SetPosition(objectPosition);
@@ -306,15 +332,14 @@ void MoneyStorageRoomController::ScanForLooseGold()
     {
         // ignore inactive / owned
         if (!gameObject->ExistsOnMap() || gameObject->GetParentRoom().IsRoom()) 
-        {
             continue;
-        }
 
         // whether object is on one of storage tiles
         Point2D mapLocation = gameObject->GetTilePosition();
 
         RoomStorageTile* storageTile = GetRoomStorageTileFromLocation(mapLocation);
-        if (storageTile == nullptr) continue;
+        if (storageTile == nullptr)
+            continue;
 
         auto* goldContainer = gameObject->GetCapability<GoldContainerCapability>();
         cxx_assert(goldContainer);
@@ -344,7 +369,8 @@ void MoneyStorageRoomController::ScanForLooseGold()
         }
 
         // done?
-        if (GetFreeStorageSpace() == 0) break;
+        if (GetFreeStorageSpace() == 0) 
+            break;
     }
 
     // update stored gold amount
@@ -381,7 +407,8 @@ long MoneyStorageRoomController::StoreGoldOnStorageTile(RoomStorageTile& storage
                 goldAmount -= storedAmount;
             }
             // done?
-            if (goldAmount <= 0) break;
+            if (goldAmount <= 0) 
+                break;
         }
 
         // create additional chest if needed
@@ -391,7 +418,8 @@ long MoneyStorageRoomController::StoreGoldOnStorageTile(RoomStorageTile& storage
             {
                 // check free space on storage tile
                 bool hasFreeStorageSpace = storageTile.mObjects.size() < GetMaxObjectsPerStorageTile();
-                if (!hasFreeStorageSpace) break;
+                if (!hasFreeStorageSpace) 
+                    break;
 
                 long storedAmount = std::min(mMoneyStorageMaxGoldPerTile, goldAmount);
                 EntityHandle chestObject = gGameObjectManager.CreateGoldChest(storedAmount, mMoneyStorageMaxGoldPerTile);
@@ -440,7 +468,8 @@ long MoneyStorageRoomController::DistributeGoldBetweenChests(long goldAmount, bo
             goldAmount -= storedAmount;
         }
         // done?
-        if (goldAmount <= 0) break;
+        if (goldAmount <= 0) 
+            break;
     }
 
     // create additional chests if needed
@@ -449,7 +478,8 @@ long MoneyStorageRoomController::DistributeGoldBetweenChests(long goldAmount, bo
         while (goldAmount > 0)
         {
             RoomStorageTile* storageTile = GetFirstAvailableStorageTile();
-            if (storageTile == nullptr) break; // no free storage space
+            if (storageTile == nullptr) 
+                break; // no free storage space
 
             long storedAmount = StoreGoldOnStorageTile(*storageTile, goldAmount, canCreateAdditionalChests);
             if (storedAmount > 0)

@@ -14,10 +14,7 @@ bool TitleScreen::LoadContent()
     if (IsHierarchyLoaded())
         return true;
 
-    TextureManager::LoadParams params;
-    params.mConvertNPOT = true;
-    params.mInitDefaultOnFail = false;
-    mBackgroundTexture = gTextureManager.GetTexture("Titlescreen.png", params);
+    mBackgroundTexture = gTextureManager.GetTexture("Titlescreen.png", eTextureBacking_None);
     return true;
 }
 
@@ -41,7 +38,8 @@ void TitleScreen::RenderFrame(UiRenderContext& renderContext)
 
     if (mBackgroundTexture)
     {
-        Rect2D srcRect = mBackgroundTexture->GetImageRect();
+        const TextureRegion& textureRegion = mBackgroundTexture->GetTextureRegion();
+        const Rect2D srcRect {0, 0, textureRegion.mRect.w, textureRegion.mRect.h};
 
         // aspect ratio
         float ratio_w = 1.0f * screenRect.w / srcRect.w;

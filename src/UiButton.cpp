@@ -45,9 +45,7 @@ void UiButton::SetButtonStatePicture(eUiButtonState uiButtonState, const std::st
 
     if (!pictureName.empty())
     {
-        TextureManager::LoadParams params;
-        params.mConvertNPOT = true; // for ui textures always perform resize
-        texture = gTextureManager.GetTexture(pictureName, params);
+        texture = gTextureManager.GetTexture(pictureName, eTextureBacking_Default);
         cxx_assert(texture);
     }
 

@@ -18,6 +18,8 @@ public:
     void DespawnInstance() override;
     void PostRearrangeObjects() override;
     void PostReconfigureRoom() override;
+    void UpdateLogic(float stepDeltaTime) override;
+    void RoomOwnershipChanged(ePlayerID previousOwnerId, ePlayerID ownerId) override;
 
     // pool
     void OnRecycle() override;

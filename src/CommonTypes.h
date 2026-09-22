@@ -317,85 +317,80 @@ inline Rect2D FitAspectContain(const Rect2D& src, const Rect2D& dst)
 
 //////////////////////////////////////////////////////////////////////////
 
-template<typename TEnumType, typename TBitmaskType = uint32_t>
+template<auto Enum_COUNT>
 struct EnumSet
 {
+    static_assert(std::is_enum_v<decltype(Enum_COUNT)>, "Enum_COUNT must be an enum!");
+
 public:
-    using EnumType = TEnumType;
-    using EnumUnderlyingType = std::underlying_type_t<EnumType>;
-    using BitmaskType = TBitmaskType;
+    using EnumType = std::decay_t<decltype(Enum_COUNT)>;
 
 public:
     constexpr EnumSet() = default;
-    constexpr EnumSet(EnumType enumValue)
+    constexpr EnumSet(EnumType enumValue) 
     {
-        Set(enumValue);
+        Include(enumValue);
     }
-    constexpr EnumSet(std::initializer_list<EnumType> enumValues)
+    constexpr EnumSet(std::initializer_list<EnumType> enumValues) 
     {
-        Set(enumValues);
-    }
-    constexpr void Set(EnumType enumValue)
-    {
-        mBits = ToBit(enumValue);
-    }
-    constexpr void Set(std::initializer_list<EnumType> enumValues)
-    {
-        mBits = 0;
-        for (EnumType roller: enumValues)
+        for (EnumType val : enumValues) 
         {
-            mBits |= ToBit(roller);
+            Include(val);
         }
     }
-    constexpr void Clear()
+    constexpr EnumSet& operator = (const EnumSet& other) { mBitset = other.mBitset; return *this; }
+    constexpr EnumSet& operator = (EnumType enumValue)
     {
-        mBits = 0;
+        return Assing(enumValue);
     }
-    constexpr bool Empty() const { return mBits == 0; }
-    constexpr bool Contains(EnumType enumValue) const { return (mBits & ToBit(enumValue)) != 0; }
-    constexpr bool HasAny(const EnumSet& other) const
-    {
-        return (mBits & other.mBits) > 0;
+    constexpr EnumSet& Assing(EnumType enumValue) 
+    {  
+        mBitset.reset().set(enumValue);
+        return *this;
     }
-    constexpr bool HasAll(const EnumSet& other) const
+    constexpr EnumSet& Set(EnumType enumValue, bool flag)
     {
-        return (mBits & other.mBits) == mBits;
+        mBitset.set(enumValue, flag);
+        return *this;
+    }
+    constexpr bool Empty() const { return mBitset.none(); }
+    constexpr bool Contains(EnumType enumValue) const 
+    { 
+        return mBitset.test(static_cast<std::size_t>(enumValue)); 
+    }
+    constexpr bool HasAny(const EnumSet& other) const { return (mBitset & other.mBitset).any(); }
+    constexpr bool HasAll(const EnumSet& other) const { return (mBitset & other.mBitset) == other.mBitset; }
+
+    constexpr EnumSet& Clear() { mBitset.reset(); return *this; }
+    constexpr EnumSet& Include(EnumType enumValue) 
+    { 
+        mBitset.set(static_cast<std::size_t>(enumValue), true); 
+        return *this; 
+    }
+    constexpr EnumSet& Exclude(EnumType enumValue) 
+    { 
+        mBitset.set(static_cast<std::size_t>(enumValue), false); 
+        return *this; 
     }
 
-    constexpr EnumSet& Change(EnumType enumValue, bool state)
-    {
-        return state ? Include(enumValue) : Exclude(enumValue);
-    }
-    constexpr EnumSet& Include(EnumType enumValue) { mBits |= ToBit(enumValue); return *this; }
-    constexpr EnumSet& Exclude(EnumType enumValue) { mBits &= ~ToBit(enumValue); return *this; }
+    constexpr EnumSet operator | (const EnumSet& other) const { return EnumSet{mBitset | other.mBitset}; }
+    constexpr EnumSet operator & (const EnumSet& other) const { return EnumSet{mBitset & other.mBitset}; }
 
-    constexpr EnumSet operator | (EnumType enumValue) const { return EnumSet{mBits | ToBit(enumValue)}; }
-    constexpr EnumSet operator & (EnumType enumValue) const { return EnumSet{mBits & ToBit(enumValue)}; }
-    constexpr EnumSet operator | (const EnumSet& other) const { return EnumSet{mBits | other.mBits}; }
-    constexpr EnumSet operator & (const EnumSet& other) const { return EnumSet{mBits & other.mBits}; }
+    constexpr EnumSet& operator |= (EnumType enumValue) { return Include(enumValue); }
+    constexpr EnumSet& operator |= (const EnumSet& other) { mBitset |= other.mBitset; return *this; }
+    constexpr EnumSet& operator &= (const EnumSet& other) { mBitset &= other.mBitset; return *this; }
 
-    constexpr EnumSet& operator |= (EnumType enumValue) { mBits |= ToBit(enumValue); return *this; }
-    constexpr EnumSet& operator &= (EnumType enumValue) { mBits &= ToBit(enumValue); return *this; }
-    constexpr EnumSet& operator |= (const EnumSet& other) { mBits |= other.mBits; return *this; }
-    constexpr EnumSet& operator &= (const EnumSet& other) { mBits &= other.mBits; return *this; }
+    constexpr EnumSet operator ~() const { return EnumSet{~mBitset}; }
 
-    constexpr bool operator == (const EnumSet& other) const { return mBits == other.mBits; }
+    constexpr bool operator == (const EnumSet& other) const { return mBitset == other.mBitset; }
     constexpr bool operator != (const EnumSet& other) const { return !(*this == other); }
-
-    constexpr EnumSet operator ~ () const { return EnumSet{~mBits}; }
-
 private:
-    constexpr explicit EnumSet(BitmaskType rawBits)
-        : mBits(rawBits)
+    explicit constexpr EnumSet(const std::bitset<static_cast<std::size_t>(Enum_COUNT)>& bitset)
+        : mBitset(bitset) 
     {
     }
-    constexpr static BitmaskType ToBit(EnumType enumValue)
-    {
-        cxx_assert(enumValue < sizeof(BitmaskType) * 8);
-        return static_cast<BitmaskType>(1) << static_cast<EnumUnderlyingType>(enumValue);
-    }
 private:
-    BitmaskType mBits {};
+    std::bitset<static_cast<std::size_t>(Enum_COUNT)> mBitset;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -422,7 +417,8 @@ namespace cxx
     template<typename T> using temp_vector = std::pmr::vector<T>;
     template<typename T> using temp_set = std::pmr::set<T>;
     template<typename T> using temp_list = std::pmr::list<T>;
-    template<typename TKey, typename TValue> using temp_map = std::pmr::map<TKey, TValue>;
+    template<typename TKey, typename TValue, typename TLess = std::less<TKey>> 
+    using temp_map = std::pmr::map<TKey, TValue, TLess>;
 
     // helpers
 

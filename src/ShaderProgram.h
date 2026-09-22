@@ -83,6 +83,7 @@ protected:
     // common material uniforms
     GpuVariableLocation mGpuUniform_MaterialOpacity = GpuLocation_Null;
     GpuVariableLocation mGpuUniform_MaterialBaseColor = GpuLocation_Null;
+    GpuVariableLocation gGpuUniform_DiffuseTexcoordsRemap = GpuLocation_Null;
 
 private:
     std::string mProgramName;

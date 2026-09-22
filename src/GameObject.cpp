@@ -376,7 +376,9 @@ void GameObject::SetHighlighted(bool isHighlighted)
 
 void GameObject::ParentRoomChanged(EntityHandle roomHandle)
 {
-    if (mParentRoom == roomHandle) return;
+    if (mParentRoom == roomHandle) 
+        return;
+
     if (roomHandle && !roomHandle.IsRoom())
     {
         cxx_assert(false);

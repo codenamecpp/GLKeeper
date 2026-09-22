@@ -44,6 +44,72 @@ public:
         mPoints[3].mPosition.y  = mPoints[0].mPosition.y;
     }
 
+    inline void BuildTextureQuad(const TextureRegion& parentRegion, const Rect2D& rcSrc, const Rect2D& rcDest, Color32 theColor)
+    {
+        // setup quad vertices in specific order
+        mPoints[0].mColor       = theColor;
+        mPoints[0].mPosition.x  = rcDest.x * 1.0f;
+        mPoints[0].mPosition.y  = rcDest.y * 1.0f;
+        mPoints[1].mColor       = theColor;
+        mPoints[1].mPosition.x  = mPoints[0].mPosition.x;
+        mPoints[1].mPosition.y  = (rcDest.y + rcDest.h) * 1.0f;
+        mPoints[2].mColor       = theColor;
+        mPoints[2].mPosition.x  = (rcDest.x + rcDest.w) * 1.0f;
+        mPoints[2].mPosition.y  = mPoints[1].mPosition.y;
+        mPoints[3].mColor       = theColor;
+        mPoints[3].mPosition.x  = mPoints[2].mPosition.x;
+        mPoints[3].mPosition.y  = mPoints[0].mPosition.y;
+
+        // texcoords
+
+        cxx_assert(parentRegion.mRect.w > 0);
+        cxx_assert(parentRegion.mRect.h > 0);
+
+        const float invW = 1.0f / parentRegion.mRect.w;
+        const float invH = 1.0f / parentRegion.mRect.h;
+
+        const glm::vec2 rel0 = {rcSrc.x * invW, rcSrc.y * invH};
+        const glm::vec2 rel1 {
+            (rcSrc.x + rcSrc.w) * invW,
+            (rcSrc.y + rcSrc.h) * invH
+        };
+        // remap
+        const glm::vec2 uv0 = parentRegion.mUvMin + rel0 * (parentRegion.mUvMax - parentRegion.mUvMin);
+        const glm::vec2 uv1 = parentRegion.mUvMin + rel1 * (parentRegion.mUvMax - parentRegion.mUvMin);
+
+        mPoints[0].mTexcoord    = uv0;
+        mPoints[1].mTexcoord.x  = uv0.x;
+        mPoints[1].mTexcoord.y  = uv1.y;
+        mPoints[2].mTexcoord    = uv1;
+        mPoints[3].mTexcoord.x  = uv1.x;
+        mPoints[3].mTexcoord.y  = uv0.y;
+    }
+
+    inline void BuildTextureQuad(const TextureRegion& parentRegion, const Rect2D& rcDest, Color32 theColor)
+    {
+        // setup quad vertices in specific order
+        mPoints[0].mColor       = theColor;
+        mPoints[0].mPosition.x  = rcDest.x * 1.0f;
+        mPoints[0].mPosition.y  = rcDest.y * 1.0f;
+        mPoints[1].mColor       = theColor;
+        mPoints[1].mPosition.x  = mPoints[0].mPosition.x;
+        mPoints[1].mPosition.y  = (rcDest.y + rcDest.h) * 1.0f;
+        mPoints[2].mColor       = theColor;
+        mPoints[2].mPosition.x  = (rcDest.x + rcDest.w) * 1.0f;
+        mPoints[2].mPosition.y  = mPoints[1].mPosition.y;
+        mPoints[3].mColor       = theColor;
+        mPoints[3].mPosition.x  = mPoints[2].mPosition.x;
+        mPoints[3].mPosition.y  = mPoints[0].mPosition.y;
+
+        // texcoords
+        mPoints[0].mTexcoord    = parentRegion.mUvMin;
+        mPoints[1].mTexcoord.x  = parentRegion.mUvMin.x;
+        mPoints[1].mTexcoord.y  = parentRegion.mUvMax.y;
+        mPoints[2].mTexcoord    = parentRegion.mUvMax;
+        mPoints[3].mTexcoord.x  = parentRegion.mUvMax.x;
+        mPoints[3].mTexcoord.y  = parentRegion.mUvMin.y;
+    }
+
     inline void RotateAroundCenter(cxx::angle_t rotationAngle)
     {
         glm::vec2 center {0.0f, 0.0f};

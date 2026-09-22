@@ -36,19 +36,17 @@ public:
     // get frame statistics
     const WorldStatistics& GetStatistics() const { return mPrevFrameStats; }
 
-    // demolish rooms on the specified map tiles
-    // operation fails if at least one tile is not suitable for demolishing
+    // demolish room(s) within map area
     // adjacent rooms may be split, shrunk or destructed
     bool DemolishRooms(ePlayerID playerId, const Rect2D& mapArea, cxx::any_vector<MapTile*> demolishTiles);
     bool CanDemolishRooms(ePlayerID playerId, const Rect2D& mapArea, cxx::any_vector<MapTile*> demolishTiles) const;
 
-    // constructs a room on the specified map tiles
-    // operation fails if at least one tile is not suitable for construction
+    // constructs a room(s) within map area
     // adjacent rooms may be merged, split, or absorbed
     bool ConstructRooms(ePlayerID playerId, RoomDefinition* roomDefinition, const Rect2D& mapArea, 
         cxx::any_vector<MapTile*> constructionTiles);
-    bool CanConstructRooms(ePlayerID playerId, RoomDefinition* roomDefinition, const Rect2D& mapArea, cxx::any_vector<MapTile*> 
-        constructionTiles) const;
+    bool CanConstructRooms(ePlayerID playerId, RoomDefinition* roomDefinition, const Rect2D& mapArea, 
+        cxx::any_vector<MapTile*> constructionTiles) const;
 
     // check whether tiles tile can be tagged for digging for player
     bool CanTagTileForDigging(const Point2D& mapLocation) const;
@@ -76,7 +74,7 @@ public:
     bool CanReinforceWall(MapTile* mapTile, ePlayerID playerId) const;
 
     // Process floor tile claiming (dirt path, mana vault)
-    // Does nothing if it's a room tile or claimed path
+    // Does nothing if is already claimed
     // Returns false if the operation cannot be performed
     bool ClaimTile(MapTile* mapTile, ePlayerID playerId);
     bool CanClaimTile(MapTile* mapTile, ePlayerID playerId) const;
@@ -86,13 +84,6 @@ public:
     // Returns false if the operation cannot be performed
     bool DamageTile(MapTile* mapTile, ePlayerID playerId, float changeHealthMultiplier = 1.0f);
     bool CanDamageTile(MapTile* mapTile, ePlayerID playerId) const;
-
-    //////////////////////////////////////////////////////////////////////////
-
-    // Queries
-
-    bool QueryAccessibleMoneyStorageRoomsForDeposit(ePlayerID playerId, EntityHandle agentEntity, int maxRooms, 
-        cxx::any_vector<EntityHandle> outEntities);
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -132,6 +123,7 @@ private:
 
     void HandleRoomAbsorbed(Room* roomInstance);
     void HandleRoomCollapsed(Room* roomInstance);
+    void HandleRoomReclaimed(Room* roomInstance, ePlayerID playerId);
 
     // returns delta hitpoints applied
     bool ChangeTileHealth(MapTile* mapTile, ePlayerID playerId, int hitpoints, int& healthDelta);

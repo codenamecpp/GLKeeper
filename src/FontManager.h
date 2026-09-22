@@ -32,7 +32,7 @@ public:
     Font* GetFont(const std::string& name, const LoadParams& params = {});
 
 private:
-    using ResourcesMap = std::map<std::string, std::unique_ptr<Font>, cxx::icase_string_less>;
+    using ResourcesMap = std::unordered_map<std::string, std::unique_ptr<Font>, cxx::icase_string_hashfunc, cxx::icase_string_eq>;
     ResourcesMap mResourcesMap;
 };
 

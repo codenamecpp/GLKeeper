@@ -3,7 +3,7 @@
 #include "GameWorld.h"
 #include "Scene.h"
 
-SceneObject::SceneObject()
+SceneObject::SceneObject(eSceneObjectType objectTypeId)
     : mRight(WorldAxes::X)
     , mUpward(WorldAxes::Y)
     , mForward(WorldAxes::Z)
@@ -16,6 +16,7 @@ SceneObject::SceneObject()
     , mBoundingBoxDirty()
     , mIsObjectActive()
     , mDebugColor(COLOR_GREEN)
+    , mSceneObjectType(objectTypeId)
 {
     mBounds.set_to_zero();
 }
@@ -221,7 +222,7 @@ void SceneObject::OnRecycle()
     mBoundsTransformed.set_to_zero();
     mBounds.set_to_zero();
 
-    mRenderLayers.Set(eSceneRenderLayer_World);
+    mRenderLayers.Assing(eRenderLayer_World);
 
     mScene = nullptr;
     mIsObjectActive = false;

@@ -54,14 +54,16 @@ void ChickenObjectController::UpdateLogic(float stepDeltaTime)
 
         if (gameObjectState == eGameObjectState_None)
         {
-            if (--mTicksBeforeHatch > 0) return;
+            if (--mTicksBeforeHatch > 0) 
+                return;
             StartHatching();
             return;
         }
 
         if (gameObjectState == eGameObjectState_Hatching)
         {
-            if (--mTicksBeforeHatch > 0) return;
+            if (--mTicksBeforeHatch > 0) 
+                return;
 
             // spawn chicken
             GetGameObject().SetCurrentState(eGameObjectState_None);
@@ -217,17 +219,19 @@ bool ChickenObjectController::TrySelectRandomMovePoint(glm::vec2& nextMovePoint)
         for (eDirection dir: gStraightDirections)
         {
             MapTile* neighbourTile = currentTile->mNeighbours[dir];
-            if (neighbourTile == nullptr) continue;
+            if (neighbourTile == nullptr) 
+                continue;
 
             if (insideHatchery)
             {
                 // prefer hatchery
-                if (!currentTile->SameNeighbourRoomInstance(dir)) continue;
+                if (!currentTile->SameNeighbourRoomInstance(dir)) 
+                    continue;
             }
             else
             {
-                if (neighbourTile->IsBaseTerrainWaterOrLava()) continue;
-                if (neighbourTile->IsSolidBlock()) continue;
+                if (neighbourTile->IsBaseTerrainWaterOrLava() || neighbourTile->IsSolidBlock()) 
+                    continue;
             }
             candidateTiles.push_back(neighbourTile);
         }

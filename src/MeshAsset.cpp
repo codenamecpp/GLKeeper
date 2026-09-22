@@ -184,7 +184,7 @@ bool MeshAsset::LoadMeshFromFile()
         dstMaterial.mDiffuseTextures.clear();
         for (const std::string& roller: dstMaterial.mDiffuseTextureNames)
         {
-            Texture* texture = gTextureManager.GetTexture(roller);
+            Texture* texture = gTextureManager.GetTexture(roller, eTextureBacking_Atlas);
             cxx_assert(texture);
             dstMaterial.mDiffuseTextures.push_back(texture);
         }
@@ -192,7 +192,7 @@ bool MeshAsset::LoadMeshFromFile()
         dstMaterial.mEnvMappingTexture = nullptr;
         if (!dstMaterial.mEnvMappingTextureName.empty())
         {
-            dstMaterial.mEnvMappingTexture = gTextureManager.GetTexture(dstMaterial.mEnvMappingTextureName);
+            dstMaterial.mEnvMappingTexture = gTextureManager.GetTexture(dstMaterial.mEnvMappingTextureName, eTextureBacking_Atlas);
             cxx_assert(dstMaterial.mEnvMappingTexture);
         }
     }

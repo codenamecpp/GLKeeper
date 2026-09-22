@@ -9,19 +9,18 @@
 // Water and Lava dedicated renderer
 //////////////////////////////////////////////////////////////////////////
 
-class EnvironmentMeshRenderer: public cxx::noncopyable
+class EnvironmentMeshRenderer: public ISceneObjectRenderer
 {
 public:
     bool Initialize();
     void Shutdown();
 
-    void BeginFrame();
-    void EndFrame();
-
-    void BeginBatch(Camera& camera);
-    void EndBatch();
-
-    void RenderInstance(eRenderPass renderPass, EnvironmentMeshObject& surface);
+    // override ISceneObjectRenderer
+    void BeginFrame() override;
+    void EndFrame() override;
+    void BeginBatch(Camera& camera) override;
+    void EndBatch() override;
+    void RenderInstance(eRenderPass currentPass, SceneObject* object) override;
 
 private:
     void UpdateWaterAnimation(float currentTime);

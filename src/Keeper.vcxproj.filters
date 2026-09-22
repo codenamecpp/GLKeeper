@@ -787,6 +787,12 @@
     <ClInclude Include="GameplayUi.h">
       <Filter>Source\Session\Gameplay</Filter>
     </ClInclude>
+    <ClInclude Include="QueryService.h">
+      <Filter>Source\Session\Services</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureAtlas.h">
+      <Filter>Source\Assets</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1265,6 +1271,12 @@
     </ClCompile>
     <ClCompile Include="GameplayUi.cpp">
       <Filter>Source\Session\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="QueryService.cpp">
+      <Filter>Source\Session\Services</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureAtlas.cpp">
+      <Filter>Source\Assets</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

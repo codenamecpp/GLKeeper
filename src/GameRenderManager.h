@@ -43,8 +43,8 @@ public:
     cxx::uniqueptr<RenderView> CreateRenderView();
 
 private:
-    void RenderWorld(Scene& scene, eSceneRenderLayer renderLayer);
-    void RenderWorld(Camera& camera, Scene& scene, eSceneRenderLayer renderLayer);
+    void RenderWorld(Scene& scene, eRenderLayer renderLayer);
+    void RenderWorld(Camera& camera, Scene& scene, eRenderLayer renderLayer);
     void RenderScene(Camera& camera, SceneRenderLists& renderLists);
 
     void UnRegisterRenderView(RenderView* renderView);
@@ -56,9 +56,10 @@ private:
     std::vector<IDebugVisualizer*> mDebugVisializers;
     std::vector<RenderView*> mRenderViews;
 
-    AnimatingMeshRenderer mAnimatingMeshlRenderer;
+    AnimatingMeshRenderer mAnimatingMeshRenderer;
     EnvironmentMeshRenderer mEnvironmentMeshRenderer;
     ProceduralMeshRenderer mProceduralMeshRenderer;
+    ISceneObjectRenderer* mSceneObjectRenderers[eSceneObjectType_COUNT];
 };
 
 //////////////////////////////////////////////////////////////////////////

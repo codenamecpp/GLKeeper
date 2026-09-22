@@ -7,7 +7,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-enum { MAX_ENGINE_TEXTURE_MIPS = 16 };
+enum { MAX_ENGINE_TEXTURE_MIPS = 4 };
 struct DK2EngineTextureMip
 {
 public:

@@ -6,6 +6,7 @@
 #include "GameMap.h"
 #include "GameWorld.h"
 #include "GameObjectManager.h"
+#include "QueryService.h"
 
 CreatureAction_Mining::CreatureAction_Mining()
     : CreatureAction(eCreatureAction_Mining)
@@ -157,7 +158,7 @@ bool CreatureAction_Mining::ProcessTileMining(float stepDeltaTime)
 
             // in case there are available storage for deposit, stop mining
             cxx::temp_vector<EntityHandle> roomEntities;
-            if (gGameWorld.QueryAccessibleMoneyStorageRoomsForDeposit(
+            if (gQueryService.QueryAccessibleMoneyStorageRoomsForDeposit(
                 GetCreature().GetOwnerId(), 
                 GetCreature().GetOwnHandle(), 1, roomEntities))
             {

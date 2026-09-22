@@ -1073,6 +1073,7 @@ bool DK2EngineTexturesCache::ScanDungeonKeeperTexturesCache(const std::string& t
     gConsole.LogMessage(eLogLevel_Info, "Found %d entries in engine textures cache", numEntries);
 
     mEntries.reserve(2048);
+    std::string textureName;
     for (int ientry = 0; ientry < numEntries; ++ientry)
     {
         DK2EngineTextureEntry engineTextureDesc;
@@ -1081,7 +1082,8 @@ bool DK2EngineTexturesCache::ScanDungeonKeeperTexturesCache(const std::string& t
             gConsole.LogMessage(eLogLevel_Warning, "Cannot query information of %d entry", ientry);
             continue;
         }
-        std::string textureName = engineTextureDesc.mName;
+
+        textureName = engineTextureDesc.mName;
 
         const int iMip = GetMipmapLevelFromName(textureName);
         if ((iMip < 0) || (iMip > MAX_ENGINE_TEXTURE_MIPS - 1))

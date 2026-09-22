@@ -78,6 +78,11 @@ void RoomController::PostReconfigureRoom()
     ReevaluatePillarTiles();
 }
 
+void RoomController::RoomOwnershipChanged(ePlayerID previousOwnerId, ePlayerID ownerId)
+{
+
+}
+
 void RoomController::OnRecycle()
 {
     DespawnInstance();

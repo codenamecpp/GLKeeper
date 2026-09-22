@@ -103,7 +103,7 @@ void InHandThingView::SetMeshAsset(const std::string& assetName)
             camera.SetupProjection(projParams);
             camera.SetPosition({1.0f, 1.3f, 1.0f});
             camera.LookAt({0.0f, 0.0f, 0.0f}, WorldAxes::Y);
-            camera.mRenderLayers.Set(eSceneRenderLayer_UiOverlay);
+            camera.mRenderLayers.Assing(eRenderLayer_UiOverlay);
             mRenderView->SetActive(false); 
         }
     }
@@ -114,7 +114,7 @@ void InHandThingView::SetMeshAsset(const std::string& assetName)
         cxx_assert(mMeshObject);
         if (mMeshObject)
         {
-            mMeshObject->GetRenderLayers().Set(eSceneRenderLayer_UiOverlay);
+            mMeshObject->GetRenderLayers().Assing(eRenderLayer_UiOverlay);
             mMeshObject->SetObjectActive(false);
         }
     }

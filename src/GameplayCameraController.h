@@ -50,7 +50,7 @@ public:
 private:
     glm::vec2 GetCameraMoveVectorFromInputs() const;
 
-    bool GetCameraMoveDirections(EnumSet<eDirection>& cardinalDirs) const;
+    bool GetCameraMoveDirections(DirectionEnumSet& cardinalDirs) const;
 
     float GetRotateDirectionFromInputs() const;
     float GetZoomDirectionFromInputs();

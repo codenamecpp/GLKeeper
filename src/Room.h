@@ -63,7 +63,7 @@ public:
     void ReleaseTiles();
 
     // Add specified uncovered tiles to room, this will lead to reevaluation of remaining tiles
-    void EnlargeRoom(cxx::span<MapTile*> targetTiles);
+    void EnlargeRoom(cxx::span<MapTile*> targetTiles, int gainHealthFromTilePercents);
 
     // This is rather complex function
     // It will destroy unneeded objects, create new objects and correct positions inside room
@@ -113,6 +113,16 @@ public:
         return static_cast<int>(mInnerTiles.size()); 
     }
 
+    // manage room health
+    inline int GetRoomMaximumHealth() const { return mMaximumHealth; } // num tiles * room max health
+    inline int GetRoomCurrentHealth() const { return mCurrentHealth; }
+    inline int GetRoomHealthPercents() const { return mHealthPercents; }
+    void ChangeRoomHealth(int deltaHealth);
+    void RestartRoomHealth();
+
+    // ownership
+    void ChangeOwnership(ePlayerID ownerId);
+
 private:
     // test whether room can be constructed on specific tile
     bool CanConstructOn(const MapTile* targetTile);
@@ -135,6 +145,9 @@ private:
     // each time room gets modified it must be reconfigurated
     // for example, tiles added or removed, wall sections updated
     void Reconfigure();
+
+    void UpdateRoomHealthAfterTileChange(int deltaTiles, int healthPercentsFromTiles);
+    void UpdateRoomHealth(int maximumHealth, int currentHealth);
 
     void ScanWallSection(MapTile* mapTile, eTileFace faceId, RoomWallSection* section) const;
     void ScanWallSection(MapTile* mapTile, eDirection faceDirection, RoomWallSection* section) const;
@@ -171,6 +184,10 @@ private:
 
     // list of currently stored objects
     std::vector<RoomStorageSlot> mStorageSlots;
+
+    int mMaximumHealth {}; // max health per tile * num covered tiles
+    int mCurrentHealth {}; 
+    int mHealthPercents {}; // cache
 };
 
 //////////////////////////////////////////////////////////////////////////

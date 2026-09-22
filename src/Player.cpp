@@ -240,3 +240,10 @@ bool Player::HasSomethingInHand() const
 {
     return !mHeldEntities.empty();
 }
+
+const auto& Player::GetOwnedRoomOfType(RoomTypeId roomType) const
+{
+    static const std::vector<EntityHandle> nullresult;
+    auto it = mRoomsByType.find(roomType);
+    return (it != mRoomsByType.end()) ? it->second : nullresult;
+}

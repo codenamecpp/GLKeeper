@@ -80,18 +80,18 @@ public:
     bool mPlayerColoured;
 };
 
-
 //////////////////////////////////////////////////////////////////////////
 
-enum eSceneRenderLayer
+enum eRenderLayer
 {
-    eSceneRenderLayer_World,
-    eSceneRenderLayer_WorldOverlay,
-    eSceneRenderLayer_UiOverlay,
-    eSceneRenderLayer_DebugOverlay
+    eRenderLayer_World,
+    eRenderLayer_WorldOverlay,
+    eRenderLayer_UiOverlay,
+    eRenderLayer_DebugOverlay,
+    eRenderLayer_COUNT
 };
 
-using SceneRenderLayerSet = EnumSet<eSceneRenderLayer>;
+using RenderLayerSet = EnumSet<eRenderLayer_COUNT>;
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -394,17 +394,18 @@ enum
 union RenderStates
 {
 public:
-    RenderStates()
-        : mBlendingMode(RENDER_STATES_BLENDMODE_ALPHA)
-        , mDepthFunc(RENDER_STATES_DEPTHTESTFUNC_LEQUAL)
-        , mPolygonFill(RENDER_STATES_POLYGON_SOLID)
-        , mCullMode(RENDER_STATES_CULLFACEMODE_BACK)
-        , mIsColorWriteEnabled(true)
-        , mIsDepthWriteEnabled(true)
-        , mIsDepthTestEnabled(true)
-        , mIsFaceCullingEnabled(true)
-        , mIsAlphaBlendEnabled() // is disabled by default, do not draw dungeon geometry with it
-    {}
+    RenderStates() : mSortKey()
+    {
+        mBlendingMode = RENDER_STATES_BLENDMODE_ALPHA;
+        mDepthFunc = RENDER_STATES_DEPTHTESTFUNC_LEQUAL;
+        mPolygonFill = RENDER_STATES_POLYGON_SOLID;
+        mCullMode = RENDER_STATES_CULLFACEMODE_BACK;
+        mIsColorWriteEnabled = true;
+        mIsDepthWriteEnabled = true;
+        mIsDepthTestEnabled = true;
+        mIsFaceCullingEnabled = true;
+        mIsAlphaBlendEnabled = false; // is disabled by default, do not draw dungeon geometry with it
+    }
 
     // Get default render states for ui drawing
     static RenderStates GetUIStates()
@@ -443,23 +444,23 @@ public:
         return *this;
     }
 
-    inline bool operator == (const RenderStates& renderStates) const { return mSortKey == renderStates.mSortKey; }
-    inline bool operator != (const RenderStates& renderStates) const { return mSortKey != renderStates.mSortKey; }
-    inline bool operator < (const RenderStates& renderStates) const { return mSortKey < renderStates.mSortKey; }
+    inline bool operator == (const RenderStates& other) const { return mSortKey == other.mSortKey; }
+    inline bool operator != (const RenderStates& other) const { return mSortKey != other.mSortKey; }
+    inline bool operator  < (const RenderStates& other) const { return mSortKey  < other.mSortKey; }
 
 public:
 
     struct
     {
-        unsigned short mDepthFunc : 4; // DEPTH_TEST_ENABLED
-        unsigned short mBlendingMode : 4; // ALPHA_BLEND_ENABLED
-        unsigned short mPolygonFill : 4;
-        unsigned short mCullMode : 4;
-        bool mIsAlphaBlendEnabled : 1;
-        bool mIsColorWriteEnabled : 1;
-        bool mIsDepthWriteEnabled : 1;
-        bool mIsDepthTestEnabled : 1;
-        bool mIsFaceCullingEnabled : 1;
+        unsigned int mDepthFunc : 4; // DEPTH_TEST_ENABLED
+        unsigned int mBlendingMode : 4; // ALPHA_BLEND_ENABLED
+        unsigned int mPolygonFill : 4;
+        unsigned int mCullMode : 4;
+        unsigned int mIsAlphaBlendEnabled : 1;
+        unsigned int mIsColorWriteEnabled : 1;
+        unsigned int mIsDepthWriteEnabled : 1;
+        unsigned int mIsDepthTestEnabled : 1;
+        unsigned int mIsFaceCullingEnabled : 1;
     };
 
     std::uint64_t mSortKey; // union

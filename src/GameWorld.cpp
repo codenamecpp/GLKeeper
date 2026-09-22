@@ -14,6 +14,7 @@
 #include "Scene.h"
 #include "GameMap.h"
 #include "CreatureTaskManager.h"
+#include "QueryService.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -78,15 +79,12 @@ bool GameWorld::LoadScenario(const ScenarioDefinition& scenarioDefinition, GameL
 
     loadingContext.UpdateLoadingProgress(0.5f);
 
-    // build room geometry
     gRoomManager.ProcessRoomChanges();
+    // build room geometry
     for (Room* roomInstance: gRoomManager.GetRooms())
     {
         RoomTileConstructor* roomConstructor = roomInstance->GetTileConstructor();
-        // floor
         roomConstructor->ConstructRoomFloor(roomInstance, roomInstance->GetFloorTiles());
-
-        // walls
         for (const RoomWallSection* wallSection: roomInstance->GetWallSections())
         {
             roomConstructor->ConstructRoomWalls(roomInstance, wallSection->GetTiles(), wallSection->GetFace());
@@ -129,6 +127,7 @@ void GameWorld::EnterWorld()
     gGameObjectManager.EnterWorld();
     gCreatureTaskManager.EnterWorld();
     gCreatureManager.EnterWorld();
+    gQueryService.EnterWorld();
 
     mCurrentFrameStats.Clear();
     mPrevFrameStats.Clear();
@@ -144,6 +143,7 @@ void GameWorld::ClearWorld()
     gGameObjectManager.ClearWorld();
     gNavigationService.ClearWorld();
     gPhysics.ClearWorld();
+    gQueryService.ClearWorld();
     gGameRenderer.mTerrainRenderer.CleanupTerrainMesh();
     gGameMap.Cleanup();
     gScene.ClearScene();
@@ -377,7 +377,7 @@ void GameWorld::CreateRoomFromUnexploredTiles(MapTile* startTile, const Scenario
     gRoomManager.ActivateRoom(roomHandle);
     if (Room* roomInstance = gRoomManager.GetRoomPtr(roomHandle))
     {
-        roomInstance->EnlargeRoom(floodTiles);
+        roomInstance->EnlargeRoom(floodTiles, roomInitParams ? roomInitParams->mInitialHealth : 100);
     }
 }
 
@@ -479,9 +479,19 @@ bool GameWorld::ReinforceWall(MapTile* mapTile, ePlayerID playerId)
 bool GameWorld::CanClaimTile(MapTile* mapTile, ePlayerID playerId) const
 {
     cxx_assert(mapTile);
-    if (mapTile->mRoomInstance)
-        return false;
+    if (Room* roomInstance = mapTile->mRoomInstance)
+    {
+        if (!roomInstance->ExistsOnMap() || roomInstance->HasOwner(playerId))
+            return false;
 
+        if (roomInstance->GetTypeId() == RoomTypeId_DungeonHeart)
+        {
+            // todo: cannot claim dungeon heart if it is alive
+            return false;
+        }
+        
+    }
+   
     TerrainDefinition* terrainDef = mapTile->GetTerrain();
     if (terrainDef->mIsSolid || terrainDef->mIsImpenetrable)
         return false;
@@ -516,17 +526,31 @@ bool GameWorld::ClaimTile(MapTile* mapTile, ePlayerID playerId)
 
     const ScenarioVariables& scenarioVars = gGameSession.GetScenarioVariables();
 
-    int damageHealth = scenarioVars.mClaimTileHealth;
-    cxx_assert(damageHealth > 0);
-    // destroy before claim
-    TerrainDefinition* terrainDef = mapTile->GetTerrain();
-    if (terrainDef->mIsOwnable)
+    if (Room* roomInstance = mapTile->mRoomInstance)
     {
-        damageHealth = scenarioVars.mAttackTileHealth;
+        int damageHealth = scenarioVars.mConvertRoomHealth;
         cxx_assert(damageHealth < 0);
+        roomInstance->ChangeRoomHealth(damageHealth);
+        if (roomInstance->GetRoomHealthPercents() < 1)
+        {
+            HandleRoomReclaimed(roomInstance, playerId);
+        }
+        return true;
     }
-    int deltaHitPoints = 0;
-    return ChangeTileHealth(mapTile, playerId, damageHealth, deltaHitPoints);
+    else
+    {
+        int damageHealth = scenarioVars.mClaimTileHealth;
+        cxx_assert(damageHealth > 0);
+        // destroy before claim
+        TerrainDefinition* terrainDef = mapTile->GetTerrain();
+        if (terrainDef->mIsOwnable)
+        {
+            damageHealth = scenarioVars.mAttackTileHealth;
+            cxx_assert(damageHealth < 0);
+        }
+        int deltaHitPoints = 0;
+        return ChangeTileHealth(mapTile, playerId, damageHealth, deltaHitPoints);
+    }
 }
 
 bool GameWorld::DamageTile(MapTile* mapTile, ePlayerID playerId, float changeHealthMultiplier)
@@ -756,11 +780,12 @@ bool GameWorld::ConstructRooms(ePlayerID playerId, RoomDefinition* roomDefinitio
         for (MapTile* processedTile: segmentTiles)
         {
             cxx_assert(processedTile->mRoomInstance == nullptr);
-            processedTile->SetRoomTerrain(gGameSession.GetScenarioDefinition().GetTerrainDefinition(roomDefinition->mTerrainType));
+            processedTile->SetRoomTerrain(roomDefinition->mTerrainDefinition);
+            //processedTile->SetHitPoints(roomDefinition->mR
             processedTile->mOwnerId = playerId;
             gCreatureTaskManager.OnTileTerrainTypeChanged(processedTile);
         }
-        absorberRoom->EnlargeRoom(segmentTiles);
+        absorberRoom->EnlargeRoom(segmentTiles, 100);
 
         // absorb adjacent rooms
         for (Room* adjacentRoom: adjacentRooms)
@@ -895,13 +920,14 @@ void GameWorld::ReleaseRoomTiles(Room* currentRoom, cxx::span<MapTile*> roomTile
 void GameWorld::HandleRoomAbsorbed(Room* roomInstance)
 {
     cxx_assert(roomInstance);
-    if (roomInstance == nullptr) return;
+    if (roomInstance == nullptr) 
+        return;
     if (roomInstance->GetRoomSize() > 0)
     {
         cxx_assert(false);
     }
     // delete it
-    ePlayerID ownerId = roomInstance->GetOwnerId();
+    const ePlayerID ownerId = roomInstance->GetOwnerId();
     gGameSession.GetPlayer(ownerId).RemoveFromInventory(roomInstance->GetOwnHandle());
     gRoomManager.DeleteRoom(roomInstance->GetInstanceUid());
 }
@@ -909,15 +935,47 @@ void GameWorld::HandleRoomAbsorbed(Room* roomInstance)
 void GameWorld::HandleRoomCollapsed(Room* roomInstance)
 {
     cxx_assert(roomInstance);
-    if (roomInstance == nullptr) return;
+    if (roomInstance == nullptr) 
+        return;
     if (roomInstance->GetRoomSize() > 0)
     {
         cxx_assert(false);
     }
     // delete it
-    ePlayerID ownerId = roomInstance->GetOwnerId();
+    const ePlayerID ownerId = roomInstance->GetOwnerId();
     gGameSession.GetPlayer(ownerId).RemoveFromInventory(roomInstance->GetOwnHandle());
     gRoomManager.DeleteRoom(roomInstance->GetInstanceUid());
+}
+
+void GameWorld::HandleRoomReclaimed(Room* roomInstance, ePlayerID playerId)
+{
+    cxx_assert(roomInstance);
+    if (roomInstance == nullptr)
+        return;
+
+    cxx_assert(roomInstance->ExistsOnMap());
+    const ePlayerID previousOwnerId = roomInstance->GetOwnerId();
+    cxx_assert(previousOwnerId != playerId);
+    if (previousOwnerId == playerId)
+        return;
+
+    roomInstance->ChangeOwnership(playerId);
+    roomInstance->RestartRoomHealth();
+
+    gGameSession.GetPlayer(previousOwnerId).RemoveFromInventory(roomInstance->GetOwnHandle());
+    gGameSession.GetPlayer(playerId).AddToInventory(roomInstance->GetOwnHandle());
+
+    // change tiles owner under the room
+    // todo: refactore
+    for (MapTile* roomMapTile: roomInstance->GetFloorTiles())
+    {
+        roomMapTile->mOwnerId = playerId;
+    }
+    // update tasks
+    for (MapTile* roomMapTile: roomInstance->GetFloorTiles())
+    {
+        gCreatureTaskManager.OnTileOwnershipChanged(roomMapTile, previousOwnerId);
+    }
 }
 
 void GameWorld::BuildInvalidatedTiles()
@@ -1227,73 +1285,6 @@ bool GameWorld::ChangeTileHealth(MapTile* mapTile, ePlayerID playerId, int hitpo
         InvalidateTile(mapTile);
     }
     return true;
-}
-
-bool GameWorld::QueryAccessibleMoneyStorageRoomsForDeposit(ePlayerID playerId, EntityHandle agentEntity, int maxRooms, 
-    cxx::any_vector<EntityHandle> outEntities)
-{
-    outEntities.reserve(16);
-    // process creature
-    if (agentEntity.IsCreature())
-    {
-        Player& player = gGameSession.GetPlayer(playerId);
-        cxx_assert(!player.IsNonPlayer());
-
-        Creature* creature = gCreatureManager.GetCreaturePtr(agentEntity);
-        if ((creature == nullptr) || !creature->ExistsOnMap())
-        {
-            return false;
-        }
-
-        const Point2D startTileCoord = creature->GetTilePosition();
-        const ePassabilityType passabilityType = creature->GetPassabilityType();
-
-        for (const EntityHandle& roomHandle: player.GetOwnedMoneyStorageRooms())
-        {
-            Room* room = gRoomManager.GetRoomPtr(roomHandle);
-            if ((room == nullptr) || !room->ExistsOnMap())
-            {
-                continue;
-            }
-
-            // check if room is reachable
-            cxx::span<MapTile*> roomTiles = room->GetFloorTiles();
-            if (roomTiles.empty())
-            {
-                continue;
-            }
-
-            if (!gNavigationService.CheckPathExists(startTileCoord, roomTiles[0]->mLocation, passabilityType))
-                continue;
-           
-            auto* moneyStorage = room->GetCapability<MoneyStorageRoomCapability>();
-            cxx_assert(moneyStorage);
-            if (moneyStorage == nullptr)
-            {
-                continue;
-            }
-
-            const long storageCapacity = moneyStorage->GetStoredGoldCapacity();
-            bool isStorageFull = (storageCapacity > 0) && (moneyStorage->GetStoredGoldAmount() >= storageCapacity);
-            if (isStorageFull)
-            {
-                continue;
-            }
-            outEntities.push_back(room->GetOwnHandle());
-            
-            // check limits
-            if (maxRooms == static_cast<int>(outEntities.size()))
-            {
-                break;
-            }
-        } // for
-    }
-    else
-    {
-        cxx_assert(false);
-    }
-    bool isSuccess = !outEntities.empty();
-    return isSuccess;
 }
 
 bool GameWorld::CheckBordersWithOwnedTerritory(MapTile* mapTile, ePlayerID playerId) const

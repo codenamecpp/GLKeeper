@@ -175,7 +175,7 @@ glm::vec2 GameplayCameraController::GetCameraMoveVectorFromInputs() const
 
     glm::vec3 moveDirection {0.0f};
 
-    EnumSet<eDirection> cardinalDirs;
+    DirectionEnumSet cardinalDirs;
     if (GetCameraMoveDirections(cardinalDirs))
     {
         if (cardinalDirs.Contains(eDirection_N) || cardinalDirs.Contains(eDirection_S))
@@ -204,7 +204,7 @@ glm::vec2 GameplayCameraController::GetCameraMoveVectorFromInputs() const
     return glm::vec2{moveDirection.x, moveDirection.z};
 }
 
-bool GameplayCameraController::GetCameraMoveDirections(EnumSet<eDirection>& cardinalDirs) const
+bool GameplayCameraController::GetCameraMoveDirections(DirectionEnumSet& cardinalDirs) const
 {
     cardinalDirs.Clear();
 

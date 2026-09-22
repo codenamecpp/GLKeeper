@@ -7,9 +7,9 @@ class BitmapImage
 {
 public:
     // Construct empty image
-    BitmapImage();
+    BitmapImage() = default;
     BitmapImage(const BitmapImage& other) = delete;
-    BitmapImage(BitmapImage&& other);
+    BitmapImage(BitmapImage&& other) noexcept;
 
     // Construct image from graphic file
     // @param theFilePath: Path to desired file
@@ -32,6 +32,8 @@ public:
     bool Create(ePixelFormat thePixelFormat, const Point2D& dims, unsigned char* thePixels);
     bool Create(ePixelFormat thePixelFormat, const Point2D& dims, Color32 fillColor);
 
+    bool CreateFrom(const BitmapImage& other, int mipmapLevel, int padding);
+
     // Save image content to external file
     bool SaveToFile(const std::string& filePath) const;
     bool SaveToFile(const std::string& filePath, int mipMap) const;
@@ -42,7 +44,7 @@ public:
     // Destroy image data with mips
     void Clear();
 
-    void Swap(BitmapImage& other);
+    void Swap(BitmapImage& other) noexcept;
 
     // Test whether image is not empty
     inline bool HasContent() const 
@@ -53,6 +55,10 @@ public:
     // Get image pixel format
     // @return Pixel format or IMAGE_PIXEL_FORMAT_NULL if image is empty
     inline ePixelFormat GetPixelFormat() const { return mPixelFormat; }
+    inline bool HasPixelFormat(ePixelFormat pixelFormat) const
+    {
+        return mPixelFormat == pixelFormat;
+    }
 
     // Get number of mip levels specified, including primary image
     inline int GetMipsCount() const 
@@ -109,7 +115,7 @@ public:
     bool IsPOT() const;
 
     BitmapImage& operator = (const BitmapImage& other) = delete;
-    BitmapImage& operator = (BitmapImage&& other)
+    BitmapImage& operator = (BitmapImage&& other) noexcept
     {
         Swap(other);
         return *this;
@@ -134,11 +140,12 @@ private:
 
     //////////////////////////////////////////////////////////////////////////
 
-    ePixelFormat mPixelFormat;
+private:
+    std::vector<MipLevel> mMipmaps; // 0 mip level is primary
+
+    ePixelFormat mPixelFormat = ePixelFormat_Null;
 
     bool mHasAlphaHint = false;
-
-    std::vector<MipLevel> mMipmaps; // 0 mip level is primary
 };
 
 //////////////////////////////////////////////////////////////////////////

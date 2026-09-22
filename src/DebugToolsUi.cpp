@@ -160,7 +160,7 @@ void DebugToolsUi::EnableMeshPreview()
     }
 
     mPreviewMeshObject->SetPosition({0.0f, 0.0f, 0.0f});
-    mPreviewMeshObject->GetRenderLayers().Set(eSceneRenderLayer_DebugOverlay);
+    mPreviewMeshObject->GetRenderLayers().Assing(eRenderLayer_DebugOverlay);
     mPreviewMeshObject->SetObjectActive(true);
 
     Camera& previewCamera = mPreviewMeshRenderView->GetCamera();
@@ -168,7 +168,7 @@ void DebugToolsUi::EnableMeshPreview()
     previewCamera.SetPosition(glm::vec3(0.0f, 0.0f, 3.0f));
     previewCamera.LookAt(mPreviewMeshObject->GetPosition(), WorldAxes::Y);
     previewCamera.Translate(glm::vec3{0.0f, 0.3f, 0.0f});
-    previewCamera.mRenderLayers.Set(eSceneRenderLayer_DebugOverlay);
+    previewCamera.mRenderLayers.Assing(eRenderLayer_DebugOverlay);
     mPreviewMeshRenderView->SetActive(true);
 }
 

@@ -35,9 +35,7 @@ void UiPicture::SetPicture(const std::string& picturePath)
     
     if (!picturePath.empty())
     {
-        TextureManager::LoadParams params;
-        params.mConvertNPOT = true; // for ui textures always perform resize
-        uiTexture = gTextureManager.GetTexture(picturePath, params);
+        uiTexture = gTextureManager.GetTexture(picturePath, eTextureBacking_Default);
     }
 
     if (uiTexture != mPicTexture)
@@ -136,9 +134,9 @@ void UiPicture::RenderSelf(UiRenderContext& uiRenderContext)
             {
                 if (mPicTexture)
                 {
-                    const Point2D& imageSize = mPicTexture->GetImageDimensions();
-                    rcDestination.w = imageSize.x;
-                    rcDestination.h = imageSize.y; 
+                    const TextureRegion& textureRegion = mPicTexture->GetTextureRegion();
+                    rcDestination.w = textureRegion.mRect.w;
+                    rcDestination.h = textureRegion.mRect.h; 
                     rcDestination.x = 0;
                     rcDestination.y = 0;
                 }
@@ -148,9 +146,9 @@ void UiPicture::RenderSelf(UiRenderContext& uiRenderContext)
             {
                 if (mPicTexture)
                 {
-                    const Point2D& imageSize = mPicTexture->GetImageDimensions();
-                    rcDestination.w = imageSize.x;
-                    rcDestination.h = imageSize.y;
+                    const TextureRegion& textureRegion = mPicTexture->GetTextureRegion();
+                    rcDestination.w = textureRegion.mRect.w;
+                    rcDestination.h = textureRegion.mRect.h;
                     rcDestination.x = (mSize.x / 2 - rcDestination.w / 2);
                     rcDestination.y = (mSize.y / 2 - rcDestination.h / 2);
                 }
@@ -198,27 +196,23 @@ void UiPicture::RecomptuteCache()
     if (!mPicTexture)
         return;
 
-    const Point2D& imageSize = mPicTexture->GetImageDimensions();
-   
-    cxx_assert(imageSize.x > 0);
-    cxx_assert(imageSize.y > 0);
-
+    const TextureRegion& textureRegion = mPicTexture->GetTextureRegion();
     // texture size is too small
-    if (imageSize.x < 1 || imageSize.y < 1)
+    if (textureRegion.mRect.Empty())
         return;
 
     float coef = 1.0f;
     if (mPicStretchMode == eUiStretchMode_TileHorizontal)
     {
-        coef = (mSize.y * 1.0f) / (imageSize.y * 1.0f);
+        coef = (mSize.y * 1.0f) / (textureRegion.mRect.h * 1.0f);
     }
     if (mPicStretchMode == eUiStretchMode_TileVertical)
     {
-        coef = (mSize.x * 1.0f) / (imageSize.x * 1.0f);
+        coef = (mSize.x * 1.0f) / (textureRegion.mRect.w * 1.0f);
     }
 
-    const int TileSize_X = static_cast<int>(imageSize.x * coef);
-    const int TileSize_Y = static_cast<int>(imageSize.y * coef);
+    const int TileSize_X = static_cast<int>(textureRegion.mRect.w * coef);
+    const int TileSize_Y = static_cast<int>(textureRegion.mRect.h * coef);
     const int ExtraTileSize_X = (mSize.x % TileSize_X);
     const int ExtraTileSize_Y = (mSize.y % TileSize_Y);
     const int NumFullTiles_X = (mSize.x / TileSize_X);
@@ -241,20 +235,20 @@ void UiPicture::RecomptuteCache()
         for (int currentY = 0; currentY < NumTiles_Y; ++currentY)
         for (int currentX = 0; currentX < NumTiles_X; ++currentX)
         {
-            const int CurrentTilePixels_X = (currentX == NumFullTiles_X) ? ExtraTexturesPixels_X : imageSize.x;
-            const int CurrentTilePixels_Y = (currentY == NumFullTiles_Y) ? ExtraTexturesPixels_Y : imageSize.y;
+            const int CurrentTilePixels_X = (currentX == NumFullTiles_X) ? ExtraTexturesPixels_X : textureRegion.mRect.w;
+            const int CurrentTilePixels_Y = (currentY == NumFullTiles_Y) ? ExtraTexturesPixels_Y : textureRegion.mRect.h;
             const Rect2D rcSrc 
             {
                 0, 0, CurrentTilePixels_X, CurrentTilePixels_Y
             };
             const Rect2D rcDest 
             {
-                currentX * imageSize.x, 
-                currentY * imageSize.y, 
+                currentX * textureRegion.mRect.w, 
+                currentY * textureRegion.mRect.h, 
                 CurrentTilePixels_X, 
                 CurrentTilePixels_Y
             };
-            mCachedQuads[currentY * NumTiles_X + currentX].BuildTextureQuad(imageSize, rcSrc, rcDest, mTintColor);
+            mCachedQuads[currentY * NumTiles_X + currentX].BuildTextureQuad(textureRegion, rcSrc, rcDest, mTintColor);
         }
     }
     else if (mPicStretchMode == eUiStretchMode_TileHorizontal)
@@ -264,14 +258,14 @@ void UiPicture::RecomptuteCache()
             const bool isExtraTile = (currentTile == NumFullTiles_X);
             const Rect2D rcSrc 
             { 
-                0, 0, (isExtraTile ? ExtraTexturesPixels_X : imageSize.x), imageSize.y 
+                0, 0, (isExtraTile ? ExtraTexturesPixels_X : textureRegion.mRect.w), textureRegion.mRect.h 
             };
             const Rect2D rcDest 
             {
                 currentTile * TileSize_X, 0, 
                 isExtraTile ? ExtraTileSize_X : TileSize_X, TileSize_Y
             };
-            mCachedQuads[currentTile].BuildTextureQuad(imageSize, rcSrc, rcDest, mTintColor);
+            mCachedQuads[currentTile].BuildTextureQuad(textureRegion, rcSrc, rcDest, mTintColor);
         }
     }
     else if (mPicStretchMode == eUiStretchMode_TileVertical)
@@ -281,14 +275,14 @@ void UiPicture::RecomptuteCache()
             const bool isExtraTile = (currentTile == NumFullTiles_Y);
             const Rect2D rcSrc 
             { 
-                0, 0, imageSize.x, (isExtraTile ? ExtraTexturesPixels_Y : imageSize.y) 
+                0, 0, textureRegion.mRect.w, (isExtraTile ? ExtraTexturesPixels_Y : textureRegion.mRect.h) 
             };
             const Rect2D rcDest 
             {
                 0, currentTile * TileSize_Y, 
                 TileSize_X, isExtraTile ? ExtraTileSize_Y : TileSize_Y
             };
-            mCachedQuads[currentTile].BuildTextureQuad(imageSize, rcSrc, rcDest, mTintColor);
+            mCachedQuads[currentTile].BuildTextureQuad(textureRegion, rcSrc, rcDest, mTintColor);
         }
     } // if
 }

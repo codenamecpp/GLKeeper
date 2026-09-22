@@ -4,6 +4,7 @@
 #include "GameMap.h"
 #include "MeshAssetManager.h"
 #include "GameWorld.h"
+#include "Texture.h"
 
 TileConstructor::TileConstructor(const ScenarioDefinition& scenarioDef)
     : mScenarioDef(scenarioDef)
@@ -102,6 +103,15 @@ void TileConstructor::ExtendTileMesh(MapTile* mapTile, eTileFace face, MeshAsset
 
         tileFace.mFaceMesh.mVertices.resize(tileMeshPiece.mBaseVertex + tileMeshPiece.mVertexCount);
 
+        glm::vec2 uvmin = {0.0f, 0.0f};
+        glm::vec2 uvsize = {1.0f, 1.0f};
+        if (diffuseTexture)
+        {
+            const TextureRegion& textureRegion = diffuseTexture->GetTextureRegion();
+            uvmin = textureRegion.mUvMin;
+            uvsize = textureRegion.mUvMax - textureRegion.mUvMin;
+        }
+
         // transfrom vertex position
         if (rotation)
         {
@@ -122,7 +132,7 @@ void TileConstructor::ExtendTileMesh(MapTile* mapTile, eTileFace face, MeshAsset
                 vertex.mTileY = mapTile->mLocation.y;
                 vertex.mPosition = transformed + tileTranslation;
                 vertex.mNormal = transformedNormal;
-                vertex.mTexcoord = sourceTexcoord[ivertex];
+                vertex.mTexcoord = uvmin + sourceTexcoord[ivertex] * uvsize;
             }
         }
         else // if rotation
@@ -134,7 +144,7 @@ void TileConstructor::ExtendTileMesh(MapTile* mapTile, eTileFace face, MeshAsset
                 vertex.mTileY = mapTile->mLocation.y;
                 vertex.mPosition = tileTranslation + sourcePositions[ivertex];
                 vertex.mNormal = sourceNormals[ivertex];
-                vertex.mTexcoord = sourceTexcoord[ivertex];
+                vertex.mTexcoord = uvmin + sourceTexcoord[ivertex] * uvsize;
             }
         }
         // copy triangles unmodified

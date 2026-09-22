@@ -2,6 +2,7 @@
 #include "ProceduralMeshObject.h"
 
 ProceduralMeshObject::ProceduralMeshObject(int vertsBufferCapacity, int trisBufferCapacity)
+    : SceneObject(eSceneObjectType_ProceduralMesh)
 {
     mVertices.reserve(vertsBufferCapacity);
     mTriangles.reserve(trisBufferCapacity);
@@ -45,7 +46,7 @@ void ProceduralMeshObject::RegisterForRendering(SceneRenderLists& renderLists, f
     if (mVertices.empty()) return;
 
     eRenderPass renderPass = mRenderMaterial.IsOpaque() ? eRenderPass_Opaque : eRenderPass_Translucent;
-    renderLists.Register(renderPass, this, distanceToCamera2);
+    renderLists.Register(renderPass, this, GetSceneObjectTypeId(), distanceToCamera2);
 }
 
 void ProceduralMeshObject::OnRecycle()

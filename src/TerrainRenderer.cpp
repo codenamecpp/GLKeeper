@@ -7,6 +7,7 @@
 #include "GameWorld.h"
 #include "GameMain.h"
 #include "GameSession.h"
+#include "Texture.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -31,12 +32,33 @@ struct PieceBucketGeometry
 
 struct PieceBucket
 {
-    std::vector<PieceBucketGeometry> mGeometries;
+    cxx::temp_list<PieceBucketGeometry> mGeometries;
     unsigned int mVertexCount = 0;
     unsigned int mTriangleCount = 0;
 };
 
-typedef std::map<SurfaceMaterial, PieceBucket> PieceBucketMap;
+class PieceBucketsCmp
+{
+public:
+    constexpr bool operator ()(const SurfaceMaterial& lhs, const SurfaceMaterial& rhs) const
+    {
+        const TextureSourceId lhs_DiffuseTextureSrcId = lhs.mDiffuseTexture ? lhs.mDiffuseTexture->GetTextureSourceId() : 0;
+        const TextureSourceId rhs_DiffuseTextureSrcId = rhs.mDiffuseTexture ? rhs.mDiffuseTexture->GetTextureSourceId() : 0;
+
+        if (lhs_DiffuseTextureSrcId != rhs_DiffuseTextureSrcId) 
+            return lhs_DiffuseTextureSrcId < rhs_DiffuseTextureSrcId;
+
+        const TextureSourceId lhs_envMappingTextureSrcId = lhs.mEnvMappingTexture ? lhs.mEnvMappingTexture->GetTextureSourceId() : 0;
+        const TextureSourceId rhs_envMappingTextureSrcId = rhs.mEnvMappingTexture ? rhs.mEnvMappingTexture->GetTextureSourceId() : 0;
+
+        if (lhs_envMappingTextureSrcId != rhs_envMappingTextureSrcId)
+            return lhs_envMappingTextureSrcId < rhs_envMappingTextureSrcId;
+
+        return lhs.mRenderStates < rhs.mRenderStates;
+    }
+};
+
+using PieceBucketMap = cxx::temp_map<SurfaceMaterial, PieceBucket, PieceBucketsCmp>;
 
 struct PieceBucketContainer
 {
@@ -119,55 +141,57 @@ void TerrainRenderer::Render(Camera& camera)
 
     int sectorsDirty = 0;
     for (int iSectorY = 0; iSectorY < mSectorsY; ++iSectorY)
-    for (int iSectorX = 0; iSectorX < mSectorsX; ++iSectorX)
     {
-        Sector& theSector = mSectorArray[iSectorX + iSectorY * mSectorsX];
-
-        bool isSectorOnScreen = true;
-        // culling
-        if (mSectorCulling)
+        for (int iSectorX = 0; iSectorX < mSectorsX; ++iSectorX)
         {
-            cxx::aabbox sectorBox;
-            // min
-            sectorBox.mMin.x = ((iSectorX * MAP_TILE_SIZE) * (SECTOR_SIZE * MAP_TILE_SIZE)) - MAP_TILE_HALF_SIZE;
-            sectorBox.mMin.y = 0.0f;
-            sectorBox.mMin.z = ((iSectorY * MAP_TILE_SIZE) * (SECTOR_SIZE * MAP_TILE_SIZE)) - MAP_TILE_HALF_SIZE;
-            // max
-            sectorBox.mMax.x = sectorBox.mMin.x + (SECTOR_SIZE * MAP_TILE_SIZE);
-            sectorBox.mMax.y = 3.0f;
-            sectorBox.mMax.z = sectorBox.mMin.z + (SECTOR_SIZE * MAP_TILE_SIZE);
+            Sector& theSector = mSectorArray[iSectorX + iSectorY * mSectorsX];
 
-            isSectorOnScreen = camera.mFrustum.contains(sectorBox);
-        }
+            bool isSectorOnScreen = true;
+            // culling
+            if (mSectorCulling)
+            {
+                cxx::aabbox sectorBox;
+                // min
+                sectorBox.mMin.x = ((iSectorX * MAP_TILE_SIZE) * (SECTOR_SIZE * MAP_TILE_SIZE)) - MAP_TILE_HALF_SIZE;
+                sectorBox.mMin.y = 0.0f;
+                sectorBox.mMin.z = ((iSectorY * MAP_TILE_SIZE) * (SECTOR_SIZE * MAP_TILE_SIZE)) - MAP_TILE_HALF_SIZE;
+                // max
+                sectorBox.mMax.x = sectorBox.mMin.x + (SECTOR_SIZE * MAP_TILE_SIZE);
+                sectorBox.mMax.y = 3.0f;
+                sectorBox.mMax.z = sectorBox.mMin.z + (SECTOR_SIZE * MAP_TILE_SIZE);
 
-        if (theSector.mDirty)
-        {
-            ++sectorsDirty;
-            BuildSector(iSectorX, iSectorY);
-        }
+                isSectorOnScreen = camera.mFrustum.contains(sectorBox);
+            }
 
-        if (!isSectorOnScreen)
-            continue;
+            if (theSector.mDirty)
+            {
+                ++sectorsDirty;
+                BuildSector(iSectorX, iSectorY);
+            }
 
-        if (!theSector.mVertexBuffer)
-        {
-            cxx_assert(!"vertex buffer is null");
-            continue;
-        }
+            if (!isSectorOnScreen)
+                continue;
 
-        gRenderDevice.BindVertexBuffer(theSector.mVertexBuffer.get());
-        gRenderDevice.BindIndexBuffer(theSector.mIndexBuffer.get());
+            if (!theSector.mVertexBuffer)
+            {
+                cxx_assert(!"vertex buffer is null");
+                continue;
+            }
 
-        // process submeshes
-        for (SectorBatch& sectorBatch: theSector.mSectorBatches)
-        {
-            sectorBatch.mMaterial.BindMaterial(*mShaderProgram);
-            // render submesh
-            gRenderDevice.RenderIndexedPrimitives(ePrimitiveType_Triangles, eIndicesType_i32,
-                sectorBatch.mTriangleStart * sizeof(glm::ivec3), 
-                sectorBatch.mTriangleCount * 3);
-        }
-    } // for
+            gRenderDevice.BindVertexBuffer(theSector.mVertexBuffer.get());
+            gRenderDevice.BindIndexBuffer(theSector.mIndexBuffer.get());
+
+            // process submeshes
+            for (SectorBatch& sectorBatch: theSector.mSectorBatches)
+            {
+                sectorBatch.mMaterial.BindMaterial(*mShaderProgram);
+                // render submesh
+                gRenderDevice.RenderIndexedPrimitives(ePrimitiveType_Triangles, eIndicesType_i32,
+                    sectorBatch.mTriangleStart * sizeof(glm::ivec3), 
+                    sectorBatch.mTriangleCount * 3);
+            }
+        } // for
+    }
 
     CommitHighlightTiles();
 }
@@ -197,7 +221,7 @@ void TerrainRenderer::OnTileTaggedStateChanged(MapTile* mapTile, ePlayerID playe
 
     Color32* pixels = reinterpret_cast<Color32*>(mHighlightTilesBitmap.GetMipPixels(0));
 
-    const int px_i = mapTile->mLocation.y * mHighlightTilesTexture->GetTextureWidth() + mapTile->mLocation.x;
+    const int px_i = mapTile->mLocation.y * mHighlightTilesTexture->GetWidth() + mapTile->mLocation.x;
     if (pixels[px_i] != setColor)
     {
         pixels[px_i] = setColor;
@@ -245,31 +269,33 @@ bool TerrainRenderer::BuildSector(int theSectorX, int theSectorY)
     PieceBucketContainer pieceBucketContainer;
 
     for (int blockY = 0; blockY < SECTOR_SIZE; ++blockY)
-    for (int blockX = 0; blockX < SECTOR_SIZE; ++blockX)
     {
-        const Point2D tileLocation {
-            blockX + theSectorX * SECTOR_SIZE, 
-            blockY + theSectorY * SECTOR_SIZE
-        };
-        const MapTile* targetMapTile = gameMap.GetMapTileOrNull(tileLocation);
-        if (targetMapTile == nullptr)
-            continue;
-        // process tile geometry
-        for (const TileFaceData& tileFace: targetMapTile->mFaces)
+        for (int blockX = 0; blockX < SECTOR_SIZE; ++blockX)
         {
-            SplitMeshPieces(tileFace.mFaceMesh, pieceBucketContainer);
+            const Point2D tileLocation {
+                blockX + theSectorX * SECTOR_SIZE, 
+                blockY + theSectorY * SECTOR_SIZE
+            };
+            const MapTile* targetMapTile = gameMap.GetMapTileOrNull(tileLocation);
+            if (targetMapTile == nullptr)
+                continue;
+            // process tile geometry
+            for (const TileFaceData& tileFace: targetMapTile->mFaces)
+            {
+                SplitMeshPieces(tileFace.mFaceMesh, pieceBucketContainer);
+            }
         }
     }
 
     // allocate buffers
 
-    unsigned int actualVBufferLength = pieceBucketContainer.mVertexCount * Sizeof_TerrainVertex;
-    unsigned int actualIBufferLength = pieceBucketContainer.mTrianglesCount * sizeof(glm::ivec3);
+    const unsigned int actualVBufferLength = pieceBucketContainer.mVertexCount * Sizeof_TerrainVertex;
+    const unsigned int actualIBufferLength = pieceBucketContainer.mTrianglesCount * sizeof(glm::ivec3);
 
-    if (actualVBufferLength == 0 || actualIBufferLength == 0)
+    if ((actualVBufferLength == 0) || (actualIBufferLength == 0))
         return true; // be tolerant
 
-    if (actualVBufferLength > MAX_VBUFFER_LENGTH || actualIBufferLength > MAX_IBUFFER_LENGTH)
+    if ((actualVBufferLength > MAX_VBUFFER_LENGTH) || (actualIBufferLength > MAX_IBUFFER_LENGTH))
     {
         cxx_assert(!"buffer length is invalid");
         return false;
@@ -337,10 +363,13 @@ bool TerrainRenderer::BuildSector(int theSectorX, int theSectorY)
             // copy triangles
             for (unsigned int itriangle = 0; itriangle < geo.mTriangleCount; ++itriangle)
             {
-                const glm::ivec3& srcTriangle = geo.mTriangleDataPtr[itriangle];               
-                ibufferPtr[itriangle].x = srcTriangle.x + vertexoffset + startVertex;
-                ibufferPtr[itriangle].y = srcTriangle.y + vertexoffset + startVertex;
-                ibufferPtr[itriangle].z = srcTriangle.z + vertexoffset + startVertex;
+                const glm::ivec3& srcTriangle = geo.mTriangleDataPtr[itriangle];
+                ibufferPtr[itriangle] = glm::ivec3
+                {
+                    srcTriangle.x + vertexoffset + startVertex,
+                    srcTriangle.y + vertexoffset + startVertex,
+                    srcTriangle.z + vertexoffset + startVertex
+                };
             }
             vertexoffset += geo.mVertexCount;
             ibufferPtr += geo.mTriangleCount;
@@ -390,15 +419,12 @@ void TerrainRenderer::InitHighlightTilesTexture()
     if (!mHighlightTilesBitmap.Create(ePixelFormat_RGBA8, maxDims, TILE_CLEAR_COLOR))
     {
         cxx_assert(false);
-        gConsole.LogMessage(eLogLevel_Warning, "Cannot allocate tiles highlight texture (1)");
+        gConsole.LogMessage(eLogLevel_Warning, "Cannot allocate tiles highlight texture");
     }
 
-    mHighlightTilesTexture = gRenderDevice.CreateTexture2D(mHighlightTilesBitmap);
-    if (!mHighlightTilesTexture)
-    {
-        cxx_assert(false);
-        gConsole.LogMessage(eLogLevel_Warning, "Cannot allocate tiles highlight texture (2)");
-    }
+    mHighlightTilesTexture = gRenderDevice.CreateTexture2D();
+    cxx_assert(mHighlightTilesTexture);
 
+    mHighlightTilesTexture->Create(mHighlightTilesBitmap);
     mHighlightTilesTextureDirty = false;
 }

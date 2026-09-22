@@ -1,8 +1,11 @@
 #pragma once
 
+//////////////////////////////////////////////////////////////////////////
+
 #include "GraphicsDefs.h"
-#include "Texture.h"
-#include "ShaderProgram.h"
+#include "AssetDefs.h"
+
+//////////////////////////////////////////////////////////////////////////
     
 // Defines rendering properties of surface
 class SurfaceMaterial
@@ -14,27 +17,13 @@ public:
     void BindMaterial(ShaderProgram& shaderProgram) const;
     void Clear();
 
-    inline bool operator < (const SurfaceMaterial& other) const
-    {
-        if (mDiffuseTexture != other.mDiffuseTexture)
-        {
-            return mDiffuseTexture < other.mDiffuseTexture;
-        }
-
-        if (mEnvMappingTexture != other.mEnvMappingTexture)
-        {
-            return mEnvMappingTexture < other.mEnvMappingTexture;
-        }
-
-        return mRenderStates < other.mRenderStates;
-    }
-
     // Test whether material is fully opaque
     inline bool IsOpaque() const { return !mRenderStates.mIsAlphaBlendEnabled; }
 
 public:
     Texture* mDiffuseTexture = nullptr;
     Texture* mEnvMappingTexture = nullptr;
+
     RenderStates mRenderStates;
 
     // colors
@@ -45,3 +34,5 @@ public:
     
     float mOpacity = 1.0f;
 };
+
+//////////////////////////////////////////////////////////////////////////

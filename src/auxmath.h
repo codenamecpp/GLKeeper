@@ -19,11 +19,7 @@ namespace cxx
     }
 
     // test whether value is power of two
-    inline bool is_pot(unsigned int value)
-    {
-        unsigned int nextPowerOfTwo = get_next_pot(value);
-        return nextPowerOfTwo == value;
-    }
+    inline bool is_pot(unsigned int value) { return get_next_pot(value) == value; }
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -74,22 +70,17 @@ namespace cxx
         return value;
     }
 
-    inline unsigned int align_up(unsigned int value, unsigned int alignment)
+    template<typename TNumber>
+    inline TNumber align_up(TNumber value, TNumber alignment)
     {
-        if (alignment > 0)
-        {
-            value = ((value) + (alignment - 1)) & ~(alignment - 1);
-        }
-        return value;
+        return (value + (alignment - 1)) & ~(alignment - 1);
     }
 
-    inline unsigned int aligh_down(unsigned int value, unsigned int alignment)
+    template<typename TNumber>
+    inline TNumber aligh_down(TNumber value, TNumber alignment)
     {
-        if (alignment > 0)
-        {
-            value = value & ~(alignment - 1);
-        }
-        return value;
+            
+        return value & ~(alignment - 1);
     }
 
     inline bool is_aligned(unsigned int value, unsigned alignment)

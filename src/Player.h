@@ -51,12 +51,7 @@ public:
     EntityHandle GetLastOwnedRoomOfType(RoomTypeId roomType) const;
 
     const auto& GetOwnedMoneyStorageRooms() const { return mMoneyStorageRooms; }
-    const auto& GetOwnedRoomOfType(RoomTypeId roomType) const
-    {
-        static const std::vector<EntityHandle> nullresult;
-        auto it = mRoomsByType.find(roomType);
-        return (it != mRoomsByType.end()) ? it->second : nullresult;
-    }
+    const auto& GetOwnedRoomOfType(RoomTypeId roomType) const;
     bool HasOwnedRoomsOfType(RoomTypeId roomType) const;
 
     // tech availability

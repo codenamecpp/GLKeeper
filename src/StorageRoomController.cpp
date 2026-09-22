@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "StorageRoomController.h"
 #include "GameObjectManager.h"
+#include "GameMap.h"
 
 StorageRoomController::StorageRoomController(int maxObjectsPerStorageTile)
     : mMaxObjectsPerStorageTile(maxObjectsPerStorageTile)
@@ -44,7 +45,8 @@ void StorageRoomController::OnRecycle()
 
 int StorageRoomController::GetRoomStorageTileIndex(const Point2D& tileLocation) const
 {
-    const int itemIndex = cxx::get_first_index_if(mStorageTiles, [&tileLocation](const RoomStorageTile& storageTile)
+    const int itemIndex = cxx::get_first_index_if(mStorageTiles, 
+        [&tileLocation](const RoomStorageTile& storageTile)
         {
             return (storageTile.mTileLocation == tileLocation);
         });
@@ -53,9 +55,14 @@ int StorageRoomController::GetRoomStorageTileIndex(const Point2D& tileLocation) 
 
 StorageRoomController::RoomStorageTile* StorageRoomController::GetRoomStorageTileFromLocation(const Point2D& tileLocation)
 {
-    for (RoomStorageTile& roller: mStorageTiles)
+    MapTile* targetTile = gGameMap.GetMapTileOrNull(tileLocation);
+    if (targetTile && (targetTile->mRoomInstance == GetRoomPtr()))
     {
-        if (roller.mTileLocation == tileLocation) return &roller;
+        for (RoomStorageTile& roller: mStorageTiles)
+        {
+            if (roller.mTileLocation == tileLocation) 
+                return &roller;
+        }
     }
     return nullptr;
 }
@@ -64,7 +71,8 @@ StorageRoomController::RoomStorageTile* StorageRoomController::GetRoomStorageTil
 {
     for (RoomStorageTile& roller: mStorageTiles)
     {
-        if (roller.mObjects.empty()) continue;
+        if (roller.mObjects.empty()) 
+            continue;
 
         if (cxx::contains_if(roller.mObjects, [&entityHandle](const EntityHandle& ent) { return (ent == entityHandle); }))
         {
@@ -110,7 +118,9 @@ bool StorageRoomController::AssignObjectToStorageTile(EntityHandle entityHandle,
 
     GameObject* objectInstance = gGameObjectManager.GetObjectPtr(entityHandle);
     cxx_assert(objectInstance);
-    if (objectInstance == nullptr) return false;
+    if (objectInstance == nullptr) 
+        return false;
+
     if (objectInstance->GetParentRoom())
     {
         cxx_assert(false);
@@ -125,7 +135,8 @@ bool StorageRoomController::AssignObjectToStorageTile(EntityHandle entityHandle,
 
 bool StorageRoomController::UnassignObjectFromStorage(EntityHandle entityHandle)
 {
-    if (!entityHandle) return false;
+    if (!entityHandle) 
+        return false;
 
     bool isSuccess = false;
     if (RoomStorageTile* storageTile = GetRoomStorageTileWithObject(entityHandle))

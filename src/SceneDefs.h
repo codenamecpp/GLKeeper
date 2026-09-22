@@ -11,6 +11,31 @@ class RenderView;
 
 //////////////////////////////////////////////////////////////////////////
 
+enum eSceneObjectType
+{
+    eSceneObjectType_EnvironmentMesh,
+    eSceneObjectType_AnimatingMesh,
+    eSceneObjectType_ProceduralMesh,
+    eSceneObjectType_COUNT
+};
+
+//////////////////////////////////////////////////////////////////////////
+
+class ISceneObjectRenderer
+{
+public:
+    virtual ~ISceneObjectRenderer()
+    {
+    }
+    virtual void BeginFrame() = 0;
+    virtual void EndFrame()  = 0;
+    virtual void BeginBatch(Camera& camera) = 0;
+    virtual void EndBatch() = 0;
+    virtual void RenderInstance(eRenderPass currentPass, SceneObject* object) = 0;
+};
+
+//////////////////////////////////////////////////////////////////////////
+
 enum eAnimationLoopMode
 {
     eAnimationLoopMode_None, // doesn't loop
@@ -40,12 +65,9 @@ public:
     struct Entry
     {
     public:
+        SceneObject* mSceneObject {};
+        eSceneObjectType mSceneObjectType {};
         float mDistanceToCamera2 = 0.0f; // squared
-
-        // switch
-        EnvironmentMeshObject* mWaterLavaMesh = nullptr;
-        AnimatingMeshObject* mAnimatingMesh = nullptr;
-        ProceduralMeshObject* mProceduralMesh = nullptr;
     };
     //////////////////////////////////////////////////////////////////////////
 public:
@@ -59,29 +81,15 @@ public:
         }
     }
     // queue
-    inline void Register(eRenderPass renderPass, EnvironmentMeshObject* object, float distanceToCamera2)
+    inline void Register(eRenderPass renderPass, SceneObject* object, eSceneObjectType objectType, float distanceToCamera2)
     {
-        if (object == nullptr) return;
-        
-        Entry& objectEntry = mListsPerPass[renderPass].emplace_back();
-        objectEntry.mWaterLavaMesh = object;
-        objectEntry.mDistanceToCamera2 = distanceToCamera2;
-    }
-    inline void Register(eRenderPass renderPass, AnimatingMeshObject* object, float distanceToCamera2)
-    {
-        if (object == nullptr) return;
-
-        Entry& objectEntry = mListsPerPass[renderPass].emplace_back();
-        objectEntry.mAnimatingMesh = object;
-        objectEntry.mDistanceToCamera2 = distanceToCamera2;
-    }
-    inline void Register(eRenderPass renderPass, ProceduralMeshObject* object, float distanceToCamera2)
-    {
-        if (object == nullptr) return;
-
-        Entry& objectEntry = mListsPerPass[renderPass].emplace_back();
-        objectEntry.mProceduralMesh = object;
-        objectEntry.mDistanceToCamera2 = distanceToCamera2;
+        if (object)
+        {
+            Entry& objectEntry = mListsPerPass[renderPass].emplace_back();
+            objectEntry.mSceneObject = object;
+            objectEntry.mSceneObjectType = objectType;
+            objectEntry.mDistanceToCamera2 = distanceToCamera2;
+        }
     }
 public:
     std::vector<Entry> mListsPerPass[eRenderPass_COUNT];

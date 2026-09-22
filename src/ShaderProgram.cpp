@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "ShaderProgram.h"
 #include "SurfaceMaterial.h"
+#include "Texture.h"
 
 ShaderProgram::ShaderProgram(const std::string& programName)
     : mProgramName(programName)
@@ -158,6 +159,24 @@ void ShaderProgram::SetMaterialUniforms(const SurfaceMaterial& material)
     {
         mGpuProgramResource->SetUniform(mGpuUniform_MaterialBaseColor, material.mBaseColor.ToFloats3());
     }
+
+    if (gGpuUniform_DiffuseTexcoordsRemap != GpuLocation_Null)
+    {
+        if (material.mDiffuseTexture)
+        {
+            const TextureRegion& textureRegion = material.mDiffuseTexture->GetTextureRegion();
+            mGpuProgramResource->SetUniform(gGpuUniform_DiffuseTexcoordsRemap, glm::vec4{ 
+                textureRegion.mUvMin.x, 
+                textureRegion.mUvMin.y, 
+                textureRegion.mUvMax.x - textureRegion.mUvMin.x,
+                textureRegion.mUvMax.y - textureRegion.mUvMin.y});
+        }
+        else
+        {
+            static const glm::vec4 TexcoordsNoRemap {0.0f, 0.0f, 1.0f, 1.0f};
+            mGpuProgramResource->SetUniform(gGpuUniform_DiffuseTexcoordsRemap, TexcoordsNoRemap);
+        }
+    }
 }
 
 void ShaderProgram::InitRenderData()
@@ -226,6 +245,7 @@ void ShaderProgram::HandleRenderDataInit()
         // common material uniforms
         mGpuUniform_MaterialOpacity = mGpuProgramResource->QueryUniformLocation("u_material_opacity");
         mGpuUniform_MaterialBaseColor = mGpuProgramResource->QueryUniformLocation("u_material_base_color");
+        gGpuUniform_DiffuseTexcoordsRemap = mGpuProgramResource->QueryUniformLocation("u_texcoords_remap");
     }
 }
 
@@ -241,6 +261,7 @@ void ShaderProgram::HandleRenderDataPurge()
     mGpuUniform_CameraPosition = GpuLocation_Null;
     mGpuUniform_MaterialOpacity = GpuLocation_Null;
     mGpuUniform_MaterialBaseColor = GpuLocation_Null;
+    gGpuUniform_DiffuseTexcoordsRemap = GpuLocation_Null;
 }
 
 bool ShaderProgram::LoadProgramFromFile()

@@ -2821,6 +2821,11 @@ bool DK2ScenarioReader::ExploreTerrainTypes(ScenarioDefinition& scenarioData) co
         if (roomDefinition.mRoomType == RoomTypeId_Null)
             continue;
 
+        roomDefinition.mTerrainDefinition = scenarioData.GetTerrainDefinition(roomDefinition.mTerrainType);
+        cxx_assert(roomDefinition.mTerrainDefinition);
+        if (roomDefinition.mTerrainDefinition == nullptr)
+            return false;
+
         // bind identifier
         scenarioData.mRoomByTerrainType[roomDefinition.mTerrainType] = roomDefinition.mRoomType;
     }

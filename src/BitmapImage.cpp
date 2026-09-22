@@ -11,17 +11,12 @@ struct BitmapImage::PixelsAllocator
 
 //////////////////////////////////////////////////////////////////////////
 
-BitmapImage::BitmapImage()
-    : mPixelFormat(ePixelFormat_Null)
-{}
-
 BitmapImage::BitmapImage(const std::string& theFilePath)             
-    : mPixelFormat(ePixelFormat_Null)
 {
     LoadFromFile(theFilePath);
 }
 
-BitmapImage::BitmapImage(BitmapImage&& other)
+BitmapImage::BitmapImage(BitmapImage&& other) noexcept
 {
     Swap(other);
 }
@@ -242,6 +237,103 @@ bool BitmapImage::Create(ePixelFormat thePixelFormat, const Point2D& dims, Color
     return false;
 }
 
+bool BitmapImage::CreateFrom(const BitmapImage& other, int mipmapLevel, int padding)
+{
+    Clear();
+
+    if (!other.HasContent() || !other.HasMipLevel(mipmapLevel))
+        return false;
+
+    mPixelFormat = other.mPixelFormat;
+    mHasAlphaHint = other.mHasAlphaHint;
+
+    const unsigned char* srcImageData = other.GetMipPixels(mipmapLevel);
+    cxx_assert(srcImageData);
+
+    const Point2D srcImageDims = other.GetDimensions(mipmapLevel);
+    if (padding < 1)
+    {
+        MipLevel& baseMip = mMipmaps.emplace_back();
+        SetMip(baseMip, srcImageDims, nullptr);
+
+        if (baseMip.mPixels)
+        {
+            const int imageDataSize = srcImageDims.x * srcImageDims.y * GetBytesPerPixel(mPixelFormat);
+            ::memcpy(baseMip.mPixels, srcImageData, imageDataSize);
+        }
+        else
+        {
+            cxx_assert(false);
+            Clear();
+        }
+    }
+    else
+    {
+        const Point2D dstImageDims = srcImageDims + Point2D(padding * 2, padding * 2);
+
+        MipLevel& baseMip = mMipmaps.emplace_back();
+        SetMip(baseMip, dstImageDims, nullptr);
+
+        if (baseMip.mPixels)
+        {
+            unsigned char* dstImageData = baseMip.mPixels;
+            const int bytesPerPixel = GetBytesPerPixel(mPixelFormat);
+            const int srcBytesPerLine = srcImageDims.x * bytesPerPixel;
+            const int dstBytesPerLine = dstImageDims.x * bytesPerPixel;
+            // center, left padding, right padding
+            for (int iy = 0; iy < srcImageDims.y; ++iy)
+            {
+                auto* srcPtr = srcImageData + (iy * srcBytesPerLine);
+                auto* dstPtrBase = dstImageData + ((iy + padding) * dstBytesPerLine);
+                // center
+                {
+                    auto* dstPtr = dstPtrBase + (padding * bytesPerPixel);
+                    ::memcpy(dstPtr, srcPtr, srcBytesPerLine);
+                }
+                // left padding
+                srcPtr = srcImageData + (iy * srcBytesPerLine);
+                for (int ix = 0; ix < padding; ++ix)
+                {
+                    auto* dstPtr = dstPtrBase + (ix * bytesPerPixel);
+                    ::memcpy(dstPtr, srcPtr, bytesPerPixel);
+                }
+                // right padding
+                srcPtr = srcImageData + ((iy * srcBytesPerLine) + (srcBytesPerLine - bytesPerPixel));
+                for (int ix = 0; ix < padding; ++ix)
+                {
+                    auto* dstPtr = dstPtrBase + ((padding + srcImageDims.x + ix) * bytesPerPixel);
+                    ::memcpy(dstPtr, srcPtr, bytesPerPixel);
+                }
+            }
+            // top padding
+            {
+                auto* srcPtr = dstImageData + (padding * dstBytesPerLine);
+                for (int iy = 0; iy < padding; ++iy)
+                {
+                    auto* dstPtr = dstImageData + (iy * dstBytesPerLine);
+                    ::memcpy(dstPtr, srcPtr, dstBytesPerLine);
+                }
+            }
+            // bottom padding
+            {
+                auto* srcPtr = dstImageData + ((padding + srcImageDims.y - 1) * dstBytesPerLine);
+                for (int iy = 0; iy < padding; ++iy)
+                {
+                    auto* dstPtr = dstImageData + ((padding + srcImageDims.y + iy) * dstBytesPerLine);
+                    ::memcpy(dstPtr, srcPtr, dstBytesPerLine);
+                }
+            }
+        }
+        else
+        {
+            cxx_assert(false);
+            Clear();
+        }
+    }
+
+    return HasContent();
+}
+
 bool BitmapImage::LoadFromFile(const std::string& theFilePath, ePixelFormat forceImageFormat)
 {
     Clear();
@@ -356,11 +448,9 @@ void BitmapImage::Clear()
     mMipmaps.clear();
 }
 
-void BitmapImage::Swap(BitmapImage& other)
+void BitmapImage::Swap(BitmapImage& other) noexcept
 {
-    if (this != &other)
-    {
-        std::swap(mPixelFormat, other.mPixelFormat);
-        std::swap(mMipmaps, other.mMipmaps);
-    }
+    std::swap(mHasAlphaHint, other.mHasAlphaHint);
+    std::swap(mPixelFormat, other.mPixelFormat);
+    std::swap(mMipmaps, other.mMipmaps);
 }

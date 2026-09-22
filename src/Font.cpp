@@ -83,23 +83,25 @@ void Font::InitRenderData()
     static bool enableFiltering = true;
     static bool freeSystemBits = true;
 
+    // allocate render resource
+    mGpuTextureResource = gRenderDevice.CreateTexture2D();
+    cxx_assert(mGpuTextureResource);
+
     if (mAtlasBitmap.HasContent())
     {
-        eTextureFiltering texFilteting = enableFiltering ? eTextureFiltering_Bilinear : eTextureFiltering_None;
-
-        // create texture
-        mGpuTextureResource = gRenderDevice.CreateTexture2D(mAtlasBitmap, texFilteting, eTextureRepeating_ClampToEdge);
-        cxx_assert(mGpuTextureResource);
-        if (mGpuTextureResource)
+        // upload data
+        const eTextureFiltering texFilteting = enableFiltering ? eTextureFiltering_Bilinear : eTextureFiltering_None;
+        if (!mGpuTextureResource->Create(mAtlasBitmap, texFilteting))
         {
-            // success
-            if (freeSystemBits)
-            {
-                mAtlasBitmap.Clear();
-            }
-
-            return;
+            cxx_assert(false);
         }
+
+        // done
+        if (freeSystemBits)
+        {
+            mAtlasBitmap.Clear();
+        }
+        return;
     }
 
     cxx_assert(false);
@@ -113,8 +115,10 @@ void Font::InitRenderData()
         cxx_assert(false);
     }
 
-    mGpuTextureResource = gRenderDevice.CreateTexture2D(bi);
-    cxx_assert(!!mGpuTextureResource);
+    if (!mGpuTextureResource->Create(bi))
+    {
+        cxx_assert(false);
+    }
 }
 
 void Font::BuildTextMesh(std::wstring_view wideString, const Point2D& pos, Color32 color, std::vector<Quad2D>& outQuads) const

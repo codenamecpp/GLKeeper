@@ -182,4 +182,5 @@ enum eUiInputPassThrough
     eUiInputPassThrough_MouseScroll,
     eUiInputPassThrough_MouseButtons,
     eUiInputPassThrough_MouseMotion,
+    eUiInputPassThrough_COUNT
 };

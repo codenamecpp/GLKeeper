@@ -2,6 +2,7 @@
 #include "AnimatingMeshObject.h"
 
 AnimatingMeshObject::AnimatingMeshObject()
+    : SceneObject(eSceneObjectType_AnimatingMesh)
 {
 }
 
@@ -262,12 +263,12 @@ void AnimatingMeshObject::RegisterForRendering(SceneRenderLists& renderLists, fl
 
     if (hasOpaqueParts)
     {
-        renderLists.Register(eRenderPass_Opaque, this, distanceToCamera2);
+        renderLists.Register(eRenderPass_Opaque, this, GetSceneObjectTypeId(),  distanceToCamera2);
     }
 
     if (hasTranslucentParts)
     {
-        renderLists.Register(eRenderPass_Translucent, this, distanceToCamera2);
+        renderLists.Register(eRenderPass_Translucent, this, GetSceneObjectTypeId(), distanceToCamera2);
     }
 }
 

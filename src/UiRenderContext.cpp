@@ -21,23 +21,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 static const Point2D ZeroDimensions (0, 0);
-
-//////////////////////////////////////////////////////////////////////////
-
-// helper
-inline GpuTexture2D* GetTextureRenderData(Texture* texture)
-{
-    GpuTexture2D* gpuTexture = nullptr;
-    if (texture)
-    {
-        if (!texture->IsRenderDataInited())
-        {
-            texture->InitRenderData();
-        }
-        gpuTexture = texture->GetGpuTexturePtr();
-    }
-    return gpuTexture;
-}
+static const TextureRegion IdentTextureRegion = TextureRegion::GetIdent();
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -178,33 +162,44 @@ void UiRenderContext::DrawRect(const Rect2D& rect, Color32 lineColor, int lineWi
 
 void UiRenderContext::DrawTexture(Texture* texture, Color32 theColor, const Rect2D& theDest, const Rect2D& theSrc)
 {
-    DrawTexture(GetTextureRenderData(texture), theColor, theDest, theSrc);
+    GpuTexture2D* textureRenderData = texture ? texture->AcquireTextureRenderData() : nullptr;
+    
+    Quad2D quad;
+    quad.BuildTextureQuad(texture ? texture->GetTextureRegion() : IdentTextureRegion, theSrc, theDest, theColor);
+    DrawQuads(textureRenderData, &quad, 1);
 }
 
 void UiRenderContext::DrawTexture(Texture* texture, Color32 theColor, const Point2D& theDest, const Rect2D& theSrc)
 {
     const Rect2D dstRect { theDest.x, theDest.y, theSrc.w, theSrc.h };
-    DrawTexture(GetTextureRenderData(texture), theColor, dstRect, theSrc);
+    DrawTexture(texture, theColor, dstRect, theSrc);
+}
+
+void UiRenderContext::DrawQuads(Texture* texture, const Quad2D* quads, int quadsCount)
+{
+    GpuTexture2D* textureRenderData = texture ? texture->AcquireTextureRenderData() : nullptr;
+    DrawQuads(textureRenderData, quads, quadsCount);
 }
 
 void UiRenderContext::DrawTexture(Texture* texture, Color32 theColor, const Rect2D& theDest)
 {
-    const Point2D& imageDimensions = texture ? texture->GetImageDimensions() : ZeroDimensions;
-    const Rect2D srcRect { 0, 0, imageDimensions.x, imageDimensions.y };
-    DrawTexture(texture, theColor, theDest, srcRect);
+    GpuTexture2D* textureRenderData = texture ? texture->AcquireTextureRenderData() : nullptr;
+
+    Quad2D quad;
+    quad.BuildTextureQuad(texture ? texture->GetTextureRegion() : IdentTextureRegion, theDest, theColor);
+    DrawQuads(textureRenderData, &quad, 1);
 }
 
 void UiRenderContext::DrawTexture(Texture* texture, Color32 theColor, const Point2D& theDest)
 {
-    const Point2D& imageDimensions = texture ? texture->GetImageDimensions() : ZeroDimensions;
-    const Rect2D srcRect { 0, 0, imageDimensions.x, imageDimensions.y };
-    const Rect2D dstRect { theDest.x, theDest.y, srcRect.w, srcRect.h };
-    DrawTexture(texture, theColor, dstRect, srcRect);
+    const Point2D& imageDimensions = texture ? texture->GetTextureRegion().GetDimensions() : ZeroDimensions;
+    const Rect2D dstRect { theDest.x, theDest.y, imageDimensions.x, imageDimensions.y };
+    DrawTexture(texture, theColor, dstRect);
 }
 
 void UiRenderContext::DrawTexture(GpuTexture2D* texture, Color32 theColor, const Rect2D& theDest, const Rect2D& theSrc)
 {
-    const Point2D& dimensions = texture ? texture->GetTextureDimensions() : ZeroDimensions;
+    const Point2D& dimensions = texture ? texture->GetDimensions() : ZeroDimensions;
 
     Quad2D quad;
     quad.BuildTextureQuad(dimensions, theSrc, theDest, theColor);
@@ -219,7 +214,7 @@ void UiRenderContext::DrawTexture(GpuTexture2D* texture, Color32 theColor, const
 
 void UiRenderContext::DrawTexture(GpuTexture2D* texture, Color32 theColor, const Rect2D& theDest)
 {
-    const Point2D& dimensions = texture ? texture->GetTextureDimensions() : ZeroDimensions;
+    const Point2D& dimensions = texture ? texture->GetDimensions() : ZeroDimensions;
     const Rect2D srcRect { 0, 0, dimensions.x, dimensions.y };
 
     Quad2D quad;
@@ -229,18 +224,13 @@ void UiRenderContext::DrawTexture(GpuTexture2D* texture, Color32 theColor, const
 
 void UiRenderContext::DrawTexture(GpuTexture2D* texture, Color32 theColor, const Point2D& theDest)
 {
-    const Point2D& dimensions = texture ? texture->GetTextureDimensions() : ZeroDimensions;
+    const Point2D& dimensions = texture ? texture->GetDimensions() : ZeroDimensions;
     const Rect2D srcRect { 0, 0, dimensions.x, dimensions.y };
     const Rect2D dstRect { theDest.x, theDest.y, srcRect.w, srcRect.h };
 
     Quad2D quad;
     quad.BuildTextureQuad(dimensions, srcRect, dstRect, theColor);
     DrawQuads(texture, &quad, 1);
-}
-
-void UiRenderContext::DrawQuads(Texture* texture, const Quad2D* quads, int quadsCount)
-{
-    DrawQuads(GetTextureRenderData(texture), quads, quadsCount);
 }
 
 void UiRenderContext::DrawQuads(GpuTexture2D* texture, const Quad2D* quads, int quadsCount)
@@ -338,7 +328,7 @@ void UiRenderContext::SwitchTexture(GpuTexture2D* texture)
     if (texture == nullptr)
     {
         // use fallback
-        texture = mWhiteTexture ? mWhiteTexture->GetGpuTexturePtr() : nullptr;
+        texture = mWhiteTexture ? mWhiteTexture->AcquireTextureRenderData() : nullptr;
         cxx_assert(texture);
     }
 
@@ -347,7 +337,7 @@ void UiRenderContext::SwitchTexture(GpuTexture2D* texture)
 
     FlushDeferred();
     mCurrentTexture = texture;
-    SwitchCurrentTextureIsA8(mCurrentTexture->GetTexturePixelFormat() == ePixelFormat_R8);
+    SwitchCurrentTextureIsA8(mCurrentTexture->GetPixelFormat() == ePixelFormat_R8);
 }
 
 void UiRenderContext::SwitchCurrentTextureIsA8(bool isAlphaTexture)

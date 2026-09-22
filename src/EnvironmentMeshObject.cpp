@@ -4,6 +4,7 @@
 #include "MapUtils.h"
 
 EnvironmentMeshObject::EnvironmentMeshObject()
+    : SceneObject(eSceneObjectType_EnvironmentMesh)
 {
 }
 
@@ -155,7 +156,7 @@ void EnvironmentMeshObject::RegisterForRendering(SceneRenderLists& renderLists, 
     if (mCoveredTiles.empty()) return;
 
     eRenderPass targetPass = (mParams.mTranslucency < 1.0f) ? eRenderPass_Translucent : eRenderPass_Opaque;
-    renderLists.Register(targetPass, this, distanceToCamera2);
+    renderLists.Register(targetPass, this, GetSceneObjectTypeId(), distanceToCamera2);
 }
 
 void EnvironmentMeshObject::PrepareRenderdata()

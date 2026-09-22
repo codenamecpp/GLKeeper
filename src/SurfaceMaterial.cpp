@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "SurfaceMaterial.h"
 #include "RenderDevice.h"
-#include "TextureManager.h"
+#include "ShaderProgram.h"
+#include "Texture.h"
 
 void SurfaceMaterial::BindMaterial(ShaderProgram& shaderProgram) const
 {

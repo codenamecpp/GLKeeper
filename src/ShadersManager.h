@@ -72,7 +72,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
 private:
-    using ResourcesMap = std::map<std::string, std::unique_ptr<ShaderProgram>, cxx::icase_string_less>;
+    using ResourcesMap = std::unordered_map<std::string, std::unique_ptr<ShaderProgram>, cxx::icase_string_hashfunc, cxx::icase_string_eq>;
     ResourcesMap mResourcesMap;
 };
 

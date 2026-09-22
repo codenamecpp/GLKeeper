@@ -34,11 +34,14 @@ public:
     virtual void PostRearrangeObjects();
     virtual void PostReconfigureRoom();
 
+    virtual void RoomOwnershipChanged(ePlayerID previousOwnerId, ePlayerID ownerId);
+
 protected:
     virtual void ReevaluatePillarTiles();
 
     // shortcuts
     inline Room& GetRoom() const { return *mRoom; }
+    inline Room* GetRoomPtr() const { return mRoom; }
 
     inline GameObjectClassId GetRoomPillarObjectId() const
     {

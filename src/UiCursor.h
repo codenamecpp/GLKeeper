@@ -33,6 +33,7 @@ public:
         // 
         eCursorState_COUNT
     };
+    using CursorStateSet = EnumSet<eCursorState_COUNT>;
     //////////////////////////////////////////////////////////////////////////
 private:
     //////////////////////////////////////////////////////////////////////////
@@ -70,8 +71,6 @@ private:
     eCursorState DetectNextState() const;
 
 private:
-    using CursorStateSet = EnumSet<eCursorState>;
-
     CursorState     mStates[eCursorState_COUNT];
     Point2D         mMousePosition {};
 

@@ -74,15 +74,16 @@ void Room::DespawnInstance()
     mInnerTiles.clear();
     mStorageSlots.clear();
 
+    mMaximumHealth = {};
+    mCurrentHealth = {}; 
+    mHealthPercents = {};
+
     mEntityFlags.mWasDespawned = true;
 }
 
 void Room::UpdateLogic(float stepDeltaTime)
 {
-    if (mController)
-    {
-        mController->UpdateLogic(stepDeltaTime);
-    }
+    mController->UpdateLogic(stepDeltaTime);
 }
 
 void Room::AbsorbRoom(Room* sourceRoom)
@@ -98,9 +99,10 @@ void Room::AbsorbRoom(Room* sourceRoom)
     {
         cxx_assert(false);
     }
-    auto tilesToAbsorb = cxx::temp_vector_from(sourceRoom->mCoveredTiles);
+    const int sourceRoomHealthPercents = sourceRoom->GetRoomHealthPercents();
+    auto tilesToAbsorb = cxx::temp_vector_from(sourceRoom->mCoveredTiles); // intent copy
     sourceRoom->ReleaseTiles(tilesToAbsorb);
-    EnlargeRoom(tilesToAbsorb);
+    EnlargeRoom(tilesToAbsorb, sourceRoomHealthPercents);
 }
 
 void Room::AbsorbRoom(Room* sourceRoom, cxx::span<MapTile*> targetTiles)
@@ -124,8 +126,9 @@ void Room::AbsorbRoom(Room* sourceRoom, cxx::span<MapTile*> targetTiles)
     {
         cxx_assert(false);
     }
+    const int sourceRoomHealthPercents = sourceRoom->GetRoomHealthPercents();
     sourceRoom->ReleaseTiles(targetTiles);
-    EnlargeRoom(targetTiles);
+    EnlargeRoom(targetTiles, sourceRoomHealthPercents);
 }
 
 bool Room::CanConstructOn(const MapTile* targetTile)
@@ -134,8 +137,7 @@ bool Room::CanConstructOn(const MapTile* targetTile)
         return false;
 
     // must build room on specific terrain type
-    const TerrainDefinition* terrain = targetTile->GetTerrain();
-    return (terrain->mTerrainType == mDefinition->mTerrainType);
+    return (targetTile->GetTerrain() == mDefinition->mTerrainDefinition);
 }
 
 void Room::AssignTiles(cxx::span<MapTile*> targetTiles)
@@ -189,23 +191,41 @@ void Room::UnassignTiles(cxx::span<MapTile*> targetTiles)
         });
 }
 
-void Room::EnlargeRoom(cxx::span<MapTile*> targetTiles)
+void Room::EnlargeRoom(cxx::span<MapTile*> targetTiles, int gainHealthFromTilePercents)
 {
+    const int prevRoomSize = GetRoomSize();
+
     AssignTiles(targetTiles);
     // update bounds and inner squares
     ReevaluateOccupationArea();
     ReevaluateInnerSquares();
     ReevaluateWallSections();
+
+    const int currRoomSize = GetRoomSize();
+    const int roomSizeDelta = currRoomSize - prevRoomSize;
+    if (roomSizeDelta)
+    {
+        UpdateRoomHealthAfterTileChange(roomSizeDelta, gainHealthFromTilePercents);
+    }    
     Reconfigure();
 }
 
 void Room::ReleaseTiles(cxx::span<MapTile*> targetTiles)
 {
+    const int prevRoomSize = GetRoomSize();
+
     UnassignTiles(targetTiles);
     // update bounds and inner squares
     ReevaluateOccupationArea();
     ReevaluateInnerSquares();
     ReevaluateWallSections();
+
+    const int currRoomSize = GetRoomSize();
+    const int roomSizeDelta = currRoomSize - prevRoomSize;
+    if (roomSizeDelta)
+    {
+        UpdateRoomHealthAfterTileChange(roomSizeDelta, GetRoomHealthPercents());
+    }
     Reconfigure();
 }
 
@@ -937,4 +957,60 @@ int Room::GetStorageSlotIndex(EntityHandle entityHandle) const
 void Room::MarkDeleted()
 {
     mEntityFlags.mWasDeleted = true;
+}
+
+void Room::RestartRoomHealth()
+{
+    const int maxHealthPerTile = mDefinition->mTerrainDefinition->mHealthInitial;
+
+    UpdateRoomHealth(maxHealthPerTile * GetRoomSize(), mMaximumHealth);
+}
+
+void Room::UpdateRoomHealthAfterTileChange(int deltaTiles, int healthPercentsFromTiles)
+{
+    cxx_assert(deltaTiles != 0);
+    const int maxHealthPerTile = mDefinition->mTerrainDefinition->mHealthMax;
+    const int healthFromTile = std::clamp<int>((static_cast<int64_t>(maxHealthPerTile) * healthPercentsFromTiles) / 100, 0, maxHealthPerTile);
+    UpdateRoomHealth(maxHealthPerTile * GetRoomSize(), mCurrentHealth + deltaTiles * healthFromTile);
+}
+
+void Room::UpdateRoomHealth(int maximumHealth, int currentHealth)
+{
+    if ((mMaximumHealth == maximumHealth) && (mCurrentHealth == currentHealth))
+        return;
+
+    mMaximumHealth = maximumHealth;
+    mCurrentHealth = std::clamp(currentHealth, 0, mMaximumHealth);
+    if ((mMaximumHealth > 0) && (mCurrentHealth > 0))
+    {
+        mHealthPercents = std::clamp<int>((static_cast<int64_t>(mCurrentHealth) * 100 / mMaximumHealth), 1, 100);
+    }
+    else
+    {
+        mHealthPercents = 0;
+    }
+}
+
+void Room::ChangeRoomHealth(int deltaHealth)
+{
+    if (deltaHealth)
+    {
+        UpdateRoomHealth(mMaximumHealth, mCurrentHealth + deltaHealth);
+    }
+}
+
+void Room::ChangeOwnership(ePlayerID ownerId)
+{
+    cxx_assert(mOwnerId < ePlayerID_COUNT);
+    if (HasOwner(ownerId))
+    {
+        cxx_assert(false);
+        return;
+    }
+    const ePlayerID previousOwnerId = GetOwnerId();
+    mOwnerId = ownerId;
+
+    // todo: notify room objects
+
+    mController->RoomOwnershipChanged(previousOwnerId, ownerId);
 }

@@ -24,7 +24,7 @@ void MapSelectionCursor::Init(Scene& scene)
             material.mRenderStates.mIsDepthWriteEnabled = false;
             material.mRenderStates.mIsFaceCullingEnabled = false;
             material.mRenderStates.EnableAlphaBlend(RENDER_STATES_BLENDMODE_ALPHA_ADDITIVE);
-            material.mDiffuseTexture = gTextureManager.GetTexture("Cursor");
+            material.mDiffuseTexture = gTextureManager.GetTexture("Cursor", eTextureBacking_None);
             material.mBaseColor = GetColorForTint(mSelectionTint);
         }
     }

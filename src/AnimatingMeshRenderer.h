@@ -7,19 +7,18 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-class AnimatingMeshRenderer: public cxx::noncopyable
+class AnimatingMeshRenderer: public ISceneObjectRenderer
 {
 public:
     bool Initialize();
     void Shutdown();
 
-    void BeginFrame();
-    void EndFrame();
-
-    void BeginBatch(Camera& camera);
-    void EndBatch();
-
-    void RenderInstance(eRenderPass currentPass, AnimatingMeshObject& object);
+    // override ISceneObjectRenderer
+    void BeginFrame() override;
+    void EndFrame() override;
+    void BeginBatch(Camera& camera) override;
+    void EndBatch() override;
+    void RenderInstance(eRenderPass currentPass, SceneObject* object) override;
 
 private:
     ShaderProgram_BlendFrames* mShaderProgram = nullptr;

@@ -204,21 +204,17 @@ void GameplayUi::Minimap::UpdateTexture()
 
     if (mTexture == nullptr)
     {
-        mTexture = gRenderDevice.CreateTexture2D(mScratchBuffer);
+        mTexture = gRenderDevice.CreateTexture2D();
         cxx_assert(mTexture);
-
-        if (!mTexture)
+        if (!mTexture->Create(mScratchBuffer, eTextureFiltering_None))
         {
+            cxx_assert(false);
             mScratchBuffer.Clear();
         }
         return;
     }
-    if (!mTexture->Upload(mScratchBuffer.GetMipPixels(0)))
-    {
-        cxx_assert(false);
-        mTexture.reset();
-        mScratchBuffer.Clear();
-    }
+
+    mTexture->Upload(mScratchBuffer.GetMipPixels(0));
 }
 
 bool GameplayUi::Minimap::CustomDraw(const UiWidget& widget, UiRenderContext& uiRenderContext)
@@ -240,7 +236,7 @@ bool GameplayUi::Minimap::CustomDraw(const UiWidget& widget, UiRenderContext& ui
     const Rect2D dstRect = FitAspectContain(srcRect, localBounds);
 
     Quad2D quad;
-    quad.BuildTextureQuad(mTexture->GetTextureDimensions(), srcRect, dstRect, COLOR_WHITE);
+    quad.BuildTextureQuad(mTexture->GetDimensions(), srcRect, dstRect, COLOR_WHITE);
     quad.RotateAroundCenter(cxx::angle_t::from_degrees(mLastCameraInfo.mRotation));
     uiRenderContext.DrawQuads(mTexture.get(), &quad, 1);
 

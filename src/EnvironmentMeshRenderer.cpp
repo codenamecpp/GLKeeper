@@ -24,10 +24,9 @@ bool EnvironmentMeshRenderer::Initialize()
 
     mShaderProgram->InitRenderData();
 
-    mLavaTexture = gTextureManager.GetTexture("Lava0");
+    mLavaTexture = gTextureManager.GetTexture("Lava0", eTextureBacking_None);
     cxx_assert(mLavaTexture);
-    mLavaTexture->InitRenderData(); // todo: ensure to initialize in render thread
-    mLavaTexture->GetGpuTexturePtr()->SetSamplerState(eTextureFiltering_Trilinear, eTextureRepeating_Repeat);
+    mLavaTexture->AcquireTextureRenderData()->SetSamplerState(eTextureFiltering_Trilinear, eTextureRepeating_Repeat);
 
     LoadWaterTextureFrames();
 
@@ -59,8 +58,10 @@ void EnvironmentMeshRenderer::BeginBatch(Camera& camera)
     }
 }
 
-void EnvironmentMeshRenderer::RenderInstance(eRenderPass renderPass, EnvironmentMeshObject& object)
+void EnvironmentMeshRenderer::RenderInstance(eRenderPass renderPass, SceneObject* objectptr)
 {
+    EnvironmentMeshObject& object = *(EnvironmentMeshObject*)objectptr;
+
     // set params
     const EnvironmentMeshObject::Params& objectParams = object.GetParams();
     mShaderProgram->SetWaterLavaParams(objectParams.mWaveTime, 
@@ -115,10 +116,9 @@ void EnvironmentMeshRenderer::LoadWaterTextureFrames()
     {
         const std::string iTextureIndexString = std::to_string(iTexture);
 
-        Texture* texture = gTextureManager.GetTexture("Water" + iTextureIndexString);
+        Texture* texture = gTextureManager.GetTexture("Water" + iTextureIndexString, eTextureBacking_None);
         cxx_assert(texture);
-        texture->InitRenderData(); // todo: ensure to initialize in render thread
-        texture->GetGpuTexturePtr()->SetSamplerState(eTextureFiltering_Trilinear, eTextureRepeating_Repeat);
+        texture->AcquireTextureRenderData()->SetSamplerState(eTextureFiltering_Trilinear, eTextureRepeating_Repeat);
         mWaterFrames.mTextures.push_back(texture);
     }
 }

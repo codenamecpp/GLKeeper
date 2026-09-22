@@ -35,11 +35,7 @@ bool LoadingScreen::LoadContent()
     if (IsHierarchyLoaded())
         return true;
 
-    TextureManager::LoadParams params;
-    params.mConvertNPOT = true;
-    params.mInitDefaultOnFail = false;
-    mBackgroundTexture = gTextureManager.GetTexture("LoadingScreen800x600.444", params);
-
+    mBackgroundTexture = gTextureManager.GetTexture("LoadingScreen800x600.444", eTextureBacking_None);
     mProgressBarSrcRect = {30, 556, 206, 16};
     mProgressBarFillColor = Color32{244, 113, 0, 255};
 
@@ -66,7 +62,8 @@ void LoadingScreen::RenderFrame(UiRenderContext& renderContext)
 
     if (mBackgroundTexture)
     {
-        Rect2D srcRect = mBackgroundTexture->GetImageRect();
+        const TextureRegion& textureRegion = mBackgroundTexture->GetTextureRegion();
+        const Rect2D srcRect {0, 0, textureRegion.mRect.w, textureRegion.mRect.h};
 
         // aspect ratio
         float ratio_w = 1.0f * screenRect.w / srcRect.w;

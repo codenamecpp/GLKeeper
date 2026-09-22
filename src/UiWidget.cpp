@@ -229,17 +229,17 @@ void UiWidget::Deserialize(const JsonElement& jsonElement)
 
     if (JsonQuery(jsonElement, "ignore_mscroll", flagValue))
     {
-        mInputPassThrough.Change(eUiInputPassThrough_MouseScroll, flagValue);
+        mInputPassThrough.Set(eUiInputPassThrough_MouseScroll, flagValue);
     }
 
     if (JsonQuery(jsonElement, "ignore_mbuttons", flagValue))
     {
-        mInputPassThrough.Change(eUiInputPassThrough_MouseButtons, flagValue);
+        mInputPassThrough.Set(eUiInputPassThrough_MouseButtons, flagValue);
     }
 
     if (JsonQuery(jsonElement, "ignore_mmove", flagValue))
     {
-        mInputPassThrough.Change(eUiInputPassThrough_MouseMotion, flagValue);
+        mInputPassThrough.Set(eUiInputPassThrough_MouseMotion, flagValue);
     }
 
     if (JsonElement customPropsNode = jsonElement.FindElement("props"))

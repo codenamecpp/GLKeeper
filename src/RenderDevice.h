@@ -45,15 +45,7 @@ public:
     void EnableFullscreen(bool fullscreenEnabled);
 
     // Create 2D texture from source image
-    std::unique_ptr<GpuTexture2D> CreateTexture2D(const BitmapImage& picture, 
-        eTextureFiltering filter = eTextureFiltering_None, 
-        eTextureRepeating repeat = eTextureRepeating_ClampToEdge);
-
-    std::unique_ptr<GpuTexture2D> CreateTexture2D(const Point2D& textureDims, 
-        ePixelFormat pixelFormat,
-        const void* pixeldata,
-        eTextureFiltering filter = eTextureFiltering_None, 
-        eTextureRepeating repeat = eTextureRepeating_ClampToEdge);
+    std::unique_ptr<GpuTexture2D> CreateTexture2D();
 
     // Create render program from shader source code
     std::unique_ptr<GpuProgram> CreateShaderProgram(const std::string& vertShaderSource, const std::string& fragShaderSource);

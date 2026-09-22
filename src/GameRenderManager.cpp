@@ -8,6 +8,7 @@
 #include "RenderView.h"
 #include "UiManager.h"
 #include "ToolsUiManager.h"
+#include "TextureManager.h"
 
 GameRenderManager gGameRenderer;
 
@@ -16,7 +17,12 @@ GameRenderManager::GameRenderManager()
     , mTerrainRenderer()
     , mEnvironmentMeshRenderer()
     , mUiRenderContext()
-{}
+    , mSceneObjectRenderers()
+{
+    mSceneObjectRenderers[eSceneObjectType_AnimatingMesh] = &mAnimatingMeshRenderer;
+    mSceneObjectRenderers[eSceneObjectType_EnvironmentMesh] = &mEnvironmentMeshRenderer;
+    mSceneObjectRenderers[eSceneObjectType_ProceduralMesh] = &mProceduralMeshRenderer;
+}
 
 bool GameRenderManager::Initialize()
 {
@@ -25,7 +31,7 @@ bool GameRenderManager::Initialize()
         !mDebugRenderer.Initialize() || 
         !mTerrainRenderer.Initialize() || 
         !mEnvironmentMeshRenderer.Initialize() || 
-        !mAnimatingMeshlRenderer.Initialize() ||
+        !mAnimatingMeshRenderer.Initialize() ||
         !mProceduralMeshRenderer.Initialize())
     {
         Shutdown();
@@ -37,7 +43,7 @@ bool GameRenderManager::Initialize()
 void GameRenderManager::Shutdown()
 {
     mProceduralMeshRenderer.Shutdown();
-    mAnimatingMeshlRenderer.Shutdown();
+    mAnimatingMeshRenderer.Shutdown();
     mUiRenderContext.Deinit();
     mEnvironmentMeshRenderer.Shutdown();
     mTerrainRenderer.Shutdown();
@@ -53,9 +59,12 @@ void GameRenderManager::RenderFrame()
     gRenderDevice.SetClearColor(COLOR_BLACK);
     gRenderDevice.ClearScreen(eDeviceClear_ColorBuffer);
 
+    // update atlases
+    gTextureManager.OnRenderFrame();
+
     // world / world overlay
-    RenderWorld(gScene, eSceneRenderLayer_World);
-    RenderWorld(gScene, eSceneRenderLayer_WorldOverlay);
+    RenderWorld(gScene, eRenderLayer_World);
+    RenderWorld(gScene, eRenderLayer_WorldOverlay);
 
     // Debug information
     if (!mDebugVisializers.empty())
@@ -74,8 +83,8 @@ void GameRenderManager::RenderFrame()
     mUiRenderContext.EndFrame();
 
     // overlays
-    RenderWorld(gScene, eSceneRenderLayer_UiOverlay);
-    RenderWorld(gScene, eSceneRenderLayer_DebugOverlay);
+    RenderWorld(gScene, eRenderLayer_UiOverlay);
+    RenderWorld(gScene, eRenderLayer_DebugOverlay);
 
     // ui overlay
     mUiRenderContext.BeginFrame();
@@ -93,15 +102,16 @@ void GameRenderManager::RenderFrame()
     gRenderDevice.EndFrame();
 }
 
-void GameRenderManager::RenderWorld(Camera& camera, Scene& scene, eSceneRenderLayer renderLayer)
+void GameRenderManager::RenderWorld(Camera& camera, Scene& scene, eRenderLayer renderLayer)
 {
     camera.ComputeMatricesAndFrustum(gRenderDevice.GetViewport());
 
-    mAnimatingMeshlRenderer.BeginFrame();
-    mEnvironmentMeshRenderer.BeginFrame();
-    mProceduralMeshRenderer.BeginFrame();
+    for (ISceneObjectRenderer* renderer: mSceneObjectRenderers)
+    {
+        renderer->BeginFrame();
+    }
 
-    if (renderLayer == eSceneRenderLayer_World)
+    if (renderLayer == eRenderLayer_World)
     {
         mTerrainRenderer.Render(camera);
     }
@@ -111,12 +121,13 @@ void GameRenderManager::RenderWorld(Camera& camera, Scene& scene, eSceneRenderLa
     RenderScene(camera, mRenderLists);
     mRenderLists.Clear();
 
-    mProceduralMeshRenderer.EndFrame();
-    mEnvironmentMeshRenderer.EndFrame();
-    mAnimatingMeshlRenderer.EndFrame();
+    for (ISceneObjectRenderer* renderer: mSceneObjectRenderers)
+    {
+        renderer->EndFrame();
+    }
 }
 
-void GameRenderManager::RenderWorld(Scene& scene, eSceneRenderLayer renderLayer)
+void GameRenderManager::RenderWorld(Scene& scene, eRenderLayer renderLayer)
 {
     // main
     {
@@ -155,19 +166,9 @@ void GameRenderManager::RenderScene(Camera& camera, SceneRenderLists& renderList
         std::sort(opaqueList.begin(), opaqueList.end(),
             [](const SceneRenderLists::Entry& lhs, const SceneRenderLists::Entry& rhs)
             {
-                if (lhs.mWaterLavaMesh)
-                    return (rhs.mWaterLavaMesh == nullptr) || (lhs.mWaterLavaMesh < rhs.mWaterLavaMesh);
-
-                if (lhs.mAnimatingMesh)
-                    return (rhs.mAnimatingMesh == nullptr) || (lhs.mAnimatingMesh < rhs.mAnimatingMesh);
-
-                if (lhs.mProceduralMesh)
-                    return (rhs.mProceduralMesh == nullptr) || (lhs.mProceduralMesh < rhs.mProceduralMesh);
-
-                // add more here
-                cxx_assert(false);
-
-                return lhs.mDistanceToCamera2 > rhs.mDistanceToCamera2;
+                return (lhs.mSceneObjectType != rhs.mSceneObjectType) ?
+                    (lhs.mSceneObjectType < rhs.mSceneObjectType) :
+                    (lhs.mDistanceToCamera2 > rhs.mDistanceToCamera2);
             });
     }
 
@@ -191,55 +192,18 @@ void GameRenderManager::RenderScene(Camera& camera, SceneRenderLists& renderList
         const auto& currentPassList = renderLists.mListsPerPass[currentPass];
         for (auto roller_it = currentPassList.begin(), end_it = currentPassList.end(); roller_it != end_it ;)
         {
-            // process water lava meshes
-            if (roller_it->mWaterLavaMesh)
+            const eSceneObjectType currentType = roller_it->mSceneObjectType;
+            ISceneObjectRenderer* renderer = mSceneObjectRenderers[currentType];
+            cxx_assert(renderer);
+            renderer->BeginBatch(camera);
+            do
             {
-                mEnvironmentMeshRenderer.BeginBatch(camera);
-                do
-                {
-                    if (!gDebug.mNoDrawWaterLava)
-                    {
-                        mEnvironmentMeshRenderer.RenderInstance(currentPass, *roller_it->mWaterLavaMesh);
-                    }
-                    ++roller_it; // advance
-                } 
-                while ((roller_it != end_it) && roller_it->mWaterLavaMesh);
-                mEnvironmentMeshRenderer.EndBatch();
-                continue;
-            }
+                renderer->RenderInstance(currentPass, roller_it->mSceneObject);
+                ++roller_it;
+            } 
+            while ((roller_it != end_it) && (roller_it->mSceneObjectType == currentType));
 
-            // process animated models
-            if (roller_it->mAnimatingMesh)
-            {
-                mAnimatingMeshlRenderer.BeginBatch(camera);
-                do
-                {
-                    mAnimatingMeshlRenderer.RenderInstance(currentPass, *roller_it->mAnimatingMesh);
-                    ++roller_it; // advance
-                }
-                while ((roller_it != end_it) && roller_it->mAnimatingMesh);
-                mAnimatingMeshlRenderer.EndBatch();
-                continue;
-            }
-
-            // process procedural mesh objects
-            if (roller_it->mProceduralMesh)
-            {
-                mProceduralMeshRenderer.BeginBatch(camera);
-                do
-                {
-                    mProceduralMeshRenderer.RenderInstance(currentPass, *roller_it->mProceduralMesh);
-                    ++roller_it; // advance
-                }
-                while ((roller_it != end_it) && roller_it->mProceduralMesh);
-                mProceduralMeshRenderer.EndBatch();
-                continue;
-            }
-
-            // add more here
-            cxx_assert(false);
-
-            ++roller_it;
+            renderer->EndBatch();
         }
     }
 

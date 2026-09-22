@@ -57,8 +57,9 @@ bool ToolsUiManager::Initialize()
         io.Fonts->Build();
         io.Fonts->GetTexDataAsRGBA32(&fontPixels, &fontTextureDimensions.x, &fontTextureDimensions.y);
 
-        mFontTexture = gRenderDevice.CreateTexture2D(fontTextureDimensions, ePixelFormat_RGBA8, fontPixels, eTextureFiltering_Bilinear, eTextureRepeating_ClampToEdge);
-        if (!mFontTexture)
+        mFontTexture = gRenderDevice.CreateTexture2D();
+        cxx_assert(mFontTexture);
+        if (!mFontTexture->Create(fontTextureDimensions, ePixelFormat_RGBA8, fontPixels))
         {
             cxx_assert(false);
         }

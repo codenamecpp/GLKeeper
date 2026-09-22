@@ -3,23 +3,25 @@
 //////////////////////////////////////////////////////////////////////////
 
 #include "GpuTexture2D.h"
+#include "AssetDefs.h"
 
 //////////////////////////////////////////////////////////////////////////
 
 class Texture : public cxx::noncopyable
 {
 public:
-    Texture(const std::string& textureName);
+    Texture(const std::string& textureName, eTextureBacking textureBacking);
 
     const std::string& GetTextureName() const { return mTextureName; }
 
     // loads texture data from file; does not create render data automatically
     // will initialize default texture if loading fails
-    // @param convertToNPOT: ensure texture dimensions to be power-of-two
-    void Load(bool convertNPOT = false);
+    // will convert texture dimensions to power-of-two
+    void Load();
 
-    // init fallback texture
-    void InitDefault();
+    void CreateDefaultWhite();
+    void CreateDefaultBlack();
+    void CreateDefault();
 
     // uploads system bits to backend; the texture must be inited beforehand
     // will init fallback render data on failure
@@ -30,28 +32,23 @@ public:
 
     void BindTexture(eTextureUnit textureUnit);
 
-    // returns true if either texture is loaded from file or it is the default one
-    inline bool IsInited() const { return mIsLoadedFromFile || mIsDefaultTexture; }
-    inline bool IsLoadedFromFile() const { return mIsLoadedFromFile; }
+    // texture status
+    inline bool IsLoaded() const { return mIsLoaded || mIsDefaultTexture; }
+    inline bool IsInAtlas() const { return mTextureBacking == eTextureBacking_Atlas; }
     inline bool IsDefaultTexture() const { return mIsDefaultTexture; }
     inline bool IsRenderDataInited() const { return mIsRenderDataInited; }
 
+    const TextureRegion& GetTextureRegion() const { return mTextureRegion; }
     inline GpuTexture2D* GetGpuTexturePtr() const
     {
-        return mGpuTextureResource.get();
+        return mGpuTextureResourceReference;
     }
 
-    const Point2D& GetTextureDimensions() const { return mTextureDimensions; }
-    const Point2D& GetImageDimensions() const { return mImageDimensions; }
-    inline Rect2D GetImageRect() const
+    inline GpuTexture2D* AcquireTextureRenderData()
     {
-        return {0, 0, mImageDimensions.x, mImageDimensions.y};
+        InitRenderData();
+        return mGpuTextureResourceReference;
     }
-    inline ePixelFormat GetPixelFormat() const { return mPixelFormat; }
-
-    inline bool HasMipmaps() const { return mHasMipmaps; }
-    inline bool WasResized() const { return mWasResized; }
-    inline bool HasAlpha() const { return mHasAlpha; }
 
     // in case system bits are in memory
     inline const BitmapImage& GetBitmapImage() const
@@ -59,8 +56,17 @@ public:
         return mImageBitmap;
     }
 
+    // use source id for geometry batching
+    inline TextureSourceId GetTextureSourceId() const { return mTextureSourceId; }
+
+    inline ePixelFormat GetPixelFormat() const { return mPixelFormat; }
+
+    inline bool HasMipmaps() const { return mHasMipmaps; }
+    inline bool HasAlpha() const { return mHasAlpha; }
+
 private:
-    bool LoadFromFile(bool convertNPOT);
+    void PostLoad();
+    bool LoadFromFile();
     bool ConvertNPOT();
     
 private:
@@ -68,16 +74,22 @@ private:
 
     BitmapImage mImageBitmap;
     ePixelFormat mPixelFormat = ePixelFormat_Null;
+    TextureSourceId mTextureSourceId {};
+    eTextureBacking mTextureBacking {};
 
-    std::unique_ptr<GpuTexture2D> mGpuTextureResource;
-    Point2D mTextureDimensions; // real dimensions of gpu texture
-    Point2D mImageDimensions; // image dimensions, in case of npot
+    std::unique_ptr<GpuTexture2D> mOwnedGpuTextureResource;
 
+    TextureRegion mTextureRegion {};
+    TextureAtlas* mTextureAtlas {};
+
+    // if the texture is part of a larger atlas, it doesn't own the gpu texture resource
+    GpuTexture2D* mGpuTextureResourceReference {}; 
+
+    bool mIsLoaded = false;
     bool mIsDefaultTexture = false;
-    bool mIsLoadedFromFile = false;
     bool mIsRenderDataInited = false;
-
     bool mHasMipmaps = false;
-    bool mWasResized = false;
     bool mHasAlpha = false;
 };
+
+//////////////////////////////////////////////////////////////////////////
