@@ -33,7 +33,7 @@ class TextureAtlas final: public cxx::noncopyable
 public:
     TextureAtlas(TextureSourceId textureSourceId);
 
-    bool Setup(const Point2D& textureDimensions, ePixelFormat pixelFormat, int numMipmaps, int padding);
+    bool Setup(const Point2D& textureDimensions, ePixelFormat pixelFormat, int numMipmaps);
     void Purge();
     bool TryAppendTexture(BitmapImage& bitmapImage, TextureRegion& region);
     void BindTexture(eTextureUnit textureUnit);

@@ -4,7 +4,6 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-static const int TextureAtlasPadding = 4;
 static const Point2D TextureAtlasSize = Point2D {2048, 2048};
 
 //////////////////////////////////////////////////////////////////////////
@@ -174,7 +173,7 @@ bool TextureManager::CreateTextureAtlasEntry(const std::string& textureName, Bit
     const TextureSourceId newAtlasSourceId = GenerateTextureSourceId();
     // create new atlas
     TextureAtlas* newAtlasPtr = mAtlases.emplace_back(std::make_unique<TextureAtlas>(newAtlasSourceId)).get();
-    if (!newAtlasPtr->Setup(TextureAtlasSize, sourceBitmap.GetPixelFormat(), sourceBitmap.GetMipsCount(), TextureAtlasPadding) ||
+    if (!newAtlasPtr->Setup(TextureAtlasSize, sourceBitmap.GetPixelFormat(), sourceBitmap.GetMipsCount()) ||
         !newAtlasPtr->TryAppendTexture(sourceBitmap, textureRegion))
     {
         cxx_assert(false);

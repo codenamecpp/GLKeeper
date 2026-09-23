@@ -3,7 +3,8 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-static constexpr int MaxAtlasTextureMipsCount = 4;
+static constexpr int MaxAtlasTextureMipsCount = 3;
+static constexpr int MaxTextureAtlasPadding = 8;
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -118,7 +119,7 @@ TextureAtlas::TextureAtlas(TextureSourceId textureSourceId)
     cxx_assert(mTextureSourceId > 0);
 }
 
-bool TextureAtlas::Setup(const Point2D& textureDimensions, ePixelFormat pixelFormat, int numMipmaps, int padding)
+bool TextureAtlas::Setup(const Point2D& textureDimensions, ePixelFormat pixelFormat, int numMipmaps)
 {
     Purge();
 
@@ -134,7 +135,10 @@ bool TextureAtlas::Setup(const Point2D& textureDimensions, ePixelFormat pixelFor
 
     mTextureDimensions = textureDimensions;
 
-    mRectsPacker.Setup({mTextureDimensions.x, mTextureDimensions.y}, padding, 1 << (mMipMapsCount - 1));
+    const int padding = std::min(MaxTextureAtlasPadding, (1 << (mMipMapsCount - 1)));
+    const int alignment = 1 << (mMipMapsCount - 1);
+
+    mRectsPacker.Setup({mTextureDimensions.x, mTextureDimensions.y}, padding, alignment);
 
     mPixelFormat = pixelFormat;
     return true;
@@ -162,21 +166,24 @@ void TextureAtlas::UpdateRenderData()
     BitmapImage bi;
     for (auto& roller: mUpdateRects)
     {
-        const Point2D baseXY = roller.first.GetPosition();
         const Point2D baseWH = roller.first.GetSize();
+        const Point2D baseXY = roller.first.GetPosition();
+        const Point2D placedXY
+        {
+            baseXY.x - padding,
+            baseXY.y - padding
+        };
 
         for (int imip = 0; imip < mMipMapsCount; ++imip)
         {
             const int mipmapPadding = (padding >> imip);
             bi.CreateFrom(roller.second, imip, mipmapPadding);
 
-            const Point2D currentXY
+            const Point2D uploadXY
             {
-                baseXY.x >> imip,
-                baseXY.y >> imip
+                placedXY.x >> imip,
+                placedXY.y >> imip
             };
-            const Point2D uploadXY = currentXY - Point2D{ mipmapPadding, mipmapPadding };
-
             mGpuTextureResource->Upload(uploadXY, bi.GetDimensions(), bi.GetMipPixels(0), imip);
         }
     }
@@ -188,7 +195,7 @@ bool TextureAtlas::TryAppendTexture(BitmapImage& bitmapImage, TextureRegion& reg
 {
     if (!bitmapImage.HasContent() || 
         !bitmapImage.HasPixelFormat(mPixelFormat) ||
-        (bitmapImage.GetMipsCount() != mMipMapsCount))
+        (bitmapImage.GetMipsCount() < mMipMapsCount))
     {
         return false;
     }

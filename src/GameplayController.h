@@ -101,4 +101,6 @@ private:
     InHandThingView mInHandThingView;
 
     MapTile* mSelectionStartTile;
+
+    int mSelectionAreaLimit = 8;
 };

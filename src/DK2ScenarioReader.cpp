@@ -1215,63 +1215,34 @@ bool DK2ScenarioReader::ReadScenarioVariables(int numElements, ScenarioDefinitio
         ScenarioVariables& scenarioVars = scenarioData.mVariables;
         switch (variableType)
         {
-            case ScenarioVariableType_DigRockHealth:
-                scenarioVars.mDigRockHealth = intValue;
-            break;
-            case ScenarioVariableType_DigOwnWallHealth:
-                scenarioVars.mDigOwnWallHealth = intValue;
-            break;
-            case ScenarioVariableType_DigEnemyWallHealth:
-                scenarioVars.mDigEnemyWallHealth = intValue;
-            break;
-            case ScenarioVariableType_ClaimTileHealth:
-                scenarioVars.mClaimTileHealth = intValue;
-            break;
-            case ScenarioVariableType_AttackTileHealth:
-                scenarioVars.mAttackTileHealth = intValue;
-            break;
-            case ScenarioVariableType_RepairTileHealth:
-                scenarioVars.mRepairTileHealth = intValue;
-            break;
-            case ScenarioVariableType_MineGoldHealth:
-                scenarioVars.mMineGoldHealth = intValue;
-            break;
-            case ScenarioVariableType_ReinforceWallHealth:
-                scenarioVars.mReinforceWallHealth = intValue;
-            break;
-            case ScenarioVariableType_RepairWallHealth:
-                scenarioVars.mRepairWallHealth = intValue;
-            break;
-            case ScenarioVariableType_ConvertRoomHealth:
-                scenarioVars.mConvertRoomHealth = intValue;
-            break;
-            case ScenarioVariableType_AttackRoomHealth:
-                scenarioVars.mAttackRoomHealth = intValue;
-            break;
-            case ScenarioVariableType_RepairRoomHealth:
-                scenarioVars.mRepairRoomHealth = intValue;
-            break;
-            case ScenarioVariableType_GoldMinedFromGems:
-                scenarioVars.mGoldMinedFromGems = intValue;
-            break;
-            case ScenarioVariableType_MaxGoldPerTreasuryTile:
-                scenarioVars.mMaxGoldPerTreasuryTile = intValue;
-            break;
-            case ScenarioVariableType_SpecialIncreaseGoldAmount:
-                scenarioVars.mSpecialIncreaseGoldAmount = intValue;
-            break;
-            case ScenarioVariableType_MaxGoldPileOutsideTreasury:
-                scenarioVars.mMaxGoldPileOutsideTreasury = intValue;
-            break;
-            case ScenarioVariableType_MaxGoldPerDungeonHeartTile:
-                scenarioVars.mMaxGoldPerDungeonHeartTile = intValue;
-            break;
-            case ScenarioVariableType_MaximumManaThreshold:
-                scenarioVars.mMaximumManaThreshold = intValue;
-            break;
-            case ScenarioVariableType_RoomSellValuePercentageOfCost:
-                scenarioVars.mRoomSellValuePercentageOfCost = intValue;
-            break;
+            case ScenarioVariableType_DigRockHealth: scenarioVars.mDigRockHealth = intValue; break;
+            case ScenarioVariableType_DigOwnWallHealth: scenarioVars.mDigOwnWallHealth = intValue; break;
+            case ScenarioVariableType_DigEnemyWallHealth: scenarioVars.mDigEnemyWallHealth = intValue; break;
+            case ScenarioVariableType_ClaimTileHealth: scenarioVars.mClaimTileHealth = intValue; break;
+            case ScenarioVariableType_AttackTileHealth: scenarioVars.mAttackTileHealth = intValue; break;
+            case ScenarioVariableType_RepairTileHealth: scenarioVars.mRepairTileHealth = intValue; break;
+            case ScenarioVariableType_MineGoldHealth: scenarioVars.mMineGoldHealth = intValue; break;
+            case ScenarioVariableType_ReinforceWallHealth: scenarioVars.mReinforceWallHealth = intValue; break;
+            case ScenarioVariableType_RepairWallHealth: scenarioVars.mRepairWallHealth = intValue; break;
+            case ScenarioVariableType_ConvertRoomHealth: scenarioVars.mConvertRoomHealth = intValue; break;
+            case ScenarioVariableType_ConvertNeutralRoomHealth: scenarioVars.mConvertNeutralRoomHealth = intValue; break;
+            case ScenarioVariableType_AttackRoomHealth: scenarioVars.mAttackRoomHealth = intValue; break;
+            case ScenarioVariableType_RepairRoomHealth: scenarioVars.mRepairRoomHealth = intValue; break;
+            case ScenarioVariableType_GoldMinedFromGems: scenarioVars.mGoldMinedFromGems = intValue; break;
+            case ScenarioVariableType_MaxGoldPerTreasuryTile: scenarioVars.mMaxGoldPerTreasuryTile = intValue; break;
+            case ScenarioVariableType_SpecialIncreaseGoldAmount: scenarioVars.mSpecialIncreaseGoldAmount = intValue; break;
+            case ScenarioVariableType_MaxGoldPileOutsideTreasury: scenarioVars.mMaxGoldPileOutsideTreasury = intValue; break;
+            case ScenarioVariableType_MaxGoldPerDungeonHeartTile: scenarioVars.mMaxGoldPerDungeonHeartTile = intValue; break;
+            case ScenarioVariableType_MaximumManaThreshold: scenarioVars.mMaximumManaThreshold = intValue; break;
+            case ScenarioVariableType_RoomSellValuePercentageOfCost: scenarioVars.mRoomSellValuePercentageOfCost = intValue; break;
+            case ScenarioVariableType_RubberBandAreaLimit: scenarioVars.mRubberBandAreaLimit = intValue; break;
+
+            case ScenarioVariableType_DwarfDiggingMultiplier: break;
+            case ScenarioVariableType_GravityConstant: break;
+            case ScenarioVariableType_MaxNumberOfThingsInHand: break;
+            case ScenarioVariableType_MaxFreeRangeChickensPerPlayer: break;
+            case ScenarioVariableType_ImpIdleDelayBeforeReevaluationSeconds: break;
+            case ScenarioVariableType_ChickenGenerationTimePerHatchery: break;
         }
     }
 

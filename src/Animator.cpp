@@ -482,10 +482,12 @@ Animator& Animator::DefineState(StringHash stateId, const ArtResourceDefinition&
                 Clip& animationClip = state.mClipMain;
                 animationClip.mAssetName = resourceDefinition.mResourceName;
 
+                MeshAsset* meshAsset = gMeshAssetManager.GetMesh(resourceDefinition.mResourceName);
+
                 AnimationParams& animParams = animationClip.mAnimParams.emplace();
                 animParams.mFramesPerSecond = resourceDefinition.mAnimationDesc.mFps * 1.0f;
                 animParams.mFirstFrame = 0;
-                animParams.mLastFrame = (resourceDefinition.mAnimationDesc.mFrames > 0) ? (resourceDefinition.mAnimationDesc.mFrames - 1) : 0;
+                animParams.mLastFrame = (meshAsset->GetAnimFramesCount() > 0) ? (meshAsset->GetAnimFramesCount() - 1) : 0;
 
                 if (overrideLoopMode.has_value())
                 {
@@ -493,7 +495,6 @@ Animator& Animator::DefineState(StringHash stateId, const ArtResourceDefinition&
                 }
                 else if (!resourceDefinition.mDoesntLoop)
                 {
-                    MeshAsset* meshAsset = gMeshAssetManager.GetMesh(resourceDefinition.mResourceName);
                     switch (meshAsset->GetAnimFrameFactorFunc())
                     {
                         case MeshAsset::eAnimFrameFactorFunc::Clamp: 
@@ -515,10 +516,12 @@ Animator& Animator::DefineState(StringHash stateId, const ArtResourceDefinition&
                 Clip& animationClip = state.mClipStart.emplace();
                 animationClip.mAssetName = resourceDefinition.mResourceName + "start";
 
+                MeshAsset* meshAsset = gMeshAssetManager.GetMesh(animationClip.mAssetName);
+
                 AnimationParams& animParams = animationClip.mAnimParams.emplace();
                 animParams.mFramesPerSecond = resourceDefinition.mAnimationDesc.mFps * 1.0f;
                 animParams.mFirstFrame = 0;
-                animParams.mLastFrame = (resourceDefinition.mStartAF > 0) ? (resourceDefinition.mStartAF - 1) : 0;
+                animParams.mLastFrame = (meshAsset->GetAnimFramesCount() > 0) ? (meshAsset->GetAnimFramesCount() - 1) : 0;
             }
             // end
             if (resourceDefinition.mHasEndAnimation)
@@ -526,10 +529,12 @@ Animator& Animator::DefineState(StringHash stateId, const ArtResourceDefinition&
                 Clip& animationClip = state.mClipEnd.emplace();
                 animationClip.mAssetName = resourceDefinition.mResourceName + "end";
 
+                MeshAsset* meshAsset = gMeshAssetManager.GetMesh(animationClip.mAssetName);
+
                 AnimationParams& animParams = animationClip.mAnimParams.emplace();
                 animParams.mFramesPerSecond = resourceDefinition.mAnimationDesc.mFps * 1.0f;
                 animParams.mFirstFrame = 0;
-                animParams.mLastFrame = (resourceDefinition.mEndAF > 0) ? (resourceDefinition.mEndAF - 1) : 0;
+                animParams.mLastFrame = (meshAsset->GetAnimFramesCount() > 0) ? (meshAsset->GetAnimFramesCount() - 1) : 0;
             }
         }
         // static mesh

@@ -44,6 +44,10 @@ void GameplayController::OnSessionStart()
         MapUtils::ComputeTileCenter2d({gameMapDimensions.x - 1, gameMapDimensions.y - 1}));
     mGameplayCamera.CaptureCamera(&gScene.GetCamera());
 
+    const ScenarioVariables& scenarioVars = gGameSession.GetScenarioVariables();
+    mSelectionAreaLimit = scenarioVars.mRubberBandAreaLimit;
+    cxx_assert(mSelectionAreaLimit > 0);
+
     if (!mGameplayUi.IsActive())
     {
         mGameplayUi.Activate();
@@ -361,10 +365,10 @@ bool GameplayController::GetMapSelectionArea(Rect2D& selectionArea) const
     if (mSelectionStartTile && mSelectionStartTile != mHoveredTile)
     {
         const int CX = glm::clamp(mSelectionStartTile->mLocation.x - mHoveredTile->mLocation.x, 
-            -MAX_TILE_SELECTION_RECT_WIDE + 1, MAX_TILE_SELECTION_RECT_WIDE - 1);
+            -(mSelectionAreaLimit - 1), (mSelectionAreaLimit - 1));
 
         const int CY = glm::clamp(mSelectionStartTile->mLocation.y - mHoveredTile->mLocation.y, 
-            -MAX_TILE_SELECTION_RECT_WIDE + 1, MAX_TILE_SELECTION_RECT_WIDE - 1);
+            -(mSelectionAreaLimit - 1), (mSelectionAreaLimit - 1));
 
         selectionArea.x = std::min(mSelectionStartTile->mLocation.x, mSelectionStartTile->mLocation.x - CX);
         selectionArea.y = std::min(mSelectionStartTile->mLocation.y, mSelectionStartTile->mLocation.y - CY);

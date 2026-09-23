@@ -302,7 +302,7 @@ void GameObject::ConfigureMeshResource(const ArtResourceDefinition& artResource)
         AnimationParams animParams;
         animParams.mFramesPerSecond = artResource.mAnimationDesc.mFps * 1.0f;
         animParams.mFirstFrame = 0;
-        animParams.mLastFrame = (artResource.mAnimationDesc.mFrames > 0) ? (artResource.mAnimationDesc.mFrames - 1) : 0;
+        animParams.mLastFrame = (meshAsset->GetAnimFramesCount() > 0) ? (meshAsset->GetAnimFramesCount() - 1) : 0;
         if (!artResource.mDoesntLoop)
         {
             switch (meshAsset->GetAnimFrameFactorFunc())

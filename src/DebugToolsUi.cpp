@@ -225,7 +225,7 @@ void DebugToolsUi::SetMeshPreview(const ArtResourceDefinition& def, MeshAnimType
                 animParams.mFramesPerSecond = def.mAnimationDesc.mFps * 1.0f;
                 if (animType == MeshAnimType_Default)
                 {
-                    animParams.mLastFrame = def.mAnimationDesc.mFrames - 1;
+                    animParams.mLastFrame = meshAsset->GetAnimFramesCount() - 1;
                     animParams.mLoopMode = eAnimationLoopMode_Repeat;
                 }
                 else

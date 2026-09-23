@@ -528,7 +528,9 @@ bool GameWorld::ClaimTile(MapTile* mapTile, ePlayerID playerId)
 
     if (Room* roomInstance = mapTile->mRoomInstance)
     {
-        int damageHealth = scenarioVars.mConvertRoomHealth;
+        int damageHealth = roomInstance->HasOwner(ePlayerID_Neutral) ? 
+            scenarioVars.mConvertNeutralRoomHealth : 
+            scenarioVars.mConvertRoomHealth;
         cxx_assert(damageHealth < 0);
         roomInstance->ChangeRoomHealth(damageHealth);
         if (roomInstance->GetRoomHealthPercents() < 1)

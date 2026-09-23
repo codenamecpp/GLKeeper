@@ -494,6 +494,7 @@ public:
     int mReinforceWallHealth = 0;
     int mRepairWallHealth = 0;
     int mConvertRoomHealth = 0;
+    int mConvertNeutralRoomHealth = 0;
     int mAttackRoomHealth = 0;
     int mRepairRoomHealth = 0;
     int mGoldMinedFromGems = 0;
@@ -503,6 +504,7 @@ public:
     int mMaxGoldPerDungeonHeartTile = 0;
     int mMaximumManaThreshold = 0;
     int mRoomSellValuePercentageOfCost = 0;
+    int mRubberBandAreaLimit = 0;
 };
 
 //////////////////////////////////////////////////////////////////////////

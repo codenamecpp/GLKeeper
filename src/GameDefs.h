@@ -18,7 +18,6 @@ class GameEventBus;
 enum
 {
     MAX_DUNGEON_MAP_DIMENSIONS = 128, // do not change
-    MAX_TILE_SELECTION_RECT_WIDE = 9,
 };
 //////////////////////////////////////////////////////////////////////////
 
