@@ -10,6 +10,8 @@
 #include "GameplayUiControls.h"
 #include "EconomyService.h"
 #include "GameEventBus.h"
+#include "AudioManager.h"
+#include "SoundCategoryNames.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -180,6 +182,15 @@ bool GameplayUi::BindControls()
         }
     }
 
+    // audible things
+    EnumerateWidgets(mHierarchy.GetRootWidget(), [this](UiWidget* widget)
+    {
+        if (widget->CustomProps().HasProperty("on_press_sfx"))
+        {
+            widget->Subscribe(this);
+        }
+    });
+
     // debug info labels
     mDebugFPSLabel = (UiTextBox*) mHierarchy.GetWidgetByPath("fpslabel");
     mDebugSceneStatsLabel = (UiTextBox*) mHierarchy.GetWidgetByPath("scenestats");
@@ -216,10 +227,21 @@ void GameplayUi::OnDeactivated()
 
 void GameplayUi::HandleUiEvent(UiWidget* eventSource, const UiEvent& eventDesc)
 {
+    // sounds
+    if (eventDesc.IsEvent(UiEventId_OnPress))
+    {
+        std::string soundType;
+        if (eventSource->CustomProps().GetProperty("on_press_sfx", soundType))
+        {
+            HandleOnPressSound(soundType);
+        }
+    }
+
     bool acceptEvent = (eventSource && eventDesc.IsEvent(UiEventId_OnPress));
     if (acceptEvent && (eventSource == mFocusOnDungeonHeartButton) && (eventDesc.mMouseButton == MBUTTON_RIGHT))
     {
         mGameplay.FocusOnNextOwnedRoom(RoomTypeId_DungeonHeart);
+        return;
     }
 }
 
@@ -336,5 +358,22 @@ void GameplayUi::UpdateAffordability()
             roller.mAffordable = isAffordable;
             mControlPanel->ReConfigureRoomInfo(roller);
         }
+    }
+}
+
+void GameplayUi::HandleOnPressSound(std::string_view soundType)
+{
+    if (soundType == "tab_button")
+    {
+        gAudio.PlayOneShot(SoundCategoryNames::GuiButtonIcon, SoundGroupId_GuiButtonIcon_ButtonClick, 0);
+        return;
+    }
+    if ((soundType == "mm_sell_button") ||
+        (soundType == "mm_options_button") ||
+        (soundType == "mm_info_button") ||
+        (soundType == "mm_zoom_button"))
+    {
+        gAudio.PlayOneShot(SoundCategoryNames::GuiSell, SoundGroupId_GuiSell_ButtonClick, 0);
+        return;
     }
 }

@@ -111,10 +111,10 @@ EntityHandle GameObjectManager::CreateScenarioObject(const ScenarioObjectThing& 
     return objectHandle;
 }
 
-EntityHandle GameObjectManager::CreateObject(GameObjectDefinition* classDefinition)
+EntityHandle GameObjectManager::CreateObject(GameObjectDefinition* definition)
 {
-    cxx_assert(classDefinition);
-    if (classDefinition == nullptr) return {}; // nothing to create
+    cxx_assert(definition);
+    if (definition == nullptr) return {}; // nothing to create
 
     int freeSlotIndex = cxx::get_first_index_if(mObjectSlots, [](const GameObjectSlot& slot)
         {
@@ -128,12 +128,13 @@ EntityHandle GameObjectManager::CreateObject(GameObjectDefinition* classDefiniti
 
     GameObjectSlot& objectSlot = mObjectSlots[freeSlotIndex];
     objectSlot.mObject = NewObjectInstance();
-    objectSlot.mController = NewControllerInstance(classDefinition);
+    objectSlot.mController = NewControllerInstance(definition);
 
-    const EntityHandle objectHandle { eEntityType_GameObject, objectSlot.mGeneration, static_cast<uint32_t>(freeSlotIndex) };
+    const EntityHandle objectHandle { 
+        eEntityType_GameObject, definition->mObjectClass, objectSlot.mGeneration, static_cast<uint32_t>(freeSlotIndex) };
     const EntityUid instanceUid = gGameWorld.GenerateEntityUid();
     mObjectUidsMap[instanceUid] = objectHandle;
-    ConfigureNewObjectInstance(objectSlot.mObject.get(), objectSlot.mController.get(), classDefinition, instanceUid);
+    ConfigureNewObjectInstance(objectSlot.mObject.get(), objectSlot.mController.get(), definition, instanceUid);
     return objectHandle;
 }
 

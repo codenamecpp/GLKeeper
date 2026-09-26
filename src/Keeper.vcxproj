@@ -103,6 +103,8 @@
     <ClInclude Include="AnimatingMeshObject.h" />
     <ClInclude Include="Animator.h" />
     <ClInclude Include="AssetDefs.h" />
+    <ClInclude Include="AudioDefs.h" />
+    <ClInclude Include="AudioManager.h" />
     <ClInclude Include="auxmath_angle.h" />
     <ClInclude Include="BinaryInputStream.h" />
     <ClInclude Include="BMFont.h" />
@@ -134,6 +136,9 @@
     <ClInclude Include="DebugToolsUi.h" />
     <ClInclude Include="DK2Font.h" />
     <ClInclude Include="DK2KMFModel.h" />
+    <ClInclude Include="DK2SfxBankFile.h" />
+    <ClInclude Include="DK2SfxMapFile.h" />
+    <ClInclude Include="DK2SoundArchive.h" />
     <ClInclude Include="DK2Text.h" />
     <ClInclude Include="DK2ScenarioReader.h" />
     <ClInclude Include="DungeonHeartRoomController.h" />
@@ -142,6 +147,7 @@
     <ClInclude Include="EntityComponents.h" />
     <ClInclude Include="EntityDefs.h" />
     <ClInclude Include="EntityMsg.h" />
+    <ClInclude Include="EntityRegistry.h" />
     <ClInclude Include="enum_serialize.h" />
     <ClInclude Include="Font.h" />
     <ClInclude Include="FontManager.h" />
@@ -164,6 +170,7 @@
     <ClInclude Include="InteractionService.h" />
     <ClInclude Include="LevelsDatabase.h" />
     <ClInclude Include="QueryService.h" />
+    <ClInclude Include="SoundCategoryNames.h" />
     <ClInclude Include="TextureAtlas.h" />
     <ClInclude Include="UiCompositeButton.h" />
     <ClInclude Include="UiCursor.h" />
@@ -322,6 +329,7 @@
     <ClCompile Include="AABBTree.cpp" />
     <ClCompile Include="AnimatingMeshObject.cpp" />
     <ClCompile Include="Animator.cpp" />
+    <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="BinaryInputStream.cpp" />
     <ClCompile Include="BMFont.cpp" />
     <ClCompile Include="ChickenObjectController.cpp" />
@@ -349,8 +357,12 @@
     <ClCompile Include="DebugToolsUi.cpp" />
     <ClCompile Include="DK2KMFModel.cpp" />
     <ClCompile Include="DK2ScenarioReader.cpp" />
+    <ClCompile Include="DK2SfxBankFile.cpp" />
+    <ClCompile Include="DK2SfxMapFile.cpp" />
+    <ClCompile Include="DK2SoundArchive.cpp" />
     <ClCompile Include="DK2Text.cpp" />
     <ClCompile Include="DungeonHeartRoomController.cpp" />
+    <ClCompile Include="EntityRegistry.cpp" />
     <ClCompile Include="enums_impl.cpp" />
     <ClCompile Include="Font.cpp" />
     <ClCompile Include="FontManager.cpp" />
@@ -365,6 +377,7 @@
     <ClCompile Include="InteractionService.cpp" />
     <ClCompile Include="LevelsDatabase.cpp" />
     <ClCompile Include="QueryService.cpp" />
+    <ClCompile Include="SoundCategoryNames.cpp" />
     <ClCompile Include="TextureAtlas.cpp" />
     <ClCompile Include="UiCompositeButton.cpp" />
     <ClCompile Include="UiCursor.cpp" />
@@ -513,6 +526,7 @@
     <Text Include="..\docs\engine_textures.txt" />
     <Text Include="..\docs\mesh_format.txt" />
     <Text Include="..\docs\objects_names.txt" />
+    <Text Include="..\docs\sound_groups.txt" />
     <Text Include="..\docs\terrains.txt" />
     <Text Include="..\docs\Todo.txt" />
   </ItemGroup>
@@ -522,6 +536,9 @@
     </ProjectReference>
     <ProjectReference Include="GLFW\GLFW.vcxproj">
       <Project>{4a74163f-7d76-46eb-92bf-05c50173d846}</Project>
+    </ProjectReference>
+    <ProjectReference Include="SoLoud\SoLoud.vcxproj">
+      <Project>{c66cd1bf-a7d8-41ab-b069-e9eeec9ffff2}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

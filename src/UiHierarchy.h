@@ -16,6 +16,7 @@ public:
     // load widgets hierarchy from json
     bool LoadFrom(const std::string& fileName);
     void Cleanup();
+
     // whether hierarchy is loaded
     inline bool IsLoaded() const { return mRootWidget != nullptr; }
 

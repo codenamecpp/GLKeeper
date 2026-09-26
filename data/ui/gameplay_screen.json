@@ -121,6 +121,10 @@
                                         {"id":"show_states", "value":"selected"}
                                     ]
                                 }
+                            ],
+                            "props":
+                            [
+                                {"id":"on_press_sfx", "value":"mm_sell_button"}
                             ]
                         },
                         {"class":"cbutton", "id":"options_button", "pos":[1,141], "size":[35,35], 
@@ -139,6 +143,10 @@
                                         {"id":"show_states", "value":"selected"}
                                     ]
                                 }
+                            ],
+                            "props":
+                            [
+                                {"id":"on_press_sfx", "value":"mm_options_button"}
                             ]
                         },
                         {"class":"cbutton", "id":"info_button", "pos":[1,1], "size":[35,35], 
@@ -157,6 +165,10 @@
                                         {"id":"show_states", "value":"selected"}
                                     ]
                                 }
+                            ],
+                            "props":
+                            [
+                                {"id":"on_press_sfx", "value":"mm_info_button"}
                             ]
                         },
                         {"class":"cbutton", "id":"zoom_button", "pos":[142,141], "size":[35,35], 
@@ -175,6 +187,10 @@
                                         {"id":"show_states", "value":"selected"}
                                     ]
                                 }
+                            ],
+                            "props":
+                            [
+                                {"id":"on_press_sfx", "value":"mm_zoom_button"}
                             ]
                         }
                     ]
@@ -240,6 +256,10 @@
                     {"id":"show_states", "value":"hovered pressed"}
                 ]
             }
+        ],
+        "props":
+        [
+            {"id":"on_press_sfx", "value":"tab_button"}
         ]
     },
     {"class":"cbutton", "id":"cp_rooms_page_button", "size":[52,52], "press_inset":[1,1], "i_state_normal":"GUI\\Tabs\\t-rooms", 
@@ -263,6 +283,10 @@
                     {"id":"show_states", "value":"hovered pressed"}
                 ]
             }
+        ],
+        "props":
+        [
+            {"id":"on_press_sfx", "value":"tab_button"}
         ]
     },
     {"class":"cbutton", "id":"cp_spells_page_button", "size":[52,52], "press_inset":[1,1], "i_state_normal":"GUI\\Tabs\\t-spells", 
@@ -286,6 +310,10 @@
                     {"id":"show_states", "value":"hovered pressed"}
                 ]
             }
+        ],
+        "props":
+        [
+            {"id":"on_press_sfx", "value":"tab_button"}
         ]
     },
     {"class":"cbutton", "id":"cp_workshop_page_button", "size":[52,52], "press_inset":[1,1], "i_state_normal":"GUI\\Tabs\\t-workshop", 
@@ -309,6 +337,10 @@
                     {"id":"show_states", "value":"hovered pressed"}
                 ]
             }
+        ],
+        "props":
+        [
+            {"id":"on_press_sfx", "value":"tab_button"}
         ]
     },
     {"class":"cbutton", "id":"cp_page_forward", "size":[26,54], "i_state_normal":"GUI\\Pages\\page_forward", "tint_disabled":[120,120,120], 

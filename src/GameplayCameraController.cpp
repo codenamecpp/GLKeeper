@@ -208,6 +208,9 @@ bool GameplayCameraController::GetCameraMoveDirections(DirectionEnumSet& cardina
 {
     cardinalDirs.Clear();
 
+    if (!mEnablePlayerInputs)
+        return false;
+
     bool ctrlPressed = (gInputs.GetKeyState(KEYCODE_LEFT_CTRL) || gInputs.GetKeyState(KEYCODE_RIGHT_CTRL));
     if (!ctrlPressed)
     {
@@ -266,6 +269,9 @@ bool GameplayCameraController::GetCameraMoveDirections(DirectionEnumSet& cardina
 
 float GameplayCameraController::GetRotateDirectionFromInputs() const
 {
+    if (!mEnablePlayerInputs)
+        return 0.0f;
+
     bool ctrlPressed = (gInputs.GetKeyState(KEYCODE_LEFT_CTRL) || gInputs.GetKeyState(KEYCODE_RIGHT_CTRL));
     if (ctrlPressed)
     {
@@ -278,6 +284,9 @@ float GameplayCameraController::GetRotateDirectionFromInputs() const
 
 float GameplayCameraController::GetZoomDirectionFromInputs()
 {
+    if (!mEnablePlayerInputs)
+        return 0.0f;
+
     bool ctrlPressed = (gInputs.GetKeyState(KEYCODE_LEFT_CTRL) || gInputs.GetKeyState(KEYCODE_RIGHT_CTRL));
     if (ctrlPressed)
     {
@@ -359,6 +368,11 @@ void GameplayCameraController::StopCamera()
 
     mMoveVelocity = {};
     mAutoScroll = {};
+}
+
+void GameplayCameraController::EnablePlayerInputs(bool isEnabled)
+{
+    mEnablePlayerInputs = isEnabled;
 }
 
 void GameplayCameraController::FocusOnMapLocation(const Point2D& tileLocation)

@@ -9,6 +9,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 class FrontendUi final: public UiView
+    , private UiEventListener
 {
 public:
     
@@ -59,11 +60,17 @@ public:
     void InputEvent(KeyInputEvent& inputEvent) override;
     void UpdateFrame(float deltaTime) override;
 
+    // override UiEventListener
+    void HandleUiEvent(UiWidget* sender, const UiEvent& eventDesc) override;
+
 private:
     void RegisterPage(MenuPage* page);
     // override UiView
     void OnActivated() override;
     void OnDeactivated() override;
+
+    void HandleOnPressSound(std::string_view soundType);
+
 private:
     FrontendController& mFrontend;
 

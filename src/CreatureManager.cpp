@@ -151,7 +151,8 @@ EntityHandle CreatureManager::CreateCreature(CreatureDefinition* definition, ePl
     creatureSlot.mCreature = NewCreatureInstance();
     creatureSlot.mController = NewControllerInstance(definition);
 
-    const EntityHandle creatureHandle { eEntityType_Creature, creatureSlot.mGeneration, static_cast<uint32_t>(freeSlotIndex) };
+    const EntityHandle creatureHandle { 
+        eEntityType_Creature, definition->mCreatureTypeId, creatureSlot.mGeneration, static_cast<uint32_t>(freeSlotIndex) };
     const EntityUid instanceUid = gGameWorld.GenerateEntityUid();
     mCreatureUidsMap[instanceUid] = creatureHandle;
     ConfigureNewCreatureInstance(creatureSlot.mCreature.get(), creatureSlot.mController.get(), definition, instanceUid, ownerId);

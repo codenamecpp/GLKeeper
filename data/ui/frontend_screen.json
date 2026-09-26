@@ -141,8 +141,18 @@
         {"class":"dummy", "id":"buttons", "pos":[0,0], "size":[1000,94], "anchor_min":[0.5,1], "anchor_max":[0.5,1], "pivot":[0.5,1], "fill_color":[60,60,60,110], 
             "children": 
             [
-                {"class":"button", "id":"cancel", "interactive":true, "pos":[-88,0], "size":[78,78], "anchor_min":[1,0], "anchor_max":[1,0], "pivot":[1,0], "i_state_normal":"Cancel-Over.png", "i_state_hovered":"Cancel-Click.png", "i_state_pressed":"Cancel-Click.png"},
-                {"class":"button", "id":"confirm", "interactive":true, "pos":[0,0], "size":[78,78], "anchor_min":[1,0], "anchor_max":[1,0], "pivot":[1,0], "i_state_normal":"Confirm-Over.png", "i_state_hovered":"Confirm-Click.png", "i_state_pressed":"Confirm-Click.png"}
+                {"class":"button", "id":"cancel", "interactive":true, "pos":[-88,0], "size":[78,78], "anchor_min":[1,0], "anchor_max":[1,0], "pivot":[1,0], "i_state_normal":"Cancel-Over.png", "i_state_hovered":"Cancel-Click.png", "i_state_pressed":"Cancel-Click.png",
+                    "props":
+                    [
+                        {"id":"on_press_sfx", "value":"cancel"}
+                    ]
+                },
+                {"class":"button", "id":"confirm", "interactive":true, "pos":[0,0], "size":[78,78], "anchor_min":[1,0], "anchor_max":[1,0], "pivot":[1,0], "i_state_normal":"Confirm-Over.png", "i_state_hovered":"Confirm-Click.png", "i_state_pressed":"Confirm-Click.png",
+                    "props":
+                    [
+                        {"id":"on_press_sfx", "value":"confirm"}
+                    ]
+                }
             ]
         },
 
@@ -155,7 +165,12 @@
 [
     
     {"class":"textbox", "id":"selectable_text_fe28", "interactive":true, "pos":[0,0], "size":[0,48], "anchor_min":[0,0], "anchor_max":[1,0], "horz_align":"center", "font":"FONT_FRONTEND28", "text":"#Text#", 
-        "color":[190,190,190,255], "color_hovered":[255,255,255,255], "color_disabled":[190,190,190,255]},
+        "color":[190,190,190,255], "color_hovered":[255,255,255,255], "color_disabled":[190,190,190,255],
+        "props":
+        [
+            {"id":"on_press_sfx", "value":"menu_item"}
+        ]
+    },
 
     {"class":"button", "id":"skirmish_maps_table_row", "pos":[0,0], "size":[500,30], "fill_color":[60,60,60,110], "i_state_normal":"", "i_state_pressed":"BG-Map-01.png", "ignore_mscroll":true, 
         "children":

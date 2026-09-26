@@ -33,6 +33,8 @@ public:
     // Stop moving or rotating
     void StopCamera();
 
+    void EnablePlayerInputs(bool isEnabled);
+
     // get current camera info
     inline void GetCameraInfo(GameplayCameraInfo& outInfo) const
     {
@@ -85,6 +87,7 @@ private:
     bool mDecreasingFov;
 
     bool mEnableEdgeScrolling = true;
+    bool mEnablePlayerInputs = true;
 };
 
 //////////////////////////////////////////////////////////////////////////

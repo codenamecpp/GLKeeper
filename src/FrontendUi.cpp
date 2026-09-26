@@ -5,6 +5,8 @@
 #include "Version.h"
 #include "UiTextBox.h"
 #include "FrontendUiControls.h"
+#include "AudioManager.h"
+#include "SoundCategoryNames.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -111,7 +113,19 @@ bool FrontendUi::LoadContent()
             cxx_assert(false);
         }
     }
-    return IsHierarchyLoaded();
+    bool isSuccess = IsHierarchyLoaded();
+    // audible things
+    if (isSuccess)
+    {
+        EnumerateWidgets(mHierarchy.GetRootWidget(), [this](UiWidget* widget)
+            {
+                if (widget->CustomProps().HasProperty("on_press_sfx"))
+                {
+                    widget->Subscribe(this);
+                }
+            });
+    }
+    return isSuccess;
 }
 
 void FrontendUi::Cleanup()
@@ -131,7 +145,7 @@ void FrontendUi::Cleanup()
 
 void FrontendUi::InputEvent(KeyInputEvent& inputEvent)
 {
-
+    
 }
 
 void FrontendUi::UpdateFrame(float deltaTime)
@@ -156,4 +170,33 @@ void FrontendUi::RegisterPage(MenuPage* page)
 
     cxx_assert(mPages[pageId] == nullptr);
     mPages[pageId] = page;
+}
+
+void FrontendUi::HandleUiEvent(UiWidget* sender, const UiEvent& eventDesc)
+{
+    // sounds
+    if (eventDesc.IsEvent(UiEventId_OnPress))
+    {
+        std::string soundType;
+        if (sender->CustomProps().GetProperty("on_press_sfx", soundType))
+        {
+            HandleOnPressSound(soundType);
+        }
+    }
+}
+
+void FrontendUi::HandleOnPressSound(std::string_view soundType)
+{
+    if (soundType == "menu_item")
+    {
+        gAudio.PlayOneShot(SoundCategoryNames::Frontend, SoundGroupId_Frontend_MenuClick, 0);
+        return;
+    }
+
+    if ((soundType == "cancel") ||
+        (soundType == "confirm"))
+    {
+        gAudio.PlayOneShot(SoundCategoryNames::FrontEndExt, SoundGroupId_FrontendExt_BigButtonClick, 0);
+        return;
+    }
 }

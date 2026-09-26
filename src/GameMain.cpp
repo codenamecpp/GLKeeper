@@ -15,6 +15,7 @@
 #include "GameSession.h"
 #include "LevelsDatabase.h"
 #include "UiCursor.h"
+#include "AudioManager.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -100,6 +101,11 @@ bool GameMain::Initialize()
         MiniUpdateFrame();
     }
 
+    if (!gAudio.Initialize())
+    {
+        gConsole.LogMessage(eLogLevel_Error, "Cannot initialize audio manager");
+    }
+
     if (!gTexts.Initialize())
     {
         gConsole.LogMessage(eLogLevel_Warning, "Cannot initialize texts");
@@ -138,6 +144,7 @@ void GameMain::Shutdown()
     }
     //
 
+    gAudio.Shutdown();
     gTexts.Shutdown();
     gGameRenderer.Shutdown();
     gUiManager.Shutdown();
@@ -314,6 +321,11 @@ void GameMain::HideConsoleScreen()
     {
         mConsoleScreen.ToggleConsole();
     }
+}
+
+bool GameMain::IsConsoleOpened() const
+{
+    return mConsoleScreen.IsActive();
 }
 
 void GameMain::ScreenSizeChanged(const Point2D& screenSize)

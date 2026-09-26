@@ -137,6 +137,9 @@
     <Filter Include="Data\Ui">
       <UniqueIdentifier>{7681bfad-9cfa-48a5-b7b8-db37504ac463}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Audio">
+      <UniqueIdentifier>{3843b35b-7991-48f6-957e-c8f5f31a6d71}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -793,6 +796,27 @@
     <ClInclude Include="TextureAtlas.h">
       <Filter>Source\Assets</Filter>
     </ClInclude>
+    <ClInclude Include="EntityRegistry.h">
+      <Filter>Source\World\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="DK2SoundArchive.h">
+      <Filter>Source\Assets\Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioManager.h">
+      <Filter>Source\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioDefs.h">
+      <Filter>Source\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="DK2SfxMapFile.h">
+      <Filter>Source\Assets\Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="DK2SfxBankFile.h">
+      <Filter>Source\Assets\Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundCategoryNames.h">
+      <Filter>Source\Audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1278,6 +1302,24 @@
     <ClCompile Include="TextureAtlas.cpp">
       <Filter>Source\Assets</Filter>
     </ClCompile>
+    <ClCompile Include="EntityRegistry.cpp">
+      <Filter>Source\World\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="DK2SoundArchive.cpp">
+      <Filter>Source\Assets\Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioManager.cpp">
+      <Filter>Source\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="DK2SfxMapFile.cpp">
+      <Filter>Source\Assets\Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="DK2SfxBankFile.cpp">
+      <Filter>Source\Assets\Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundCategoryNames.cpp">
+      <Filter>Source\Audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="ListenersContainer.inl">
@@ -1355,6 +1397,9 @@
       <Filter>Docs</Filter>
     </Text>
     <Text Include="..\docs\engine_path_info.txt">
+      <Filter>Docs</Filter>
+    </Text>
+    <Text Include="..\docs\sound_groups.txt">
       <Filter>Docs</Filter>
     </Text>
   </ItemGroup>

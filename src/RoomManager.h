@@ -36,7 +36,7 @@ public:
 
     EntityHandle CreateScenarioRoom(const ScenarioRoomThing& roomThing);
     EntityHandle CreateRoom(RoomTypeId typeId, ePlayerID ownerId, eDirection direction = eDirection_N);
-    EntityHandle CreateRoom(RoomDefinition* roomDefinition, ePlayerID ownerId, eDirection direction = eDirection_N);
+    EntityHandle CreateRoom(RoomDefinition* definition, ePlayerID ownerId, eDirection direction = eDirection_N);
 
     EntityHandle FindRoom(EntityUid instanceUid) const;
 

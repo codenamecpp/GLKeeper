@@ -85,10 +85,10 @@ EntityHandle RoomManager::CreateRoom(RoomTypeId typeId, ePlayerID ownerId, eDire
     return {};
 }
 
-EntityHandle RoomManager::CreateRoom(RoomDefinition* roomDefinition, ePlayerID ownerId, eDirection direction)
+EntityHandle RoomManager::CreateRoom(RoomDefinition* definition, ePlayerID ownerId, eDirection direction)
 {
-    cxx_assert(roomDefinition);
-    if (roomDefinition == nullptr) return {}; // nothing to create
+    cxx_assert(definition);
+    if (definition == nullptr) return {}; // nothing to create
     
     int freeSlotIndex = cxx::get_first_index_if(mRoomSlots, [](const RoomInstanceSlot& slot)
         {
@@ -102,13 +102,14 @@ EntityHandle RoomManager::CreateRoom(RoomDefinition* roomDefinition, ePlayerID o
 
     RoomInstanceSlot& roomSlot = mRoomSlots[freeSlotIndex];
     roomSlot.mInstance = NewRoomInstance();
-    roomSlot.mController = NewControllerInstance(roomDefinition);
+    roomSlot.mController = NewControllerInstance(definition);
     cxx_assert(roomSlot.mController);
 
-    const EntityHandle roomHandle { eEntityType_Room, roomSlot.mGeneration, static_cast<uint32_t>(freeSlotIndex) };
+    const EntityHandle roomHandle { 
+        eEntityType_Room, definition->mRoomType, roomSlot.mGeneration, static_cast<uint32_t>(freeSlotIndex) };
     const EntityUid instanceUid = gGameWorld.GenerateEntityUid();
     mInstanceUidsMap[instanceUid] = roomHandle;
-    ConfigureNewRoomInstance(roomSlot.mInstance.get(), roomSlot.mController.get(), roomDefinition, instanceUid, direction, ownerId);
+    ConfigureNewRoomInstance(roomSlot.mInstance.get(), roomSlot.mController.get(), definition, instanceUid, direction, ownerId);
     return roomHandle;
 }
 

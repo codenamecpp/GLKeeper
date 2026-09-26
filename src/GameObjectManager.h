@@ -36,7 +36,7 @@ public:
 
     EntityHandle CreateScenarioObject(const ScenarioObjectThing& objectThing);
     EntityHandle CreateObject(GameObjectClassId classId);
-    EntityHandle CreateObject(GameObjectDefinition* classDefinition);
+    EntityHandle CreateObject(GameObjectDefinition* definition);
     EntityHandle CreateGoldChest(long startGold, long storageCapacity);
     EntityHandle CreateGoldPile(long goldAmount);
 

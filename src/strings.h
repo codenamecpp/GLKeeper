@@ -135,18 +135,28 @@ namespace cxx
 
     // convert target string to lower case
     // @param string: Target string
-    inline std::string lower_string(std::string string)
+    inline std::string to_lower_copy(std::string string)
     {
         std::transform(string.begin(), string.end(), string.begin(), tolower);
         return string;
     }
 
+    inline void to_lower(std::string& string)
+    {
+        std::transform(string.begin(), string.end(), string.begin(), tolower);
+    }
+
     // convert target string to upper case
     // @param string: Target string
-    inline std::string upper_string(std::string string)
+    inline std::string to_upper_copy(std::string string)
     {
         std::transform(string.begin(), string.end(), string.begin(), toupper);
         return string;
+    }
+
+    inline void to_upper(std::string& string)
+    {
+        std::transform(string.begin(), string.end(), string.begin(), toupper);
     }
 
     inline bool is_space(char inchar)

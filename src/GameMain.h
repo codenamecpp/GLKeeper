@@ -40,6 +40,7 @@ public:
     // Show or hide developers console screen
     void OpenConsoleScreen();
     void HideConsoleScreen();
+    bool IsConsoleOpened() const;
 
 public:
     // notifications

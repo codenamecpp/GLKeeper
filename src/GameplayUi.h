@@ -157,6 +157,8 @@ private:
     // override GameEventListener
     void HandleGameEvent(const GameEvent& eventData) override;
 
+    void HandleOnPressSound(std::string_view soundType);
+
 private:
     GameplayController& mGameplay;
     std::unique_ptr<ControlPanel> mControlPanel;

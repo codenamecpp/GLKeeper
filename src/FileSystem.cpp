@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "FileSystem.h"
-#include <filesystem>
 #include "SimplePool.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -142,7 +141,7 @@ bool FileSystem::EnumMapFiles(EnumFilesCallback callback) const
 
 void FileSystem::AddSearchPlace(const std::string& pathToPlace)
 {
-    const std::string lowerPathToPlace = cxx::lower_string(pathToPlace);
+    const std::string lowerPathToPlace = cxx::to_lower_copy(pathToPlace);
     auto foundIterator = std::find_if(
         mSearchPlaces.begin(),
         mSearchPlaces.end(), [lowerPathToPlace](const std::string& stringArg)

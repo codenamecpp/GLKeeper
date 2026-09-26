@@ -110,6 +110,7 @@
 #include <cstdarg>
 #include <array>
 #include <variant>
+#include <filesystem>
 
 // opengl
 #include "GLEW/GL/glew.h"

@@ -145,3 +145,21 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////
+
+template<typename TEnumProc>
+inline void EnumerateWidgets(UiWidget* rootWidget, TEnumProc proc)
+{
+    if (rootWidget == nullptr)
+        return;
+
+    for (UiWidget* roller: rootWidget->GetChildren())
+    {
+        proc(roller);
+    }
+    for (UiWidget* roller: rootWidget->GetChildren())
+    {
+        EnumerateWidgets(roller, proc);
+    }
+}
+
+//////////////////////////////////////////////////////////////////////////

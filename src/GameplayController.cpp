@@ -14,6 +14,7 @@
 #include "InteractionService.h"
 #include "UiCursor.h"
 #include "RoomManager.h"
+#include "GameMain.h"
 
 GameplayController::GameplayController()
     : mGameplayUi(*this)
@@ -86,6 +87,8 @@ void GameplayController::OnSessionShutdown()
 
 void GameplayController::UpdateFrame(float deltaTime)
 {
+    bool enableCameraPlayerControl = !gGame.IsConsoleOpened();
+    mGameplayCamera.EnablePlayerInputs(enableCameraPlayerControl);
     mGameplayCamera.UpdateFrame(deltaTime);
 
     UpdateHoveredTile();
