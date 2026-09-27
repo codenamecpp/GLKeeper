@@ -8,6 +8,8 @@
 #include "Scene.h"
 #include "LevelsDatabase.h"
 #include "UiCursor.h"
+#include "AudioManager.h"
+#include "SoundCategoryNames.h"
 
 FrontendController::FrontendController()
     : mFrontendUi(*this)
@@ -137,6 +139,8 @@ void FrontendController::OnSessionStart()
     mFrontendUi.ConfigureMyPetDungeonMaps(mapsList);
 
     mFrontendUi.ShowMenuPage(FrontendUi::eMenuPage_Main);
+
+    gAudio.PlayAmbience(SoundCategoryNames::Ambience, SoundGroupId_Ambience_Track);
 }
 
 void FrontendController::OnSessionShutdown()

@@ -11,6 +11,8 @@ enum : unsigned int
 {
     SoundGroupId_Null = 0,
 
+    // ambience
+    SoundGroupId_Ambience_Track = 341,
     // frontend
     SoundGroupId_Frontend_MenuClick = 778,
     // frontend ext

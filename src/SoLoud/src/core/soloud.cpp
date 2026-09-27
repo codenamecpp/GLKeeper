@@ -680,7 +680,7 @@ namespace SoLoud
 		}
 	}
 
-	const char * Soloud::getErrorString(result aErrorCode) const
+	const char * Soloud::getErrorString(result aErrorCode)
 	{
 		switch (aErrorCode)
 		{

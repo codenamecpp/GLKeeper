@@ -37,6 +37,10 @@ bool GameProfile::LoadGameProfile(const std::string& filepath)
     JsonQuery(jsonSettings.GetRootElement(), "screen.fullscreen", mUserSettings.mEnableFullscreen);
     JsonQuery(jsonSettings.GetRootElement(), "screen.vsync", mUserSettings.mEnableVSync);
     JsonQuery(jsonSettings.GetRootElement(), "screen.hardware_cursor", mUserSettings.mEnableHwCursor);
+    JsonQuery(jsonSettings.GetRootElement(), "sound.master_volume", mUserSettings.mMasterVolume);
+    JsonQuery(jsonSettings.GetRootElement(), "sound.voice_volume", mUserSettings.mVoiceVolume);
+    JsonQuery(jsonSettings.GetRootElement(), "sound.music_volume", mUserSettings.mMusicVolume);
+    JsonQuery(jsonSettings.GetRootElement(), "sound.sfx_volume", mUserSettings.mSfxVolume);
     JsonQuery(jsonSettings.GetRootElement(), "game_root", mUserSettings.mGameRootFolder);
     JsonQuery(jsonSettings.GetRootElement(), "language", mUserSettings.mLanguage);
     // user progress
@@ -93,4 +97,8 @@ void GameProfile::LoadDefaults()
     // default inputs
 
     // default sounds
+    mUserSettings.mMasterVolume = 1.0f;
+    mUserSettings.mVoiceVolume = 1.0f;
+    mUserSettings.mMusicVolume = 1.0f;
+    mUserSettings.mSfxVolume = 1.0f;
 }

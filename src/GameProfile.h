@@ -28,6 +28,10 @@ public:
         bool mEnableHwCursor = false;
         // inputs
         // sounds
+        float mMasterVolume = 1.0f;
+        float mVoiceVolume = 1.0f;
+        float mMusicVolume = 1.0f;
+        float mSfxVolume = 1.0f;
     };
 
     //////////////////////////////////////////////////////////////////////////

@@ -23,7 +23,7 @@ public:
         unsigned int mArchiveId {}; // 1 based
     };
 
-    struct SfxEEEntry
+    struct SfxSegment
     {
         std::vector<SfxSoundEntry> mSoundEntries;
         std::vector<SfxData> mDataEntries;
@@ -31,7 +31,7 @@ public:
 
     struct SfxGroup
     {
-        std::vector<SfxEEEntry> mEEEntries;
+        std::vector<SfxSegment> mSegments; // > 1 for ambience/music
         unsigned int mGroupId {};
     };
 
@@ -52,14 +52,15 @@ public:
     void CloseFile();
     bool IsOpened() const;
 
-    bool GetSoundEntry(unsigned int groupId, SfxSoundEntry& entry) const;
-    bool GetSoundEntry(unsigned int groupId, unsigned int index, SfxSoundEntry& entry) const;
-    bool GetSoundEntriesCount(unsigned int groupId, unsigned int& entriesCount) const;
+    bool GetGroupSegmentsCount  (unsigned int groupId, unsigned int& segmentsCount) const;
+    bool GetSoundEntry          (unsigned int groupId, unsigned int segmentIndex, unsigned int soundIndex, SfxSoundEntry& entry) const;
+    bool GetSoundEntriesCount   (unsigned int groupId, unsigned int segmentIndex, unsigned int& entriesCount) const;
 
     const auto& GetEntries() const { return mSfxEntries; }
-private:
-    const SfxGroup* FindGroup(unsigned int groupId) const;
 
+private:
+    const SfxGroup* GetGroup(unsigned int groupId) const;
+    const SfxSegment* GetGroupSegment(unsigned int groupId, unsigned int segmentIndex) const;
 private:
     std::vector<SfxMapEntry> mSfxEntries;
 };

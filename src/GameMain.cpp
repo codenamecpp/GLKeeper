@@ -274,12 +274,15 @@ void GameMain::UpdateFrame()
     gFrameMemoryManager.ResetFrameMemory();
     gTime.UpdateFrame();
 
-    float uiDeltaTime = gTime.GetFrameDelta(eGameClock::Ui);
+    const float rtDeltaTime = gTime.GetFrameDelta(eGameClock::Realtime);
+    gAudio.UpdateFrame(rtDeltaTime);
+
+    const float uiDeltaTime = gTime.GetFrameDelta(eGameClock::Ui);
     gUiManager.UpdateFrame(uiDeltaTime);
 
     // variable delta time frame update
     {
-        float gameDeltaTime = gTime.GetFrameDelta(eGameClock::Gametime);
+        const float gameDeltaTime = gTime.GetFrameDelta(eGameClock::Gametime);
         if (gGameSession.IsInState(eGameSessionState_Active))
         {
             gGameSession.UpdateFrame(gameDeltaTime);
@@ -289,14 +292,14 @@ void GameMain::UpdateFrame()
     // fixed physics update
     for (int istep = 0, NumSteps = gTime.GetFixedSteps(eFixedClock::GamePhysics); istep < NumSteps; ++istep)
     {
-        float stepTime = gTime.GetFixedDelta(eFixedClock::GamePhysics);
+        const float stepTime = gTime.GetFixedDelta(eFixedClock::GamePhysics);
         UpdatePhysics(stepTime);
     }
 
     // fixed logic update
     for (int istep = 0, NumSteps = gTime.GetFixedSteps(eFixedClock::GameLogic); istep < NumSteps; ++istep)
     {
-        float stepTime = gTime.GetFixedDelta(eFixedClock::GameLogic);
+        const float stepTime = gTime.GetFixedDelta(eFixedClock::GameLogic);
         UpdateLogic(stepTime);
     }
 

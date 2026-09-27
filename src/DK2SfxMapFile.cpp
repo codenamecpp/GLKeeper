@@ -70,7 +70,7 @@ bool DK2SfxMapFile::OpenFile(const std::string& filePath)
             const unsigned int unknown2 = cxx::read_int32(fileStream);
             const unsigned int unknown3 = cxx::read_int32(fileStream);
 
-            groupsRoller.mEEEntries.resize(groupEntriesCount);
+            groupsRoller.mSegments.resize(groupEntriesCount);
         }
 
         if (!fileStream)
@@ -86,13 +86,13 @@ bool DK2SfxMapFile::OpenFile(const std::string& filePath)
     {
         for (SfxGroup& groupsRoller: entriesRoller.mGroups)
         {
-            for (SfxEEEntry& eeRoller: groupsRoller.mEEEntries)
+            for (SfxSegment& segmentsRoller: groupsRoller.mSegments)
             {
                 const unsigned int soundsCount = cxx::read_int32(fileStream);
-                eeRoller.mSoundEntries.resize(soundsCount);
+                segmentsRoller.mSoundEntries.resize(soundsCount);
 
                 const unsigned int soundDataCount = cxx::read_int32(fileStream);
-                eeRoller.mDataEntries.resize(soundDataCount);
+                segmentsRoller.mDataEntries.resize(soundDataCount);
 
                 const unsigned int unknown1 = cxx::read_int32(fileStream);
                 // unknown data 26 bytes
@@ -101,9 +101,9 @@ bool DK2SfxMapFile::OpenFile(const std::string& filePath)
                 const unsigned int unknown3 = cxx::read_int32(fileStream);
             }
 
-            for (SfxEEEntry& eeRoller: groupsRoller.mEEEntries)
+            for (SfxSegment& segmentsRoller: groupsRoller.mSegments)
             {
-                for (SfxSoundEntry& soundsRoller: eeRoller.mSoundEntries)
+                for (SfxSoundEntry& soundsRoller: segmentsRoller.mSoundEntries)
                 {
                     soundsRoller.mIndex = cxx::read_int32(fileStream);
                     const unsigned int unknown1 = cxx::read_int32(fileStream);
@@ -111,7 +111,7 @@ bool DK2SfxMapFile::OpenFile(const std::string& filePath)
                     soundsRoller.mArchiveId = cxx::read_int32(fileStream);
                 }
 
-                for (SfxData& dataRoller: eeRoller.mDataEntries)
+                for (SfxData& dataRoller: segmentsRoller.mDataEntries)
                 {
                     dataRoller.mIndex = cxx::read_int32(fileStream);
                     const unsigned int unknown1 = cxx::read_int32(fileStream);
@@ -141,47 +141,41 @@ bool DK2SfxMapFile::IsOpened() const
     return !mSfxEntries.empty();
 }
 
-bool DK2SfxMapFile::GetSoundEntry(unsigned int groupId, SfxSoundEntry& entry) const
+bool DK2SfxMapFile::GetSoundEntry(unsigned int groupId, unsigned int segmentIndex, unsigned int index, SfxSoundEntry& entry) const
 {
-    return GetSoundEntry(groupId, 0, entry);
-}
-
-bool DK2SfxMapFile::GetSoundEntry(unsigned int groupId, unsigned int index, SfxSoundEntry& entry) const
-{
-    if (const SfxGroup* group = FindGroup(groupId))
+    if (const SfxSegment* segment = GetGroupSegment(groupId, segmentIndex))
     {
-        if (group->mEEEntries.empty())
-            return false;
-
-        const SfxEEEntry& eeEntry = group->mEEEntries.front();
-
-        if (!eeEntry.mSoundEntries.empty() && 
-            (eeEntry.mSoundEntries.size() > index))
+        if (!segment->mSoundEntries.empty() && 
+            (segment->mSoundEntries.size() > index))
         {
-            entry = eeEntry.mSoundEntries[index];
+            entry = segment->mSoundEntries[index];
             return true;
         }
     }
     return false;
 }
 
-bool DK2SfxMapFile::GetSoundEntriesCount(unsigned int groupId, unsigned int& entriesCount) const
+bool DK2SfxMapFile::GetSoundEntriesCount(unsigned int groupId, unsigned int segmentIndex, unsigned int& entriesCount) const
 {
-    if (const SfxGroup* group = FindGroup(groupId))
+    entriesCount = 0;
+    if (const SfxSegment* segment = GetGroupSegment(groupId, segmentIndex))
     {
-        if (group->mEEEntries.empty())
-        {
-            entriesCount = 0;
-            return true;
-        }
-
-        entriesCount = group->mEEEntries.front().mSoundEntries.size();
-        return true;
+        entriesCount = segment->mSoundEntries.size();
     }
-    return false;
+    return entriesCount > 0;
 }
 
-const DK2SfxMapFile::SfxGroup* DK2SfxMapFile::FindGroup(unsigned int groupId) const
+bool DK2SfxMapFile::GetGroupSegmentsCount(unsigned int groupId, unsigned int& segmentsCount) const
+{
+    segmentsCount = 0;
+    if (const SfxGroup* group = GetGroup(groupId))
+    {
+        segmentsCount = group->mSegments.size();
+    }
+    return segmentsCount > 0;
+}
+
+const DK2SfxMapFile::SfxGroup* DK2SfxMapFile::GetGroup(unsigned int groupId) const
 {
     for (const SfxMapEntry& roller: mSfxEntries)
     {
@@ -189,6 +183,19 @@ const DK2SfxMapFile::SfxGroup* DK2SfxMapFile::FindGroup(unsigned int groupId) co
         {
             if (groupsRoller.mGroupId == groupId)
                 return &groupsRoller;
+        }
+    }
+    return nullptr;
+}
+
+const DK2SfxMapFile::SfxSegment* DK2SfxMapFile::GetGroupSegment(unsigned int groupId, unsigned int segmentIndex) const
+{
+    if (const SfxGroup* group = GetGroup(groupId))
+    {
+        if (!group->mSegments.empty() && 
+            (group->mSegments.size() > segmentIndex))
+        {
+            return &group->mSegments[segmentIndex];
         }
     }
     return nullptr;

@@ -365,7 +365,7 @@ void GameplayUi::HandleOnPressSound(std::string_view soundType)
 {
     if (soundType == "tab_button")
     {
-        gAudio.PlayOneShot(SoundCategoryNames::GuiButtonIcon, SoundGroupId_GuiButtonIcon_ButtonClick, 0);
+        gAudio.PlayOneShot(SoundCategoryNames::GuiButtonIcon, SoundGroupId_GuiButtonIcon_ButtonClick);
         return;
     }
     if ((soundType == "mm_sell_button") ||
@@ -373,7 +373,7 @@ void GameplayUi::HandleOnPressSound(std::string_view soundType)
         (soundType == "mm_info_button") ||
         (soundType == "mm_zoom_button"))
     {
-        gAudio.PlayOneShot(SoundCategoryNames::GuiSell, SoundGroupId_GuiSell_ButtonClick, 0);
+        gAudio.PlayOneShot(SoundCategoryNames::GuiSell, SoundGroupId_GuiSell_ButtonClick);
         return;
     }
 }

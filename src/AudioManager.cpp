@@ -3,10 +3,26 @@
 // SoLoud
 #include "SoLoud/include/soloud.h"
 #include "SoLoud/include/soloud_wavstream.h"
+#include "SoLoud/include/soloud_wav.h"
 
 //////////////////////////////////////////////////////////////////////////
 
 AudioManager gAudio;
+
+//////////////////////////////////////////////////////////////////////////
+
+inline bool _SoLoudCheckResult_(SoLoud::result code, const char* functionName)
+{
+    bool isSuccess = (code == SoLoud::SO_NO_ERROR);
+    if (!isSuccess)
+    {
+        gConsole.LogMessage(eLogLevel_Warning, "Audio engine error in %s: '%s'", functionName, SoLoud::Soloud::getErrorString(code));
+        cxx_assert(false); 
+    }
+    return isSuccess;
+}
+
+#define SoLoudCheckResult(code) _SoLoudCheckResult_(code, __FUNCTION__)
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +33,7 @@ AudioManager::AudioManager()
 
 AudioManager::~AudioManager()
 {
-    cxx_assert(!mSoundEngine);
+    cxx_assert(!mAudioEngine);
 }
 
 bool AudioManager::Initialize()
@@ -32,24 +48,37 @@ bool AudioManager::Initialize()
 
     ScanMapFiles();
 
-    gConsole.LogMessage(eLogLevel_Info, "Initialize SoLoud sound engine...");
+    gConsole.LogMessage(eLogLevel_Info, "Initialize SoLoud audio engine...");
 
-    mSoundEngine = std::make_unique<SoLoud::Soloud>();
-    SoLoud::result errorCode = mSoundEngine->init();
-    if (errorCode != SoLoud::SO_NO_ERROR)
+    mAudioEngine = std::make_unique<SoLoud::Soloud>();
+    if (!SoLoudCheckResult(mAudioEngine->init()))
     {
-        gConsole.LogMessage(eLogLevel_Warning, "Failed to initialize sound engine: %s (%d)", mSoundEngine->getErrorString(errorCode), errorCode);
-        mSoundEngine.reset();
+        gConsole.LogMessage(eLogLevel_Warning, "Failed to initialize audio engine");
+
+        mAudioEngine.reset();
         return false;
     }
 
-    gConsole.LogMessage(eLogLevel_Info, "Sound engine backend string: %s", mSoundEngine->getBackendString());
+    gConsole.LogMessage(eLogLevel_Info, "Audio engine backend string: %s", mAudioEngine->getBackendString());
+
+    const GameProfile::UserSettings& userSettings = gGameProfile.GetUserSettings();
+
+    mAudioEngine->setGlobalVolume(userSettings.mMasterVolume);
+
+    mSoundBusGui = std::make_unique<SoLoud::Bus>();
+    mSoundBusGui->setVolume(userSettings.mSfxVolume);
+    mAudioEngine->play(*mSoundBusGui);
+
+    mSoundQueueAmbience = std::make_unique<SoLoud::Queue>();
+    mSoundQueueAmbience->setVolume(userSettings.mMusicVolume);
 
     return true;
 }
 
 void AudioManager::Shutdown()
 {
+    StopAmbience();
+
     for (auto& roller: mClipsCache)
     {
         roller.second->stop();
@@ -57,10 +86,40 @@ void AudioManager::Shutdown()
 
     mClipsCache.clear();
 
-    if (mSoundEngine)
+    if (mSoundQueueAmbience)
     {
-        mSoundEngine->deinit();
-        mSoundEngine.reset();
+        mSoundQueueAmbience->stop();
+        mSoundQueueAmbience.reset();
+    }
+
+    if (mSoundBusGui)
+    {
+        mSoundBusGui->stop();
+        mSoundBusGui.reset();
+    }
+
+    if (mSoundBusMusic)
+    {
+        mSoundBusMusic->stop();
+        mSoundBusMusic.reset();
+    }
+
+    if (mSoundBusSpeech)
+    {
+        mSoundBusSpeech->stop();
+        mSoundBusSpeech.reset();
+    }
+
+    if (mSoundBusWorld)
+    {
+        mSoundBusWorld->stop();
+        mSoundBusWorld.reset();
+    }
+
+    if (mAudioEngine)
+    {
+        mAudioEngine->deinit();
+        mAudioEngine.reset();
     }
 
     mCategoriesMap.clear();
@@ -174,46 +233,17 @@ bool AudioManager::PlayOneShot(const std::string& categoryName, snd_group_id gro
     if (!IsAudioOnline())
         return false;
 
-    SfxEndpoint soundLocation;
-    if (!ResolveSound(categoryName, groupId, clipIndex, soundLocation))
-    {
+    SfxEndpoint soundEndpoint;
+    if (!ResolveSound(categoryName, groupId, clipIndex, soundEndpoint))
         return false;
-    }
 
-    cxx_assert(soundLocation.mSoundArchive);
-
-    DK2SoundArchive::SoundEntry archiveEntry;
-    if (!soundLocation.mSoundArchive->GetSoundEntryByIndex(soundLocation.mEntryIndex, archiveEntry))
+    if (SoLoud::AudioSource* audioSource = LoadSound(soundEndpoint, false))
     {
-        cxx_assert(false);
-        return false;
+        mSoundBusGui->play(*audioSource);
+        return true;
     }
 
-    if (archiveEntry.mSoundType == DK2SoundArchive::eSoundType_None)
-    {
-        return false;
-    }
-
-    std::unique_ptr<SoLoud::WavStream>& audioStream = mClipsCache[archiveEntry.mName];
-    if (audioStream.get() == nullptr)
-    {
-        audioStream = std::make_unique<SoLoud::WavStream>();
-        // get clip data
-        if (!soundLocation.mSoundArchive->GetSoundEntryData(archiveEntry, mDataBuffer))
-        {
-            cxx_assert(false);
-            return false;
-        }
-        SoLoud::result errorCode = audioStream->loadMem(mDataBuffer.data(), mDataBuffer.size(), true, false);
-        if (errorCode != SoLoud::SO_NO_ERROR)
-        {
-            gConsole.LogMessage(eLogLevel_Warning, "Cannot load sound clip '%s': %s (%d)", archiveEntry.mName.c_str(),
-                mSoundEngine->getErrorString(errorCode), errorCode);
-        }
-    }
-    cxx_assert(audioStream != nullptr);
-    mSoundEngine->play(*audioStream);
-    return true;
+    return false;
 }
 
 bool AudioManager::PlayOneShot(const std::string& categoryName, snd_group_id groupId)
@@ -248,37 +278,27 @@ DK2SoundArchive* AudioManager::OpenSoundArchive(const std::string& archiveName)
 
 bool AudioManager::IsAudioOnline() const
 {
-    return mSoundEngine.get() != nullptr;
+    return mAudioEngine.get() != nullptr;
 }
 
 bool AudioManager::ResolveSound(const std::string& categoryName, snd_group_id groupId, snd_clip_idx clipIdx, SfxEndpoint& endpoint)
 {
     endpoint = {};
 
-    auto map_it = mCategoriesMap.find(categoryName);
-    if (map_it == mCategoriesMap.end())
-    {
-        mCategoriesMap[categoryName] = {}; // force insert empty
-
-        gConsole.LogMessage(eLogLevel_Warning, "Unknown sound category '%s'", categoryName.c_str());
-        return false;
-    }
-
-    const SfxFilesPair& mapFilesPair = map_it->second;
+    const SfxFilesPair& mapFilesPair = GetSfxFilesPair(categoryName);
 
     // select random clip
     if (clipIdx == -1)
     {
         unsigned int soundEntriesCount {};
-        if (!mapFilesPair.first.GetSoundEntriesCount(groupId, soundEntriesCount) || (soundEntriesCount == 0))
-        {
+        if (!mapFilesPair.first.GetSoundEntriesCount(groupId, 0, soundEntriesCount) || (soundEntriesCount == 0))
             return false;
-        }
+
         clipIdx = Random::GenerateUint(0, soundEntriesCount - 1);
     }
 
     DK2SfxMapFile::SfxSoundEntry mapSoundEntry;
-    if (!mapFilesPair.first.GetSoundEntry(groupId, clipIdx, mapSoundEntry) ||
+    if (!mapFilesPair.first.GetSoundEntry(groupId, 0, clipIdx, mapSoundEntry) ||
         (mapSoundEntry.mIndex == 0) || 
         (mapSoundEntry.mArchiveId == 0))
     {
@@ -306,4 +326,178 @@ bool AudioManager::ResolveSound(const std::string& categoryName, snd_group_id gr
 bool AudioManager::ResolveSound(const std::string& categoryName, snd_group_id groupId, SfxEndpoint& endpoint)
 {
     return ResolveSound(categoryName, groupId, -1, endpoint);
+}
+
+void AudioManager::UpdateFrame(float deltaTime)
+{
+    if (!IsAudioOnline())
+        return;
+
+    UpdateAmbience(false);
+}
+
+bool AudioManager::PlayAmbience(const std::string& categoryName, snd_group_id groupId)
+{
+    if (!IsAudioOnline())
+        return false;
+
+    if (IsAmbiencePlaying())
+    {
+        StopAmbience();
+    }
+
+    cxx_assert(mSoundQueueAmbience);
+
+    // init new sequence
+    const SfxFilesPair& mapFilesPair = GetSfxFilesPair(categoryName);
+    unsigned int segmentsCount {};
+    if (!mapFilesPair.first.GetGroupSegmentsCount(groupId, segmentsCount) || (segmentsCount == 0))
+    {
+        return false;
+    }
+
+    for (unsigned int isegment = 0; isegment < segmentsCount; ++isegment)
+    {
+        DK2SfxMapFile::SfxSoundEntry mapSoundEntry;
+        if (!mapFilesPair.first.GetSoundEntry(groupId, isegment, 0, mapSoundEntry) ||
+            (mapSoundEntry.mIndex == 0) || 
+            (mapSoundEntry.mArchiveId == 0))
+        {
+            continue;
+        }
+
+        SfxEndpoint endpoint {};
+
+        const unsigned int bankEntryIndex = mapSoundEntry.mArchiveId - 1;
+        const auto& bankEntries = mapFilesPair.second.GetEntries();
+        if (!bankEntries.empty() && 
+            (bankEntryIndex < bankEntries.size()))
+        {
+            const DK2SfxBankFile::BankEntry& bankEntry = bankEntries[bankEntryIndex];
+            if (bankEntry.mArchiveName.empty())
+            {
+                cxx_assert_once(false);
+                continue;
+            }
+            endpoint.mSoundArchive = OpenSoundArchive(bankEntry.mArchiveName);
+            endpoint.mEntryIndex = mapSoundEntry.mIndex - 1;
+        }
+
+        if (endpoint.mSoundArchive == nullptr)
+            continue;
+
+        SoLoud::AudioSource* audioSource = LoadSound(endpoint, true);
+        if (audioSource == nullptr)
+            continue;
+
+        mAmbienceSequence.push_back(audioSource);
+    }
+
+    if (mAmbienceSequence.empty())
+    {
+        cxx_assert(false);
+        return false;
+    }
+
+    mIsAmbiencePlaying = true;
+
+    UpdateAmbience(true);
+    return mIsAmbiencePlaying;
+}
+
+bool AudioManager::StopAmbience()
+{
+    if (!IsAudioOnline() || !IsAmbiencePlaying())
+        return false;
+
+    // todo: fadeout option?
+    mSoundQueueAmbience->stop();
+
+    mAmbienceSequencePos = 0;
+    mAmbienceSequence.clear();
+    mIsAmbiencePlaying = false;
+    return true;
+}
+
+bool AudioManager::IsAmbiencePlaying() const
+{
+    return mIsAmbiencePlaying;
+}
+
+AudioManager::SfxFilesPair& AudioManager::GetSfxFilesPair(const std::string& categoryName)
+{
+    auto map_it = mCategoriesMap.find(categoryName);
+    if (map_it == mCategoriesMap.end())
+    {
+        gConsole.LogMessage(eLogLevel_Warning, "Unknown sound category '%s'", categoryName.c_str());
+    }
+    // create empty if not exists
+    return mCategoriesMap[categoryName];
+}
+
+void AudioManager::UpdateAmbience(bool isInitial)
+{
+    if (!IsAmbiencePlaying())
+        return;
+    
+    if (isInitial)
+    {
+        mSoundQueueAmbience->setParamsFromAudioSource(*mAmbienceSequence.front());
+        mAudioEngine->playBackground(*mSoundQueueAmbience);
+    }
+
+    while (mSoundQueueAmbience->getQueueCount() < 2)
+    {
+        SoLoud::AudioSource* audioSource = mAmbienceSequence[mAmbienceSequencePos];
+        mAmbienceSequencePos = (mAmbienceSequencePos + 1) % mAmbienceSequence.size(); 
+        SoLoudCheckResult(mSoundQueueAmbience->play(*audioSource));
+    }
+}
+
+SoLoud::AudioSource* AudioManager::LoadSound(const SfxEndpoint& endpoint, bool queueableAudio)
+{
+    cxx_assert(endpoint.mSoundArchive);
+    if (endpoint.mSoundArchive == nullptr)
+    {
+        return nullptr;
+    }
+
+    DK2SoundArchive::SoundEntry archiveEntry;
+    if (!endpoint.mSoundArchive->GetSoundEntryByIndex(endpoint.mEntryIndex, archiveEntry))
+    {
+        cxx_assert(false);
+        return nullptr;
+    }
+
+    if (archiveEntry.mSoundType == DK2SoundArchive::eSoundType_None)
+        return nullptr;
+
+    // todo: check eSoundType_WavOld and eSoundType_Wav
+
+    std::unique_ptr<SoLoud::AudioSource>& audioStream = mClipsCache[archiveEntry.mName];
+    if (audioStream.get() == nullptr)
+    {
+        if (!endpoint.mSoundArchive->GetSoundEntryData(archiveEntry, mDataBuffer))
+        {
+            cxx_assert(false);
+            return nullptr;
+        }
+
+        SoLoud::result errorCode {};
+        if (queueableAudio)
+        {
+            std::unique_ptr<SoLoud::Wav> wavAudioStream = std::make_unique<SoLoud::Wav>();
+            SoLoudCheckResult(wavAudioStream->loadMem(mDataBuffer.data(), mDataBuffer.size(), true, false));
+            audioStream.reset(wavAudioStream.release());
+        }
+        else
+        {
+            std::unique_ptr<SoLoud::WavStream> wavAudioStream = std::make_unique<SoLoud::WavStream>();
+            SoLoudCheckResult(wavAudioStream->loadMem(mDataBuffer.data(), mDataBuffer.size(), true, false));
+            audioStream.reset(wavAudioStream.release());
+        }
+    }
+
+    cxx_assert(audioStream != nullptr);
+    return audioStream.get();
 }

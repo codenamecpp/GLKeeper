@@ -7,6 +7,14 @@
         "hardware_cursor": true
     },
 
+    "sound":
+    {
+        "master_volume": 1.0,
+        "voice_volume": 1.0,
+        "music_volume": 0.5,
+        "sfx_volume": 0.7
+    },
+
     "game_root": "E:/Games/GOG/Dungeon Keeper 2",
     "language": ""
 }

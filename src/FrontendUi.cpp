@@ -189,14 +189,14 @@ void FrontendUi::HandleOnPressSound(std::string_view soundType)
 {
     if (soundType == "menu_item")
     {
-        gAudio.PlayOneShot(SoundCategoryNames::Frontend, SoundGroupId_Frontend_MenuClick, 0);
+        gAudio.PlayOneShot(SoundCategoryNames::Frontend, SoundGroupId_Frontend_MenuClick);
         return;
     }
 
     if ((soundType == "cancel") ||
         (soundType == "confirm"))
     {
-        gAudio.PlayOneShot(SoundCategoryNames::FrontEndExt, SoundGroupId_FrontendExt_BigButtonClick, 0);
+        gAudio.PlayOneShot(SoundCategoryNames::FrontEndExt, SoundGroupId_FrontendExt_BigButtonClick);
         return;
     }
 }

@@ -12,7 +12,9 @@
 namespace SoLoud
 {
     class Soloud;
-    class WavStream;
+    class Bus;
+    class Queue;
+    class AudioSource;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -36,31 +38,52 @@ public:
 
     bool Initialize();
     void Shutdown();
+    void UpdateFrame(float deltaTime);
 
     bool IsAudioOnline() const;
 
     bool PlayOneShot(const std::string& categoryName, snd_group_id groupId, snd_clip_idx clipIndex);
     bool PlayOneShot(const std::string& categoryName, snd_group_id groupId);
 
+    bool PlayAmbience(const std::string& categoryName, snd_group_id groupId);
+    bool StopAmbience();
+    bool IsAmbiencePlaying() const;
+
 private:
     bool ScanMapFiles();
-
     bool ResolveSound(const std::string& categoryName, snd_group_id groupId, snd_clip_idx clipIdx, SfxEndpoint& endpoint);
     bool ResolveSound(const std::string& categoryName, snd_group_id groupId, SfxEndpoint& endpoint);
 
+    void UpdateAmbience(bool isInitial);
+
+    SoLoud::AudioSource* LoadSound(const SfxEndpoint& endpoint, bool queueableAudio);
+
     DK2SoundArchive* OpenSoundArchive(const std::string& archiveName);
 
+    SfxFilesPair& GetSfxFilesPair(const std::string& categoryName);
+
 private:
-    //////////////////////////////////////////////////////////////////////////
     std::string mSoundSfxDirectoryPath;
+
     // category name is in upper case
     std::unordered_map<std::string, SfxFilesPair> mCategoriesMap;
     std::unordered_map<std::string, DK2SoundArchive> mSoundArhivesMap;
 
-    std::unique_ptr<SoLoud::Soloud> mSoundEngine;
-    std::unordered_map<std::string, std::unique_ptr<SoLoud::WavStream>> mClipsCache;
+    std::unique_ptr<SoLoud::Soloud> mAudioEngine;
+    std::unordered_map<std::string, std::unique_ptr<SoLoud::AudioSource>> mClipsCache;
+
+    std::unique_ptr<SoLoud::Bus> mSoundBusGui;
+    std::unique_ptr<SoLoud::Bus> mSoundBusMusic;
+    std::unique_ptr<SoLoud::Bus> mSoundBusSpeech;
+    std::unique_ptr<SoLoud::Bus> mSoundBusWorld;
+
+    std::unique_ptr<SoLoud::Queue> mSoundQueueAmbience;
 
     std::vector<uint8_t> mDataBuffer;
+    // ambience playback state
+    std::vector<SoLoud::AudioSource*> mAmbienceSequence;
+    size_t mAmbienceSequencePos {}; // points to next clip in mAmbienceSequence
+    bool mIsAmbiencePlaying {};
 };
 
 //////////////////////////////////////////////////////////////////////////

@@ -208,7 +208,7 @@ namespace SoLoud
 		unsigned int getVersion() const;
 
 		// Translate error number to an asciiz string
-		const char * getErrorString(result aErrorCode) const;
+		static const char * getErrorString(result aErrorCode);
 
 		// Returns current backend ID (BACKENDS enum)
 		unsigned int getBackendId();
