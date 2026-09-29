@@ -129,7 +129,7 @@ UiCursor::eCursorState UiCursor::DetectNextState() const
         for (int istate = 0; istate < eCursorState_COUNT; ++istate)
         {
             const eCursorState statesRoller = static_cast<eCursorState>(istate);
-            if (mNextStateSet.Contains(statesRoller))
+            if (mNextStateSet.Has(statesRoller))
             {
                 return statesRoller;
             }
@@ -178,7 +178,7 @@ void UiCursor::StatesOff()
 
 bool UiCursor::IsOneShotAnimation(eCursorState stateId) const
 {
-    return mOneShotAnimationSet.Contains(stateId);
+    return mOneShotAnimationSet.Has(stateId);
 }
 
 bool UiCursor::CanChangeState(eCursorState stateId) const

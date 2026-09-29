@@ -33,6 +33,7 @@ namespace SoLoud
 {
 	class Queue;
 
+	// TODO: only a single Instance per queue is allowed. This should be enforced by code, e.g. combine both classes into a single one
 	class QueueInstance : public AudioSourceInstance
 	{
 		Queue *mParent;
@@ -48,22 +49,37 @@ namespace SoLoud
 	public:
 		Queue();
 		virtual QueueInstance *createInstance();
+		
 		// Play sound through the queue
 		result play(AudioSource &aSound);
+		void stop_queue(); // stops playback and empties the queue
+
+		// Deletes the most recently added sound of the queue
+		// sounds that are currently playing are not popped
+		// it is safe to not check the count before attempting a pop (this avoids a mutex lock)
+		result pop();
+
         // Number of audio sources queued for replay
         unsigned int getQueueCount();
+		
 		// Is this audio source currently playing?
 		bool isCurrentlyPlaying(AudioSource &aSound);
+		
 		// Set params by reading them from an audio source
 		result setParamsFromAudioSource(AudioSource &aSound);
+		
 		// Set params manually
 		result setParams(float aSamplerate, unsigned int aChannels = 2);
+
+		bool hasEnded();
 		
+		void clearInstanceInternal(); // called by QueueInstance dtor
 	public:
+		// mCount: if there are no sounds: mCount=0; if one sound is currently playing and no other sound is queued: mCount=1; if a sound is playing and another one is queued: mCount=2
 	    unsigned int mReadIndex, mWriteIndex, mCount;
 	    AudioSourceInstance *mSource[SOLOUD_QUEUE_MAX];
 		QueueInstance *mInstance;
-		handle mQueueHandle;
+		handle mQueueHandle; // unclear purpose. this variable is never used
 		void findQueueHandle();
 		
 	};

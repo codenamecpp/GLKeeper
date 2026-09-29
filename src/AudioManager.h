@@ -6,6 +6,7 @@
 #include "DK2SfxMapFile.h"
 #include "DK2SfxBankFile.h"
 #include "DK2SoundArchive.h"
+#include "SimpleTimer.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -80,10 +81,11 @@ private:
     std::unique_ptr<SoLoud::Queue> mSoundQueueAmbience;
 
     std::vector<uint8_t> mDataBuffer;
+
     // ambience playback state
     std::vector<SoLoud::AudioSource*> mAmbienceSequence;
     size_t mAmbienceSequencePos {}; // points to next clip in mAmbienceSequence
-    bool mIsAmbiencePlaying {};
+    SimpleTimer mAmbienceUpdateTimer {};
 };
 
 //////////////////////////////////////////////////////////////////////////

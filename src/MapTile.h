@@ -241,7 +241,7 @@ public:
 
     inline bool IsTaggedForDigging(ePlayerID playerId) const
     {
-        return mTaggedByPlayers.Contains(playerId);
+        return mTaggedByPlayers.Has(playerId);
     }
 
     inline void SetTaggedForDigging(ePlayerID playerId, bool isTagged)

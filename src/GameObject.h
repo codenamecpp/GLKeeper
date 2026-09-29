@@ -91,7 +91,7 @@ public:
 
     // highlight control
     void SetHighlighted(bool isHighlighted);
-    bool IsHighlighted() const { return mIsHighlighted; }
+    bool IsHighlighted() const;
 
     //////////////////////////////////////////////////////////////////////////
     // notifications
@@ -145,8 +145,6 @@ private:
     Locomotion mLocomotion;
     cxx::uniqueptr<AnimatingMeshObject> mMeshObject; // optional
     eGameObjectMeshId mMeshResourceId = eGameObjectMeshId_Main;
-
-    bool mIsHighlighted {};
 };
 
 //////////////////////////////////////////////////////////////////////////

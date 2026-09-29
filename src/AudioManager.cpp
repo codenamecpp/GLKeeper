@@ -38,6 +38,14 @@ AudioManager::~AudioManager()
 
 bool AudioManager::Initialize()
 {
+    const GameProfile::UserSettings& userSettings = gGameProfile.GetUserSettings();
+
+    if (!userSettings.mEnableSound)
+    {
+        gConsole.LogMessage(eLogLevel_Info, "Sounds disabled");
+        return true;
+    }
+
     if (!gFiles.PathToDirectory("Data/Sound/Sfx", mSoundSfxDirectoryPath))
     {
         gConsole.LogMessage(eLogLevel_Warning, "Cannot locate sounds");
@@ -61,8 +69,6 @@ bool AudioManager::Initialize()
 
     gConsole.LogMessage(eLogLevel_Info, "Audio engine backend string: %s", mAudioEngine->getBackendString());
 
-    const GameProfile::UserSettings& userSettings = gGameProfile.GetUserSettings();
-
     mAudioEngine->setGlobalVolume(userSettings.mMasterVolume);
 
     mSoundBusGui = std::make_unique<SoLoud::Bus>();
@@ -70,7 +76,7 @@ bool AudioManager::Initialize()
     mAudioEngine->play(*mSoundBusGui);
 
     mSoundQueueAmbience = std::make_unique<SoLoud::Queue>();
-    mSoundQueueAmbience->setVolume(userSettings.mMusicVolume);
+    mSoundQueueAmbience->setVolume(userSettings.mSfxVolume);
 
     return true;
 }
@@ -88,6 +94,7 @@ void AudioManager::Shutdown()
 
     if (mSoundQueueAmbience)
     {
+        mSoundQueueAmbience->stop_queue();
         mSoundQueueAmbience->stop();
         mSoundQueueAmbience.reset();
     }
@@ -333,11 +340,16 @@ void AudioManager::UpdateFrame(float deltaTime)
     if (!IsAudioOnline())
         return;
 
-    UpdateAmbience(false);
+    if (mAmbienceUpdateTimer.IsStarted() &&
+        mAmbienceUpdateTimer.TickAndCheckExpire(deltaTime))
+    {
+        mAmbienceUpdateTimer.Start();
+        UpdateAmbience(false);
+    }
 }
 
 bool AudioManager::PlayAmbience(const std::string& categoryName, snd_group_id groupId)
-{
+{   
     if (!IsAudioOnline())
         return false;
 
@@ -399,10 +411,11 @@ bool AudioManager::PlayAmbience(const std::string& categoryName, snd_group_id gr
         return false;
     }
 
-    mIsAmbiencePlaying = true;
+    mAmbienceUpdateTimer.Start(5.0f);
 
     UpdateAmbience(true);
-    return mIsAmbiencePlaying;
+
+    return IsAmbiencePlaying();
 }
 
 bool AudioManager::StopAmbience()
@@ -411,17 +424,19 @@ bool AudioManager::StopAmbience()
         return false;
 
     // todo: fadeout option?
+    mSoundQueueAmbience->stop_queue();
     mSoundQueueAmbience->stop();
 
+    mAmbienceUpdateTimer = {};
     mAmbienceSequencePos = 0;
     mAmbienceSequence.clear();
-    mIsAmbiencePlaying = false;
+
     return true;
 }
 
 bool AudioManager::IsAmbiencePlaying() const
 {
-    return mIsAmbiencePlaying;
+    return mAmbienceUpdateTimer.IsStarted();
 }
 
 AudioManager::SfxFilesPair& AudioManager::GetSfxFilesPair(const std::string& categoryName)
@@ -446,11 +461,17 @@ void AudioManager::UpdateAmbience(bool isInitial)
         mAudioEngine->playBackground(*mSoundQueueAmbience);
     }
 
-    while (mSoundQueueAmbience->getQueueCount() < 2)
+    const unsigned int queueCount = mSoundQueueAmbience->getQueueCount();
+    for (unsigned i = queueCount; i < 2; ++i)
     {
         SoLoud::AudioSource* audioSource = mAmbienceSequence[mAmbienceSequencePos];
         mAmbienceSequencePos = (mAmbienceSequencePos + 1) % mAmbienceSequence.size(); 
         SoLoudCheckResult(mSoundQueueAmbience->play(*audioSource));
+    }
+
+    if (!isInitial && mSoundQueueAmbience->hasEnded())
+    {
+        mAudioEngine->playBackground(*mSoundQueueAmbience);
     }
 }
 

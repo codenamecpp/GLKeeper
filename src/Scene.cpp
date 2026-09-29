@@ -219,7 +219,7 @@ void Scene::OnDebugDraw(DebugRenderer& theDebugRenderer)
     }
 }
 
-void Scene::OnAnimatorBecomeActive(SceneObject* object)
+void Scene::OnObjectBecomeActive(SceneObject* object)
 {
     bool isValid = object && object->IsObjectActive();
     if (!isValid || cxx::contains(mActiveObjects, object))
@@ -232,7 +232,7 @@ void Scene::OnAnimatorBecomeActive(SceneObject* object)
     mAABBTree.InsertObject(object);
 }
 
-void Scene::OnAnimatorBecomeInactive(SceneObject* object)
+void Scene::OnObjectBecomeInactive(SceneObject* object)
 {
     bool isValid = object && !object->IsObjectActive();
     if (!isValid || !cxx::erase(mActiveObjects, object))

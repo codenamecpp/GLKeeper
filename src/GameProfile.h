@@ -28,6 +28,7 @@ public:
         bool mEnableHwCursor = false;
         // inputs
         // sounds
+        bool mEnableSound = true;
         float mMasterVolume = 1.0f;
         float mVoiceVolume = 1.0f;
         float mMusicVolume = 1.0f;

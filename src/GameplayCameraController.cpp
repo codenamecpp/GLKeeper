@@ -178,24 +178,24 @@ glm::vec2 GameplayCameraController::GetCameraMoveVectorFromInputs() const
     DirectionEnumSet cardinalDirs;
     if (GetCameraMoveDirections(cardinalDirs))
     {
-        if (cardinalDirs.Contains(eDirection_N) || cardinalDirs.Contains(eDirection_S))
+        if (cardinalDirs.Has(eDirection_N) || cardinalDirs.Has(eDirection_S))
         {
             const glm::vec3 vmove = glm::normalize(glm::cross(WorldAxes::Y, mCamera->mRight));
-            if (cardinalDirs.Contains(eDirection_S))
+            if (cardinalDirs.Has(eDirection_S))
             {
                 moveDirection += vmove;
             }
-            if (cardinalDirs.Contains(eDirection_N))
+            if (cardinalDirs.Has(eDirection_N))
             {
                 moveDirection -= vmove;
             }
         }
 
-        if (cardinalDirs.Contains(eDirection_E))
+        if (cardinalDirs.Has(eDirection_E))
         {
             moveDirection -= mCamera->mRight;
         }
-        if (cardinalDirs.Contains(eDirection_W))
+        if (cardinalDirs.Has(eDirection_W))
         {
             moveDirection += mCamera->mRight;
         }

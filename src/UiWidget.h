@@ -263,7 +263,7 @@ protected:
 
     glm::mat4 mTransform; // current transformations matrix, screen space
 
-    EnumSet<eUiInputPassThrough_COUNT> mInputPassThrough {};
+    EnumSet<eUiInputPassThrough, eUiInputPassThrough_COUNT> mInputPassThrough {};
 
     int mChildrenLocksCount = 0;
 

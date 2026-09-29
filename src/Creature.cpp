@@ -41,14 +41,14 @@ void Creature::ConfigureInstance(EntityUid instanceUid, CreatureController* cont
 
 void Creature::SpawnInstance()
 {
-    cxx_assert(!mEntityFlags.mWasSpawned);
-    cxx_assert(!mEntityFlags.mWasDespawned);
-    cxx_assert(!mEntityFlags.mWasDeleted);
+    cxx_assert(!WasSpawned());
+    cxx_assert(!WasDespawned());
+    cxx_assert(!WasDeleted());
 
-    if (mEntityFlags.mWasSpawned) 
+    if (WasSpawned()) 
         return;
 
-    mEntityFlags.mWasSpawned = true;
+    mEntityFlags.Include(eEntityFlags_WasSpawned);
 
     mOwnHandle = gCreatureManager.FindCreature(mInstanceUid);
 
@@ -77,9 +77,9 @@ void Creature::SpawnInstance()
 
 void Creature::DespawnInstance()
 {
-    cxx_assert(mEntityFlags.mWasSpawned);
+    cxx_assert(WasSpawned());
 
-    if (mEntityFlags.mWasDespawned)
+    if (WasDespawned())
         return;
 
     ChangeState(eCreatureState_None);
@@ -102,7 +102,7 @@ void Creature::DespawnInstance()
 
     UnassignCurrentTask();
 
-    mEntityFlags.mWasDespawned = true;
+    mEntityFlags.Include(eEntityFlags_WasDespawned);
 }
 
 void Creature::UpdateLogic(float stepDeltaTime)
@@ -299,10 +299,10 @@ long Creature::WithdrawMoney(long moneyAmount)
 
 void Creature::SetHighlighted(bool isHighlighted)
 {
-    if (mStateFlags.mIsHighlighted == isHighlighted)
+    if (IsHighlighted() == isHighlighted)
         return;
 
-    mStateFlags.mIsHighlighted = isHighlighted;
+    mEntityFlags.Set(eEntityFlags_IsHighlighted, isHighlighted);
     if (mMeshObject)
     {
         mMeshObject->SetHighlighted(isHighlighted);
@@ -311,7 +311,7 @@ void Creature::SetHighlighted(bool isHighlighted)
 
 void Creature::MarkDeleted()
 {
-    mEntityFlags.mWasDeleted = true;
+    mEntityFlags.Include(eEntityFlags_WasDeleted);
 }
 
 void Creature::OnRecycle()
@@ -586,11 +586,14 @@ bool Creature::SelectBestTask()
 
     CreatureTaskPtr assignTask;
 
+    // discard the current task before selecting a new one
+    // so the task manager doesn't get confused
+    UnassignCurrentTask();
+
     const CreatureDefinition* creatureDefs = GetDefinition();
+    // search for worker tasks
     if (creatureDefs->mIsWorker)
     {
-        // search for worker tasks
-
         if (assignTask == nullptr)
         {
             assignTask = gCreatureTaskManager.GetClaimTerritoryTask(this);
@@ -616,7 +619,7 @@ bool Creature::SelectBestTask()
             assignTask = gCreatureTaskManager.GetReinforceWallTask(this);
         }
     }
-
+    // todo: implement non-workers tasks
     if (assignTask == nullptr)
     {
         assignTask = gCreatureTaskManager.GetWanderTask(this);
@@ -639,6 +642,10 @@ bool Creature::SelectTaskForJob(eCreatureJob jobType)
     // todo: refactore
 
     CreatureTaskPtr assignTask;
+
+    // discard the current task before selecting a new one
+    // so the task manager doesn't get confused
+    UnassignCurrentTask();
 
     const CreatureDefinition* creatureDefs = GetDefinition();
     if (creatureDefs->mIsWorker)
@@ -711,8 +718,8 @@ bool Creature::PickUp()
     if (!CanPickUp())
         return false;
 
-    mStateFlags.mInHand = true;
-    SetEntityUnplaced(true);
+    mEntityFlags.Set(eEntityFlags_IsUnplaced, true);
+    mEntityFlags.Set(eEntityFlags_InHand, true);
 
     ChangeState(eCreatureState_InHand);
     return true;
@@ -720,12 +727,11 @@ bool Creature::PickUp()
 
 bool Creature::DropOn(const glm::vec2& position)
 {
-    if (!IsPickedUp())
+    if (!InHand())
         return false;
 
-    SetEntityUnplaced(false);
-
-    mStateFlags.mInHand = false;
+    mEntityFlags.Set(eEntityFlags_IsUnplaced, false);
+    mEntityFlags.Set(eEntityFlags_InHand, false);
 
     float dropHeight = MAP_FLOOR_LEVEL + MAP_BLOCK_HEIGHT;
 
@@ -736,4 +742,3 @@ bool Creature::DropOn(const glm::vec2& position)
     ChangeState(eCreatureState_Idle);
     return true;
 }
-

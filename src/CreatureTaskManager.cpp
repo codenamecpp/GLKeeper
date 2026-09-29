@@ -258,7 +258,7 @@ void CreatureTaskManager::UpdateTaggedTileTasks(MapTile* mapTile, ePlayerID play
 
     for (eTileFace facesRoller: TileFaces)
     {
-        if (availableFacesSet.Contains(facesRoller))
+        if (availableFacesSet.Has(facesRoller))
         {
             CreateWorkerSlotsForJob(mapTile, jobType, facesRoller, playerId);
         }
@@ -694,7 +694,7 @@ void CreatureTaskManager::UpdateReinforceWallTasks(MapTile* mapTile, ePlayerID p
 
     for (eTileFace facesRoller: gTileFaces)
     {
-        if (faceSet.Contains(facesRoller))
+        if (faceSet.Has(facesRoller))
         {
             CreateWorkerSlotsForJob(mapTile, eCreatureJob_ReinforceWall, facesRoller, playerId);
         }
@@ -713,7 +713,7 @@ void CreatureTaskManager::InitReinforceWallTasks(MapTile* mapTile, ePlayerID pla
 
     for (eTileFace facesRoller: gTileFaces)
     {
-        if (!faceSet.Contains(facesRoller))
+        if (!faceSet.Has(facesRoller))
             continue;
 
         CreateWorkerSlotsForJob(mapTile, eCreatureJob_ReinforceWall, facesRoller, playerId);

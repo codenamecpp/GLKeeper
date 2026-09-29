@@ -99,8 +99,6 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     // highlight control
-    bool IsHighlighted() const { return mStateFlags.mIsHighlighted; }
-
     void SetHighlighted(bool isHighlighted);
 
     //////////////////////////////////////////////////////////////////////////
@@ -110,7 +108,6 @@ public:
     // during pickup/dropon only basic rules are checked (state-dependent)
     // ignores special rules like creature ownership or tile availability
     bool CanPickUp() const;
-    bool IsPickedUp() const { return mStateFlags.mInHand; }
     bool PickUp();
     bool DropOn(const glm::vec2& position);
 

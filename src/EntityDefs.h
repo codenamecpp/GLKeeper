@@ -107,19 +107,19 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 
-struct EntityFlags
+enum eEntityFlags: unsigned int
 {
-public:
-    EntityFlags()
-        : mWasSpawned(false)
-        , mWasDeleted(false)
-        , mWasDespawned(false)
-        , mIsUnplaced(false)
-    {}
-    bool mWasSpawned : 1; // whether entity was activated
-    bool mWasDeleted : 1; // whether entity marked as pending deletion
-    bool mWasDespawned : 1; // whether entity was completely removed from world
-    bool mIsUnplaced : 1; // whether entity has no world placement (e.g., in hand)
+    eEntityFlags_WasSpawned, // whether entity was activated
+    eEntityFlags_WasDeleted, // whether entity marked as pending deletion
+    eEntityFlags_WasDespawned, // whether entity was completely removed from world
+    eEntityFlags_IsUnplaced, // whether entity has no world placement (e.g., in hand)
+
+    eEntityFlags_IsHighlighted,
+    eEntityFlags_InHand,
+
+    eEntityFlags_COUNT
 };
+
+using EntityFlags = EnumSet<eEntityFlags, eEntityFlags_COUNT>;
 
 //////////////////////////////////////////////////////////////////////////

@@ -30,14 +30,14 @@ void GameObject::ConfigureInstance(EntityUid instanceUid, GameObjectController* 
 
 void GameObject::SpawnInstance()
 {
-    cxx_assert(!mEntityFlags.mWasSpawned);
-    cxx_assert(!mEntityFlags.mWasDespawned);
-    cxx_assert(!mEntityFlags.mWasDeleted);
+    cxx_assert(!WasSpawned());
+    cxx_assert(!WasDespawned());
+    cxx_assert(!WasDeleted());
 
-    if (mEntityFlags.mWasSpawned) 
+    if (WasSpawned()) 
         return;
 
-    mEntityFlags.mWasSpawned = true;
+    mEntityFlags.Include(eEntityFlags_WasSpawned);
 
     mOwnHandle = gGameObjectManager.FindObject(mInstanceUid);
 
@@ -62,9 +62,9 @@ void GameObject::SpawnInstance()
 
 void GameObject::DespawnInstance()
 {
-    cxx_assert(mEntityFlags.mWasSpawned);
+    cxx_assert(WasSpawned());
 
-    if (mEntityFlags.mWasDespawned) 
+    if (WasDespawned()) 
         return;
 
     if (mController)
@@ -80,7 +80,7 @@ void GameObject::DespawnInstance()
 
     mOwnHandle = {};
 
-    mEntityFlags.mWasDespawned = true;
+    mEntityFlags.Include(eEntityFlags_WasDespawned);
 }
 
 void GameObject::InitMesh()
@@ -226,8 +226,6 @@ void GameObject::OnRecycle()
 
     FreeMesh();
     FreePhysics();
-
-    mIsHighlighted = {};
 }
 
 bool GameObject::HasMeshResource(eGameObjectMeshId meshId) const
@@ -364,10 +362,10 @@ void GameObject::ResetAnimationDuration()
 
 void GameObject::SetHighlighted(bool isHighlighted)
 {
-    if (isHighlighted == mIsHighlighted)
+    if (IsHighlighted() == isHighlighted)
         return;
 
-    mIsHighlighted = isHighlighted;
+    mEntityFlags.Set(eEntityFlags_IsHighlighted, isHighlighted);
     if (mMeshObject)
     {
         mMeshObject->SetHighlighted(isHighlighted);
@@ -431,7 +429,7 @@ void GameObject::FreePhysics()
 
 void GameObject::MarkDeleted()
 {
-    mEntityFlags.mWasDeleted = true;
+    mEntityFlags.Include(eEntityFlags_WasDeleted);
 }
 
 void GameObject::UpdateLogic(float stepDeltaTime)
@@ -502,5 +500,10 @@ void GameObject::ReceiveMsg(EntityMsg& msgData)
         msgData.SetConsumed();
         return;
     }
+}
+
+bool GameObject::IsHighlighted() const
+{
+    return mEntityFlags.Has(eEntityFlags_IsHighlighted);
 }
 

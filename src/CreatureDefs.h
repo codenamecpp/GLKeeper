@@ -255,7 +255,6 @@ union CreatureStateFlags
 {
     struct
     {
-        bool mInHand : 1;
         bool mContributesToPortalLimit : 1;
         bool mRebelActive : 1;
         bool mRebelLeader : 1;
@@ -299,8 +298,6 @@ union CreatureStateFlags
         bool mReaperComplete : 1;
         bool mFleeing : 1;
         bool mInWater : 1;
-
-        bool mIsHighlighted : 1;
     };
 };
 

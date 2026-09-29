@@ -37,6 +37,7 @@ bool GameProfile::LoadGameProfile(const std::string& filepath)
     JsonQuery(jsonSettings.GetRootElement(), "screen.fullscreen", mUserSettings.mEnableFullscreen);
     JsonQuery(jsonSettings.GetRootElement(), "screen.vsync", mUserSettings.mEnableVSync);
     JsonQuery(jsonSettings.GetRootElement(), "screen.hardware_cursor", mUserSettings.mEnableHwCursor);
+    JsonQuery(jsonSettings.GetRootElement(), "sound.enable", mUserSettings.mEnableSound);
     JsonQuery(jsonSettings.GetRootElement(), "sound.master_volume", mUserSettings.mMasterVolume);
     JsonQuery(jsonSettings.GetRootElement(), "sound.voice_volume", mUserSettings.mVoiceVolume);
     JsonQuery(jsonSettings.GetRootElement(), "sound.music_volume", mUserSettings.mMusicVolume);
@@ -97,6 +98,7 @@ void GameProfile::LoadDefaults()
     // default inputs
 
     // default sounds
+    mUserSettings.mEnableSound = true;
     mUserSettings.mMasterVolume = 1.0f;
     mUserSettings.mVoiceVolume = 1.0f;
     mUserSettings.mMusicVolume = 1.0f;

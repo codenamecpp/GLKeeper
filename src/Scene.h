@@ -64,8 +64,8 @@ private:
     void OnDebugDraw(DebugRenderer& theDebugRenderer) override;
 
     // handle object events
-    void OnAnimatorBecomeActive(SceneObject* object);
-    void OnAnimatorBecomeInactive(SceneObject* object);
+    void OnObjectBecomeActive(SceneObject* object);
+    void OnObjectBecomeInactive(SceneObject* object);
     void OnObjectInvalidateTransform(SceneObject* object);
     void OnObjectInvalidateBounds(SceneObject* object);
 

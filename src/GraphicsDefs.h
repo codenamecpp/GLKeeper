@@ -91,7 +91,7 @@ enum eRenderLayer
     eRenderLayer_COUNT
 };
 
-using RenderLayerSet = EnumSet<eRenderLayer_COUNT>;
+using RenderLayerSet = EnumSet<eRenderLayer, eRenderLayer_COUNT>;
 
 //////////////////////////////////////////////////////////////////////////
 

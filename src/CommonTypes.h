@@ -317,17 +317,17 @@ inline Rect2D FitAspectContain(const Rect2D& src, const Rect2D& dst)
 
 //////////////////////////////////////////////////////////////////////////
 
-template<auto Enum_COUNT>
+template<typename TEnumType, TEnumType Enum_COUNT>
 struct EnumSet
 {
-    static_assert(std::is_enum_v<decltype(Enum_COUNT)>, "Enum_COUNT must be an enum!");
+    static_assert(std::is_enum_v<TEnumType>, "Enum_COUNT must be an enum!");
 
 public:
-    using EnumType = std::decay_t<decltype(Enum_COUNT)>;
+    using EnumType = TEnumType;
 
 public:
     constexpr EnumSet() = default;
-    constexpr EnumSet(EnumType enumValue) 
+    constexpr explicit EnumSet(EnumType enumValue) 
     {
         Include(enumValue);
     }
@@ -339,10 +339,6 @@ public:
         }
     }
     constexpr EnumSet& operator = (const EnumSet& other) { mBitset = other.mBitset; return *this; }
-    constexpr EnumSet& operator = (EnumType enumValue)
-    {
-        return Assing(enumValue);
-    }
     constexpr EnumSet& Assing(EnumType enumValue) 
     {  
         mBitset.reset().set(enumValue);
@@ -354,9 +350,9 @@ public:
         return *this;
     }
     constexpr bool Empty() const { return mBitset.none(); }
-    constexpr bool Contains(EnumType enumValue) const 
+    constexpr bool Has(EnumType enumValue) const 
     { 
-        return mBitset.test(static_cast<std::size_t>(enumValue)); 
+        return mBitset.test(enumValue); 
     }
     constexpr bool HasAny(const EnumSet& other) const { return (mBitset & other.mBitset).any(); }
     constexpr bool HasAll(const EnumSet& other) const { return (mBitset & other.mBitset) == other.mBitset; }
@@ -364,12 +360,12 @@ public:
     constexpr EnumSet& Clear() { mBitset.reset(); return *this; }
     constexpr EnumSet& Include(EnumType enumValue) 
     { 
-        mBitset.set(static_cast<std::size_t>(enumValue), true); 
+        mBitset.set(enumValue, true); 
         return *this; 
     }
     constexpr EnumSet& Exclude(EnumType enumValue) 
     { 
-        mBitset.set(static_cast<std::size_t>(enumValue), false); 
+        mBitset.set(enumValue, false); 
         return *this; 
     }
 
@@ -385,12 +381,12 @@ public:
     constexpr bool operator == (const EnumSet& other) const { return mBitset == other.mBitset; }
     constexpr bool operator != (const EnumSet& other) const { return !(*this == other); }
 private:
-    explicit constexpr EnumSet(const std::bitset<static_cast<std::size_t>(Enum_COUNT)>& bitset)
+    explicit constexpr EnumSet(const std::bitset<Enum_COUNT>& bitset)
         : mBitset(bitset) 
     {
     }
 private:
-    std::bitset<static_cast<std::size_t>(Enum_COUNT)> mBitset;
+    std::bitset<Enum_COUNT> mBitset;
 };
 
 //////////////////////////////////////////////////////////////////////////

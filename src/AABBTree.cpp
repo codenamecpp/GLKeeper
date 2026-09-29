@@ -84,70 +84,76 @@ void AABBTree::InsertLeaf(TreeNodeIndex leafNodeIndex)
 	// search for the best place to put the new leaf in the tree
 	// we use surface area and depth as search heuristics
 	TreeNodeIndex treeNodeIndex = mRootNodeIndex;
-	TreeNode& leafNode = mTreeNodes[leafNodeIndex];
-	while (!mTreeNodes[treeNodeIndex].IsLeafNode())
-	{
-		// because of the test in the while loop above we know we are never a leaf inside it
-		const TreeNode& treeNode = mTreeNodes[treeNodeIndex];
-		TreeNodeIndex leftNodeIndex = treeNode.mLeftNodeIndex;
-		TreeNodeIndex rightNodeIndex = treeNode.mRightNodeIndex;
-		const TreeNode& leftNode = mTreeNodes[leftNodeIndex];
-		const TreeNode& rightNode = mTreeNodes[rightNodeIndex];
 
-        float combinedAabbSurfaceArea = treeNode.mBoundingBox.union_with(leafNode.mBoundingBox).get_surface_area();
-		float newParentNodeCost = 2.0f * combinedAabbSurfaceArea;
-		float minimumPushDownCost = 2.0f * (combinedAabbSurfaceArea - treeNode.mBoundingBox.get_surface_area());
-		// use the costs to figure out whether to create a new parent here or descend
-		float costLeft;
-		float costRight;
-		if (leftNode.IsLeafNode())
-		{
-			costLeft = leafNode.mBoundingBox.union_with(leftNode.mBoundingBox).get_surface_area() + minimumPushDownCost;
-		}
-		else
-		{
-			cxx::aabbox newLeftAabb = leafNode.mBoundingBox.union_with(leftNode.mBoundingBox);
-			costLeft = (newLeftAabb.get_surface_area() - leftNode.mBoundingBox.get_surface_area()) + minimumPushDownCost;			
-		}
-		if (rightNode.IsLeafNode())
-		{
-			costRight = leafNode.mBoundingBox.union_with(rightNode.mBoundingBox).get_surface_area() + minimumPushDownCost;
-		}
-		else
-		{
-			cxx::aabbox newRightAabb = leafNode.mBoundingBox.union_with(rightNode.mBoundingBox);
-			costRight = (newRightAabb.get_surface_area() - rightNode.mBoundingBox.get_surface_area()) + minimumPushDownCost;
-		}
+    {
+	    TreeNode& leafNode = mTreeNodes[leafNodeIndex];
+	    while (!mTreeNodes[treeNodeIndex].IsLeafNode())
+	    {
+		    // because of the test in the while loop above we know we are never a leaf inside it
+		    const TreeNode& treeNode = mTreeNodes[treeNodeIndex];
+		    TreeNodeIndex leftNodeIndex = treeNode.mLeftNodeIndex;
+		    TreeNodeIndex rightNodeIndex = treeNode.mRightNodeIndex;
+		    const TreeNode& leftNode = mTreeNodes[leftNodeIndex];
+		    const TreeNode& rightNode = mTreeNodes[rightNodeIndex];
 
-		// if the cost of creating a new parent node here is less than descending in either direction then
-		// we know we need to create a new parent node, errrr, here and attach the leaf to that
-		if (newParentNodeCost < costLeft && newParentNodeCost < costRight)	
-			break;
+            float combinedAabbSurfaceArea = treeNode.mBoundingBox.union_with(leafNode.mBoundingBox).get_surface_area();
+		    float newParentNodeCost = 2.0f * combinedAabbSurfaceArea;
+		    float minimumPushDownCost = 2.0f * (combinedAabbSurfaceArea - treeNode.mBoundingBox.get_surface_area());
+		    // use the costs to figure out whether to create a new parent here or descend
+		    float costLeft;
+		    float costRight;
+		    if (leftNode.IsLeafNode())
+		    {
+			    costLeft = leafNode.mBoundingBox.union_with(leftNode.mBoundingBox).get_surface_area() + minimumPushDownCost;
+		    }
+		    else
+		    {
+			    cxx::aabbox newLeftAabb = leafNode.mBoundingBox.union_with(leftNode.mBoundingBox);
+			    costLeft = (newLeftAabb.get_surface_area() - leftNode.mBoundingBox.get_surface_area()) + minimumPushDownCost;			
+		    }
+		    if (rightNode.IsLeafNode())
+		    {
+			    costRight = leafNode.mBoundingBox.union_with(rightNode.mBoundingBox).get_surface_area() + minimumPushDownCost;
+		    }
+		    else
+		    {
+			    cxx::aabbox newRightAabb = leafNode.mBoundingBox.union_with(rightNode.mBoundingBox);
+			    costRight = (newRightAabb.get_surface_area() - rightNode.mBoundingBox.get_surface_area()) + minimumPushDownCost;
+		    }
 
-		// otherwise descend in the cheapest direction
-		if (costLeft < costRight)
-		{
-			treeNodeIndex = leftNodeIndex;
-		}
-		else
-		{
-			treeNodeIndex = rightNodeIndex;
-		}
-	}
+		    // if the cost of creating a new parent node here is less than descending in either direction then
+		    // we know we need to create a new parent node, errrr, here and attach the leaf to that
+		    if (newParentNodeCost < costLeft && newParentNodeCost < costRight)	
+			    break;
+
+		    // otherwise descend in the cheapest direction
+		    if (costLeft < costRight)
+		    {
+			    treeNodeIndex = leftNodeIndex;
+		    }
+		    else
+		    {
+			    treeNodeIndex = rightNodeIndex;
+		    }
+	    }
+    }
 
 	// the leafs sibling is going to be the node we found above and we are going to create a new
 	// parent node and attach the leaf and this item
 	TreeNodeIndex leafSiblingIndex = treeNodeIndex;
-	TreeNode& leafSibling = mTreeNodes[leafSiblingIndex];
-	TreeNodeIndex oldParentIndex = leafSibling.mParentNodeIndex;
+	TreeNodeIndex oldParentIndex = mTreeNodes[leafSiblingIndex].mParentNodeIndex;
 	TreeNodeIndex newParentIndex = NULL_TREE_NODE;
     AllocateTreeNode(&newParentIndex);
 
-	TreeNode& newParent = mTreeNodes[newParentIndex];
-	newParent.mParentNodeIndex = oldParentIndex;
-	newParent.mBoundingBox = leafNode.mBoundingBox.union_with(leafSibling.mBoundingBox); // the new parents aabb is the leaf aabb combined with it's siblings aabb
-	newParent.mLeftNodeIndex = leafSiblingIndex;
-	newParent.mRightNodeIndex = leafNodeIndex;
+    TreeNode& leafNode = mTreeNodes[leafNodeIndex];
+    TreeNode& leafSibling = mTreeNodes[leafSiblingIndex];
+    {
+	    TreeNode& newParent = mTreeNodes[newParentIndex];
+	    newParent.mParentNodeIndex = oldParentIndex;
+	    newParent.mBoundingBox = leafNode.mBoundingBox.union_with(leafSibling.mBoundingBox); // the new parents aabb is the leaf aabb combined with it's siblings aabb
+	    newParent.mLeftNodeIndex = leafSiblingIndex;
+	    newParent.mRightNodeIndex = leafNodeIndex;
+    }
 	leafNode.mParentNodeIndex = newParentIndex;
 	leafSibling.mParentNodeIndex = newParentIndex;
 

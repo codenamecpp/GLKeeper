@@ -37,7 +37,7 @@ enum eDirection
     eDirection_COUNT
 };
 
-using DirectionEnumSet = EnumSet<eDirection_COUNT>;
+using DirectionEnumSet = EnumSet<eDirection, eDirection_COUNT>;
 
 namespace
 {
@@ -151,7 +151,7 @@ enum eTileFace
     eTileFace_COUNT
 };
 
-using TileFaceIdSet = EnumSet<eTileFace_COUNT>;
+using TileFaceIdSet = EnumSet<eTileFace, eTileFace_COUNT>;
 
 namespace
 {

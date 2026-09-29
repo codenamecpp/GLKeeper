@@ -22,7 +22,7 @@ enum ePlayerID : uint8_t
 
 enum_serialize_decl(ePlayerID);
 
-using PlayerIdSet = EnumSet<ePlayerID_COUNT>;
+using PlayerIdSet = EnumSet<ePlayerID, ePlayerID_COUNT>;
 
 //////////////////////////////////////////////////////////////////////////
 

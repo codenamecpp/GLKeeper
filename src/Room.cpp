@@ -41,14 +41,14 @@ void Room::ConfigureInstance(EntityUid instanceUid,
 
 void Room::SpawnInstance()
 {
-    cxx_assert(!mEntityFlags.mWasSpawned);
-    cxx_assert(!mEntityFlags.mWasDespawned);
-    cxx_assert(!mEntityFlags.mWasDeleted);
+    cxx_assert(!WasSpawned());
+    cxx_assert(!WasDespawned());
+    cxx_assert(!WasDeleted());
 
-    if (mEntityFlags.mWasSpawned) 
+    if (WasSpawned()) 
         return;
 
-    mEntityFlags.mWasSpawned = true;
+    mEntityFlags.Include(eEntityFlags_WasSpawned);
 
     mLocationArea = {};
     mOwnHandle = gRoomManager.FindRoom(mInstanceUid);
@@ -58,9 +58,9 @@ void Room::SpawnInstance()
 
 void Room::DespawnInstance()
 {
-    cxx_assert(mEntityFlags.mWasSpawned);
+    cxx_assert(WasSpawned());
 
-    if (mEntityFlags.mWasDespawned) 
+    if (WasDespawned()) 
         return;
 
     mController->DespawnInstance();
@@ -78,7 +78,7 @@ void Room::DespawnInstance()
     mCurrentHealth = {}; 
     mHealthPercents = {};
 
-    mEntityFlags.mWasDespawned = true;
+    mEntityFlags.Include(eEntityFlags_WasDespawned);
 }
 
 void Room::UpdateLogic(float stepDeltaTime)
@@ -956,7 +956,7 @@ int Room::GetStorageSlotIndex(EntityHandle entityHandle) const
 
 void Room::MarkDeleted()
 {
-    mEntityFlags.mWasDeleted = true;
+    mEntityFlags.Include(eEntityFlags_WasDeleted);
 }
 
 void Room::RestartRoomHealth()

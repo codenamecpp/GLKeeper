@@ -26,7 +26,7 @@ SceneObject::~SceneObject()
     if (mIsObjectActive)
     {
         cxx_assert(mScene);
-        mScene->OnAnimatorBecomeInactive(this);
+        mScene->OnObjectBecomeInactive(this);
     }
 }
 
@@ -44,11 +44,11 @@ void SceneObject::SetObjectActive(bool isActive)
         cxx_assert(mScene);
         if (isActive)
         {
-            mScene->OnAnimatorBecomeActive(this);
+            mScene->OnObjectBecomeActive(this);
         }
         else
         {
-            mScene->OnAnimatorBecomeInactive(this);
+            mScene->OnObjectBecomeInactive(this);
         }
     }
 }

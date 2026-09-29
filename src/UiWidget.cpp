@@ -107,7 +107,7 @@ void UiWidget::InputEvent(MouseButtonInputEvent& inputEvent)
     if (!IsEnabledInHierarchy())
         return;
 
-    if (mInputPassThrough.Contains(eUiInputPassThrough_MouseButtons))
+    if (mInputPassThrough.Has(eUiInputPassThrough_MouseButtons))
         return;
 
     HandleInputEvent(inputEvent);
@@ -132,7 +132,7 @@ void UiWidget::InputEvent(MouseMovedInputEvent& inputEvent)
     if (!IsEnabledInHierarchy())
         return;
 
-    if (mInputPassThrough.Contains(eUiInputPassThrough_MouseMotion))
+    if (mInputPassThrough.Has(eUiInputPassThrough_MouseMotion))
         return;
 
     HandleInputEvent(inputEvent);
@@ -149,7 +149,7 @@ void UiWidget::InputEvent(MouseScrollInputEvent& inputEvent)
     if (!IsEnabledInHierarchy())
         return;
 
-    if (mInputPassThrough.Contains(eUiInputPassThrough_MouseScroll))
+    if (mInputPassThrough.Has(eUiInputPassThrough_MouseScroll))
         return;
 
     HandleInputEvent(inputEvent);

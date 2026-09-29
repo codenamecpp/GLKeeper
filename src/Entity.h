@@ -23,29 +23,35 @@ public:
     //////////////////////////////////////////////////////////////////////////
 
     // check whether entity marked as pending deletion
-    inline bool WasDeleted() const { return mEntityFlags.mWasDeleted; }
+    inline bool WasDeleted() const { return mEntityFlags.Has(eEntityFlags_WasDeleted); }
 
     // check whether entity was activated in world
-    inline bool WasSpawned() const { return mEntityFlags.mWasSpawned; }
+    inline bool WasSpawned() const { return mEntityFlags.Has(eEntityFlags_WasSpawned); }
 
     // check whether entity was deactivated in world
-    inline bool WasDespawned() const { return mEntityFlags.mWasDespawned; }
+    inline bool WasDespawned() const { return mEntityFlags.Has(eEntityFlags_WasDespawned); }
 
     // check whether entity was spawned and has not been despawned or deleted
     inline bool Exists() const
     {
-        return mEntityFlags.mWasSpawned && 
-            !mEntityFlags.mWasDespawned &&
-            !mEntityFlags.mWasDeleted;
+        return mEntityFlags.Has(eEntityFlags_WasSpawned) && 
+            !mEntityFlags.Has(eEntityFlags_WasDeleted) &&
+            !mEntityFlags.Has(eEntityFlags_WasDespawned);
     }
     // same as Exists and placed on game map
     inline bool ExistsOnMap() const
     {
-        return mEntityFlags.mWasSpawned &&  
-            !mEntityFlags.mWasDespawned && 
-            !mEntityFlags.mWasDeleted &&
-            !mEntityFlags.mIsUnplaced;
+        return mEntityFlags.Has(eEntityFlags_WasSpawned) &&  
+            !mEntityFlags.Has(eEntityFlags_WasDeleted) && 
+            !mEntityFlags.Has(eEntityFlags_WasDespawned) &&
+            !mEntityFlags.Has(eEntityFlags_IsUnplaced);
     }
+
+    // whether the entity is highlighted
+    inline bool IsHighlighted() const { return mEntityFlags.Has(eEntityFlags_IsHighlighted); }
+
+    // whether the entity was picked up
+    inline bool InHand() const { return mEntityFlags.Has(eEntityFlags_InHand); }
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -146,7 +152,7 @@ protected:
     // pool
     inline void OnRecycle()
     {
-        mEntityFlags = {};
+        mEntityFlags    = {};
         mOwnHandle      = {};
         mInstanceUid    = {};
         mTransform      = {};
@@ -155,14 +161,6 @@ protected:
         // reset components
         std::apply([](auto&... roller) {((roller.reset()), ...);}, mComponents);
     }
-
-    // helpers
-
-    inline void SetEntityUnplaced(bool isUnplaced)
-    {
-        mEntityFlags.mIsUnplaced = isUnplaced;
-    }
-
 protected:
     EntityHandle    mOwnHandle;
     EntityUid       mInstanceUid = 0; // unique within game world

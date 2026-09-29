@@ -132,7 +132,7 @@ void GameRenderManager::RenderWorld(Scene& scene, eRenderLayer renderLayer)
     // main
     {
         Camera& camera = gScene.GetCamera();
-        if (camera.mRenderLayers.Contains(renderLayer))
+        if (camera.mRenderLayers.Has(renderLayer))
         {
             gRenderDevice.ClearScreen(eDeviceClear_DepthBuffer);
             RenderWorld(camera, scene, renderLayer);
@@ -146,7 +146,7 @@ void GameRenderManager::RenderWorld(Scene& scene, eRenderLayer renderLayer)
             continue;
 
         Camera& camera = roller->GetCamera();
-        if (!camera.mRenderLayers.Contains(renderLayer))
+        if (!camera.mRenderLayers.Has(renderLayer))
         {
             continue;
         }
