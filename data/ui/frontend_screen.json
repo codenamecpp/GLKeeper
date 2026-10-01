@@ -21,8 +21,8 @@
             "children":
             [
                 {"class":"textbox", "id":"single_player_title", "size":[0,48], "anchor_min":[0,0], "anchor_max":[1,0], "pivot":[0,1], "horz_align":"center", "font":"FONT_INGAME48", "text":"#Single Player Game#", "string_id":71, "color":[220,150,40,200]},
-                {"template":"selectable_text_fe28", "id":"new_campaign", "enabled":false, "pos":[0,100], "text":"#New Campaign#", "string_id":140},
-                {"template":"selectable_text_fe28", "id":"continue_campaign", "enabled":false, "pos":[0,170], "text":"#Continue Campaign#", "string_id":2059},
+                {"template":"selectable_text_fe28", "id":"new_campaign", "pos":[0,100], "text":"#New Campaign#", "string_id":140},
+                {"template":"selectable_text_fe28", "id":"continue_campaign", "pos":[0,170], "text":"#Continue Campaign#", "string_id":2059},
                 {"template":"selectable_text_fe28", "id":"skirmish", "pos":[0,280], "text":"#Skirmish#", "string_id":141},
                 {"template":"selectable_text_fe28", "id":"load_game", "enabled":false, "pos":[0,350], "text":"#Load Game#", "string_id":145}
             ]
@@ -135,6 +135,12 @@
                 },
                 {"class":"picture", "id":"obj_pic1", "path":"Level1-0.png", "stretch_mode":"scale", "pos":[10,110], "size":[230,180]},
                 {"class":"picture", "id":"obj_pic2", "path":"Level1-1.png", "stretch_mode":"scale", "pos":[10,320], "size":[230,180]}
+            ]
+        },
+
+        {"class":"dummy", "id":"menu_page_7", "pos":[0,0], "size":[1000,600], "anchor_min":[0.5,0.5], "anchor_max":[0.5,0.5], "pivot":[0.5,0.5], "fill_color":[128,10,50,255], 
+            "children":
+            [
             ]
         },
 

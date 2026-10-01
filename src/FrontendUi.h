@@ -22,6 +22,7 @@ public:
         eMenuPage_SkirmishMaps,
         eMenuPage_MyPetDungeon,
         eMenuPage_MissionBriefing,
+        eMenuPage_CampaignTable,
         eMenuPage_QuitGame,
         eMenuPage_COUNT
     };
@@ -39,6 +40,7 @@ private:
     class MenuPageSkirmishMaps;
     class MenuPageMyPetDungeon;
     class MenuPageMissionBriefing;
+    class MenuPageCampaignTable;
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -82,6 +84,7 @@ private:
     std::unique_ptr<MenuPageSkirmishMaps> mPageSkirmishMaps;
     std::unique_ptr<MenuPageMyPetDungeon> mPageMyPetDungeon;
     std::unique_ptr<MenuPageMissionBriefing> mPageMissionBriefing;
+    std::unique_ptr<MenuPageCampaignTable> mPageCampaignTable;
 
     MenuPage* mPages[eMenuPage_COUNT];
     MenuPage* mCurrentPage = nullptr;

@@ -46,14 +46,6 @@ void FrontendCameraController::UpdateFrame(float deltaTime)
         if (!gCameraEffects.InTransition())
         {
             mCurrentMode = eWorkMode_Default;
-
-            // enforce correct position
-            {
-                CameraPathId pathId = mTransitionsMatrix[mCurrentLocation][mCurrentLocation];
-                gCameraEffects.StartTransition(pathId, mStartPosition);
-                gCameraEffects.FinishTransition();
-            }
-
             mFrontend.OnCameraTransitionCompleted();
         }
     }

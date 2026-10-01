@@ -91,6 +91,27 @@ void FrontendController::OnMissionBriefingConfirmed(const std::string& fileName)
     gGameEventBus.Send_StartScenarioRequest(fileName);  
 }
 
+void FrontendController::OnNewCampaignSelected()
+{
+    mFrontendUi.ShowMenuPage(FrontendUi::eMenuPage_CampaignTable);
+    mFrontendUi.ShowMenuContent(false);
+    mCameraController.StartTransitionToLocation(FrontendCameraController::eLocation_Table);
+}
+
+void FrontendController::OnContinueCampaignSelected()
+{
+    mFrontendUi.ShowMenuPage(FrontendUi::eMenuPage_CampaignTable);
+    mFrontendUi.ShowMenuContent(false);
+    mCameraController.StartTransitionToLocation(FrontendCameraController::eLocation_Table);
+}
+
+void FrontendController::OnCampaignSelectionCancelled()
+{
+    mFrontendUi.ShowMenuPage(FrontendUi::eMenuPage_SinglePlayer);
+    mFrontendUi.ShowMenuContent(false);
+    mCameraController.StartTransitionToLocation(FrontendCameraController::eLocation_Entrance);
+}
+
 void FrontendController::OnQuitGameConfirmed()
 {
     gGameEventBus.Send_QuitGameRequest();

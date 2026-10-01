@@ -49,6 +49,8 @@ void CameraEffects::Initialize()
             std::istream instream(&memorystream);
             this->LoadCameraPath(entryName, instream);
         });
+
+    FixCameraPaths();
 }
 
 bool CameraEffects::LoadCameraPath(const std::string& name, std::istream& datastream)
@@ -147,19 +149,17 @@ bool CameraEffects::StartTransition(CameraPathId pathId, const glm::vec3& basePo
 {
     mOngoingTransition.reset();
 
-    // find path
-    auto paths_it = mCameraPaths.find(pathId);
-    if (paths_it == mCameraPaths.end())
-    {
-        cxx_assert(false);
-        return false;
-    }
+    CameraPath* cameraPath = GetCameraPath(pathId);
+    cxx_assert(cameraPath);
 
-    const float transitionFrameDuration = 1.0f / 24.0f;
+    if (cameraPath == nullptr)
+        return false;
+
+    const float transitionFrameDuration = 1.0f / 30.0f;
 
     OngoingTransitionState& transitionState = mOngoingTransition.emplace();
     transitionState.mPathId = pathId;
-    transitionState.mPathPtr = &paths_it->second;
+    transitionState.mPathPtr = cameraPath;
     transitionState.mBasePosition = basePosition;
     transitionState.mProgressSeconds = 0.0f;
     transitionState.mDurationSeconds = transitionState.mPathPtr->GetFramesCount() * transitionFrameDuration;
@@ -246,4 +246,54 @@ bool CameraEffects::UpdateTransition(OngoingTransitionState& transitionState, fl
     sceneCamera.mForward = pathFrame.mForward;
 
     return (t >= 1.0f);
+}
+
+void CameraEffects::FixCameraPaths()
+{
+    // extend frontend transitions
+
+    auto extendPath = [](CameraPath* targetPath, CameraPath& sourcePath)
+        {
+            if (targetPath && !sourcePath.mFrames.empty())
+            {
+                targetPath->mFrames.push_back(sourcePath.mFrames.front());
+            }
+        };
+
+    if (CameraPath* pathFeStatic1stLeft = GetCameraPath(CameraPathId_Frontend_Static1stLeft))
+    {
+        extendPath(GetCameraPath(CameraPathId_Frontend_EntryTo1stLeft), *pathFeStatic1stLeft);
+        extendPath(GetCameraPath(CameraPathId_Frontend_CreditViewTo1stLeft), *pathFeStatic1stLeft);
+    }
+    if (CameraPath* pathFeStatic2ndLeft = GetCameraPath(CameraPathId_Frontend_Static2ndLeft))
+    {
+        extendPath(GetCameraPath(CameraPathId_Frontend_EntryTo2ndLeft), *pathFeStatic2ndLeft);
+    }
+    if (CameraPath* pathFeStatic1stRight = GetCameraPath(CameraPathId_Frontend_Static1stRight))
+    {
+        extendPath(GetCameraPath(CameraPathId_Frontend_TableTo1stRight), *pathFeStatic1stRight);
+        extendPath(GetCameraPath(CameraPathId_Frontend_EntryTo1stRight), *pathFeStatic1stRight);
+    }
+    if (CameraPath* pathFeStatic2ndRight = GetCameraPath(CameraPathId_Frontend_Static2ndRight))
+    {
+        extendPath(GetCameraPath(CameraPathId_Frontend_EntryTo2ndRight), *pathFeStatic2ndRight);
+    }
+    if (CameraPath* pathFeStaticEntry = GetCameraPath(CameraPathId_Frontend_StaticEntry))
+    {
+        extendPath(GetCameraPath(CameraPathId_Frontend_TableToEntry), *pathFeStaticEntry);
+        extendPath(GetCameraPath(CameraPathId_Frontend_2ndRightToEntry), *pathFeStaticEntry);
+        extendPath(GetCameraPath(CameraPathId_Frontend_1stLeftToEntry), *pathFeStaticEntry);
+        extendPath(GetCameraPath(CameraPathId_Frontend_2ndLeftToEntry), *pathFeStaticEntry);
+        extendPath(GetCameraPath(CameraPathId_Frontend_1stRightToEntry), *pathFeStaticEntry);
+    }
+}
+
+CameraPath* CameraEffects::GetCameraPath(CameraPathId pathId)
+{
+    auto paths_it = mCameraPaths.find(pathId);
+    if (paths_it != mCameraPaths.end())
+    {
+        return &paths_it->second;
+    }
+    return nullptr;
 }

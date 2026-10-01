@@ -54,6 +54,9 @@ public:
 
 private:
     bool LoadCameraPath(const std::string& name, std::istream& datastream);
+    void FixCameraPaths();
+
+    CameraPath* GetCameraPath(CameraPathId pathId);
 
     bool UpdateTransition(OngoingTransitionState& transitionState, float deltaTime);
 

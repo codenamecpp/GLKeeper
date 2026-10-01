@@ -38,6 +38,9 @@ public:
     void OnSkirmishMapSelectConfirmed(const std::string& fileName);
     void OnMissionBriefingCancelled(bool isMyPetDungeon);
     void OnMissionBriefingConfirmed(const std::string& fileName);
+    void OnNewCampaignSelected();
+    void OnContinueCampaignSelected();
+    void OnCampaignSelectionCancelled();
     void OnQuitGameConfirmed();
     void OnQuitGameCancelled();
     void OnQuitGameSelected();

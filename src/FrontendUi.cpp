@@ -24,6 +24,7 @@ FrontendUi::FrontendUi(FrontendController& frontend)
     mPageSkirmishMaps = std::make_unique<MenuPageSkirmishMaps>(frontend);
     mPageMyPetDungeon = std::make_unique<MenuPageMyPetDungeon>(frontend);
     mPageMissionBriefing = std::make_unique<MenuPageMissionBriefing>(frontend);
+    mPageCampaignTable = std::make_unique<MenuPageCampaignTable>(frontend);
 
     RegisterPage(mPageMain.get());
     RegisterPage(mPageQuit.get());
@@ -31,6 +32,7 @@ FrontendUi::FrontendUi(FrontendController& frontend)
     RegisterPage(mPageSkirmishMaps.get());
     RegisterPage(mPageMyPetDungeon.get());
     RegisterPage(mPageMissionBriefing.get());
+    RegisterPage(mPageCampaignTable.get());
 }
 
 FrontendUi::~FrontendUi()
@@ -41,6 +43,7 @@ FrontendUi::~FrontendUi()
     mPageSkirmishMaps.reset();
     mPageMyPetDungeon.reset();
     mPageMissionBriefing.reset();
+    mPageCampaignTable.reset();
 }
 
 void FrontendUi::ShowMenuPage(eMenuPage pageId)

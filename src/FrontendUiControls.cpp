@@ -265,6 +265,8 @@ void FrontendUi::MenuPageQuitGame::PageConfirmed()
 //////////////////////////////////////////////////////////////////////////
 
 static const char* SinglePlayerPageSkirmish = "skirmish";
+static const char* SinglePlayerPageNewCampaign = "new_campaign";
+static const char* SinglePlayerPageContinueCampaign = "continue_campaign";
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -282,6 +284,16 @@ bool FrontendUi::MenuPageSinglePlayer::BindPageControls(UiHierarchy* hier)
         {
             uiWidget->Subscribe(this);
             uiWidget->UserData().SetValue(SinglePlayerPageSkirmish);
+        }
+        if (UiWidget* uiWidget = mPageRoot->FindChildWithName(SinglePlayerPageNewCampaign))
+        {
+            uiWidget->Subscribe(this);
+            uiWidget->UserData().SetValue(SinglePlayerPageNewCampaign);
+        }
+        if (UiWidget* uiWidget = mPageRoot->FindChildWithName(SinglePlayerPageContinueCampaign))
+        {
+            uiWidget->Subscribe(this);
+            uiWidget->UserData().SetValue(SinglePlayerPageContinueCampaign);
         }
     }
     return isSuccess;
@@ -306,6 +318,16 @@ void FrontendUi::MenuPageSinglePlayer::HandleUiEvent(UiWidget* sender, const UiE
         if (menuItemId == SinglePlayerPageSkirmish)
         {
             mFrontend.OnOpenSkirmishMenuSelected();
+            return;
+        }
+        if (menuItemId == SinglePlayerPageNewCampaign)
+        {
+            mFrontend.OnNewCampaignSelected();
+            return;
+        }
+        if (menuItemId == SinglePlayerPageContinueCampaign)
+        {
+            mFrontend.OnContinueCampaignSelected();
             return;
         }
     }
@@ -808,6 +830,25 @@ void FrontendUi::MenuPageMissionBriefing::RefreshBriefing()
             mObjectivePics[i]->SetVisible(false);
         }
     }
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+FrontendUi::MenuPageCampaignTable::MenuPageCampaignTable(FrontendController& frontend)
+    : MenuPage(frontend, eMenuPage_CampaignTable, "menu_page_7")
+{
+}
+
+void FrontendUi::MenuPageCampaignTable::ShowPage()
+{
+    MenuPage::ShowPage();
+    SetPageButtons(ePageButtons_Cancel);
+    ShowMainLogo(false);
+}
+
+void FrontendUi::MenuPageCampaignTable::PageCancelled()
+{
+    mFrontend.OnCampaignSelectionCancelled();
 }
 
 //////////////////////////////////////////////////////////////////////////
