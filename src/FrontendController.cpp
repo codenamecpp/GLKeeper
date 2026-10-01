@@ -13,6 +13,7 @@
 
 FrontendController::FrontendController()
     : mFrontendUi(*this)
+    , mCameraController(*this)
 {
 }
 
@@ -24,11 +25,15 @@ void FrontendController::OnOpenSinglePlayerMenuSelected()
 void FrontendController::OnMyPetDungeonMenuSelected()
 {   
     mFrontendUi.ShowMenuPage(FrontendUi::eMenuPage_MyPetDungeon);
+    mFrontendUi.ShowMenuContent(false);
+    mCameraController.StartTransitionToLocation(FrontendCameraController::eLocation_2ndLeft);
 }
 
 void FrontendController::OnMyPetDungeonMenuCancelled()
 {
     mFrontendUi.ShowMenuPage(FrontendUi::eMenuPage_Main);
+    mFrontendUi.ShowMenuContent(false);
+    mCameraController.StartTransitionToLocation(FrontendCameraController::eLocation_Entrance);
 }
 
 void FrontendController::OnMyPetDungeonLevelSelect(const std::string& fileName)
@@ -48,6 +53,8 @@ void FrontendController::OnMyPetDungeonLevelSelect(const std::string& fileName)
 void FrontendController::OnOpenSkirmishMenuSelected()
 {
     mFrontendUi.ShowMenuPage(FrontendUi::eMenuPage_SkirmishMaps);
+    mFrontendUi.ShowMenuContent(false);
+    mCameraController.StartTransitionToLocation(FrontendCameraController::eLocation_1stRight);
 }
 
 void FrontendController::OnSinglePlayerCancelled()
@@ -58,6 +65,8 @@ void FrontendController::OnSinglePlayerCancelled()
 void FrontendController::OnSkirmishMapSelectCancelled()
 {
     mFrontendUi.ShowMenuPage(FrontendUi::eMenuPage_SinglePlayer);
+    mFrontendUi.ShowMenuContent(false);
+    mCameraController.StartTransitionToLocation(FrontendCameraController::eLocation_Entrance);
 }
 
 void FrontendController::OnSkirmishMapSelectConfirmed(const std::string& fileName)
@@ -97,6 +106,11 @@ void FrontendController::OnQuitGameSelected()
     mFrontendUi.ShowMenuPage(FrontendUi::eMenuPage_QuitGame);
 }
 
+void FrontendController::OnCameraTransitionCompleted()
+{
+    mFrontendUi.ShowMenuContent(true);
+}
+
 void FrontendController::OnSessionLoaded()
 {
     Player& localPlayer = gGameSession.GetLocalPlayer();
@@ -106,8 +120,6 @@ void FrontendController::OnSessionLoaded()
 
     glm::vec3 cameraTileCoord = MapUtils::ComputeTileCenter(localPlayer.GetStartCameraTilePosition());
 
-    cameraTileCoord[1] = 1.65f; // height
-    cameraTileCoord[2] -= 0.5f;
     mCameraController.SetStartPosition(cameraTileCoord);
     mCameraController.CaptureCamera(&gScene.GetCamera());
 }

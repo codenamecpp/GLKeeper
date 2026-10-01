@@ -133,6 +133,11 @@ namespace cxx
 
     //////////////////////////////////////////////////////////////////////////
 
+    bool parse_int(std::string_view sourceString, int& output);
+    bool parse_int(std::string_view sourceString, unsigned int& output);
+
+    //////////////////////////////////////////////////////////////////////////
+
     // convert target string to lower case
     // @param string: Target string
     inline std::string to_lower_copy(std::string string)

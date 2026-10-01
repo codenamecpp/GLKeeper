@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "strings.h"
 
+#include <charconv>
+
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 
@@ -116,6 +118,28 @@ int str_wprintf(std::wstring& stringBuffer, const wchar_t* format_string, ...)
     stringBuffer.assign(current_buffer);
 
     return str_length;
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+bool parse_int(std::string_view sourceString, int& output)
+{
+    auto [ptr, ec] = std::from_chars(sourceString.data(), sourceString.data() + sourceString.length(), output);
+    if (ec == std::errc{})
+    {
+        return true;
+    }
+    return false;
+}
+
+bool parse_int(std::string_view sourceString, unsigned int& output)
+{
+    auto [ptr, ec] = std::from_chars(sourceString.data(), sourceString.data() + sourceString.length(), output);
+    if (ec == std::errc{})
+    {
+        return true;
+    }
+    return false;
 }
 
 //////////////////////////////////////////////////////////////////////////

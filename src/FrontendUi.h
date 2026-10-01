@@ -53,6 +53,7 @@ public:
 
     // control
     void ShowMenuPage(eMenuPage pageId);
+    void ShowMenuContent(bool setShown);
 
     // override UiView
     bool LoadContent() override;

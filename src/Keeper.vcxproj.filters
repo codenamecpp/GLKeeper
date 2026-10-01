@@ -817,6 +817,12 @@
     <ClInclude Include="SoundCategoryNames.h">
       <Filter>Source\Audio</Filter>
     </ClInclude>
+    <ClInclude Include="CameraPath.h">
+      <Filter>Source\World\View</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraEffects.h">
+      <Filter>Source\World\View</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1319,6 +1325,12 @@
     </ClCompile>
     <ClCompile Include="SoundCategoryNames.cpp">
       <Filter>Source\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraPath.cpp">
+      <Filter>Source\World\View</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraEffects.cpp">
+      <Filter>Source\World\View</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

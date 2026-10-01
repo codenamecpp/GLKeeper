@@ -42,6 +42,9 @@ public:
     void OnQuitGameCancelled();
     void OnQuitGameSelected();
 
+    // frontendcameracontroller notifications
+    void OnCameraTransitionCompleted();
+
 private:
     FrontendCameraController mCameraController;
     FrontendUi mFrontendUi;

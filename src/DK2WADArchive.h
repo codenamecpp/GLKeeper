@@ -45,6 +45,15 @@ public:
 
     // Get names of all entries within wad archive
     bool GetEntryNames(std::vector<std::string>& outNames) const;
+
+    template<typename TProc>
+    inline void EnumEntries(TProc proc)
+    {
+        for (const auto& roller: mIndices)
+        {
+            proc(roller.first, roller.second);
+        }
+    }
     
 private:
     //////////////////////////////////////////////////////////////////////////

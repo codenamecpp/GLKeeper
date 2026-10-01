@@ -7,6 +7,7 @@
 #include "GameWorld.h"
 #include "EconomyService.h"
 #include "InteractionService.h"
+#include "CameraEffects.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -117,6 +118,7 @@ void GameSession::UpdateFrame(float deltaTime)
     }
 
     gGameWorld.UpdateFrame(deltaTime);
+    gCameraEffects.UpdateFrame(deltaTime);
     gEconomyService.UpdateFrame(deltaTime);
 }
 

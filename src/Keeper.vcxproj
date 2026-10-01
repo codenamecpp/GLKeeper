@@ -108,7 +108,9 @@
     <ClInclude Include="auxmath_angle.h" />
     <ClInclude Include="BinaryInputStream.h" />
     <ClInclude Include="BMFont.h" />
+    <ClInclude Include="CameraPath.h" />
     <ClInclude Include="ChickenObjectController.h" />
+    <ClInclude Include="CameraEffects.h" />
     <ClInclude Include="CommonTypes.h" />
     <ClInclude Include="container_adapter.h" />
     <ClInclude Include="Creature.h" />
@@ -332,7 +334,9 @@
     <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="BinaryInputStream.cpp" />
     <ClCompile Include="BMFont.cpp" />
+    <ClCompile Include="CameraPath.cpp" />
     <ClCompile Include="ChickenObjectController.cpp" />
+    <ClCompile Include="CameraEffects.cpp" />
     <ClCompile Include="Creature.cpp" />
     <ClCompile Include="CreatureAction.cpp" />
     <ClCompile Include="CreatureAction_CarryGoldToTreasury.cpp" />

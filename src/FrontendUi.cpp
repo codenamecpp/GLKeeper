@@ -65,6 +65,14 @@ void FrontendUi::ShowMenuPage(eMenuPage pageId)
     }
 }
 
+void FrontendUi::ShowMenuContent(bool setShown)
+{
+    if (UiWidget* rootWidget = mHierarchy.GetRootWidget())
+    {
+        rootWidget->SetVisible(setShown);
+    }
+}
+
 void FrontendUi::ConfigureSkirmishMaps(cxx::span<ScenarioLevelInfo> mapsList)
 {
     mPageSkirmishMaps->ConfigureMaps(mapsList);

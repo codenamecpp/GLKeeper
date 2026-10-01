@@ -16,6 +16,7 @@
 #include "LevelsDatabase.h"
 #include "UiCursor.h"
 #include "AudioManager.h"
+#include "CameraEffects.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -115,6 +116,8 @@ bool GameMain::Initialize()
     {
         gConsole.LogMessage(eLogLevel_Error, "Cannot initialize levels database");
     }
+
+    gCameraEffects.Initialize();
 
     mTitleScreen.Deactivate();
     SetGamestate(eGamestate::None);
