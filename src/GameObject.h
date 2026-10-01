@@ -37,6 +37,9 @@ public:
     // think
     void UpdateLogic(float stepDeltaTime);
 
+    // variable delta update
+    void UpdateFrame(float deltaTime);
+
     // fixed update, physics related
     void UpdatePhysics(float stepDeltaTime);
 

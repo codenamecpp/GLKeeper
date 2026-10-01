@@ -251,7 +251,7 @@ void TerrainRenderer::CreateTerrainMesh()
         }
     }
 
-    InitHighlightTilesTexture();
+    InitHighlightTilesTexture(mapDimensions);
 }
 
 bool TerrainRenderer::BuildSector(int theSectorX, int theSectorY)
@@ -413,10 +413,19 @@ void TerrainRenderer::CleanupTerrainMesh()
     mHighlightTilesTextureDirty = false;
 }
 
-void TerrainRenderer::InitHighlightTilesTexture()
+void TerrainRenderer::InitHighlightTilesTexture(const Point2D& mapDimensions)
 {
-    Point2D maxDims { MAX_DUNGEON_MAP_DIMENSIONS, MAX_DUNGEON_MAP_DIMENSIONS };
-    if (!mHighlightTilesBitmap.Create(ePixelFormat_RGBA8, maxDims, TILE_CLEAR_COLOR))
+    const Point2D textureDims 
+    { 
+        cxx::get_next_pot(mapDimensions.x), 
+        cxx::get_next_pot(mapDimensions.y) 
+    };
+
+    // sanity check
+    cxx_assert((textureDims.x > 0) && (textureDims.x <= 2048));
+    cxx_assert((textureDims.y > 0) && (textureDims.y <= 2048));
+
+    if (!mHighlightTilesBitmap.Create(ePixelFormat_RGBA8, textureDims, TILE_CLEAR_COLOR))
     {
         cxx_assert(false);
         gConsole.LogMessage(eLogLevel_Warning, "Cannot allocate tiles highlight texture");

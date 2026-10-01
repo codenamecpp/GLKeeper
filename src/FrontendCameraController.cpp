@@ -104,6 +104,11 @@ void FrontendCameraController::StartTransitionToLocation(eLocation newLocation)
     mCurrentLocation = newLocation;
 }
 
+bool FrontendCameraController::InTransition() const
+{
+    return mCurrentMode == eWorkMode_InTransition;
+}
+
 void FrontendCameraController::InitTransitionsMatrix()
 {
     auto setDefaultDestination = [this](eLocation dstLocation, CameraPathId pathId)

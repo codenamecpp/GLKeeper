@@ -60,6 +60,7 @@ public:
 
     // request transitions
     void StartTransitionToLocation(eLocation newLocation);
+    bool InTransition() const;
 
 private:
     void InitTransitionsMatrix();

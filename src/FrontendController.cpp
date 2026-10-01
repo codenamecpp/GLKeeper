@@ -10,6 +10,8 @@
 #include "UiCursor.h"
 #include "AudioManager.h"
 #include "SoundCategoryNames.h"
+#include "UiManager.h"
+#include "RoomManager.h"
 
 FrontendController::FrontendController()
     : mFrontendUi(*this)
@@ -112,6 +114,20 @@ void FrontendController::OnCampaignSelectionCancelled()
     mCameraController.StartTransitionToLocation(FrontendCameraController::eLocation_Entrance);
 }
 
+void FrontendController::OnOpenExtrasMenuSelected()
+{
+    mFrontendUi.ShowMenuPage(FrontendUi::eMenuPage_Extras);
+    mFrontendUi.ShowMenuContent(false);
+    mCameraController.StartTransitionToLocation(FrontendCameraController::eLocation_1stLeft);
+}
+
+void FrontendController::OnExtrasMenuConfirmed()
+{
+    mFrontendUi.ShowMenuPage(FrontendUi::eMenuPage_Main);
+    mFrontendUi.ShowMenuContent(false);
+    mCameraController.StartTransitionToLocation(FrontendCameraController::eLocation_Entrance);
+}
+
 void FrontendController::OnQuitGameConfirmed()
 {
     gGameEventBus.Send_QuitGameRequest();
@@ -132,6 +148,39 @@ void FrontendController::OnCameraTransitionCompleted()
     mFrontendUi.ShowMenuContent(true);
 }
 
+void FrontendController::UpdateCampaignTableInteractions(float deltaTime)
+{
+    EntityHandle currHoveredEntity {};
+
+    if (!gUiManager.IsCursorOverUi())
+    {
+        const Point2D mouseScreenPos = gInputs.GetMousePosition();
+
+        cxx::ray3d_t ray3d;
+        if (gScene.CastRayFromScreenPoint(mouseScreenPos, ray3d))
+        {
+            cxx::temp_vector<RayHitResult> hitResults;
+            if (gScene.QueryObjects(ray3d, hitResults))
+            {
+                // todo: not ideal
+                std::sort(hitResults.begin(), hitResults.end(), 
+                    [](const RayHitResult& lhs, const RayHitResult& rhs)
+                    {
+                        return lhs.mDistanceNear < rhs.mDistanceNear;
+                    });
+
+                for (const RayHitResult& hitsRoller: hitResults)
+                {
+                    const EntityHandle& entity = hitsRoller.mSceneObject->GetOwnerEntity();
+                    if (!entity.IsRoom())
+                        continue;
+
+                } // for scene objects
+            }
+        } // if cast ray
+    } 
+}
+
 void FrontendController::OnSessionLoaded()
 {
     Player& localPlayer = gGameSession.GetLocalPlayer();
@@ -143,6 +192,16 @@ void FrontendController::OnSessionLoaded()
 
     mCameraController.SetStartPosition(cameraTileCoord);
     mCameraController.CaptureCamera(&gScene.GetCamera());
+
+    // find hero gate room
+    for (Room* roller: gRoomManager.GetRoomsByType(RoomTypeId_HeroGate_Frontend))
+    {
+        cxx_assert(roller->ExistsOnMap());
+
+        mHeroGateRoomHandle = roller->GetOwnHandle();
+        break;
+    }
+    cxx_assert(mHeroGateRoomHandle.IsRoom());
 }
 
 void FrontendController::OnSessionStart()
@@ -184,13 +243,19 @@ void FrontendController::OnSessionShutdown()
         mFrontendUi.Deactivate();
         mFrontendUi.Cleanup();
     }
-
+    mHeroGateRoomHandle = {};
     gUiCursor.StateOff(UiCursor::eCursorState_PointOnThing);
 }
 
 void FrontendController::UpdateFrame(float deltaTime)
 {
     mCameraController.UpdateFrame(deltaTime);
+
+    if (mFrontendUi.IsOnMenuPage(FrontendUi::eMenuPage_CampaignTable) && 
+        !mCameraController.InTransition())
+    {
+        UpdateCampaignTableInteractions(deltaTime);
+    }
 }
 
 void FrontendController::UpdateLogic(float stepDeltaTime)

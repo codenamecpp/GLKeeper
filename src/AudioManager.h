@@ -40,6 +40,10 @@ public:
     bool Initialize();
     void Shutdown();
     void UpdateFrame(float deltaTime);
+    void SetMasterVolume(float volume);
+    void SetVoiceVolume(float volume);
+    void SetMusicVolume(float volume);
+    void SetSfxVolume(float volume);
 
     bool IsAudioOnline() const;
 

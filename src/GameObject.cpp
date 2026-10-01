@@ -440,6 +440,14 @@ void GameObject::UpdateLogic(float stepDeltaTime)
     }
 }
 
+void GameObject::UpdateFrame(float deltaTime)
+{
+    if (mController)
+    {
+        mController->UpdateFrame(deltaTime);
+    }
+}
+
 void GameObject::UpdatePhysics(float stepDeltaTime)
 {
     // process locomotion

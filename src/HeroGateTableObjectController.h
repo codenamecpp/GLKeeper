@@ -6,11 +6,10 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-class GoldPileObjectController: public GameObjectController
-    , private GoldContainerCapability
+class HeroGateTableObjectController: public GameObjectController
 {
 public:
-    GoldPileObjectController() = default;
+    HeroGateTableObjectController() = default;
 
     // override GameObjectController
     void ConfigureInstance(GameObject* objectInstance) override;
@@ -22,16 +21,7 @@ public:
     void OnRecycle() override;
 
 private:
-    // override GoldContainerCapability
-    long GetStoredGoldAmount() const override;
-    long GetStoredGoldCapacity() const override;
-    long StoreGold(long goldAmount) override;
-    long DisposeGold(long goldAmount) override;
 
-    void SetMeshFromGoldAmount();
-    
-private:
-    MoneyComponent* mMoneyComponent = nullptr;
 };
 
 //////////////////////////////////////////////////////////////////////////

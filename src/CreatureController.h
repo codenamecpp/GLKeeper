@@ -24,10 +24,10 @@ public:
     // pool
     virtual void OnRecycle();
 
-    // variable fps update
+    // variable delta update
     virtual void UpdateFrame(float deltaTime);
 
-    // fixed logic tick update
+    // fixed update, think
     virtual void UpdateLogic(float stepDeltaTime);
 
     // animation states should be initialized once when creature is spawned

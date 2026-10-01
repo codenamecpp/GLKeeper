@@ -24,7 +24,10 @@ public:
     // pool
     virtual void OnRecycle();
 
-    // fixed logic tick update
+    // variable delta update
+    virtual void UpdateFrame(float deltaTime);
+
+    // fixed update, think
     virtual void UpdateLogic(float stepDeltaTime);
 
     virtual void ParentRoomChanged();

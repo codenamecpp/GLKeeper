@@ -44,7 +44,7 @@ private:
     // Processing geometries
     bool BuildSector(int theSectorX, int theSectorY);
 
-    void InitHighlightTilesTexture();
+    void InitHighlightTilesTexture(const Point2D& mapDimensions);
     // Force update highhlight tiles texture
     void CommitHighlightTiles();
 

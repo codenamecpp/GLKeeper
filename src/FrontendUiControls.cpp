@@ -179,6 +179,7 @@ void FrontendUi::MenuPage::ShowMainLogo(bool showLogo)
 static const char* MainPageSinglePlayer = "single_player";
 static const char* MainPageQuit = "quit";
 static const char* MainPageMpd = "mpd";
+static const char* MainPageExtras = "extras";
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -197,17 +198,20 @@ bool FrontendUi::MenuPageMain::BindPageControls(UiHierarchy* hier)
             uiWidget->Subscribe(this);
             uiWidget->UserData().SetValue(MainPageSinglePlayer);
         }
-
         if (UiWidget* uiWidget = mPageRoot->FindChildWithName(MainPageQuit))
         {
             uiWidget->Subscribe(this);
             uiWidget->UserData().SetValue(MainPageQuit);
         }
-
         if (UiWidget* uiWidget = mPageRoot->FindChildWithName(MainPageMpd))
         {
             uiWidget->Subscribe(this);
             uiWidget->UserData().SetValue(MainPageMpd);
+        }
+        if (UiWidget* uiWidget = mPageRoot->FindChildWithName(MainPageExtras))
+        {
+            uiWidget->Subscribe(this);
+            uiWidget->UserData().SetValue(MainPageExtras);
         }
     }
     return isSuccess;
@@ -233,6 +237,12 @@ void FrontendUi::MenuPageMain::HandleUiEvent(UiWidget* sender, const UiEvent& ev
         if (menuItemId == MainPageMpd)
         {
             mFrontend.OnMyPetDungeonMenuSelected();
+            return;
+        }
+
+        if (menuItemId == MainPageExtras)
+        {
+            mFrontend.OnOpenExtrasMenuSelected();
             return;
         }
     }
@@ -852,3 +862,21 @@ void FrontendUi::MenuPageCampaignTable::PageCancelled()
 }
 
 //////////////////////////////////////////////////////////////////////////
+
+FrontendUi::MenuPageExtras::MenuPageExtras(FrontendController& frontend)
+    : MenuPage(frontend, eMenuPage_Extras, "menu_page_8")
+{
+
+}
+
+void FrontendUi::MenuPageExtras::ShowPage()
+{
+    MenuPage::ShowPage();
+    SetPageButtons(ePageButtons_Confirm);
+    ShowMainLogo(false);
+}
+
+void FrontendUi::MenuPageExtras::PageConfirmed()
+{
+    mFrontend.OnExtrasMenuConfirmed();
+}

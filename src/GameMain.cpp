@@ -24,7 +24,7 @@ GameMain gGame;
 
 //////////////////////////////////////////////////////////////////////////
 
-bool GameMain::Initialize()
+bool GameMain::Initialize(int argc, char** argv)
 {
     gDebug.Initialize();
 
@@ -35,6 +35,8 @@ bool GameMain::Initialize()
 
     gConsole.LogMessage(eLogLevel_Info, "Game initialization");
     gConsole.LogMessage(eLogLevel_Info, "Version: %s", GAME_VERSION_STRING);
+
+    ParseStartupParams(argc, argv);
 
     if (!gFrameMemoryManager.Initialize())
     {
@@ -102,9 +104,22 @@ bool GameMain::Initialize()
         MiniUpdateFrame();
     }
 
-    if (!gAudio.Initialize())
+    // audio
+    bool enableSound = userSettings.mEnableSound && !mStartupParams.mNoSound;
+    if (enableSound)
     {
-        gConsole.LogMessage(eLogLevel_Error, "Cannot initialize audio manager");
+        if (!gAudio.Initialize())
+        {
+            gConsole.LogMessage(eLogLevel_Error, "Cannot initialize audio manager");
+        }
+        gAudio.SetMasterVolume(userSettings.mMasterVolume);
+        gAudio.SetMusicVolume(userSettings.mMusicVolume);
+        gAudio.SetVoiceVolume(userSettings.mVoiceVolume);
+        gAudio.SetSfxVolume(userSettings.mSfxVolume);
+    }
+    else
+    {
+        gConsole.LogMessage(eLogLevel_Info, "Sounds disabled");
     }
 
     if (!gTexts.Initialize())
@@ -129,6 +144,7 @@ bool GameMain::Initialize()
     Random::SetLocalThreadSeed(12345); // todo: init seed properly
 
     gConsole.LogMessage(eLogLevel_Info, "Ready");
+
     return true;
 }
 
@@ -165,34 +181,45 @@ void GameMain::Shutdown()
     gFrameMemoryManager.Shutdown();
 }
 
-void GameMain::Run()
+void GameMain::RunMainLoop()
 {
     mQuitRequested = false;
 
-    if (!Initialize())
-    {
-        Terminate();
-    }
+    cxx_assert(GetCurrentGamestate() == eGamestate::None);
 
-    if (GetCurrentGamestate() == eGamestate::None)
-    {
-        if (!StartFrontend())
-        {
-            Terminate();
-        }
-    }
-
-    if (GetCurrentGamestate() == eGamestate::None)
+    // dev tools
+    if (mStartupParams.mDevScreen)
     {
         mTestScreen.Activate();
+    }
+    else 
+    {
+        // autostart level
+        if (!mStartupParams.mLoadLevelName.empty())
+        {
+            gConsole.LogMessage(eLogLevel_Info, "Loading level '%s'...", mStartupParams.mLoadLevelName.c_str());
+            bool isSuccess = StartScenario(mStartupParams.mLoadLevelName);
+            cxx_assert(isSuccess);
+            if (!isSuccess)
+            {
+                gConsole.LogMessage(eLogLevel_Warning, "Cannot load level");
+            }
+            mStartupParams.mLoadLevelName.clear();
+        }
+
+        if (GetCurrentGamestate() == eGamestate::None)
+        {
+            if (!StartFrontend())
+            {
+                Terminate();
+            }
+        }
     }
 
     for (; !mQuitRequested; )
     {
         UpdateFrame();
     }
-
-    Shutdown();
 }
 
 void GameMain::Terminate()
@@ -376,6 +403,35 @@ void GameMain::HandleGameEvent(const GameEvent& eventData)
     }
 }
 
+void GameMain::ParseStartupParams(int argc, char *argv[])
+{
+    for (int iarg = 0; iarg < argc; )
+    {
+        if (cxx::strings_eq(argv[iarg], "-level") && (argc > (iarg + 1)))
+        {
+            mStartupParams.mLoadLevelName = argv[iarg + 1];
+            iarg += 2;
+            continue;
+        }
+
+        if (cxx::strings_eq(argv[iarg], "-nosound"))
+        {
+            mStartupParams.mNoSound = true;
+            iarg += 1;
+            continue;
+        }
+
+        if (cxx::strings_eq(argv[iarg], "-devscreen"))
+        {
+            mStartupParams.mDevScreen = true;
+            iarg += 1;
+            continue;
+        }
+
+        ++iarg;
+    }
+}
+
 void GameMain::StartCampaignScenario()
 {
     // todo
@@ -515,7 +571,15 @@ int main(int argc, char** argv)
     //// simulate memory leak
     //new int;
 
-    gGame.Run();
+    if (!gGame.Initialize(argc, argv))
+    {
+        gGame.Terminate();
+        return -1;
+    }
+
+    gGame.RunMainLoop();
+    gGame.Shutdown();
+
     return 0;
 }
 

@@ -44,7 +44,7 @@ public:
     // called by CreatureManager during DeleteCreature()
     void DespawnInstance();
 
-    // variable update, presentation
+    // variable delta update
     void UpdateFrame(float deltaTime);
 
     // fixed update, think

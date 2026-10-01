@@ -41,6 +41,8 @@ public:
     void OnNewCampaignSelected();
     void OnContinueCampaignSelected();
     void OnCampaignSelectionCancelled();
+    void OnOpenExtrasMenuSelected();
+    void OnExtrasMenuConfirmed();
     void OnQuitGameConfirmed();
     void OnQuitGameCancelled();
     void OnQuitGameSelected();
@@ -49,8 +51,12 @@ public:
     void OnCameraTransitionCompleted();
 
 private:
+    void UpdateCampaignTableInteractions(float deltaTime);
+
+private:
     FrontendCameraController mCameraController;
     FrontendUi mFrontendUi;
+    EntityHandle mHeroGateRoomHandle;
 };
 
 //////////////////////////////////////////////////////////////////////////

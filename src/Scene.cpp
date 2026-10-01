@@ -114,25 +114,29 @@ void Scene::BuildObjectsAABBTree()
     }
 }
 
-bool Scene::QueryObjects(const cxx::ray3d_t& ray, cxx::any_vector<SceneObject*> queryResult)
+bool Scene::QueryObjects(const cxx::ray3d_t& ray, cxx::any_vector<RayHitResult> queryResult)
 {
     return QueryObjects(ray, mCamera, queryResult);
 }
 
-bool Scene::QueryObjects(const cxx::ray3d_t& ray, Camera& camera, cxx::any_vector<SceneObject*> queryResult)
+bool Scene::QueryObjects(const cxx::ray3d_t& ray, Camera& camera, cxx::any_vector<RayHitResult> queryResult)
 {
     queryResult.reserve(32);
 
     BuildObjectsAABBTree(); // force update aabbtree
     camera.ComputeMatricesAndFrustum(gRenderDevice.GetViewport());
-    mAABBTree.QueryObjects(ray, [&camera, this, &queryResult](SceneObject* object)
-    {
-        // check object visibility for camera
-        if (!camera.mRenderLayers.HasAny(object->GetRenderLayers()))
-            return;
+    mAABBTree.QueryObjects(ray, [&camera, this, &queryResult](SceneObject* object, float distanceNear, float distanceFar)
+        {
+            // check object visibility for camera
+            if (!camera.mRenderLayers.HasAny(object->GetRenderLayers()))
+                return;
 
-        queryResult.push_back(object);
-    });
+            RayHitResult rayHitResult;
+            rayHitResult.mSceneObject = object;
+            rayHitResult.mDistanceNear = distanceNear;
+            rayHitResult.mDistanceFar = distanceFar;
+            queryResult.push_back(rayHitResult);
+        });
     bool isSuccess = !queryResult.empty();
     return isSuccess;
 }

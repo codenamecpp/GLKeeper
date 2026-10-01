@@ -37,8 +37,8 @@ public:
     void CollectObjectsForRender(SceneRenderLists& renderList);
     void CollectObjectsForRender(Camera& camera, SceneRenderLists& renderList);
     
-    bool QueryObjects(const cxx::ray3d_t& ray, cxx::any_vector<SceneObject*> queryResult);
-    bool QueryObjects(const cxx::ray3d_t& ray, Camera& camera, cxx::any_vector<SceneObject*> queryResult);
+    bool QueryObjects(const cxx::ray3d_t& ray, cxx::any_vector<RayHitResult> queryResult);
+    bool QueryObjects(const cxx::ray3d_t& ray, Camera& camera, cxx::any_vector<RayHitResult> queryResult);
 
     // create scene objects
 

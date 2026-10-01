@@ -25,6 +25,7 @@ FrontendUi::FrontendUi(FrontendController& frontend)
     mPageMyPetDungeon = std::make_unique<MenuPageMyPetDungeon>(frontend);
     mPageMissionBriefing = std::make_unique<MenuPageMissionBriefing>(frontend);
     mPageCampaignTable = std::make_unique<MenuPageCampaignTable>(frontend);
+    mPageExtras = std::make_unique<MenuPageExtras>(frontend);
 
     RegisterPage(mPageMain.get());
     RegisterPage(mPageQuit.get());
@@ -33,6 +34,7 @@ FrontendUi::FrontendUi(FrontendController& frontend)
     RegisterPage(mPageMyPetDungeon.get());
     RegisterPage(mPageMissionBriefing.get());
     RegisterPage(mPageCampaignTable.get());
+    RegisterPage(mPageExtras.get());
 }
 
 FrontendUi::~FrontendUi()
@@ -210,4 +212,9 @@ void FrontendUi::HandleOnPressSound(std::string_view soundType)
         gAudio.PlayOneShot(SoundCategoryNames::FrontEndExt, SoundGroupId_FrontendExt_BigButtonClick);
         return;
     }
+}
+
+bool FrontendUi::IsOnMenuPage(eMenuPage pageId) const
+{
+    return mCurrentPage && (mCurrentPage->GetPageId() == pageId);
 }

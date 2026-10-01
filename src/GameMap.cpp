@@ -70,9 +70,6 @@ void GameMap::LoadScenario(const ScenarioDefinition& scenarioData)
     cxx_assert(mTiles == nullptr);
     mDimensions = { scenarioData.mLevelInfo.mMapDimsX, scenarioData.mLevelInfo.mMapDimsY };
 
-    cxx_assert(mDimensions.x <= MAX_DUNGEON_MAP_DIMENSIONS);
-    cxx_assert(mDimensions.y <= MAX_DUNGEON_MAP_DIMENSIONS);
-
     // allocate map tiles matrix
     mTiles = std::move(std::unique_ptr<MapTile[]>(new MapTile[mDimensions.x * mDimensions.y]));
 

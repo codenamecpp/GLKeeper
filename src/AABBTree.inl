@@ -44,7 +44,7 @@ void AABBTree::QueryObjectsRecursive(const TreeNode* node, const cxx::ray3d_t& r
     {
         if (node->mObject)
         {
-            callback(node->mObject);
+            callback(node->mObject, outDistanceNear, outDistanceFar);
             maxObjects--;
         }
         return;

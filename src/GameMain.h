@@ -8,6 +8,7 @@
 #include "TestScreen.h"
 #include "GameSessionDefs.h"
 #include "GameEvent.h"
+#include "GameStartupParams.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -15,11 +16,11 @@ class GameMain: private GameEventListener, private GameLoadingAware
 {
 public:
     // one-time initialization/deinitialization
-    bool Initialize();
+    bool Initialize(int argc, char** argv);
     void Shutdown();
 
     // entry point
-    void Run();
+    void RunMainLoop();
 
     // set exit request flag, execution will be interrupted soon
     void RequestQuit();
@@ -47,6 +48,8 @@ public:
     void ScreenSizeChanged(const Point2D& screenSize);
 
 private:
+    void ParseStartupParams(int argc, char *argv[]);
+
     void StartCampaignScenario();
     void StartSkirmishScenario();
     void StartMPDScenario();
@@ -69,6 +72,8 @@ private:
 
 private:
     bool mQuitRequested = false;
+
+    GameStartupParams mStartupParams {};
 
     // gamestates
     eGamestate mCurrentGamestate = eGamestate::None;

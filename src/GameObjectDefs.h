@@ -28,6 +28,7 @@ enum : GameObjectClassId
     GameObjectClassId_GraveyardPillar = 84,
     GameObjectClassId_CasinoPillar = 85,
     GameObjectClassId_3DFrontEndBanner1 = 89,
+    GameObjectClassId_3DFrontEndHeroGateTable = 102,
     GameObjectClassId_TempleCandlestick = 111,
     GameObjectClassId_3DFrontEndBanner2 = 134,
     GameObjectClassId_3DFrontEndBanner3 = 135,

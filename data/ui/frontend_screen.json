@@ -1,6 +1,6 @@
 {
 
-"widget": {"class": "dummy",  "id": "root", "pos":[0,0], "size":[1024,768], "anchor_min":[0,0], "anchor_max":[1,1], 
+"widget": {"class": "dummy", "interactive":false, "id": "root", "pos":[0,0], "size":[1024,768], "anchor_min":[0,0], "anchor_max":[1,1], 
     "children": 
     [
         {"class":"picture", "id":"logo", "path":"Logo.png", "stretch_mode":"scale", "pos":[0,40], "size":[526,198], "anchor_min":[0.5,0], "pivot":[0.5,0]},
@@ -11,7 +11,7 @@
                 {"template":"selectable_text_fe28", "id":"single_player", "pos":[0,0], "text":"#Single Player Game#", "string_id":71},
                 {"template":"selectable_text_fe28", "id":"mpd", "pos":[0,70], "text":"#My Pet Dungeon#", "string_id":1675},
                 {"template":"selectable_text_fe28", "id":"options", "enabled":false, "pos":[0,180], "text":"#Options#", "string_id":94},
-                {"template":"selectable_text_fe28", "id":"extras", "enabled":false, "pos":[0,250], "text":"#Extras#", "string_id":73},
+                {"template":"selectable_text_fe28", "id":"extras", "pos":[0,250], "text":"#Extras#", "string_id":73},
                 {"template":"selectable_text_fe28", "id":"quit", "pos":[0,362], "text":"#Quit#", "string_id":28}
             ]
         },
@@ -138,7 +138,13 @@
             ]
         },
 
-        {"class":"dummy", "id":"menu_page_7", "pos":[0,0], "size":[1000,600], "anchor_min":[0.5,0.5], "anchor_max":[0.5,0.5], "pivot":[0.5,0.5], "fill_color":[128,10,50,255], 
+        {"class":"dummy", "id":"menu_page_7", "interactive":false, "pos":[0,0], "size":[1000,600], "anchor_min":[0.5,0.5], "anchor_max":[0.5,0.5], "pivot":[0.5,0.5], "fill_color":[128,10,50,255], 
+            "children":
+            [
+            ]
+        },
+
+        {"class":"dummy", "id":"menu_page_8", "interactive":false, "pos":[0,0], "size":[1000,600], "anchor_min":[0.5,0.5], "anchor_max":[0.5,0.5], "pivot":[0.5,0.5], "fill_color":[128,10,50,255], 
             "children":
             [
             ]

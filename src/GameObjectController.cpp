@@ -38,3 +38,8 @@ void GameObjectController::OnRecycle()
     DespawnInstance();
     mGameObject = nullptr;
 }
+
+void GameObjectController::UpdateFrame(float deltaTime)
+{
+
+}

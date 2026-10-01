@@ -7,6 +7,7 @@
 #include "GoldPileObjectController.h"
 #include "MapUtils.h"
 #include "GameSession.h"
+#include "HeroGateTableObjectController.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -48,6 +49,16 @@ void GameObjectManager::ClearWorld()
 void GameObjectManager::UpdateFrame(float deltaTime)
 {
     ProcessObjectChanges();
+
+    // don't use iterators because of new objects that may be added during the update
+    for (size_t i = 0, MaxUpdateObjects = mActiveObjects.size(); i < MaxUpdateObjects; ++i)
+    {
+        GameObject* gameObject = mActiveObjects[i];
+        if (gameObject->Exists())
+        {
+            gameObject->UpdateFrame(deltaTime);
+        }
+    }
 }
 
 void GameObjectManager::UpdateLogic(float stepDeltaTime)
@@ -340,6 +351,11 @@ cxx::uniqueptr<GameObjectController> GameObjectManager::NewControllerInstance(Ga
     if (objectDefinition->mObjectCategory == eGameObjectCategory_Gold)
     {
         return NewControllerInstance<GoldPileObjectController>();
+    }
+
+    if (objectDefinition->mObjectClass == GameObjectClassId_3DFrontEndHeroGateTable)
+    {
+        return NewControllerInstance<HeroGateTableObjectController>();
     }
 
     if ((objectDefinition->mObjectClass == GameObjectClassId_Chicken) || 

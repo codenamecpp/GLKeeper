@@ -23,6 +23,7 @@ public:
         eMenuPage_MyPetDungeon,
         eMenuPage_MissionBriefing,
         eMenuPage_CampaignTable,
+        eMenuPage_Extras,
         eMenuPage_QuitGame,
         eMenuPage_COUNT
     };
@@ -41,6 +42,7 @@ private:
     class MenuPageMyPetDungeon;
     class MenuPageMissionBriefing;
     class MenuPageCampaignTable;
+    class MenuPageExtras;
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -56,6 +58,8 @@ public:
     // control
     void ShowMenuPage(eMenuPage pageId);
     void ShowMenuContent(bool setShown);
+
+    bool IsOnMenuPage(eMenuPage pageId) const;
 
     // override UiView
     bool LoadContent() override;
@@ -85,6 +89,7 @@ private:
     std::unique_ptr<MenuPageMyPetDungeon> mPageMyPetDungeon;
     std::unique_ptr<MenuPageMissionBriefing> mPageMissionBriefing;
     std::unique_ptr<MenuPageCampaignTable> mPageCampaignTable;
+    std::unique_ptr<MenuPageExtras> mPageExtras;
 
     MenuPage* mPages[eMenuPage_COUNT];
     MenuPage* mCurrentPage = nullptr;

@@ -38,14 +38,6 @@ AudioManager::~AudioManager()
 
 bool AudioManager::Initialize()
 {
-    const GameProfile::UserSettings& userSettings = gGameProfile.GetUserSettings();
-
-    if (!userSettings.mEnableSound)
-    {
-        gConsole.LogMessage(eLogLevel_Info, "Sounds disabled");
-        return true;
-    }
-
     if (!gFiles.PathToDirectory("Data/Sound/Sfx", mSoundSfxDirectoryPath))
     {
         gConsole.LogMessage(eLogLevel_Warning, "Cannot locate sounds");
@@ -69,14 +61,10 @@ bool AudioManager::Initialize()
 
     gConsole.LogMessage(eLogLevel_Info, "Audio engine backend string: %s", mAudioEngine->getBackendString());
 
-    mAudioEngine->setGlobalVolume(userSettings.mMasterVolume);
-
     mSoundBusGui = std::make_unique<SoLoud::Bus>();
-    mSoundBusGui->setVolume(userSettings.mSfxVolume);
     mAudioEngine->play(*mSoundBusGui);
 
     mSoundQueueAmbience = std::make_unique<SoLoud::Queue>();
-    mSoundQueueAmbience->setVolume(userSettings.mSfxVolume);
 
     return true;
 }
@@ -131,6 +119,37 @@ void AudioManager::Shutdown()
 
     mCategoriesMap.clear();
     mSoundArhivesMap.clear();
+}
+
+void AudioManager::SetMasterVolume(float volume)
+{
+    if (mAudioEngine)
+    {
+        mAudioEngine->setGlobalVolume(volume);
+    }
+}
+
+void AudioManager::SetVoiceVolume(float volume)
+{
+    // todo
+}
+
+void AudioManager::SetMusicVolume(float volume)
+{
+    // todo
+}
+
+void AudioManager::SetSfxVolume(float volume)
+{
+    if (mSoundBusGui)
+    {
+        mSoundBusGui->setVolume(volume);
+    }
+
+    if (mSoundQueueAmbience)
+    {
+        mSoundQueueAmbience->setVolume(volume);
+    }
 }
 
 bool AudioManager::ScanMapFiles()

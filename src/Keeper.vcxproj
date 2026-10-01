@@ -167,7 +167,9 @@
     <ClInclude Include="GameProfile.h" />
     <ClInclude Include="GameSessionController.h" />
     <ClInclude Include="GameSessionDefs.h" />
+    <ClInclude Include="GameStartupParams.h" />
     <ClInclude Include="GameWorld.h" />
+    <ClInclude Include="HeroGateTableObjectController.h" />
     <ClInclude Include="InHandThingView.h" />
     <ClInclude Include="InteractionService.h" />
     <ClInclude Include="LevelsDatabase.h" />
@@ -377,6 +379,7 @@
     <ClCompile Include="GameEventBus.cpp" />
     <ClCompile Include="GameObjectController.cpp" />
     <ClCompile Include="GameplayUiControls.cpp" />
+    <ClCompile Include="HeroGateTableObjectController.cpp" />
     <ClCompile Include="InHandThingView.cpp" />
     <ClCompile Include="InteractionService.cpp" />
     <ClCompile Include="LevelsDatabase.cpp" />

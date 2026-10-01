@@ -163,5 +163,6 @@ void HeroGateFrontendRoomController::Init3dMap()
         piecePtr->Configure(pieceMesh);
         piecePtr->SetPosition(tablePosition);
         piecePtr->SetObjectActive(true);
+        piecePtr->SetOwnerEntity(GetRoom().GetOwnHandle());
     }
 }

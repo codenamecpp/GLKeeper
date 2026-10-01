@@ -253,12 +253,14 @@ void GameplayController::UpdateHoveredEntity()
         cxx::ray3d_t ray3d;
         if (gScene.CastRayFromScreenPoint(mouseScreenPos, ray3d))
         {
-            cxx::temp_vector<SceneObject*> sceneObjects;
-            if (gScene.QueryObjects(ray3d, sceneObjects))
+            cxx::temp_vector<RayHitResult> hitResults;
+            if (gScene.QueryObjects(ray3d, hitResults))
             {
-                for (SceneObject* objectsRoller: sceneObjects)
+                // todo: sort by priority
+
+                for (const RayHitResult& hitsRoller: hitResults)
                 {
-                    if (const EntityHandle& entity = objectsRoller->GetOwnerEntity())
+                    if (const EntityHandle& entity = hitsRoller.mSceneObject->GetOwnerEntity())
                     {
                         cxx_assert(!entity.IsRoom());
                         currHoveredEntity = entity;

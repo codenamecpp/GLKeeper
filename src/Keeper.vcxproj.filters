@@ -823,6 +823,12 @@
     <ClInclude Include="CameraEffects.h">
       <Filter>Source\World\View</Filter>
     </ClInclude>
+    <ClInclude Include="HeroGateTableObjectController.h">
+      <Filter>Source\World\GameObjects\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="GameStartupParams.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -1331,6 +1337,9 @@
     </ClCompile>
     <ClCompile Include="CameraEffects.cpp">
       <Filter>Source\World\View</Filter>
+    </ClCompile>
+    <ClCompile Include="HeroGateTableObjectController.cpp">
+      <Filter>Source\World\GameObjects\Controllers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
