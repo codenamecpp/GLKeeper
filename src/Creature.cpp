@@ -13,10 +13,13 @@
 
 Creature::Creature()
 {
+    // leave ctor
 }
 
 Creature::~Creature()
 {
+    // leave dtor
+
     cxx_assert(mAssignedTask == nullptr);
 }
 
@@ -391,9 +394,7 @@ void Creature::InitPhysics()
     if (mPhysicsObject)
         return;
 
-    gPhysics.AttachUser(this);
-
-    mPhysicsObject = gPhysics.GetPhysicsObject(this);
+    mPhysicsObject = gPhysics.CreatePhysicsObject(this);
     cxx_assert(mPhysicsObject);
     mPhysicsObject->ClearAngularVelocity();
     mPhysicsObject->ClearLinearVelocity();
@@ -401,11 +402,7 @@ void Creature::InitPhysics()
 
 void Creature::FreePhysics()
 {
-    if (mPhysicsObject)
-    {
-        gPhysics.DetachUser(this);
-        mPhysicsObject = nullptr;
-    }
+    mPhysicsObject.reset();
 }
 
 void Creature::EnablePhysics(bool isEnabled)

@@ -18,10 +18,13 @@ enum class eGamestate
 {
     None,
     TitleScreen,
+    Intro1,
+    Intro2,
     LoadingFrontend,
     Frontend,
     LoadingGameplay,
     Gameplay,
+    DevScreen,
 };
 
 enum_serialize_decl(eGamestate);

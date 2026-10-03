@@ -161,6 +161,12 @@ void GameMain::Shutdown()
         mTestScreen.Deactivate();
         mTestScreen.Cleanup();
     }
+
+    if (mMovieScreen.IsActive())
+    {
+        mMovieScreen.Deactivate();
+        mMovieScreen.Cleanup();
+    }
     //
 
     gAudio.Shutdown();
@@ -188,31 +194,36 @@ void GameMain::RunMainLoop()
     cxx_assert(GetCurrentGamestate() == eGamestate::None);
 
     // dev tools
-    if (mStartupParams.mDevScreen)
+    if ((GetCurrentGamestate() == eGamestate::None) && mStartupParams.mDevScreen)
     {
+        SetGamestate(eGamestate::DevScreen);
         mTestScreen.Activate();
     }
-    else 
+
+    // autostart level
+    if ((GetCurrentGamestate() == eGamestate::None) &&
+        !mStartupParams.mLoadLevelName.empty())
     {
-        // autostart level
-        if (!mStartupParams.mLoadLevelName.empty())
+        gConsole.LogMessage(eLogLevel_Info, "Loading level '%s'...", mStartupParams.mLoadLevelName.c_str());
+        bool isSuccess = StartScenario(mStartupParams.mLoadLevelName);
+        cxx_assert(isSuccess);
+        if (!isSuccess)
         {
-            gConsole.LogMessage(eLogLevel_Info, "Loading level '%s'...", mStartupParams.mLoadLevelName.c_str());
-            bool isSuccess = StartScenario(mStartupParams.mLoadLevelName);
-            cxx_assert(isSuccess);
-            if (!isSuccess)
-            {
-                gConsole.LogMessage(eLogLevel_Warning, "Cannot load level");
-            }
-            mStartupParams.mLoadLevelName.clear();
+            gConsole.LogMessage(eLogLevel_Warning, "Cannot load level");
+        }
+        mStartupParams.mLoadLevelName.clear();
+    }
+
+    if (GetCurrentGamestate() == eGamestate::None)
+    {
+        if (!mStartupParams.mNoIntro)
+        {
+            StartIntroMovies();
         }
 
-        if (GetCurrentGamestate() == eGamestate::None)
+        if (!mQuitRequested && !StartFrontend())
         {
-            if (!StartFrontend())
-            {
-                Terminate();
-            }
+            Terminate();
         }
     }
 
@@ -421,6 +432,13 @@ void GameMain::ParseStartupParams(int argc, char *argv[])
             continue;
         }
 
+        if (cxx::strings_eq(argv[iarg], "-nointro"))
+        {
+            mStartupParams.mNoIntro = true;
+            iarg += 1;
+            continue;
+        }
+
         if (cxx::strings_eq(argv[iarg], "-devscreen"))
         {
             mStartupParams.mDevScreen = true;
@@ -519,6 +537,33 @@ bool GameMain::StartFrontend()
         gGameSession.ShutdownSession();
     }
     return isSuccess;
+}
+
+void GameMain::StartIntroMovies()
+{
+    // todo: refactore
+
+    SetGamestate(eGamestate::Intro1);
+    if (!mQuitRequested && mMovieScreen.ShowMovie("BullfrogIntro"))
+    {
+        for (;!mQuitRequested && mMovieScreen.IsPlaying();)
+        {
+            MiniUpdateFrame();
+        }
+        mMovieScreen.ExitMovie();
+    }
+
+    SetGamestate(eGamestate::Intro2);
+    if (!mQuitRequested && mMovieScreen.ShowMovie("INTRO"))
+    {
+        for (;!mQuitRequested && mMovieScreen.IsPlaying();)
+        {
+            MiniUpdateFrame();
+        }
+        mMovieScreen.ExitMovie();
+    }
+
+    SetGamestate(eGamestate::None);
 }
 
 void GameMain::MiniUpdateFrame()

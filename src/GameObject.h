@@ -17,6 +17,8 @@
 class GameObject final: public Entity
 {
 public:
+    GameObject();
+    ~GameObject();
 
     //////////////////////////////////////////////////////////////////////////
     // lifecycle
@@ -80,7 +82,11 @@ public:
     { 
         return mMeshObject.get(); 
     }
-    inline PhysicsObject* GetPhysics() const { return mPhysicsObject; }
+
+    inline PhysicsObject* GetPhysics() const 
+    { 
+        return mPhysicsObject.get(); 
+    }
 
     inline Locomotion& GetLocomotion() { return mLocomotion; }
 
@@ -94,7 +100,6 @@ public:
 
     // highlight control
     void SetHighlighted(bool isHighlighted);
-    bool IsHighlighted() const;
 
     //////////////////////////////////////////////////////////////////////////
     // notifications
@@ -144,7 +149,7 @@ private:
     EntityHandle mParentRoom;
     eGameObjectState mCurrentState = eGameObjectState_None;
     GameObjectController* mController = nullptr; // optional
-    PhysicsObject* mPhysicsObject = nullptr; // optional
+    PhysicsObjectPtr mPhysicsObject = nullptr; // optional
     Locomotion mLocomotion;
     cxx::uniqueptr<AnimatingMeshObject> mMeshObject; // optional
     eGameObjectMeshId mMeshResourceId = eGameObjectMeshId_Main;

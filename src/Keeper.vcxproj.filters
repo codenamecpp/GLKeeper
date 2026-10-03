@@ -709,9 +709,6 @@
     <ClInclude Include="CreatureAction_Mining.h">
       <Filter>Source\World\Creatures\Actions</Filter>
     </ClInclude>
-    <ClInclude Include="CreatureComponents.h">
-      <Filter>Source\World\Creatures</Filter>
-    </ClInclude>
     <ClInclude Include="CreatureAction_CarryGoldToTreasury.h">
       <Filter>Source\World\Creatures\Actions</Filter>
     </ClInclude>
@@ -828,6 +825,12 @@
     </ClInclude>
     <ClInclude Include="GameStartupParams.h">
       <Filter>Source</Filter>
+    </ClInclude>
+    <ClInclude Include="DK2MovieDecoder.h">
+      <Filter>Source\Assets\Formats</Filter>
+    </ClInclude>
+    <ClInclude Include="MovieScreen.h">
+      <Filter>Source\Ui\Screens</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1340,6 +1343,12 @@
     </ClCompile>
     <ClCompile Include="HeroGateTableObjectController.cpp">
       <Filter>Source\World\GameObjects\Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="DK2MovieDecoder.cpp">
+      <Filter>Source\Assets\Formats</Filter>
+    </ClCompile>
+    <ClCompile Include="MovieScreen.cpp">
+      <Filter>Source\Ui\Screens</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

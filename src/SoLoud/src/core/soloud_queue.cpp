@@ -146,10 +146,14 @@ namespace SoLoud
 
 	void Queue::stop_queue()
 	{
-		// empty queue. this is not very efficient, since the mutex is locked in each iteration. oh well...
-		while(getQueueCount() > 0)
-			pop();
-
+        if (mSoloud)
+        {
+		    // empty queue. this is not very efficient, since the mutex is locked in each iteration. oh well...
+		    while (getQueueCount() > 0)
+            {
+			    pop();
+            }
+        }
 		stop();
 		mInstance = 0; // instance was deleted from stop()
 	}

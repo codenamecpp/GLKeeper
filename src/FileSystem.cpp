@@ -90,6 +90,21 @@ bool FileSystem::LocateShader(const std::string& resourceName, std::string& reso
     return PathToFile(subpath, resourcePath);
 }
 
+bool FileSystem::LocateMovie(const std::string& resourceName, std::string& resourcePath) const
+{
+    if (PathToFile(resourceName, resourcePath))
+        return true;
+
+    std::string path = cxx::va("Data/Movies/%s", resourceName.c_str());
+
+    const std::string_view fileExtension = ".tgq";
+    if (!cxx::ends_with_icase(resourceName, fileExtension))
+    {
+        path.append(fileExtension);
+    }
+    return PathToFile(path, resourcePath);
+}
+
 bool FileSystem::LocateMapData(const std::string& resourceName, std::string& resourcePath) const
 {
     std::string subpath;

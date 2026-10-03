@@ -81,54 +81,19 @@ bool Physics::LoadScenario(const ScenarioDefinition& scenarioDef)
     return true;
 }
 
-void Physics::AttachUser(Entity* entity)
-{
-    if ((entity == nullptr) || GetPhysicsObject(entity))
-    {
-        cxx_assert(false);
-        return;
-    }
-
-    EntityEntry& entityEntry = mEntities.emplace_back();
-    entityEntry.first = entity;
-    entityEntry.second = CreatePhysicsObject();
-    entityEntry.second->Configure(entity, entity->GetTransform());
-
-    mObjects.push_back(entityEntry.second.get());
-}
-
-void Physics::DetachUser(Entity* entity)
-{
-    auto ent_it = std::find_if(mEntities.begin(), mEntities.end(), [entity](const EntityEntry& entry) 
-        { 
-            return entry.first == entity; 
-        });
-    if (ent_it == mEntities.end())
-    {
-        cxx_assert(false);
-        return;
-    }
-    cxx::erase(mObjects, ent_it->second.get());
-    cxx::erase(mInterpolateTransforms, ent_it->second.get());
-    mEntities.erase(ent_it);
-}
-
-PhysicsObject* Physics::GetPhysicsObject(Entity* entity) const
+PhysicsObjectPtr Physics::CreatePhysicsObject(Entity* entity)
 {
     auto object_iter = std::find_if(mEntities.begin(), mEntities.end(), [entity](const EntityEntry& entry)
         {
             return entry.first == entity;
         });
-    PhysicsObject* physicsObject = nullptr;
-    if (object_iter != mEntities.end())
-    {
-        physicsObject = object_iter->second.get();
-    }
-    return physicsObject;
-}
 
-PhysicsObjectPtr Physics::CreatePhysicsObject() const
-{
+    if ((entity == nullptr) || (object_iter != mEntities.end()))
+    {
+        cxx_assert(false);
+        return nullptr;
+    }
+
     static SimplePool<PhysicsObject> objectsPool = (
         [](PhysicsObject* object)
         {
@@ -136,13 +101,21 @@ PhysicsObjectPtr Physics::CreatePhysicsObject() const
         });
 
     PhysicsObject* objectPtr = objectsPool.Acquire();
+
+    EntityEntry& entityEntry = mEntities.emplace_back();
+    entityEntry.first = entity;
+    entityEntry.second = objectPtr;
+    entityEntry.second->Configure(entity, entity->GetTransform());
+    mObjects.push_back(objectPtr);
+
     return std::move(PhysicsObjectPtr (objectPtr, [](PhysicsObject* object)
-    {
-        if (object)
         {
-            objectsPool.Return(object);
-        }
-    }));
+            if (object)
+            {
+                gPhysics.Unregister(object);
+                objectsPool.Return(object);
+            }
+        }));
 }
 
 void Physics::InterpolationStep(PhysicsObject* object, float t)
@@ -234,4 +207,19 @@ void Physics::ResetVelocities(PhysicsObject* object)
 {
     object->ClearAngularVelocity();
     object->ClearLinearVelocity();
+}
+
+void Physics::Unregister(PhysicsObject* object)
+{
+    cxx_assert(object);
+    auto ent_it = std::find_if(mEntities.begin(), mEntities.end(), [object](const EntityEntry& entry) 
+        { 
+            return entry.second == object; 
+        });
+    if (ent_it != mEntities.end())
+    {
+        mEntities.erase(ent_it);
+    }
+    cxx::erase(mObjects, object);
+    cxx::erase(mInterpolateTransforms, object);
 }

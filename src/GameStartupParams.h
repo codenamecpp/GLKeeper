@@ -11,6 +11,7 @@ public:
     {
         mLoadLevelName.clear();
         mNoSound = {};
+        mNoIntro = {};
         mDevScreen = {};
     }
 
@@ -18,6 +19,7 @@ public:
     std::string mLoadLevelName;
 
     bool mNoSound = false;
+    bool mNoIntro = false;
     bool mDevScreen = false;
 };
 

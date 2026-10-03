@@ -125,7 +125,6 @@
     <ClInclude Include="CreatureAction_WalkToPoint.h" />
     <ClInclude Include="CreatureAction_Wander.h" />
     <ClInclude Include="CreatureAnimConst.h" />
-    <ClInclude Include="CreatureComponents.h" />
     <ClInclude Include="CreatureController.h" />
     <ClInclude Include="CreatureManager.h" />
     <ClInclude Include="CreatureState.h" />
@@ -143,6 +142,7 @@
     <ClInclude Include="DK2SoundArchive.h" />
     <ClInclude Include="DK2Text.h" />
     <ClInclude Include="DK2ScenarioReader.h" />
+    <ClInclude Include="DK2MovieDecoder.h" />
     <ClInclude Include="DungeonHeartRoomController.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EntityCapabilities.h" />
@@ -173,6 +173,7 @@
     <ClInclude Include="InHandThingView.h" />
     <ClInclude Include="InteractionService.h" />
     <ClInclude Include="LevelsDatabase.h" />
+    <ClInclude Include="MovieScreen.h" />
     <ClInclude Include="QueryService.h" />
     <ClInclude Include="SoundCategoryNames.h" />
     <ClInclude Include="TextureAtlas.h" />
@@ -367,6 +368,7 @@
     <ClCompile Include="DK2SfxMapFile.cpp" />
     <ClCompile Include="DK2SoundArchive.cpp" />
     <ClCompile Include="DK2Text.cpp" />
+    <ClCompile Include="DK2MovieDecoder.cpp" />
     <ClCompile Include="DungeonHeartRoomController.cpp" />
     <ClCompile Include="EntityRegistry.cpp" />
     <ClCompile Include="enums_impl.cpp" />
@@ -383,6 +385,7 @@
     <ClCompile Include="InHandThingView.cpp" />
     <ClCompile Include="InteractionService.cpp" />
     <ClCompile Include="LevelsDatabase.cpp" />
+    <ClCompile Include="MovieScreen.cpp" />
     <ClCompile Include="QueryService.cpp" />
     <ClCompile Include="SoundCategoryNames.cpp" />
     <ClCompile Include="TextureAtlas.cpp" />

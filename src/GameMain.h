@@ -9,6 +9,7 @@
 #include "GameSessionDefs.h"
 #include "GameEvent.h"
 #include "GameStartupParams.h"
+#include "MovieScreen.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -57,6 +58,8 @@ private:
     bool StartScenario(const std::string& scenarioName);
     bool StartFrontend();
 
+    void StartIntroMovies();
+
     void MiniUpdateFrame();
 
     void SetGamestate(eGamestate newGamestate);
@@ -83,6 +86,7 @@ private:
     LoadingScreen mLoadingScreen;
     TitleScreen mTitleScreen;
     TestScreen mTestScreen;
+    MovieScreen mMovieScreen;
 };
 
 //////////////////////////////////////////////////////////////////////////

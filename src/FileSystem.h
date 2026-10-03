@@ -29,6 +29,9 @@ public:
     // Find shader resource
     bool LocateShader(const std::string& resourceName, std::string& resourcePath) const;
 
+    // find cinematics
+    bool LocateMovie(const std::string& resourceName, std::string& resourcePath) const;
+
     // Find map data resource
     bool LocateMapData(const std::string& resourceName, std::string& resourcePath) const;
 

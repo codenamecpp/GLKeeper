@@ -11,7 +11,6 @@
 #include "Locomotion.h"
 #include "Animator.h"
 #include "CreatureState.h"
-#include "CreatureComponents.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -181,7 +180,7 @@ private:
 private:
     CreatureDefinition* mDefinition = nullptr; // never changes
     CreatureController* mController = nullptr;
-    PhysicsObject* mPhysicsObject = nullptr; // optional
+    PhysicsObjectPtr mPhysicsObject = nullptr; // optional
     Locomotion mLocomotion;
 
     CreatureTaskPtr mAssignedTask;

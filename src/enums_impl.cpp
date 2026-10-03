@@ -167,10 +167,14 @@ enum_serialize_impl(eArtResource)
 enum_serialize_impl(eGamestate)
 {
     {eGamestate::None, "none"},
+    {eGamestate::TitleScreen, "title"},
+    {eGamestate::Intro1, "intro1"},
+    {eGamestate::Intro2, "intro2"},
     {eGamestate::LoadingFrontend, "loading_frontend"},
     {eGamestate::Frontend, "frontend"},
     {eGamestate::LoadingGameplay, "loading_gameplay"},
     {eGamestate::Gameplay, "gameplay"},
+    {eGamestate::DevScreen, "devscreen"},
 };
 
 //////////////////////////////////////////////////////////////////////////

@@ -9,6 +9,16 @@
 #include "Scene.h"
 #include "GameMap.h"
 
+GameObject::GameObject()
+{
+    // leave ctor
+}
+
+GameObject::~GameObject()
+{
+    // leave dtor
+}
+
 void GameObject::ConfigureInstance(EntityUid instanceUid, GameObjectController* objectController, GameObjectDefinition* objectDef)
 {
     mInstanceUid = instanceUid;
@@ -410,9 +420,7 @@ void GameObject::InitPhysics()
     if (mPhysicsObject)
         return;
 
-    gPhysics.AttachUser(this);
-
-    mPhysicsObject = gPhysics.GetPhysicsObject(this);
+    mPhysicsObject = gPhysics.CreatePhysicsObject(this);
     cxx_assert(mPhysicsObject);
     mPhysicsObject->ClearAngularVelocity();
     mPhysicsObject->ClearLinearVelocity();
@@ -420,11 +428,7 @@ void GameObject::InitPhysics()
 
 void GameObject::FreePhysics()
 {
-    if (mPhysicsObject)
-    {
-        gPhysics.DetachUser(this);
-        mPhysicsObject = nullptr;
-    }
+    mPhysicsObject.reset();
 }
 
 void GameObject::MarkDeleted()
@@ -509,9 +513,3 @@ void GameObject::ReceiveMsg(EntityMsg& msgData)
         return;
     }
 }
-
-bool GameObject::IsHighlighted() const
-{
-    return mEntityFlags.Has(eEntityFlags_IsHighlighted);
-}
-

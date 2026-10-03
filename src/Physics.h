@@ -18,18 +18,17 @@ public:
     void UpdateFrame(float deltaTime);
     void UpdatePhysics(float stepDeltaTime);
 
-    void AttachUser(Entity* entity);
-    void DetachUser(Entity* entity);
+    // attach entity to physics world
+    // only a single physics object per entity allowed
 
-    PhysicsObject* GetPhysicsObject(Entity* entity) const;
+    PhysicsObjectPtr CreatePhysicsObject(Entity* entity);
 
 private:
-    // factory
-    PhysicsObjectPtr CreatePhysicsObject() const;
-
     void InterpolationStep(PhysicsObject* object, float t);
     void SimulationStep(PhysicsObject* object);
     void ResetVelocities(PhysicsObject* object);
+
+    void Unregister(PhysicsObject* object);
 
 private:
     float mSimulationStepDelta = 0.0f;
@@ -37,7 +36,7 @@ private:
 
     //////////////////////////////////////////////////////////////////////////
 
-    using EntityEntry = std::pair<Entity*, PhysicsObjectPtr>;
+    using EntityEntry = std::pair<Entity*, PhysicsObject*>;
 
     //////////////////////////////////////////////////////////////////////////
 
