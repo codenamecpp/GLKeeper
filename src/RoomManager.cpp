@@ -90,7 +90,7 @@ EntityHandle RoomManager::CreateRoom(RoomDefinition* definition, ePlayerID owner
     cxx_assert(definition);
     if (definition == nullptr) return {}; // nothing to create
     
-    int freeSlotIndex = cxx::get_first_index_if(mRoomSlots, [](const RoomInstanceSlot& slot)
+    int freeSlotIndex = cxx::get_index_if(mRoomSlots, [](const RoomInstanceSlot& slot)
         {
             return !slot.mInstance;
         });
@@ -129,7 +129,7 @@ Room* RoomManager::GetRoomPtr(EntityUid instanceUid) const
     return GetRoomPtr(roomHandle);
 }
 
-Room* RoomManager::GetRoomPtr(const EntityHandle& roomHandle) const
+Room* RoomManager::GetRoomPtr(EntityHandle roomHandle) const
 {
     Room* roomPtr = nullptr;
     if (roomHandle.IsRoom() && (roomHandle.mIndex < mRoomSlots.size()))
@@ -143,7 +143,7 @@ Room* RoomManager::GetRoomPtr(const EntityHandle& roomHandle) const
     return roomPtr;
 }
 
-bool RoomManager::ActivateRoom(const EntityHandle& roomHandle)
+bool RoomManager::ActivateRoom(EntityHandle roomHandle)
 {
     bool isSuccess = false;
     if (Room* roomInstance = GetRoomPtr(roomHandle))
@@ -181,7 +181,7 @@ bool RoomManager::ActivateRoom(EntityUid instanceUid)
     return ActivateRoom(roomHandle);
 }
 
-bool RoomManager::DeleteRoom(const EntityHandle& roomHandle)
+bool RoomManager::DeleteRoom(EntityHandle roomHandle)
 {
     bool isSuccess = false;
 
@@ -216,7 +216,7 @@ bool RoomManager::DeleteRoom(EntityUid instanceUid)
     return DeleteRoom(roomHandle);
 }
 
-bool RoomManager::ExistsOnMap(const EntityHandle& roomHandle) const
+bool RoomManager::ExistsOnMap(EntityHandle roomHandle) const
 {
     if (Room* roomInstance = GetRoomPtr(roomHandle))
     {

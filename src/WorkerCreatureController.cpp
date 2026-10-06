@@ -14,7 +14,9 @@ void WorkerCreatureController::SpawnInstance()
 
     // make imps orient faster
     // todo: move to settings
-    GetCreature().GetLocomotion().SetOrientSpeed(glm::radians(560.0f));
+    Locomotion* locomotion = GetCreature().GetLocomotion();
+    cxx_assert(locomotion);
+    locomotion->SetOrientSpeed(glm::radians(560.0f));
 }
 
 void WorkerCreatureController::ConfigureCreatureAnimationStates()
@@ -28,17 +30,18 @@ void WorkerCreatureController::ConfigureCreatureAnimationStates()
     };
 
     // configure common states
-    Animator& animator = GetCreature().GetAnimator();
-    animator.DefineState(CreatureAnimConst::StateDigging, GetAnimResource(CreatureAnimation_Imp_Dig), eAnimationLoopMode_Repeat);
-    animator.DefineState(CreatureAnimConst::StateReinforceWall, GetAnimResource(CreatureAnimation_Imp_ClaimLand), eAnimationLoopMode_Repeat);
-    animator.DefineState(CreatureAnimConst::StateClaimFloor, GetAnimResource(CreatureAnimation_Imp_ClaimFloor), eAnimationLoopMode_Repeat);
+    Animator* animator = GetCreature().GetAnimator();
+    cxx_assert(animator);
+    animator->DefineState(CreatureAnimConst::StateDigging, GetAnimResource(CreatureAnimation_Imp_Dig), eAnimationLoopMode_Repeat);
+    animator->DefineState(CreatureAnimConst::StateReinforceWall, GetAnimResource(CreatureAnimation_Imp_ClaimLand), eAnimationLoopMode_Repeat);
+    animator->DefineState(CreatureAnimConst::StateClaimFloor, GetAnimResource(CreatureAnimation_Imp_ClaimFloor), eAnimationLoopMode_Repeat);
 
     // configure specific state transitions
 
     // digging ->
     {
-        animator.DefineTransition(CreatureAnimConst::StateDigging, CreatureAnimConst::StatePose, {});
-        animator.DefineTransition(CreatureAnimConst::StateDigging, CreatureAnimConst::StatePose,
+        animator->DefineTransition(CreatureAnimConst::StateDigging, CreatureAnimConst::StatePose, {});
+        animator->DefineTransition(CreatureAnimConst::StateDigging, CreatureAnimConst::StatePose,
             {
                 Animator::ConditionForBool(CreatureAnimConst::ParamIsDigging, false)
             },
@@ -47,8 +50,8 @@ void WorkerCreatureController::ConfigureCreatureAnimationStates()
     }
     // reinforcing wall ->
     {
-        animator.DefineTransition(CreatureAnimConst::StateReinforceWall, CreatureAnimConst::StatePose, {});
-        animator.DefineTransition(CreatureAnimConst::StateReinforceWall, CreatureAnimConst::StatePose,
+        animator->DefineTransition(CreatureAnimConst::StateReinforceWall, CreatureAnimConst::StatePose, {});
+        animator->DefineTransition(CreatureAnimConst::StateReinforceWall, CreatureAnimConst::StatePose,
             {
                 Animator::ConditionForBool(CreatureAnimConst::ParamIsReinforceWall, false)
             },
@@ -57,8 +60,8 @@ void WorkerCreatureController::ConfigureCreatureAnimationStates()
     }
     // claiming floor tile ->
     {
-        animator.DefineTransition(CreatureAnimConst::StateClaimFloor, CreatureAnimConst::StatePose, {});
-        animator.DefineTransition(CreatureAnimConst::StateClaimFloor, CreatureAnimConst::StatePose,
+        animator->DefineTransition(CreatureAnimConst::StateClaimFloor, CreatureAnimConst::StatePose, {});
+        animator->DefineTransition(CreatureAnimConst::StateClaimFloor, CreatureAnimConst::StatePose,
             {
                 Animator::ConditionForBool(CreatureAnimConst::ParamIsClaimFloor, false)
             },

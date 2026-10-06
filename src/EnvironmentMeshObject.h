@@ -79,3 +79,5 @@ private:
     std::unique_ptr<GpuVertexBuffer> mGpuVertexBuffer;
     std::unique_ptr<GpuIndexBuffer> mGpuIndexBuffer;
 };
+
+//////////////////////////////////////////////////////////////////////////

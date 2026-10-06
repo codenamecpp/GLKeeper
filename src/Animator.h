@@ -164,6 +164,9 @@ public:
     void Configure(AnimatingMeshObject* animatingMesh);
     void Clear();
 
+    // pool
+    void OnRecycle();
+
     // process update
     void UpdateFrame(float deltaTime);
 

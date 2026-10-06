@@ -42,6 +42,8 @@ public:
     {
         ResetToDefaults();
     }
+    // pool
+    void OnRecycle();
 
     // reset to defaults params
     void ResetToDefaults();

@@ -7,7 +7,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 class StorageRoomController: public RoomController
-    , protected ObjectStorageRoomCapability
+    , protected IStorageRoom
 {
 protected:
 

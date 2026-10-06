@@ -689,7 +689,7 @@ void GameplayUi::CPPageRooms::RefreshRoomButton(int buttonIndex)
 
 bool GameplayUi::CPPageRooms::GetRoomButtonIndex(RoomDefinition* definition, int& buttonIndex) const
 {
-    const int itemIndex = cxx::get_first_index_if(mRoomEntries, [definition](const RoomInfo& roller)
+    const int itemIndex = cxx::get_index_if(mRoomEntries, [definition](const RoomInfo& roller)
         {
             return roller.mDefinition == definition;
         });

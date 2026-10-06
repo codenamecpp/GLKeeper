@@ -29,8 +29,6 @@ void CreatureController::ConfigureInstance(Creature* creatureInstance)
 void CreatureController::SpawnInstance()
 {
     ConfigureCreatureAnimationStates();
-
-    GetCreature().GetAnimator().Start();
 }
 
 void CreatureController::DespawnInstance()
@@ -45,7 +43,8 @@ void CreatureController::UpdateLogic(float stepDeltaTime)
 
 void CreatureController::ConfigureCreatureAnimationStates()
 {
-    Animator& animator = GetCreature().GetAnimator();
+    Animator* animator = GetCreature().GetAnimator();
+    cxx_assert(animator);
 
     CreatureDefinition* definition = GetCreature().GetDefinition();
 
@@ -55,14 +54,14 @@ void CreatureController::ConfigureCreatureAnimationStates()
         };
 
     // configure common states
-    animator.DefineState(CreatureAnimConst::StatePose, GetAnimResource(CreatureAnimation_Pose_Frame), eAnimationLoopMode_None);
-    animator.DefineState(CreatureAnimConst::StateWalk, GetAnimResource(CreatureAnimation_Walk), eAnimationLoopMode_Repeat);
-    animator.DefineState(CreatureAnimConst::StateIdleSelector, GetAnimResource(CreatureAnimation_Pose_Frame), eAnimationLoopMode_None);
-    animator.DefineState(CreatureAnimConst::StateIdle1, GetAnimResource(CreatureAnimation_Idle1), eAnimationLoopMode_None);
-    animator.DefineState(CreatureAnimConst::StateIdle2, GetAnimResource(CreatureAnimation_Idle2), eAnimationLoopMode_None);
+    animator->DefineState(CreatureAnimConst::StatePose, GetAnimResource(CreatureAnimation_Pose_Frame), eAnimationLoopMode_None);
+    animator->DefineState(CreatureAnimConst::StateWalk, GetAnimResource(CreatureAnimation_Walk), eAnimationLoopMode_Repeat);
+    animator->DefineState(CreatureAnimConst::StateIdleSelector, GetAnimResource(CreatureAnimation_Pose_Frame), eAnimationLoopMode_None);
+    animator->DefineState(CreatureAnimConst::StateIdle1, GetAnimResource(CreatureAnimation_Idle1), eAnimationLoopMode_None);
+    animator->DefineState(CreatureAnimConst::StateIdle2, GetAnimResource(CreatureAnimation_Idle2), eAnimationLoopMode_None);
 
     // configure start transitions
-    animator.DefineTransitionFromStart(CreatureAnimConst::StatePose, {});
+    animator->DefineTransitionFromStart(CreatureAnimConst::StatePose, {});
 
     // configure any state transitions in order: from highest down to lowest priority
     {
@@ -83,8 +82,8 @@ void CreatureController::ConfigureCreatureAnimationStates()
     {
         // walk ->
         {
-            animator.DefineTransition(CreatureAnimConst::StateWalk, CreatureAnimConst::StatePose, {});
-            animator.DefineTransition(CreatureAnimConst::StateWalk, CreatureAnimConst::StatePose,
+            animator->DefineTransition(CreatureAnimConst::StateWalk, CreatureAnimConst::StatePose, {});
+            animator->DefineTransition(CreatureAnimConst::StateWalk, CreatureAnimConst::StatePose,
                 {
                     Animator::ConditionForBool(CreatureAnimConst::ParamIsWalk, false)
                 },
@@ -94,14 +93,14 @@ void CreatureController::ConfigureCreatureAnimationStates()
 
         // idle selector ->
         {
-            animator.DefineTransition(CreatureAnimConst::StateIdleSelector, CreatureAnimConst::StateIdle1, 60.0f);
-            animator.DefineTransition(CreatureAnimConst::StateIdleSelector, CreatureAnimConst::StateIdle2, 40.0f);
+            animator->DefineTransition(CreatureAnimConst::StateIdleSelector, CreatureAnimConst::StateIdle1, 60.0f);
+            animator->DefineTransition(CreatureAnimConst::StateIdleSelector, CreatureAnimConst::StateIdle2, 40.0f);
         }
 
         // idle ->
         {
-            animator.DefineTransition(CreatureAnimConst::StateIdle1, CreatureAnimConst::StatePose, {});
-            animator.DefineTransition(CreatureAnimConst::StateIdle2, CreatureAnimConst::StatePose, {});
+            animator->DefineTransition(CreatureAnimConst::StateIdle1, CreatureAnimConst::StatePose, {});
+            animator->DefineTransition(CreatureAnimConst::StateIdle2, CreatureAnimConst::StatePose, {});
         }
     }
 }

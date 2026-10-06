@@ -29,8 +29,8 @@ private:
 private:
     EntityHandle mEntityHandle;
     MeshAsset* mMeshAsset = nullptr;
-    cxx::uniqueptr<AnimatingMeshObject> mMeshObject;
-    cxx::uniqueptr<RenderView> mRenderView;
+    AnimatingMeshObjectPtr mMeshObject;
+    RenderViewPtr mRenderView;
 };
 
 //////////////////////////////////////////////////////////////////////////

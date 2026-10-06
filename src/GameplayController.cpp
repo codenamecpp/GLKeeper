@@ -260,7 +260,7 @@ void GameplayController::UpdateHoveredEntity()
 
                 for (const RayHitResult& hitsRoller: hitResults)
                 {
-                    if (const EntityHandle& entity = hitsRoller.mSceneObject->GetOwnerEntity())
+                    if (EntityHandle entity = hitsRoller.mSceneObject->GetOwnerEntity())
                     {
                         cxx_assert(!entity.IsRoom());
                         currHoveredEntity = entity;

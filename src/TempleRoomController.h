@@ -26,7 +26,7 @@ private:
     void DestroyWaterPool();
 
 private:
-    cxx::uniqueptr<EnvironmentMeshObject> mWaterPool;
+    EnvironmentMeshObjectPtr mWaterPool;
     std::vector<MapTile*> mWaterPoolTiles;
     std::optional<Point2D> mHandLocation;
 };

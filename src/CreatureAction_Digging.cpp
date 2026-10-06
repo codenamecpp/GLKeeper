@@ -39,14 +39,15 @@ void CreatureAction_Digging::HandleLeaveAction()
 
 void CreatureAction_Digging::HandleUpdateLogic(float stepDeltaTime)
 {
-    Animator& animator = GetCreature().GetAnimator();
+    Animator* animator = GetCreature().GetAnimator();
+    cxx_assert(animator);
 
     if (IsCancellationRequested() || !ProcessTileDigging(stepDeltaTime))
     {
         StopTileDigging();
     }
 
-    if (animator.IsCurrentState(CreatureAnimConst::StateDigging) && !animator.IsCurrentStateStopped())
+    if (animator->IsCurrentState(CreatureAnimConst::StateDigging) && !animator->IsCurrentStateStopped())
     {
         // continue with digging
         return;
@@ -100,15 +101,17 @@ void CreatureAction_Digging::StartTileDigging()
 {
     mDigTimer.Start(1.0f);
 
-    Animator& animator = GetCreature().GetAnimator();
-    animator.ChangeState(CreatureAnimConst::StateDigging);
-    animator.SetParamValue(CreatureAnimConst::ParamIsDigging, true);
+    Animator* animator = GetCreature().GetAnimator();
+    cxx_assert(animator);
+    animator->ChangeState(CreatureAnimConst::StateDigging);
+    animator->SetParamValue(CreatureAnimConst::ParamIsDigging, true);
 }
 
 void CreatureAction_Digging::StopTileDigging()
 {
-    Animator& animator = GetCreature().GetAnimator();
-    animator.SetParamValue(CreatureAnimConst::ParamIsDigging, false);
+    Animator* animator = GetCreature().GetAnimator();
+    cxx_assert(animator);
+    animator->SetParamValue(CreatureAnimConst::ParamIsDigging, false);
 }
 
 bool CreatureAction_Digging::ProcessTileDigging(float stepDeltaTime)

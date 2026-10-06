@@ -39,8 +39,8 @@ private:
     void ChangeGoldAmount(long amount);
 
 private:
-    cxx::uniqueptr<AnimatingMeshObject> mPreviewMeshObject;
-    cxx::uniqueptr<RenderView> mPreviewMeshRenderView;
+    AnimatingMeshObjectPtr mPreviewMeshObject;
+    RenderViewPtr mPreviewMeshRenderView;
 
     bool mIsMeshPreviewActive = false;
     bool mRotatePreviewMesh = true;

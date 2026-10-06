@@ -52,8 +52,9 @@ void CreatureAction_ReinforceWall::HandleUpdateLogic(float stepDeltaTime)
         StopReinforcingWall();
     }
 
-    Animator& animator = GetCreature().GetAnimator();
-    if (animator.IsCurrentState(CreatureAnimConst::StateReinforceWall) && !animator.IsCurrentStateStopped())
+    Animator* animator = GetCreature().GetAnimator();
+    cxx_assert(animator);
+    if (animator->IsCurrentState(CreatureAnimConst::StateReinforceWall) && !animator->IsCurrentStateStopped())
     {
         // continue with reinforcement
         return;
@@ -105,15 +106,17 @@ void CreatureAction_ReinforceWall::StartReinforcingWall()
 {
     mReinforceTimer.Start(1.0f);
 
-    Animator& animator = GetCreature().GetAnimator();
-    animator.ChangeState(CreatureAnimConst::StateReinforceWall);
-    animator.SetParamValue(CreatureAnimConst::ParamIsReinforceWall, true);
+    Animator* animator = GetCreature().GetAnimator();
+    cxx_assert(animator);
+    animator->ChangeState(CreatureAnimConst::StateReinforceWall);
+    animator->SetParamValue(CreatureAnimConst::ParamIsReinforceWall, true);
 }
 
 void CreatureAction_ReinforceWall::StopReinforcingWall()
 {
-    Animator& animator = GetCreature().GetAnimator();
-    animator.SetParamValue(CreatureAnimConst::ParamIsReinforceWall, false);
+    Animator* animator = GetCreature().GetAnimator();
+    cxx_assert(animator);
+    animator->SetParamValue(CreatureAnimConst::ParamIsReinforceWall, false);
 }
 
 bool CreatureAction_ReinforceWall::ProcessReinforcingWall(float stepDeltaTime)

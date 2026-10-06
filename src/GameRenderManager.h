@@ -40,7 +40,7 @@ public:
     void UnRegisterDebugVisualizer(IDebugVisualizer* theVisualizer);
 
     // create new render view of game world
-    cxx::uniqueptr<RenderView> CreateRenderView();
+    RenderViewPtr CreateRenderView();
 
 private:
     void RenderWorld(Scene& scene, eRenderLayer renderLayer);

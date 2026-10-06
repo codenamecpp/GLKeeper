@@ -177,3 +177,9 @@ bool Locomotion::CheckAtGoal(const LocomotionGoal& locomotionGoal, const EntityT
 
     return true;
 }
+
+void Locomotion::OnRecycle()
+{
+    ClearGoals();
+    ResetToDefaults();
+}

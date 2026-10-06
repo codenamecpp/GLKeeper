@@ -51,12 +51,14 @@ public:
     void OnCameraTransitionCompleted();
 
 private:
-    void UpdateCampaignTableInteractions(float deltaTime);
+    bool IsSelectingCampaignLevel() const;
+    void UpdateCampaignLevelSelection(float deltaTime);
 
 private:
     FrontendCameraController mCameraController;
     FrontendUi mFrontendUi;
     EntityHandle mHeroGateRoomHandle;
+    CampaignLevelKey mSelectedCampaignLevel {};
 };
 
 //////////////////////////////////////////////////////////////////////////

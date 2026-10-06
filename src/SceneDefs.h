@@ -4,10 +4,21 @@
 
 class Scene;
 class SceneObject;
+
 class EnvironmentMeshObject;
+using EnvironmentMeshObjectPtr = cxx::uniqueptr<EnvironmentMeshObject>;
+
 class AnimatingMeshObject;
+using AnimatingMeshObjectPtr = cxx::uniqueptr<AnimatingMeshObject>;
+
 class ProceduralMeshObject;
+using ProceduralMeshObjectPtr = cxx::uniqueptr<ProceduralMeshObject>;
+
 class RenderView;
+using RenderViewPtr = cxx::uniqueptr<RenderView>;
+
+class Animator;
+using AnimatorPtr = cxx::uniqueptr<Animator>;
 
 //////////////////////////////////////////////////////////////////////////
 

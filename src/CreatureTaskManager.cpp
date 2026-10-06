@@ -286,7 +286,7 @@ void CreatureTaskManager::CreateWorkerSlotsForJob(MapTile* mapTile, eCreatureJob
     
     std::vector<TileWithWorkerSlots>& tilesList = mPlayersWorkerTasks[playerId].mTiles;
     
-    int tileListIndex = cxx::get_first_index_if(tilesList, 
+    int tileListIndex = cxx::get_index_if(tilesList, 
         [mapTile, jobType](const auto& roller)
         {
             return (roller.mMapTile == mapTile) && (roller.mJobType == jobType);
@@ -386,7 +386,7 @@ void CreatureTaskManager::RemoveWorkerSlotsForJob(MapTile* mapTile, eCreatureJob
 
     std::vector<TileWithWorkerSlots>& tilesList = mPlayersWorkerTasks[playerId].mTiles;
     
-    int tileListIndex = cxx::get_first_index_if(tilesList, 
+    int tileListIndex = cxx::get_index_if(tilesList, 
         [mapTile, jobType](const auto& roller)
         {
             return (roller.mMapTile == mapTile) && (roller.mJobType == jobType);
@@ -656,7 +656,7 @@ CreatureTaskPtr CreatureTaskManager::GetCarryGoldToTreasuryTask(Creature* assign
             continue;
         }
         
-        auto* storage = roomInstance->GetCapability<MoneyStorageRoomCapability>();
+        auto* storage = roomInstance->GetCapability<ITreasuryRoom>();
         cxx_assert(storage);
         if (storage == nullptr)
             continue;

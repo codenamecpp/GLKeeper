@@ -55,7 +55,7 @@ long EconomyService::GiveResource(Player& player, eGameResource resourceType, lo
             cxx_assert(roomInstance);
             if (roomInstance == nullptr) 
                 continue;
-            if (auto* moneyStorage = roomInstance->GetCapability<MoneyStorageRoomCapability>())
+            if (auto* moneyStorage = roomInstance->GetCapability<ITreasuryRoom>())
             {
                 long storedMoney = moneyStorage->StoreGold(moneyAmountLeft);
                 moneyAmountLeft -= storedMoney;
@@ -101,7 +101,7 @@ long EconomyService::TakeResource(Player& player, eGameResource resourceType, lo
             cxx_assert(roomInstance);
             if (roomInstance == nullptr) 
                 continue;
-            if (auto* moneyStorage = roomInstance->GetCapability<MoneyStorageRoomCapability>())
+            if (auto* moneyStorage = roomInstance->GetCapability<ITreasuryRoom>())
             {
                 long removedMoney = moneyStorage->DisposeGold(moneyAmountLeft);
                 moneyAmountLeft -= removedMoney;

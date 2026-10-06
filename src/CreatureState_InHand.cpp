@@ -10,7 +10,10 @@ CreatureState_InHand::CreatureState_InHand()
 void CreatureState_InHand::HandleEnterState(eCreatureState prevState)
 {
     GetCreature().UnassignCurrentTask();
-    GetCreature().GetLocomotion().ClearGoals();
+    if (Locomotion* locomotion = GetCreature().GetLocomotion())
+    {
+        locomotion->ClearGoals();
+    }
     GetCreature().SetHighlighted(false);
     GetCreature().EnablePhysics(false);
     GetCreature().EnableMesh(false);

@@ -150,7 +150,8 @@ void AnimatingMeshObject::SetAnimationLoopMode(eAnimationLoopMode loopMode)
 {
     if (HasAnimation())
     {
-        if (mAnimParams.mLoopMode == loopMode) return;
+        if (mAnimParams.mLoopMode == loopMode) 
+            return;
 
         mAnimParams.mLoopMode = loopMode;
         mAnimState.mLoopCount = 0; // force reset loop count
@@ -192,7 +193,8 @@ int AnimatingMeshObject::GetAnimationFrame() const
 
 void AnimatingMeshObject::SetAnimationFrame(int frame)
 {
-    if (!HasAnimation()) return;
+    if (!HasAnimation()) 
+        return;
 
     const int prevFrame = mAnimState.mCurrFrame;
     mAnimState.mCurrFrame = std::clamp(frame, mAnimParams.mFirstFrame, mAnimParams.mLastFrame);
@@ -244,7 +246,8 @@ void AnimatingMeshObject::UpdateFrame(float deltaTime)
 
 void AnimatingMeshObject::RegisterForRendering(SceneRenderLists& renderLists, float distanceToCamera2)
 {
-    if (mMeshAsset == nullptr) return;
+    if (mMeshAsset == nullptr) 
+        return;
 
     bool hasOpaqueParts = false;
     bool hasTranslucentParts = false;
@@ -270,6 +273,51 @@ void AnimatingMeshObject::RegisterForRendering(SceneRenderLists& renderLists, fl
     {
         renderLists.Register(eRenderPass_Translucent, this, GetSceneObjectTypeId(), distanceToCamera2);
     }
+}
+
+bool AnimatingMeshObject::Raycast(const cxx::ray3d_t& ray, float& outDistance) const
+{
+    if (mMeshAsset == nullptr)
+        return SceneObject::Raycast(ray, outDistance);
+
+    const glm::mat4 invTransform = glm::inverse(mTransformation);
+
+    cxx::ray3d_t localRay;
+    localRay.mOrigin = glm::vec3(invTransform * glm::vec4(ray.mOrigin, 1.0f));
+    localRay.mDirection = glm::normalize(glm::vec3(invTransform * glm::vec4(ray.mDirection, 0.0f)));
+
+    bool hasHit = false;
+    float closestDistance = std::numeric_limits<float>::max();
+
+    glm::vec3 localHitPoint {};
+
+    int subMeshIndex = 0;
+    for (const MeshAsset::SubMesh& subMesh: mMeshAsset->GetSubMeshList())
+    {
+        const glm::vec3* vertices = mMeshAsset->GetFrameVertices(subMeshIndex, mAnimState.mCurrFrame);
+        for (const glm::ivec3& triangle: subMesh.mTris)
+        {
+            bool found = cxx::intersects(localRay, 
+                vertices[triangle.x],
+                vertices[triangle.y],
+                vertices[triangle.z], localHitPoint);
+            if (found)
+            {
+                float dist = glm::dot(localHitPoint - localRay.mOrigin, localRay.mDirection);
+                if ((dist > 0.0f) && (dist < closestDistance))
+                {
+                    closestDistance = dist;
+                    hasHit = true;
+                }
+            }
+        }
+        ++subMeshIndex;
+    }
+    if (hasHit)
+    {
+        outDistance = closestDistance;
+    }
+    return hasHit;
 }
 
 void AnimatingMeshObject::OnRecycle()

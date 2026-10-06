@@ -81,6 +81,7 @@ public:
     // override SceneObject
     void UpdateFrame(float deltaTime) override;
     void RegisterForRendering(SceneRenderLists& renderLists, float distanceToCamera2) override;
+    bool Raycast(const cxx::ray3d_t& ray, float& outDistance) const override;
 
     // pool
     void OnRecycle() override;

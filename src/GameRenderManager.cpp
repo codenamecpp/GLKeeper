@@ -230,7 +230,7 @@ void GameRenderManager::UnRegisterDebugVisualizer(IDebugVisualizer* theVisualize
     cxx::erase(mDebugVisializers, theVisualizer);
 }
 
-cxx::uniqueptr<RenderView> GameRenderManager::CreateRenderView()
+RenderViewPtr GameRenderManager::CreateRenderView()
 {
     static SimplePool<RenderView> viewsPool = (
         [](RenderView* renderView)
@@ -243,7 +243,7 @@ cxx::uniqueptr<RenderView> GameRenderManager::CreateRenderView()
     cxx_assert(!cxx::contains(mRenderViews, renderViewPtr));
     // register
     mRenderViews.push_back(renderViewPtr);
-    return std::move(cxx::uniqueptr<RenderView> (renderViewPtr, [](RenderView* renderView)
+    return std::move(RenderViewPtr (renderViewPtr, [](RenderView* renderView)
         {
             if (renderView)
             {

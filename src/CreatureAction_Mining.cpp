@@ -47,8 +47,9 @@ void CreatureAction_Mining::HandleUpdateLogic(float stepDeltaTime)
         StopTileMining();
     }
 
-    Animator& animator = GetCreature().GetAnimator();
-    if (animator.IsCurrentState(CreatureAnimConst::StateDigging) && !animator.IsCurrentStateStopped())
+    Animator* animator = GetCreature().GetAnimator();
+    cxx_assert(animator);
+    if (animator->IsCurrentState(CreatureAnimConst::StateDigging) && !animator->IsCurrentStateStopped())
     {
         // continue with mining
         return;
@@ -100,15 +101,17 @@ void CreatureAction_Mining::StartTileMining()
 {
     mMineTimer.Start(1.0f);
 
-    Animator& animator = GetCreature().GetAnimator();
-    animator.ChangeState(CreatureAnimConst::StateDigging);
-    animator.SetParamValue(CreatureAnimConst::ParamIsDigging, true);
+    Animator* animator = GetCreature().GetAnimator();
+    cxx_assert(animator);
+    animator->ChangeState(CreatureAnimConst::StateDigging);
+    animator->SetParamValue(CreatureAnimConst::ParamIsDigging, true);
 }
 
 void CreatureAction_Mining::StopTileMining()
 {
-    Animator& animator = GetCreature().GetAnimator();
-    animator.SetParamValue(CreatureAnimConst::ParamIsDigging, false);
+    Animator* animator = GetCreature().GetAnimator();
+    cxx_assert(animator);
+    animator->SetParamValue(CreatureAnimConst::ParamIsDigging, false);
 }
 
 bool CreatureAction_Mining::ProcessTileMining(float stepDeltaTime)

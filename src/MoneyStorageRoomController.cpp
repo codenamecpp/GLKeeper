@@ -25,7 +25,7 @@ void MoneyStorageRoomController::ConfigureInstance(Room* roomInstance)
     cxx_assert(mMoneyComponent);
 
     // setup capabilities
-    GetRoom().SetCapability<MoneyStorageRoomCapability>(this);
+    GetRoom().AddCapability<ITreasuryRoom>(this);
 }
 
 void MoneyStorageRoomController::SpawnInstance()
@@ -147,7 +147,7 @@ long MoneyStorageRoomController::DisposeGold(long goldAmount)
         if (objectInstance == nullptr) 
             continue;
 
-        auto* storageCapability = objectInstance->GetCapability<GoldContainerCapability>();
+        auto* storageCapability = objectInstance->GetCapability<IGoldContainer>();
         if (storageCapability == nullptr) 
             continue;
 
@@ -169,7 +169,7 @@ long MoneyStorageRoomController::DisposeGold(long goldAmount)
     }
 
     // release objects
-    for (const EntityHandle& roller: releaseObjects)
+    for (EntityHandle roller: releaseObjects)
     {
         if (!UnassignObjectFromStorage(roller))
         {
@@ -207,7 +207,7 @@ bool MoneyStorageRoomController::GetTileToStoreGold(Point2D& tileLocation)
             {
                 continue;
             }
-            auto* storageCapability = objectInstance->GetCapability<GoldContainerCapability>();
+            auto* storageCapability = objectInstance->GetCapability<IGoldContainer>();
             cxx_assert(storageCapability);
             if (storageCapability == nullptr)
             {
@@ -242,7 +242,7 @@ void MoneyStorageRoomController::StoredObjectUnassigned(EntityHandle entityHandl
     if (gameObject->GetClassId() == GameObjectClassId_GoldPile) 
         return;
 
-    if (auto* goldContainer = gameObject->GetCapability<GoldContainerCapability>())
+    if (auto* goldContainer = gameObject->GetCapability<IGoldContainer>())
     {
         long goldAmount = goldContainer->GetStoredGoldAmount();
         if (goldAmount > 0)
@@ -307,7 +307,7 @@ void MoneyStorageRoomController::SyncStoredMoneyAmount()
             cxx_assert(false);
             continue;
         }
-        if (auto* goldContainer = gameObject->GetCapability<GoldContainerCapability>())
+        if (auto* goldContainer = gameObject->GetCapability<IGoldContainer>())
         {
             currentGoldAmount += goldContainer->GetStoredGoldAmount();
         }
@@ -341,7 +341,7 @@ void MoneyStorageRoomController::ScanForLooseGold()
         if (storageTile == nullptr)
             continue;
 
-        auto* goldContainer = gameObject->GetCapability<GoldContainerCapability>();
+        auto* goldContainer = gameObject->GetCapability<IGoldContainer>();
         cxx_assert(goldContainer);
         
         // try store on target tile first
@@ -446,7 +446,7 @@ long MoneyStorageRoomController::StoreGoldInContainer(EntityHandle objectHandle,
     cxx_assert(gameObject);
     if (gameObject)
     {
-        if (auto* storageCapability = gameObject->GetCapability<GoldContainerCapability>())
+        if (auto* storageCapability = gameObject->GetCapability<IGoldContainer>())
         {
             return storageCapability->StoreGold(goldAmount);
         }

@@ -70,7 +70,7 @@ void Player::AddToInventory(EntityHandle entity)
             mRoomsByType[definition->mRoomType].push_back(entity);
 
             // money storage?
-            if (roomInstance->HasCapability<MoneyStorageRoomCapability>())
+            if (roomInstance->HasCapability<ITreasuryRoom>())
             {
                 mMoneyStorageRooms.push_back(entity);
             }

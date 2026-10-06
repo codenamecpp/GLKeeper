@@ -44,7 +44,7 @@ private:
     static Color32 GetColorForTint(eSelectionTint tint);
         
 private:
-    cxx::uniqueptr<ProceduralMeshObject> mMeshObject;
+    ProceduralMeshObjectPtr mMeshObject;
     Rect2D mSelectionArea {0, 0, 0, 0};
 
     eSelectionTint mSelectionTint = eSelectionTint_Blue;

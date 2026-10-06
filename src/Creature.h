@@ -133,31 +133,53 @@ public:
 
     inline eCreatureJob GetLastAssignedJob() const { return mLastAssignedJob; }
 
-    // accessing primary components
+    //////////////////////////////////////////////////////////////////////////
+
+    // component shortcuts
+
     inline AnimatingMeshObject* GetMeshObject() const 
-    { 
-        return mMeshObject.get(); 
+    {
+        const AnimatingMeshComponent* component = GetComponent<AnimatingMeshComponent>();
+        return component ? component->mMeshObject.get() : nullptr;
     }
-    inline Locomotion& GetLocomotion() { return mLocomotion; }
-    inline Animator& GetAnimator() { return mAnimator; }
+
+    inline PhysicsObject* GetPhysics() const
+    {
+        const PhysicsComponent* component = GetComponent<PhysicsComponent>();
+        return component ? component->mPhysicsObject.get() : nullptr;
+    }
+
+    inline Locomotion* GetLocomotion() const 
+    { 
+        const LocomotionComponent* component = GetComponent<LocomotionComponent>();
+        return component ? component->mLoco.get() : nullptr;
+    }
+
+    inline Animator* GetAnimator() const
+    {
+        const AnimatorComponent* component = GetComponent<AnimatorComponent>();
+        return component ? component->mAnimator.get() : nullptr;
+    }
+
+    //////////////////////////////////////////////////////////////////////////
 
     // override Entity
     void ReceiveMsg(EntityMsg& msgData) override;
 
 private:
 
+    void InitLocomotion();
+
     //////////////////////////////////////////////////////////////////////////
 
     // mesh control
     void InitMesh();
-    void FreeMesh();
     void EnableMesh(bool isEnabled);
 
     //////////////////////////////////////////////////////////////////////////
 
     // physics control
     void InitPhysics();
-    void FreePhysics();
     void EnablePhysics(bool isEnabled);
 
     //////////////////////////////////////////////////////////////////////////
@@ -180,14 +202,9 @@ private:
 private:
     CreatureDefinition* mDefinition = nullptr; // never changes
     CreatureController* mController = nullptr;
-    PhysicsObjectPtr mPhysicsObject = nullptr; // optional
-    Locomotion mLocomotion;
 
     CreatureTaskPtr mAssignedTask;
     eCreatureJob mLastAssignedJob {};
-
-    cxx::uniqueptr<AnimatingMeshObject> mMeshObject;
-    Animator mAnimator;
 
     CreatureStatePtr mCurrState;
     CreatureStatePtr mPrevState;

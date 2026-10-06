@@ -1350,6 +1350,9 @@
     <ClCompile Include="MovieScreen.cpp">
       <Filter>Source\Ui\Screens</Filter>
     </ClCompile>
+    <ClCompile Include="EntityComponents.cpp">
+      <Filter>Source\World\Entity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="ListenersContainer.inl">

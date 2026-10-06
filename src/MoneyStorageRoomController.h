@@ -7,7 +7,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 class MoneyStorageRoomController: public StorageRoomController
-    , protected MoneyStorageRoomCapability
+    , protected ITreasuryRoom
 {
 public:
     MoneyStorageRoomController();

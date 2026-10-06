@@ -804,7 +804,7 @@ void Room::HandleRoomFurnitureObjects(cxx::span<RoomFurnitureSlot> newObjects, R
         cxx_assert(gameObject);
 
         // setup params
-        gameObject->SetMeshResource(currentObject.mObjectMeshId);
+        gameObject->SetObjectMesh(currentObject.mObjectMeshId);
         gameObject->ParentRoomChanged(GetOwnHandle());
 
         // setup object position and rotation
@@ -947,7 +947,7 @@ void Room::ReassignStorageSlotObject(const Point2D& tileLocation, EntityHandle e
 
 int Room::GetStorageSlotIndex(EntityHandle entityHandle) const
 {
-    const int slotIndex = cxx::get_first_index_if(mStorageSlots, [&entityHandle](const RoomStorageSlot& storageSlot)
+    const int slotIndex = cxx::get_index_if(mStorageSlots, [&entityHandle](const RoomStorageSlot& storageSlot)
         { 
             return (storageSlot.mObjectHandle == entityHandle);
         });

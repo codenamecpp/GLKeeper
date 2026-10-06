@@ -486,7 +486,7 @@ void FrontendUi::MenuPageSkirmishMaps::HandleUiEvent(UiWidget* sender, const UiE
 
     if (eventDesc.IsEvent(UiEventId_OnPress))
     {
-        int rowIndex = cxx::get_first_index_if(mTableRows, [sender](const TableRow& tableRow)
+        int rowIndex = cxx::get_index_if(mTableRows, [sender](const TableRow& tableRow)
             {
                 return (sender == tableRow.mWidget);
             });

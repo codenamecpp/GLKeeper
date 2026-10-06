@@ -13,11 +13,6 @@ class PhysicsObject final: public cxx::noncopyable
 public:
     PhysicsObject() = default;
 
-    void Configure(Entity* entity, const EntityTransform& entityTransform);
-
-    // pool
-    void OnRecycle();
-
     // overrides current transform
     void SetTransform(const EntityTransform& entityTransform);
 
@@ -51,6 +46,12 @@ public:
     { 
         return mCurrTransform.mOrientation; 
     }
+
+private:
+    void Configure(Entity* entity, const EntityTransform& entityTransform);
+
+    // pool
+    void OnRecycle();
 
 private:
     Entity* mEntity = nullptr; // bridge to entity

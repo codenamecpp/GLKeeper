@@ -48,10 +48,10 @@ public:
 
     // the object gets destroyed when its uniqueptr is reset
 
-    cxx::uniqueptr<EnvironmentMeshObject> CreateLavaMesh(cxx::span<MapTile*> mapTiles);
-    cxx::uniqueptr<EnvironmentMeshObject> CreateWaterMesh(cxx::span<MapTile*> mapTiles);
-    cxx::uniqueptr<AnimatingMeshObject> CreateAnimatingMesh();
-    cxx::uniqueptr<ProceduralMeshObject> CreateProceduralMesh();
+    EnvironmentMeshObjectPtr CreateLavaMesh(cxx::span<MapTile*> mapTiles);
+    EnvironmentMeshObjectPtr CreateWaterMesh(cxx::span<MapTile*> mapTiles);
+    AnimatingMeshObjectPtr CreateAnimatingMesh();
+    ProceduralMeshObjectPtr CreateProceduralMesh();
 
     // stats
     inline int GetActiveSceneObjectCount() const 

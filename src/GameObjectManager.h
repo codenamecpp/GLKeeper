@@ -43,16 +43,16 @@ public:
     EntityHandle FindObject(EntityUid objectUid) const;
 
     GameObject* GetObjectPtr(EntityUid objectUid) const;
-    GameObject* GetObjectPtr(const EntityHandle& objectHandle) const;
+    GameObject* GetObjectPtr(EntityHandle objectHandle) const;
 
-    bool ActivateObject(const EntityHandle& objectHandle);
+    bool ActivateObject(EntityHandle objectHandle);
     bool ActivateObject(EntityUid objectUid);
 
-    bool DeleteObject(const EntityHandle& objectHandle);
+    bool DeleteObject(EntityHandle objectHandle);
     bool DeleteObject(EntityUid objectUid);
 
     // check whether the game object was spawned and remains active on map
-    bool ExistsOnMap(const EntityHandle& objectHandle) const;
+    bool ExistsOnMap(EntityHandle objectHandle) const;
 
     // get all currently active gameobjects in game world
     // warning: do not store result

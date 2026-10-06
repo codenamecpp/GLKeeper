@@ -10,7 +10,7 @@ void GoldPileObjectController::ConfigureInstance(GameObject* objectInstance)
     cxx_assert(mMoneyComponent);
 
     // setup capabilities
-    GetGameObject().SetCapability<GoldContainerCapability>(this);
+    GetGameObject().AddCapability<IGoldContainer>(this);
 }
 
 void GoldPileObjectController::SpawnInstance()
@@ -95,5 +95,5 @@ void GoldPileObjectController::SetMeshFromGoldAmount()
         long currStage = std::min((mMoneyComponent->mAmount / goldPerStage), numStages - 1);
         meshId = animIds[currStage];
     }
-    GetGameObject().SetMeshResource(meshId);
+    GetGameObject().SetObjectMesh(meshId);
 }

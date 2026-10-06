@@ -137,7 +137,7 @@ EntityHandle CreatureManager::CreateCreature(CreatureDefinition* definition, ePl
     cxx_assert(definition);
     if (definition == nullptr) return {}; // nothing to create
 
-    int freeSlotIndex = cxx::get_first_index_if(mCreatureSlots, [](const CreatureSlot& slot)
+    int freeSlotIndex = cxx::get_index_if(mCreatureSlots, [](const CreatureSlot& slot)
         {
             return !slot.mCreature;
         });
@@ -175,7 +175,7 @@ Creature* CreatureManager::GetCreaturePtr(EntityUid creatureUid) const
     return GetCreaturePtr(creatureHandle);
 }
 
-Creature* CreatureManager::GetCreaturePtr(const EntityHandle& creatureHandle) const
+Creature* CreatureManager::GetCreaturePtr(EntityHandle creatureHandle) const
 {
     Creature* creatureInstance = nullptr;
     if (creatureHandle.IsCreature() && (creatureHandle.mIndex < mCreatureSlots.size()))
@@ -189,7 +189,7 @@ Creature* CreatureManager::GetCreaturePtr(const EntityHandle& creatureHandle) co
     return creatureInstance;
 }
 
-bool CreatureManager::ActivateCreature(const EntityHandle& creatureHandle)
+bool CreatureManager::ActivateCreature(EntityHandle creatureHandle)
 {
     bool isSuccess = false;
     if (Creature* creatureInstance = GetCreaturePtr(creatureHandle))
@@ -227,7 +227,7 @@ bool CreatureManager::ActivateCreature(EntityUid creatureUid)
     return ActivateCreature(creatureHandle);
 }
 
-bool CreatureManager::DeleteCreature(const EntityHandle& creatureHandle)
+bool CreatureManager::DeleteCreature(EntityHandle creatureHandle)
 {
     bool isSuccess = false;
 
@@ -262,7 +262,7 @@ bool CreatureManager::DeleteCreature(EntityUid creatureUid)
     return DeleteCreature(creatureHandle);
 }
 
-bool CreatureManager::ExistsOnMap(const EntityHandle& creatureHandle) const
+bool CreatureManager::ExistsOnMap(EntityHandle creatureHandle) const
 {
     if (Creature* creature = GetCreaturePtr(creatureHandle))
     {

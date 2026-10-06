@@ -127,7 +127,7 @@ EntityHandle GameObjectManager::CreateObject(GameObjectDefinition* definition)
     cxx_assert(definition);
     if (definition == nullptr) return {}; // nothing to create
 
-    int freeSlotIndex = cxx::get_first_index_if(mObjectSlots, [](const GameObjectSlot& slot)
+    int freeSlotIndex = cxx::get_index_if(mObjectSlots, [](const GameObjectSlot& slot)
         {
             return !slot.mObject;
         });
@@ -206,7 +206,7 @@ GameObject* GameObjectManager::GetObjectPtr(EntityUid objectUid) const
     return GetObjectPtr(objectHandle);
 }
 
-GameObject* GameObjectManager::GetObjectPtr(const EntityHandle& objectHandle) const
+GameObject* GameObjectManager::GetObjectPtr(EntityHandle objectHandle) const
 {
     GameObject* gameObjectPtr = nullptr;
     if (objectHandle.IsGameObject() && (objectHandle.mIndex < mObjectSlots.size()))
@@ -220,7 +220,7 @@ GameObject* GameObjectManager::GetObjectPtr(const EntityHandle& objectHandle) co
     return gameObjectPtr;
 }
 
-bool GameObjectManager::ActivateObject(const EntityHandle& objectHandle)
+bool GameObjectManager::ActivateObject(EntityHandle objectHandle)
 {
     bool isSuccess = false;
     if (GameObject* objectInstance = GetObjectPtr(objectHandle))
@@ -258,7 +258,7 @@ bool GameObjectManager::ActivateObject(EntityUid objectUid)
     return ActivateObject(objectHandle);
 }
 
-bool GameObjectManager::DeleteObject(const EntityHandle& objectHandle)
+bool GameObjectManager::DeleteObject(EntityHandle objectHandle)
 {
     bool isSuccess = false;
 
@@ -293,7 +293,7 @@ bool GameObjectManager::DeleteObject(EntityUid objectUid)
     return DeleteObject(objectHandle);
 }
 
-bool GameObjectManager::ExistsOnMap(const EntityHandle& objectHandle) const
+bool GameObjectManager::ExistsOnMap(EntityHandle objectHandle) const
 {
     if (GameObject* objectInstance = GetObjectPtr(objectHandle))
     {
@@ -463,7 +463,7 @@ void GameObjectManager::RegisterObject(GameObject* objectInstance)
     const eGameObjectCategory objectCategory = objectInstance->GetCategory();
     mActiveObjectsByCategory[objectCategory].push_back(objectInstance);
 
-    if (objectInstance->HasCapability<GoldContainerCapability>())
+    if (objectInstance->HasCapability<IGoldContainer>())
     {
         mActiveGoldContainers.push_back(objectInstance);
     }

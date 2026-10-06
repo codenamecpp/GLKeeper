@@ -113,7 +113,7 @@ namespace cxx
     }
 
     template<typename TContainer, typename TProc>
-    inline int get_first_index_if(const TContainer& container, TProc proc)
+    inline int get_index_if(const TContainer& container, TProc proc)
     {
         int counter = 0;
         for (const auto& roller: container)

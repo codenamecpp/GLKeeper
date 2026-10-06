@@ -10,23 +10,26 @@ CreatureAction_IdleStanding::CreatureAction_IdleStanding()
 
 void CreatureAction_IdleStanding::HandleEnterAction()
 {
-    Animator& animator = GetCreature().GetAnimator();
+    Animator* animator = GetCreature().GetAnimator();
+    cxx_assert(animator);
     // start random idle animation
-    animator.ChangeState(CreatureAnimConst::StateIdleSelector);
+    animator->ChangeState(CreatureAnimConst::StateIdleSelector);
 }
 
 void CreatureAction_IdleStanding::HandleLeaveAction()
 {
-    Animator& animator = GetCreature().GetAnimator();
+    Animator* animator = GetCreature().GetAnimator();
+    cxx_assert(animator);
     // reset to pose
-    animator.ChangeState(CreatureAnimConst::StatePose);
+    animator->ChangeState(CreatureAnimConst::StatePose);
 }
 
 void CreatureAction_IdleStanding::HandleUpdateLogic(float stepDeltaTime)
 {
-    Animator& animator = GetCreature().GetAnimator();
+    Animator* animator = GetCreature().GetAnimator();
+    cxx_assert(animator);
 
-    if (!CreatureAnimConst::IsIdleState(animator.GetCurrentState()) || animator.IsCurrentStateStopped())
+    if (!CreatureAnimConst::IsIdleState(animator->GetCurrentState()) || animator->IsCurrentStateStopped())
     {
         SetActionResult(CreatureAction::eResult_Success);
         return;

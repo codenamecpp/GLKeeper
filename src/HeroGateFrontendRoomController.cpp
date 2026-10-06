@@ -10,6 +10,7 @@
 #include "GameObjectManager.h"
 #include "Scene.h"
 #include "MapUtils.h"
+#include "EntityRegistry.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -26,26 +27,32 @@ void HeroGateFrontendRoomController::PostReconfigureRoom()
 void HeroGateFrontendRoomController::SpawnInstance()
 {
     RoomController::SpawnInstance();
+
+    GetRoom().AddCapability<I3DMapTableRoom>(this);
 }
 
 void HeroGateFrontendRoomController::DespawnInstance()
 {
     RoomController::DespawnInstance();
-    m3dMapTable.reset();
+
+    for (const auto& roller: m3dMapTablePieces)
+    {
+        cxx_assert(roller.first.IsGameObject());
+        gEntities.DeleteEntity(roller.first);
+    }
     m3dMapTablePieces.clear();
+    mSelectedTablePiece = {};
 }
 
 void HeroGateFrontendRoomController::OnRecycle()
 {
     RoomController::OnRecycle();
-    m3dMapTable.reset();
     m3dMapTablePieces.clear();
+    mSelectedTablePiece = {};
 }
 
 void HeroGateFrontendRoomController::EvaluateFloorFurniture(RoomFurnitureSlots& evaluation)
 {
-    // TODO : temporary implementation
-
     const Rect2D& locationArea = GetRoom().GetLocationArea();
 
     Point2D baseLocation {locationArea.x, locationArea.y};
@@ -103,66 +110,115 @@ void HeroGateFrontendRoomController::PostRearrangeObjects()
     }
 }
 
-void HeroGateFrontendRoomController::Init3dMap()
+bool HeroGateFrontendRoomController::IsLevel(EntityHandle objectHandle) const
 {
-    if (m3dMapTable)
+    return objectHandle && cxx::contains_if(m3dMapTablePieces, 
+        [objectHandle](const TablePieceEntry& entry)
+        {
+            return (entry.first == objectHandle) && entry.second;
+        });
+}
+
+bool HeroGateFrontendRoomController::SelectLevel(EntityHandle objectHandle)
+{
+    if (!IsLevel(objectHandle))
+        return false;
+
+    if (mSelectedTablePiece != objectHandle)
+    {
+        DeselectLevel();
+        mSelectedTablePiece = objectHandle;
+
+        if (auto capability = gEntities.GetEntityCapability<I3DMapTableLevel>(mSelectedTablePiece))
+        {
+            capability->SelectLevel();
+        }
+    }
+    return true;
+}
+
+void HeroGateFrontendRoomController::DeselectLevel()
+{
+    if (!mSelectedTablePiece)
         return;
 
-    const Rect2D& locationArea = GetRoom().GetLocationArea();
-
-    Point2D tileLocation {locationArea.x + 1, locationArea.y + 3};
-    glm::vec3 tablePosition = MapUtils::ComputeTileCenter(tileLocation);
-
-    MeshAsset* tableMesh = gMeshAssetManager.GetMesh(FRONT_END_LEVELS_TABLE_MESH);
-
-    m3dMapTable = gScene.CreateAnimatingMesh();
-    m3dMapTable->Configure(tableMesh);
-    m3dMapTable->SetPosition(tablePosition);
-    m3dMapTable->SetObjectActive(true);
-
-    // todo: refactore
-
-    const std::string pieces[] =
+    if (auto capability = gEntities.GetEntityCapability<I3DMapTableLevel>(mSelectedTablePiece))
     {
-        "3dmap_level1",
-        "3dmap_level2",
-        "3dmap_level3",
-        "3dmap_level4",
-        "3dmap_level5",
-        //"3dmap_level6",
-        "3dmap_level6a",
-        "3dmap_level6b",
-        "3dmap_level7",
-        "3dmap_level8",
-        "3dmap_level9",
-        "3dmap_level10",
-        //"3dmap_level11",
-        "3dmap_level11a",
-        "3dmap_level11b",
-        "3dmap_level11c",
-        "3dmap_level12",
-        "3dmap_level13",
-        "3dmap_level14",
-        //"3dmap_level15",
-        "3dmap_level15a",
-        "3dmap_level15b",
-        "3dmap_level16",
-        "3dmap_level17",
-        "3dmap_level18",
-        "3dmap_level19",
-        "3dmap_level20"
-    };
-
-    for (const std::string& roller: pieces)
-    {
-        auto& piecePtr = m3dMapTablePieces.emplace_back();
-
-        MeshAsset* pieceMesh = gMeshAssetManager.GetMesh(roller);
-
-        piecePtr = gScene.CreateAnimatingMesh();
-        piecePtr->Configure(pieceMesh);
-        piecePtr->SetPosition(tablePosition);
-        piecePtr->SetObjectActive(true);
-        piecePtr->SetOwnerEntity(GetRoom().GetOwnHandle());
+        capability->DeselectLevel();
     }
+    mSelectedTablePiece = {};
+}
+
+bool HeroGateFrontendRoomController::GetLevelKey(EntityHandle objectHandle, CampaignLevelKey& levelKey) const
+{
+    const int entryIndex = cxx::get_index_if(m3dMapTablePieces, 
+        [objectHandle](const TablePieceEntry& entry)
+        {
+            return (entry.first == objectHandle) && entry.second;
+        });
+    bool isSuccess = (entryIndex != -1);
+    if (isSuccess)
+    {
+        levelKey = m3dMapTablePieces[entryIndex].second;
+    }
+    return isSuccess;
+}
+
+void HeroGateFrontendRoomController::Init3dMap()
+{
+    bool isInited = !m3dMapTablePieces.empty();
+
+    if (isInited)
+        return;
+
+    const Point2D tableTileLocation = GetRoom().GetLocationArea().GetPosition() + Point2D {1, 3};
+    const glm::vec3 tablePosition = MapUtils::ComputeTileCenter(tableTileLocation);
+
+    m3dMapTablePieces.reserve(36);
+
+    auto createTablePiece = [this, &tablePosition](const CampaignLevelKey& levelKey, const std::string& meshName)
+        {
+            EntityHandle tablePiece = gGameObjectManager.CreateObject(GameObjectClassId_3DFrontEndHeroGateTable);
+            bool isSucces = gGameObjectManager.ActivateObject(tablePiece);
+            if (isSucces)
+            {
+                this->m3dMapTablePieces.emplace_back(tablePiece, levelKey);
+            }
+            cxx_assert(isSucces);
+            // post configure
+            if (GameObject* objectPtr = gGameObjectManager.GetObjectPtr(tablePiece))
+            {
+                objectPtr->ParentRoomChanged(this->GetRoom().GetOwnHandle());
+                objectPtr->SetCustomMesh(meshName);
+                objectPtr->SetPosition(tablePosition);
+            }
+        };
+    createTablePiece({},                                FRONT_END_LEVELS_TABLE_MESH);
+    createTablePiece({eCampaignLevelType_Main, 1},      "3dmap_level1");
+    createTablePiece({eCampaignLevelType_Main, 2},      "3dmap_level2");
+    createTablePiece({eCampaignLevelType_Main, 3},      "3dmap_level3");
+    createTablePiece({eCampaignLevelType_Main, 4},      "3dmap_level4");
+    createTablePiece({eCampaignLevelType_Main, 5},      "3dmap_level5");
+    //"3dmap_level6",
+    createTablePiece({eCampaignLevelType_Main, 6,'a'},  "3dmap_level6a");
+    createTablePiece({eCampaignLevelType_Main, 6,'b'},  "3dmap_level6b");
+    createTablePiece({eCampaignLevelType_Main, 7},      "3dmap_level7");
+    createTablePiece({eCampaignLevelType_Main, 8},      "3dmap_level8");
+    createTablePiece({eCampaignLevelType_Main, 9},      "3dmap_level9");
+    createTablePiece({eCampaignLevelType_Main,10},      "3dmap_level10");
+    //"3dmap_level11",
+    createTablePiece({eCampaignLevelType_Main,11,'a'},  "3dmap_level11a");
+    createTablePiece({eCampaignLevelType_Main,11,'b'},  "3dmap_level11b");
+    createTablePiece({eCampaignLevelType_Main,11,'c'},  "3dmap_level11c");
+    createTablePiece({eCampaignLevelType_Main,12},      "3dmap_level12");
+    createTablePiece({eCampaignLevelType_Main,13},      "3dmap_level13");
+    createTablePiece({eCampaignLevelType_Main,14},      "3dmap_level14");
+    //"3dmap_level15",
+    createTablePiece({eCampaignLevelType_Main,15,'a'},  "3dmap_level15a");
+    createTablePiece({eCampaignLevelType_Main,15,'b'},  "3dmap_level15b");
+    createTablePiece({eCampaignLevelType_Main,16},      "3dmap_level16");
+    createTablePiece({eCampaignLevelType_Main,17},      "3dmap_level17");
+    createTablePiece({eCampaignLevelType_Main,18},      "3dmap_level18");
+    createTablePiece({eCampaignLevelType_Main,19},      "3dmap_level19");
+    createTablePiece({eCampaignLevelType_Main,20},      "3dmap_level20");
 }

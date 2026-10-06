@@ -370,6 +370,7 @@
     <ClCompile Include="DK2Text.cpp" />
     <ClCompile Include="DK2MovieDecoder.cpp" />
     <ClCompile Include="DungeonHeartRoomController.cpp" />
+    <ClCompile Include="EntityComponents.cpp" />
     <ClCompile Include="EntityRegistry.cpp" />
     <ClCompile Include="enums_impl.cpp" />
     <ClCompile Include="Font.cpp" />

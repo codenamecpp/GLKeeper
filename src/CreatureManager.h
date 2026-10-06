@@ -37,16 +37,16 @@ public:
     EntityHandle FindCreature(EntityUid creatureUid) const;
 
     Creature* GetCreaturePtr(EntityUid creatureUid) const;
-    Creature* GetCreaturePtr(const EntityHandle& creatureHandle) const;
+    Creature* GetCreaturePtr(EntityHandle creatureHandle) const;
 
-    bool ActivateCreature(const EntityHandle& creatureHandle);
+    bool ActivateCreature(EntityHandle creatureHandle);
     bool ActivateCreature(EntityUid creatureUid);
 
-    bool DeleteCreature(const EntityHandle& creatureHandle);
+    bool DeleteCreature(EntityHandle creatureHandle);
     bool DeleteCreature(EntityUid creatureUid);
 
     // check whether the creature was spawned and remains active on map
-    bool ExistsOnMap(const EntityHandle& creatureHandle) const;
+    bool ExistsOnMap(EntityHandle creatureHandle) const;
 
     // get all currently active creatures in game world
     // warning: do not store result

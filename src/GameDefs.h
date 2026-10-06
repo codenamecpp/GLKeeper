@@ -121,6 +121,26 @@ enum
 
 //////////////////////////////////////////////////////////////////////////
 
+enum eCampaignLevelType { eCampaignLevelType_Main, eCampaignLevelType_MyPetDungeon, eCampaignLevelType_Secret };
+struct CampaignLevelKey
+{
+public: 
+    CampaignLevelKey() = default;
+    CampaignLevelKey(eCampaignLevelType levelType, char levelNumber, char levelVariant = 0)
+        : mType(levelType)
+        , mNumber(levelNumber)
+        , mVariant(levelVariant)
+    {
+    }
+    inline operator bool () const { return mNumber > 0; }
+public:
+    eCampaignLevelType mType {eCampaignLevelType_Main};
+    char mNumber {}; // 1, 2, 3, 4, 5, 6, 6 ... 20 for main campaign type levels
+    char mVariant {}; // 'a', 'b', 'c' or zero for main campaign type levels 
+};
+
+//////////////////////////////////////////////////////////////////////////
+
 // economy
 
 enum eGameResource

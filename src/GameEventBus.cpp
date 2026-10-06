@@ -83,7 +83,7 @@ void GameEventBus::Subscribe(eGameEvent eventID, GameEventListener* listener)
     if (cxx::contains(subscriptions, listener))
         return;
 
-    int reusePlaceIndex = cxx::get_first_index_if(subscriptions, [](GameEventListener* ptr) { return ptr == nullptr; });
+    int reusePlaceIndex = cxx::get_index_if(subscriptions, [](GameEventListener* ptr) { return ptr == nullptr; });
     if (reusePlaceIndex != -1)
     {
         cxx_assert(subscriptions[reusePlaceIndex] == nullptr); // sanity check

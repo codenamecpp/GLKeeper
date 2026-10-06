@@ -105,7 +105,7 @@ public:
     {
         cxx_assert(!HasComponent<TComponent>());
         auto& component = std::get<std::optional<TComponent>>(mComponents);
-        component.emplace();
+        component.emplace(this);
         return &(*component);
     }
 
@@ -132,7 +132,7 @@ public:
     }
 
     template<typename TCapability>
-    inline void SetCapability(TCapability* capability)
+    inline void AddCapability(TCapability* capability)
     {
         cxx_assert(!HasCapability<TCapability>());
         std::get<TCapability*>(mCapabilities) = capability;
@@ -170,18 +170,26 @@ protected:
 
     //////////////////////////////////////////////////////////////////////////
 
+    #define ENT_COMPONENTS_ENTRY(component_type) std::optional<component_type>
     using TComponentsList = std::tuple<
-            std::optional<MoneyComponent>
+        ENT_COMPONENTS_ENTRY(AnimatingMeshComponent),
+        ENT_COMPONENTS_ENTRY(PhysicsComponent),
+        ENT_COMPONENTS_ENTRY(AnimatorComponent),
+        ENT_COMPONENTS_ENTRY(LocomotionComponent),
+        ENT_COMPONENTS_ENTRY(MoneyComponent)
         >;
+    #undef ENT_COMPONENTS_ENTRY
     TComponentsList mComponents;
 
-    //////////////////////////////////////////////////////////////////////////
-
+    #define ENT_CAPABILIES_ENTRY(interface_type) interface_type*
     using TCapabilitiesList = std::tuple<
-            MoneyStorageRoomCapability*,
-            ObjectStorageRoomCapability*,
-            GoldContainerCapability*
+        ENT_CAPABILIES_ENTRY(ITreasuryRoom),
+        ENT_CAPABILIES_ENTRY(IStorageRoom),
+        ENT_CAPABILIES_ENTRY(IGoldContainer),
+        ENT_CAPABILIES_ENTRY(I3DMapTableLevel),
+        ENT_CAPABILIES_ENTRY(I3DMapTableRoom)
         >;
+    #undef ENT_CAPABILIES_ENTRY
     TCapabilitiesList mCapabilities;
 };
 

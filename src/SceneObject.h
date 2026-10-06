@@ -33,6 +33,13 @@ public:
         // do nothing
     }
 
+    // performs raycast against mesh geometry
+    // precise, but slower than AABB test
+    virtual bool Raycast(const cxx::ray3d_t& ray, float& outDistance) const
+    {
+        return true;
+    }
+
     // enable or disable visual object
     // disabled objects will not be rendered / updated
     void SetObjectActive(bool isActive);
@@ -86,7 +93,7 @@ public:
     inline RenderLayerSet& GetRenderLayers() { return mRenderLayers; }
     inline const RenderLayerSet& GetRenderLayers() const { return mRenderLayers; }
 
-    inline const EntityHandle& GetOwnerEntity() const { return mOwnerEntity; }
+    inline EntityHandle GetOwnerEntity() const { return mOwnerEntity; }
     inline void SetOwnerEntity(EntityHandle entityHandle)
     {
         mOwnerEntity = entityHandle;
@@ -129,3 +136,5 @@ protected:
     bool mTransformDirty: 1;
     bool mBoundingBoxDirty: 1;
 };
+
+//////////////////////////////////////////////////////////////////////////

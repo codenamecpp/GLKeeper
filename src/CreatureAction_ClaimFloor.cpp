@@ -50,8 +50,9 @@ void CreatureAction_ClaimFloor::HandleUpdateLogic(float stepDeltaTime)
         StopClaimFloor();
     }
 
-    Animator& animator = GetCreature().GetAnimator();
-    if (animator.IsCurrentState(CreatureAnimConst::StateClaimFloor) && !animator.IsCurrentStateStopped())
+    Animator* animator = GetCreature().GetAnimator();
+    cxx_assert(animator);
+    if (animator->IsCurrentState(CreatureAnimConst::StateClaimFloor) && !animator->IsCurrentStateStopped())
     {
         // continue with claiming
         return;
@@ -96,15 +97,17 @@ void CreatureAction_ClaimFloor::StartClaimFloor()
 {
     mClaimTimer.Start(1.0f);
 
-    Animator& animator = GetCreature().GetAnimator();
-    animator.ChangeState(CreatureAnimConst::StateClaimFloor);
-    animator.SetParamValue(CreatureAnimConst::ParamIsClaimFloor, true);
+    Animator* animator = GetCreature().GetAnimator();
+    cxx_assert(animator);
+    animator->ChangeState(CreatureAnimConst::StateClaimFloor);
+    animator->SetParamValue(CreatureAnimConst::ParamIsClaimFloor, true);
 }
 
 void CreatureAction_ClaimFloor::StopClaimFloor()
 {
-    Animator& animator = GetCreature().GetAnimator();
-    animator.SetParamValue(CreatureAnimConst::ParamIsClaimFloor, false);
+    Animator* animator = GetCreature().GetAnimator();
+    cxx_assert(animator);
+    animator->SetParamValue(CreatureAnimConst::ParamIsClaimFloor, false);
 }
 
 bool CreatureAction_ClaimFloor::ProcessClaimFloor(float stepDeltaTime)

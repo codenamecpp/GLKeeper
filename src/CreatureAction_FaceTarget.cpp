@@ -22,8 +22,9 @@ void CreatureAction_FaceTarget::OnRecycle()
 
 void CreatureAction_FaceTarget::HandleEnterAction()
 {
-    Locomotion& locomotion = GetCreature().GetLocomotion();
-    locomotion.ClearGoals();
+    Locomotion* locomotion = GetCreature().GetLocomotion();
+    cxx_assert(locomotion);
+    locomotion->ClearGoals();
 
     // face to target tile
     if (mTargetMapTile)
@@ -38,12 +39,12 @@ void CreatureAction_FaceTarget::HandleEnterAction()
         {
             const glm::vec2 creaturePosition = GetCreature().GetPosition2d();
             const glm::vec2 faceTargetPosition = creaturePosition + glm::vec2{horz_delta * 1.0f, vert_delta * 1.0f};
-            locomotion.OrientToPoint(faceTargetPosition, GetCreature().GetTransform());
+            locomotion->OrientToPoint(faceTargetPosition, GetCreature().GetTransform());
         }
         else
         {
             glm::vec2 centerPoint = MapUtils::ComputeTileCenter2d(targetTile);
-            locomotion.OrientToPoint(centerPoint, GetCreature().GetTransform());
+            locomotion->OrientToPoint(centerPoint, GetCreature().GetTransform());
         }
         return;
     }
@@ -51,8 +52,9 @@ void CreatureAction_FaceTarget::HandleEnterAction()
 
 void CreatureAction_FaceTarget::HandleLeaveAction()
 {
-    Locomotion& locomotion = GetCreature().GetLocomotion();
-    locomotion.ClearGoals();
+    Locomotion* locomotion = GetCreature().GetLocomotion();
+    cxx_assert(locomotion);
+    locomotion->ClearGoals();
 }
 
 void CreatureAction_FaceTarget::HandleUpdateLogic(float stepDeltaTime)
@@ -63,8 +65,9 @@ void CreatureAction_FaceTarget::HandleUpdateLogic(float stepDeltaTime)
         return;
     }
 
-    Locomotion& locomotion = GetCreature().GetLocomotion();
-    if (!locomotion.HasGoals())
+    Locomotion* locomotion = GetCreature().GetLocomotion();
+    cxx_assert(locomotion);
+    if (!locomotion->HasGoals())
     {
         SetActionResult(CreatureAction::eResult_Success);
         return;

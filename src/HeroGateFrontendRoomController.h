@@ -9,6 +9,7 @@
 
 // Hero Gate FrontEnd Room Logic
 class HeroGateFrontendRoomController: public RoomController
+    , protected I3DMapTableRoom
 {
 public:
     HeroGateFrontendRoomController() = default;
@@ -21,10 +22,19 @@ public:
     void PostReconfigureRoom() override;
     void PostRearrangeObjects() override;
 
+    // override I3DMapTableRoom
+    bool IsLevel(EntityHandle objectHandle) const override;
+    bool SelectLevel(EntityHandle objectHandle) override;
+    void DeselectLevel() override;
+    bool GetLevelKey(EntityHandle objectHandle, CampaignLevelKey& levelKey) const override;
+
 protected:
     void Init3dMap();
 
 private:
-    cxx::uniqueptr<AnimatingMeshObject> m3dMapTable;
-    std::vector<cxx::uniqueptr<AnimatingMeshObject>> m3dMapTablePieces;
+    using TablePieceEntry = std::pair<EntityHandle, CampaignLevelKey>;
+    std::vector<TablePieceEntry> m3dMapTablePieces;
+    EntityHandle mSelectedTablePiece {};
 };
+
+//////////////////////////////////////////////////////////////////////////

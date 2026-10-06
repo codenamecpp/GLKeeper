@@ -130,6 +130,7 @@ enum eGameObjectState
 
 enum eGameObjectMeshId
 {
+    eGameObjectMeshId_None, // custom
     eGameObjectMeshId_Main,
     eGameObjectMeshId_Additional1,
     eGameObjectMeshId_Additional2,

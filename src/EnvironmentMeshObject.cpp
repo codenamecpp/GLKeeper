@@ -297,7 +297,7 @@ void EnvironmentMeshObject::ReBuildMesh()
 
             // find same vertex
             // todo: optimize
-            int32_t vidx = cxx::get_first_index_if(mMeshVerts, [&pointPos](const WaterLavaVertex& v)
+            int32_t vidx = cxx::get_index_if(mMeshVerts, [&pointPos](const WaterLavaVertex& v)
                 {
                     return v.mPosition == pointPos;
                 });

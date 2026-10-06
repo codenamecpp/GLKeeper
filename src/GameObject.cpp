@@ -51,13 +51,6 @@ void GameObject::SpawnInstance()
 
     mOwnHandle = gGameObjectManager.FindObject(mInstanceUid);
 
-    // configure locomotion
-    {
-        mLocomotion.ResetToDefaults();
-        mLocomotion.ClearGoals();
-        mLocomotion.SetArriveSpeed(mDefinition->mSpeed);
-    }
-
     // init mesh
     if (mDefinition->mResourceMesh.IsDefined())
     {
@@ -82,8 +75,10 @@ void GameObject::DespawnInstance()
         mController->DespawnInstance();
     }
 
-    mLocomotion.ClearGoals();
-    mLocomotion.ResetToDefaults();
+    if (Locomotion* locomotion = GetLocomotion())
+    {
+        locomotion->ClearGoals();
+    }
 
     EnablePhysics(false);
     ShowMesh(false);
@@ -95,55 +90,34 @@ void GameObject::DespawnInstance()
 
 void GameObject::InitMesh()
 {
-    if (mMeshObject)
-        return;
-
-    mMeshObject = gScene.CreateAnimatingMesh();
-    cxx_assert(mMeshObject);
-
-    if (mMeshObject)
+    if (!HasComponent<AnimatingMeshComponent>())
     {
-        // sync mesh transformation with object
-        mMeshObject->ResetTransformation();
-        mMeshObject->SetPosition(mTransform.mPosition);
-        mMeshObject->RotateAroundAxis(WorldAxes::Y, mTransform.mOrientation);
-
-        // params
-        mMeshObject->SetHighlighted(IsHighlighted());
-        mMeshObject->SetOwnerEntity(GetOwnHandle());
-        mMeshObject->SetObjectActive(true);    
+        cxx_assert(GetMeshObject() == nullptr);
+        AnimatingMeshComponent* component = AddComponent<AnimatingMeshComponent>();
+        cxx_assert(GetMeshObject());
     }
-}
-
-void GameObject::FreeMesh()
-{
-    mMeshObject.reset();
 }
 
 void GameObject::ShowMesh(bool isEnabled)
 {
-    if (mMeshObject)
+    if (AnimatingMeshComponent* component = GetComponent<AnimatingMeshComponent>())
     {
-        bool wasEnabled = mMeshObject->IsObjectActive();
-        if (wasEnabled != isEnabled)
-        {
-            mMeshObject->SetObjectActive(isEnabled);
-        }
+        component->SetEnabled(isEnabled);
     }
 }
 
 void GameObject::SetPosition(const glm::vec3& position)
 {
     mTransform.mPosition = position;
-    if (mMeshObject)
+    if (AnimatingMeshObject* meshObject = GetMeshObject())
     {
-        mMeshObject->SetPosition(mTransform.mPosition);
+        meshObject->SetPosition(mTransform.mPosition);
     }
 
     // sync physics
-    if (mPhysicsObject)
+    if (PhysicsObject* physics = GetPhysics())
     {
-        mPhysicsObject->SetTransform(mTransform);
+        physics->SetTransform(mTransform);
     }
 }
 
@@ -179,16 +153,16 @@ void GameObject::SnapPositionToFloor(bool withRespectToMeshBounds)
 void GameObject::SetOrientation(cxx::angle_t orientation)
 {
     mTransform.mOrientation = orientation;
-    if (mMeshObject)
+    if (AnimatingMeshObject* meshObject = GetMeshObject())
     {
-        mMeshObject->ResetOrientation();
-        mMeshObject->RotateAroundAxis(WorldAxes::Y, mTransform.mOrientation);
+        meshObject->ResetOrientation();
+        meshObject->RotateAroundAxis(WorldAxes::Y, mTransform.mOrientation);
     }
 
     // sync physics
-    if (mPhysicsObject)
+    if (PhysicsObject* physics = GetPhysics())
     {
-        mPhysicsObject->SetTransform(mTransform);
+        physics->SetTransform(mTransform);
     }
 }
 
@@ -200,21 +174,22 @@ void GameObject::SetTransform(const EntityTransform& transform)
 
 const cxx::aabbox& GameObject::GetMeshLocalBounds() const
 {
+    if (AnimatingMeshObject* meshObject = GetMeshObject())
+    {
+        return meshObject->GetLocalBounds();
+    }
     static const cxx::aabbox nullBounds;
-    if (mMeshObject)
-        return mMeshObject->GetLocalBounds();
-
     return nullBounds;
 }
 
 const cxx::aabbox& GameObject::GetMeshWorldBounds() const
 {
-    static const cxx::aabbox nullBounds;
-    if (mMeshObject)
+    if (AnimatingMeshObject* meshObject = GetMeshObject())
     {
-        mMeshObject->ComputeTransformation();
-        return mMeshObject->GetWorldBounds();
+        meshObject->ComputeTransformation();
+        return meshObject->GetWorldBounds();
     }
+    static const cxx::aabbox nullBounds;
     return nullBounds;
 }
 
@@ -232,13 +207,10 @@ void GameObject::OnRecycle()
     mCurrentState = eGameObjectState_None;
     mParentRoom = {};
     mDefinition = nullptr;
-    mMeshResourceId = eGameObjectMeshId_Main;
-
-    FreeMesh();
-    FreePhysics();
+    mObjectMeshId = eGameObjectMeshId_Main;
 }
 
-bool GameObject::HasMeshResource(eGameObjectMeshId meshId) const
+bool GameObject::HasObjectMesh(eGameObjectMeshId meshId) const
 {
     switch (meshId)
     {
@@ -252,9 +224,9 @@ bool GameObject::HasMeshResource(eGameObjectMeshId meshId) const
     return false;
 }
 
-bool GameObject::SetMeshResource(eGameObjectMeshId meshId)
+bool GameObject::SetObjectMesh(eGameObjectMeshId meshId)
 {
-    if (mMeshResourceId == meshId) 
+    if (mObjectMeshId == meshId) 
         return true;
 
     std::reference_wrapper<ArtResourceDefinition> artResource = mDefinition->mResourceMesh;
@@ -277,7 +249,7 @@ bool GameObject::SetMeshResource(eGameObjectMeshId meshId)
 
     if (artResource.get().IsDefined())
     {
-        mMeshResourceId = meshId;
+        mObjectMeshId = meshId;
 
         ShowMesh(true);
         ConfigureMeshResource(artResource.get());
@@ -286,12 +258,40 @@ bool GameObject::SetMeshResource(eGameObjectMeshId meshId)
     return false;
 }
 
+void GameObject::SetCustomMesh(const std::string& meshName)
+{
+    mObjectMeshId = eGameObjectMeshId_None;
+
+    MeshAsset* meshAsset = gMeshAssetManager.GetMesh(meshName);
+    cxx_assert(meshAsset);
+
+    InitMesh();
+
+    AnimatingMeshObject* meshObject = GetMeshObject();
+    cxx_assert(meshObject);
+
+    if (meshAsset->GetAnimFramesCount() > 0)
+    {
+        AnimationParams animParams;
+        animParams.mFirstFrame = 0;
+        animParams.mLastFrame = (meshAsset->GetAnimFramesCount() > 0) ? (meshAsset->GetAnimFramesCount() - 1) : 0;
+        animParams.mLoopMode = eAnimationLoopMode_Repeat;
+
+        meshObject->Configure(meshAsset, animParams);
+        meshObject->ResetAnimationSpeedFactor();
+    }
+    else
+    {
+        meshObject->Configure(meshAsset);
+    }
+}
+
 void GameObject::ConfigureMeshResource(const ArtResourceDefinition& artResource)
 {
     InitMesh();
 
-    if (!mMeshObject) 
-        return;
+    AnimatingMeshObject* meshObject = GetMeshObject();
+    cxx_assert(meshObject);
 
     bool isSucess = false;
 
@@ -299,7 +299,7 @@ void GameObject::ConfigureMeshResource(const ArtResourceDefinition& artResource)
         (artResource.mResourceType == eArtResource_TerrainMesh))
     {
         MeshAsset* meshAsset = gMeshAssetManager.GetMesh(artResource.mResourceName);
-        mMeshObject->Configure(meshAsset);
+        meshObject->Configure(meshAsset);
         isSucess = true;
     }
 
@@ -327,12 +327,12 @@ void GameObject::ConfigureMeshResource(const ArtResourceDefinition& artResource)
                 break;
             }
         }
-        mMeshObject->Configure(meshAsset, animParams);
-        mMeshObject->ResetAnimationSpeedFactor();
+        meshObject->Configure(meshAsset, animParams);
+        meshObject->ResetAnimationSpeedFactor();
         // set random progress
         if (artResource.mRandomStartFrame)
         {
-            mMeshObject->SetAnimationProgress(Random::GenerateFloat01());
+            meshObject->SetAnimationProgress(Random::GenerateFloat01());
         }
         isSucess = true;
     }
@@ -348,14 +348,15 @@ void GameObject::SetCurrentState(eGameObjectState stateId)
 bool GameObject::RescaleAnimationDuration(float animDuration)
 {
     cxx_assert(animDuration > 0.0f);
-    if (mMeshObject && mMeshObject->HasAnimation())
+    AnimatingMeshObject* meshObject = GetMeshObject();
+    if (meshObject && meshObject->HasAnimation())
     {
-        float origDuration = mMeshObject->GetAnimationDuration();
+        float origDuration = meshObject->GetAnimationDuration();
         if (animDuration > 0.0f)
         {
             float speedFactor = origDuration / animDuration;
             cxx_assert(speedFactor > 0.0f);
-            mMeshObject->SetAnimationSpeedFactor(speedFactor);
+            meshObject->SetAnimationSpeedFactor(speedFactor);
         }
         return true;
     }
@@ -364,9 +365,10 @@ bool GameObject::RescaleAnimationDuration(float animDuration)
 
 void GameObject::ResetAnimationDuration()
 {
-    if (mMeshObject && mMeshObject->HasAnimation())
+    AnimatingMeshObject* meshObject = GetMeshObject();
+    if (meshObject && meshObject->HasAnimation())
     {
-        mMeshObject->ResetAnimationSpeedFactor();
+        meshObject->ResetAnimationSpeedFactor();
     }
 }
 
@@ -376,9 +378,9 @@ void GameObject::SetHighlighted(bool isHighlighted)
         return;
 
     mEntityFlags.Set(eEntityFlags_IsHighlighted, isHighlighted);
-    if (mMeshObject)
+    if (AnimatingMeshObject* meshObject = GetMeshObject())
     {
-        mMeshObject->SetHighlighted(isHighlighted);
+        meshObject->SetHighlighted(isHighlighted);
     }
 }
 
@@ -401,34 +403,47 @@ void GameObject::ParentRoomChanged(EntityHandle roomHandle)
 
 void GameObject::EnablePhysics(bool isEnabled)
 {
-    bool wasEnabled = (mPhysicsObject != nullptr);
-    if (wasEnabled != isEnabled)
+    if (PhysicsComponent* component = GetComponent<PhysicsComponent>())
     {
-        if (isEnabled)
-        {
-            InitPhysics();
-        }
-        else
-        {
-            FreePhysics();
-        }
+        component->SetEnabled(isEnabled);
     }
 }
 
 void GameObject::InitPhysics()
 {
-    if (mPhysicsObject)
+    if (HasComponent<PhysicsComponent>())
+    {
+        cxx_assert(GetPhysics());
         return;
+    }
 
-    mPhysicsObject = gPhysics.CreatePhysicsObject(this);
-    cxx_assert(mPhysicsObject);
-    mPhysicsObject->ClearAngularVelocity();
-    mPhysicsObject->ClearLinearVelocity();
+    PhysicsComponent* component = AddComponent<PhysicsComponent>();
+    cxx_assert(component->mPhysicsObject);
+
+    if (PhysicsObject* physics = GetPhysics())
+    {
+        physics->ClearAngularVelocity();
+        physics->ClearLinearVelocity();
+    }
 }
 
-void GameObject::FreePhysics()
+void GameObject::InitLocomotion()
 {
-    mPhysicsObject.reset();
+    if (HasComponent<LocomotionComponent>())
+    {
+        cxx_assert(GetLocomotion());
+        return;
+    }
+
+    LocomotionComponent* component = AddComponent<LocomotionComponent>();
+    cxx_assert(component);
+
+    if (Locomotion* locomotion = GetLocomotion())
+    {
+        locomotion->ResetToDefaults();
+        locomotion->ClearGoals();
+        locomotion->SetArriveSpeed(mDefinition->mSpeed);
+    }
 }
 
 void GameObject::MarkDeleted()
@@ -455,17 +470,20 @@ void GameObject::UpdateFrame(float deltaTime)
 void GameObject::UpdatePhysics(float stepDeltaTime)
 {
     // process locomotion
-    if (mLocomotion.HasGoals())
+    if (Locomotion* locomotion = GetLocomotion())
     {
-        Locomotion::VelocitiesResult velocities = mLocomotion.ProcessGoals(stepDeltaTime, GetTransform());
-        // notify self
-        if (mLocomotion.HasGoals())
+        if (locomotion->HasGoals())
         {
-            ReceiveMsg(EntityMsg_LocoApplyVelocities{velocities.mLinearVelocity, velocities.mAngularVelocity});
-        }
-        else
-        {
-            ReceiveMsg(EntityMsg_LocoClearVelocities{});
+            Locomotion::VelocitiesResult velocities = locomotion->ProcessGoals(stepDeltaTime, GetTransform());
+            // notify self
+            if (locomotion->HasGoals())
+            {
+                ReceiveMsg(EntityMsg_LocoApplyVelocities{velocities.mLinearVelocity, velocities.mAngularVelocity});
+            }
+            else
+            {
+                ReceiveMsg(EntityMsg_LocoClearVelocities{});
+            }
         }
     }
 }
@@ -477,10 +495,10 @@ void GameObject::ReceiveMsg(EntityMsg& msgData)
 
     if (msgData.Is(EntityMsg::eID_LocoApplyVelocities))
     {
-        if (mPhysicsObject)
+        if (PhysicsObject* physics = GetPhysics())
         {
-            mPhysicsObject->SetLinearVelocity(msgData.mLocoVelocities.mLinear);
-            mPhysicsObject->SetAngularVelocity(msgData.mLocoVelocities.mAngular);
+            physics->SetLinearVelocity(msgData.mLocoVelocities.mLinear);
+            physics->SetAngularVelocity(msgData.mLocoVelocities.mAngular);
         }
         msgData.SetConsumed();
         return;
@@ -488,10 +506,10 @@ void GameObject::ReceiveMsg(EntityMsg& msgData)
 
     if (msgData.Is(EntityMsg::eID_LocoClearVelocities))
     {
-        if (mPhysicsObject)
+        if (PhysicsObject* physics = GetPhysics())
         {
-            mPhysicsObject->ClearLinearVelocity();
-            mPhysicsObject->ClearAngularVelocity();
+            physics->ClearLinearVelocity();
+            physics->ClearAngularVelocity();
         }
         msgData.SetConsumed();
         return;
@@ -499,14 +517,14 @@ void GameObject::ReceiveMsg(EntityMsg& msgData)
 
     if (msgData.Is(EntityMsg::eID_SyncWithPhysicsTransform))
     {
-        if (mPhysicsObject)
+        if (PhysicsObject* physics = GetPhysics())
         {
-            mTransform = mPhysicsObject->GetTransform();
-            if (mMeshObject)
+            mTransform = physics->GetTransform();
+            if (AnimatingMeshObject* meshObject = GetMeshObject())
             {
-                mMeshObject->SetPosition(mTransform.mPosition);
-                mMeshObject->ResetOrientation();
-                mMeshObject->RotateAroundAxis(WorldAxes::Y, mTransform.mOrientation);
+                meshObject->SetPosition(mTransform.mPosition);
+                meshObject->ResetOrientation();
+                meshObject->RotateAroundAxis(WorldAxes::Y, mTransform.mOrientation);
             }
         }
         msgData.SetConsumed();

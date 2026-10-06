@@ -41,16 +41,16 @@ public:
     EntityHandle FindRoom(EntityUid instanceUid) const;
 
     Room* GetRoomPtr(EntityUid instanceUid) const;
-    Room* GetRoomPtr(const EntityHandle& roomHandle) const;
+    Room* GetRoomPtr(EntityHandle roomHandle) const;
 
-    bool ActivateRoom(const EntityHandle& roomHandle);
+    bool ActivateRoom(EntityHandle roomHandle);
     bool ActivateRoom(EntityUid instanceUid);
 
-    bool DeleteRoom(const EntityHandle& roomHandle);
+    bool DeleteRoom(EntityHandle roomHandle);
     bool DeleteRoom(EntityUid instanceUid);
 
     // check whether the room was spawned and remains active on map
-    bool ExistsOnMap(const EntityHandle& roomHandle) const;
+    bool ExistsOnMap(EntityHandle roomHandle) const;
 
     // get all currently active rooms in game world
     // warning: do not store result

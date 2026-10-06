@@ -285,7 +285,7 @@ void GameWorld::CreateEnvironmentEntities()
             continue;
         }
 
-        cxx::uniqueptr<EnvironmentMeshObject> lavaSurface = gScene.CreateLavaMesh(tempTiles);
+        EnvironmentMeshObjectPtr lavaSurface = gScene.CreateLavaMesh(tempTiles);
         cxx_assert(lavaSurface);
         if (lavaSurface)
         {
@@ -313,7 +313,7 @@ void GameWorld::CreateEnvironmentEntities()
             continue;
         }
 
-        cxx::uniqueptr<EnvironmentMeshObject> waterSurface = gScene.CreateWaterMesh(tempTiles);
+        EnvironmentMeshObjectPtr waterSurface = gScene.CreateWaterMesh(tempTiles);
         cxx_assert(waterSurface);
         if (waterSurface)
         {
@@ -352,7 +352,7 @@ void GameWorld::CreateRoomFromUnexploredTiles(MapTile* startTile, const Scenario
     }
     Point2D roomCenter = (minPoint + maxPoint) / 2;
     // check for init params
-    int initParamsIdx = cxx::get_first_index_if(scenarioDefinition.mRoomThings, 
+    int initParamsIdx = cxx::get_index_if(scenarioDefinition.mRoomThings, 
         [&roomCenter, roomDefinition](const ScenarioRoomThing& initParams)
         {
             return (initParams.mRoomType == roomDefinition->mRoomType) && 

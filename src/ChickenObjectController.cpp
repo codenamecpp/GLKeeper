@@ -15,7 +15,8 @@ void ChickenObjectController::SpawnInstance()
 {
     GameObjectController::SpawnInstance();
 
-    GetGameObject().EnablePhysics(true);
+    GetGameObject().InitPhysics();
+    GetGameObject().InitLocomotion();
 
     switch (GetGameObject().GetClassId())
     {
@@ -89,8 +90,9 @@ void ChickenObjectController::UpdateLogic(float stepDeltaTime)
     }
 
     // wait until locomotion is done
-    Locomotion& locomotion = GetGameObject().GetLocomotion();
-    if (locomotion.HasGoals()) 
+    Locomotion* locomotion = GetGameObject().GetLocomotion();
+    cxx_assert(locomotion);
+    if (locomotion->HasGoals()) 
         return;
 
     eGameObjectState currentState = GetGameObject().GetCurrentState();
@@ -115,7 +117,7 @@ void ChickenObjectController::UpdateLogic(float stepDeltaTime)
             cxx::angle_t randomAngle = cxx::angle_t::from_degrees((AngleRangeDegrees * Random::GenerateFloat01()) - (AngleRangeDegrees * 0.5f));
             randomAngle += GetGameObject().GetOrientation();
 
-            locomotion.OrientTo(randomAngle);
+            locomotion->OrientTo(randomAngle);
             return;
         }
 
@@ -139,13 +141,13 @@ void ChickenObjectController::OnRecycle()
 void ChickenObjectController::StartIdle()
 {
     GetGameObject().SetCurrentState(eGameObjectState_DoNothing);
-    GetGameObject().SetMeshResource(eGameObjectMeshId_Additional3);
+    GetGameObject().SetObjectMesh(eGameObjectMeshId_Additional3);
 }
 
 void ChickenObjectController::StartPecking()
 {
     GetGameObject().SetCurrentState(eGameObjectState_Pecking);
-    GetGameObject().SetMeshResource(eGameObjectMeshId_Additional1);
+    GetGameObject().SetObjectMesh(eGameObjectMeshId_Additional1);
     mPeckingChangeDirectionTicks = 0;
     mPeckingChangeDirectionCountdown = 3; // todo: magic numbers
 }
@@ -159,7 +161,7 @@ void ChickenObjectController::Die()
 
 void ChickenObjectController::StartHatching()
 {
-    GetGameObject().SetMeshResource(eGameObjectMeshId_Additional1);
+    GetGameObject().SetObjectMesh(eGameObjectMeshId_Additional1);
     GetGameObject().SetCurrentState(eGameObjectState_Hatching);
     GetGameObject().ResetAnimationDuration();
 
@@ -175,7 +177,7 @@ void ChickenObjectController::InitEgg()
 {
     GetGameObject().SetOrientation(Random::GenerateAngle());
     GetGameObject().SetCurrentState(eGameObjectState_None);
-    GetGameObject().SetMeshResource(eGameObjectMeshId_Main);
+    GetGameObject().SetObjectMesh(eGameObjectMeshId_Main);
 
     mTicksBeforeHatch = 6; // todo: magic numbers
 
@@ -186,8 +188,9 @@ void ChickenObjectController::InitEgg()
 
 void ChickenObjectController::InitChicken()
 {
-    Locomotion& locomotion = GetGameObject().GetLocomotion();
-    locomotion.ClearGoals();
+    Locomotion* locomotion = GetGameObject().GetLocomotion();
+    cxx_assert(locomotion);
+    locomotion->ClearGoals();
 
     mLifetimeTicks = 120;
 
@@ -261,13 +264,14 @@ bool ChickenObjectController::TrySelectRandomMovePoint(glm::vec2& nextMovePoint)
 
 bool ChickenObjectController::TryStartMoveToNextMovePoint(const glm::vec2& nextMovePoint)
 {   
-    Locomotion& locomotion = GetGameObject().GetLocomotion();
+    Locomotion* locomotion = GetGameObject().GetLocomotion();
+    cxx_assert(locomotion);
 
-    locomotion.OrientToPoint(nextMovePoint, GetGameObject().GetTransform());
-    locomotion.ArriveTo(nextMovePoint, false);
+    locomotion->OrientToPoint(nextMovePoint, GetGameObject().GetTransform());
+    locomotion->ArriveTo(nextMovePoint, false);
 
     GetGameObject().SetCurrentState(eGameObjectState_MoveTo);
-    GetGameObject().SetMeshResource(eGameObjectMeshId_Main);
+    GetGameObject().SetObjectMesh(eGameObjectMeshId_Main);
 
     return true;
 }

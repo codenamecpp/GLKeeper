@@ -271,7 +271,6 @@ void CameraEffects::FixCameraPaths()
     }
     if (CameraPath* pathFeStatic1stRight = GetCameraPath(CameraPathId_Frontend_Static1stRight))
     {
-        extendPath(GetCameraPath(CameraPathId_Frontend_TableTo1stRight), *pathFeStatic1stRight);
         extendPath(GetCameraPath(CameraPathId_Frontend_EntryTo1stRight), *pathFeStatic1stRight);
     }
     if (CameraPath* pathFeStatic2ndRight = GetCameraPath(CameraPathId_Frontend_Static2ndRight))

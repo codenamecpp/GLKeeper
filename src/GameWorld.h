@@ -148,7 +148,7 @@ private:
     WorldStatistics mCurrentFrameStats;
     WorldStatistics mPrevFrameStats;
 
-    std::vector<cxx::uniqueptr<EnvironmentMeshObject>> mEnvironmentObjects;
+    std::vector<EnvironmentMeshObjectPtr> mEnvironmentObjects;
 };
 
 //////////////////////////////////////////////////////////////////////////

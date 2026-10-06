@@ -40,7 +40,7 @@ bool QueryService::QueryAccessibleMoneyStorageRoomsForDeposit(ePlayerID playerId
         const Point2D startTileCoord = creature->GetTilePosition();
         const ePassabilityType passabilityType = creature->GetPassabilityType();
 
-        for (const EntityHandle& roomHandle: player.GetOwnedMoneyStorageRooms())
+        for (EntityHandle roomHandle: player.GetOwnedMoneyStorageRooms())
         {
             Room* room = gRoomManager.GetRoomPtr(roomHandle);
             if ((room == nullptr) || !room->ExistsOnMap())
@@ -58,7 +58,7 @@ bool QueryService::QueryAccessibleMoneyStorageRoomsForDeposit(ePlayerID playerId
             if (!gNavigationService.CheckPathExists(startTileCoord, roomTiles[0]->mLocation, passabilityType))
                 continue;
            
-            auto* moneyStorage = room->GetCapability<MoneyStorageRoomCapability>();
+            auto* moneyStorage = room->GetCapability<ITreasuryRoom>();
             cxx_assert(moneyStorage);
             if (moneyStorage == nullptr)
             {

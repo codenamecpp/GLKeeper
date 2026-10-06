@@ -175,12 +175,11 @@ namespace cxx
 
         const TVec direction = target - current;
 
-        float sqDistanceToTarget = glm::length2(direction);
-        if (eps_equals_zero(sqDistanceToTarget) || (sqDistanceToTarget <= (maxDelta * maxDelta)))
+        float distanceToTarget = glm::length(direction);
+        if (eps_equals_zero(distanceToTarget) || (distanceToTarget <= maxDelta))
         {
             return target;
         }
-        float distanceToTarget = std::sqrt(sqDistanceToTarget);
         return current + (direction / distanceToTarget) * maxDelta;
     }
 

@@ -7,7 +7,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 class GoldPileObjectController: public GameObjectController
-    , private GoldContainerCapability
+    , private IGoldContainer
 {
 public:
     GoldPileObjectController() = default;

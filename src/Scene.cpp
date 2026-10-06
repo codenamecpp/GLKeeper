@@ -141,10 +141,10 @@ bool Scene::QueryObjects(const cxx::ray3d_t& ray, Camera& camera, cxx::any_vecto
     return isSuccess;
 }
 
-cxx::uniqueptr<EnvironmentMeshObject> Scene::CreateLavaMesh(cxx::span<MapTile*> mapTiles)
+EnvironmentMeshObjectPtr Scene::CreateLavaMesh(cxx::span<MapTile*> mapTiles)
 {
     EnvironmentMeshObject* objectptr = gEnvironmentMeshObjectsPool.Acquire();
-    cxx::uniqueptr<EnvironmentMeshObject> resultObject (objectptr, [](EnvironmentMeshObject* object)
+    EnvironmentMeshObjectPtr resultObject (objectptr, [](EnvironmentMeshObject* object)
         {
             if (object)
             {
@@ -157,10 +157,10 @@ cxx::uniqueptr<EnvironmentMeshObject> Scene::CreateLavaMesh(cxx::span<MapTile*> 
     return std::move(resultObject);
 }
 
-cxx::uniqueptr<EnvironmentMeshObject> Scene::CreateWaterMesh(cxx::span<MapTile*> mapTiles)
+EnvironmentMeshObjectPtr Scene::CreateWaterMesh(cxx::span<MapTile*> mapTiles)
 {
     EnvironmentMeshObject* objectptr = gEnvironmentMeshObjectsPool.Acquire();
-    cxx::uniqueptr<EnvironmentMeshObject> resultObject (objectptr, [](EnvironmentMeshObject* object)
+    EnvironmentMeshObjectPtr resultObject (objectptr, [](EnvironmentMeshObject* object)
         {
             if (object)
             {
@@ -173,7 +173,7 @@ cxx::uniqueptr<EnvironmentMeshObject> Scene::CreateWaterMesh(cxx::span<MapTile*>
     return std::move(resultObject);
 }
 
-cxx::uniqueptr<AnimatingMeshObject> Scene::CreateAnimatingMesh()
+AnimatingMeshObjectPtr Scene::CreateAnimatingMesh()
 {
     static SimplePool<AnimatingMeshObject> animatingMeshesPool = (
         [](AnimatingMeshObject* object)
@@ -184,7 +184,7 @@ cxx::uniqueptr<AnimatingMeshObject> Scene::CreateAnimatingMesh()
 
     AnimatingMeshObject* objectptr = animatingMeshesPool.Acquire();
     objectptr->SetScene(this);
-    cxx::uniqueptr<AnimatingMeshObject> resultObject (objectptr, [](AnimatingMeshObject* object)
+    AnimatingMeshObjectPtr resultObject (objectptr, [](AnimatingMeshObject* object)
         {
             if (object)
             {
@@ -194,7 +194,7 @@ cxx::uniqueptr<AnimatingMeshObject> Scene::CreateAnimatingMesh()
     return std::move(resultObject);
 }
 
-cxx::uniqueptr<ProceduralMeshObject> Scene::CreateProceduralMesh()
+ProceduralMeshObjectPtr Scene::CreateProceduralMesh()
 {
     static SimplePool<ProceduralMeshObject> proceduralMeshesPool = (
         [](ProceduralMeshObject* object)
@@ -205,7 +205,7 @@ cxx::uniqueptr<ProceduralMeshObject> Scene::CreateProceduralMesh()
 
     ProceduralMeshObject* objectptr = proceduralMeshesPool.Acquire();
     objectptr->SetScene(this);
-    cxx::uniqueptr<ProceduralMeshObject> resultObject (objectptr, [](ProceduralMeshObject* object)
+    ProceduralMeshObjectPtr resultObject (objectptr, [](ProceduralMeshObject* object)
         {
             if (object)
             {

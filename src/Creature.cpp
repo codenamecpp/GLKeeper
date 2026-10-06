@@ -58,18 +58,18 @@ void Creature::SpawnInstance()
     InitMesh();
     EnableMesh(true);
     
-    // configure locomotion
-    {
-        mLocomotion.ResetToDefaults();
-        mLocomotion.SetArriveSpeed(mDefinition->mSpeed);
-    }
-
+    InitLocomotion();
     InitPhysics();
     EnablePhysics(true);
 
     if (mController)
     {
         mController->SpawnInstance();
+    }
+
+    if (Animator* animator = GetAnimator())
+    {
+        animator->Start();
     }
 
     if (mCurrState == nullptr)
@@ -97,8 +97,10 @@ void Creature::DespawnInstance()
     mOwnerId = ePlayerID_Null;
     mOwnHandle = {};
 
-    mLocomotion.ResetToDefaults();
-    mLocomotion.ClearGoals();
+    if (Locomotion* locomotion = GetLocomotion())
+    {
+        locomotion->ClearGoals();
+    }
 
     EnablePhysics(false);
     EnableMesh(false);
@@ -130,11 +132,15 @@ void Creature::UpdateLogic(float stepDeltaTime)
 void Creature::UpdatePhysics(float stepDeltaTime)
 {
     // process locomotion
-    if (mLocomotion.HasGoals())
+
+    Locomotion* locomotion = GetLocomotion();
+    cxx_assert(locomotion);
+
+    if (locomotion->HasGoals())
     {
-        Locomotion::VelocitiesResult velocities = mLocomotion.ProcessGoals(stepDeltaTime, GetTransform());
+        Locomotion::VelocitiesResult velocities = locomotion->ProcessGoals(stepDeltaTime, GetTransform());
         // notify self
-        if (mLocomotion.HasGoals())
+        if (locomotion->HasGoals())
         {
             ReceiveMsg(EntityMsg_LocoApplyVelocities{velocities.mLinearVelocity, velocities.mAngularVelocity});
         }
@@ -148,7 +154,11 @@ void Creature::UpdatePhysics(float stepDeltaTime)
 void Creature::UpdateFrame(float deltaTime)
 {
     // process animations
-    mAnimator.UpdateFrame(deltaTime);
+
+    if (Animator* animator = GetAnimator())
+    {
+        animator->UpdateFrame(deltaTime);
+    }
 
     if (mController)
     {
@@ -159,15 +169,15 @@ void Creature::UpdateFrame(float deltaTime)
 void Creature::SetPosition(const glm::vec3& position)
 {
     mTransform.mPosition = position;
-    if (mMeshObject)
+    if (AnimatingMeshObject* meshObject = GetMeshObject())
     {
-        mMeshObject->SetPosition(mTransform.mPosition);
+        meshObject->SetPosition(mTransform.mPosition);
     }
 
     // sync physics
-    if (mPhysicsObject)
+    if (PhysicsObject* physics = GetPhysics())
     {
-        mPhysicsObject->SetTransform(mTransform);
+        physics->SetTransform(mTransform);
     }
 }
 
@@ -203,16 +213,16 @@ void Creature::SnapPositionToFloor(bool withRespectToMeshBounds)
 void Creature::SetOrientation(cxx::angle_t orientation)
 {
     mTransform.mOrientation = orientation;
-    if (mMeshObject)
+    if (AnimatingMeshObject* meshObject = GetMeshObject())
     {
-        mMeshObject->ResetOrientation();
-        mMeshObject->RotateAroundAxis(WorldAxes::Y, mTransform.mOrientation);
+        meshObject->ResetOrientation();
+        meshObject->RotateAroundAxis(WorldAxes::Y, mTransform.mOrientation);
     }
 
     // sync physics
-    if (mPhysicsObject)
+    if (PhysicsObject* physics = GetPhysics())
     {
-        mPhysicsObject->SetTransform(mTransform);
+        physics->SetTransform(mTransform);
     }
 }
 
@@ -224,9 +234,9 @@ Point2D Creature::GetTilePosition() const
 
 const cxx::aabbox& Creature::GetMeshLocalBounds() const
 {
-    if (mMeshObject)
+    if (AnimatingMeshObject* meshObject = GetMeshObject())
     {
-        return mMeshObject->GetLocalBounds();
+        return meshObject->GetLocalBounds();
     }
     static const cxx::aabbox nullBounds;
     return nullBounds;
@@ -234,10 +244,10 @@ const cxx::aabbox& Creature::GetMeshLocalBounds() const
 
 const cxx::aabbox& Creature::GetMeshWorldBounds() const
 {
-    if (mMeshObject)
+    if (AnimatingMeshObject* meshObject = GetMeshObject())
     {
-        mMeshObject->ComputeTransformation();
-        return mMeshObject->GetWorldBounds();
+        meshObject->ComputeTransformation();
+        return meshObject->GetWorldBounds();
     }
     static const cxx::aabbox nullBounds;
     return nullBounds;
@@ -306,9 +316,10 @@ void Creature::SetHighlighted(bool isHighlighted)
         return;
 
     mEntityFlags.Set(eEntityFlags_IsHighlighted, isHighlighted);
-    if (mMeshObject)
+
+    if (AnimatingMeshObject* meshObject = GetMeshObject())
     {
-        mMeshObject->SetHighlighted(isHighlighted);
+        meshObject->SetHighlighted(isHighlighted);
     }
 }
 
@@ -334,90 +345,89 @@ void Creature::OnRecycle()
     mAssignedTask = nullptr;
 
     mLastAssignedJob = {};
-
-    mLocomotion.ResetToDefaults();
-    mLocomotion.ClearGoals();
-
-    FreePhysics();
-    FreeMesh();
-
     mStateFlags = {};
+}
+
+void Creature::InitLocomotion()
+{
+    if (HasComponent<LocomotionComponent>())
+    {
+        cxx_assert(GetLocomotion());
+        return;
+    }
+
+    LocomotionComponent* component = AddComponent<LocomotionComponent>();
+    cxx_assert(component);
+
+    if (Locomotion* locomotion = GetLocomotion())
+    {
+        locomotion->ResetToDefaults();
+        locomotion->SetArriveSpeed(mDefinition->mSpeed);
+    }
 }
 
 void Creature::InitMesh()
 {
-    if (mMeshObject)
-        return;
+    // init mesh component
 
-    // init mesh
-    mMeshObject = gScene.CreateAnimatingMesh();
-    cxx_assert(mMeshObject);
-
-    if (mMeshObject)
+    if (!HasComponent<AnimatingMeshComponent>())
     {
-        // sync mesh transformation with object
-        mMeshObject->ResetTransformation();
-        mMeshObject->SetPosition(mTransform.mPosition);
-        mMeshObject->RotateAroundAxis(WorldAxes::Y, mTransform.mOrientation);
+        cxx_assert(GetMeshObject() == nullptr);
+        AnimatingMeshComponent* component = AddComponent<AnimatingMeshComponent>();
+        cxx_assert(GetMeshObject());
     }
 
-    // init animator
-    if (mMeshObject)
-    {
-        mMeshObject->SetHighlighted(IsHighlighted());
-        mMeshObject->SetOwnerEntity(GetOwnHandle());
-        mMeshObject->SetObjectActive(true);
-    }
-    mAnimator.Configure(mMeshObject.get());
-}
+    // init animator component
 
-void Creature::FreeMesh()
-{
-    mMeshObject.reset();
-    mAnimator.Clear();
+    if (!HasComponent<AnimatorComponent>())
+    {
+        cxx_assert(GetAnimator() == nullptr);
+
+        AnimatorComponent* component = AddComponent<AnimatorComponent>();
+        cxx_assert(component);
+
+        if (Animator* animator = GetAnimator())
+        {
+            animator->Configure(GetMeshObject());
+        }
+    }
 }
 
 void Creature::EnableMesh(bool isEnabled)
 {
-    if (mMeshObject)
+    if (AnimatingMeshObject* meshObject = GetMeshObject())
     {
-        bool wasEnabled = mMeshObject->IsObjectActive();
+        bool wasEnabled = meshObject->IsObjectActive();
         if (wasEnabled != isEnabled)
         {
-            mMeshObject->SetObjectActive(isEnabled);
+            meshObject->SetObjectActive(isEnabled);
         }
     }
 }
 
 void Creature::InitPhysics()
 {
-    if (mPhysicsObject)
+    if (HasComponent<PhysicsComponent>())
+    {
+        cxx_assert(GetPhysics());
         return;
+    }
 
-    mPhysicsObject = gPhysics.CreatePhysicsObject(this);
-    cxx_assert(mPhysicsObject);
-    mPhysicsObject->ClearAngularVelocity();
-    mPhysicsObject->ClearLinearVelocity();
-}
+    PhysicsComponent* component = AddComponent<PhysicsComponent>();
+    cxx_assert(component->mPhysicsObject);
 
-void Creature::FreePhysics()
-{
-    mPhysicsObject.reset();
+    if (PhysicsObject* physics = GetPhysics())
+    {
+        physics->ClearAngularVelocity();
+        physics->ClearLinearVelocity();
+    }
 }
 
 void Creature::EnablePhysics(bool isEnabled)
 {
-    bool wasEnabled = (mPhysicsObject != nullptr);
-    if (wasEnabled != isEnabled) 
+    if (PhysicsComponent* component = GetComponent<PhysicsComponent>())
     {
-        if (isEnabled)
-        {
-            InitPhysics();
-        }
-        else
-        {
-            FreePhysics();
-        }
+        component->SetEnabled(isEnabled);
     }
 }
 
@@ -428,14 +438,14 @@ void Creature::ReceiveMsg(EntityMsg& msgData)
 
     if (msgData.Is(EntityMsg::eID_SyncWithPhysicsTransform))
     {
-        if (mPhysicsObject)
+        if (PhysicsObject* physics = GetPhysics())
         {
-            mTransform = mPhysicsObject->GetTransform();
-            if (mMeshObject)
+            mTransform = physics->GetTransform();
+            if (AnimatingMeshObject* meshObject = GetMeshObject())
             {
-                mMeshObject->SetPosition(mTransform.mPosition);
-                mMeshObject->ResetOrientation();
-                mMeshObject->RotateAroundAxis(WorldAxes::Y, mTransform.mOrientation);
+                meshObject->SetPosition(mTransform.mPosition);
+                meshObject->ResetOrientation();
+                meshObject->RotateAroundAxis(WorldAxes::Y, mTransform.mOrientation);
             }
         }
         msgData.SetConsumed();
@@ -444,20 +454,20 @@ void Creature::ReceiveMsg(EntityMsg& msgData)
 
     if (msgData.Is(EntityMsg::eID_LocoApplyVelocities))
     {
-        if (mPhysicsObject)
+        if (PhysicsObject* physics = GetPhysics())
         {
-            mPhysicsObject->SetLinearVelocity(msgData.mLocoVelocities.mLinear);
-            mPhysicsObject->SetAngularVelocity(msgData.mLocoVelocities.mAngular);
+            physics->SetLinearVelocity(msgData.mLocoVelocities.mLinear);
+            physics->SetAngularVelocity(msgData.mLocoVelocities.mAngular);
         }
         msgData.SetConsumed();
     }
 
     if (msgData.Is(EntityMsg::eID_LocoClearVelocities))
     {
-        if (mPhysicsObject)
+        if (PhysicsObject* physics = GetPhysics())
         {
-            mPhysicsObject->ClearLinearVelocity();
-            mPhysicsObject->ClearAngularVelocity();
+            physics->ClearLinearVelocity();
+            physics->ClearAngularVelocity();
         }
         msgData.SetConsumed();
     }

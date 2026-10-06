@@ -6,4 +6,7 @@ class Physics;
 class PhysicsObject;
 using PhysicsObjectPtr = cxx::uniqueptr<PhysicsObject>;
 
+class Locomotion;
+using LocomotionPtr = cxx::uniqueptr<Locomotion>;
+
 //////////////////////////////////////////////////////////////////////////

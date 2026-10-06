@@ -3048,7 +3048,7 @@ bool DK2ScenarioReader::ReadScenarioShortInfo(const std::string& filePath, Scena
     // get map dimensions info
     bool hasMapDimensions = false;
     {
-        int eIndex = cxx::get_first_index_if(paths, [](const LevelDataFilePath& e) { return e.mDataTypeId == DKLD_MAP; });
+        int eIndex = cxx::get_index_if(paths, [](const LevelDataFilePath& e) { return e.mDataTypeId == DKLD_MAP; });
         if (eIndex != -1)
         {
             std::string dataFilePath;

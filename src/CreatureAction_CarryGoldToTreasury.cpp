@@ -89,7 +89,7 @@ void CreatureAction_CarryGoldToTreasury::HandleResumeAction(eCreatureAction subA
             return;
         }
 
-        auto* moneyStorage = mapTile->mRoomInstance->GetCapability<MoneyStorageRoomCapability>();
+        auto* moneyStorage = mapTile->mRoomInstance->GetCapability<ITreasuryRoom>();
         cxx_assert(moneyStorage);
         if (moneyStorage == nullptr)
         {

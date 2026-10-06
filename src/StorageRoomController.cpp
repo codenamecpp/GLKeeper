@@ -45,7 +45,7 @@ void StorageRoomController::OnRecycle()
 
 int StorageRoomController::GetRoomStorageTileIndex(const Point2D& tileLocation) const
 {
-    const int itemIndex = cxx::get_first_index_if(mStorageTiles, 
+    const int itemIndex = cxx::get_index_if(mStorageTiles, 
         [&tileLocation](const RoomStorageTile& storageTile)
         {
             return (storageTile.mTileLocation == tileLocation);
@@ -232,7 +232,7 @@ void StorageRoomController::HandleRoomStorageTiles(cxx::span<Point2D> evaluatedT
     // handle objects on removed tiles
     for (const RoomStorageTile& rollerTile: removedStorageTiles)
     {
-        for (const EntityHandle& objectHandle: rollerTile.mObjects)
+        for (EntityHandle objectHandle: rollerTile.mObjects)
         {         
             // if tile is still part of the room then try to reassign storage tile
             if (CheckTileWithinRoom(rollerTile.mTileLocation))

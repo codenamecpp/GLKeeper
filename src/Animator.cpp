@@ -163,7 +163,7 @@ bool Animator::CheckTransitionConditions(const ConditionalTransition& transition
 
 bool Animator::SelectFirstBestTransition(const ConditionalTransitions& transitions, eTransitionRequestOrigin origin)
 {
-    int transitionIndex = cxx::get_first_index_if(transitions, 
+    int transitionIndex = cxx::get_index_if(transitions, 
         [this](const ConditionalTransition& transition)
         {
             return this->CheckTransitionConditions(transition);
@@ -845,4 +845,9 @@ bool Animator::ExecuteTransition()
 bool Animator::HasState(StringHash stateId) const
 {
     return mStates.find(stateId) != mStates.end();
+}
+
+void Animator::OnRecycle()
+{
+    Clear();
 }

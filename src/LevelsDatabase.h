@@ -16,6 +16,22 @@ public:
     bool HasLevelInfo(const std::string& fileName) const;
     bool GetLevelInfo(const std::string& fileName, ScenarioLevelInfo& levelInfo) const;
 
+    bool GetCampaignLevelInfo(const CampaignLevelKey& levelKey, ScenarioLevelInfo& levelInfo) const;
+
+    template<typename EnumProc>
+    inline void EnumCampaignLevelKeys(eCampaignLevelType levelType, EnumProc enumProc) const
+    {
+        for (const CampaignLevelKey& roller: mCampaignLevelKeys)
+        {
+            if (roller.mType == levelType)
+            {
+                enumProc(roller);
+            }
+        }
+    }
+
+    const auto& GetAllCampaignLevelKeys() const { return mCampaignLevelKeys; }
+
     template<typename EnumProc>
     inline void EnumMyPetDungeonLevels(EnumProc enumProc) const
     {
@@ -64,7 +80,6 @@ public:
         }
     }
 
-
     template<typename EnumProc>
     inline void EnumMultiplayerLevels(EnumProc enumProc) const
     {
@@ -85,6 +100,7 @@ private:
 
 private:
     std::vector<ScenarioLevelInfo> mLevelInfoList;
+    std::vector<CampaignLevelKey> mCampaignLevelKeys;
 };
 
 //////////////////////////////////////////////////////////////////////////

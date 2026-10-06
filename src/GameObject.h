@@ -77,18 +77,25 @@ public:
 
     //////////////////////////////////////////////////////////////////////////
 
-    // accessing primary components
+    // component shortcuts
+
     inline AnimatingMeshObject* GetMeshObject() const 
-    { 
-        return mMeshObject.get(); 
+    {
+        const AnimatingMeshComponent* component = GetComponent<AnimatingMeshComponent>();
+        return component ? component->mMeshObject.get() : nullptr;
     }
 
-    inline PhysicsObject* GetPhysics() const 
-    { 
-        return mPhysicsObject.get(); 
+    inline PhysicsObject* GetPhysics() const
+    {
+        const PhysicsComponent* component = GetComponent<PhysicsComponent>();
+        return component ? component->mPhysicsObject.get() : nullptr;
     }
 
-    inline Locomotion& GetLocomotion() { return mLocomotion; }
+    inline Locomotion* GetLocomotion() const
+    {
+        const LocomotionComponent* component = GetComponent<LocomotionComponent>();
+        return component ? component->mLoco.get() : nullptr;
+    }
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -118,17 +125,17 @@ public:
     // part of the internal GameObject Controllers API, not intended for public use
     //////////////////////////////////////////////////////////////////////////
 
+    void InitLocomotion();
+
     // physics control
     void InitPhysics();
-    void FreePhysics();
     void EnablePhysics(bool isEnabled);
 
     // mesh control
-    void InitMesh();
-    void FreeMesh();
     void ShowMesh(bool isEnabled);
-    bool HasMeshResource(eGameObjectMeshId meshId) const;
-    bool SetMeshResource(eGameObjectMeshId meshId);
+    bool HasObjectMesh(eGameObjectMeshId meshId) const;
+    bool SetObjectMesh(eGameObjectMeshId meshId);
+    void SetCustomMesh(const std::string& meshName);
 
     // mesh animation params
     bool RescaleAnimationDuration(float animDuration);
@@ -138,9 +145,8 @@ public:
     void SetCurrentState(eGameObjectState stateId);
     inline eGameObjectState GetCurrentState() const { return mCurrentState; }
 
-    //////////////////////////////////////////////////////////////////////////
-
 private:
+    void InitMesh();
     void ConfigureMeshResource(const ArtResourceDefinition& artResource);
 
 private:
@@ -149,10 +155,7 @@ private:
     EntityHandle mParentRoom;
     eGameObjectState mCurrentState = eGameObjectState_None;
     GameObjectController* mController = nullptr; // optional
-    PhysicsObjectPtr mPhysicsObject = nullptr; // optional
-    Locomotion mLocomotion;
-    cxx::uniqueptr<AnimatingMeshObject> mMeshObject; // optional
-    eGameObjectMeshId mMeshResourceId = eGameObjectMeshId_Main;
+    eGameObjectMeshId mObjectMeshId = eGameObjectMeshId_Main;
 };
 
 //////////////////////////////////////////////////////////////////////////

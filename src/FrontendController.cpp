@@ -12,6 +12,7 @@
 #include "SoundCategoryNames.h"
 #include "UiManager.h"
 #include "RoomManager.h"
+#include "EntityRegistry.h"
 
 FrontendController::FrontendController()
     : mFrontendUi(*this)
@@ -82,9 +83,11 @@ void FrontendController::OnMissionBriefingCancelled(bool isMyPetDungeon)
     {
         mFrontendUi.ShowMenuPage(FrontendUi::eMenuPage_MyPetDungeon);
     }
-    else
+    else // main campaign
     {
-        mFrontendUi.ShowMenuPage(FrontendUi::eMenuPage_Main);
+        mFrontendUi.ShowMenuPage(FrontendUi::eMenuPage_CampaignTable);
+        mFrontendUi.ShowMenuContent(false);
+        mCameraController.StartTransitionToLocation(FrontendCameraController::eLocation_Table);
     }
 }
 
@@ -148,37 +151,66 @@ void FrontendController::OnCameraTransitionCompleted()
     mFrontendUi.ShowMenuContent(true);
 }
 
-void FrontendController::UpdateCampaignTableInteractions(float deltaTime)
+bool FrontendController::IsSelectingCampaignLevel() const
 {
-    EntityHandle currHoveredEntity {};
+    return mFrontendUi.IsOnMenuPage(FrontendUi::eMenuPage_CampaignTable) && 
+        !mCameraController.InTransition();
+}
 
-    if (!gUiManager.IsCursorOverUi())
+void FrontendController::UpdateCampaignLevelSelection(float deltaTime)
+{
+    if (gUiManager.IsCursorOverUi())
+        return;
+
+    const Point2D mouseScreenPos = gInputs.GetMousePosition();
+
+    EntityHandle entityUnderCusror {};
+    mSelectedCampaignLevel = {};
+
+    cxx::temp_vector<RayHitResult> hitResults;
+    cxx::ray3d_t ray3d;
+    if (gScene.CastRayFromScreenPoint(mouseScreenPos, ray3d) && 
+        gScene.QueryObjects(ray3d, hitResults))
     {
-        const Point2D mouseScreenPos = gInputs.GetMousePosition();
-
-        cxx::ray3d_t ray3d;
-        if (gScene.CastRayFromScreenPoint(mouseScreenPos, ray3d))
+        for (auto hits_iter = hitResults.begin(); hits_iter != hitResults.end();)
         {
-            cxx::temp_vector<RayHitResult> hitResults;
-            if (gScene.QueryObjects(ray3d, hitResults))
+            RayHitResult& hitsRoller = *hits_iter;
+            if (!hitsRoller.mSceneObject->Raycast(ray3d, hitsRoller.mDistanceNear))
             {
-                // todo: not ideal
-                std::sort(hitResults.begin(), hitResults.end(), 
-                    [](const RayHitResult& lhs, const RayHitResult& rhs)
-                    {
-                        return lhs.mDistanceNear < rhs.mDistanceNear;
-                    });
-
-                for (const RayHitResult& hitsRoller: hitResults)
-                {
-                    const EntityHandle& entity = hitsRoller.mSceneObject->GetOwnerEntity();
-                    if (!entity.IsRoom())
-                        continue;
-
-                } // for scene objects
+                hits_iter = hitResults.erase(hits_iter);
+                continue;
             }
-        } // if cast ray
-    } 
+            ++hits_iter;
+        }
+        std::sort(hitResults.begin(), hitResults.end(), 
+            [](const RayHitResult& lhs, const RayHitResult& rhs)
+            {
+                return lhs.mDistanceNear < rhs.mDistanceNear;
+            });
+    }
+
+    if (auto capability = gEntities.GetEntityCapability<I3DMapTableRoom>(mHeroGateRoomHandle))
+    {
+        for (const RayHitResult& roller: hitResults)
+        {
+            EntityHandle entityHandle = roller.mSceneObject->GetOwnerEntity();
+            if (capability->SelectLevel(entityHandle))
+            {
+                entityUnderCusror = entityHandle;
+                if (!capability->GetLevelKey(entityUnderCusror, mSelectedCampaignLevel))
+                {
+                    cxx_assert(false);
+                    continue;
+                }
+                break;
+            }
+        }
+
+        if (!entityUnderCusror)
+        {
+            capability->DeselectLevel();
+        }
+    }
 }
 
 void FrontendController::OnSessionLoaded()
@@ -244,6 +276,7 @@ void FrontendController::OnSessionShutdown()
         mFrontendUi.Cleanup();
     }
     mHeroGateRoomHandle = {};
+    mSelectedCampaignLevel = {};
     gUiCursor.StateOff(UiCursor::eCursorState_PointOnThing);
 }
 
@@ -251,10 +284,9 @@ void FrontendController::UpdateFrame(float deltaTime)
 {
     mCameraController.UpdateFrame(deltaTime);
 
-    if (mFrontendUi.IsOnMenuPage(FrontendUi::eMenuPage_CampaignTable) && 
-        !mCameraController.InTransition())
+    if (IsSelectingCampaignLevel())
     {
-        UpdateCampaignTableInteractions(deltaTime);
+        UpdateCampaignLevelSelection(deltaTime);
     }
 }
 
@@ -266,6 +298,25 @@ void FrontendController::UpdateLogic(float stepDeltaTime)
 void FrontendController::InputEvent(MouseButtonInputEvent& inputEvent)
 {
     mCameraController.InputEvent(inputEvent);
+
+    if (IsSelectingCampaignLevel())
+    {
+        if (inputEvent.IsButtonPressed(MBUTTON_LEFT) && mSelectedCampaignLevel)
+        {
+            ScenarioLevelInfo scenarioLevelInfo {};
+            if (gLevelsDatabase.GetCampaignLevelInfo(mSelectedCampaignLevel, scenarioLevelInfo))
+            {
+                mFrontendUi.ConfigureMissionBriefing(scenarioLevelInfo);
+                mFrontendUi.ShowMenuPage(FrontendUi::eMenuPage_MissionBriefing);
+                mFrontendUi.ShowMenuContent(false);
+                mCameraController.StartTransitionToLocation(FrontendCameraController::eLocation_1stRight);
+            }
+            else
+            {
+                cxx_assert(false);
+            }
+        } 
+    }
 }
 
 void FrontendController::InputEvent(KeyInputEvent& inputEvent)
