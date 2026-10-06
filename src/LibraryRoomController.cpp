@@ -43,8 +43,8 @@ void LibraryRoomController::EvaluateFloorFurniture(RoomFurnitureSlots& evaluatio
             RoomFurnitureSlot::eFaceRotation_180 : 
             RoomFurnitureSlot::eFaceRotation_0;
 
-        // select variation
-        eGameObjectMeshId meshId = static_cast<eGameObjectMeshId>(1 + (mapTile->mRandomValue % 3)); // todo: fix
+        // select variation, todo: fix
+        eGameObjectMeshId meshId = static_cast<eGameObjectMeshId>(eGameObjectMeshId_Additional1 + (mapTile->mRandomValue % 3));
         roomObject.mObjectMeshId = meshId;
     }
 }

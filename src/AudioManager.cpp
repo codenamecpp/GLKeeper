@@ -51,7 +51,7 @@ bool AudioManager::Initialize()
     gConsole.LogMessage(eLogLevel_Info, "Initialize SoLoud audio engine...");
 
     mAudioEngine = std::make_unique<SoLoud::Soloud>();
-    if (!SoLoudCheckResult(mAudioEngine->init()))
+    if (!SoLoudCheckResult(mAudioEngine->init(SoLoud::Soloud::CLIP_ROUNDOFF, SoLoud::Soloud::WINMM)))
     {
         gConsole.LogMessage(eLogLevel_Warning, "Failed to initialize audio engine");
 
