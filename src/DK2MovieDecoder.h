@@ -8,7 +8,7 @@ public:
    
     //////////////////////////////////////////////////////////////////////////
 
-    enum eCodec { eCodec_Unknown, eCodec_Tqi, eCodec_Tgq };
+    enum eCodec { eCodec_Unknown, eCodec_Tqi };
     enum eErrorCode
     {
         eErrorCode_None,
@@ -23,7 +23,6 @@ public:
 
 public:
     bool OpenFile(const std::string& path);
-    bool OpenMemory(const uint8_t* data, uint32_t size);
     void Close();
     void Rewind();
 
@@ -51,8 +50,6 @@ private:
 
     bool DemuxNext(DemuxResult& outResult);
     bool DecodeTqi(const uint8_t* payload, uint32_t size, ByteArray& out);
-    bool DecodeTgq(const uint8_t* payload, uint32_t size, ByteArray& out);
-    void YUV2RGB(ByteArray& out) const;
 
 private:
     std::vector<uint8_t> mFileData;
@@ -65,11 +62,6 @@ private:
     Point2D mFrameDimsCoded {};
 
     int mFrameIndex = 0;
-
-    std::vector<uint8_t> mY, mCb, mCr;
-    std::vector<uint8_t> mLastY, mLastCb, mLastCr;
-
-    bool mHaveReference = false;
 };
 
 //////////////////////////////////////////////////////////////////////////

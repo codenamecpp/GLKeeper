@@ -189,32 +189,58 @@ namespace tqi
  
         constexpr int clampi(int v, int lo, int hi) { return v < lo ? lo : v > hi ? hi : v; }
  
-        // colour tables
+        // precomputed YUV -> RGB colour tables
+        // fixed-point, 9-bit fields
         struct ColorTables 
         {
-            uint32_t a[512] {}, b[512] {}, c[512] {};     // Y, (U), (V) packed 9-bit R/G/B fields
-            uint8_t  r[512] {}, g[512] {}, bl[512] {};    // field -> 8-bit channel (brightness 100%)
+            // packed contributions:
+            //   a[] = Y contribution  (R/G/B share the same Y term)
+            //   b[] = U contribution  (mainly G and B)
+            //   c[] = V contribution  (mainly R and G)
+            uint32_t a[512] {}, b[512] {}, c[512] {};
+
+            // final 8-bit channel lookup after the packed sum is formed
+            uint8_t  r[512] {}, g[512] {}, bl[512] {};
+
+            // ITU-R BT.601 coefficients
+            static constexpr double kCbToG =  0.3441;   // -0.344136 * Cb  -> G
+            static constexpr double kCbToB = -1.772;    //  1.772    * Cb  -> B
+            static constexpr double kCrToR = -1.402;    //  1.402    * Cr  -> R
+            static constexpr double kCrToG =  0.7141;   // -0.714136 * Cr  -> G
+
+            // bias added to the Y contribution
+            static constexpr uint32_t kYBias = 0x4883d8a9u;
 
             constexpr ColorTables() 
             {
-                for (int iroller = -256; iroller < 256; iroller++) 
+                // build the three packed contribution tables for every possible
+                // signed sample in [-256 ... 255].  The sample is first clamped
+                // to the range the original engine used (-64 ... 63)
+                for (int sample = -256; sample < 256; ++sample) 
                 {
-                    const int eax = clampi(iroller, -64, 63);
-                    const uint32_t idx = static_cast<uint32_t>(iroller - 192) & 0x1ffu;
-                    uint32_t ecx = static_cast<uint32_t>(eax) << 12; 
-                    ecx = (ecx + static_cast<uint32_t>(eax)) << 11;
-                    a[idx] = ecx + static_cast<uint32_t>(eax) + 0x4883d8a9u;
+                    const int clamped = clampi(sample, -64, 63);
+                    const uint32_t idx = static_cast<uint32_t>(sample - 192) & 0x1FFu;
 
-                    const double cc = static_cast<double>(eax) + 0.5;
-                    const uint32_t v1 = static_cast<uint32_t>(0.5 - cc * 0.3441); // truncation toward zero == _ftol
-                    const uint32_t v2 = static_cast<uint32_t>(0.5 - cc * -1.772);
-                    const uint32_t v3 = static_cast<uint32_t>(0.5 - cc * 0.7141);
-                    const uint32_t v4 = static_cast<uint32_t>(0.5 - cc * -1.402);
+                    // Y contribution
+                    uint32_t yTerm = static_cast<uint32_t>(clamped);
+                    yTerm = (yTerm << 12) + yTerm;          // * 4097
+                    yTerm = (yTerm << 11) + static_cast<uint32_t>(clamped);
+                    a[idx] = yTerm + kYBias;
 
-                    b[idx] = ((v1 & 0x1ff) << 11) + (v2 & 0x1ff);
-                    c[idx] = ((v3 & 0x1ff)        + ((v4 & 0x1ff) << 12)) << 11;
+                    // U / V contributions (floating-point, truncated toward zero)
+                    const double centered = static_cast<double>(clamped) + 0.5;
+
+                    const uint32_t uG = static_cast<uint32_t>(0.5 - centered * kCbToG);
+                    const uint32_t uB = static_cast<uint32_t>(0.5 - centered * kCbToB);
+                    const uint32_t vR = static_cast<uint32_t>(0.5 - centered * kCrToR);
+                    const uint32_t vG = static_cast<uint32_t>(0.5 - centered * kCrToG);
+
+                    b[idx] = ((uG & 0x1FFu) << 11) | (uB & 0x1FFu);
+                    c[idx] = (((vG & 0x1FFu) + ((vR & 0x1FFu) << 12)) << 11);
                 }
-                for (int i = 0; i < 512; i++) 
+
+                // final 8-bit expansion tables, linear mapping with offset
+                for (int i = 0; i < 512; ++i) 
                 {
                     r[i]  = static_cast<uint8_t>(clampi(-177 + 2 * i, 0, 255));
                     g[i]  = static_cast<uint8_t>(clampi(-133 + 2 * i, 0, 255));
@@ -258,30 +284,34 @@ namespace tqi
 
         inline const AcTable& acTable() { static const AcTable t; return t; }
  
-        // bit reader: LE dwords, MSB first
+        // bitstream reader for TQI: little-endian 32-bit words, bits taken MSB-first
         struct Bits 
         {
-            const uint8_t* p; 
-            uint32_t n; 
-            uint64_t pos;
+            const uint8_t* data;      // raw payload
+            uint32_t       size;      // size in bytes
+            uint64_t       bitPos;    // current bit offset
 
-            inline uint32_t word(uint32_t w) const 
+            // read a 32-bit little-endian word at the given word index
+            inline uint32_t readWord(uint32_t wordIndex) const 
             {
-                uint32_t o = w * 4; 
-                uint32_t v = 0;
-                if ((o + 4) <= n) 
+                const uint32_t byteOffset = wordIndex * 4; 
+                uint32_t value = 0;
+
+                if (byteOffset + 4 <= size) 
                 { 
-                    std::memcpy(&v, p + o, 4); 
-                    return fromLE(v); 
+                    std::memcpy(&value, data + byteOffset, 4); 
+                    return toHostEndian(value); 
                 }
-                for (uint32_t i = 0; (i < 4) && ((o + i) < n); i++) 
+
+                // partial word at the end of the buffer
+                for (uint32_t i = 0; i < 4 && (byteOffset + i) < size; ++i) 
                 {
-                    v |= static_cast<uint32_t>(p[o + i]) << (8 * i);
+                    value |= static_cast<uint32_t>(data[byteOffset + i]) << (8 * i);
                 }
-                return v;
+                return value;
             }
 
-            static uint32_t fromLE(uint32_t v) 
+            static uint32_t toHostEndian(uint32_t v) 
             {
         #if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
                 return __builtin_bswap32(v);
@@ -290,154 +320,244 @@ namespace tqi
         #endif
             }
 
+            // peek the next 32 bits without advancing the position
             inline uint32_t peek32() const 
             {
-                const uint32_t w = static_cast<uint32_t>(pos >> 5); 
-                const uint32_t s = pos & 31;
-                const uint32_t a = word(w);
-                return s ? (a << s) | (word(w + 1) >> (32 - s)) : a;
+                const uint32_t wordIdx  = static_cast<uint32_t>(bitPos >> 5); 
+                const uint32_t shift    = static_cast<uint32_t>(bitPos & 31);
+                const uint32_t lowWord  = readWord(wordIdx);
+
+                if (shift == 0) 
+                    return lowWord;
+
+                return (lowWord << shift) | (readWord(wordIdx + 1) >> (32 - shift));
             }
 
-            inline bool overrun() const { return pos > static_cast<uint64_t>(n) * 8; }
+            inline bool overrun() const 
+            { 
+                return bitPos > static_cast<uint64_t>(size) * 8; 
+            }
         };
  
-        // IDCT
-        constexpr double kA = 0.5411961078643799;
-        constexpr double kB = 1.3065630197525024;
-        constexpr double kC = 0.3826834261417389;
-        constexpr int64_t kSq = 0x5a82799a;
- 
-        // "+1.5*2^52, read low dword" == round-to-nearest-even
-        inline int32_t rne(double x) 
+        // AAN / floating-point IDCT constants
+        constexpr double kAanA = 0.5411961078643799;   // cos(3*pi/8) / (sqrt(2) * cos(pi/8) )
+        constexpr double kAanB = 1.3065630197525024;
+        constexpr double kAanC = 0.3826834261417389;   // cos(3*pi/8)
+        constexpr int64_t kSqrt2Scaled = 0x5a82799a;   // ~ sqrt(2) * 2^30  (fixed-point)
+
+        // round-to-nearest-even via the classic “add 1.5 * 2^52 and read low dword” trick 
+        inline int32_t roundNearestEven(double x) 
         {          
-            double t = x + 6755399441055744.0; 
-            uint64_t u; 
-            std::memcpy(&u, &t, 8); 
-            return static_cast<int32_t>(static_cast<uint32_t>(u));
+            double tmp = x + 6755399441055744.0;   // 1.5 * 2^52
+            uint64_t bits; 
+            std::memcpy(&bits, &tmp, sizeof(bits)); 
+            return static_cast<int32_t>(static_cast<uint32_t>(bits));
         }
 
-        inline void idct8(const int32_t* x, int32_t* o) 
+        // 1-D 8-point inverse DCT (AAN algorithm, fixed-point + float hybrid)
+        inline void idct8(const int32_t* in, int32_t* out) 
         {
-            const int32_t t35 = x[3] + x[5], A = x[5] - x[3], t17 = x[7] + x[1], B = x[1] - x[7];
-            const int32_t S = t35 + t17, D = t17 - t35;
-            const double Z = static_cast<double>(A + B) * kC;
-            const int32_t Y1 = rne(static_cast<double>(A) * kA + Z), Y2 = rne(static_cast<double>(B) * kB - Z);
-            const int32_t E  = static_cast<int32_t>(static_cast<uint32_t>(static_cast<int32_t>((D * kSq) >> 32)) << 1);
-            const int32_t r1 = Y1 + E, r2 = E + Y2, r3 = Y2 + S;
-            const int32_t d26 = x[2] - x[6], s04 = x[4] + x[0], d04 = x[0] - x[4];
-            const int32_t F  = static_cast<int32_t>(static_cast<uint32_t>(static_cast<int32_t>((d26 * kSq) >> 32)) << 1);
-            const int32_t s26 = x[6] + x[2] + F;
-            const int32_t e0 = s26 + s04, e3 = s04 - s26, e1 = F + d04, e2 = d04 - F;
-            o[0] = e0 + r3; o[7] = e0 - r3; o[1] = e1 + r2; o[6] = e1 - r2;
-            o[2] = e2 + r1; o[5] = e2 - r1; o[3] = e3 + Y1; o[4] = e3 - Y1;
+            // odd part
+            const int32_t t35 = in[3] + in[5];
+            const int32_t A   = in[5] - in[3];
+            const int32_t t17 = in[7] + in[1];
+            const int32_t B   = in[1] - in[7];
+            const int32_t S   = t35 + t17;
+            const int32_t D   = t17 - t35;
+
+            const double Z  = static_cast<double>(A + B) * kAanC;
+            const int32_t Y1 = roundNearestEven(static_cast<double>(A) * kAanA + Z);
+            const int32_t Y2 = roundNearestEven(static_cast<double>(B) * kAanB - Z);
+
+            // (D * sqrt(2)) in fixed-point, then *2
+            const int32_t E = static_cast<int32_t>(
+                static_cast<uint32_t>(static_cast<int32_t>((D * kSqrt2Scaled) >> 32)) << 1);
+
+            const int32_t r1 = Y1 + E;
+            const int32_t r2 = E  + Y2;
+            const int32_t r3 = Y2 + S;
+
+            // Even part
+            const int32_t d26 = in[2] - in[6];
+            const int32_t s04 = in[4] + in[0];
+            const int32_t d04 = in[0] - in[4];
+
+            const int32_t F = static_cast<int32_t>(
+                static_cast<uint32_t>(static_cast<int32_t>((d26 * kSqrt2Scaled) >> 32)) << 1);
+
+            const int32_t s26 = in[6] + in[2] + F;
+            const int32_t e0  = s26 + s04;
+            const int32_t e3  = s04 - s26;
+            const int32_t e1  = F   + d04;
+            const int32_t e2  = d04 - F;
+
+            out[0] = e0 + r3;  out[7] = e0 - r3;
+            out[1] = e1 + r2;  out[6] = e1 - r2;
+            out[2] = e2 + r1;  out[5] = e2 - r1;
+            out[3] = e3 + Y1;  out[4] = e3 - Y1;
         }
 
-        // sample -> colour-table index (s+256, clamped to the table range)
-        inline uint16_t toIdx(int32_t s) 
+        // convert an IDCT sample to an index into the colour tables
+        inline uint16_t sampleToColorIndex(int32_t sample) 
         { 
-            return static_cast<uint16_t>(clampi(s, -256, 255) + 256); 
+            return static_cast<uint16_t>(clampi(sample, -256, 255) + 256); 
         }
  
+        // full 8*8 inverse DCT + colour-index conversion
+        // uses the classic row-column approach with a DC-only fast path
         inline void idctBlock(const int32_t* coef, uint16_t* out, int stride) 
         {
-            int32_t tmp[8][8], o[8];
-            for (int r = 0; r < 8; r++) 
+            int32_t tmp[8][8];
+            int32_t col[8];
+
+            // Rows
+            for (int row = 0; row < 8; ++row) 
             {
-                const int32_t* in = coef + r * 8;
-                if (!(in[1] | in[2] | in[3] | in[4] | in[5] | in[6] | in[7])) 
+                const int32_t* src = coef + row * 8;
+
+                // fast path: only DC coefficient is non-zero
+                if ((src[1] | src[2] | src[3] | src[4] | src[5] | src[6] | src[7]) == 0) 
                 { 
-                    for (int j = 0; j < 8; j++) 
+                    for (int j = 0; j < 8; ++j) 
                     {
-                        o[j] = in[0]; 
+                        col[j] = src[0];
                     }
                 }
                 else 
                 {
-                    idct8(in, o);
+                    idct8(src, col);
                 }
-                for (int j = 0; j < 8; j++) 
+
+                // transpose into temporary matrix
+                for (int j = 0; j < 8; ++j) 
                 {
-                    tmp[j][r] = o[j];
+                    tmp[j][row] = col[j];
                 }
             }
-            for (int j = 0; j < 8; j++) 
+
+            // columns
+            for (int colIdx = 0; colIdx < 8; ++colIdx) 
             {
-                idct8(tmp[j], o);
-                for (int i = 0; i < 8; i++) 
+                idct8(tmp[colIdx], col);
+                for (int i = 0; i < 8; ++i) 
                 {
-                    out[j * stride + i] = toIdx(o[i] >> 17);
+                    out[colIdx * stride + i] = sampleToColorIndex(col[i] >> 17);
                 }
             }
         }
  
-        inline int readDc(Bits& b, bool chroma) 
+        // read a differential DC coefficient (MPEG-1 style VLC)
+        // returns the signed delta that must be added to the predictor
+        inline int readDc(Bits& bits, bool isChroma) 
         {
-            const uint32_t w = b.peek32();
-            const uint8_t e = chroma ? TQI_DC_CHROMA[w >> 24] : TQI_DC_LUMA[w >> 25];
-            int size = e >> 4; 
-            b.pos += e & 15;
-            if (!size) 
+            const uint32_t window = bits.peek32();
+            const uint8_t entry = isChroma 
+                ? TQI_DC_CHROMA[window >> 24] 
+                : TQI_DC_LUMA[window >> 25];
+
+            const int size = entry >> 4;          // number of magnitude bits
+            bits.bitPos += entry & 0x0F;          // consume the VLC code itself
+
+            if (size == 0) 
                 return 0;
-            uint32_t v = b.peek32() >> (32 - size); 
-            b.pos += size;
-            if (!((v >> (size - 1)) & 1)) 
+
+            uint32_t magnitude = bits.peek32() >> (32 - size);
+            bits.bitPos += size;
+
+            // sign-extend if the high bit is clear (two's-complement style)
+            if (((magnitude >> (size - 1)) & 1) == 0) 
             {
-                v -= (1u << size) - 1;
+                magnitude -= (1u << size) - 1;
             }
-            return static_cast<int32_t>(v);
+
+            return static_cast<int32_t>(magnitude);
         }
  
-        inline void decodeBlock(Bits& b, const int32_t* q, int& dcpred, bool chroma, uint16_t* out, int stride) 
+        // decode one 8x8 block (DC + AC coefficients -> colour indices).
+        inline void decodeBlock(Bits& bits, const int32_t* quant, int& dcPredictor, bool isChroma, uint16_t* out, int stride) 
         {
             int32_t coef[64] {};
-            dcpred += readDc(b, chroma);
-            coef[0] = static_cast<int32_t>(static_cast<uint32_t>(dcpred) * static_cast<uint32_t>(q[0]));
-            const uint16_t* ac = acTable().e;
-            int k = 0; 
-            bool any = false;
+
+            // DC
+            dcPredictor += readDc(bits, isChroma);
+            coef[0] = static_cast<int32_t>(
+                static_cast<uint32_t>(dcPredictor) * static_cast<uint32_t>(quant[0]));
+
+            // AC
+            const uint16_t* acLut = acTable().e;
+            int scanPos = 0;
+            bool hasAc = false;
+
             for (;;) 
             {
-                uint32_t w = b.peek32() >> 16;
-                uint16_t e = ac[w];
-                if (e == 0)  // invalid code 
-                    break; 
-                int len = e >> 11, run = (e >> 6) & 31, lvl = e & 63;
-                b.pos += len;
-                if (lvl == 0) 
-                {
-                    if (run == 0) 
-                        break; // EOB
+                const uint32_t window = bits.peek32() >> 16;
+                const uint16_t entry  = acLut[window];
 
-                    uint32_t x = b.peek32() >> 18; b.pos += 14; // ESC: 6b run + 8b level
-                    int a = x & 255; k += static_cast<int>((x >> 8) & 63) + 1;
-                    if (a == 0)         { lvl = b.peek32() >> 24; b.pos += 8; }
-                    else if (a == 0x80) { lvl = static_cast<int>(b.peek32() >> 24) - 256; b.pos += 8; }
-                    else                  lvl = a > 0x80 ? a - 256 : a;
+                if (entry == 0)                 // invalid / end of stream
+                    break;
+
+                const int codeLen = entry >> 11;
+                const int run     = (entry >> 6) & 31;
+                int level         = entry & 63;
+                bits.bitPos += codeLen;
+
+                if (level == 0) 
+                {
+                    if (run == 0)               // EOB
+                        break;
+
+                    // esc code: 6-bit run + 8-bit level (possibly extended)
+                    const uint32_t esc = bits.peek32() >> 18;
+                    bits.bitPos += 14;
+
+                    const int levelByte = esc & 0xFF;
+                    scanPos += static_cast<int>((esc >> 8) & 63) + 1;
+
+                    if (levelByte == 0) 
+                    {
+                        level = static_cast<int>(bits.peek32() >> 24);
+                        bits.bitPos += 8;
+                    }
+                    else if (levelByte == 0x80) 
+                    {
+                        level = static_cast<int>(bits.peek32() >> 24) - 256;
+                        bits.bitPos += 8;
+                    }
+                    else 
+                    {
+                        level = (levelByte > 0x80) ? levelByte - 256 : levelByte;
+                    }
                 } 
                 else 
                 {
-                    k += run + 1;
-                    if (b.peek32() >> 31) 
+                    scanPos += run + 1;
+
+                    // sign bit follows the VLC code
+                    if (bits.peek32() >> 31) 
                     {
-                        lvl = -lvl;
+                        level = -level;
                     }
-                    b.pos += 1;
+                    bits.bitPos += 1;
                 }
-                if (k > 63) 
+
+                if (scanPos > 63) 
                     break;
-                int pos = TQI_SCAN[k];
-                coef[pos] = static_cast<int32_t>(static_cast<uint32_t>(lvl) * static_cast<uint32_t>(q[pos]));
-                any = true;
+
+                const int zigzag = TQI_SCAN[scanPos];
+                coef[zigzag] = static_cast<int32_t>(
+                    static_cast<uint32_t>(level) * static_cast<uint32_t>(quant[zigzag]));
+                hasAc = true;
             }
-            // DC-only shortcut
-            if (!any) 
+
+            // DC-only fast path (very common for flat areas)
+            if (!hasAc) 
             {    
-                const uint16_t v = toIdx(coef[0] >> 17);
-                for (int y = 0; y < 8; y++) 
+                const uint16_t value = sampleToColorIndex(coef[0] >> 17);
+                for (int y = 0; y < 8; ++y) 
                 {
-                    for (int x = 0; x < 8; x++) 
+                    for (int x = 0; x < 8; ++x) 
                     {
-                        out[y * stride + x] = v;
+                        out[y * stride + x] = value;
                     }
                 }
             } 
@@ -447,11 +567,12 @@ namespace tqi
             }
         }
  
-        inline void put(uint8_t* d, unsigned r, unsigned g, unsigned b) 
+        // write a single RGB24 pixel
+        inline void putRgb(uint8_t* dst, unsigned r, unsigned g, unsigned b) 
         {
-            d[0] = r; 
-            d[1] = g; 
-            d[2] = b;
+            dst[0] = static_cast<uint8_t>(r); 
+            dst[1] = static_cast<uint8_t>(g); 
+            dst[2] = static_cast<uint8_t>(b);
         }
  
     }  // namespace detail
@@ -514,316 +635,71 @@ namespace tqi
                 return false;
 
             makeQ(fi.quant);
-            const auto& T = detail::kColor;
-            detail::Bits b{p + 8, n - 8, 0};
-            int dc[3] = {0, 0, 0};
-            const int mbw = (fi.width + 15) / 16, mbh = (fi.height + 15) / 16;
+            const auto& color = detail::kColor;
+            detail::Bits bits{p + 8, n - 8, 0};
+
+            int dcPred[3] = {0, 0, 0};          // Y, Cb, Cr predictors
+            const int mbWidth  = (fi.width  + 15) / 16;
+            const int mbHeight = (fi.height + 15) / 16;
+
             uint16_t Y[16 * 16], U[8 * 8], V[8 * 8];
-            for (int my = 0; my < mbh; my++) 
+
+            for (int mbY = 0; mbY < mbHeight; ++mbY) 
             {
-                for (int mx = 0; mx < mbw; mx++) 
+                for (int mbX = 0; mbX < mbWidth; ++mbX) 
                 {
-                    detail::decodeBlock(b, q_, dc[0], false, Y,              16);
-                    detail::decodeBlock(b, q_, dc[0], false, Y + 8,          16);
-                    detail::decodeBlock(b, q_, dc[0], false, Y + 8 * 16,     16);
-                    detail::decodeBlock(b, q_, dc[0], false, Y + 8 * 16 + 8, 16);
-                    detail::decodeBlock(b, q_, dc[1], true,  U, 8);
-                    detail::decodeBlock(b, q_, dc[2], true,  V, 8);
-                    const int x0 = mx * 16, y0 = my * 16;
-                    const int cw = fi.width - x0 < 16 ? fi.width - x0 : 16;
-                    const int ch = fi.height - y0 < 16 ? fi.height - y0 : 16;
-                    for (int y = 0; y < ch; y++) 
+                    // four 8x8 luma blocks + two 8x8 chroma blocks (4:2:0)
+                    detail::decodeBlock(bits, q_, dcPred[0], false, Y,              16);
+                    detail::decodeBlock(bits, q_, dcPred[0], false, Y + 8,          16);
+                    detail::decodeBlock(bits, q_, dcPred[0], false, Y + 8 * 16,     16);
+                    detail::decodeBlock(bits, q_, dcPred[0], false, Y + 8 * 16 + 8, 16);
+                    detail::decodeBlock(bits, q_, dcPred[1], true,  U, 8);
+                    detail::decodeBlock(bits, q_, dcPred[2], true,  V, 8);
+
+                    const int x0 = mbX * 16;
+                    const int y0 = mbY * 16;
+                    const int blockW = (fi.width  - x0 < 16) ? fi.width  - x0 : 16;
+                    const int blockH = (fi.height - y0 < 16) ? fi.height - y0 : 16;
+
+                    for (int y = 0; y < blockH; ++y) 
                     {
-                        uint8_t* d = dst + static_cast<std::ptrdiff_t>(y0 + y) * stride + static_cast<std::ptrdiff_t>(x0) * bytesPerPixel;
-                        const uint16_t* yy = Y + y * 16; 
-                        const uint16_t* uu = U + (y >> 1) * 8; 
-                        const uint16_t* vv = V + (y >> 1) * 8;
-                        for (int x = 0; x < cw; x++, d += bytesPerPixel) 
+                        uint8_t* dstPixel = dst 
+                            + static_cast<std::ptrdiff_t>(y0 + y) * stride 
+                            + static_cast<std::ptrdiff_t>(x0) * bytesPerPixel;
+
+                        const uint16_t* rowY = Y + y * 16; 
+                        const uint16_t* rowU = U + (y >> 1) * 8; 
+                        const uint16_t* rowV = V + (y >> 1) * 8;
+
+                        for (int x = 0; x < blockW; ++x, dstPixel += bytesPerPixel) 
                         {
-                            uint32_t s = T.a[yy[x]] + T.b[uu[x >> 1]] + T.c[vv[x >> 1]];
-                            detail::put(d, T.r[s >> 23], T.g[(s & 0xff800) >> 11], T.bl[s & 0x1ff]);
+                            // combine the three precomputed contributions and expand to 8-bit RGB
+                            const uint32_t packed = color.a[rowY[x]] 
+                                                  + color.b[rowU[x >> 1]] 
+                                                  + color.c[rowV[x >> 1]];
+                            detail::putRgb(dstPixel,
+                                color.r[packed >> 23],
+                                color.g[(packed & 0xFF800u) >> 11],
+                                color.bl[packed & 0x1FFu]);
                         }
                     }
                 }
-            } // for
-            return !b.overrun();
+            }
+            return !bits.overrun();
         }
     };
  
 }  // namespace tqi
 
+
 //////////////////////////////////////////////////////////////////////////
 
-inline uint16_t rl16(const uint8_t* p) { return (uint16_t)(p[0] | (p[1] << 8)); }
 inline uint32_t rl32(const uint8_t* p) 
 {
     return (uint32_t)p[0] | ((uint32_t)p[1] << 8) | ((uint32_t)p[2] << 16) | ((uint32_t)p[3] << 24);
 }
-inline int8_t s8(uint8_t v) { return (int8_t)v; }
-inline uint8_t clip8(int v) 
-{
-    if (v <   0) return   0;
-    if (v > 255) return 255;
-    return (uint8_t) v;
-}
+
 inline int align16(int v) { return (v + 15) & ~15; }
-
-// MPEG zigzag (raster index for scan position)
-static const uint8_t kZigzag[64] = 
-{
-     0,  1,  8, 16,  9,  2,  3, 10,
-    17, 24, 32, 25, 18, 11,  4,  5,
-    12, 19, 26, 33, 40, 48, 41, 34,
-    27, 20, 13,  6,  7, 14, 21, 28,
-    35, 42, 49, 56, 57, 50, 43, 36,
-    29, 22, 15, 23, 30, 37, 44, 51,
-    58, 59, 52, 45, 38, 31, 39, 46,
-    53, 60, 61, 54, 47, 55, 62, 63
-};
-
-// AAN inverse scales (used by EA TGQ/TQI quant matrices)
-static const uint16_t kInvAan[64] = 
-{
-    4096,  2953,  3135,  3483,  4096,  5213,  7568, 14846,
-    2953,  2129,  2260,  2511,  2953,  3759,  5457, 10703,
-    3135,  2260,  2399,  2666,  3135,  3990,  5793, 11363,
-    3483,  2511,  2666,  2962,  3483,  4433,  6436, 12625,
-    4096,  2953,  3135,  3483,  4096,  5213,  7568, 14846,
-    5213,  3759,  3990,  4433,  5213,  6635,  9633, 18895,
-    7568,  5457,  5793,  6436,  7568,  9633, 13985, 27432,
-   14846, 10703, 11363, 12625, 14846, 18895, 27432, 53809
-};
-
-// bitstream: TGQ = LE, bits taken LSB-first
-class BitLsb 
-{
-public:
-    const uint8_t* mDataPtr;
-    uint32_t mLeft;
-    uint32_t mCache {};
-    int mNumBits {};
-
-public:
-    BitLsb(const uint8_t* data, uint32_t size) 
-        : mDataPtr(data)
-        , mLeft(size) 
-    {
-    }
-
-    inline void refill() 
-    {
-        while ((mNumBits <= 24) && mLeft) 
-        {
-            mCache |= (uint32_t)(*mDataPtr++) << mNumBits;
-            mLeft--;
-            mNumBits += 8;
-        }
-    }
-
-    inline uint32_t peek(int n) 
-    {
-        refill();
-        return mCache & ((1u << n) - 1u);
-    }
-
-    inline uint32_t get(int n) 
-    {
-        refill();
-        const uint32_t v = mCache & ((1u << n) - 1u);
-        mCache >>= n;
-        mNumBits -= n;
-        return v;
-    }
-
-    inline int get_s(int n) 
-    {
-        const int v = (int)get(n);
-        const int sh = 32 - n;
-        return (v << sh) >> sh;
-    }
-};
-
-// EA IDCT (same integer kernel as eaidct.c)
-constexpr int kAsqrt = 181;
-constexpr int kA4 = 669;
-constexpr int kA2 = 277;
-constexpr int kA5 = 196;
-
-inline void idct_col(int16_t* dest, const int16_t* src)
-{
-    if ((src[8] | src[16] | src[24] | src[32] | src[40] | src[48] | src[56]) == 0) 
-    {
-        dest[0] = dest[8] = dest[16] = dest[24] = dest[32] = dest[40] = dest[48] = dest[56] = src[0];
-        return;
-    }
-    const int a1 = src[8] + src[56];
-    const int a7 = src[8] - src[56];
-    const int a5 = src[40] + src[24];
-    const int a3 = src[40] - src[24];
-    const int a2 = src[16] + src[48];
-    const int a6 = (kAsqrt * (src[16] - src[48])) >> 8;
-    const int a0 = src[0] + src[32];
-    const int a4 = src[0] - src[32];
-    const int b0 = (((kA4 - kA5) * a7 - kA5 * a3) >> 9) + a1 + a5;
-    const int b1 = (((kA4 - kA5) * a7 - kA5 * a3) >> 9) + ((kAsqrt * (a1 - a5)) >> 8);
-    const int b2 = (((kA2 + kA5) * a3 + kA5 * a7) >> 9) + ((kAsqrt * (a1 - a5)) >> 8);
-    const int b3 = ((kA2 + kA5) * a3 + kA5 * a7) >> 9;
-    dest[0]  = (int16_t)(a0 + a2 + a6 + b0);
-    dest[8]  = (int16_t)(a4 + a6 + b1);
-    dest[16] = (int16_t)(a4 - a6 + b2);
-    dest[24] = (int16_t)(a0 - a2 - a6 + b3);
-    dest[32] = (int16_t)(a0 - a2 - a6 - b3);
-    dest[40] = (int16_t)(a4 - a6 - b2);
-    dest[48] = (int16_t)(a4 + a6 - b1);
-    dest[56] = (int16_t)(a0 + a2 + a6 - b0);
-}
-
-inline void ea_idct_put(uint8_t* dest, int stride, int16_t block[64]) 
-{
-    int16_t temp[64];
-    block[0] = (int16_t)(block[0] + 4);
-    for (int i = 0; i < 8; i++)
-    {
-        idct_col(&temp[i], &block[i]);
-    }
-    for (int i = 0; i < 8; i++) 
-    {
-        const int16_t* src = &temp[8 * i];
-        const int a1 = src[1] + src[7];
-        const int a7 = src[1] - src[7];
-        const int a5 = src[5] + src[3];
-        const int a3 = src[5] - src[3];
-        const int a2 = src[2] + src[6];
-        const int a6 = (kAsqrt * (src[2] - src[6])) >> 8;
-        const int a0 = src[0] + src[4];
-        const int a4 = src[0] - src[4];
-        const int b0 = (((kA4 - kA5) * a7 - kA5 * a3) >> 9) + a1 + a5;
-        const int b1 = (((kA4 - kA5) * a7 - kA5 * a3) >> 9) + ((kAsqrt * (a1 - a5)) >> 8);
-        const int b2 = (((kA2 + kA5) * a3 + kA5 * a7) >> 9) + ((kAsqrt * (a1 - a5)) >> 8);
-        const int b3 = ((kA2 + kA5) * a3 + kA5 * a7) >> 9;
-        dest[0] = clip8((a0 + a2 + a6 + b0) >> 4);
-        dest[1] = clip8((a4 + a6 + b1) >> 4);
-        dest[2] = clip8((a4 - a6 + b2) >> 4);
-        dest[3] = clip8((a0 - a2 - a6 + b3) >> 4);
-        dest[4] = clip8((a0 - a2 - a6 - b3) >> 4);
-        dest[5] = clip8((a4 - a6 - b2) >> 4);
-        dest[6] = clip8((a4 + a6 - b1) >> 4);
-        dest[7] = clip8((a0 + a2 + a6 - b0) >> 4);
-        dest += stride;
-    }
-}
-
-inline void idct_put_mb(uint8_t* y, int ystride, uint8_t* cb, uint8_t* cr, int cstride, int16_t block[6][64]) 
-{
-    ea_idct_put(y, ystride, block[0]);
-    ea_idct_put(y + 8, ystride, block[1]);
-    ea_idct_put(y + 8 * ystride, ystride, block[2]);
-    ea_idct_put(y + 8 * ystride + 8, ystride, block[3]);
-    ea_idct_put(cb, cstride, block[4]);
-    ea_idct_put(cr, cstride, block[5]);
-}
-
-inline void tgq_qtable(int qtable[64], int quant) 
-{
-    const int a = (14 * (100 - quant)) / 100 + 1;
-    const int b = (11 * (100 - quant)) / 100 + 4;
-    for (int j = 0; j < 8; j++)
-    {
-        for (int i = 0; i < 8; i++)
-        {
-            qtable[j * 8 + i] = ((a * (j + i) / 14 + b) * (int)kInvAan[j * 8 + i]) >> 10;
-        }
-    }
-}
-
-inline bool tgq_block(BitLsb& b, int16_t block[64], const int qtable[64]) 
-{
-    std::memset(block, 0, 64 * sizeof(int16_t));
-    block[0] = (int16_t)(b.get_s(8) * qtable[0]);
-
-    for (int i = 1; i < 64;) 
-    {
-        switch (b.peek(3)) 
-        {
-            case 4:
-            {
-                if (i >= 63) 
-                    return false;
-
-                block[kZigzag[i++]] = 0;
-                // fallthrough
-            }
-            case 0:
-            {
-                block[kZigzag[i++]] = 0;
-                b.get(3);
-                break;
-            }
-            case 5:
-            case 1: 
-            {
-                b.get(2);
-                const int value = (int)b.get(6);
-                if (value > 64 - i) 
-                    return false;
-
-                for (int j = 0; j < value; j++)
-                {
-                    block[kZigzag[i++]] = 0;
-                }
-                break;
-            }
-            case 6:
-            {
-                b.get(3);
-                block[kZigzag[i]] = (int16_t)(-qtable[kZigzag[i]]);
-                i++;
-                break;
-            }
-            case 2:
-            {
-                b.get(3);
-                block[kZigzag[i]] = (int16_t)(qtable[kZigzag[i]]);
-                i++;
-                break;
-            }
-            case 7:
-            case 3:
-            {
-                b.get(2);
-                if (b.peek(6) == 0x3F) 
-                {
-                    b.get(6);
-                    block[kZigzag[i]] = (int16_t)(b.get_s(8) * qtable[kZigzag[i]]);
-                } 
-                else 
-                {
-                    block[kZigzag[i]] = (int16_t)(b.get_s(6) * qtable[kZigzag[i]]);
-                }
-                i++;
-                break;
-            }
-        }
-    }
-    block[0] = (int16_t)(block[0] + (128 << 4));
-    return true;
-}
-
-inline void fill8(uint8_t* dst, int stride, uint8_t v) 
-{
-    for (int j = 0; j < 8; j++)
-    {
-        std::memset(dst + j * stride, v, 8);
-    }
-}
-
-inline void copy16(uint8_t* dst, int dstride, const uint8_t* src, int sstride, int h, int w) 
-{
-    for (int j = 0; j < h; j++)
-    {
-        std::memcpy(dst + j * dstride, src + j * sstride, (uint32_t)w);
-    }
-}
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -835,39 +711,41 @@ bool DK2MovieDecoder::OpenFile(const std::string& path)
         return false;
     }
     fileStream.seekg(0, std::ios::end);
-    const auto n = fileStream.tellg();
-    if (n <= 0) 
+    const int dataLength = static_cast<int>(fileStream.tellg());
+    if (dataLength <= 0) 
     {
         return false;
     }
     fileStream.seekg(0, std::ios::beg);
-    std::vector<uint8_t> buf((uint32_t)n);
-    fileStream.read((char*) buf.data(), n);
-    if (!fileStream) 
-    {
-        return false;
-    }
-    return OpenMemory(buf.data(), buf.size());
-}
 
-bool DK2MovieDecoder::OpenMemory(const uint8_t* data, uint32_t size) 
-{
     Close();
-    if (size < 8) // too small
+    if (dataLength < 8) // too small
     {
         mErrorCode = eErrorCode_FileError;
         return false;
     }
-    mFileData.assign(data, data + size);
 
-    DemuxResult demuxNextResult;
-    if (!DemuxNext(demuxNextResult)) 
+    mFileData.resize(dataLength);
+    fileStream.read((char*) mFileData.data(), dataLength);
+    if (!fileStream) 
     {
-        if (mErrorCode == eErrorCode_None)
+        mErrorCode = eErrorCode_FileError;
+    }
+    else
+    {
+        DemuxResult demuxNextResult;
+        if (!DemuxNext(demuxNextResult) && (mErrorCode == eErrorCode_None)) 
         {
             mErrorCode = eErrorCode_EOF;
         }
-        return false;
+    }
+
+    bool isSuccess = (mErrorCode == eErrorCode_None);
+    if (!isSuccess)
+    {
+        const eErrorCode errorCode = mErrorCode;
+        Close();
+        mErrorCode = errorCode;
     }
     return true;
 }
@@ -884,22 +762,12 @@ void DK2MovieDecoder::Close()
     mFrameDimsCoded = {};
 
     mFrameIndex = 0;
-
-    mY.clear();
-    mCb.clear();
-    mCr.clear();
-    mLastY.clear();
-    mLastCb.clear();
-    mLastCr.clear();
-
-    mHaveReference = false;
 }
 
 void DK2MovieDecoder::Rewind() 
 {
     mFilePosition = 0;
     mFrameIndex = 0;
-    mHaveReference = false;
 }
 
 bool DK2MovieDecoder::DemuxNext(DemuxResult& outResult) 
@@ -927,66 +795,16 @@ bool DK2MovieDecoder::DemuxNext(DemuxResult& outResult)
 
         mFilePosition += raw;
 
-        const bool tqi = (outResult.mTag == 0x54514970u); // 'pIQT' as LE
-        const bool tgq = (outResult.mTag == 0x73514754u) || (outResult.mTag == 0x54475170u); // 'TGQs' / 'pQGT'
-        if (tqi || tgq) 
+        // 'pIQT' as little-endian fourcc
+        if (outResult.mTag == 0x54514970u) 
         {
-            mCodec = tqi ? eCodec::eCodec_Tqi : eCodec::eCodec_Tgq;
+            mCodec = eCodec::eCodec_Tqi;
             return true;
         }
 
-        // unknown: skip
-        // todo: audio
+        // unknown chunk (audio etc.) — skip
     }
     return false;
-}
-
-void DK2MovieDecoder::YUV2RGB(ByteArray& outFrame) const 
-{
-    outFrame.resize(mFrameDims.x * mFrameDims.y * 3);
-
-    const uint32_t ys = (uint32_t)mFrameDimsCoded.x;
-    const uint32_t cs = (uint32_t)mFrameDimsCoded.x >> 1;
-
-    for (int y = 0; y < mFrameDims.y; y++) 
-    {
-        const int cy = y >> 1;
-        uint8_t* outBufferPtr = outFrame.data() + y * mFrameDims.x * 3;
-
-        const uint8_t* y_data  = mY.data()  + y  * ys;
-        const uint8_t* cb_data = mCb.data() + cy * cs;
-        const uint8_t* cr_data = mCr.data() + cy * cs;
-
-        for (int x = 0; x < mFrameDims.x; x++) 
-        {
-            const uint32_t cx = (uint32_t)x >> 1;
-
-#if 0
-            const int Y  = (int) y_data[x];
-            const int Cb = (int) cb_data[cx] - 128;
-            const int Cr = (int) cr_data[cx] - 128;
-
-            // JPEG / full-range YCbCr
-            const int r = Y + ((359 * Cr) >> 8);
-            const int g = Y - ((88 * Cb + 183 * Cr) >> 8);
-            const int b = Y + ((454 * Cb) >> 8);
-#else
-            // better looking contrast
-
-            const int Y  = ((int)  y_data[x] - 16) * 298;         // 1.164 * 256
-            const int Cb = (int) cb_data[cx] - 128;
-            const int Cr = (int) cr_data[cx] - 128;
-
-            const int r = (Y + 409 * Cr + 128) >> 8;            // 1.596 * 256
-            const int g = (Y - 100 * Cb - 208 * Cr + 128) >> 8; // 0.392, 0.813
-            const int b = (Y + 516 * Cb + 128) >> 8;            // 2.017 * 256
-#endif
-
-            outBufferPtr[x * 3 + 0] = clip8(r);
-            outBufferPtr[x * 3 + 1] = clip8(g);
-            outBufferPtr[x * 3 + 2] = clip8(b);
-        }
-    }
 }
 
 bool DK2MovieDecoder::DecodeTqi(const uint8_t* payload, uint32_t size, ByteArray& outFrame) 
@@ -1021,198 +839,6 @@ bool DK2MovieDecoder::DecodeTqi(const uint8_t* payload, uint32_t size, ByteArray
     return true;
 }
 
-bool DK2MovieDecoder::DecodeTgq(const uint8_t* payload, uint32_t size, ByteArray& outFrame) 
-{
-    if (size < 8) 
-    {
-        mErrorCode = eErrorCode_FrameTooSmall;
-        return false;
-    }
-
-    const int w = (int)rl16(payload + 0);
-    const int h = (int)rl16(payload + 2);
-
-    const int quant = payload[4];
-    if (w <= 0 || h <= 0 || w > 4096 || h > 4096) 
-    {
-        mErrorCode = eErrorCode_InvalidFrameDimensions;
-        return false;
-    }
-
-    mFrameDims = {w, h};
-
-    mFrameDimsCoded.x = align16(w);
-    mFrameDimsCoded.y = align16(h);
-
-    const uint32_t ysz = (uint32_t) mFrameDimsCoded.x * mFrameDimsCoded.y;
-    const uint32_t csz = (uint32_t)(mFrameDimsCoded.x >> 1) * (mFrameDimsCoded.y >> 1);
-
-    mY.assign(ysz, 0x80);
-    mCb.assign(csz, 0x80);
-    mCr.assign(csz, 0x80);
-
-    int qtable[64];
-    tgq_qtable(qtable, quant);
-
-    const uint8_t* p = payload + 8;
-
-    uint32_t left = size - 8;
-    int16_t block[6][64];
-
-    const int mb_w = mFrameDimsCoded.x / 16;
-    const int mb_h = mFrameDimsCoded.y / 16;
-
-    for (int my = 0; my < mb_h; my++) 
-    {
-        for (int mx = 0; mx < mb_w; mx++) 
-        {
-            if (left < 1) 
-            {
-                mErrorCode = eErrorCode_DecodeError;
-                return false;
-            }
-
-            const int mode = *p++;
-
-            left--;
-            uint8_t* yp = mY.data() + (uint32_t)my * 16 * mFrameDimsCoded.x + mx * 16;
-            uint8_t* cbp = mCb.data() + (uint32_t)my * 8 * (mFrameDimsCoded.x >> 1) + mx * 8;
-            uint8_t* crp = mCr.data() + (uint32_t)my * 8 * (mFrameDimsCoded.x >> 1) + mx * 8;
-
-            if (mode > 12) 
-            {
-                if (left < (uint32_t)mode) 
-                {
-                    mErrorCode = eErrorCode_DecodeError;
-                    return false;
-                }
-
-                BitLsb bits(p, (uint32_t)mode);
-                for (int n = 0; n < 6; n++) 
-                {
-                    if (!tgq_block(bits, block[n], qtable)) 
-                    {
-                        mErrorCode = eErrorCode_DecodeError;
-                        return false;
-                    }
-                }
-
-                idct_put_mb(yp, mFrameDimsCoded.x, cbp, crp, mFrameDimsCoded.x >> 1, block);
-
-                p += (uint32_t)mode;
-                left -= (uint32_t)mode;
-            } 
-            else if (mode == 1) 
-            {
-                if (left < 1) 
-                {
-                    mErrorCode = eErrorCode_DecodeError;
-                    return false;
-                }
-
-                const int mv = *p++;
-                left--;
-                int mv_x = mv >> 4;
-                int mv_y = mv & 0x0F;
-
-                if (mv_x >= 8) mv_x -= 16;
-                if (mv_y >= 8) mv_y -= 16;
-
-                const int x = mx * 16 - mv_x;
-                const int y = my * 16 - mv_y;
-
-                if (!mHaveReference || 
-                    (x < 0) || (x + 16 > mFrameDimsCoded.x) || 
-                    (y < 0) || (y + 16 > mFrameDimsCoded.y)) 
-                {
-                    // no ref / OOB: leave mid-gray
-                } 
-                else 
-                {
-                    copy16(yp, mFrameDimsCoded.x, mLastY.data() + (uint32_t)y * mFrameDimsCoded.x + x, mFrameDimsCoded.x, 16, 16);
-                    copy16(cbp, mFrameDimsCoded.x >> 1,
-                           mLastCb.data() + (uint32_t)(y >> 1) * (mFrameDimsCoded.x >> 1) + (x >> 1),
-                           mFrameDimsCoded.x >> 1, 8, 8);
-                    copy16(crp, mFrameDimsCoded.x >> 1,
-                           mLastCr.data() + (uint32_t)(y >> 1) * (mFrameDimsCoded.x >> 1) + (x >> 1),
-                        mFrameDimsCoded.x >> 1, 8, 8);
-                }
-            } 
-            else 
-            {
-                int8_t dc[6] = {0, 0, 0, 0, 0, 0};
-                if (mode == 3) 
-                {
-                    if (left < 3) 
-                    { 
-                        mErrorCode = eErrorCode_DecodeError;
-                        return false; 
-                    }
-
-                    const int8_t ydc = s8(*p++);
-                    dc[0] = dc[1] = dc[2] = dc[3] = ydc;
-                    dc[4] = s8(*p++);
-                    dc[5] = s8(*p++);
-                    left -= 3;
-                } 
-                else if (mode == 6) 
-                {
-                    if (left < 6) 
-                    {
-                        mErrorCode = eErrorCode_DecodeError;
-                        return false; 
-                    }
-
-                    for (int i = 0; i < 6; i++) 
-                    {
-                        dc[i] = s8(*p++);
-                    }
-                    left -= 6;
-                } 
-                else if (mode == 12) 
-                {
-                    if (left < 12) 
-                    { 
-                        mErrorCode = eErrorCode_DecodeError;
-                        return false; 
-                    }
-
-                    for (int i = 0; i < 6; i++) 
-                    {
-                        dc[i] = s8(*p++);
-                        p++;
-                    }
-                    left -= 12;
-                } 
-                else 
-                {
-                    mErrorCode = eErrorCode_DecodeError;
-                    return false; 
-                }
-
-                auto dconly = [&](uint8_t* dst, int stride, int dcv) 
-                    {
-                        const int level = clip8((dcv * qtable[0] + 2056) >> 4);
-                        fill8(dst, stride, (uint8_t)level);
-                    };
-                dconly(yp, mFrameDimsCoded.x, dc[0]);
-                dconly(yp + 8, mFrameDimsCoded.x, dc[1]);
-                dconly(yp + 8 * mFrameDimsCoded.x, mFrameDimsCoded.x, dc[2]);
-                dconly(yp + 8 * mFrameDimsCoded.x + 8, mFrameDimsCoded.x, dc[3]);
-                dconly(cbp, mFrameDimsCoded.x >> 1, dc[4]);
-                dconly(crp, mFrameDimsCoded.x >> 1, dc[5]);
-            }
-        }
-    }
-
-    mLastY = mY;
-    mLastCb = mCb;
-    mLastCr = mCr;
-    mHaveReference = true;
-    YUV2RGB(outFrame);
-    return true;
-}
-
 bool DK2MovieDecoder::DecodeNextFrame(ByteArray& outFrame) 
 {
     DemuxResult demuxNextResult;
@@ -1225,15 +851,7 @@ bool DK2MovieDecoder::DecodeNextFrame(ByteArray& outFrame)
         return false;
     }
 
-    bool isSuccess = false;
-    if (mCodec == eCodec::eCodec_Tqi)
-    {
-        isSuccess = DecodeTqi(demuxNextResult.mDataPtr, demuxNextResult.mLength, outFrame);
-    }
-    else
-    {
-        isSuccess = DecodeTgq(demuxNextResult.mDataPtr, demuxNextResult.mLength, outFrame);
-    }
+    const bool isSuccess = DecodeTqi(demuxNextResult.mDataPtr, demuxNextResult.mLength, outFrame);
     if (isSuccess) 
     {
         mFrameIndex++;
