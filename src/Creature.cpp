@@ -363,6 +363,7 @@ void Creature::InitLocomotion()
     {
         locomotion->ResetToDefaults();
         locomotion->SetArriveSpeed(mDefinition->mSpeed);
+        locomotion->SetOrientSpeed(glm::radians(mDefinition->mMaxTurnRateDegrees));
     }
 }
 

@@ -21,6 +21,7 @@ public:
     {
         unsigned int mIndex {}; // 1 based
         unsigned int mArchiveId {}; // 1 based
+        float mDuration {};
     };
 
     struct SfxSegment
@@ -38,9 +39,7 @@ public:
     struct SfxMapEntry
     {
         std::vector<SfxGroup> mGroups;
-        float mMinDistance {};
-        float mMaxDistance {};
-        float mScale = 1.0f;
+        unsigned int mChannelMask {}; // 1 master, 2 music, 4 speech, 8 sfx: mute switch + volume slider
     };
 
     //////////////////////////////////////////////////////////////////////////

@@ -154,7 +154,7 @@ enum
     ROOMF_PLACEABLE_ON_LAVA                     = (0x0002UL),
     ROOMF_PLACEABLE_ON_LAND                     = (0x0004UL),
     ROOMF_HAS_WALLS                             = (0x0008UL),
-    ROOMF_CENTRE                                = (0x0010UL), // Placement
+    ROOMF_CENTER                                = (0x0010UL), // Placement
     ROOMF_SPECIAL_TILES                         = (0x0020UL), // Placement
     ROOMF_NORMAL_TILES                          = (0x0040UL), // Placement
     ROOMF_BUILDABLE                             = (0x0080UL),
@@ -222,7 +222,7 @@ enum : ScenarioVariableType
     ScenarioVariableType_RepairRoomHealth = 16,
     // 17
     ScenarioVariableType_ChickenGenerationTimePerHatchery = 18,
-    // 19
+    ScenarioVariableType_GameTicksPerSecond = 19,
     ScenarioVariableType_GoldMinedFromGems = 20,
     ScenarioVariableType_TimeBetweenReattemptingHungerSeconds = 21,
     ScenarioVariableType_TimeBetweenReattemptingSleepSeconds = 22,
@@ -232,7 +232,7 @@ enum : ScenarioVariableType
     ScenarioVariableType_CreatureDyingStateDurationSeconds = 26,
     ScenarioVariableType_SpecialIncreaseGoldAmount = 27,
     ScenarioVariableType_SpecialIncreaseManaAmount = 28,
-    // 29
+    ScenarioVariableType_ImpNearRangeDistance = 29,
     ScenarioVariableType_ImpIdleDelayBeforeReevaluationSeconds = 30,
     ScenarioVariableType_DelayBeforePayReevaluationSeconds = 31,
     ScenarioVariableType_MaxGoldPileOutsideTreasury = 32,
@@ -269,7 +269,7 @@ enum : ScenarioVariableType
     // 63
     // 64
     ScenarioVariableType_CreatureStatsId = 65,
-    // 66
+    ScenarioVariableType_ManaGenerationForJob = 66,
     ScenarioVariableType_DefaultCellingHeightTiles = 67,
     ScenarioVariableType_PayDayCutOffTimeSeconds = 68,
     // 69
@@ -280,7 +280,7 @@ enum : ScenarioVariableType
     ScenarioVariableType_GameTicks = 74,
     ScenarioVariableType_ModifyHealthOfCreatureInLairPerSecond = 75,
     ScenarioVariableType_ModifyAngerOfCreatureInLairPerSecond = 76,
-    // 77
+    ScenarioVariableType_ModifyCreatureStats = 77,
     ScenarioVariableType_ModifyAngerInCompanyOfHatedCreaturesPerSecond = 78,
     ScenarioVariableType_ForceAppliedToSlappedCreature = 79,
     // 80
@@ -389,7 +389,7 @@ enum : ScenarioVariableType
     ScenarioVariableType_DungeonHeartReportingDistanceTiles = 183,
     ScenarioVariableType_DwarfDiggingMultiplier = 184,
     ScenarioVariableType_TriggerTrapTriggerSpeedTilesPerSecond = 185,
-    // 186
+    ScenarioVariableType_WarlockFireballSpellRechargeTime = 186,
     ScenarioVariableType_FirstPersonAccuracyAngleDegrees = 187,
     ScenarioVariableType_SpecialReceiveImpsAmount = 188,
     ScenarioVariableType_DungeonHeartCreatureGatheringDistanceTiles = 189,
@@ -446,6 +446,11 @@ enum : ScenarioVariableType
     ScenarioVariableType_BoulderSlapDamage = 240,
     ScenarioVariableType_LevelRating = 241,
     ScenarioVariableType_AverageTime = 242,
+    ScenarioVariableType_PlinthCreatureGenerationDelay = 243,
+    ScenarioVariableType_GemsNeededToWinLevel = 244,
+    ScenarioVariableType_GemPowerupRespawnDelay = 245,
+    ScenarioVariableType_EnemyPlinthDamagePerSecond = 246,
+    ScenarioVariableType_OwnPlinthHealthIncreasePerSecond = 247,
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -1044,7 +1049,7 @@ bool DK2ScenarioReader::ReadRoomFlags(RoomDefinition& roomDef)
     roomDef.mPlaceableOnLava = (roomFlags & ROOMF_PLACEABLE_ON_LAVA) > 0;
     roomDef.mPlaceableOnLand = (roomFlags & ROOMF_PLACEABLE_ON_LAND) > 0;
     roomDef.mHasWalls = (roomFlags & ROOMF_HAS_WALLS) > 0;
-    roomDef.mCentre = (roomFlags & ROOMF_CENTRE) > 0;
+    roomDef.mCentre = (roomFlags & ROOMF_CENTER) > 0;
     roomDef.mSpecialTiles = (roomFlags & ROOMF_SPECIAL_TILES) > 0;
     roomDef.mNormalTiles = (roomFlags & ROOMF_NORMAL_TILES) > 0;
     roomDef.mBuildable = (roomFlags & ROOMF_BUILDABLE) > 0;
@@ -1967,13 +1972,14 @@ bool DK2ScenarioReader::ReadCreaturesDefinition(CreatureDefinition& creature)
     if (!ReadVector3f(creature.mAnimationOffset))
         return false;
 
-    SKIP_FSTREAM_U32(mFileStream);
-
+    if (!Read32bitsFloat(creature.mWidth))
+        return false;
     if (!Read32bitsFloat(creature.mHeight))
         return false;
-
-    SKIP_FSTREAM_U32(mFileStream); // float32 ?
-    SKIP_FSTREAM_U32(mFileStream);
+    if (!Read32bitsFloat(creature.mMass))
+        return false;
+    if (!Read32bitsFloat(creature.mAirFriction))
+        return false;
     if (!Read32bitsFloat(creature.mEyeHeight))
         return false;
     if (!Read32bitsFloat(creature.mSpeed))
@@ -2038,7 +2044,11 @@ bool DK2ScenarioReader::ReadCreaturesDefinition(CreatureDefinition& creature)
     SKIP_FSTREAM_U16(mFileStream);
     READ_FSTREAM_U16(mFileStream, creature.mPay);
     READ_FSTREAM_U16(mFileStream, creature.mMaxGoldHeld);
-    SKIP_FSTREAM_U16(mFileStream); // float16?
+    
+    unsigned short maxTurnRateU16 = 0; // 2048 = 360 degrees per second
+    READ_FSTREAM_U16(mFileStream, maxTurnRateU16);
+    creature.mMaxTurnRateDegrees = (maxTurnRateU16 / 2048.0f) * 360.0f;
+
     READ_FSTREAM_U16(mFileStream, creature.mDecomposeValue);
     READ_FSTREAM_U16(mFileStream, creature.mNameStringId);
     READ_FSTREAM_U16(mFileStream, creature.mTooltipStringId);
@@ -2064,7 +2074,7 @@ bool DK2ScenarioReader::ReadCreaturesDefinition(CreatureDefinition& creature)
     SKIP_FSTREAM_BYTES(mFileStream, 3);
     READ_FSTREAM_U8(mFileStream, creature.mCreatureTypeId);
     SKIP_FSTREAM_U8(mFileStream);
-    SKIP_FSTREAM_U8(mFileStream);
+    SKIP_FSTREAM_U8(mFileStream); // roomCapacityNeeded
     SKIP_FSTREAM_U8(mFileStream); // hungerFill
     SKIP_FSTREAM_U8(mFileStream); // unhappy threshold
     SKIP_FSTREAM_U8(mFileStream); // meleeAttackType
@@ -2127,7 +2137,7 @@ bool DK2ScenarioReader::ReadCreaturesDefinition(CreatureDefinition& creature)
     if (!ReadArtResource(creature.mAnimationResources[CreatureAnimation_WalkBack]))
         return false;
 
-    SKIP_FSTREAM_BYTES(mFileStream, 48 * 4);
+    SKIP_FSTREAM_BYTES(mFileStream, 48 * 4); // footstepFrames, Footstep Frame Left/Right per animation slot (0 = walk ... 47)
 
     if (!ReadArtResource(creature.mAnimationResources[CreatureAnimation_Pose_Frame]))
         return false;
@@ -2555,16 +2565,19 @@ bool DK2ScenarioReader::ReadLevelInfo(ScenarioLevelInfo& levelInfo, std::vector<
     READ_FROM_FSTREAM(mFileStream, fillerWord); // textTitleId
     READ_FROM_FSTREAM(mFileStream, fillerWord); // textPlotId
     READ_FROM_FSTREAM(mFileStream, fillerWord); // textDebriefId
-    READ_FROM_FSTREAM(mFileStream, fillerWord); // textObjectvId
-    READ_FROM_FSTREAM(mFileStream, fillerWord);
-    READ_FROM_FSTREAM(mFileStream, fillerWord);
-    READ_FROM_FSTREAM(mFileStream, fillerWord);
-    READ_FROM_FSTREAM(mFileStream, fillerWord);
-    READ_FROM_FSTREAM(mFileStream, fillerWord); // speclvlIdx
+    READ_FROM_FSTREAM(mFileStream, fillerWord); // textObjectiveId
+    READ_FROM_FSTREAM(mFileStream, fillerWord); // ??
+    READ_FROM_FSTREAM(mFileStream, fillerWord); // textSubObjectiveId1
+    READ_FROM_FSTREAM(mFileStream, fillerWord); // textSubObjectiveId2
+    READ_FROM_FSTREAM(mFileStream, fillerWord); // textSubObjectiveId3
 
-    // unknown data
-    SKIP_FSTREAM_BYTES(mFileStream, 8 * sizeof(unsigned char));
-    SKIP_FSTREAM_BYTES(mFileStream, 8 * sizeof(unsigned short));
+    unsigned char specialLevelNumber;
+    unsigned char uniqueCreatureTypeId;
+    READ_FROM_FSTREAM(mFileStream, specialLevelNumber); 
+    READ_FROM_FSTREAM(mFileStream, uniqueCreatureTypeId); 
+
+    SKIP_FSTREAM_BYTES(mFileStream, 8 * sizeof(unsigned char)); // textIntroductionOverrideObjective
+    SKIP_FSTREAM_BYTES(mFileStream, 8 * sizeof(unsigned short)); // textIntroductionOverrideIds
 
     // path
     std::string terrainPath;
@@ -2644,7 +2657,7 @@ bool DK2ScenarioReader::ReadDataFileHeader(KWDFileHeader& fileHeader, ScenarioDe
         case DKLD_LEVEL:
         {
             READ_FSTREAM_U16(mFileStream, fileHeader.mItemsCount);
-            SKIP_FSTREAM_BYTES(mFileStream, 2); // height
+            SKIP_FSTREAM_BYTES(mFileStream, 2); // creatureCount
             SKIP_FSTREAM_BYTES(mFileStream, 4); // unknown
 
             if (!ReadTimestamp()) // created
@@ -2671,7 +2684,6 @@ bool DK2ScenarioReader::ReadDataFileHeader(KWDFileHeader& fileHeader, ScenarioDe
     READ_FSTREAM_U32(mFileStream, fileHeader.mContentSize);
     return true;
 }
-
 
 bool DK2ScenarioReader::ReadDataFileContent(KWDFileHeader& fileHeader, ScenarioDefinition& scenarioData)
 {

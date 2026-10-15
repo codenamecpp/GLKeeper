@@ -189,26 +189,25 @@ void FrontendController::UpdateCampaignLevelSelection(float deltaTime)
             });
     }
 
-    if (auto capability = gEntities.GetEntityCapability<I3DMapTableRoom>(mHeroGateRoomHandle))
+    if (auto roomCapability = gEntities.GetEntityCapability<I3DMapTableRoom>(mHeroGateRoomHandle))
     {
-        for (const RayHitResult& roller: hitResults)
+        if (!hitResults.empty())
         {
-            EntityHandle entityHandle = roller.mSceneObject->GetOwnerEntity();
-            if (capability->SelectLevel(entityHandle))
+            const RayHitResult& rayHitResult = hitResults.front();
+            const EntityHandle entityHandle = rayHitResult.mSceneObject->GetOwnerEntity();
+            if (roomCapability->SelectLevel(entityHandle))
             {
                 entityUnderCusror = entityHandle;
-                if (!capability->GetLevelKey(entityUnderCusror, mSelectedCampaignLevel))
+                if (!roomCapability->GetLevelKey(entityUnderCusror, mSelectedCampaignLevel))
                 {
                     cxx_assert(false);
-                    continue;
                 }
-                break;
             }
         }
 
         if (!entityUnderCusror)
         {
-            capability->DeselectLevel();
+            roomCapability->DeselectLevel();
         }
     }
 }

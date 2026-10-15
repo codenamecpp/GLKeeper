@@ -3,6 +3,557 @@
 
 //////////////////////////////////////////////////////////////////////////
 
+// AAN scales
+static const int32_t TQI_BASE1[64] = 
+{
+    8192,5906,6270,6967,8192,10426,15137,29692,5906,4258,4520,5023,5906,7517,10913,21407,6270,4520,4799,5332,
+    6270,7980,11585,22725,6967,5023,5332,5925,6967,8867,12873,25251,8192,5906,6270,6967,8192,10426,15137,29692,
+    10426,7517,7980,8867,10426,13270,19266,37791,15137,10913,11585,12873,15137,19266,27969,54864,29692,21407,22725,
+    25251,29692,37791,54864,107619
+};
+
+// MPEG-1 default intra matrix
+static const int32_t TQI_BASE2[64] = 
+{
+    8,16,19,22,26,27,29,34,16,16,22,24,27,29,34,37,19,22,26,27,29,34,34,38,22,22,26,27,29,34,37,40,22,26,27,29,32,35,40,
+    48,26,27,29,32,35,40,48,58,26,27,29,34,38,46,56,69,27,29,35,38,46,56,69,83
+}; 
+
+// scan index k (0..63) -> position pos = row*8+col in the 8x8 coefficient array
+static const uint8_t TQI_SCAN[64] = 
+{
+    0,8,1,2,9,16,24,17,10,3,4,11,18,25,32,40,33,26,19,12,5,6,13,20,27,34,41,48,56,49,42,35,28,21,14,7,15,22,29,36,43,50,
+    57,58,51,44,37,30,23,31,38,45,52,59,60,53,46,39,47,54,61,62,55,63
+};
+
+// DC VLC lookup: byte = (dc_size<<4)|code_len ; luma indexed by next 7 bits, chroma by next 8 bits
+static const uint8_t TQI_DC_LUMA[128] = 
+{
+    18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,34,34,34,34,34,34,34,
+    34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,51,51,51,51,
+    51,51,51,51,51,51,51,51,51,51,51,51,67,67,67,67,67,67,67,67,67,67,67,67,67,67,67,67,84,84,84,84,84,84,84,84,101,101,101,
+    101,118,118,135,0
+};
+
+static const uint8_t TQI_DC_CHROMA[256] = 
+{
+    2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+    2,2,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
+    18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,
+    34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,34,
+    34,34,34,34,51,51,51,51,51,51,51,51,51,51,51,51,51,51,51,51,51,51,51,51,51,51,51,51,51,51,51,51,51,51,51,51,68,68,68,68,68,68,
+    68,68,68,68,68,68,68,68,68,68,85,85,85,85,85,85,85,85,102,102,102,102,119,119,136,0
+};
+
+// AC VLC (MPEG-1 table B.14)
+struct TqiAc
+{
+    const char* code;
+    uint8_t run1;
+    uint8_t level;
+};
+
+static const TqiAc TQI_AC[]=
+{
+    {"10",65,0},
+    {"11",1,1},
+    {"011",2,1},
+    {"0100",1,2},
+    {"0101",3,1},
+    {"00101",1,3},
+    {"00110",5,1},
+    {"00111",4,1},
+    {"000001",66,0},
+    {"000100",8,1},
+    {"000101",7,1},
+    {"000110",2,2},
+    {"000111",6,1},
+    {"0000100",3,2},
+    {"0000101",10,1},
+    {"0000110",1,4},
+    {"0000111",9,1},
+    {"00100000",14,1},
+    {"00100001",1,6},
+    {"00100010",13,1},
+    {"00100011",12,1},
+    {"00100100",4,2},
+    {"00100101",2,3},
+    {"00100110",1,5},
+    {"00100111",11,1},
+    {"0000001000",17,1},
+    {"0000001001",6,2},
+    {"0000001010",1,7},
+    {"0000001011",3,3},
+    {"0000001100",2,4},
+    {"0000001101",16,1},
+    {"0000001110",15,1},
+    {"0000001111",5,2},
+    {"000000010000",1,11},
+    {"000000010001",9,2},
+    {"000000010010",5,3},
+    {"000000010011",1,10},
+    {"000000010100",3,4},
+    {"000000010101",8,2},
+    {"000000010110",22,1},
+    {"000000010111",21,1},
+    {"000000011000",1,9},
+    {"000000011001",20,1},
+    {"000000011010",19,1},
+    {"000000011011",2,5},
+    {"000000011100",4,3},
+    {"000000011101",1,8},
+    {"000000011110",7,2},
+    {"000000011111",18,1},
+    {"0000000010000",11,2},
+    {"0000000010001",10,2},
+    {"0000000010010",6,3},
+    {"0000000010011",4,4},
+    {"0000000010100",3,5},
+    {"0000000010101",2,7},
+    {"0000000010110",2,6},
+    {"0000000010111",1,15},
+    {"0000000011000",1,14},
+    {"0000000011001",1,13},
+    {"0000000011010",1,12},
+    {"0000000011011",27,1},
+    {"0000000011100",26,1},
+    {"0000000011101",25,1},
+    {"0000000011110",24,1},
+    {"0000000011111",23,1},
+    {"00000000010000",1,31},
+    {"00000000010001",1,30},
+    {"00000000010010",1,29},
+    {"00000000010011",1,28},
+    {"00000000010100",1,27},
+    {"00000000010101",1,26},
+    {"00000000010110",1,25},
+    {"00000000010111",1,24},
+    {"00000000011000",1,23},
+    {"00000000011001",1,22},
+    {"00000000011010",1,21},
+    {"00000000011011",1,20},
+    {"00000000011100",1,19},
+    {"00000000011101",1,18},
+    {"00000000011110",1,17},
+    {"00000000011111",1,16},
+    {"000000000010000",1,40},
+    {"000000000010001",1,39},
+    {"000000000010010",1,38},
+    {"000000000010011",1,37},
+    {"000000000010100",1,36},
+    {"000000000010101",1,35},
+    {"000000000010110",1,34},
+    {"000000000010111",1,33},
+    {"000000000011000",1,32},
+    {"000000000011001",2,14},
+    {"000000000011010",2,13},
+    {"000000000011011",2,12},
+    {"000000000011100",2,11},
+    {"000000000011101",2,10},
+    {"000000000011110",2,9},
+    {"000000000011111",2,8},
+    {"0000000000010000",2,18},
+    {"0000000000010001",2,17},
+    {"0000000000010010",2,16},
+    {"0000000000010011",2,15},
+    {"0000000000010100",7,3},
+    {"0000000000010101",17,2},
+    {"0000000000010110",16,2},
+    {"0000000000010111",15,2},
+    {"0000000000011000",14,2},
+    {"0000000000011001",13,2},
+    {"0000000000011010",12,2},
+    {"0000000000011011",32,1},
+    {"0000000000011100",31,1},
+    {"0000000000011101",30,1},
+    {"0000000000011110",29,1},
+    {"0000000000011111",28,1},
+    {0,0,0}
+};
+
+//////////////////////////////////////////////////////////////////////////
+
+namespace tqi 
+{
+ 
+    struct FrameInfo 
+    {
+        int width {};
+        int height {}; 
+        int quant {};
+        int flags {}; 
+    };
+ 
+    namespace detail 
+    {
+ 
+        constexpr int clampi(int v, int lo, int hi) { return v < lo ? lo : v > hi ? hi : v; }
+ 
+        // colour tables
+        struct ColorTables 
+        {
+            uint32_t a[512] {}, b[512] {}, c[512] {};     // Y, (U), (V) packed 9-bit R/G/B fields
+            uint8_t  r[512] {}, g[512] {}, bl[512] {};    // field -> 8-bit channel (brightness 100%)
+
+            constexpr ColorTables() 
+            {
+                for (int iroller = -256; iroller < 256; iroller++) 
+                {
+                    const int eax = clampi(iroller, -64, 63);
+                    const uint32_t idx = static_cast<uint32_t>(iroller - 192) & 0x1ffu;
+                    uint32_t ecx = static_cast<uint32_t>(eax) << 12; 
+                    ecx = (ecx + static_cast<uint32_t>(eax)) << 11;
+                    a[idx] = ecx + static_cast<uint32_t>(eax) + 0x4883d8a9u;
+
+                    const double cc = static_cast<double>(eax) + 0.5;
+                    const uint32_t v1 = static_cast<uint32_t>(0.5 - cc * 0.3441); // truncation toward zero == _ftol
+                    const uint32_t v2 = static_cast<uint32_t>(0.5 - cc * -1.772);
+                    const uint32_t v3 = static_cast<uint32_t>(0.5 - cc * 0.7141);
+                    const uint32_t v4 = static_cast<uint32_t>(0.5 - cc * -1.402);
+
+                    b[idx] = ((v1 & 0x1ff) << 11) + (v2 & 0x1ff);
+                    c[idx] = ((v3 & 0x1ff)        + ((v4 & 0x1ff) << 12)) << 11;
+                }
+                for (int i = 0; i < 512; i++) 
+                {
+                    r[i]  = static_cast<uint8_t>(clampi(-177 + 2 * i, 0, 255));
+                    g[i]  = static_cast<uint8_t>(clampi(-133 + 2 * i, 0, 255));
+                    bl[i] = static_cast<uint8_t>(clampi(-225 + 2 * i, 0, 255));
+                }
+            }
+        };
+        static const ColorTables kColor {};
+ 
+        // AC VLC: 16-bit window -> uint16 { len:5 | run:5 | level:6 }.  level==0 && run==0 -> EOB, level==0 && run==1 -> ESC
+        struct AcTable 
+        {
+        public:
+            AcTable() 
+            {
+                std::memset(e, 0, sizeof(e));
+                for (const TqiAc* c = TQI_AC; c->code; c++) 
+                {
+                    const int len = static_cast<int>(std::strlen(c->code)); 
+                    uint32_t v = 0;
+                    for (int i = 0; i < len; i++) 
+                    {
+                        v = (v << 1) | (c->code[i] == '1');
+                    }
+                    uint16_t ent;
+                    if (c->run1 == 65)      ent = static_cast<uint16_t>(len << 11);                 // EOB
+                    else if (c->run1 == 66) ent = static_cast<uint16_t>((len << 11) | (1 << 6));    // ESC
+                    else                    ent = static_cast<uint16_t>((len << 11) | ((c->run1 - 1) << 6) | c->level);
+
+                    const uint32_t lo = v << (16 - len); 
+                    const uint32_t hi = lo + (1u << (16 - len));
+                    for (uint32_t w = lo; w < hi; w++) 
+                    {
+                        e[w] = ent;
+                    }
+                } // for
+            }
+        public:
+            uint16_t e[1 << 16];
+        };
+
+        inline const AcTable& acTable() { static const AcTable t; return t; }
+ 
+        // bit reader: LE dwords, MSB first
+        struct Bits 
+        {
+            const uint8_t* p; 
+            uint32_t n; 
+            uint64_t pos;
+
+            inline uint32_t word(uint32_t w) const 
+            {
+                uint32_t o = w * 4; 
+                uint32_t v = 0;
+                if ((o + 4) <= n) 
+                { 
+                    std::memcpy(&v, p + o, 4); 
+                    return fromLE(v); 
+                }
+                for (uint32_t i = 0; (i < 4) && ((o + i) < n); i++) 
+                {
+                    v |= static_cast<uint32_t>(p[o + i]) << (8 * i);
+                }
+                return v;
+            }
+
+            static uint32_t fromLE(uint32_t v) 
+            {
+        #if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+                return __builtin_bswap32(v);
+        #else
+                return v;
+        #endif
+            }
+
+            inline uint32_t peek32() const 
+            {
+                const uint32_t w = static_cast<uint32_t>(pos >> 5); 
+                const uint32_t s = pos & 31;
+                const uint32_t a = word(w);
+                return s ? (a << s) | (word(w + 1) >> (32 - s)) : a;
+            }
+
+            inline bool overrun() const { return pos > static_cast<uint64_t>(n) * 8; }
+        };
+ 
+        // IDCT
+        constexpr double kA = 0.5411961078643799;
+        constexpr double kB = 1.3065630197525024;
+        constexpr double kC = 0.3826834261417389;
+        constexpr int64_t kSq = 0x5a82799a;
+ 
+        // "+1.5*2^52, read low dword" == round-to-nearest-even
+        inline int32_t rne(double x) 
+        {          
+            double t = x + 6755399441055744.0; 
+            uint64_t u; 
+            std::memcpy(&u, &t, 8); 
+            return static_cast<int32_t>(static_cast<uint32_t>(u));
+        }
+
+        inline void idct8(const int32_t* x, int32_t* o) 
+        {
+            const int32_t t35 = x[3] + x[5], A = x[5] - x[3], t17 = x[7] + x[1], B = x[1] - x[7];
+            const int32_t S = t35 + t17, D = t17 - t35;
+            const double Z = static_cast<double>(A + B) * kC;
+            const int32_t Y1 = rne(static_cast<double>(A) * kA + Z), Y2 = rne(static_cast<double>(B) * kB - Z);
+            const int32_t E  = static_cast<int32_t>(static_cast<uint32_t>(static_cast<int32_t>((D * kSq) >> 32)) << 1);
+            const int32_t r1 = Y1 + E, r2 = E + Y2, r3 = Y2 + S;
+            const int32_t d26 = x[2] - x[6], s04 = x[4] + x[0], d04 = x[0] - x[4];
+            const int32_t F  = static_cast<int32_t>(static_cast<uint32_t>(static_cast<int32_t>((d26 * kSq) >> 32)) << 1);
+            const int32_t s26 = x[6] + x[2] + F;
+            const int32_t e0 = s26 + s04, e3 = s04 - s26, e1 = F + d04, e2 = d04 - F;
+            o[0] = e0 + r3; o[7] = e0 - r3; o[1] = e1 + r2; o[6] = e1 - r2;
+            o[2] = e2 + r1; o[5] = e2 - r1; o[3] = e3 + Y1; o[4] = e3 - Y1;
+        }
+
+        // sample -> colour-table index (s+256, clamped to the table range)
+        inline uint16_t toIdx(int32_t s) 
+        { 
+            return static_cast<uint16_t>(clampi(s, -256, 255) + 256); 
+        }
+ 
+        inline void idctBlock(const int32_t* coef, uint16_t* out, int stride) 
+        {
+            int32_t tmp[8][8], o[8];
+            for (int r = 0; r < 8; r++) 
+            {
+                const int32_t* in = coef + r * 8;
+                if (!(in[1] | in[2] | in[3] | in[4] | in[5] | in[6] | in[7])) 
+                { 
+                    for (int j = 0; j < 8; j++) 
+                    {
+                        o[j] = in[0]; 
+                    }
+                }
+                else 
+                {
+                    idct8(in, o);
+                }
+                for (int j = 0; j < 8; j++) 
+                {
+                    tmp[j][r] = o[j];
+                }
+            }
+            for (int j = 0; j < 8; j++) 
+            {
+                idct8(tmp[j], o);
+                for (int i = 0; i < 8; i++) 
+                {
+                    out[j * stride + i] = toIdx(o[i] >> 17);
+                }
+            }
+        }
+ 
+        inline int readDc(Bits& b, bool chroma) 
+        {
+            const uint32_t w = b.peek32();
+            const uint8_t e = chroma ? TQI_DC_CHROMA[w >> 24] : TQI_DC_LUMA[w >> 25];
+            int size = e >> 4; 
+            b.pos += e & 15;
+            if (!size) 
+                return 0;
+            uint32_t v = b.peek32() >> (32 - size); 
+            b.pos += size;
+            if (!((v >> (size - 1)) & 1)) 
+            {
+                v -= (1u << size) - 1;
+            }
+            return static_cast<int32_t>(v);
+        }
+ 
+        inline void decodeBlock(Bits& b, const int32_t* q, int& dcpred, bool chroma, uint16_t* out, int stride) 
+        {
+            int32_t coef[64] {};
+            dcpred += readDc(b, chroma);
+            coef[0] = static_cast<int32_t>(static_cast<uint32_t>(dcpred) * static_cast<uint32_t>(q[0]));
+            const uint16_t* ac = acTable().e;
+            int k = 0; 
+            bool any = false;
+            for (;;) 
+            {
+                uint32_t w = b.peek32() >> 16;
+                uint16_t e = ac[w];
+                if (e == 0)  // invalid code 
+                    break; 
+                int len = e >> 11, run = (e >> 6) & 31, lvl = e & 63;
+                b.pos += len;
+                if (lvl == 0) 
+                {
+                    if (run == 0) 
+                        break; // EOB
+
+                    uint32_t x = b.peek32() >> 18; b.pos += 14; // ESC: 6b run + 8b level
+                    int a = x & 255; k += static_cast<int>((x >> 8) & 63) + 1;
+                    if (a == 0)         { lvl = b.peek32() >> 24; b.pos += 8; }
+                    else if (a == 0x80) { lvl = static_cast<int>(b.peek32() >> 24) - 256; b.pos += 8; }
+                    else                  lvl = a > 0x80 ? a - 256 : a;
+                } 
+                else 
+                {
+                    k += run + 1;
+                    if (b.peek32() >> 31) 
+                    {
+                        lvl = -lvl;
+                    }
+                    b.pos += 1;
+                }
+                if (k > 63) 
+                    break;
+                int pos = TQI_SCAN[k];
+                coef[pos] = static_cast<int32_t>(static_cast<uint32_t>(lvl) * static_cast<uint32_t>(q[pos]));
+                any = true;
+            }
+            // DC-only shortcut
+            if (!any) 
+            {    
+                const uint16_t v = toIdx(coef[0] >> 17);
+                for (int y = 0; y < 8; y++) 
+                {
+                    for (int x = 0; x < 8; x++) 
+                    {
+                        out[y * stride + x] = v;
+                    }
+                }
+            } 
+            else 
+            {
+                idctBlock(coef, out, stride);
+            }
+        }
+ 
+        inline void put(uint8_t* d, unsigned r, unsigned g, unsigned b) 
+        {
+            d[0] = r; 
+            d[1] = g; 
+            d[2] = b;
+        }
+ 
+    }  // namespace detail
+    
+    //////////////////////////////////////////////////////////////////////////
+ 
+    class Decoder 
+    {
+    public:
+        // parse the 8-byte frame header (payload = chunk data after the 8-byte chunk header)
+        static bool readHeader(const uint8_t* p, uint32_t n, FrameInfo& fi) 
+        {
+            if (n < 8) 
+                return false;
+            fi.width = p[0] | (p[1] << 8); 
+            fi.height = p[2] | (p[3] << 8); 
+            fi.quant = p[4]; 
+            fi.flags = p[7];
+            return fi.width > 0 && fi.height > 0;
+        }
+ 
+        // decode one frame into dst
+        bool decode(const uint8_t* payload, uint32_t size, uint8_t* dst, std::ptrdiff_t stride) 
+        {
+            return run(payload, size, dst, stride);
+        }
+ 
+    private:
+        int quant_ = -1;
+        int32_t q_[64] {};
+ 
+    private:
+        void makeQ(int quant) 
+        {
+            if (quant == quant_) 
+                return;
+
+            for (int i = 0; i < 64; i++) 
+            {
+                if (quant == 100) 
+                {
+                    q_[i] = TQI_BASE1[i] * 8;
+                }
+                else 
+                {
+                    const int64_t qi = static_cast<int64_t>(TQI_BASE2[i]) * (107 - quant) * 4096;
+                    q_[i] = static_cast<int32_t>((static_cast<int64_t>(TQI_BASE1[i]) * qi + 0x8000) >> 16);
+                }
+            }
+            q_[0] = TQI_BASE1[0] * 8;
+            quant_ = quant;
+        }
+ 
+        bool run(const uint8_t* p, uint32_t n, uint8_t* dst, std::ptrdiff_t stride) 
+        {
+            static const int bytesPerPixel = 3;
+
+            FrameInfo fi;
+            if (!readHeader(p, n, fi)) 
+                return false;
+
+            makeQ(fi.quant);
+            const auto& T = detail::kColor;
+            detail::Bits b{p + 8, n - 8, 0};
+            int dc[3] = {0, 0, 0};
+            const int mbw = (fi.width + 15) / 16, mbh = (fi.height + 15) / 16;
+            uint16_t Y[16 * 16], U[8 * 8], V[8 * 8];
+            for (int my = 0; my < mbh; my++) 
+            {
+                for (int mx = 0; mx < mbw; mx++) 
+                {
+                    detail::decodeBlock(b, q_, dc[0], false, Y,              16);
+                    detail::decodeBlock(b, q_, dc[0], false, Y + 8,          16);
+                    detail::decodeBlock(b, q_, dc[0], false, Y + 8 * 16,     16);
+                    detail::decodeBlock(b, q_, dc[0], false, Y + 8 * 16 + 8, 16);
+                    detail::decodeBlock(b, q_, dc[1], true,  U, 8);
+                    detail::decodeBlock(b, q_, dc[2], true,  V, 8);
+                    const int x0 = mx * 16, y0 = my * 16;
+                    const int cw = fi.width - x0 < 16 ? fi.width - x0 : 16;
+                    const int ch = fi.height - y0 < 16 ? fi.height - y0 : 16;
+                    for (int y = 0; y < ch; y++) 
+                    {
+                        uint8_t* d = dst + static_cast<std::ptrdiff_t>(y0 + y) * stride + static_cast<std::ptrdiff_t>(x0) * bytesPerPixel;
+                        const uint16_t* yy = Y + y * 16; 
+                        const uint16_t* uu = U + (y >> 1) * 8; 
+                        const uint16_t* vv = V + (y >> 1) * 8;
+                        for (int x = 0; x < cw; x++, d += bytesPerPixel) 
+                        {
+                            uint32_t s = T.a[yy[x]] + T.b[uu[x >> 1]] + T.c[vv[x >> 1]];
+                            detail::put(d, T.r[s >> 23], T.g[(s & 0xff800) >> 11], T.bl[s & 0x1ff]);
+                        }
+                    }
+                }
+            } // for
+            return !b.overrun();
+        }
+    };
+ 
+}  // namespace tqi
+
+//////////////////////////////////////////////////////////////////////////
+
 inline uint16_t rl16(const uint8_t* p) { return (uint16_t)(p[0] | (p[1] << 8)); }
 inline uint32_t rl32(const uint8_t* p) 
 {
@@ -43,239 +594,7 @@ static const uint16_t kInvAan[64] =
    14846, 10703, 11363, 12625, 14846, 18895, 27432, 53809
 };
 
-// MPEG-1 default intra quant matrix
-static const uint8_t kMpeg1Intra[64] = 
-{
-     8, 16, 19, 22, 26, 27, 29, 34,
-    16, 16, 22, 24, 27, 29, 34, 37,
-    19, 22, 26, 27, 29, 34, 34, 38,
-    22, 22, 26, 27, 29, 34, 37, 40,
-    22, 26, 27, 29, 32, 35, 40, 48,
-    26, 27, 29, 32, 35, 40, 48, 58,
-    26, 27, 29, 34, 38, 46, 56, 69,
-    27, 29, 35, 38, 46, 56, 69, 83
-};
-
-// MPEG-1 DCT coefficient VLC (ISO 11172-2 table B.5), plus escape / EOB.
-// code, bits, run, level. 111 entries + escape + eob.
-struct MpegAc 
-{
-    uint16_t code;
-    uint8_t bits;
-    uint8_t run;
-    int8_t level; // 0 = EOB if run==0 && code is EOB; escape marked separately
-};
-
-static const MpegAc kMpeg1Ac[] = 
-{
-    {0x3,2,0,1},{0x4,4,0,2},{0x5,5,0,3},{0x6,7,0,4},
-    {0x26,8,0,5},{0x21,8,0,6},{0xa,10,0,7},{0x1d,12,0,8},
-    {0x18,12,0,9},{0x13,12,0,10},{0x10,12,0,11},{0x1a,13,0,12},
-    {0x19,13,0,13},{0x18,13,0,14},{0x17,13,0,15},{0x1f,14,0,16},
-    {0x1e,14,0,17},{0x1d,14,0,18},{0x1c,14,0,19},{0x1b,14,0,20},
-    {0x1a,14,0,21},{0x19,14,0,22},{0x18,14,0,23},{0x17,14,0,24},
-    {0x16,14,0,25},{0x15,14,0,26},{0x14,14,0,27},{0x13,14,0,28},
-    {0x12,14,0,29},{0x11,14,0,30},{0x10,14,0,31},{0x18,15,0,32},
-    {0x17,15,0,33},{0x16,15,0,34},{0x15,15,0,35},{0x14,15,0,36},
-    {0x13,15,0,37},{0x12,15,0,38},{0x11,15,0,39},{0x10,15,0,40},
-    {0x3,3,1,1},{0x6,6,1,2},{0x25,8,1,3},{0xc,10,1,4},
-    {0x1b,12,1,5},{0x16,13,1,6},{0x15,13,1,7},{0x1f,15,1,8},
-    {0x1e,15,1,9},{0x1d,15,1,10},{0x1c,15,1,11},{0x1b,15,1,12},
-    {0x1a,15,1,13},{0x19,15,1,14},{0x13,16,1,15},{0x12,16,1,16},
-    {0x11,16,1,17},{0x10,16,1,18},{0x5,4,2,1},{0x4,7,2,2},
-    {0xb,10,2,3},{0x14,12,2,4},{0x14,13,2,5},{0x7,5,3,1},
-    {0x24,8,3,2},{0x1c,12,3,3},{0x13,13,3,4},{0x6,5,4,1},
-    {0xf,10,4,2},{0x12,12,4,3},{0x7,6,5,1},{0x9,10,5,2},
-    {0x12,13,5,3},{0x5,6,6,1},{0x1e,12,6,2},{0x14,16,6,3},
-    {0x4,6,7,1},{0x15,12,7,2},{0x7,7,8,1},{0x11,12,8,2},
-    {0x5,7,9,1},{0x11,13,9,2},{0x27,8,10,1},{0x10,13,10,2},
-    {0x23,8,11,1},{0x1a,16,11,2},{0x22,8,12,1},{0x19,16,12,2},
-    {0x20,8,13,1},{0x18,16,13,2},{0xe,10,14,1},{0x17,16,14,2},
-    {0xd,10,15,1},{0x16,16,15,2},{0x8,10,16,1},{0x15,16,16,2},
-    {0x1f,12,17,1},{0x1a,12,18,1},{0x19,12,19,1},{0x17,12,20,1},
-    {0x16,12,21,1},{0x1f,13,22,1},{0x1e,13,23,1},{0x1d,13,24,1},
-    {0x1c,13,25,1},{0x1b,13,26,1},{0x1f,16,27,1},{0x1e,16,28,1},
-    {0x1d,16,29,1},{0x1c,16,30,1},{0x1b,16,31,1},
-};
-
-// 16-bit MSB peek LUT: bits(5) | run(6) | kind(2) | level(8 signed stored +128)
-// kind: 0=invalid 1=coeff 2=eob 3=escape
-struct AcLut { uint8_t bits, run, kind; int8_t level; };
-
-inline const AcLut* ac_lut() 
-{
-    static AcLut lut[65536];
-    static bool ready = false;
-    if (ready) 
-    {
-        return lut;
-    }
-    std::memset(lut, 0, sizeof(lut));
-    auto fill = [&](uint16_t code, int bits, uint8_t run, uint8_t kind, int8_t level) 
-        {
-            const int shift = 16 - bits;
-            const int start = (int)code << shift;
-            const int count = 1 << shift;
-            for (int i = 0; i < count; i++) 
-            {
-                lut[start + i].bits = (uint8_t)bits;
-                lut[start + i].run = run;
-                lut[start + i].kind = kind;
-                lut[start + i].level = level;
-            }
-        };
-    for (const auto& e : kMpeg1Ac)
-    {
-        fill(e.code, e.bits, e.run, 1, e.level);
-    }
-    fill(0x1, 6, 0, 3, 0); // escape 000001
-    fill(0x2, 2, 0, 2, 0); // EOB 10
-    ready = true;
-    return lut;
-}
-
-// MPEG-1 DC size VLCs (lum / chroma)
-inline int decode_dc_size_lum(class BitMsb& b);
-inline int decode_dc_size_chr(class BitMsb& b);
-
-// ---- bitstream: TQI = LE 32-bit words, bits taken MSB-first of each word
-class BitMsb 
-{
-public:
-    const uint8_t* mDataPtr;
-    uint32_t mLeft;
-    uint32_t mCache {};
-    int mNumBits {};
-
-public:
-    BitMsb(const uint8_t* data, uint32_t size) 
-        : mDataPtr(data)
-        , mLeft(size) 
-    {
-    }
-
-    inline void refill() 
-    {
-        if (mNumBits > 0) 
-            return;
-
-        mNumBits = 32;
-
-        if (mLeft >= 4) 
-        {
-            mCache = rl32(mDataPtr);
-            mDataPtr += 4;
-            mLeft -= 4;
-            return;
-        }
-
-        if (mLeft == 0) 
-        {
-            mCache = 0;
-            return;
-        }
-
-        // leftover < 4: treat remaining bytes as a short LE word, high bytes 0
-        uint32_t w = 0;
-        for (uint32_t i = 0; i < mLeft; i++) 
-        {
-            w |= (uint32_t)mDataPtr[i] << (8 * i);
-        }
-        mDataPtr += mLeft;
-        mLeft = 0;
-        mCache = w;
-    }
-
-    inline uint32_t get(int n) 
-    {
-        uint32_t v = 0;
-        while (n > 0) 
-        {
-            refill();
-            const int take = n < mNumBits ? n : mNumBits;
-            v = (v << take) | (mCache >> (32 - take));
-            mCache <<= take;
-            mNumBits -= take;
-            n -= take;
-        }
-        return v;
-    }
-
-    inline uint32_t peek(int n) 
-    {
-        // refill into a local copy
-        BitMsb t = *this;
-        return t.get(n);
-    }
-
-    inline int get_s(int n) 
-    {
-        const int v = (int)get(n);
-        const int sh = 32 - n;
-        return (v << sh) >> sh;
-    }
-
-    inline int mpeg_signed(int size) 
-    {
-        if (size <= 0) 
-            return 0;
-
-        const int val = (int)get(size);
-        const int sign = (val >> (size - 1)) ^ 1;
-        return val + sign - (sign << size);
-    }
-};
-
-inline int decode_dc_size_lum(BitMsb& b) 
-{
-    // 00=1, 01=2, 100=0, 101=3, 110=4, 1110=5, ... 111111111=11
-    if (b.peek(2) < 2) 
-    {
-        const int v = (int)b.get(2);
-        return v + 1; // 00->1, 01->2
-    }
-
-    if (b.peek(3) == 4) { b.get(3); return 0; }      // 100
-    if (b.peek(3) == 5) { b.get(3); return 3; }      // 101
-    if (b.peek(3) == 6) { b.get(3); return 4; }      // 110
-
-    // 111...
-    b.get(3);
-    int size = 5;
-    while (size < 11) 
-    {
-        if (b.get(1) == 0) 
-            return size;
-
-        size++;
-    }
-    return 11; // 111111111
-}
-
-inline int decode_dc_size_chr(BitMsb& b) 
-{
-    // 00=0, 01=1, 10=2, 110=3, 1110=4, ... 1111111111=11
-    const int t2 = (int) b.peek(2);
-    if (t2 <= 2) 
-    {
-        b.get(2);
-        return t2; // 00,01,10
-    }
-
-    b.get(2); // 11
-
-    int size = 3;
-    while (size < 11) 
-    {
-        if (b.get(1) == 0) 
-            return size;
-
-        size++;
-    }
-    return 11;
-}
-
-// ---- bitstream: TGQ = LE, bits taken LSB-first
+// bitstream: TGQ = LE, bits taken LSB-first
 class BitLsb 
 {
 public:
@@ -324,7 +643,7 @@ public:
     }
 };
 
-// ---- EA IDCT (same integer kernel as eaidct.c)
+// EA IDCT (same integer kernel as eaidct.c)
 constexpr int kAsqrt = 181;
 constexpr int kA4 = 669;
 constexpr int kA2 = 277;
@@ -402,90 +721,6 @@ inline void idct_put_mb(uint8_t* y, int ystride, uint8_t* cb, uint8_t* cr, int c
     ea_idct_put(y + 8 * ystride + 8, ystride, block[3]);
     ea_idct_put(cb, cstride, block[4]);
     ea_idct_put(cr, cstride, block[5]);
-}
-
-// TQI intra block. DC scaled by matrix[0]
-inline bool tqi_block(BitMsb& b, int16_t block[64], int n, int last_dc[3], const uint16_t matrix[64]) 
-{
-    std::memset(block, 0, 64 * sizeof(int16_t));
-
-    const int comp = (n < 4) ? 0 : ((n & 1) + 1);
-    const int size = (comp == 0) ? decode_dc_size_lum(b) : decode_dc_size_chr(b);
-
-    if (size < 0 || size > 11) 
-        return false;
-
-    const int diff = (size == 0) ? 0 : b.mpeg_signed(size);
-    last_dc[comp] += diff;
-
-    block[0] = (int16_t)(last_dc[comp] * (int)matrix[0]);
-
-    const AcLut* lut = ac_lut();
-    int i = 0;
-    for (;;) 
-    {
-        const uint32_t peekData = b.peek(16);
-        const AcLut e = lut[peekData & 0xFFFF];
-        if (e.kind == 0 || e.bits == 0) 
-        {
-            return false;
-        }
-
-        b.get(e.bits);
-
-        if (e.kind == 2) 
-            break; // EOB
-
-        int level;
-        if (e.kind == 3) 
-        {
-            const int run = (int)b.get(6) + 1;
-            level = b.get_s(8);
-            if (level == -128) 
-            {
-                level = (int)b.get(8) - 256;
-            }
-            else if (level == 0) 
-            {
-                level = (int)b.get(8);
-            }
-            i += run;
-
-            if (i < 0 || i >= 64) 
-                return false;
-
-            const int j = kZigzag[i];
-            int mag = level < 0 ? -level : level;
-            mag = (mag * (int)matrix[j]) >> 4;
-            mag = (mag - 1) | 1;
-            block[j] = (int16_t)(level < 0 ? -mag : mag);
-        } 
-        else 
-        {
-            i += (int)e.run + 1;
-            if (i < 0 || i >= 64) 
-                return false;
-
-            const int j = kZigzag[i];
-            int mag = (int)e.level;
-            mag = (mag * (int)matrix[j]) >> 4;
-            mag = (mag - 1) | 1;
-            const int sign = (int)b.get(1);
-            block[j] = (int16_t)(sign ? -mag : mag);
-        }
-    }
-    return true;
-}
-
-inline void tqi_qtable(uint16_t matrix[64], int quant) 
-{
-    const int64_t qscale = (215 - 2 * quant) * 5;
-    matrix[0] = (uint16_t)((kInvAan[0] * kMpeg1Intra[0]) >> 11);
-    for (int i = 1; i < 64; i++)
-    {
-        int64_t v = ((int64_t)kInvAan[i] * kMpeg1Intra[i] * qscale + 32) >> 14;
-        matrix[i] = (uint16_t)(v > 65535 ? 65535 : v);
-    }
 }
 
 inline void tgq_qtable(int qtable[64], int quant) 
@@ -762,55 +997,27 @@ bool DK2MovieDecoder::DecodeTqi(const uint8_t* payload, uint32_t size, ByteArray
         return false;
     }
 
-    const int w = (int)rl16(payload + 0);
-    const int h = (int)rl16(payload + 2);
-    const int quant = payload[4];
-    if (w <= 0 || h <= 0 || w > 4096 || h > 4096) 
+    tqi::FrameInfo fi;
+    tqi::Decoder::readHeader(payload, size, fi);
+    if (fi.width <= 0 || fi.height <= 0 || fi.width > 4096 || fi.height > 4096) 
     {
         mErrorCode = eErrorCode_InvalidFrameDimensions;
         return false;
     }
 
-    mFrameDims = {w, h};
-    mFrameDimsCoded.x = align16(w);
-    mFrameDimsCoded.y = align16(h);
+    mFrameDims = {fi.width, fi.height};
+    mFrameDimsCoded.x = align16(fi.width);
+    mFrameDimsCoded.y = align16(fi.height);
 
-    mY.assign((uint32_t)mFrameDimsCoded.x * mFrameDimsCoded.y, 0x80);
-    mCb.assign((uint32_t)(mFrameDimsCoded.x >> 1) * (mFrameDimsCoded.y >> 1), 0x80);
-    mCr.assign((uint32_t)(mFrameDimsCoded.x >> 1) * (mFrameDimsCoded.y >> 1), 0x80);
+    outFrame.resize(fi.width * fi.height * 3);
 
-    uint16_t matrix[64];
-    tqi_qtable(matrix, quant);
-
-    BitMsb bits(payload + 8, size - 8);
-
-    int last_dc[3] = {0, 0, 0};
-
-    int16_t block[6][64];
-
-    const int mb_w = mFrameDimsCoded.x / 16;
-    const int mb_h = mFrameDimsCoded.y / 16;
-
-    for (int my = 0; my < mb_h; my++) 
+    tqi::Decoder decoder;
+    if (!decoder.decode(payload, size, outFrame.data(), (std::ptrdiff_t)fi.width * 3)) 
     {
-        for (int mx = 0; mx < mb_w; mx++) 
-        {
-            for (int n = 0; n < 6; n++) 
-            {
-                if (!tqi_block(bits, block[n], n, last_dc, matrix)) 
-                {
-                    mErrorCode = eErrorCode_DecodeError;
-                    return false;
-                }
-            }
-
-            uint8_t* yp = mY.data() + (uint32_t)my * 16 * mFrameDimsCoded.x + mx * 16;
-            uint8_t* cbp = mCb.data() + (uint32_t)my * 8 * (mFrameDimsCoded.x >> 1) + mx * 8;
-            uint8_t* crp = mCr.data() + (uint32_t)my * 8 * (mFrameDimsCoded.x >> 1) + mx * 8;
-            idct_put_mb(yp, mFrameDimsCoded.x, cbp, crp, mFrameDimsCoded.x >> 1, block);
-        }
+        // bitstream ended before all macroblocks were decoded
+        mErrorCode = eErrorCode_DecodeError;
+        return false;
     }
-    YUV2RGB(outFrame);
     return true;
 }
 

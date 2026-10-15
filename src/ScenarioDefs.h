@@ -557,7 +557,11 @@ public:
     std::string mTranslationSoundGategory;
     std::string mSoundCategory;
     float mShuffleSpeed;
-    float mHeight;
+    float mWidth {}; // collision width, radius = width / 2
+    float mHeight {};
+    float mMass {};
+    float mAirFriction {};
+    float mMaxTurnRateDegrees {}; // per second
     float mEyeHeight;
     float mSpeed;
     float mRunSpeed;

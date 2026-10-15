@@ -42,12 +42,14 @@ bool DK2SfxMapFile::OpenFile(const std::string& filePath)
     {
         const unsigned int groupsCount = cxx::read_int32(fileStream);
         const unsigned int unknown1 = cxx::read_int32(fileStream);
-        const unsigned int unknown2 = cxx::read_int32(fileStream);
 
-        entriesRoller.mMinDistance = cxx::read_f32(fileStream);
-        entriesRoller.mMaxDistance = cxx::read_f32(fileStream);
-        entriesRoller.mScale = cxx::read_f32(fileStream);
+        entriesRoller.mChannelMask = cxx::read_int8(fileStream);
+        cxx::read_int8(fileStream); // unused
 
+        const unsigned short eaxEnvironment = cxx::read_int16(fileStream);
+        const float eaxVolume = cxx::read_f32(fileStream);
+        const float eaxDecayTimeSeconds = cxx::read_f32(fileStream);
+        const float eaxDamping = cxx::read_f32(fileStream);
         entriesRoller.mGroups.resize(groupsCount);
 
         if (!fileStream)
@@ -107,7 +109,11 @@ bool DK2SfxMapFile::OpenFile(const std::string& filePath)
                 {
                     soundsRoller.mIndex = cxx::read_int32(fileStream);
                     const unsigned int unknown1 = cxx::read_int32(fileStream);
-                    const unsigned int unknown2 = cxx::read_int32(fileStream);
+                    const unsigned int durationMs = cxx::read_int32(fileStream);
+                    if (durationMs > 0)
+                    {
+                        soundsRoller.mDuration = durationMs / 1000.0f;
+                    }
                     soundsRoller.mArchiveId = cxx::read_int32(fileStream);
                 }
 
