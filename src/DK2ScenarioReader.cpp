@@ -466,6 +466,7 @@ inline bool KWDParseENUM(int inputInt, ePlayerID& outputID)
         ePlayerID_Keeper2, // 4
         ePlayerID_Keeper3, // 5
         ePlayerID_Keeper4, // 6
+        ePlayerID_Keeper5, // 7
     };
     if (inputInt < CountOf(IDs))
     {

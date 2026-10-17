@@ -56,8 +56,7 @@ void TimeManager::UpdateFrame()
     AdvanceFixedClock(mLogicClock, mGametimeClock.mFrameDelta);
     AdvanceFixedClock(mPhysicsClock, mGametimeClock.mFrameDelta);
 
-    // smallsleep
-    ::glfwWaitEventsTimeout(0.001);
+    ::glfwWaitEventsTimeout(0.0);
 }
 
 void TimeManager::SetMaxFrameDeltaTime(float maxDeltaTime)

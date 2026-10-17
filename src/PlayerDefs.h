@@ -17,6 +17,10 @@ enum ePlayerID : uint8_t
     ePlayerID_Keeper2,
     ePlayerID_Keeper3,
     ePlayerID_Keeper4,
+
+    // normally, a maximum of 4 Keeper players can play on a map,
+    // but some campaign levels (specifically Carnage) require a 5th Keeper
+    ePlayerID_Keeper5, 
     ePlayerID_COUNT
 };
 

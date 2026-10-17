@@ -33,6 +33,9 @@ private:
         unsigned int mEntryIndex {};
     };
     //////////////////////////////////////////////////////////////////////////
+    class OneShotPcmAudioSource;
+    class OneShotPcmAudioInstance;
+    //////////////////////////////////////////////////////////////////////////
 public:
     AudioManager();
     ~AudioManager();
@@ -53,6 +56,11 @@ public:
     bool PlayAmbience(const std::string& categoryName, snd_group_id groupId);
     bool StopAmbience();
     bool IsAmbiencePlaying() const;
+
+    AudioHandle PlayOneShotPcm(eAudioChannel channel, int sampleRate, int channels, std::vector<int16_t>&& samples);
+    bool StopPlayback(AudioHandle audioHandle);
+    bool IsPlaying(AudioHandle audioHandle) const;
+    bool GetPlaybackTime(AudioHandle audioHandle, double& playbackTime) const;
 
 private:
     bool ScanMapFiles();
@@ -90,6 +98,9 @@ private:
     std::vector<SoLoud::AudioSource*> mAmbienceSequence;
     size_t mAmbienceSequencePos {}; // points to next clip in mAmbienceSequence
     SimpleTimer mAmbienceUpdateTimer {};
+
+    // one shot pcms
+    std::vector<std::unique_ptr<OneShotPcmAudioSource>> mOneShotPcms;
 };
 
 //////////////////////////////////////////////////////////////////////////

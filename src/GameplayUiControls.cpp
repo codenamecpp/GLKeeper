@@ -60,6 +60,11 @@ GameplayUi::Minimap::Minimap(GameplayController& gameplay)
     mPlayerColors[ePlayerID_Keeper4][ePlayerColors_ReinforcedWall] = Color32 {160, 105, 0, 255};
     mPlayerColors[ePlayerID_Keeper4][ePlayerColors_Creature] = Color32 {160, 105, 0, 255};
 
+    mPlayerColors[ePlayerID_Keeper5][ePlayerColors_DungeonHeart] = eTerrainColors_Invalid;
+    mPlayerColors[ePlayerID_Keeper5][ePlayerColors_ClaimedPath] = eTerrainColors_Invalid;
+    mPlayerColors[ePlayerID_Keeper5][ePlayerColors_ReinforcedWall] = eTerrainColors_Invalid;
+    mPlayerColors[ePlayerID_Keeper5][ePlayerColors_Creature] = eTerrainColors_Invalid;
+
     mAnimCycleColors.push_back({142, 0, 0, 255});
     mAnimCycleColors.push_back({24, 41, 135, 255});
     mAnimCycleColors.push_back({18, 128, 19, 255});

@@ -2,6 +2,14 @@
 #include "MovieScreen.h"
 #include "GpuTexture2D.h"
 #include "UiRenderContext.h"
+#include "AudioManager.h"
+
+//////////////////////////////////////////////////////////////////////////
+
+#define MOVIE_PFS               25.0f
+#define MOVIE_FRAME_DURATION    (1.0f / MOVIE_PFS)
+
+//////////////////////////////////////////////////////////////////////////
 
 MovieScreen::MovieScreen()
     : UiView(eUiViewLayer_Overlay)
@@ -49,8 +57,19 @@ bool MovieScreen::ShowMovie(const std::string& movieName)
         }
     }
 
+    // audio
+    if (gAudio.IsAudioOnline())
+    {
+        DK2MovieDecoder::AudioData audioData;
+        DK2MovieDecoder::AudioInfo audioInfo;
+        if (mMovieDecoder.DecodeAudio(1, audioInfo, audioData))
+        {
+            mAudioHandle = gAudio.PlayOneShotPcm(eAudioChannel_Master, audioInfo.mSampleRate, audioInfo.mChannels, std::move(audioData));
+            cxx_assert(mAudioHandle != 0);
+        }
+    }
     mPlaybackTime = 0.0f;
-    mFrameDuration = 1.0f / 30.0f;
+    mFrameDuration = MOVIE_FRAME_DURATION;
     mPlaybackState = ePlaybackState_Playing;
     return true;
 }
@@ -96,6 +115,21 @@ void MovieScreen::UpdateFrame(float deltaTime)
     if (mPlaybackState == ePlaybackState_Playing)
     {
         mPlaybackTime += deltaTime;
+
+        // sync with audio
+        if (mAudioHandle)
+        {
+            double audioTime {};
+            if (gAudio.GetPlaybackTime(mAudioHandle, audioTime))
+            {
+                const double threshold = 0.1;
+                if ((mPlaybackTime < (audioTime - threshold)) ||
+                    (mPlaybackTime > (audioTime + threshold)))
+                {
+                    mPlaybackTime = static_cast<float>(audioTime);
+                }
+            }
+        }
 
         int currentFrame = static_cast<int>(std::round(mPlaybackTime / mFrameDuration));
         bool frameChanged = false;
@@ -185,6 +219,11 @@ void MovieScreen::UpdateFrameTexture()
 
 void MovieScreen::ClearState()
 {
+    if (mAudioHandle)
+    {
+        gAudio.StopPlayback(mAudioHandle);
+        mAudioHandle = {};
+    }
     mMovieDecoder.Close();
     mTexture.reset();
     mRgbData.clear();

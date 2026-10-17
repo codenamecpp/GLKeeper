@@ -3,6 +3,34 @@
 
 //////////////////////////////////////////////////////////////////////////
 
+// 'pIQT' as little-endian fourcc
+#define FOURCC_PIQT 0x54514970u
+
+//////////////////////////////////////////////////////////////////////////
+
+constexpr uint32_t Fourcc(char a, char b, char c, char d)
+{
+    return (uint32_t)(uint8_t)a | ((uint32_t)(uint8_t)b << 8) | ((uint32_t)(uint8_t)c << 16) | ((uint32_t)(uint8_t)d << 24);
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+inline uint32_t rl32(const uint8_t* p) 
+{
+    return (uint32_t)p[0] | ((uint32_t)p[1] << 8) | ((uint32_t)p[2] << 16) | ((uint32_t)p[3] << 24);
+}
+inline int16_t rl16s(const uint8_t* p) 
+{ 
+    return (int16_t)(uint16_t)(p[0] | (p[1] << 8)); 
+}
+inline int align16(int v) { return (v + 15) & ~15; }
+inline int16_t clip16(int v) 
+{ 
+    return (int16_t)(v < -32768 ? -32768 : v > 32767 ? 32767 : v); 
+}
+
+//////////////////////////////////////////////////////////////////////////
+
 // AAN scales
 static const int32_t TQI_BASE1[64] = 
 {
@@ -345,7 +373,7 @@ namespace tqi
         constexpr double kAanC = 0.3826834261417389;   // cos(3*pi/8)
         constexpr int64_t kSqrt2Scaled = 0x5a82799a;   // ~ sqrt(2) * 2^30  (fixed-point)
 
-        // round-to-nearest-even via the classic “add 1.5 * 2^52 and read low dword” trick 
+        // round-to-nearest-even via the classic "add 1.5 * 2^52 and read low dword" trick 
         inline int32_t roundNearestEven(double x) 
         {          
             double tmp = x + 6755399441055744.0;   // 1.5 * 2^52
@@ -691,118 +719,448 @@ namespace tqi
  
 }  // namespace tqi
 
-
 //////////////////////////////////////////////////////////////////////////
 
-inline uint32_t rl32(const uint8_t* p) 
-{
-    return (uint32_t)p[0] | ((uint32_t)p[1] << 8) | ((uint32_t)p[2] << 16) | ((uint32_t)p[3] << 24);
-}
+// audio decoding
 
-inline int align16(int v) { return (v + 15) & ~15; }
+// a movie may contain several audio tracks (e.g. languages): 
+// N header chunks at the start of the file and, after every video frame, N consecutive data chunks - the n-th one belongs to track n
+
+// codecs:
+//   0  PCM s16le:   u32 frames; then frames*channels samples (interleaved)
+//   7  EA ADPCM:    u32 (ignored), s16 curL, prevL, curR, prevR (mono: only the first two are used), then blocks
+//                   stereo: 30 bytes = [coefL<<4|coefR][shiftL<<4|shiftR][28 bytes: hiNibble=L loNibble=R]
+//                   mono:   15 bytes = [coef<<4|shift][14 bytes, hi nibble first]      -> 28 frames per block
+//   10 IMA SEAD:    stereo IMA ADPCM, one byte per frame (hi nibble L, lo nibble R), state kept between chunks
+
+namespace dk2audio 
+{
+
+    struct Format
+    {
+        bool valid = false;
+        int bits = 16;
+        int channels = 1;
+        int sampleRate = 22050;
+        int codec = 0;
+    };
+
+    enum eCodec { eCodec_Pcm16 = 0, eCodec_EaAdpcm = 7, eCodec_ImaSead = 10 };
+
+    inline bool IsHeaderTag(uint32_t t) { return (t == Fourcc('S','C','H','l')) || (t == Fourcc('1','S','N','h')) || (t == Fourcc('S','E','A','D')); }
+    inline bool IsDataTag(uint32_t t)   { return (t == Fourcc('S','C','D','l')) || (t == Fourcc('1','S','N','d')) || (t == Fourcc('S','N','D','C')); }
+    inline bool IsOtherAudioTag(uint32_t t)
+    {
+        return (t == Fourcc('S','C','E','l')) || 
+            (t == Fourcc('1','S','N','e')) || 
+            (t == Fourcc('S','E','N','D')) ||
+            (t == Fourcc('S','C','C','l')) || 
+            (t == Fourcc('S','C','L','l'));
+    }
+
+    namespace detail 
+    {
+
+        // {tag, len, len bytes BE}, sign-extended for len 1..3
+        inline bool ReadElement(const uint8_t*& p, const uint8_t* end, int32_t& value)
+        {
+            if (end - p < 2) 
+                return false;
+
+            const int n = p[1];
+            if (end - p < 2 + n) 
+                return false;
+
+            uint32_t v = 0;
+            for (int i = 0; i < n; i++) 
+            {
+                v = (v << 8) | p[2 + i];
+            }
+            if (n == 1 && v > 0x7f) 
+            {
+                v -= 0x100;
+            }
+            else if (n == 2 && v > 0x7fff) 
+            {
+                v -= 0x10000;
+            }
+            else if (n == 3 && v > 0x7fffff) 
+            {
+                v -= 0x1000000;
+            }
+            value = (int32_t)v;
+            p += 2 + n;
+            return true;
+        }
+
+        // ea_adpcm_table: coef1[i] = T[i], coef2[i] = T[i + 4]
+        static const int EA_TABLE[20] = { 0, 240, 460, 392, 0, 0, -208, -220, 0, 1, 3, 4, 7, 8, 10, 11, 0, -1, -3, -4 };
+
+        // standard IMA tables
+        static const int IMA_STEP[89] = 
+        {
+            7,8,9,10,11,12,13,14,16,17,19,21,23,25,28,31,34,37,41,45,50,55,60,66,73,80,88,97,107,118,130,143,157,173,190,209,
+            230,253,279,307,337,371,408,449,494,544,598,658,724,796,876,963,1060,1166,1282,1411,1552,1707,1878,2066,2272,2499,
+            2749,3024,3327,3660,4026,4428,4871,5358,5894,6484,7132,7845,8630,9493,10442,11487,12635,13899,15289,16818,18500,
+            20350,22385,24623,27086,29794,32767 
+        };
+        static const int IMA_INDEX_DELTA[8] = { -1, -1, -1, -1, 2, 4, 6, 8 };
+
+    } // namespace detail
+
+    inline bool ParseHeaderChunk(const uint8_t* p, uint32_t size, Format& f)
+    {
+        f = Format();
+        const uint8_t* end = p + size;
+        int32_t v = 0;
+        if (size <= 4) 
+            return false;
+
+        // skip leading elements until the 0xFD sub-header
+        p += 4;
+        while ((p < end) && (*p != 0xFD))
+        {
+            if (!detail::ReadElement(p, end, v)) 
+                return false;
+        }
+
+        if (p >= end) 
+            return false;
+        p++; // skip 0xFD
+        while ((p < end) && (*p != 0x8A))
+        {
+            const uint8_t tag = *p;
+            if (!detail::ReadElement(p, end, v)) 
+                return false;
+            switch (tag)
+            {
+                case 0x81: f.bits       = v; break;
+                case 0x82: f.channels   = v; break;
+                case 0x83: f.codec      = v; break;
+                case 0x84: f.sampleRate = v; break;
+            }
+        }
+        f.valid = (p < end);
+        return f.valid;
+    }
+
+    // 'SEAD' chunk - fixed format, payload ignored
+    inline Format SeadFormat()
+    {
+        Format f; 
+        f.valid = true; 
+        f.bits = 16; 
+        f.channels = 2; 
+        f.sampleRate = 22050; 
+        f.codec = eCodec_ImaSead;
+        return f;
+    }
+
+    inline bool IsSupported(const Format& f)
+    {
+        if (!f.valid || ( f.bits != 16)) 
+            return false;
+
+        switch (f.codec)
+        {
+            case eCodec_Pcm16:
+            case eCodec_EaAdpcm: 
+                return (f.channels == 1) || (f.channels == 2);
+            case eCodec_ImaSead: 
+                return true;
+        }
+        return false;
+    }
+
+    class Decoder
+    {
+    public:
+        // IMA SEAD keeps its predictor/step index between chunks of a track; call at start and on rewind
+        inline void Reset() 
+        { 
+            for (int c = 0; c < 2; c++) 
+            { 
+                mPred[c] = 0; 
+                mIndex[c] = 0; 
+            } 
+        }
+
+        // appends interleaved s16 samples of one data chunk to 'out'
+        // returns the number of sample FRAMES appended
+        // (0 for unsupported/empty chunks)
+        // never reads outside [p, p+size)
+        uint32_t DecodeChunk(const Format& f, const uint8_t* p, uint32_t size, std::vector<int16_t>& out)
+        {
+            if (!IsSupported(f)) 
+                return 0;
+            switch (f.codec)
+            {
+                case eCodec_Pcm16:   return DecodePcm(f, p, size, out);
+                case eCodec_EaAdpcm: return (f.channels == 2) ? DecodeEaStereo(p, size, out) : DecodeEaMono(p, size, out);
+                case eCodec_ImaSead: return DecodeSead(p, size, out);
+            }
+            return 0;
+        }
+
+    private:
+        static uint32_t DecodePcm(const Format& f, const uint8_t* p, uint32_t size, std::vector<int16_t>& out)
+        {
+            if (size < 4) 
+                return 0;
+            uint32_t frames = rl32(p);
+            const uint32_t avail = (size - 4) / (2u * f.channels);
+            if (frames > avail) 
+            {
+                frames = avail;
+            }
+            const uint32_t base = out.size();
+            out.resize(base + frames * f.channels);
+            const uint8_t* s = p + 4;
+            for (uint32_t i = 0; i < frames * f.channels; i++)
+            {
+                out[base + i] = rl16s(s);
+                s += 2;
+            }
+            return frames;
+        }
+
+        static uint32_t DecodeEaStereo(const uint8_t* p, uint32_t size, std::vector<int16_t>& out)
+        {
+            if (size < 12) 
+                return 0;
+
+            int currL = rl16s(p + 4);
+            int prevL = rl16s(p + 6);
+            int currR = rl16s(p + 8);
+            int prevR = rl16s(p + 10);
+
+            const uint8_t* src = p + 12;
+            const uint32_t blocks = (size - 12) / 30;
+            const uint32_t base = out.size();
+
+            out.resize(base + (uint32_t)blocks * 28 * 2);
+
+            int16_t* output_ptr = out.data() + base;
+
+            for (uint32_t b = 0; b < blocks; b++, src += 30)
+            {
+                const int h0 = src[0];
+                const int h1 = src[1];
+
+                const int c1L = detail::EA_TABLE[h0 >> 4];
+                const int c2L = detail::EA_TABLE[(h0 >> 4) + 4];
+                const int c1R = detail::EA_TABLE[h0 & 15];
+                const int c2R = detail::EA_TABLE[(h0 & 15) + 4];
+
+                const int shL = (h1 >> 4) + 8;
+                const int shR = (h1 & 15) + 8;
+
+                for (int i = 0; i < 28; i++)
+                {
+                    const uint32_t by = src[2 + i];
+                    const int vL = (int32_t)((by & 0xF0u) << 24) >> shL;
+                    const int vR = (int32_t)(by << 28) >> shR;
+                    const int nL = clip16((vL + currL * c1L + prevL * c2L + 0x80) >> 8);
+                    const int nR = clip16((vR + currR * c1R + prevR * c2R + 0x80) >> 8);
+                    prevL = currL; 
+                    currL = nL; 
+                    prevR = currR; 
+                    currR = nR;
+                    *output_ptr++ = (int16_t)nL; 
+                    *output_ptr++ = (int16_t)nR;
+                }
+            }
+            return blocks * 28;
+        }
+
+        static uint32_t DecodeEaMono(const uint8_t* p, uint32_t size, std::vector<int16_t>& out)
+        {
+            if (size < 12) 
+                return 0;
+
+            int curr = rl16s(p + 4);
+            int prev = rl16s(p + 6);
+
+            const uint8_t* src = p + 12;
+            const uint32_t blocks = (size - 12) / 15;
+            const uint32_t base = out.size();
+
+            out.resize(base + (uint32_t)blocks * 28);
+
+            int16_t* output_ptr = out.data() + base;
+
+            for (uint32_t b = 0; b < blocks; b++, src += 15)
+            {
+                const int h = src[0];
+
+                const int c1 = detail::EA_TABLE[h >> 4];
+                const int c2 = detail::EA_TABLE[(h >> 4) + 4];
+
+                const int sh = (h & 15) + 8;
+
+                for (int i = 0; i < 14; i++)
+                {
+                    const uint32_t by = src[1 + i];
+                    const int v0 = (int32_t)((by & 0xF0u) << 24) >> sh;
+                    const int v1 = (int32_t)(by << 28) >> sh;
+
+                    const int n0 = clip16((v0 + curr * c1 + prev * c2 + 0x80) >> 8);
+                    prev = curr; 
+                    curr = n0;
+
+                    const int n1 = clip16((v1 + curr * c1 + prev * c2 + 0x80) >> 8);
+                    prev = curr; 
+                    curr = n1;
+
+                    *output_ptr++ = (int16_t)n0; 
+                    *output_ptr++ = (int16_t)n1;
+                }
+            }
+            return blocks * 28;
+        }
+
+        inline uint32_t DecodeSead(const uint8_t* p, uint32_t size, std::vector<int16_t>& out)
+        {
+            const uint32_t base = out.size();
+
+            out.resize(base + size * 2);
+
+            int16_t* output_ptr = out.data() + base;
+
+            for (uint32_t i = 0; i < size; i++)
+            {
+                const int by = p[i];
+                *output_ptr++ = DecodeIma(0, by >> 4);
+                *output_ptr++ = DecodeIma(1, by & 15);
+            }
+            return size;
+        }
+
+        inline int16_t DecodeIma(int c, int nib)
+        {
+            const int step = detail::IMA_STEP[mIndex[c]];
+            int d = step >> 3;
+            if (nib & 4) { d += step; }
+            if (nib & 2) { d += step >> 1; }
+            if (nib & 1) { d += step >> 2; }
+            if (nib & 8) { d = -d; }
+            mPred[c] = clip16(mPred[c] + d);
+            int idx = mIndex[c] + detail::IMA_INDEX_DELTA[nib & 7];
+            mIndex[c] = idx < 0 ? 0 : idx > 88 ? 88 : idx;
+            return (int16_t)mPred[c];
+        }
+
+    private:
+        int mPred[2] = { 0, 0 };
+        int mIndex[2] = { 0, 0 };
+    };
+
+} // namespace dk2audio
 
 //////////////////////////////////////////////////////////////////////////
 
 bool DK2MovieDecoder::OpenFile(const std::string& path) 
 {
-    std::ifstream fileStream(path, std::ios::binary);
-    if (!fileStream) 
-    {
-        return false;
-    }
-    fileStream.seekg(0, std::ios::end);
-    const int dataLength = static_cast<int>(fileStream.tellg());
-    if (dataLength <= 0) 
-    {
-        return false;
-    }
-    fileStream.seekg(0, std::ios::beg);
-
-    Close();
-    if (dataLength < 8) // too small
+    mFileStream.open(path, std::ios::binary);
+    if (!mFileStream) 
     {
         mErrorCode = eErrorCode_FileError;
         return false;
     }
 
-    mFileData.resize(dataLength);
-    fileStream.read((char*) mFileData.data(), dataLength);
-    if (!fileStream) 
+    mDataBuffer.reserve(1024 * 64);
+
+    DemuxResult demuxNextResult;
+    if (!DemuxNext(demuxNextResult) && (mErrorCode == eErrorCode_None)) 
     {
-        mErrorCode = eErrorCode_FileError;
-    }
-    else
-    {
-        DemuxResult demuxNextResult;
-        if (!DemuxNext(demuxNextResult) && (mErrorCode == eErrorCode_None)) 
-        {
-            mErrorCode = eErrorCode_EOF;
-        }
+        mErrorCode = eErrorCode_EOF;
     }
 
     bool isSuccess = (mErrorCode == eErrorCode_None);
-    if (!isSuccess)
+    if (isSuccess)
+    {
+        Rewind();
+    }
+    else
     {
         const eErrorCode errorCode = mErrorCode;
         Close();
         mErrorCode = errorCode;
     }
-    return true;
+    return isSuccess;
 }
 
 void DK2MovieDecoder::Close()
 {
-    mFileData.clear();
-    mFilePosition = 0;
+    mFileStream.close();
+    mDataBuffer.clear();
 
-    mCodec = {};
     mErrorCode = {};
-
     mFrameDims = {};
     mFrameDimsCoded = {};
-
     mFrameIndex = 0;
 }
 
 void DK2MovieDecoder::Rewind() 
 {
-    mFilePosition = 0;
+    cxx_assert(mFileStream.is_open());
+    if (mFileStream.is_open())
+    {
+        mFileStream.clear();
+        mFileStream.seekg(0, std::ios::beg);
+    }
+    if (mErrorCode == eErrorCode_EOF)
+    {
+        mErrorCode = eErrorCode_None;
+    }
     mFrameIndex = 0;
 }
 
 bool DK2MovieDecoder::DemuxNext(DemuxResult& outResult) 
 {
-    while (mFilePosition + 8 <= mFileData.size()) 
+    if (!mFileStream)
+        return false;
+
+    const uint32_t HeaderSize = 8;
+    for (;;)
     {
-        outResult.mTag = rl32(mFileData.data() + mFilePosition);
+        // chunk header
+        uint8_t headerBytes[HeaderSize];
+        if (!cxx::read_elements(mFileStream, headerBytes, HeaderSize))
+            return false; // eof
 
-        const uint32_t raw = rl32(mFileData.data() + mFilePosition + 4);
-
-        if (raw < 8) 
+        const uint32_t tag = rl32(headerBytes);
+        const uint32_t raw = rl32(headerBytes + 4);
+        if (raw < HeaderSize) 
         {
             mErrorCode = eErrorCode_DecodeError;
             return false;
         }
 
-        if (mFilePosition + raw > mFileData.size()) 
+        if (tag == FOURCC_PIQT) 
         {
-            mErrorCode = eErrorCode_DecodeError;
-            return false;
-        }
+            mDataBuffer.clear();
+            mDataBuffer.resize(raw - HeaderSize);
 
-        outResult.mDataPtr = mFileData.data() + mFilePosition + 8;
-        outResult.mLength = raw - 8;
+            if (!cxx::read_elements(mFileStream, mDataBuffer.data(), mDataBuffer.size()))
+            {
+                mErrorCode = eErrorCode_DecodeError;
+                return false;
+            }
 
-        mFilePosition += raw;
+            outResult.mTag = tag;
+            outResult.mLength = mDataBuffer.size();
+            outResult.mDataPtr = mDataBuffer.data();
 
-        // 'pIQT' as little-endian fourcc
-        if (outResult.mTag == 0x54514970u) 
-        {
-            mCodec = eCodec::eCodec_Tqi;
             return true;
         }
 
-        // unknown chunk (audio etc.) — skip
+        // unknown chunk (audio etc.) skip
+        if (!mFileStream.seekg(raw - HeaderSize, std::ios::cur))
+        {
+            mErrorCode = eErrorCode_DecodeError;
+            return false;
+        }
     }
     return false;
 }
@@ -857,4 +1215,138 @@ bool DK2MovieDecoder::DecodeNextFrame(ByteArray& outFrame)
         mFrameIndex++;
     }
     return isSuccess;
+}
+
+bool DK2MovieDecoder::DecodeAudio(int track, AudioInfo& audioInfo, AudioData& audioData)
+{
+    audioInfo = {};
+    audioData.clear();
+
+    if ((track < 1) || !mFileStream.is_open())
+    {
+        cxx_assert(false);
+        return false;
+    }
+
+    mFileStream.clear();
+    const std::streampos savedPos = mFileStream.tellg();
+    mFileStream.seekg(0, std::ios::end);
+    const std::streamoff fileSize = mFileStream.tellg();
+    mFileStream.seekg(0, std::ios::beg);
+
+    const uint32_t HeaderSize = 8;
+
+    // the file starts with one audio header chunk per track
+    // after every video frame there is one data chunk per track: 
+    // the n-th data chunk in a row belongs to track n
+    // any other chunk starts the count over
+    std::vector<dk2audio::Format> trackFormats;
+
+    std::vector<uint8_t> chunkData;
+
+    dk2audio::Decoder audioDecoder;
+
+    int dataChunkNumber = 0;
+
+    bool leadingHeaders = true;
+    bool isFormatChecked = false;
+    bool isFormatOk = false;
+
+    std::streamoff chunkPos = 0;
+    while (chunkPos + HeaderSize <= fileSize)
+    {
+        uint8_t headerBytes[HeaderSize];
+        if (!cxx::read_elements(mFileStream, headerBytes, HeaderSize))
+            break;
+
+        const uint32_t tag = rl32(headerBytes);
+        const uint32_t raw = rl32(headerBytes + 4);
+        if ((raw < HeaderSize) || (chunkPos + raw > fileSize)) // damaged or truncated chunk
+            break;
+
+        const uint32_t payloadSize = raw - HeaderSize;
+        chunkPos += raw;
+
+        bool needPayload = false;
+        if (dk2audio::IsHeaderTag(tag))
+        {
+            // headers that are not at the start of the file are only accepted if there were none before
+            needPayload = leadingHeaders || trackFormats.empty();
+            dataChunkNumber = 0;
+        }
+        else
+        {
+            leadingHeaders = false;
+            if (dk2audio::IsDataTag(tag))
+            {
+                if (!isFormatChecked)
+                {
+                    isFormatChecked = true;
+                    isFormatOk = ((uint32_t) track <= trackFormats.size()) && dk2audio::IsSupported(trackFormats[track - 1]);
+                    if (!isFormatOk)
+                        break;
+                }
+                dataChunkNumber++;
+                needPayload = (dataChunkNumber == track) && isFormatOk;
+            }
+            else if (!dk2audio::IsOtherAudioTag(tag) || (tag == Fourcc('S','C','C','l')) || (tag == Fourcc('S','C','L','l')))
+            {
+                dataChunkNumber = 0; // video, unknown and counter chunks
+            }
+        }
+
+        if (!needPayload)
+        {
+            if (!mFileStream.seekg(payloadSize, std::ios::cur))
+                break;
+
+            continue;
+        }
+
+        chunkData.resize(payloadSize);
+        if ((payloadSize > 0) && !cxx::read_elements(mFileStream, chunkData.data(), chunkData.size()))
+            break;
+
+        if (dk2audio::IsHeaderTag(tag))
+        {
+            dk2audio::Format format;
+            if (tag == Fourcc('S','E','A','D'))
+            {
+                format = dk2audio::SeadFormat();
+            }
+            else
+            {
+                dk2audio::ParseHeaderChunk(chunkData.data(), payloadSize, format);
+            }
+            trackFormats.push_back(format);
+        }
+        else
+        {
+            audioDecoder.DecodeChunk(trackFormats[track - 1], chunkData.data(), payloadSize, audioData);
+        }
+    }
+
+    // restore pos
+    mFileStream.clear();
+    mFileStream.seekg(savedPos);
+
+    if (audioData.empty() || ((uint32_t) track > trackFormats.size()))
+    {
+        return false;
+    }
+
+    const dk2audio::Format& format = trackFormats[track - 1];
+    audioInfo.mSampleRate = format.sampleRate;
+    audioInfo.mChannels = format.channels;
+
+    if (format.channels > 0)
+    {
+        audioInfo.mFramesCount = audioData.size() / format.channels;
+    }
+
+    if (format.sampleRate > 0)
+    {
+        audioInfo.mDuration = (1.0f * audioInfo.mFramesCount / format.sampleRate);
+    }
+    return true;
 }

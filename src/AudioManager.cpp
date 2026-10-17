@@ -5,6 +5,8 @@
 #include "SoLoud/include/soloud_wavstream.h"
 #include "SoLoud/include/soloud_wav.h"
 
+#include <atomic>
+
 //////////////////////////////////////////////////////////////////////////
 
 AudioManager gAudio;
@@ -23,6 +25,80 @@ inline bool _SoLoudCheckResult_(SoLoud::result code, const char* functionName)
 }
 
 #define SoLoudCheckResult(code) _SoLoudCheckResult_(code, __FUNCTION__)
+
+//////////////////////////////////////////////////////////////////////////
+
+class AudioManager::OneShotPcmAudioSource: public SoLoud::AudioSource
+{
+    friend class OneShotPcmAudioInstance;
+public:
+    OneShotPcmAudioSource(int sampleRate, int channels, std::vector<int16_t>&& samples)
+        : mPcmSamples(std::move(samples))
+    {
+        mChannels = channels;
+        mBaseSamplerate = sampleRate * 1.0f;
+    }
+    ~OneShotPcmAudioSource() override
+    {
+        stop();
+    }
+    inline bool PendingDeletion() const { return mPendingDeletion; }
+    // override SoLoud::AudioSource
+    SoLoud::AudioSourceInstance *createInstance() override;
+private:
+    void SetPendingDeletion()
+    {
+        mPendingDeletion = true;
+    }
+private:
+    std::vector<int16_t> mPcmSamples;
+    std::atomic_bool mPendingDeletion {false};
+};
+
+class AudioManager::OneShotPcmAudioInstance: public SoLoud::AudioSourceInstance
+{
+public:
+    OneShotPcmAudioInstance(OneShotPcmAudioSource& audioSource)
+        : mAudioSource(audioSource)
+    {
+        if (mAudioSource.mChannels > 0)
+        {
+            mPcmSamplesPerChannel = mAudioSource.mPcmSamples.size() / mAudioSource.mChannels;
+        }
+    }
+    ~OneShotPcmAudioInstance() override
+    {
+        mAudioSource.SetPendingDeletion();
+    }
+    // override SoLoud::AudioSourceInstance
+    unsigned int getAudio(float* buf, unsigned int toRead, unsigned int bufSize) override
+    {
+        const int16_t* pcmSamples = mAudioSource.mPcmSamples.data() + mPcmSamplesOffset * mAudioSource.mChannels;
+        const uint32_t samplesWritten = std::min(toRead, mPcmSamplesPerChannel - mPcmSamplesOffset);
+        for (uint32_t ichannel = 0; ichannel < mAudioSource.mChannels; ++ichannel)
+        {
+            for (uint32_t isample = 0; isample < samplesWritten; ++isample)
+            {
+                *buf++ = pcmSamples[isample * mAudioSource.mChannels + ichannel] / 32768.0f;
+            }
+        }
+        mPcmSamplesOffset += samplesWritten;
+        return samplesWritten;
+    }
+    bool hasEnded() override 
+    {
+        return mPcmSamplesOffset >= mPcmSamplesPerChannel;
+    }
+private:
+    OneShotPcmAudioSource& mAudioSource;
+    uint32_t mPcmSamplesOffset {};
+    uint32_t mPcmSamplesPerChannel {};
+};
+
+SoLoud::AudioSourceInstance *AudioManager::OneShotPcmAudioSource::createInstance()
+{
+    return new OneShotPcmAudioInstance(*this);
+}
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -72,6 +148,13 @@ bool AudioManager::Initialize()
 void AudioManager::Shutdown()
 {
     StopAmbience();
+
+    for (auto& roller: mOneShotPcms)
+    {
+        roller->stop();
+    }
+
+    mOneShotPcms.clear();
 
     for (auto& roller: mClipsCache)
     {
@@ -365,6 +448,18 @@ void AudioManager::UpdateFrame(float deltaTime)
         mAmbienceUpdateTimer.Start();
         UpdateAmbience(false);
     }
+
+    // update one-shot pcms
+    for (auto it = mOneShotPcms.begin(); it != mOneShotPcms.end(); )
+    {
+        OneShotPcmAudioSource* oneShotSource = it->get();
+        if (oneShotSource->PendingDeletion())
+        {
+            it = mOneShotPcms.erase(it);
+            continue;
+        }
+        ++it;
+    }
 }
 
 bool AudioManager::PlayAmbience(const std::string& categoryName, snd_group_id groupId)
@@ -540,4 +635,59 @@ SoLoud::AudioSource* AudioManager::LoadSound(const SfxEndpoint& endpoint, bool q
 
     cxx_assert(audioStream != nullptr);
     return audioStream.get();
+}
+
+AudioHandle AudioManager::PlayOneShotPcm(eAudioChannel channel, int sampleRate, int channels, std::vector<int16_t>&& samples)
+{
+    if (!IsAudioOnline())
+        return {};
+
+    if (samples.empty() || (sampleRate < 1) || (channels < 1))
+    {
+        cxx_assert(false);
+        return {};
+    }
+
+    mOneShotPcms.push_back(std::make_unique<OneShotPcmAudioSource>(sampleRate, channels, std::move(samples)));
+    AudioHandle audioHandle = mAudioEngine->playBackground(*mOneShotPcms.back());
+    if (audioHandle == 0)
+    {
+        cxx_assert(false);
+        mOneShotPcms.pop_back();
+    }
+    return audioHandle;
+}
+
+bool AudioManager::IsPlaying(AudioHandle audioHandle) const
+{
+    if (!IsAudioOnline())
+        return false;
+
+    return mAudioEngine->isValidVoiceHandle(audioHandle);
+}
+
+bool AudioManager::GetPlaybackTime(AudioHandle audioHandle, double& playbackTime) const
+{
+    if (!IsAudioOnline())
+        return false;
+
+    bool isSuccess = mAudioEngine->isValidVoiceHandle(audioHandle);
+    if (isSuccess)
+    {
+        playbackTime = mAudioEngine->getStreamPosition(audioHandle);
+    }
+    return isSuccess;
+}
+
+bool AudioManager::StopPlayback(AudioHandle audioHandle)
+{
+    if (!IsAudioOnline())
+        return false;
+
+    bool isSuccess = mAudioEngine->isValidVoiceHandle(audioHandle);
+    if (isSuccess)
+    {
+        mAudioEngine->stop(audioHandle);
+    }
+    return isSuccess;
 }

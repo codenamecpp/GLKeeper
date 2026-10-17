@@ -4,6 +4,7 @@
 
 #include "UiView.h"
 #include "DK2MovieDecoder.h"
+#include "AudioDefs.h"
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -47,6 +48,8 @@ private:
     DK2MovieDecoder mMovieDecoder;
 
     ePlaybackState mPlaybackState {};
+
+    AudioHandle mAudioHandle {};
 
     std::shared_ptr<GpuTexture2D> mTexture;
     std::vector<uint8_t> mRgbData;

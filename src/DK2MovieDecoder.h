@@ -8,7 +8,6 @@ public:
    
     //////////////////////////////////////////////////////////////////////////
 
-    enum eCodec { eCodec_Unknown, eCodec_Tqi };
     enum eErrorCode
     {
         eErrorCode_None,
@@ -21,6 +20,20 @@ public:
 
     //////////////////////////////////////////////////////////////////////////
 
+    struct AudioInfo
+    {
+    public:
+        int mSampleRate = 0;    // Hz
+        int mChannels = 0;      // 1 or 2
+        int mFramesCount = 0;   // samples count / channels
+        float mDuration = 0.0f; // seconds
+    };
+
+    // pcm samples are signed 16-bit, interleaved (L R L R ... for stereo)
+    using AudioData = std::vector<int16_t>;
+
+    //////////////////////////////////////////////////////////////////////////
+
 public:
     bool OpenFile(const std::string& path);
     void Close();
@@ -29,12 +42,14 @@ public:
     // outFrame data is packed RGB24, width * height * 3
     bool DecodeNextFrame(ByteArray& outFrame);
 
+    // reads and decodes the whole audio track (track is 1-based)
+    bool DecodeAudio(int track, AudioInfo& audioInfo, AudioData& audioData);
+
     inline Point2D GetFrameDimensions() const 
     { 
         return mFrameDims; 
     }
     inline eErrorCode GetErrorCode() const { return mErrorCode; }
-    inline eCodec GetCodec() const { return mCodec; }
 
     inline int GetFrameIndex() const { return mFrameIndex; }
 private:
@@ -52,10 +67,9 @@ private:
     bool DecodeTqi(const uint8_t* payload, uint32_t size, ByteArray& out);
 
 private:
-    std::vector<uint8_t> mFileData;
-    uint32_t mFilePosition = 0;
+    std::ifstream mFileStream;
+    std::vector<uint8_t> mDataBuffer;
 
-    eCodec mCodec {};
     eErrorCode mErrorCode {};
 
     Point2D mFrameDims {};
